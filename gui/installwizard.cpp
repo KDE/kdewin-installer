@@ -29,6 +29,7 @@
 #include "installer.h"
 #include "packagelist.h"
 
+#include <QModelIndex>
 
 extern InstallWizard *wizard;
 
@@ -36,35 +37,6 @@ extern InstallWizard *wizard;
 PackageList *packageList;
 Installer *installer;
 Downloader *downloader;
-
-// this functions will go into class PackageList 
-QStringList filterPackageFiles(const QStringList &list,const QString &mode)
-{
-	QStringList result; 
-  for (int j = 0; j < list.size(); ++j) {
-  	QUrl url(list.at(j));
-    QFileInfo fileInfo(url.path());
-    QString fileName = fileInfo.fileName();
-
-    // only download package not already downloaded and only bin and lib packages
-		if (mode == "URL" && QFile::exists(fileName))
-	    qDebug() << fileName << " - already downloaded";
-		else if(fileName.contains("src") ) 
-	    qDebug() << fileName << " - ignored";
-		else {
-	    if (mode == "URL")
-		    qDebug() << fileName << " - downloading";
-		 	else
-		    qDebug() << fileName << " - installing";
-	    if (mode == "URL")
-	    	result << list.at(j);
-	    else
-	    	result << fileName;
-  	}
-	}
-	return result;
-}
-
 
 int downloadPackageList()
 {
@@ -138,7 +110,7 @@ TitlePage::TitlePage(InstallWizard *wizard)
     	"<h1>KDE for Windows Installer</h1>"
     	"<p>This setup programm is used for the initial installation of KDE for Windows application.</p>"
     	"<p>The pages that follow will guide you through the installation."
-    	"<br>Please note that the by default this installer will install "
+    	"<br>Please note that by default this installer will install "
     	"<br>only a basic set of applications by default. You can always "
     	"<br>run this program at any time in the future to add, remove, or "
     	"<br>upgrade packages if necessary.</p>"
@@ -275,13 +247,11 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
 {
     topLabel = new QLabel(tr("<center><b>Please select the required packages</b></center>"));
 
-		int size = packageList->size();
-    model = new QStandardItemModel(size, 3);
     tree  = new QTreeView();
-    tree->setModel(model);
     tree->setWindowTitle(QObject::tr("Dir View"));
-		packageList->writeToModel(model);
-//    connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
+		packageList->setModelData(tree);
+    //connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
+    connect(tree,SIGNAL(clicked(QModelIndex &)),this,SLOT(clicked(QModelIndex &)));
 
 
 
@@ -296,9 +266,16 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
 
 void PackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
 {
-	item->setCheckState(0,item->checkState(0) == Qt::Checked ? Qt::Unchecked : Qt::Checked);
+	qDebug("itemClicked %d",column);
+	item->setCheckState(column,item->checkState(0) == Qt::Checked ? Qt::Unchecked : Qt::Checked);
+	item->setText(column,"sdsdsd");
+	item->setText(column,"sdsdsd");
 }
 
+void PackageSelectorPage::clicked(const QModelIndex &index)
+{
+	qDebug("clicked %d",index);
+}
 
 void PackageSelectorPage::resetPage()
 {

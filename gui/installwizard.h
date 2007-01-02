@@ -115,6 +115,7 @@ public:
 
 private slots: 
 	void itemClicked(QTreeWidgetItem *item, int column);
+	void clicked(const QModelIndex &index);
 
 private:
     QLabel *topLabel;

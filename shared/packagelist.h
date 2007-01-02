@@ -27,35 +27,55 @@
 #include "package.h"
 
 class QStandardItemModel;
+class Downloader;
+class Installer;
+
+QStringList filterPackageFiles(const QStringList &list,const QString &mode);
 
 class PackageList : public QObject {
 	Q_OBJECT
 	
 	public:
 		PackageList();
+		PackageList(Downloader *downloader);
 		virtual ~PackageList();
 		void addPackage(Package const &package); 
 		void listPackages(const QString &title="");
-		bool readFromFile(QString const &fileName);
+		bool readFromFile(QString const &fileName="");
 		bool readFromHTMLFile(const QString &fileName);
-		bool writeToFile(QString const &fileName);
+		bool writeToFile(QString const &fileName="");
 //		static bool downloadPackage(QString const &pkgName);
 		QStringList getPackageFiles(QString const &pkgName);
 		Package *getPackage(QString const &pkgName);
-		QStringList getFilesToInstall(QString const &pkgName);
+		QStringList getFilesForInstall(QString const &pkgName);
 		QStringList getFilesForDownload(QString const &pkgName);
 		bool updatePackage(Package &pkg);
 		int size();
 		/// write content to model/view container
 		void writeToModel(QStandardItemModel *model);
 
+		// 0.5.3
+ 		bool hasConfig();
+    bool downloadPackage(const QString &pkgName);
+    bool installPackage(const QString &pkgName);
+    QStandardItemModel *PackageList::getModel();
+    void setModelData(QTreeView *tree);
+    void updateModelData(const QModelIndex &index);
+		QStringList getPackagesToInstall(QStandardItemModel *model);
+
 
 	signals:
 		void loadedConfig();
-
+	
 	private: 
 		QList<Package> *packageList;
-		
+		QString root; 
+		QString configFile;
+		Downloader *downloader;
+		Installer *installer;
+		QStandardItemModel *model;
+
+	friend class Installer;		
 };
 
 #endif

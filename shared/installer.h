@@ -33,11 +33,15 @@ class Installer : public QObject {
 		Installer(PackageList *packageList);
 		virtual ~Installer();
 		
-		void install(const QString &fileName, const QString &destdir="");
+		bool install(const QString &fileName /*, const QString &destdir=""*/);
 		// installPackage(Package *pkg) 
 //		bool readFromFile(QString const &fileName);
 //		bool writeToFile(QString const &fileName);
-		bool loadConfig(const QString &destdir="");
+		//bool loadConfig(const QString &destdir="");
+		bool loadConfig();
+
+		bool isEnabled(); 
+		void setRoot(const QString &_root);
 
 	public slots:
 		void updatePackageList();
@@ -45,6 +49,8 @@ class Installer : public QObject {
 	private:
 		QList<QString> *installedList;
 		PackageList *packageList;
+		QString root;
+		QString configFile;
 };
 
 

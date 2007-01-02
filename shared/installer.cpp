@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2005 Ralf Habacker. All rights reserved.
+** Copyright (C) 2005-2006 Ralf Habacker. All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
@@ -21,93 +21,48 @@
 **
 ****************************************************************************/
 
-// @TODO load installer config from manifest dir
-
-
 #include <QtCore>
 
 #include "installer.h"
 #include "packagelist.h"
+//#define DEBUG
 
 Installer::Installer(PackageList *_packageList)
 	: QObject()
 {
+	root = ".";
 	packageList = _packageList;
-	connect (packageList,SIGNAL(loadedConfig()),this,SLOT(updatePackageList()));
-	installedList = new QList<QString>();
+	packageList->installer = this;
+	packageList->root = root;
 
-//	if (QFile::exists("installed.txt"))
-//		readFromFile("installed.txt");
-//	else
-//		loadConfig();
+	connect (packageList,SIGNAL(loadedConfig()),this,SLOT(updatePackageList()));
 }
 
 Installer::~Installer()
 {
-//	writeToFile("installed.txt");
-	delete installedList;
 }
 
-/*
-void Installer::printList(const QString &title) 
+bool Installer::isEnabled() 
+{
+	return true; //QFile::exists("bin/unzip.exe");
+}
+
+void Installer::setRoot(const QString &_root) 
+{ 
+	root = _root; 
+	packageList->root = root;
+	QDir dir;
+	dir.mkdir(root);
+}
+
+
+bool Installer::loadConfig()
 {
 #ifdef DEBUG
 	qDebug() << __PRETTY_FUNCTION__;
 #endif
-	qDebug() << title;
-	QList<QString>::iterator i;
-	for (i = installedList->begin(); i != installedList->end(); ++i)
-		qWarning(i->toLatin1());
-}
-*/
-
-/* not required at now
-bool Installer::readFromFile(QString const &fileName)
-{
-#ifdef DEBUG
-	qDebug() << __PRETTY_FUNCTION__;
-#endif
-	QFile file(fileName);
-  if (!file.open(QIODevice::ReadOnly| QIODevice::Text))
-      return false;
-
-	installedList->clear();
-
-  while (!file.atEnd()) {
-	  QByteArray line = file.readLine();
-		if (line.startsWith("#"))
-			continue;
-    installedList->append(line);
-	}
-	return true;
-}
-
-bool Installer::writeToFile(QString const &fileName)
-{
-#ifdef DEBUG
-	qDebug() << __PRETTY_FUNCTION__;
-#endif
-	QFile file(fileName);
-  if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-      return false;
-
-	QTextStream out(&file);
-	out << "# installed package list" << "\n";
-	QList<QString>::iterator i;
-	for (i = installedList->begin(); i != installedList->end(); ++i)
-		out << i->toLatin1() << "\n";
-	return true;
-}
-*/
-
-bool Installer::loadConfig(const QString &destdir)
-{
-#ifdef DEBUG
-	qDebug() << __PRETTY_FUNCTION__;
-#endif
-	installedList->clear();
-
-	QDir dir(destdir + "manifest");
+	
+	QDir dir(root + "/manifest");
 	dir.setFilter(QDir::Files);
 	dir.setNameFilters(QStringList("*.ver"));
 	dir.setSorting(QDir::Size | QDir::Reversed);
@@ -118,27 +73,37 @@ bool Installer::loadConfig(const QString &destdir)
 	  Package pkg;
 	  pkg.setFromVersionFile(fileInfo.fileName());
 	  packageList->updatePackage(pkg);
-//    installedList->append(fileInfo.fileName());
 	}
-//	printList("installed packages");
 	return true;
 }
+extern "C" int unzip(char *fileName, char *rootdir);
 
-void Installer::install(const QString &fileName, const QString &destdir)
+bool Installer::install(const QString &fileName)
 {
+#ifdef USE_EXTERNAL_ZIP
 	QString cmd = "bin\\unzip.exe -o";
-	if (destdir != "")
-	cmd += " -d " + destdir; 
+	if (root != "")
+		cmd += " -d " + root; 
 	cmd += " " + fileName;
 	qDebug() << cmd;
 	
 	QProcess unzip;
   unzip.setReadChannelMode(QProcess::MergedChannels);
 	unzip.start(cmd);
-	if (!unzip.waitForFinished())
+	if (!unzip.waitForFinished()) {
 		qDebug() << "unzip failed:" << unzip.errorString();
-	else
+		return false;
+	}
+	else {
 		qDebug() << "unzip output:" << unzip.readAll();
+		return true;
+	}
+#else
+	QByteArray file = fileName.toLatin1();
+	QByteArray rootdir = root.toLatin1();
+	
+	int ret = unzip(file.data(),rootdir.data());
+#endif
 }
 
 void Installer::updatePackageList()

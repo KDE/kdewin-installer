@@ -1,27 +1,21 @@
 TARGET=kde-installer-gui
 TEMPLATE=app
 
-HEADERS       = ..\shared\package.h \
-                ..\shared\packagelist.h \
-                ..\shared\downloader.h \
-                ..\shared\installer.h \
-                complexwizard.h \
-                 installwizard.h
-#                 spinboxdelegate.h 
+HEADERS       = complexwizard.h \
+                installwizard.h
+#               spinboxdelegate.h 
                
-SOURCES       = ..\shared\package.cpp \
-                ..\shared\packagelist.cpp \
-                ..\shared\downloader.cpp \
-                ..\shared\installer.cpp \
-                complexwizard.cpp \
+SOURCES       = complexwizard.cpp \
                 installwizard.cpp \
                 main.cpp
 QT += network
-CONFIG += debug 
+CONFIG += release
 DEFINES += USE_GUI
 INCLUDEPATH += ..\shared
 DESTDIR = ..\bin
 # install
+
+include(../shared/shared.pri)
 
 target.path = $$[QT_INSTALL_EXAMPLES]/dialogs/simplewizard
 sources.files = $$SOURCES $$HEADERS *.pro

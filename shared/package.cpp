@@ -27,7 +27,7 @@
 #include <QtGui>
 #include <QtNetwork>
 
-QString Package::baseURL = "http://ovh.dl.sourceforge.net/sourceforge/gnuwin32/";
+QString Package::baseURL = "http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/";
 
 Package::Package()
 {
@@ -81,7 +81,7 @@ void Package::setType(const QString &typeString)
 		installedDOC = true;
 }
 
-QString Package::toString() 
+QString Package::toString(bool mode) 
 { 
 	QString result = name + "-" + version;
 	QString installedTypes = getTypeAsString();

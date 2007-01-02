@@ -39,19 +39,22 @@ class Package {
 		void setVersion(QString const &_version) { version = _version; }
 		void setType(const QString &typeString);
 		bool setFromVersionFile(const QString &verString);
-		QString toString();
+		QString toString(bool mode=false);
 		const QString getTypeAsString();
 
 		const QString getFileName(Package::Type type);
 		const QString getURL(Package::Type type);
 		bool isEmpty() {return name == ""; }
 		void addInstalledTypes(const Package &pkg);
+		static QString baseURL;
+
+		// 0.5.3
+		bool isInstalled(Package::Type type) { return false;}
 
 	private slots:
 		void logOutput();
 		
 	private:
-		static QString baseURL;
 		QString name;
 		QString version; 
 		bool installedLIB;

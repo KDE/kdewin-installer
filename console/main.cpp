@@ -1,5 +1,23 @@
 /****************************************************************************
 **
+** Copyright (C) 2005-2006  Ralf Habacker. All rights reserved.
+**
+** This file is part of the KDE installer for windows
+**
+** This file may be used under the terms of the GNU General Public
+** License version 2.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of
+** this file.  Please review the following information to ensure GNU
+** General Public Licensing requirements will be met:
+** http://www.trolltech.com/products/qt/opensource.html
+**
+** If you are unsure which license is appropriate for your use, please
+** review the following information:
+** http://www.trolltech.com/products/qt/licensing.html or contact the
+** sales department at sales@trolltech.com.
+**
+** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
 
@@ -9,45 +27,75 @@
 #include "downloader.h"
 #include "installer.h"
 
-// this functions will go into class PackageList 
-QStringList filterPackageFiles(const QStringList &list,const QString &mode)
+static struct Options
 {
-	QStringList result; 
-  for (int j = 0; j < list.size(); ++j) {
-  	QUrl url(list.at(j));
-    QFileInfo fileInfo(url.path());
-    QString fileName = fileInfo.fileName();
-
-    // only download package not already downloaded and only bin and lib packages
-		if (mode == "URL" && QFile::exists(fileName))
-	    qDebug() << fileName << " - already downloaded";
-		else if(fileName.contains("src") ) 
-	    qDebug() << fileName << " - ignored";
-		else {
-	    if (mode == "URL")
-		    qDebug() << fileName << " - downloading";
-		 	else
-		    qDebug() << fileName << " - installing";
-	    if (mode == "URL")
-	    	result << list.at(j);
-	    else
-	    	result << fileName;
-  	}
-	}
-	return result;
+    bool verbose;
+    bool query;
+    bool download;
+    bool install;
+    bool list;
+    QString rootdir;
 }
+options;
 
-
+void usage()
+{
+	qDebug() << "... [options] <packagename> [<packagename>]"
+	 << "\nOptions"
+	 << "\n -l list packages"
+	 << "\n -q <packagename> query packages"
+	 << "\n -i <packagename> download and install package"
+	 << "\n -d <packagename> download package"
+	 ;
+}
+//#define CYGWIN_INSTALLER
 
 int main(int argc, char *argv[])
 {
 	QCoreApplication app(argc, argv);
 
-	PackageList packageList;
-	Installer installer(&packageList);
-	Downloader downloader(/*blocking=*/ true);
+	QStringList packages;
 
-	if (!QFile::exists("packages.txt")) {
+	int i=1;
+  while(i < app.arguments().size()) {
+		if (app.arguments().at(i).startsWith("-")) {
+			QString option = app.arguments().at(i);
+			if (option == "-h") {
+				usage();
+				exit(0);
+			}
+			if (option == "-l") 
+				options.list = true;
+			else if (option == "-q")
+				options.query = true;
+			else if (option == "-d") 
+				options.download = true; 
+			else if (option == "-i") {
+				options.download = true; 
+				options.install = true; 
+			}
+			else if (option == "-m") {
+			}
+			else if (option == "-r") {
+				options.rootdir = app.arguments().at(++i);
+			}	
+		}
+		else
+			packages << app.arguments().at(i);
+		i++;
+	}
+	
+#ifdef CYGWIN_INSTALLER
+	Cygwin::main(app);
+#else
+	Package::baseURL = "http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/";
+	
+	Downloader downloader(/*blocking=*/ true);
+	PackageList packageList(&downloader);
+	Installer installer(&packageList);
+	installer.setRoot(options.rootdir.isEmpty() ? "packages" : options.rootdir);
+
+	if ( !packageList.hasConfig() ) {
 		// download package list 
 		downloader.start("http://sourceforge.net/project/showfiles.php?group_id=23617","packages.html");
 
@@ -56,71 +104,46 @@ int main(int argc, char *argv[])
 			return 1; 
 
 		// save into file
-		if (!packageList.writeToFile("packages.txt"))
+		if (!packageList.writeToFile())
 			return 1; 
-
-		// print list 
-		packageList.listPackages("Package List");
 
 		// remove temporay files 
-		QFile::remove("packages.html");
-	}
-	else {
-		// read list from file 
-		if (!packageList.readFromFile("packages.txt"))
-			return 1; 
+		//QFile::remove("packages.html");
 
-		if ( !QFile::exists("bin\\unzip.exe") ) {
-			QStringList files = packageList.getFilesForDownload("unzip");
-			files = filterPackageFiles(files,"URL");
-		  for (int j = 0; j < files.size(); ++j)
-				downloader.start(files.at(j));
-		}
-		
-		// print list 
-		packageList.listPackages("Package List");
-
-		if ( !QFile::exists("bin\\unzip.exe") ) {
+		if ( !installer.isEnabled() ) {
+			packageList.downloadPackage("unzip");
 			qDebug() 	<< "Please unpack " 
-							<< packageList.getPackage("unzip")->getFileName(Package::BIN) 
-							<< " into the current dir"
-			<< "\n then restart installer to download and install additional packages."
-			<< "\n\n" << app.arguments().at(0) << "<package-name> <package-name>";
+								<< packageList.getPackage("unzip")->getFileName(Package::BIN) 
+								<< " into the current dir"
+								<< "\n then restart installer to download and install additional packages."
+								<< "\n\n" << app.arguments().at(0)  << "[options] <package-name> <package-name>";
 			return 0;
 		}
 	}
-
-	QStringList packages;
-
-  for (int i = 1; i < app.arguments().size(); ++i) {
-  	if (!app.arguments().at(i).startsWith("-"))
-			packages << app.arguments().at(i);
+	else {
+		// read list from file 
+		if (!packageList.readFromFile())
+			return 1; 
 	}
+
+	if (options.list)
+		packageList.listPackages("Package List");
 	
-	if (packages.size() > 0) {
+	else if(options.download && packages.size() > 0) {
 		qDebug() << "the following packages are considered for downloading: " << packages;
 
 	  for (int i = 0; i < packages.size(); ++i) {
-			QStringList files = packageList.getFilesForDownload(packages.at(i));
-			files = filterPackageFiles(files,"URL");
-		  for (int j = 0; j < files.size(); ++j)
-				downloader.start(files.at(j));
+			packageList.downloadPackage(packages.at(i));
 		}
-		// install packages 
-		if ( QFile::exists("bin/unzip.exe")) {
-			qDebug() << "prelimary installer found, now installing";
-		  for (int i = 0; i < packages.size(); ++i) {
-				QStringList files = packageList.getFilesToInstall(packages.at(i));
-				files = filterPackageFiles(files,"PATH");
-			  for (int j = 0; j < files.size(); ++j)
-					installer.install(files.at(j),"");
-			}	  	
-		}
-
 	}
-	else
-		qDebug() << "no packages selected ";
-		
+	// install packages 
+	if (options.install && packages.size() > 0 && installer.isEnabled()) {
+		qDebug() << "prelimary installer found, now installing";
+	  for (int i = 0; i < packages.size(); ++i) {
+			packageList.installPackage(packages.at(i));
+		}	  	
+	}
 
+#endif
 	return 0;
 }
