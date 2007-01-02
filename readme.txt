@@ -3,7 +3,7 @@ the required libraries from the GNUWIN32 project mirrors
 
 syntax: 
 
-bin\kde-installer-console.exe <package-name>
+bin\kde-installer-console.exe [<option>] <package-name>
 
 NOTES
 ===== 
@@ -22,6 +22,10 @@ TODO
 
 History
 =======
+
+version 0.5.1
+-------------
+- added initial gui client
 
 version 0.5
 -----------
