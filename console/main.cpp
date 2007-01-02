@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 
 		if ( !QFile::exists("bin\\unzip.exe") ) {
 			qDebug() 	<< "Please unpack " 
-							<< packageList.getPackage("unzip").getFileName(Package::BIN) 
+							<< packageList.getPackage("unzip")->getFileName(Package::BIN) 
 							<< " into the current dir"
 			<< "\n then restart installer to download and install additional packages."
 			<< "\n\n" << app.arguments().at(0) << "<package-name> <package-name>";
