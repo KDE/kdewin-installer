@@ -44,7 +44,7 @@ Installer::~Installer()
 
 bool Installer::isEnabled() 
 {
-	return true; //QFile::exists("bin/unzip.exe");
+	return QFile::exists("bin/unzip.exe");
 }
 
 void Installer::setRoot(const QString &_root) 
@@ -61,7 +61,7 @@ bool Installer::loadConfig()
 #ifdef DEBUG
 	qDebug() << __PRETTY_FUNCTION__;
 #endif
-	
+	// gnuwin32 related 
 	QDir dir(root + "/manifest");
 	dir.setFilter(QDir::Files);
 	dir.setNameFilters(QStringList("*.ver"));
