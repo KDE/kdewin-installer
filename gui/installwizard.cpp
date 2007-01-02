@@ -108,7 +108,7 @@ TitlePage::TitlePage(InstallWizard *wizard)
 {
     topLabel = new QLabel(tr(
     	"<h1>KDE for Windows Installer</h1>"
-    	"<p>This setup programm is used for the initial installation of KDE for Windows application.</p>"
+    	"<p>This setup program is used for the initial installation of KDE for Windows application.</p>"
     	"<p>The pages that follow will guide you through the installation."
     	"<br>Please note that by default this installer will install "
     	"<br>only a basic set of applications by default. You can always "
