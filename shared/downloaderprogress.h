@@ -21,50 +21,44 @@
 **
 ****************************************************************************/
 
-#ifndef DOWNLOADER_H
-#define DOWNLOADER_H
+#ifndef DOWNLOADERPROGRESS_H
+#define DOWNLOADERPROGRESS_H
 
-#include <QtCore>
-class QHttpResponseHeader;
-class QHttp;
-class QEventLoop;
-class QFile;
-class DownloaderProgress;
+#ifdef USE_GUI
+class ComplexWizard; 
+#include <QtGui>
 
-class Downloader: public QObject
-{
-	Q_OBJECT
-
-public:
-#ifndef USE_GUI
-	Downloader(bool blocking=false);
-#else
-	Downloader(bool blocking=false, DownloaderProgress *progress=0);
-#endif
-  virtual ~Downloader();
-	bool start(const QString &url, const QString &fileName="");
-	void cancel();
-
-signals:
-	void done(bool error);
-
-private slots:
-	void httpRequestFinished(int requestId, bool error);
-	void readResponseHeader(const QHttpResponseHeader &responseHeader);
-	void updateDataReadProgress(int bytesRead, int totalBytes);
-	void allDone(bool error);
-	void stateChanged(int state);
-
-private:
-	void init();
-	void setError(const QString&);
-  DownloaderProgress *progress;
-  QHttp *http;
-  QFile *file;
-  int httpGetId;
-  bool httpRequestAborted;
-  bool blocking;
-  QEventLoop *eventLoop;
+class DownloaderProgress : public QWidget {
+	public:
+		DownloaderProgress(ComplexWizard *parent);
+		~DownloaderProgress();
+		void hide();
+		void setTitle(const QString &title);
+		void setStatus(const QString &status);
+		void setMaximum(int value);
+		void setValue(int value);
+		void show();
+	private:
+		QLabel *titleLabel;
+		QLabel *statusLabel;
+		QProgressBar *progress;
 };
 
+#else
+class DownloaderProgress {
+	public:
+		void hide();
+		void setTitle(const QString &title);
+		void setStatus(const QString &status);
+		void setMaximum(int value);
+		void setValue(int value);
+		void show();
+		
+	private:
+		int oldunit;
+		bool visible;		
+};
 #endif
+
+
+#endif 

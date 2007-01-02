@@ -27,34 +27,27 @@
 #include "packagelist.h"
 #include "package.h"
 #include "downloader.h"
-
-class DownloaderProgress {
-	public:
-		void show() {visible = true; }
-		void hide() {visible = false; }
-		void setLabel(const QString &label) { qDebug() << label; }
-		void setMaximum(int value) {} 
-		void setValue(int value) 
-		{ 
-			int unit = value/10240;
-			if (oldunit != value/10240) {
-				if (visible)
-					putchar('.');
-				oldunit = unit;
-			}
-		}
-
-	private:
-		int oldunit;
-		bool visible;		
-};
+#include "downloaderprogress.cpp"
 
 
+#ifndef USE_GUI
 Downloader::Downloader(bool _blocking) 
 {
 	blocking = _blocking;
   progress = new DownloaderProgress();
+  init();
+}
+#else
+Downloader::Downloader(bool _blocking,DownloaderProgress *_progress) 
+{
+	blocking = _blocking;
+  progress = _progress;
+  init();
+}
+#endif
 
+void Downloader::init()
+{
 	http = new QHttp(this);
 	
 	connect(http, SIGNAL(requestFinished(int, bool)),this, SLOT(httpRequestFinished(int, bool)));
@@ -101,7 +94,7 @@ bool Downloader::start(const QString &_url, const QString &_fileName)
   httpGetId = http->get(url.path() + (!query.isEmpty() ? "?" + url.encodedQuery() : ""), file);
 
  	progress->show();
- 	progress->setLabel(tr("Downloading %1 to %2.").arg(_url).arg(fileName));
+ 	progress->setTitle(tr("Downloading %1 to %2.").arg(_url).arg(fileName));
 	if (blocking) {
 		eventLoop = new QEventLoop(); 
 		eventLoop->exec();
@@ -112,7 +105,7 @@ bool Downloader::start(const QString &_url, const QString &_fileName)
 
 void Downloader::cancel()
 {
-	progress->setLabel(tr("Download canceled."));
+	progress->setStatus(tr("Download canceled."));
 	httpRequestAborted = true;
 	http->abort();
 }
@@ -143,7 +136,7 @@ void Downloader::httpRequestFinished(int requestId, bool error)
     file->remove();
     setError(tr("Download failed: %1.").arg(http->errorString()));
 	} else {
-		progress->setLabel(tr("download ready"));
+		progress->setStatus(tr("download ready"));
 	}
 	delete file;
 	file = 0;
@@ -191,5 +184,5 @@ void Downloader::stateChanged(int state)
 		case QHttp::Connected    : stateLabel = "Connected  "; break;
 		case QHttp::Closing      : stateLabel = "Closing    "; break;
 	}
-	progress->setLabel(stateLabel);
+	progress->setStatus(stateLabel);
 }

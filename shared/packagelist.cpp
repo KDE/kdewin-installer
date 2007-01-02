@@ -96,9 +96,9 @@ bool PackageList::readFromFile(QString const &fileName)
 	  QByteArray line = file.readLine();
 		if (line.startsWith("#"))
 			continue;
-    int i = line.indexOf("-");
-    pkg.setName(line.left(i));
-    pkg.setVersion(line.mid(i+1,line.size()-i-2));
+    int i = line.lastIndexOf("-");
+    pkg.setName(line.mid(0,i-1));
+    pkg.setVersion(line.mid(i+1));
 		addPackage(pkg);
 	}
 	emit loadedConfig();
@@ -149,6 +149,7 @@ Package *PackageList::getPackage(QString const &pkgName)
 	return 0;
 }
 
+
 QStringList PackageList::getFilesToInstall(QString const &pkgName)
 {
 #ifdef DEBUG
@@ -190,4 +191,28 @@ bool PackageList::updatePackage(Package &apkg)
 	}
 	pkg->addInstalledTypes(apkg);
 	return true;
+}
+
+int PackageList::size()
+{
+#ifdef DEBUG
+	qDebug() << __PRETTY_FUNCTION__;
+#endif
+	return packageList->size();
+}
+
+void PackageList::writeToModel(QStandardItemModel *model)
+{
+	QList<Package>::iterator i;
+	int row = 0;
+	int column = 0;
+	model->setHeaderData( 0,Qt::Horizontal,QVariant("Package") );
+	model->setHeaderData( 1,Qt::Horizontal,QVariant("Version") );
+	model->setHeaderData( 2,Qt::Horizontal,QVariant("installed") );
+	for (i = packageList->begin(); i != packageList->end(); ++i) {
+	  model->setData(model->index(row, 0), QVariant(i->Name()) );
+	  model->setData(model->index(row, 1), QVariant(i->Version()) );
+	  model->setData(model->index(row, 2), QVariant(i->getTypeAsString()) );
+	  row++;
+	}
 }

@@ -34,6 +34,7 @@ class Package {
 		Package();
 		Package(QString const &_name, QString const &_version);
 		QString &Name() { return name; }
+		QString &Version() { return version; }
 		void setName(QString const &_name) { name = _name; }
 		void setVersion(QString const &_version) { version = _version; }
 		void setType(const QString &typeString);

@@ -26,6 +26,8 @@
 
 #include "package.h"
 
+class QStandardItemModel;
+
 class PackageList : public QObject {
 	Q_OBJECT
 	
@@ -43,6 +45,10 @@ class PackageList : public QObject {
 		QStringList getFilesToInstall(QString const &pkgName);
 		QStringList getFilesForDownload(QString const &pkgName);
 		bool updatePackage(Package &pkg);
+		int size();
+		/// write content to model/view container
+		void writeToModel(QStandardItemModel *model);
+
 
 	signals:
 		void loadedConfig();
