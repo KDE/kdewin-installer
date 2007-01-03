@@ -66,7 +66,7 @@ class InstallerGNUWin32 : public InstallerBase {
 };
 
 // default installer 
-#define Installer Installer_GNUWin32
+#define Installer InstallerGNUWin32
 
 #endif
 
