@@ -132,15 +132,22 @@ int main(int argc, char *argv[])
 	else if(options.download && packages.size() > 0) {
 		qDebug() << "the following packages are considered for downloading: " << packages;
 
-	  for (int i = 0; i < packages.size(); ++i) {
-			packageList.downloadPackage(packages.at(i));
+		Package *pkg;
+		for (int i = 0; i < packages.size(); ++i) {
+	  		if ((pkg = packageList.getPackage(packages.at(i))))
+				packageList.downloadPackage(packages.at(i));
+			else
+				qDebug() << "package '" << packages.at(i) << " not found: ";
+				
 		}
 	}
 	// install packages 
 	if (options.install && packages.size() > 0 && installer.isEnabled()) {
 		qDebug() << "prelimary installer found, now installing";
-	  for (int i = 0; i < packages.size(); ++i) {
-			packageList.installPackage(packages.at(i));
+		Package *pkg;
+		for (int i = 0; i < packages.size(); ++i) {
+			if ((pkg = packageList.getPackage(packages.at(i))))
+				packageList.installPackage(packages.at(i));
 		}	  	
 	}
 
