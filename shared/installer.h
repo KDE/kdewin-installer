@@ -26,33 +26,47 @@
 #include <QtCore>
 class PackageList;
 
-class Installer : public QObject {
+class InstallerBase : public QObject {
 	Q_OBJECT
 
 	public:
-		Installer(PackageList *packageList);
-		virtual ~Installer();
+		InstallerBase(PackageList *packageList);
+		virtual ~InstallerBase();
 		
-		bool install(const QString &fileName /*, const QString &destdir=""*/);
+		virtual bool install(const QString &fileName /*, const QString &destdir=""*/);
 		// installPackage(Package *pkg) 
 //		bool readFromFile(QString const &fileName);
 //		bool writeToFile(QString const &fileName);
 		//bool loadConfig(const QString &destdir="");
-		bool loadConfig();
+		virtual bool loadConfig();
 
-		bool isEnabled(); 
-		void setRoot(const QString &_root);
+		virtual bool isEnabled(); 
+		virtual void setRoot(const QString &_root);
 
 	public slots:
 		void updatePackageList();
 
-	private:
+	protected:
 		QList<QString> *installedList;
 		PackageList *packageList;
 		QString root;
 		QString configFile;
 };
 
+class InstallerGNUWin32 : public InstallerBase {
+	public:
+		InstallerGNUWin32(PackageList *packageList); 
+		virtual ~InstallerGNUWin32();
+
+		virtual bool install(const QString &fileName /*, const QString &destdir=""*/);
+		virtual bool loadConfig();
+
+		virtual bool isEnabled(); 
+		
+};
+
+// default installer 
+#define Installer Installer_GNUWin32
 
 #endif
 

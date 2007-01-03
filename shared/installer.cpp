@@ -27,7 +27,7 @@
 #include "packagelist.h"
 //#define DEBUG
 
-Installer::Installer(PackageList *_packageList)
+InstallerBase::InstallerBase(PackageList *_packageList)
 	: QObject()
 {
 	root = ".";
@@ -38,16 +38,16 @@ Installer::Installer(PackageList *_packageList)
 	connect (packageList,SIGNAL(loadedConfig()),this,SLOT(updatePackageList()));
 }
 
-Installer::~Installer()
+InstallerBase::~InstallerBase()
 {
 }
 
-bool Installer::isEnabled() 
+bool InstallerBase::isEnabled() 
 {
-	return QFile::exists("bin/unzip.exe");
+	return false;
 }
 
-void Installer::setRoot(const QString &_root) 
+void InstallerBase::setRoot(const QString &_root) 
 { 
 	root = _root; 
 	packageList->root = root;
@@ -55,8 +55,40 @@ void Installer::setRoot(const QString &_root)
 	dir.mkdir(root);
 }
 
+bool InstallerBase::loadConfig()
+{
+	return false;
+}
 
-bool Installer::loadConfig()
+bool InstallerBase::install(const QString &fileName)
+{
+	return false;
+}
+
+void InstallerBase::updatePackageList()
+{
+#ifdef DEBUG
+	qDebug() << __PRETTY_FUNCTION__;
+#endif
+	loadConfig();
+}
+
+
+
+InstallerGNUWin32::InstallerGNUWin32(PackageList *packageList) : InstallerBase(packageList)
+{
+}
+
+InstallerGNUWin32::~InstallerGNUWin32()
+{
+}
+
+bool InstallerGNUWin32::isEnabled() 
+{
+	return QFile::exists("bin/unzip.exe");
+}
+
+bool InstallerGNUWin32::loadConfig()
 {
 #ifdef DEBUG
 	qDebug() << __PRETTY_FUNCTION__;
@@ -76,9 +108,10 @@ bool Installer::loadConfig()
 	}
 	return true;
 }
+
 extern "C" int unzip(char *fileName, char *rootdir);
 
-bool Installer::install(const QString &fileName)
+bool InstallerGNUWin32::install(const QString &fileName)
 {
 #ifdef USE_EXTERNAL_ZIP
 	QString cmd = "bin\\unzip.exe -o";
@@ -105,14 +138,5 @@ bool Installer::install(const QString &fileName)
 	int ret = unzip(file.data(),rootdir.data());
 #endif
 }
-
-void Installer::updatePackageList()
-{
-#ifdef DEBUG
-	qDebug() << __PRETTY_FUNCTION__;
-#endif
-	loadConfig();
-}
-
 
 

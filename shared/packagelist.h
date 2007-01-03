@@ -28,7 +28,7 @@
 
 class QStandardItemModel;
 class Downloader;
-class Installer;
+class InstallerBase;
 
 QStringList filterPackageFiles(const QStringList &list,const QString &mode);
 
@@ -72,10 +72,10 @@ class PackageList : public QObject {
 		QString root; 
 		QString configFile;
 		Downloader *downloader;
-		Installer *installer;
+		InstallerBase *installer;
 		QStandardItemModel *model;
 
-	friend class Installer;		
+	friend class InstallerBase;		
 };
 
 #endif
