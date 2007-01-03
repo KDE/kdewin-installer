@@ -250,7 +250,7 @@ bool PackageList::updatePackage(Package &apkg)
 {
 	Package *pkg = getPackage(apkg.Name());
 	if (!pkg) {
-		qDebug() << __PRETTY_FUNCTION__ << "package " << apkg.Name() << " not found";
+		qDebug() << __FUNCTION__ << "package " << apkg.Name() << " not found";
 		return false;
 	}
 	pkg->addInstalledTypes(apkg);

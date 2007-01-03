@@ -11,7 +11,6 @@ SOURCES       = complexwizard.cpp \
 QT += network
 CONFIG += release
 DEFINES += USE_GUI
-INCLUDEPATH += ..\shared
 DESTDIR = ..\bin
 # install
 

@@ -121,22 +121,23 @@ bool InstallerGNUWin32::install(const QString &fileName)
 	qDebug() << cmd;
 	
 	QProcess unzip;
-  unzip.setReadChannelMode(QProcess::MergedChannels);
+	unzip.setReadChannelMode(QProcess::MergedChannels);
 	unzip.start(cmd);
 	if (!unzip.waitForFinished()) {
 		qDebug() << "unzip failed:" << unzip.errorString();
 		return false;
 	}
-	else {
-		qDebug() << "unzip output:" << unzip.readAll();
-		return true;
-	}
+	qDebug() << "unzip output:" << unzip.readAll();
+	return true;
+
 #else
 	QByteArray file = fileName.toLatin1();
 	QByteArray rootdir = root.toLatin1();
 	
 	int ret = unzip(file.data(),rootdir.data());
+    return ret;
 #endif
 }
+
 
 
