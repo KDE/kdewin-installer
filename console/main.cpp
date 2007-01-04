@@ -155,7 +155,8 @@ int main(int argc, char *argv[])
 		Package *pkg;
 		for (int i = 0; i < packages.size(); ++i) {
 			if ((pkg = packageList.getPackage(packages.at(i))))
-				packageList.installPackage(packages.at(i));
+				if (!packageList.installPackage(packages.at(i)))
+					qDebug() << "error installing package " << packages.at(i);
 		}	  	
 	}
 
