@@ -93,9 +93,11 @@ bool InstallerBase::unzipFile(const QString &destpath, const QString &zipFile)
 
   QuaZipFile file(&z);
   QuaZipFileInfo info;
+#ifndef USE_GUI
   DownloaderProgress progress(this);
   progress.setMaximum(z.getEntriesCount());
   progress.show();
+#endif
 
   for(bool bOk = z.goToFirstFile(); bOk; bOk = z.goToNextFile()) {
     // get file informations
@@ -139,7 +141,9 @@ bool InstallerBase::unzipFile(const QString &destpath, const QString &zipFile)
       return false;
     }
 
+#ifndef USE_GUI
 	progress.setTitle(tr("Installing %1 ").arg(newFile.fileName().toAscii().data()));
+#endif
     // copy data
     // FIXME: check for not that huge filesize ?
     qint64 iBytesRead;

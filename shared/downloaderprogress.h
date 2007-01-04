@@ -35,7 +35,7 @@ class QProgressBar;
 
 class DownloaderProgress : public QWidget {
 	public:
-		DownloaderProgress(ComplexWizard *parent);
+		DownloaderProgress(QWidget *parent);
 		~DownloaderProgress();
 		void hide();
 		void setTitle(const QString &title);

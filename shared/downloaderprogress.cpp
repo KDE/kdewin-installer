@@ -22,6 +22,10 @@
 ****************************************************************************/
 
 #include <QDebug>
+#include <QLabel>
+#include <QProgressBar>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 
 #include "downloaderprogress.h"
 
@@ -29,7 +33,7 @@
 
 #include "complexwizard.h"
 
-DownloaderProgress::DownloaderProgress(ComplexWizard *parent) 
+DownloaderProgress::DownloaderProgress(QWidget *parent) 
 { 
     statusLabel = new QLabel();
     progress = new QProgressBar(parent); 

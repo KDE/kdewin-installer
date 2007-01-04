@@ -44,8 +44,9 @@ Downloader::Downloader(bool _blocking, DownloaderProgress *_progress)
 void Downloader::init()
 {
 	m_http = new QHttp(this);
+#ifndef USE_GUI
 	m_progress = new DownloaderProgress(this);
-
+#endif
 	connect(m_http, SIGNAL(requestFinished(int, bool)),this, SLOT(httpRequestFinished(int, bool)));
 	connect(m_http, SIGNAL(dataReadProgress(int, int)),this, SLOT(updateDataReadProgress(int, int)));
 	connect(m_http, SIGNAL(responseHeaderReceived(const QHttpResponseHeader &)),this, SLOT(readResponseHeader(const QHttpResponseHeader &)));
