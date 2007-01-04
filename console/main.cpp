@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
 	Downloader downloader(/*blocking=*/ true);
 	PackageList packageList(&downloader);
 	Installer installer(&packageList);
-	installer.setVerbose(options.verbose);
+//	installer.setVerbose(options.verbose);
 	installer.setRoot(options.rootdir.isEmpty() ? "packages" : options.rootdir);
 
 	if ( !packageList.hasConfig() ) {
@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
 		downloader.start("http://sourceforge.net/project/showfiles.php?group_id=23617","packages.html");
 
 		// load and parse 
-		if (!packageList.readFromHTMLFile("packages.html"))
+		if (!packageList.readHTMLFromFile("packages.html"))
 			return 1; 
 
 		// save into file

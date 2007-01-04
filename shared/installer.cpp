@@ -23,31 +23,30 @@
 
 #include <QtCore>
 
-#include <quazip/quazip.h>
-#include <quazip/quazipfile.h>
-
 #include "installer.h"
 #include "packagelist.h"
+#include "quazip.h"
+#include "quazipfile.h"
+
 //#define DEBUG
+#ifdef Q_CC_MSVC
+# define __PRETTY_FUNCTION__ __FUNCTION__
+#endif
 
 InstallerBase::InstallerBase(PackageList *_packageList)
 	: QObject()
 {
 	root = ".";
 	packageList = _packageList;
-	packageList->installer = this;
-	packageList->root = root;
-
+  if(packageList) {
+	  packageList->installer = this;
+	  packageList->root = root;
+  }
 	connect (packageList,SIGNAL(loadedConfig()),this,SLOT(updatePackageList()));
 }
 
 InstallerBase::~InstallerBase()
 {
-}
-
-bool InstallerBase::isEnabled() 
-{
-	return false;
 }
 
 void InstallerBase::setRoot(const QString &_root) 
@@ -63,21 +62,104 @@ bool InstallerBase::loadConfig()
 	return false;
 }
 
-bool InstallerBase::install(const QString &fileName)
-{
-	return false;
-}
-
 void InstallerBase::updatePackageList()
 {
 #ifdef DEBUG
-	qDebug() << __FUNCTION__;
+	qDebug() << __PRETTY_FUNCTION__;
 #endif
 	loadConfig();
 }
 
+#ifndef QUNZIP_BUFFER
+# define QUNZIP_BUFFER (256 * 1024)
+#endif
+bool InstallerBase::unzipFile(const QString &destpath, const QString &zipFile)
+{
+  QDir path(destpath);
+  QuaZip z(zipFile);
 
+  if(!z.open(QuaZip::mdUnzip)) {
+    // setError("Can not open %s", filename);
+    return false;
+  }
 
+  if(!path.exists()) {
+    // setError("Internal Error - Path %s does not exist", path.absolutePath());
+    return false;
+  }
+
+  // z.setFileNameCodec("Windows-1252"); // important!
+
+  QuaZipFile file(&z);
+  QuaZipFileInfo info;
+
+  for(bool bOk = z.goToFirstFile(); bOk; bOk = z.goToNextFile()) {
+    // get file informations
+    if(!z.getCurrentFileInfo(&info)) {
+      // setError("Can not get file information from zip file %s", filename);
+      return false;
+    }
+
+    // is it's a subdir ?
+    if(info.compressedSize == 0 && info.uncompressedSize == 0) {
+      QFileInfo fi(path.filePath(info.name));
+      if(fi.exists()) {
+        if(!fi.isDir()) {
+          // setError("Can not create directory %s", filePath(info.name));
+          return false;
+        }
+        continue;
+      }
+      if(!path.mkdir(fi.absoluteFilePath())) {
+        // setError("Can not create directory %s", filePath(info.name));
+        return false;
+      }
+      continue;
+    }
+
+    // open file
+    if(!file.open(QIODevice::ReadOnly)) {
+      // setError("Can not open file %s from zip file %s", info.name, filename);
+      return false;
+    }
+    if(file.getZipError() != UNZ_OK) {
+      // setError("Error reading zip file %s", filename);
+      return false;
+    }
+
+    // create new file
+    QFile newFile(path.filePath(info.name));
+    if(!newFile.open(QIODevice::WriteOnly)) {
+      // setError("Can not creating file %s ", info.name);
+      return false;
+    }
+
+    // copy data
+    // FIXME: check for not that huge filesize ?
+    qint64 iBytesRead;
+    QByteArray ba;
+    ba.resize(QUNZIP_BUFFER);
+
+    while((iBytesRead = file.read(ba.data(), QUNZIP_BUFFER)) > 0)
+      newFile.write(ba.data(), iBytesRead);
+
+    file.close();
+    newFile.close();
+
+    if(file.getZipError() != UNZ_OK) {
+      // setError("Error reading zip file %s", filename);
+      return false;
+    }
+  }
+  z.close();
+  if(z.getZipError() != UNZ_OK) {
+    // setError("Error reading zip file %s", filename);
+    return false;
+  }
+  return true;
+}
+
+// InstallerGNUWin32
 InstallerGNUWin32::InstallerGNUWin32(PackageList *packageList) : InstallerBase(packageList)
 {
 }
@@ -88,13 +170,13 @@ InstallerGNUWin32::~InstallerGNUWin32()
 
 bool InstallerGNUWin32::isEnabled() 
 {
-	return QFile::exists("bin/unzip.exe");
+	return true;
 }
 
 bool InstallerGNUWin32::loadConfig()
 {
 #ifdef DEBUG
-	qDebug() << __FUNCTION__;
+	qDebug() << __PRETTY_FUNCTION__;
 #endif
 	// gnuwin32 related 
 	QDir dir(root + "/manifest");
@@ -112,107 +194,9 @@ bool InstallerGNUWin32::loadConfig()
 	return true;
 }
 
-extern "C" int unzip(char *fileName, char *rootdir);
-
 bool InstallerGNUWin32::install(const QString &fileName)
 {
-#ifdef USE_EXTERNAL_ZIP
-	QString cmd = "bin\\unzip.exe -o";
-	if (root != "")
-		cmd += " -d " + root; 
-	cmd += " " + fileName;
-	qDebug() << cmd;
-	
-	QProcess unzip;
-	unzip.setReadChannelMode(QProcess::MergedChannels);
-	unzip.start(cmd);
-	if (!unzip.waitForFinished()) {
-		qDebug() << "unzip failed:" << unzip.errorString();
-		return false;
-	}
-	qDebug() << "unzip output:" << unzip.readAll();
-	return true;
-
-#else
-  QuaZip zip(fileName);
-  if(!zip.open(QuaZip::mdUnzip)) {
-    qWarning("zip.open(): %d", zip.getZipError());
-    return false;
-  }
-  zip.setFileNameCodec("IBM866");
-#ifdef DEBUG
-  printf("%d entries\n", zip.getEntriesCount());
-  printf("Global comment: %s\n", zip.getComment().toLocal8Bit().constData());
-#endif
-  QuaZipFileInfo info;
-
-#ifdef DEBUG
-  printf("name\tcver\tnver\tflags\tmethod\tctime\tCRC\tcsize\tusize\tdisknum\tIA\tEA\tcomment\textra\n");
-#endif
-  QuaZipFile file(&zip);
-  QString name;
-  char c;
-  for(bool more=zip.goToFirstFile(); more; more=zip.goToNextFile()) {
-    if(!zip.getCurrentFileInfo(&info)) {
-      qWarning("install(): getCurrentFileInfo(): %d\n", zip.getZipError());
-      return false;
-    }
-#ifdef _DEBUG
-    printf("%s\t%hu\t%hu\t%hu\t%hu\t%s\t%u\t%u\t%u\t%hu\t%hu\t%u\t%s\t%s\n",
-        info.name.toLocal8Bit().constData(),
-        info.versionCreated, info.versionNeeded, info.flags, info.method,
-        info.dateTime.toString(Qt::ISODate).toLocal8Bit().constData(),
-        info.crc, info.compressedSize, info.uncompressedSize, info.diskNumberStart,
-        info.internalAttr, info.externalAttr,
-        info.comment.toLocal8Bit().constData(), info.extra.constData());
-#endif
-    if(info.name.endsWith("/")) {
-    	// don't use directory items, some zip files does not have them included
-    	continue;
-    }
-    if(!file.open(QIODevice::ReadOnly)) {
-      qWarning("install(): file.open(): %d", file.getZipError());
-      return false;
-    }
-    name=file.getActualFileName();
-    if(file.getZipError()!=UNZ_OK) {
-      qWarning("install(): file.getFileName(): %d", file.getZipError());
-      return false;
-    }
-	QFileInfo fi(root+"/"+name);
-	QDir a(fi.absolutePath());
-	if (!a.mkpath(fi.absolutePath())) {
-		qWarning(" can't create directory %d", fi.absolutePath().toAscii().data());
-		return false;
-	}
-
-	if (verbose)
-    	printf("%s %d -> %d\n",info.name.toLocal8Bit().constData(), info.compressedSize, info.uncompressedSize);
-
-	QFile out(fi.absoluteFilePath());
-    out.open(QIODevice::WriteOnly);
-    QByteArray buf;
-    buf.resize(info.uncompressedSize);
-    file.read(buf.data(),buf.size());
-    out.write(buf.data(),buf.size());
-    out.close();
-    if(file.getZipError()!=UNZ_OK) {
-      qWarning("install(): file.getFileName(): %d", file.getZipError());
-      return false;
-    }
-    if(!file.atEnd()) {
-      qWarning("install(): read all but not EOF");
-      return false;
-    }
-    file.close();
-    if(file.getZipError()!=UNZ_OK) {
-      qWarning("install(): file.close(): %d", file.getZipError());
-      return false;
-    }
-  }
   return true;
-  #endif
 }
 
-
-
+#include "installer.moc"

@@ -28,7 +28,7 @@
 class QHttpResponseHeader;
 class QHttp;
 class QEventLoop;
-class QFile;
+class QIODevice;
 class DownloaderProgress;
 
 class Downloader: public QObject
@@ -36,13 +36,11 @@ class Downloader: public QObject
 	Q_OBJECT
 
 public:
-#ifndef USE_GUI
-	Downloader(bool blocking=false);
-#else
 	Downloader(bool blocking=false, DownloaderProgress *progress=0);
-#endif
+
   virtual ~Downloader();
-	bool start(const QString &url, const QString &fileName="");
+  bool start(const QString &url, const QString &fileName = QString::null);
+  bool start(const QString &url, QByteArray &ba);
 	void cancel();
 
 signals:
@@ -58,13 +56,16 @@ private slots:
 private:
 	void init();
 	void setError(const QString&);
-  DownloaderProgress *progress;
-  QHttp *http;
-  QFile *file;
-  int httpGetId;
-  bool httpRequestAborted;
-  bool blocking;
-  QEventLoop *eventLoop;
+  bool startInternal(const QString &_url, QIODevice *ioDev);
+private:
+  DownloaderProgress *m_progress;
+  QHttp      *m_http;
+  QIODevice  *m_ioDevice;
+  QFile      *m_file;
+  int         m_httpGetId;
+  bool        m_httpRequestAborted;
+  bool        m_blocking;
+  QEventLoop *m_eventLoop;
 };
 
 #endif

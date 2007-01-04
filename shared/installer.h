@@ -33,26 +33,26 @@ class InstallerBase : public QObject {
 		InstallerBase(PackageList *packageList);
 		virtual ~InstallerBase();
 		
-		virtual bool install(const QString &fileName /*, const QString &destdir=""*/);
+		virtual bool install(const QString &fileName /*, const QString &destdir=""*/) = 0;
 		// installPackage(Package *pkg) 
 //		bool readFromFile(QString const &fileName);
 //		bool writeToFile(QString const &fileName);
 		//bool loadConfig(const QString &destdir="");
 		virtual bool loadConfig();
 
-		virtual bool isEnabled(); 
+		virtual bool isEnabled() = 0;
 		virtual void setRoot(const QString &_root);
-		void setVerbose(bool _verbose) { verbose= _verbose; }
 
 	public slots:
 		void updatePackageList();
 
 	protected:
-		QList<QString> *installedList;
+    bool unzipFile(const QString &destpath, const QString &zipFile);
+
+protected:
 		PackageList *packageList;
 		QString root;
 		QString configFile;
-		bool verbose;
 };
 
 class InstallerGNUWin32 : public InstallerBase {

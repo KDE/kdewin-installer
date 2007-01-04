@@ -24,7 +24,10 @@
 #ifndef DOWNLOADERPROGRESS_H
 #define DOWNLOADERPROGRESS_H
 
+#include <QtCore>
+
 #ifdef USE_GUI
+
 class ComplexWizard; 
 #include <QtGui>
 

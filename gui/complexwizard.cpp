@@ -137,3 +137,5 @@ bool WizardPage::isComplete()
 {
     return true;
 }
+
+#include "complexwizard.moc"

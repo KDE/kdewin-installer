@@ -38,14 +38,14 @@ class PackageList : public QObject {
 	public:
 		enum SiteType {SourceForge, ApacheModIndex};
 		
-		PackageList();
-		PackageList(Downloader *downloader);
+		PackageList(Downloader *downloader= NULL);
 		virtual ~PackageList();
 		void addPackage(Package const &package); 
-		void listPackages(const QString &title="");
-		bool readFromFile(QString const &fileName="");
-		bool readFromHTMLFile(const QString &fileName, SiteType type=SourceForge);
-		bool writeToFile(QString const &fileName="");
+		void listPackages(const QString &title=QString::null);
+		bool readFromFile(const QString &_fileName=QString::null);
+		bool readHTMLFromFile(const QString &fileName, SiteType type=SourceForge);
+		bool readHTMLFromByteArray(const QByteArray &ba, SiteType type=SourceForge);
+		bool writeToFile(QString const &fileName=QString::null);
 //		static bool downloadPackage(QString const &pkgName);
 		QStringList getPackageFiles(QString const &pkgName);
 		Package *getPackage(QString const &pkgName);
@@ -69,7 +69,9 @@ class PackageList : public QObject {
 	signals:
 		void loadedConfig();
 	
-	private: 
+  private:
+		bool readHTMLInternal(QIODevice *ioDev, SiteType type);
+  private: 
 		QList<Package> *packageList;
 		QString root; 
 		QString configFile;

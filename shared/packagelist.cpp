@@ -28,6 +28,9 @@
 #include "downloader.h"
 #include "installer.h"
 //#define DEBUG
+#ifdef Q_CC_MSVC
+# define __PRETTY_FUNCTION__ __FUNCTION__
+#endif
 
 QStringList filterPackageFiles(const QStringList &list,const QString &mode)
 {
@@ -56,26 +59,13 @@ QStringList filterPackageFiles(const QStringList &list,const QString &mode)
 	return result;
 }
 
-PackageList::PackageList()
-	: QObject()
-{
-#ifdef DEBUG
-	qDebug() << __FUNCTION__;
-#endif
-	downloader = new Downloader;
-	packageList = new QList<Package>;
-	root = ".";
-	configFile = "/packages.txt";
-}
-
-
 PackageList::PackageList(Downloader *_downloader)
 	: QObject()
 {
 #ifdef DEBUG
-	qDebug() << __FUNCTION__;
+	qDebug() << __PRETTY_FUNCTION__;
 #endif
-	downloader = _downloader;
+    downloader = _downloader ? _downloader : new Downloader;
 	packageList = new QList<Package>;
 	root = ".";
 	configFile = "/packages.txt";
@@ -85,7 +75,7 @@ PackageList::PackageList(Downloader *_downloader)
 PackageList::~PackageList()
 {
 #ifdef DEBUG
-	qDebug() << __FUNCTION__;
+	qDebug() << __PRETTY_FUNCTION__;
 #endif
 	delete packageList;
 }
@@ -98,7 +88,7 @@ bool PackageList::hasConfig()
 void PackageList::addPackage(Package const &package)
 {
 #ifdef DEBUG
-	qDebug() << __FUNCTION__;
+	qDebug() << __PRETTY_FUNCTION__;
 #endif
 	packageList->append(package);
 }
@@ -106,7 +96,7 @@ void PackageList::addPackage(Package const &package)
 Package *PackageList::getPackage(QString const &pkgName)
 {
 #ifdef DEBUG
-	qDebug() << __FUNCTION__;
+	qDebug() << __PRETTY_FUNCTION__;
 #endif
 	QList<Package>::iterator i;
 	for (i = packageList->begin(); i != packageList->end(); ++i)
@@ -118,7 +108,7 @@ Package *PackageList::getPackage(QString const &pkgName)
 void PackageList::listPackages(const QString &title) 
 {
 #ifdef DEBUG
-	qDebug() << __FUNCTION__;
+	qDebug() << __PRETTY_FUNCTION__;
 #endif
 	qDebug() << title;
 	QList<Package>::iterator i;
@@ -129,12 +119,12 @@ void PackageList::listPackages(const QString &title)
 bool PackageList::writeToFile(const QString &_fileName)
 {
 #ifdef DEBUG
-	qDebug() << __FUNCTION__;
+	qDebug() << __PRETTY_FUNCTION__;
 #endif
 	if (packageList->count() == 0)
 		return false;
 
-	QString fileName = _fileName == "" ? root + configFile : _fileName;
+	QString fileName = _fileName.isEmpty() ? root + configFile : _fileName;
 	QFile file(fileName);
   if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
       return false;
@@ -150,22 +140,22 @@ bool PackageList::writeToFile(const QString &_fileName)
 bool PackageList::readFromFile(const QString &_fileName)
 {
 #ifdef DEBUG
-	qDebug() << __FUNCTION__;
+	qDebug() << __PRETTY_FUNCTION__;
 #endif
-	QString fileName = _fileName == "" ? root + configFile : _fileName;
+	QString fileName = _fileName.isEmpty() ? root + configFile : _fileName;
 	QFile file(fileName);
 
   if (!file.open(QIODevice::ReadOnly| QIODevice::Text))
       return false;
 
-	packageList->clear();
+  packageList->clear();
 
 	Package pkg;
   while (!file.atEnd()) {
 	  QByteArray line = file.readLine();
 		if (line.startsWith("#"))
 			continue;
-    int i = line.lastIndexOf("\t");
+    int i = line.lastIndexOf('\t');
     pkg.setName(line.mid(0,i));
     pkg.setVersion(line.mid(i+1,line.size()-i-2));
 		addPackage(pkg);
@@ -174,24 +164,16 @@ bool PackageList::readFromFile(const QString &_fileName)
 	return true;
 }
 
-bool PackageList::readFromHTMLFile(const QString &fileName, SiteType type )
+bool PackageList::readHTMLInternal(QIODevice *ioDev, SiteType type)
 {
-#ifdef DEBUG
-	qDebug() << __FUNCTION__;
-#endif
-	QFile pkglist(fileName);
-	if (!pkglist.exists())
-  	return false;
-
-	packageList->clear();
+  packageList->clear();
 	
-	pkglist.open(QIODevice::ReadOnly);
 	Package pkg; 
 
 	switch (type) {
 		case SourceForge: 
-			while (!pkglist.atEnd()) {
-				QByteArray line = pkglist.readLine();
+			while (!ioDev->atEnd()) {
+				QByteArray line = ioDev->readLine();
 				if (line.contains("<td><a href=\"/project/showfiles.php?group_id=23617")) {
 					int a = line.indexOf("\">") + 2;
 					int b = line.indexOf("</a>");
@@ -210,8 +192,8 @@ bool PackageList::readFromHTMLFile(const QString &fileName, SiteType type )
 			char *lineKey = "alt=\"[   ]\"> <a href=\"";
 			char *fileKeyStart = "<a href=\"";
 			char *fileKeyEnd = "\">";
-			while (!pkglist.atEnd()) {
-				QByteArray line = pkglist.readLine();
+			while (!ioDev->atEnd()) {
+				QByteArray line = ioDev->readLine();
 #ifdef DEBUG
 				qDebug() << "2"  << line << " " << lineKey; 
 #endif
@@ -234,9 +216,9 @@ bool PackageList::readFromHTMLFile(const QString &fileName, SiteType type )
 					QByteArray version = parts.at(parts.size()-2) + "-" + patchlevel.at(0) + "." + patchlevel.at(1);
 					pkg.setVersion(version);
 					if (parts.size() == 4) 
-						pkg.setName(parts.at(0) + "-" + parts.at(1));
+						pkg.setName(parts.at(0) + '-' + parts.at(1));
 					else if (parts.size() == 5) 
-						pkg.setName(parts.at(0) + "-" + parts.at(1) + "-" + parts.at(2));
+						pkg.setName(parts.at(0) + '-' + parts.at(1) + '-' + parts.at(2));
 					addPackage(pkg);
 				}
 			}
@@ -246,10 +228,39 @@ bool PackageList::readFromHTMLFile(const QString &fileName, SiteType type )
 	return true;
 }
 
+bool PackageList::readHTMLFromByteArray(const QByteArray &_ba, SiteType type)
+{
+#ifdef DEBUG
+	qDebug() << __PRETTY_FUNCTION__;
+#endif
+
+  QByteArray ba(_ba);
+  QBuffer buf(&ba);
+
+  if (!buf.open(QIODevice::ReadOnly| QIODevice::Text))
+      return false;
+
+  return readHTMLInternal(&buf, type);
+}
+
+bool PackageList::readHTMLFromFile(const QString &fileName, SiteType type )
+{
+#ifdef DEBUG
+	qDebug() << __PRETTY_FUNCTION__;
+#endif
+	QFile pkglist(fileName);
+	if (!pkglist.exists())
+  	return false;
+
+	pkglist.open(QIODevice::ReadOnly);
+
+  return readHTMLInternal(&pkglist, type);
+}
+
 QStringList PackageList::getFilesForInstall(QString const &pkgName)
 {
 #ifdef DEBUG
-	qDebug() << __FUNCTION__;
+	qDebug() << __PRETTY_FUNCTION__;
 #endif
 	QStringList result;
 	Package *pkg = getPackage(pkgName);
@@ -269,7 +280,7 @@ QStringList PackageList::getFilesForInstall(QString const &pkgName)
 QStringList PackageList::getFilesForDownload(QString const &pkgName)
 {
 #ifdef DEBUG
-	qDebug() << __FUNCTION__;
+	qDebug() << __PRETTY_FUNCTION__;
 #endif
 	QStringList result;
 	Package *pkg = getPackage(pkgName);
@@ -324,7 +335,7 @@ bool PackageList::installPackage(const QString &pkgName)
 int PackageList::size()
 {
 #ifdef DEBUG
-	qDebug() << __FUNCTION__;
+	qDebug() << __PRETTY_FUNCTION__;
 #endif
 	return packageList->size();
 }
@@ -415,3 +426,5 @@ QStringList PackageList::getPackagesToInstall(QStandardItemModel *model)
 	}
 	return packagesToInstall;
 }
+
+#include "packagelist.moc"

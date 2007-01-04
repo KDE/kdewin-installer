@@ -27,40 +27,34 @@
 #include "packagelist.h"
 #include "package.h"
 #include "downloader.h"
-#include "downloaderprogress.cpp"
+#include "downloaderprogress.h"
 
-
-#ifndef USE_GUI
-Downloader::Downloader(bool _blocking) 
+Downloader::Downloader(bool _blocking, DownloaderProgress *_progress)
+ : m_progress(_progress), m_ioDevice(0), m_file(0), m_httpGetId(~0U),
+   m_httpRequestAborted(false), m_blocking(_blocking), m_eventLoop(0)
 {
-	blocking = _blocking;
-  progress = new DownloaderProgress();
+//  if(!m_progress)
+//    m_progress = new DownloaderProgress(this);
   init();
 }
-#else
-Downloader::Downloader(bool _blocking,DownloaderProgress *_progress) 
-{
-	blocking = _blocking;
-  progress = _progress;
-  init();
-}
-#endif
 
 void Downloader::init()
 {
-	http = new QHttp(this);
+	m_http = new QHttp(this);
 	
-	connect(http, SIGNAL(requestFinished(int, bool)),this, SLOT(httpRequestFinished(int, bool)));
-	connect(http, SIGNAL(dataReadProgress(int, int)),this, SLOT(updateDataReadProgress(int, int)));
-	connect(http, SIGNAL(responseHeaderReceived(const QHttpResponseHeader &)),this, SLOT(readResponseHeader(const QHttpResponseHeader &)));
-	connect(http, SIGNAL(done(bool)),this, SLOT(allDone(bool)));
-	connect(http, SIGNAL(stateChanged(int)),this, SLOT(stateChanged(int)));
+	connect(m_http, SIGNAL(requestFinished(int, bool)),this, SLOT(httpRequestFinished(int, bool)));
+	connect(m_http, SIGNAL(dataReadProgress(int, int)),this, SLOT(updateDataReadProgress(int, int)));
+	connect(m_http, SIGNAL(responseHeaderReceived(const QHttpResponseHeader &)),this, SLOT(readResponseHeader(const QHttpResponseHeader &)));
+	connect(m_http, SIGNAL(done(bool)),this, SLOT(allDone(bool)));
+	connect(m_http, SIGNAL(stateChanged(int)),this, SLOT(stateChanged(int)));
 }
 
 Downloader::~Downloader() 
 {
-	delete progress;
-	delete http;	
+	delete m_progress;
+	delete m_http;
+	delete m_eventLoop;
+  delete m_file;
 }
 
 void Downloader::setError(const QString &text)
@@ -70,105 +64,130 @@ void Downloader::setError(const QString &text)
 
 bool Downloader::start(const QString &_url, const QString &_fileName)
 {
-	QString fileName = _fileName;
-  QUrl url(_url);
-	if (fileName == "") {
-    QFileInfo fileInfo(url.path());
-    fileName = fileInfo.fileName();
-  }
+  QString fileName = _fileName;
 
-  file = new QFile(fileName);
-  if (!file->open(QIODevice::WriteOnly)) {
-    setError(tr("Unable to save the file %1: %2.").arg(fileName).arg(file->errorString()));
-    delete file;
-    file = 0;
+  if(_fileName.isEmpty()) {
+    QFileInfo fi(QUrl(_url).path());
+    fileName = fi.fileName();
+  }
+  m_file = new QFile(fileName);
+  if (!m_file->open(QIODevice::WriteOnly)) {
+    setError(tr("Unable to open file %1: %2.").arg(_fileName).arg(m_file->errorString()));
+    delete m_file;
+    m_file = 0;
     return false;
   }
+  m_progress->setTitle(tr("Downloading %1 to %2").arg(_url).arg(m_file->fileName()));
+  return startInternal(_url, m_file);
+}
 
-  http->setHost(url.host(), url.port() != -1 ? url.port() : 80);
+bool Downloader::start(const QString &_url, QByteArray &ba)
+{
+  m_progress->setTitle(tr("Downloading %1").arg(_url));
+  QBuffer *buf = new QBuffer(&ba);
+
+  if(!buf->open(QIODevice::WriteOnly)) {
+    setError(tr("Internal error!"));
+    return false;
+  }
+  return startInternal(_url, buf);
+}
+
+bool Downloader::startInternal(const QString &_url, QIODevice *ioDev)
+{
+  QUrl url(_url);
+  m_ioDevice = ioDev;
+
+  m_http->setHost(url.host(), url.port() != -1 ? url.port() : 80);
   if (!url.userName().isEmpty())
-    http->setUser(url.userName(), url.password());
+    m_http->setUser(url.userName(), url.password());
 
-  httpRequestAborted = false;
   QByteArray query = url.encodedQuery(); 
-  httpGetId = http->get(url.path() + (!query.isEmpty() ? "?" + url.encodedQuery() : ""), file);
+  m_httpRequestAborted = false;
+  m_httpGetId = m_http->get(url.path() + (!query.isEmpty() ? "?" + url.encodedQuery() : ""), m_ioDevice);
 
- 	progress->show();
- 	progress->setTitle(tr("Downloading %1 to %2.").arg(_url).arg(fileName));
-	if (blocking) {
-		eventLoop = new QEventLoop(); 
-		eventLoop->exec();
-		delete eventLoop;
+ 	m_progress->show();
+	if (m_blocking) {
+		m_eventLoop = new QEventLoop(); 
+		m_eventLoop->exec();
+		delete m_eventLoop;
 	}		
 	return true;
 }
 
 void Downloader::cancel()
 {
-	progress->setStatus(tr("Download canceled."));
-	httpRequestAborted = true;
-	http->abort();
+	m_progress->setStatus(tr("Download canceled."));
+	m_httpRequestAborted = true;
+	m_http->abort();
 }
 
 void Downloader::httpRequestFinished(int requestId, bool error)
 {
-	if (httpRequestAborted) {
-		if (file) {
-			file->close();
-			file->remove();
-			delete file;
-			file = 0;
-		}
+	if (m_httpRequestAborted) {
+		if (m_file) {
+			m_file->close();
+			m_file->remove();
+			delete m_file;
+			m_file = 0;
+      m_ioDevice = 0;
+		} else
+    if (m_ioDevice) {
+      m_ioDevice->close();
+      delete m_ioDevice;
+      m_ioDevice = 0;
+    }
 	
-		if (progress)
-			progress->hide();
-			return;
+		if (m_progress)
+			m_progress->hide();
+    return;
 	}
 	
-	if (requestId != httpGetId)
+	if (requestId != m_httpGetId)
     return;
 	
-	if (progress)
-	  progress->hide();
-		file->close();
+  if (m_progress)
+    m_progress->hide();
+  m_ioDevice->close();
 	
 	if (error) {
-    file->remove();
-    setError(tr("Download failed: %1.").arg(http->errorString()));
+    m_file->remove();
+    setError(tr("Download failed: %1.").arg(m_http->errorString()));
 	} else {
-		progress->setStatus(tr("download ready"));
+		m_progress->setStatus(tr("download ready"));
 	}
-	delete file;
-	file = 0;
+	delete m_ioDevice;
+	m_ioDevice = 0;
+	m_file = 0;
 }
 
 void Downloader::readResponseHeader(const QHttpResponseHeader &responseHeader)
 {
 	if (responseHeader.statusCode() != 200) {
 		setError(tr("Download failed: %1.").arg(responseHeader.reasonPhrase()));
-		httpRequestAborted = true;
-		progress->hide();
-		http->abort();
+		m_httpRequestAborted = true;
+		m_progress->hide();
+		m_http->abort();
 		return;
 	}
 }
 
 void Downloader::updateDataReadProgress(int bytesRead, int totalBytes)
 {
-	if (httpRequestAborted)
+	if (m_httpRequestAborted)
 	    return;
 	
-	if (progress) {
-	  progress->setMaximum(totalBytes);
-	  progress->setValue(bytesRead);
+	if (m_progress) {
+	  m_progress->setMaximum(totalBytes);
+	  m_progress->setValue(bytesRead);
 	}
 }
 
 void Downloader::allDone(bool error)
 {
 	emit done(error);
-	if (blocking)
-		eventLoop->quit();
+	if (m_blocking)
+		m_eventLoop->quit();
 }
 
 
@@ -184,5 +203,7 @@ void Downloader::stateChanged(int state)
 		case QHttp::Connected    : stateLabel = "Connected  "; break;
 		case QHttp::Closing      : stateLabel = "Closing    "; break;
 	}
-	progress->setStatus(stateLabel);
+	m_progress->setStatus(stateLabel);
 }
+
+#include "downloader.moc"

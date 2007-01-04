@@ -33,7 +33,7 @@
 
 extern InstallWizard *wizard;
 
-
+// FIXME: put this into a class!
 PackageList *packageList;
 Installer *installer;
 Downloader *downloader;
@@ -41,11 +41,12 @@ Downloader *downloader;
 int downloadPackageList()
 {
 	if (!QFile::exists("packages.txt")) {
+    QByteArray ba;
 		// download package list 
-		downloader->start("http://sourceforge.net/project/showfiles.php?group_id=23617","packages.html");
-	
-		// load and parse 
-		if (!packageList->readFromHTMLFile("packages.html"))
+		downloader->start("http://sourceforge.net/project/showfiles.php?group_id=23617", ba);
+
+    // load and parse 
+		if (!packageList->readHTMLFromByteArray(ba))
 			return 1; 
 
 		// save into file
