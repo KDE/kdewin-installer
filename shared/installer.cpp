@@ -103,10 +103,11 @@ bool InstallerBase::unzipFile(const QString &destpath, const QString &zipFile)
       setError("Can not get file information from zip file ", zipFile.toAscii());
       return false;
     }
+    QFileInfo fi(path.filePath(info.name));
 
     // is it's a subdir ?
-    if(info.compressedSize == 0 && info.uncompressedSize == 0) {
-      QFileInfo fi(path.filePath(info.name));
+	// if(info.compressedSize == 0 && info.uncompressedSize == 0) 
+	  {
       if(fi.exists()) {
         if(!fi.isDir()) {
           setError("Can not create directory %s", fi.absoluteFilePath().toAscii().data());
@@ -114,8 +115,8 @@ bool InstallerBase::unzipFile(const QString &destpath, const QString &zipFile)
         }
         continue;
       }
-      if(!path.mkdir(fi.absoluteFilePath())) {
-        setError("Can not create directory %s", filePath(info.name));
+      if(!path.mkpath(fi.absoluteFilePath())) {
+        setError("Can not create directory %s", fi.absoluteFilePath().toAscii().data());
         return false;
       }
       continue;
