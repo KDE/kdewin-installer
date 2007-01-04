@@ -23,6 +23,9 @@
 
 #include <QtCore>
 
+#include <quazip/quazip.h>
+#include <quazip/quazipfile.h>
+
 #include "installer.h"
 #include "packagelist.h"
 //#define DEBUG
@@ -131,12 +134,71 @@ bool InstallerGNUWin32::install(const QString &fileName)
 	return true;
 
 #else
-	QByteArray file = fileName.toLatin1();
-	QByteArray rootdir = root.toLatin1();
-	
-	int ret = unzip(file.data(),rootdir.data());
-    return ret;
-#endif
+  QuaZip zip(fileName);
+  if(!zip.open(QuaZip::mdUnzip)) {
+    qWarning("zip.open(): %d", zip.getZipError());
+    return false;
+  }
+  zip.setFileNameCodec("IBM866");
+  printf("%d entries\n", zip.getEntriesCount());
+  printf("Global comment: %s\n", zip.getComment().toLocal8Bit().constData());
+  QuaZipFileInfo info;
+  printf("name\tcver\tnver\tflags\tmethod\tctime\tCRC\tcsize\tusize\tdisknum\tIA\tEA\tcomment\textra\n");
+  QuaZipFile file(&zip);
+  QString name;
+  char c;
+  for(bool more=zip.goToFirstFile(); more; more=zip.goToNextFile()) {
+    if(!zip.getCurrentFileInfo(&info)) {
+      qWarning("testRead(): getCurrentFileInfo(): %d\n", zip.getZipError());
+      return false;
+    }
+    printf("%s\t%hu\t%hu\t%hu\t%hu\t%s\t%u\t%u\t%u\t%hu\t%hu\t%u\t%s\t%s\n",
+        info.name.toLocal8Bit().constData(),
+        info.versionCreated, info.versionNeeded, info.flags, info.method,
+        info.dateTime.toString(Qt::ISODate).toLocal8Bit().constData(),
+        info.crc, info.compressedSize, info.uncompressedSize, info.diskNumberStart,
+        info.internalAttr, info.externalAttr,
+        info.comment.toLocal8Bit().constData(), info.extra.constData());
+    if(!file.open(QIODevice::ReadOnly)) {
+      qWarning("testRead(): file.open(): %d", file.getZipError());
+      return false;
+    }
+    name=file.getActualFileName();
+    if(file.getZipError()!=UNZ_OK) {
+      qWarning("testRead(): file.getFileName(): %d", file.getZipError());
+      return false;
+    }
+	qWarning(QString(root + "/" + name).toAscii().data());
+
+	QFileInfo fi(root+"/"+name);
+	QDir a(fi.absolutePath());
+	if (!a.mkpath(fi.absolutePath())) {
+		qWarning(" can't create directory %d", fi.absolutePath().toAscii().data());
+		return false;
+	}
+	QFile out(fi.absoluteFilePath());
+    out.open(QIODevice::WriteOnly);
+    // Slow like hell (on GNU/Linux at least), but it is not my fault.
+    // Not ZIP/UNZIP package's fault either.
+    // The slowest thing here is out.putChar(c).
+    while(file.getChar(&c)) out.putChar(c);
+    out.close();
+    if(file.getZipError()!=UNZ_OK) {
+      qWarning("testRead(): file.getFileName(): %d", file.getZipError());
+      return false;
+    }
+    if(!file.atEnd()) {
+      qWarning("testRead(): read all but not EOF");
+      return false;
+    }
+    file.close();
+    if(file.getZipError()!=UNZ_OK) {
+      qWarning("testRead(): file.close(): %d", file.getZipError());
+      return false;
+    }
+  }
+  return true;
+  #endif
 }
 
 

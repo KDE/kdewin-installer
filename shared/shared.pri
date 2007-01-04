@@ -1,5 +1,5 @@
-DEFINES += USE_EXTERNAL_ZIP DEBUG
-
+DEFINES += DEBUG
+#USE_EXTERNAL_ZIP 
 # uncomment for including doc and source packages
 #DEFINES += INCLUDE_DOC_AND_SRC_PACKAGES
 
@@ -9,10 +9,6 @@ SOURCES += ..\shared\package.cpp \
            ..\shared\downloader.cpp \
            ..\shared\installer.cpp \
 
-!contains( DEFINES, USE_EXTERNAL_ZIP ) {
-  SOURCES += ..\shared\unzip.c
-}
-
 HEADERS += ..\shared\package.h \
            ..\shared\packagelist.h \
            ..\shared\downloader.h \
@@ -21,6 +17,6 @@ HEADERS += ..\shared\package.h \
 INCLUDEPATH += ..\shared 
 
 !contains( DEFINES, USE_EXTERNAL_ZIP ) {
-  INCLUDEPATH += ..\unzip-5.51-1-src\src\unzip\5.51\unzip-5.51
-  LIBS += -L..\unzip-5.51-1-src\src\unzip\5.51\unzip-5.51 -lunzip32
+  INCLUDEPATH += ..\..\3rdparty\quazip ..\..\3rdparty\zlib
+  LIBS += -L..\..\3rdparty\quazip\quazip\release -lquazip
 }
