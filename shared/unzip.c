@@ -21,6 +21,15 @@
 **
 ****************************************************************************/
 
+/* how the enable experimental zip support (not working yet): 
+ 1. unpack gnuwin32 unzip-5.51-1-src package into installer root dir
+ 2. run 
+ 	cd unzip-5.51-1-src\src\unzip\5.51\unzip-5.51 
+ 	mingw32-make win32\Makefile.gcc
+ 
+ 3. remove USE_EXTERNAL_ZIP from shared/shares.pri and recompile kde-installer 
+*/
+
 #include <stdio.h>
 #include <windll/windll.h>
 #define LPSTR char *
