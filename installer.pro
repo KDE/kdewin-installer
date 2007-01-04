@@ -1,2 +1,2 @@
 TEMPLATE=subdirs
-SUBDIRS=console gui tests
+SUBDIRS=..\3rdparty\zlib ..\3rdparty\quazip console gui tests 
