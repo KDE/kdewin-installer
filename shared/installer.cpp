@@ -25,6 +25,7 @@
 
 #include "installer.h"
 #include "packagelist.h"
+#include "downloaderprogress.h"
 #include "quazip.h"
 #include "quazipfile.h"
 
@@ -92,6 +93,9 @@ bool InstallerBase::unzipFile(const QString &destpath, const QString &zipFile)
 
   QuaZipFile file(&z);
   QuaZipFileInfo info;
+  DownloaderProgress progress(this);
+  progress.setMaximum(z.getEntriesCount());
+  progress.show();
 
   for(bool bOk = z.goToFirstFile(); bOk; bOk = z.goToNextFile()) {
     // get file informations
@@ -134,6 +138,7 @@ bool InstallerBase::unzipFile(const QString &destpath, const QString &zipFile)
       return false;
     }
 
+	progress.setTitle(tr("Installing %1 ").arg(newFile.fileName().toAscii().constData()));
     // copy data
     // FIXME: check for not that huge filesize ?
     qint64 iBytesRead;
