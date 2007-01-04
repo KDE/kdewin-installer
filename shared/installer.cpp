@@ -139,7 +139,7 @@ bool InstallerBase::unzipFile(const QString &destpath, const QString &zipFile)
       return false;
     }
 
-	progress.setTitle(tr("Installing %1 ").arg(newFile.fileName().toAscii().constData()));
+	progress.setTitle(tr("Installing %1 ").arg(newFile.fileName().toAscii().data()));
     // copy data
     // FIXME: check for not that huge filesize ?
     qint64 iBytesRead;
@@ -209,7 +209,7 @@ bool InstallerGNUWin32::loadConfig()
 
 bool InstallerGNUWin32::install(const QString &fileName)
 {
-  return true;
+	return unzipFile(root, fileName);
 }
 
 #include "installer.moc"
