@@ -9,6 +9,10 @@ LIBS += -lz
 DEPENDPATH += .
 INCLUDEPATH += .
 
+INCLUDEPATH += ..\..\zlib
+LIBS += -L..\..\zlib
+
+
 # Input
 HEADERS += crypt.h \
            ioapi.h \

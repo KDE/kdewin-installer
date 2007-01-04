@@ -10,6 +10,10 @@ INCLUDEPATH += . ../..
 unix:LIBS += -L../../quazip -lquazip
 win32:LIBS += -L../../quazip/release -lquazip
 
+
+INCLUDEPATH += ..\..\..\zlib
+LIBS += -L..\..\..\zlib
+
 # Input
 SOURCES += main.cpp
 
