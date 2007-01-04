@@ -166,6 +166,10 @@ bool InstallerGNUWin32::install(const QString &fileName)
         info.internalAttr, info.externalAttr,
         info.comment.toLocal8Bit().constData(), info.extra.constData());
 #endif
+    if(info.name.endsWith("/")) {
+    	// don't use directory items, some zip files does not have them included
+    	continue;
+    }
     if(!file.open(QIODevice::ReadOnly)) {
       qWarning("install(): file.open(): %d", file.getZipError());
       return false;
