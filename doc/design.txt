@@ -33,7 +33,57 @@ The gui installer is in a very early state and not functional.
 Design
 ------
 
+
+The installer uses a main config file located on a well known server to detect which 
+packages and/or sites have packages to install.  A sample format is shown below
+
+On each start of the installer this file inspected and the package lists are downloaded. 
+
+Then the user can select packages to install using the gui version or the command line version.
+After confirmation the relateds packages are downloaded and installed or updated. 
+
+
+Prelimary config file format
+-----------------------------
+
+@format 1.0
+; comment
+; a package definition
+@package perl ; package name
+@version 5.8.8 ; package version
+@url http://downloads.activestate.com/ActivePerl/Windows/5.8/ActivePerl-5.8.8.819-MSWin32-x86-267479.msi ; base url
+@url http://downloads.activestate.com/ActivePerl/Windows/5.8/ActivePerl-5.8.8.819-MSWin32-x86-267479.msi ; other url
+@options
+
+; another package definition
+@package cmake
+@version 2.4.5
+@url http://www.cmake.org/files/v2.4/cmake-2.4.5-win32-x86.zip
+@options
+
+; site definition
+@site  gnuwin32
+@packagesurl http://sourceforge.net/project/showfiles.php?group_id=23617
+@packagestype sourceforge
+@options
+
+; another definition
+@site  kde-win32
+@url http://sourceforge.net/project/showfiles.php?group_id=23617
+@type sourceforge
+@options
+
+
+; another definition
+@site  kde-i18n
+@url http://software.opensuse.org/download/KDE:/KDE3/SUSE_Linux_10.1/noarch/
+@type apachemodindex
+
+
+
 classes 
+-------
+
 
 Downloader -    Class for downloading file lists and packages 
 PackageList -   holds a list of packages 
