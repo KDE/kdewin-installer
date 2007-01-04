@@ -36,13 +36,15 @@ class PackageList : public QObject {
 	Q_OBJECT
 	
 	public:
+		enum SiteType {SourceForge, ApacheModIndex};
+		
 		PackageList();
 		PackageList(Downloader *downloader);
 		virtual ~PackageList();
 		void addPackage(Package const &package); 
 		void listPackages(const QString &title="");
 		bool readFromFile(QString const &fileName="");
-		bool readFromHTMLFile(const QString &fileName);
+		bool readFromHTMLFile(const QString &fileName, SiteType type=SourceForge);
 		bool writeToFile(QString const &fileName="");
 //		static bool downloadPackage(QString const &pkgName);
 		QStringList getPackageFiles(QString const &pkgName);
