@@ -49,8 +49,8 @@ class Package {
 		static QString baseURL;
 
 		// 0.5.3
-		bool isInstalled(Package::Type type) { return false;}
-
+		bool isInstalled(Package::Type type);
+		
 	private slots:
 		void logOutput();
 		

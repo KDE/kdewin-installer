@@ -139,7 +139,22 @@ void Package::addInstalledTypes(const Package &pkg)
 	installedSRC = pkg.installedSRC ? pkg.installedSRC : installedSRC ;
 }
 
-void Package::logOutput()
-{
-}
+bool Package::isInstalled(Package::Type type)   
+{                                               
+	switch (type) {                              
+		case BIN: return installedBIN;           
+		case LIB: return installedLIB;           
+		case SRC: return installedSRC;           
+		case DOC: return installedDOC;           
+		default:  return false;                  
+	}                                            
+}                                               
 
+void Package::logOutput()
+ {
+ }
+ 
+ 
+ 
+ 
+ 
