@@ -1,4 +1,4 @@
-DEFINES += DEBUG
+DEFINES += #DEBUG
 #USE_EXTERNAL_ZIP 
 # uncomment for including doc and source packages
 #DEFINES += INCLUDE_DOC_AND_SRC_PACKAGES
