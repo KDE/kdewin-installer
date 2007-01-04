@@ -212,7 +212,9 @@ bool PackageList::readFromHTMLFile(const QString &fileName, SiteType type )
 			char *fileKeyEnd = "\">";
 			while (!pkglist.atEnd()) {
 				QByteArray line = pkglist.readLine();
+#ifdef DEBUG
 				qDebug() << "2"  << line << " " << lineKey; 
+#endif
 				if (line.contains(lineKey)) {
 					int a = line.indexOf(fileKeyStart) + strlen(fileKeyStart);
 					int b = line.indexOf(fileKeyEnd,a);
