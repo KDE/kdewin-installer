@@ -91,6 +91,7 @@ int main(int argc, char *argv[])
 	Cygwin::main(app);
 #else
 	Package::baseURL = "http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/";
+	// other mirror http://www.mesh-solutions.com/sf/
 	
 	Downloader downloader(/*blocking=*/ true);
 	PackageList packageList(&downloader);
@@ -113,6 +114,7 @@ int main(int argc, char *argv[])
 		// remove temporay files 
 		//QFile::remove("packages.html");
 
+#ifdef USE_EXTERNAL_ZIP
 		if ( !installer.isEnabled() ) {
 			packageList.downloadPackage("unzip");
 			qDebug() 	<< "Please unpack " 
@@ -122,6 +124,7 @@ int main(int argc, char *argv[])
 								<< "\n\n" << app.arguments().at(0)  << "[options] <package-name> <package-name>";
 			return 0;
 		}
+#endif
 	}
 	else {
 		// read list from file 
