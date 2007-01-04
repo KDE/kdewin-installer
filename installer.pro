@@ -1,2 +1,2 @@
 TEMPLATE=subdirs
-SUBDIRS=console gui
+SUBDIRS=console gui tests
