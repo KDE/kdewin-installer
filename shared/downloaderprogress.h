@@ -52,6 +52,7 @@ class DownloaderProgress : public QWidget {
 #else
 class DownloaderProgress {
 	public:
+		DownloaderProgress(QObject *parent);
 		void hide();
 		void setTitle(const QString &title);
 		void setStatus(const QString &status);

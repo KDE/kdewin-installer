@@ -89,6 +89,11 @@ void DownloaderProgress::setValue(int value)
 
 #else // console implementation 
 
+DownloaderProgress::DownloaderProgress(QObject *parent)
+{
+    hide();
+}
+
 void DownloaderProgress::hide() 
 { 
 	visible = false; 
