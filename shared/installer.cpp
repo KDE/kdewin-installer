@@ -80,12 +80,12 @@ bool InstallerBase::unzipFile(const QString &destpath, const QString &zipFile)
   QuaZip z(zipFile);
 
   if(!z.open(QuaZip::mdUnzip)) {
-    // setError("Can not open %s", filename);
+    setError("Can not open %s", zipFile.toAscii().data());
     return false;
   }
 
   if(!path.exists()) {
-    // setError("Internal Error - Path %s does not exist", path.absolutePath());
+    setError("Internal Error - Path %s does not exist", path.absolutePath().toAscii().data());
     return false;
   }
 
@@ -100,7 +100,7 @@ bool InstallerBase::unzipFile(const QString &destpath, const QString &zipFile)
   for(bool bOk = z.goToFirstFile(); bOk; bOk = z.goToNextFile()) {
     // get file informations
     if(!z.getCurrentFileInfo(&info)) {
-      // setError("Can not get file information from zip file %s", filename);
+      setError("Can not get file information from zip file ", zipFile.toAscii());
       return false;
     }
 
@@ -109,13 +109,13 @@ bool InstallerBase::unzipFile(const QString &destpath, const QString &zipFile)
       QFileInfo fi(path.filePath(info.name));
       if(fi.exists()) {
         if(!fi.isDir()) {
-          // setError("Can not create directory %s", filePath(info.name));
+          setError("Can not create directory %s", fi.absoluteFilePath().toAscii().data());
           return false;
         }
         continue;
       }
       if(!path.mkdir(fi.absoluteFilePath())) {
-        // setError("Can not create directory %s", filePath(info.name));
+        setError("Can not create directory %s", filePath(info.name));
         return false;
       }
       continue;
@@ -123,18 +123,18 @@ bool InstallerBase::unzipFile(const QString &destpath, const QString &zipFile)
 
     // open file
     if(!file.open(QIODevice::ReadOnly)) {
-      // setError("Can not open file %s from zip file %s", info.name, filename);
+      setError("Can not open file %s from zip file %s", info.name.toAscii().data(), zipFile.toAscii().data());
       return false;
     }
     if(file.getZipError() != UNZ_OK) {
-      // setError("Error reading zip file %s", filename);
+      setError("Error reading zip file %s", zipFile.toAscii().data());
       return false;
     }
 
     // create new file
-    QFile newFile(path.filePath(info.name));
+    QFile newFile(fi.absoluteFilePath());
     if(!newFile.open(QIODevice::WriteOnly)) {
-      // setError("Can not creating file %s ", info.name);
+      setError("Can not creating file %s ", info.name.toAscii().data());
       return false;
     }
 
@@ -152,17 +152,24 @@ bool InstallerBase::unzipFile(const QString &destpath, const QString &zipFile)
     newFile.close();
 
     if(file.getZipError() != UNZ_OK) {
-      // setError("Error reading zip file %s", filename);
+      setError("Error reading zip file %s", zipFile.toAscii().data());
       return false;
     }
   }
   z.close();
   if(z.getZipError() != UNZ_OK) {
-    // setError("Error reading zip file %s", filename);
+    setError("Error reading zip file %s", zipFile.toAscii().data());
     return false;
   }
   return true;
 }
+
+
+void InstallerBase::setError(QByteArray format, QByteArray p1, QByteArray p2)
+{
+	qDebug(format.data(),p1.data(),p2.data());
+}
+ 
 
 // InstallerGNUWin32
 InstallerGNUWin32::InstallerGNUWin32(PackageList *packageList) : InstallerBase(packageList)

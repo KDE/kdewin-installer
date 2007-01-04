@@ -46,9 +46,9 @@ class InstallerBase : public QObject {
 		void updatePackageList();
 
 	protected:
-    bool unzipFile(const QString &destpath, const QString &zipFile);
+    	bool unzipFile(const QString &destpath, const QString &zipFile);
+		void setError(QByteArray format, QByteArray p1="", QByteArray p2="");
 
-protected:
 		PackageList *packageList;
 		QString root;
 		QString configFile;
