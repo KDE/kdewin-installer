@@ -66,6 +66,8 @@ int main(int argc, char *argv[])
 			}
 			if (option == "-l") 
 				options.list = true;
+			else if (option == "-v") 
+				options.verbose = true;
 			else if (option == "-q")
 				options.query = true;
 			else if (option == "-d") 
@@ -93,6 +95,7 @@ int main(int argc, char *argv[])
 	Downloader downloader(/*blocking=*/ true);
 	PackageList packageList(&downloader);
 	Installer installer(&packageList);
+	installer.setVerbose(options.verbose);
 	installer.setRoot(options.rootdir.isEmpty() ? "packages" : options.rootdir);
 
 	if ( !packageList.hasConfig() ) {
