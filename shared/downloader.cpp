@@ -38,15 +38,14 @@ Downloader::Downloader(bool _blocking, DownloaderProgress *_progress)
  : m_progress(_progress), m_ioDevice(0), m_file(0), m_httpGetId(~0U),
    m_httpRequestAborted(false), m_blocking(_blocking), m_eventLoop(0)
 {
-//  if(!m_progress)
-//    m_progress = new DownloaderProgress(this);
   init();
 }
 
 void Downloader::init()
 {
 	m_http = new QHttp(this);
-	
+	m_progress = new DownloaderProgress(this);
+
 	connect(m_http, SIGNAL(requestFinished(int, bool)),this, SLOT(httpRequestFinished(int, bool)));
 	connect(m_http, SIGNAL(dataReadProgress(int, int)),this, SLOT(updateDataReadProgress(int, int)));
 	connect(m_http, SIGNAL(responseHeaderReceived(const QHttpResponseHeader &)),this, SLOT(readResponseHeader(const QHttpResponseHeader &)));
@@ -58,8 +57,7 @@ Downloader::~Downloader()
 {
 	delete m_progress;
 	delete m_http;
-	delete m_eventLoop;
-  delete m_file;
+  	delete m_file;
 }
 
 void Downloader::setError(const QString &text)
