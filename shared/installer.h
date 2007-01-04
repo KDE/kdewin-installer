@@ -42,6 +42,7 @@ class InstallerBase : public QObject {
 
 		virtual bool isEnabled(); 
 		virtual void setRoot(const QString &_root);
+		void setVerbose(bool _verbose) { verbose= _verbose; }
 
 	public slots:
 		void updatePackageList();
@@ -51,6 +52,7 @@ class InstallerBase : public QObject {
 		PackageList *packageList;
 		QString root;
 		QString configFile;
+		bool verbose;
 };
 
 class InstallerGNUWin32 : public InstallerBase {
