@@ -123,7 +123,7 @@ void PackageList::listPackages(const QString &title)
 	qDebug() << title;
 	QList<Package>::iterator i;
 	for (i = packageList->begin(); i != packageList->end(); ++i)
-		qDebug(i->toString(true).toLatin1());
+		qDebug(i->toString(true," - ").toLatin1());
 }
 
 bool PackageList::writeToFile(const QString &_fileName)

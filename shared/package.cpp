@@ -81,9 +81,9 @@ void Package::setType(const QString &typeString)
 		installedDOC = true;
 }
 
-QString Package::toString(bool mode) 
+QString Package::toString(bool mode, const QString &delim) 
 { 
-	QString result = name + "-" + version;
+	QString result = name + delim + version;
 	QString installedTypes = getTypeAsString();
 	if (installedTypes != "")
 	 	result += "   ( installed =" + getTypeAsString() + ")";

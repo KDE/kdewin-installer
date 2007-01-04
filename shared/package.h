@@ -39,7 +39,7 @@ class Package {
 		void setVersion(QString const &_version) { version = _version; }
 		void setType(const QString &typeString);
 		bool setFromVersionFile(const QString &verString);
-		QString toString(bool mode=false);
+		QString toString(bool mode=false, const QString &delim="-");
 		const QString getTypeAsString();
 
 		const QString getFileName(Package::Type type);
