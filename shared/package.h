@@ -23,8 +23,8 @@
 #ifndef PACKAGE_H
 #define PACKAGE_H
 
-#include <QtGui>
-#include <QtNetwork>
+#include <QObject>
+#include <QString>
 
 class Package {
 	

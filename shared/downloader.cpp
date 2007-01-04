@@ -21,8 +21,13 @@
 **
 ****************************************************************************/
 
-#include <QtNetwork>
-#include <QtCore>
+#include <QBuffer>
+#include <QDebug>
+#include <QEventLoop>
+#include <QFileInfo>
+#include <QHttp>
+#include <QString>
+#include <QUrl>
 
 #include "packagelist.h"
 #include "package.h"

@@ -24,12 +24,12 @@
 #ifndef DOWNLOADER_H
 #define DOWNLOADER_H
 
-#include <QtCore>
-class QHttpResponseHeader;
-class QHttp;
-class QEventLoop;
-class QIODevice;
 class DownloaderProgress;
+class QEventLoop;
+class QFile;
+class QHttp;
+class QHttpResponseHeader;
+class QIODevice;
 
 class Downloader: public QObject
 {

@@ -24,12 +24,14 @@
 #ifndef DOWNLOADERPROGRESS_H
 #define DOWNLOADERPROGRESS_H
 
-#include <QtCore>
+#include <QString>
 
 #ifdef USE_GUI
 
+#include <QWidget>
 class ComplexWizard; 
-#include <QtGui>
+class QLabel;
+class QProgressBar;
 
 class DownloaderProgress : public QWidget {
 	public:

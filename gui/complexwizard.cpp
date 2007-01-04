@@ -21,7 +21,8 @@
 **
 ****************************************************************************/
 
-#include <QtGui>
+#include <QHBoxLayout>
+#include <QPushButton>
 
 #include "complexwizard.h"
 #include "downloaderprogress.h"

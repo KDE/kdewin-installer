@@ -21,42 +21,46 @@
 **
 ****************************************************************************/
 
-#include <QtGui>
-#include <QtNetwork>
+#include <QBuffer>
+#include <QDebug>
+#include <QFile>
+#include <QFileInfo>
+#include <QStandardItemModel>
+#include <QUrl>
 
 #include "packagelist.h"
 #include "downloader.h"
 #include "installer.h"
-//#define DEBUG
+
 #ifdef Q_CC_MSVC
 # define __PRETTY_FUNCTION__ __FUNCTION__
 #endif
 
 QStringList filterPackageFiles(const QStringList &list,const QString &mode)
 {
-	QStringList result; 
-  for (int j = 0; j < list.size(); ++j) {
-  	QUrl url(list.at(j));
-    QFileInfo fileInfo(url.path());
-    QString fileName = fileInfo.fileName();
+    QStringList result; 
+    for (int j = 0; j < list.size(); ++j) {
+        QUrl url(list.at(j));
+        QFileInfo fileInfo(url.path());
+        QString fileName = fileInfo.fileName();
 
-    // only download package not already downloaded and only bin and lib packages
-		if (mode == "URL" && QFile::exists(fileName))
-	    qDebug() << fileName << " - already downloaded";
-//		else if(fileName.contains("src") ) 
-//	    qDebug() << fileName << " - ignored";
-		else {
-	    if (mode == "URL")
-		    qDebug() << fileName << " - downloading";
-		 	else
-		    qDebug() << fileName << " - installing";
-	    if (mode == "URL")
-	    	result << list.at(j);
-	    else
-	    	result << fileName;
-  	}
-	}
-	return result;
+        // only download package not already downloaded and only bin and lib packages
+	        if (mode == "URL" && QFile::exists(fileName))
+            qDebug() << fileName << " - already downloaded";
+        //		else if(fileName.contains("src") ) 
+        //	    qDebug() << fileName << " - ignored";
+        else {
+        if (mode == "URL")
+            qDebug() << fileName << " - downloading";
+            else
+            qDebug() << fileName << " - installing";
+        if (mode == "URL")
+            result << list.at(j);
+        else
+            result << fileName;
+        }
+    }
+    return result;
 }
 
 PackageList::PackageList(Downloader *_downloader)
@@ -355,7 +359,7 @@ QStandardItemModel *PackageList::getModel()
 void PackageList::setModelData(QTreeView *tree)
 {
 	int size = packageList->size();
-  QStandardItemModel *model = new QStandardItemModel(size, 8);
+    QStandardItemModel *model = new QStandardItemModel(size, 8);
 	tree->setModel(model);
 
 	QList<Package>::iterator i;

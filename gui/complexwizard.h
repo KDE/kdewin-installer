@@ -28,7 +28,6 @@
 #include <QList>
 #include "downloader.h"
 
-
 class QHBoxLayout;
 class QPushButton;
 class QVBoxLayout;

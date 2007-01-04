@@ -24,6 +24,9 @@
 #ifndef PACKAGELIST_H
 #define PACKAGELIST_H
 
+#include <QObject>
+#include <QTreeView>
+
 #include "package.h"
 
 class QStandardItemModel;

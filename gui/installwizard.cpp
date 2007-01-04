@@ -21,15 +21,20 @@
 **
 ****************************************************************************/
 
-#include <QtGui>
+#include <QCheckBox>
+#include <QDebug>
+#include <QFile>
+#include <QLabel>
+#include <QLineEdit>
+#include <QModelIndex>
+#include <QTreeWidgetItem>
+#include <QPushButton>
+#include <QVBoxLayout>
 
 #include "installwizard.h"
-
 #include "downloader.h"
 #include "installer.h"
 #include "packagelist.h"
-
-#include <QModelIndex>
 
 extern InstallWizard *wizard;
 

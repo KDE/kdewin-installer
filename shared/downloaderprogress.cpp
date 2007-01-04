@@ -21,27 +21,29 @@
 **
 ****************************************************************************/
 
+#include <QDebug>
+
 #include "downloaderprogress.h"
 
 #ifdef USE_GUI
-#include <QtGui>
+
 #include "complexwizard.h"
 
 DownloaderProgress::DownloaderProgress(ComplexWizard *parent) 
 { 
-	statusLabel = new QLabel();
-	progress = new QProgressBar(parent); 
+    statusLabel = new QLabel();
+    progress = new QProgressBar(parent); 
 
-  QHBoxLayout *statusLayout = new QHBoxLayout;
-  statusLayout->addWidget(statusLabel);
-  statusLayout->addWidget(progress);
-  
-	titleLabel = new QLabel();
-  QVBoxLayout *mainLayout = new QVBoxLayout;
-  mainLayout->addWidget(titleLabel);
-  mainLayout->addLayout(statusLayout);
-  setLayout(mainLayout);
-  hide();
+    QHBoxLayout *statusLayout = new QHBoxLayout;
+    statusLayout->addWidget(statusLabel);
+    statusLayout->addWidget(progress);
+
+    titleLabel = new QLabel();
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->addWidget(titleLabel);
+    mainLayout->addLayout(statusLayout);
+    setLayout(mainLayout);
+    hide();
 }
 
 DownloaderProgress::~DownloaderProgress()

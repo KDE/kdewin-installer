@@ -25,6 +25,8 @@
 #ifndef InstallWizard_H
 #define InstallWizard_H
 
+#include <QModelIndex>
+
 #include "complexwizard.h"
 
 class QCheckBox;
@@ -99,7 +101,6 @@ private:
 };
 
 
-//class QDirModel;
 class QStandardItemModel;
 class QTreeView;
 class QTreeWidgetItem;

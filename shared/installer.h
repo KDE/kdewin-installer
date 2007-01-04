@@ -23,7 +23,6 @@
 #ifndef INSTALLER_H
 #define INSTALLER_H
 
-#include <QtCore>
 class PackageList;
 
 class InstallerBase : public QObject {

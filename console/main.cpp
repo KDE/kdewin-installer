@@ -22,6 +22,7 @@
 ****************************************************************************/
 
 #include <QCoreApplication>
+#include <QDebug>
 
 #include "packagelist.h"
 #include "downloader.h"
