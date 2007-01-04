@@ -18,6 +18,7 @@ TODO
 
 - create gui version in wizard form (qt's simplewizard example could be taken as base) 
 
+- use QT_NO_DEBUG_OUTPUT instead of #ifdef DEBUG to avoid debug output 
 
 
 History
