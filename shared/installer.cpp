@@ -71,7 +71,7 @@ bool InstallerBase::install(const QString &fileName)
 void InstallerBase::updatePackageList()
 {
 #ifdef DEBUG
-	qDebug() << __PRETTY_FUNCTION__;
+	qDebug() << __FUNCTION__;
 #endif
 	loadConfig();
 }
@@ -94,7 +94,7 @@ bool InstallerGNUWin32::isEnabled()
 bool InstallerGNUWin32::loadConfig()
 {
 #ifdef DEBUG
-	qDebug() << __PRETTY_FUNCTION__;
+	qDebug() << __FUNCTION__;
 #endif
 	// gnuwin32 related 
 	QDir dir(root + "/manifest");
