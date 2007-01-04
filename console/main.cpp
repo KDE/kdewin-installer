@@ -23,6 +23,7 @@
 
 #include <QCoreApplication>
 #include <QDebug>
+#include <QFile>
 
 #include "packagelist.h"
 #include "downloader.h"
@@ -113,7 +114,7 @@ int main(int argc, char *argv[])
 			return 1; 
 
 		// remove temporay files 
-		//QFile::remove("packages.html");
+		QFile::remove("packages.html");
 
 #ifdef USE_EXTERNAL_ZIP
 		if ( !installer.isEnabled() ) {
