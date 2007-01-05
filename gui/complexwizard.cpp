@@ -30,6 +30,7 @@
 ComplexWizard::ComplexWizard(QWidget *parent)
     : QDialog(parent)
 {
+    setWindowFlags(Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);
     cancelButton = new QPushButton(tr("Cancel"));
     backButton = new QPushButton(tr("< &Back"));
     nextButton = new QPushButton(tr("Next >"));
