@@ -102,7 +102,7 @@ private:
 
 
 class QStandardItemModel;
-class QTreeView;
+class QTreeWidget;
 class QTreeWidgetItem;
 
 class PackageSelectorPage : public InstallWizardPage
@@ -114,7 +114,7 @@ public:
     WizardPage *nextPage();
     bool isComplete();
 
-private slots: 
+public slots: 
 	void itemClicked(QTreeWidgetItem *item, int column);
 	void clicked(const QModelIndex &index);
 
@@ -122,7 +122,7 @@ private:
     QLabel *topLabel;
     QStandardItemModel *model;
 //    QDirModel *model;
-    QTreeView *tree;
+    QTreeWidget *tree;
 
 };
 /*

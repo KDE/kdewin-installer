@@ -27,6 +27,7 @@
 #include <QFileInfo>
 #include <QStandardItemModel>
 #include <QUrl>
+#include <QTreeWidget>
 
 #include "packagelist.h"
 #include "downloader.h"
@@ -344,91 +345,35 @@ int PackageList::size()
 	return packageList->size();
 }
 
-
-QStandardItemModel *PackageList::getModel()
+void PackageList::setWidgetData(QTreeWidget *tree)
 {
-/*
-	// TODO: update model size 
-	if (!model)
-		model = new QStandardItemModel(size(), 6);
-	return model;
-*/
-	return 0;
-}
+ 	tree->setColumnCount(8);
+ 	QStringList labels;
+ 	labels 
+ 	<< "Package"
+	<< "Version"
+	<< "bin"
+	<< "lib"
+	<< "src"
+	<< "doc"
+	<< "all"
+	<< "Notes";
 
-void PackageList::setModelData(QTreeView *tree)
-{
-	int size = packageList->size();
-    QStandardItemModel *model = new QStandardItemModel(size, 8);
-	tree->setModel(model);
-
+ 	tree->setHeaderLabels(labels);
+ 	QList<QTreeWidgetItem *> items;
 	QList<Package>::iterator i;
-	int row = 0;
-	int col = 0;
-	model->setHeaderData( col++,Qt::Horizontal,QVariant("Package") );
-	model->setHeaderData( col++,Qt::Horizontal,QVariant("Version") );
-	model->setHeaderData( col++,Qt::Horizontal,QVariant("all") );
-	model->setHeaderData( col++,Qt::Horizontal,QVariant("bin") );
-	model->setHeaderData( col++,Qt::Horizontal,QVariant("lib") );
-	model->setHeaderData( col++,Qt::Horizontal,QVariant("doc") );
-	model->setHeaderData( col++,Qt::Horizontal,QVariant("src") );
-	model->setHeaderData( col++,Qt::Horizontal,QVariant("Notes") );
 	for (i = packageList->begin(); i != packageList->end(); ++i) {
-		int col = 0;
-	  model->setData(model->index(row, col++), QVariant(i->Name()) );
-	  model->setData(model->index(row, col++), QVariant(i->Version()) );
-	  model->setData(model->index(row, col++), QVariant(" ") );
-	  model->setData(model->index(row, col++), QVariant(i->isInstalled(Package::BIN) ? " X " : "---") );
-	  model->setData(model->index(row, col++), QVariant(i->isInstalled(Package::LIB) ? " X " : "---") );
-	  model->setData(model->index(row, col++), QVariant(i->isInstalled(Package::DOC) ? " X " : "---") );
-	  model->setData(model->index(row, col++), QVariant(i->isInstalled(Package::SRC) ? " X " : "---") );
-	  model->setData(model->index(row, col++), QVariant("") );
-	  row++;
-	}
-}
-
-void PackageList::updateModelData(const QModelIndex &index)
-{
-	if (index.column() < 2)
-		return;
-	QString old = index.data().toString();
-	QString now;
-	if (index.column() == 2) {
-		if (old == "  ")
-			now = " I ";
-		else if (old == " I ")
-			now = " R ";
-		else if (old == " R ")
-			now = "  ";
-		model->setData(index, QVariant(now));
-	}
-/* not allowed at now 
-	else {
-		if (old == " X ")
-			now = " R ";
-		else if(old == "---")
-			now = " I ";
-		else if(old == " R ")
-			now = " X ";
-		else if(old == " I ")
-			now = "---";
-		model->setData(index, QVariant(now));
-	}	
-*/ 
-	// TODO: set required action in packageList
-}
-QStringList PackageList::getPackagesToInstall(QStandardItemModel *model)
-{
-	int row = 0;
-	QStringList packagesToInstall;
-	QList<Package>::iterator i;
-
-	for (i = packageList->begin(); i != packageList->end(); ++i) {
-	  if (model->data(model->index(row, 2)).toString() == " I ")
-	  	packagesToInstall << model->data(model->index(row, 0)).toString();
-		row++;
-	}
-	return packagesToInstall;
+		QStringList data; 
+		data << i->Name()
+			 << i->Version()
+			 << (i->isInstalled(Package::BIN) ? "x" : "")
+			 << (i->isInstalled(Package::LIB) ? "x" : "")
+			 << (i->isInstalled(Package::SRC) ? "x" : "")
+			 << (i->isInstalled(Package::DOC) ? "x" : "")
+			;			 
+     items.append(new QTreeWidgetItem((QTreeWidget*)0, data));
+    }
+ 	tree->insertTopLevelItems(0, items);
 }
 
 #include "packagelist.moc"

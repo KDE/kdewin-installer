@@ -56,7 +56,7 @@ int downloadPackageList()
 			return 1; 
 
 		// save into file
-		if (!packageList->writeToFile("packages.txt"))
+		if (!packageList->writeToFile())
 			return 1; 
 
 		// print list 
@@ -64,7 +64,7 @@ int downloadPackageList()
 	}
 	else {
 		// read list from file 
-		if (!packageList->readFromFile("packages.txt"))
+		if (!packageList->readFromFile())
 			return 1; 
 
 		// print list 
@@ -185,67 +185,15 @@ bool SettingsPage::isComplete()
     return !nameLineEdit->text().isEmpty() && !emailLineEdit->text().isEmpty();
 }
 
-#if 0
-#include "spinboxdelegate.h"
-
-SpinBoxDelegate::SpinBoxDelegate(QObject *parent)
-    : QItemDelegate(parent)
-{
-}
-
-QWidget *SpinBoxDelegate::createEditor(QWidget *parent,
-    const QStyleOptionViewItem &/* option */,
-    const QModelIndex &/* index */) const
-{
-    QSpinBox *editor = new QSpinBox(parent);
-    editor->setMinimum(0);
-    editor->setMaximum(100);
-    editor->installEventFilter(const_cast<SpinBoxDelegate*>(this));
-
-    return editor;
-}
-
-void SpinBoxDelegate::setEditorData(QWidget *editor,
-                                        const QModelIndex &index) const
-{
-    int value = index.model()->data(index, Qt::DisplayRole).toInt();
-
-    QSpinBox *spinBox = static_cast<QSpinBox*>(editor);
-    spinBox->setValue(value);
-}
-
-void SpinBoxDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
-                                   const QModelIndex &index) const
-{
-    QSpinBox *spinBox = static_cast<QSpinBox*>(editor);
-    spinBox->interpretText();
-    int value = spinBox->value();
-
-    model->setData(index, value);
-}
-
-void SpinBoxDelegate::updateEditorGeometry(QWidget *editor,
-    const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
-{
-    editor->setGeometry(option.rect);
-}
-#endif
 
 PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
     : InstallWizardPage(wizard)
 {
     topLabel = new QLabel(tr("<center><b>Please select the required packages</b></center>"));
 
-    tree  = new QTreeView();
-    tree->setWindowTitle(QObject::tr("Dir View"));
-		packageList->setModelData(tree);
-    //connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
-    connect(tree,SIGNAL(clicked(QModelIndex &)),this,SLOT(clicked(QModelIndex &)));
-
-
-
-//    SpinBoxDelegate *delegate = new SpinBoxDelegate();
-//    tree->setItemDelegate(delegate);
+	QTreeWidget *tree = new QTreeWidget();
+	packageList->setWidgetData(tree);
+    connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(topLabel);
@@ -253,12 +201,11 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
     setLayout(layout);
 }
 
-void PackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
+void WizardPage::itemClicked(QTreeWidgetItem *item, int column)
 {
-	qDebug("itemClicked %d",column);
-	item->setCheckState(column,item->checkState(0) == Qt::Checked ? Qt::Unchecked : Qt::Checked);
-	item->setText(column,"sdsdsd");
-	item->setText(column,"sdsdsd");
+	if (column < 2)
+		return;
+	item->setCheckState(column,item->checkState(column) == Qt::Checked ? Qt::Unchecked : Qt::Checked);
 }
 
 void PackageSelectorPage::clicked(const QModelIndex &index)

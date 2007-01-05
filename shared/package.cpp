@@ -22,7 +22,6 @@
 ****************************************************************************/
 
 #include "package.h"
-#include "packagelist.h"
 
 QString Package::baseURL = "http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/";
 

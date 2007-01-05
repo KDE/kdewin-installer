@@ -25,13 +25,12 @@
 #define PACKAGELIST_H
 
 #include <QObject>
-#include <QTreeView>
-
 #include "package.h"
 
-class QStandardItemModel;
 class Downloader;
 class InstallerBase;
+class QTreeWidget;
+
 
 QStringList filterPackageFiles(const QStringList &list,const QString &mode);
 
@@ -56,18 +55,13 @@ class PackageList : public QObject {
 		QStringList getFilesForDownload(QString const &pkgName);
 		bool updatePackage(Package &pkg);
 		int size();
-		/// write content to model/view container
-		void writeToModel(QStandardItemModel *model);
 
 		// 0.5.3
  		bool hasConfig();
     bool downloadPackage(const QString &pkgName);
     bool installPackage(const QString &pkgName);
-    QStandardItemModel *PackageList::getModel();
-    void setModelData(QTreeView *tree);
-    void updateModelData(const QModelIndex &index);
-		QStringList getPackagesToInstall(QStandardItemModel *model);
 
+    void setWidgetData(QTreeWidget *tree);
 
 	signals:
 		void loadedConfig();
@@ -80,7 +74,6 @@ class PackageList : public QObject {
 		QString configFile;
 		Downloader *downloader;
 		InstallerBase *installer;
-		QStandardItemModel *model;
 
 	friend class InstallerBase;		
 };

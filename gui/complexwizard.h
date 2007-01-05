@@ -32,6 +32,7 @@ class QHBoxLayout;
 class QPushButton;
 class QVBoxLayout;
 class WizardPage;
+class QTreeWidgetItem;
 
 class ComplexWizard : public QDialog
 {
@@ -78,6 +79,9 @@ public:
 
 signals:
     void completeStateChanged();
+
+public slots:
+	void itemClicked(QTreeWidgetItem *item, int column);
 };
 
 #endif
