@@ -398,7 +398,16 @@ void PackageList::itemClicked(QTreeWidgetItem *item, int column)
 		item->setCheckState(5,item->checkState(column));
 		item->setCheckState(6,item->checkState(column));
 	}
+}   
+
+void PackageList::installPackages(QTreeWidget *tree)
+{
+	for (int i = 0; i < tree->topLevelItemCount(); i++) {
+		QTreeWidgetItem *item = tree->topLevelItem(i);
+		qDebug("%s %s %d",item->text(0).toAscii().data(),item->text(1).toAscii().data(),item->checkState(2));
+	}
 }
+
 
 
 #include "packagelist.moc"

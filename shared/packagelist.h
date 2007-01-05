@@ -61,8 +61,11 @@ class PackageList : public QObject {
     bool downloadPackage(const QString &pkgName);
     bool installPackage(const QString &pkgName);
 
+		// Selector Page related methods
     void setWidgetData(QTreeWidget *tree);
 		void itemClicked(QTreeWidgetItem *item, int column);
+		void installPackages(QTreeWidget *tree);
+
 		
 	signals:
 		void loadedConfig();
