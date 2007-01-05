@@ -347,8 +347,11 @@ int PackageList::size()
 
 void PackageList::setWidgetData(QTreeWidget *tree)
 {
- 	tree->setColumnCount(8);
  	QStringList labels;
+ 	QList<QTreeWidgetItem *> items;
+	QList<Package>::iterator i;
+	QTreeWidgetItem *item;
+
  	labels 
  	<< "Package"
 	<< "Version"
@@ -359,9 +362,22 @@ void PackageList::setWidgetData(QTreeWidget *tree)
 	<< "doc"
 	<< "Notes";
 
+ 	tree->setColumnCount(8);
  	tree->setHeaderLabels(labels);
- 	QList<QTreeWidgetItem *> items;
-	QList<Package>::iterator i;
+
+	// adding top level items 
+ 	QList<QTreeWidgetItem *> categoryList;
+	QStringList categories;
+	categories << "windbus" << "gnuwin32" << "python" << "perl" << "KDE-i18n" << "KDE4";
+
+	foreach(QString aCategory, categories) {
+		QTreeWidgetItem *category = new QTreeWidgetItem((QTreeWidget*)0, QStringList(aCategory));
+		categoryList.append(category);
+	}
+
+	tree->insertTopLevelItems(0,categoryList);
+	
+	// adding sub items 
 	for (i = packageList->begin(); i != packageList->end(); ++i) {
 		QStringList data; 
 		data << i->Name()
@@ -372,19 +388,31 @@ void PackageList::setWidgetData(QTreeWidget *tree)
 			 << (i->isInstalled(Package::SRC) ? "x" : "")
 			 << (i->isInstalled(Package::DOC) ? "x" : "")
 			;			 
-		QTreeWidgetItem *a = new QTreeWidgetItem((QTreeWidget*)0, data);
+		QTreeWidgetItem *item = new QTreeWidgetItem(categoryList.at(1), data);
 /*		if (i->isInstalled(Package::BIN))
-			a->setCheckState(2,Qt::Checked);
+			item->setCheckState(2,Qt::Checked);
 		if (i->isInstalled(Package::LIB))
-			a->setCheckState(3,Qt::Checked);
+			item->setCheckState(3,Qt::Checked);
 		if (i->isInstalled(Package::SRC))
-			a->setCheckState(4,Qt::Checked);
+			item->setCheckState(4,Qt::Checked);
 		if (i->isInstalled(Package::DOC))
-			a->setCheckState(5,Qt::Checked);
+			item->setCheckState(5,Qt::Checked);
 */
-		items.append(a);
+
+//		items.append(item);
   }
- 	tree->insertTopLevelItems(0, items);
+// 	tree->insertTopLevelItems(0,items);
+
+	QStringList data; 
+	data.clear(); 
+	data << "kdelibs" << "4.1.2";
+	item = new QTreeWidgetItem(categoryList.at(5), data);
+	data.clear(); 
+	data << "kdebase" << "4.1.2";
+	item = new QTreeWidgetItem(categoryList.at(5), data);
+	data.clear(); 
+	data << "kdepim" << "4.1.2";
+	item = new QTreeWidgetItem(categoryList.at(5), data);
 }
 
 void PackageList::itemClicked(QTreeWidgetItem *item, int column)
@@ -400,14 +428,37 @@ void PackageList::itemClicked(QTreeWidgetItem *item, int column)
 	}
 }   
 
-void PackageList::installPackages(QTreeWidget *tree)
+bool PackageList::installPackages(QTreeWidget *tree)
 {
 	for (int i = 0; i < tree->topLevelItemCount(); i++) {
 		QTreeWidgetItem *item = tree->topLevelItem(i);
-		qDebug("%s %s %d",item->text(0).toAscii().data(),item->text(1).toAscii().data(),item->checkState(2));
+		// qDebug("%s %s %d",item->text(0).toAscii().data(),item->text(1).toAscii().data(),item->checkState(2));
+		if (item->checkState(2) == Qt::Checked) {
+			if (!installPackage(item->text(0)))
+			qDebug() << "could not install package";
+		}
 	}
+	return true;
 }
 
+
+bool PackageList::downloadPackages(QTreeWidget *tree)
+{
+	for (int i = 0; i < tree->topLevelItemCount(); i++) {
+		QTreeWidgetItem *item = tree->topLevelItem(i);
+		if (item->text(0) == "gnuwin32") {
+			for (int j = 0; j < item->childCount(); j++) {
+				QTreeWidgetItem *child = item->child(j);
+				qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
+				if (child->checkState(2) == Qt::Checked) {
+					if (!downloadPackage(child->text(0)))
+						qDebug() << "could not download package";
+				}
+			}
+		}
+	}
+	return true;
+}
 
 
 #include "packagelist.moc"
