@@ -371,8 +371,17 @@ void PackageList::setWidgetData(QTreeWidget *tree)
 			 << (i->isInstalled(Package::SRC) ? "x" : "")
 			 << (i->isInstalled(Package::DOC) ? "x" : "")
 			;			 
-     items.append(new QTreeWidgetItem((QTreeWidget*)0, data));
-    }
+		QTreeWidgetItem *a = new QTreeWidgetItem((QTreeWidget*)0, data);
+		if (i->isInstalled(Package::BIN))
+			a->setCheckState(2,Qt::Checked);
+		if (i->isInstalled(Package::LIB))
+			a->setCheckState(3,Qt::Checked);
+		if (i->isInstalled(Package::SRC))
+			a->setCheckState(4,Qt::Checked);
+		if (i->isInstalled(Package::DOC))
+			a->setCheckState(5,Qt::Checked);
+		items.append(a);
+  }
  	tree->insertTopLevelItems(0, items);
 }
 
