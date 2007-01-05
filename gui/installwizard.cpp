@@ -45,12 +45,13 @@ Downloader *downloader;
 
 int downloadPackageList()
 {
-	if (!QFile::exists("packages.txt")) {
-    QByteArray ba;
+	installer->setRoot("packages");
+	if ( !packageList->hasConfig() ) {
+    	QByteArray ba;
 		// download package list 
 		downloader->start("http://sourceforge.net/project/showfiles.php?group_id=23617", ba);
 
-    // load and parse 
+    	// load and parse 
 		if (!packageList->readHTMLFromByteArray(ba))
 			return 1; 
 
@@ -60,33 +61,14 @@ int downloadPackageList()
 
 		// print list 
 		packageList->listPackages("Package List");
-
-		// remove temporay files 
-		QFile::remove("packages.html");
 	}
 	else {
 		// read list from file 
 		if (!packageList->readFromFile("packages.txt"))
 			return 1; 
 
-		if ( !QFile::exists("bin\\unzip.exe") ) {
-			QStringList files = packageList->getFilesForDownload("unzip");
-			files = filterPackageFiles(files,"URL");
-		  for (int j = 0; j < files.size(); ++j)
-				downloader->start(files.at(j));
-		}
-		
 		// print list 
 		packageList->listPackages("Package List");
-
-		if ( !QFile::exists("bin\\unzip.exe") ) {
-			qDebug() 	<< "Please unpack " 
-							<< packageList->getPackage("unzip")->getFileName(Package::BIN) 
-							<< " into the current dir"
-			<< "\n then restart installer to download and install additional packages."
-			<< "\n\n" <<" ..." << "<package-name> <package-name>";
-			return 0;
-		}
 	}
     return 1;
 }
@@ -106,8 +88,8 @@ InstallWizard::InstallWizard(QWidget *parent)
     resize(480, 200);
 
     packageList = new PackageList();
-		installer = new Installer(packageList);
-		downloader = new Downloader(/*blocking=*/ true,progressBar);
+	installer = new Installer(packageList);
+	downloader = new Downloader(/*blocking=*/ true,progressBar);
 }
 
 TitlePage::TitlePage(InstallWizard *wizard)
