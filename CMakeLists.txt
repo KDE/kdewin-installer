@@ -48,6 +48,8 @@ set(installer_shared_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shared)
 
 include_directories(${quazip_INCLUDE_DIR} ${installer_shared_INCLUDE_DIR})
 
+add_definitions(-DINCLUDE_DOC_AND_SRC_PACKAGES)
 # our targets
 add_subdirectory(console)
 add_subdirectory(gui)
+add_subdirectory(tests)
