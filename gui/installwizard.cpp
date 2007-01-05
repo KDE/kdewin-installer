@@ -191,8 +191,8 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
 {
     topLabel = new QLabel(tr("<center><b>Please select the required packages</b></center>"));
 
-	QTreeWidget *tree = new QTreeWidget();
-	packageList->setWidgetData(tree);
+    QTreeWidget *tree = new QTreeWidget();
+    packageList->setWidgetData(tree);
     connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
 
     QVBoxLayout *layout = new QVBoxLayout;
@@ -203,14 +203,7 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
 
 void WizardPage::itemClicked(QTreeWidgetItem *item, int column)
 {
-	if (column < 2)
-		return;
-	item->setCheckState(column,item->checkState(column) == Qt::Checked ? Qt::Unchecked : Qt::Checked);
-}
-
-void PackageSelectorPage::clicked(const QModelIndex &index)
-{
-	qDebug("clicked %d",index);
+    packageList->itemClicked(item,column);
 }
 
 void PackageSelectorPage::resetPage()

@@ -352,11 +352,11 @@ void PackageList::setWidgetData(QTreeWidget *tree)
  	labels 
  	<< "Package"
 	<< "Version"
+	<< "all"
 	<< "bin"
 	<< "lib"
 	<< "src"
 	<< "doc"
-	<< "all"
 	<< "Notes";
 
  	tree->setHeaderLabels(labels);
@@ -366,13 +366,14 @@ void PackageList::setWidgetData(QTreeWidget *tree)
 		QStringList data; 
 		data << i->Name()
 			 << i->Version()
+			 << ""
 			 << (i->isInstalled(Package::BIN) ? "x" : "")
 			 << (i->isInstalled(Package::LIB) ? "x" : "")
 			 << (i->isInstalled(Package::SRC) ? "x" : "")
 			 << (i->isInstalled(Package::DOC) ? "x" : "")
 			;			 
 		QTreeWidgetItem *a = new QTreeWidgetItem((QTreeWidget*)0, data);
-		if (i->isInstalled(Package::BIN))
+/*		if (i->isInstalled(Package::BIN))
 			a->setCheckState(2,Qt::Checked);
 		if (i->isInstalled(Package::LIB))
 			a->setCheckState(3,Qt::Checked);
@@ -380,9 +381,24 @@ void PackageList::setWidgetData(QTreeWidget *tree)
 			a->setCheckState(4,Qt::Checked);
 		if (i->isInstalled(Package::DOC))
 			a->setCheckState(5,Qt::Checked);
+*/
 		items.append(a);
   }
  	tree->insertTopLevelItems(0, items);
 }
+
+void PackageList::itemClicked(QTreeWidgetItem *item, int column)
+{
+	if (column < 2)
+		return;
+	item->setCheckState(column,item->checkState(column) == Qt::Checked ? Qt::Unchecked : Qt::Checked);
+	if (column == 2) {
+		item->setCheckState(3,item->checkState(column));
+		item->setCheckState(4,item->checkState(column));
+		item->setCheckState(5,item->checkState(column));
+		item->setCheckState(6,item->checkState(column));
+	}
+}
+
 
 #include "packagelist.moc"

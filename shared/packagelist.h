@@ -30,7 +30,7 @@
 class Downloader;
 class InstallerBase;
 class QTreeWidget;
-
+class QTreeWidgetItem;
 
 QStringList filterPackageFiles(const QStringList &list,const QString &mode);
 
@@ -62,7 +62,8 @@ class PackageList : public QObject {
     bool installPackage(const QString &pkgName);
 
     void setWidgetData(QTreeWidget *tree);
-
+		void itemClicked(QTreeWidgetItem *item, int column);
+		
 	signals:
 		void loadedConfig();
 	

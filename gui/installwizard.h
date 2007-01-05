@@ -116,12 +116,9 @@ public:
 
 public slots: 
 	void itemClicked(QTreeWidgetItem *item, int column);
-	void clicked(const QModelIndex &index);
 
 private:
     QLabel *topLabel;
-    QStandardItemModel *model;
-//    QDirModel *model;
     QTreeWidget *tree;
 
 };
