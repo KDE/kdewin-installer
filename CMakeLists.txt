@@ -2,10 +2,8 @@ project(kdewin-installer)
 set (VERSION 0.1)
 
 find_package(Qt4 REQUIRED)
-#find_package(ZLIB REQUIRED)
 
 # we just need zlib include dir, linking to zlib is not needed
-#${ZLIB_INCLUDE_DIR}
 include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${QT_INCLUDES} ${CMAKE_SOURCE_DIR}/3rdparty/zlib)
 
 # get quazip_SOURCES/quazip_HEADERS/quazip_INCLUDE_DIR
