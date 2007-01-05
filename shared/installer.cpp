@@ -107,8 +107,7 @@ bool InstallerBase::unzipFile(const QString &destpath, const QString &zipFile)
     QFileInfo fi(path.filePath(info.name));
 
     // is it's a subdir ?
-	// if(info.compressedSize == 0 && info.uncompressedSize == 0) 
-	  {
+	if(info.compressedSize == 0 && info.uncompressedSize == 0) {
       if(fi.exists()) {
         if(!fi.isDir()) {
           setError("Can not create directory %s", fi.absoluteFilePath().toAscii().data());
@@ -117,12 +116,21 @@ bool InstallerBase::unzipFile(const QString &destpath, const QString &zipFile)
         continue;
       }
       if(!path.mkpath(fi.absoluteFilePath())) {
-        setError("Can not create directory %s", fi.absoluteFilePath().toAscii().data());
+        setError("Can not create directory %s", fi.absolutePath().toAscii().data());
         return false;
       }
       continue;
     }
-
+    // some archives does not have directory entries 
+  else {
+    if(!path.exists(fi.absolutePath())) {
+      setError("create directory %s", fi.absolutePath().toAscii().data());
+      if (!path.mkpath(fi.absolutePath())) {
+        setError("Can not create directory %s", fi.absolutePath().toAscii().data());
+        return false;
+      }
+    }
+  }
     // open file
     if(!file.open(QIODevice::ReadOnly)) {
       setError("Can not open file %s from zip file %s", info.name.toAscii().data(), zipFile.toAscii().data());
@@ -136,7 +144,7 @@ bool InstallerBase::unzipFile(const QString &destpath, const QString &zipFile)
     // create new file
     QFile newFile(fi.absoluteFilePath());
     if(!newFile.open(QIODevice::WriteOnly)) {
-      setError("Can not creating file %s ", info.name.toAscii().data());
+      setError("Can not creating file %s ", fi.absoluteFilePath().toAscii().data());
       return false;
     }
 
