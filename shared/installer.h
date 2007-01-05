@@ -24,12 +24,13 @@
 #define INSTALLER_H
 
 class PackageList;
+class InstallerProgress;
 
 class InstallerBase : public QObject {
 	Q_OBJECT
 
 	public:
-		InstallerBase(PackageList *packageList);
+		InstallerBase(PackageList *packageList, InstallerProgress *progress=0);
 		virtual ~InstallerBase();
 		
 		virtual bool install(const QString &fileName /*, const QString &destdir=""*/) = 0;
@@ -52,6 +53,7 @@ class InstallerBase : public QObject {
 		PackageList *packageList;
 		QString root;
 		QString configFile;
+		InstallerProgress *m_progress;
 };
 
 class InstallerGNUWin32 : public InstallerBase {

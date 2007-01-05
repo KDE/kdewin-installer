@@ -25,7 +25,7 @@
 
 #include "installer.h"
 #include "packagelist.h"
-#include "downloaderprogress.h"
+#include "installerprogress.h"
 #include "quazip.h"
 #include "quazipfile.h"
 
@@ -34,8 +34,8 @@
 # define __PRETTY_FUNCTION__ __FUNCTION__
 #endif
 
-InstallerBase::InstallerBase(PackageList *_packageList)
-	: QObject()
+InstallerBase::InstallerBase(PackageList *_packageList, InstallerProgress *_progress)
+	: QObject(), m_progress(_progress)
 {
 	root = ".";
 	packageList = _packageList;
@@ -93,11 +93,10 @@ bool InstallerBase::unzipFile(const QString &destpath, const QString &zipFile)
 
   QuaZipFile file(&z);
   QuaZipFileInfo info;
-#ifndef USE_GUI
-  DownloaderProgress progress(this);
-  progress.setMaximum(z.getEntriesCount());
-  progress.show();
-#endif
+  if (m_progress) {
+  	m_progress->setMaximum(z.getEntriesCount());
+  	m_progress->show();
+  }
 
   for(bool bOk = z.goToFirstFile(); bOk; bOk = z.goToNextFile()) {
     // get file informations
@@ -141,9 +140,9 @@ bool InstallerBase::unzipFile(const QString &destpath, const QString &zipFile)
       return false;
     }
 
-#ifndef USE_GUI
-	progress.setTitle(tr("Installing %1 ").arg(newFile.fileName().toAscii().data()));
-#endif
+  	if (m_progress) {
+		m_progress->setTitle(tr("Installing %1 ").arg(newFile.fileName().toAscii().data()));
+	}
     // copy data
     // FIXME: check for not that huge filesize ?
     qint64 iBytesRead;
