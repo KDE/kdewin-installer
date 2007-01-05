@@ -184,11 +184,13 @@ void InstallerBase::setError(QByteArray format, QByteArray p1, QByteArray p2)
  
 
 // InstallerGNUWin32
-InstallerGNUWin32::InstallerGNUWin32(PackageList *packageList) : InstallerBase(packageList)
+
+InstallerGNUWin32::InstallerGNUWin32(PackageList *packageList, InstallerProgress *progress)  
+ : InstallerBase(packageList,progress) 
 {
 }
 
-InstallerGNUWin32::~InstallerGNUWin32()
+InstallerGNUWin32::~InstallerGNUWin32()  
 {
 }
 

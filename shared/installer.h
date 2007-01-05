@@ -58,7 +58,7 @@ class InstallerBase : public QObject {
 
 class InstallerGNUWin32 : public InstallerBase {
 	public:
-		InstallerGNUWin32(PackageList *packageList); 
+		InstallerGNUWin32(PackageList *packageList, InstallerProgress *progress=0); 
 		virtual ~InstallerGNUWin32();
 
 		virtual bool install(const QString &fileName /*, const QString &destdir=""*/);
