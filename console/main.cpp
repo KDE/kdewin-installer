@@ -24,6 +24,7 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QFile>
+#include <QStringList>
 
 #include "packagelist.h"
 #include "downloader.h"
