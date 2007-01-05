@@ -57,22 +57,22 @@ class PackageList : public QObject {
 		int size();
 
 		// 0.5.3
- 		bool hasConfig();
-    bool downloadPackage(const QString &pkgName);
-    bool installPackage(const QString &pkgName);
+		bool hasConfig();
+		bool downloadPackage(const QString &pkgName);
+		bool installPackage(const QString &pkgName);
 
 		// Selector Page related methods
-    void setWidgetData(QTreeWidget *tree);
+		void setWidgetData(QTreeWidget *tree);
 		void itemClicked(QTreeWidgetItem *item, int column);
-		void installPackages(QTreeWidget *tree);
-
+		bool downloadPackages(QTreeWidget *tree);
+		bool installPackages(QTreeWidget *tree);
 		
 	signals:
 		void loadedConfig();
 	
-  private:
+	private:
 		bool readHTMLInternal(QIODevice *ioDev, SiteType type);
-  private: 
+	private: 
 		QList<Package> *packageList;
 		QString root; 
 		QString configFile;
