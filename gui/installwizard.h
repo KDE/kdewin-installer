@@ -33,11 +33,11 @@ class QCheckBox;
 class QLabel;
 class QLineEdit;
 class QRadioButton;
-class SettingsPage;
-class FinishPage;
-class PackageSelectorPage;
-//class DetailsPage;
 class TitlePage;
+class PackageSelectorPage;
+class InstallPage;
+class DownloadPage;
+class FinishPage;
 
 class InstallWizard : public ComplexWizard
 {
@@ -46,16 +46,16 @@ public:
 
 private:
     TitlePage *titlePage;
-    SettingsPage *settingsPage;
     PackageSelectorPage *packageSelectorPage;
-//    DetailsPage *detailsPage;
+    DownloadPage *downloadPage;
+    InstallPage *installPage;
     FinishPage *finishPage;
 
-//    friend class DetailsPage;
-    friend class SettingsPage;
-    friend class FinishPage;
-    friend class PackageSelectorPage;
     friend class TitlePage;
+    friend class PackageSelectorPage;
+    friend class DownloadPage;
+    friend class InstallPage;
+    friend class FinishPage;
 };
 
 class InstallWizardPage : public WizardPage
@@ -82,26 +82,6 @@ private:
 //    QRadioButton *downloadAndInstallRadioButton;
 };
 
-class SettingsPage : public InstallWizardPage
-{
-public:
-    SettingsPage(InstallWizard *wizard);
-
-    void resetPage();
-    WizardPage *nextPage();
-    bool isComplete();
-
-private:
-    QLabel *topLabel;
-    QLabel *nameLabel;
-    QLabel *emailLabel;
-    QLabel *bottomLabel;
-    QLineEdit *nameLineEdit;
-    QLineEdit *emailLineEdit;
-};
-
-
-class QStandardItemModel;
 class QTreeWidget;
 class QTreeWidgetItem;
 
@@ -115,18 +95,16 @@ public:
     bool isComplete();
 
 public slots: 
-	void itemClicked(QTreeWidgetItem *item, int column);
+    void itemClicked(QTreeWidgetItem *item, int column);
 
 private:
     QLabel *topLabel;
-    QTreeWidget *tree;
-
 };
-/*
-class DetailsPage : public InstallWizardPage
+
+class DownloadPage : public InstallWizardPage
 {
 public:
-    DetailsPage(InstallWizard *wizard);
+    DownloadPage(InstallWizard *wizard);
 
     void resetPage();
     WizardPage *nextPage();
@@ -134,14 +112,20 @@ public:
 
 private:
     QLabel *topLabel;
-    QLabel *companyLabel;
-    QLabel *emailLabel;
-    QLabel *postalLabel;
-    QLineEdit *companyLineEdit;
-    QLineEdit *emailLineEdit;
-    QLineEdit *postalLineEdit;
 };
-*/
+
+class InstallPage : public InstallWizardPage
+{
+public:
+    InstallPage(InstallWizard *wizard);
+
+    void resetPage();
+    WizardPage *nextPage();
+    bool isComplete();
+
+private:
+    QLabel *topLabel;
+};
 
 class FinishPage : public InstallWizardPage
 {

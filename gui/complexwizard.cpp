@@ -26,6 +26,7 @@
 
 #include "complexwizard.h"
 #include "downloaderprogress.h"
+#include "installerprogress.h"
 
 ComplexWizard::ComplexWizard(QWidget *parent)
     : QDialog(parent)
@@ -36,6 +37,7 @@ ComplexWizard::ComplexWizard(QWidget *parent)
     nextButton = new QPushButton(tr("Next >"));
     finishButton = new QPushButton(tr("&Finish"));
     progressBar = new DownloaderProgress(this);
+    instProgressBar = new InstallerProgress(this);
 
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
     connect(backButton, SIGNAL(clicked()), this, SLOT(backButtonClicked()));

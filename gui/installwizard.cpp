@@ -34,6 +34,7 @@
 #include "installwizard.h"
 #include "downloader.h"
 #include "installer.h"
+#include "installerprogress.h"
 #include "packagelist.h"
 
 extern InstallWizard *wizard;
@@ -42,6 +43,8 @@ extern InstallWizard *wizard;
 PackageList *packageList;
 Installer *installer;
 Downloader *downloader;
+QTreeWidget *tree;
+InstallerProgress *instProgress;
 
 int downloadPackageList()
 {
@@ -77,19 +80,15 @@ InstallWizard::InstallWizard(QWidget *parent)
     : ComplexWizard(parent)
 {
     titlePage = new TitlePage(this);
-    settingsPage = new SettingsPage(this);
 //    packageSelectorPage = new PackageSelectorPage(this);
-//    detailsPage = new DetailsPage(this);
-    finishPage = new FinishPage(this);
-
     setFirstPage(titlePage);
 
     setWindowTitle(tr("KDE Installer"));
     resize(480, 200);
 
-    packageList = new PackageList();
-	installer = new Installer(packageList);
-	downloader = new Downloader(/*blocking=*/ true,progressBar);
+    downloader = new Downloader(/*blocking=*/ true,progressBar);
+    packageList = new PackageList(downloader);
+    installer = new Installer(packageList,instProgressBar );
 }
 
 TitlePage::TitlePage(InstallWizard *wizard)
@@ -130,61 +129,7 @@ WizardPage *TitlePage::nextPage()
 	wizard->nextButton->setEnabled(true);
   wizard->packageSelectorPage = new PackageSelectorPage(wizard);
 	return wizard->packageSelectorPage;
-//	return wizard->settingsPage;
 }
-
-SettingsPage::SettingsPage(InstallWizard *wizard)
-    : InstallWizardPage(wizard)
-{
-    topLabel = new QLabel(tr("<center><b>Evaluate Super Product One"
-                             "</b></center>"));
-
-    nameLabel = new QLabel(tr("&Name:"));
-    nameLineEdit = new QLineEdit;
-    nameLabel->setBuddy(nameLineEdit);
-    setFocusProxy(nameLineEdit);
-
-    emailLabel = new QLabel(tr("&Email address:"));
-    emailLineEdit = new QLineEdit;
-    emailLabel->setBuddy(emailLineEdit);
-
-    bottomLabel = new QLabel(tr("Please fill in both fields.\nThis will "
-                                "entitle you to a 30-day evaluation."));
-
-    connect(nameLineEdit, SIGNAL(textChanged(QString)),
-            this, SIGNAL(completeStateChanged()));
-    connect(emailLineEdit, SIGNAL(textChanged(QString)),
-            this, SIGNAL(completeStateChanged()));
-
-    QGridLayout *layout = new QGridLayout;
-    layout->addWidget(topLabel, 0, 0, 1, 2);
-    layout->setRowMinimumHeight(1, 10);
-    layout->addWidget(nameLabel, 2, 0);
-    layout->addWidget(nameLineEdit, 2, 1);
-    layout->addWidget(emailLabel, 3, 0);
-    layout->addWidget(emailLineEdit, 3, 1);
-    layout->setRowMinimumHeight(4, 10);
-    layout->addWidget(bottomLabel, 5, 0, 1, 2);
-    layout->setRowStretch(6, 1);
-    setLayout(layout);
-}
-
-void SettingsPage::resetPage()
-{
-    nameLineEdit->clear();
-    emailLineEdit->clear();
-}
-
-WizardPage *SettingsPage::nextPage()
-{
-    return wizard->packageSelectorPage;
-}
-
-bool SettingsPage::isComplete()
-{
-    return !nameLineEdit->text().isEmpty() && !emailLineEdit->text().isEmpty();
-}
-
 
 PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
     : InstallWizardPage(wizard)
@@ -212,8 +157,8 @@ void PackageSelectorPage::resetPage()
 
 WizardPage *PackageSelectorPage::nextPage()
 {
-	packageList->installPackages(tree);
-	return wizard->finishPage;
+    wizard->downloadPage = new DownloadPage(wizard);
+    return wizard->downloadPage;
 }
 
 bool PackageSelectorPage::isComplete()
@@ -221,116 +166,80 @@ bool PackageSelectorPage::isComplete()
     return true;
 }
 
-/*
-DetailsPage::DetailsPage(InstallWizard *wizard)
+DownloadPage::DownloadPage(InstallWizard *wizard)
     : InstallWizardPage(wizard)
 {
-    topLabel = new QLabel(tr("<center><b>Fill in your details</b></center>"));
+    topLabel = new QLabel(tr("<center><b>Downloading packages</b></center>"));
 
-    companyLabel = new QLabel(tr("&Company name:"));
-    companyLineEdit = new QLineEdit;
-    companyLabel->setBuddy(companyLineEdit);
-    setFocusProxy(companyLineEdit);
-
-    emailLabel = new QLabel(tr("&Email address:"));
-    emailLineEdit = new QLineEdit;
-    emailLabel->setBuddy(emailLineEdit);
-
-    postalLabel = new QLabel(tr("&Postal address:"));
-    postalLineEdit = new QLineEdit;
-    postalLabel->setBuddy(postalLineEdit);
-
-    connect(companyLineEdit, SIGNAL(textChanged(QString)),
-            this, SIGNAL(completeStateChanged()));
-    connect(emailLineEdit, SIGNAL(textChanged(QString)),
-            this, SIGNAL(completeStateChanged()));
-    connect(postalLineEdit, SIGNAL(textChanged(QString)),
-            this, SIGNAL(completeStateChanged()));
-
-    QGridLayout *layout = new QGridLayout;
-    layout->addWidget(topLabel, 0, 0, 1, 2);
-    layout->setRowMinimumHeight(1, 10);
-    layout->addWidget(companyLabel, 2, 0);
-    layout->addWidget(companyLineEdit, 2, 1);
-    layout->addWidget(emailLabel, 3, 0);
-    layout->addWidget(emailLineEdit, 3, 1);
-    layout->addWidget(postalLabel, 4, 0);
-    layout->addWidget(postalLineEdit, 4, 1);
-    layout->setRowStretch(5, 1);
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(topLabel);
     setLayout(layout);
 }
 
-void DetailsPage::resetPage()
+void DownloadPage::resetPage()
 {
-    companyLineEdit->clear();
-    emailLineEdit->clear();
-    postalLineEdit->clear();
 }
 
-WizardPage *DetailsPage::nextPage()
+WizardPage *DownloadPage::nextPage()
 {
+/*
+    wizard->installPage = new InstallPage(wizard);
+    return wizard->installPage;
+*/
+    wizard->finishPage = new FinishPage(wizard);
     return wizard->finishPage;
 }
 
-bool DetailsPage::isComplete()
+bool DownloadPage::isComplete()
 {
-    return !companyLineEdit->text().isEmpty()
-           && !emailLineEdit->text().isEmpty()
-           && !postalLineEdit->text().isEmpty();
+    packageList->downloadPackages(tree);
+    packageList->installPackages(tree);
+    // here the finish page should be called directly 
+		return 1;
 }
-*/
+
+InstallPage::InstallPage(InstallWizard *wizard)
+    : InstallWizardPage(wizard)
+{
+    topLabel = new QLabel(tr("<center><b>Installing packages</b></center>"));
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(topLabel);
+    setLayout(layout);
+}
+
+void InstallPage::resetPage()
+{
+}
+
+WizardPage *InstallPage::nextPage()
+{
+    wizard->finishPage = new FinishPage(wizard);
+    return wizard->finishPage;
+}
+
+bool InstallPage::isComplete()
+{
+		return packageList->installPackages(tree);
+}
 
 FinishPage::FinishPage(InstallWizard *wizard)
     : InstallWizardPage(wizard)
 {
-    topLabel = new QLabel(tr("<center><b>Complete your registration"
+    topLabel = new QLabel(tr("<center><b>Installation finished"
                              "</b></center>"));
-
-    bottomLabel = new QLabel;
-    bottomLabel->setWordWrap(true);
-
-    agreeCheckBox = new QCheckBox(tr("I agree to the terms and conditions of "
-                                     "the license"));
-    setFocusProxy(agreeCheckBox);
-
-    connect(agreeCheckBox, SIGNAL(toggled(bool)),
-            this, SIGNAL(completeStateChanged()));
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(topLabel);
-    layout->addSpacing(10);
-    layout->addWidget(bottomLabel);
-    layout->addWidget(agreeCheckBox);
     layout->addStretch(1);
     setLayout(layout);
 }
 
 void FinishPage::resetPage()
 {
-    QString licenseText;
-
-    if (wizard->historyPages().contains(wizard->settingsPage)) {
-        licenseText = tr("Evaluation License Agreement: "
-                         "You can use this software for 30 days and make one "
-                         "back up, but you are not allowed to distribute it.");
-    } 
-/*
-    else if (wizard->historyPages().contains(wizard->detailsPage)) {
-        licenseText = tr("First-Time License Agreement: "
-                         "You can use this software subject to the license "
-                         "you will receive by email.");
-    } 
-*/
-    else {
-        licenseText = tr("Upgrade License Agreement: "
-                         "This software is licensed under the terms of your "
-                         "current license.");
-    }
-    bottomLabel->setText(licenseText);
-    agreeCheckBox->setChecked(false);
 }
 
 bool FinishPage::isComplete()
 {
-    return agreeCheckBox->isChecked();
+    return 1;
 }

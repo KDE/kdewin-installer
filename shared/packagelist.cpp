@@ -428,25 +428,30 @@ void PackageList::itemClicked(QTreeWidgetItem *item, int column)
 	}
 }   
 
-bool PackageList::installPackages(QTreeWidget *tree)
+bool PackageList::installPackages(QTreeWidget *tree,const QString &category)
 {
 	for (int i = 0; i < tree->topLevelItemCount(); i++) {
 		QTreeWidgetItem *item = tree->topLevelItem(i);
-		// qDebug("%s %s %d",item->text(0).toAscii().data(),item->text(1).toAscii().data(),item->checkState(2));
-		if (item->checkState(2) == Qt::Checked) {
-			if (!installPackage(item->text(0)))
-			qDebug() << "could not install package";
+		if (category.isEmpty() || item->text(0) == category) {
+			for (int j = 0; j < item->childCount(); j++) {
+				QTreeWidgetItem *child = item->child(j);
+				qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
+				if (child->checkState(2) == Qt::Checked) {
+					if (!installPackage(child->text(0)))
+						qDebug() << "could not download package";
+				}
+			}
 		}
 	}
 	return true;
 }
 
 
-bool PackageList::downloadPackages(QTreeWidget *tree)
+bool PackageList::downloadPackages(QTreeWidget *tree, const QString &category)
 {
 	for (int i = 0; i < tree->topLevelItemCount(); i++) {
 		QTreeWidgetItem *item = tree->topLevelItem(i);
-		if (item->text(0) == "gnuwin32") {
+		if (category.isEmpty() || item->text(0) == category) {
 			for (int j = 0; j < item->childCount(); j++) {
 				QTreeWidgetItem *child = item->child(j);
 				qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));

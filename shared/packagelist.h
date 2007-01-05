@@ -64,8 +64,8 @@ class PackageList : public QObject {
 		// Selector Page related methods
 		void setWidgetData(QTreeWidget *tree);
 		void itemClicked(QTreeWidgetItem *item, int column);
-		bool downloadPackages(QTreeWidget *tree);
-		bool installPackages(QTreeWidget *tree);
+		bool downloadPackages(QTreeWidget *tree, const QString &category="");
+		bool installPackages(QTreeWidget *tree, const QString &category="");
 		
 	signals:
 		void loadedConfig();

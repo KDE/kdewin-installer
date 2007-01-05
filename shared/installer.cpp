@@ -149,6 +149,7 @@ bool InstallerBase::unzipFile(const QString &destpath, const QString &zipFile)
     }
 
   	if (m_progress) {
+  	qDebug() << tr("Installing %1 ").arg(newFile.fileName().toAscii().data());
 		m_progress->setTitle(tr("Installing %1 ").arg(newFile.fileName().toAscii().data()));
 	}
     // copy data

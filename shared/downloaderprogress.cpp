@@ -59,6 +59,7 @@ DownloaderProgress::~DownloaderProgress()
 
 void DownloaderProgress::hide() 
 { 
+	qDebug() << __FUNCTION__;
 	titleLabel->hide(); 
 	statusLabel->hide(); 
 	progress->hide(); 
@@ -66,16 +67,19 @@ void DownloaderProgress::hide()
 
 void DownloaderProgress::setTitle(const QString &label) 
 { 
+	qDebug() << __FUNCTION__ << " " << label; 
 	titleLabel->setText(label); 
 }
 
 void DownloaderProgress::setStatus(const QString &label) 
 { 
+	qDebug() << __FUNCTION__ << " " << label;
 	statusLabel->setText(label); 
 }
 
 void DownloaderProgress::show() 
 { 
+	qDebug() << __FUNCTION__;
 	titleLabel->show(); 
 	statusLabel->show();
 	progress->show(); 

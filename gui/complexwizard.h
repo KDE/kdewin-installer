@@ -33,6 +33,8 @@ class QPushButton;
 class QVBoxLayout;
 class WizardPage;
 class QTreeWidgetItem;
+class DownloaderProgress;
+class InstallerProgress;
 
 class ComplexWizard : public QDialog
 {
@@ -46,6 +48,7 @@ public:
 protected:
     void setFirstPage(WizardPage *page);
     DownloaderProgress *progressBar;
+    InstallerProgress *instProgressBar;
     QPushButton *nextButton;
 
 private slots:
