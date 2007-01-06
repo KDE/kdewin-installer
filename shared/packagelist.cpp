@@ -205,37 +205,81 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, SiteType type)
 #ifdef DEBUG
 					qDebug() << "3"  << name;
 #endif
-					if (name.endsWith(".noarch.rpm")) {
-						// desktop-translations-10.1-41.3.noarch.rpm
-						// kde3-i18n-vi-3.5.5-67.9.noarch.rpm
-						QList<QByteArray> parts = name.replace(".noarch.rpm","").split('-');
-	#ifdef DEBUG
-	     				qDebug() << parts.size();
-						for (int i = 0; i < parts.size(); ++i) 
-	     					qDebug() << parts.at(i);
-	#endif
-						QList<QByteArray> patchlevel = parts.at(parts.size()-1).split('.');
-						QByteArray version = parts.at(parts.size()-2) + "-" + patchlevel.at(0) + "." + patchlevel.at(1);
-						pkg.setVersion(version);
-						if (parts.size() == 4) 
-							pkg.setName(parts.at(0) + '-' + parts.at(1));
-						else if (parts.size() == 5) 
-							pkg.setName(parts.at(0) + '-' + parts.at(1) + '-' + parts.at(2));
-					}
-					else if (name.endsWith(".win32.zip")) {
-						// iconv-1.9.2.win32.zip 
-						// aspell-0.50.3-3.win32.zip  
-						QList<QByteArray> parts = name.replace(".win32.zip","").split('-');
-						pkg.setName(parts.at(0));
-						pkg.setVersion(parts.at(1) + (parts.size() == 3 ? "-" + parts.at(2) : ""));
-					}
-					else if (name.endsWith(".zip")) {
-						// openssl-0.9.8d.zip  
-						// aspell-0.50.3-3.zip  
-						QList<QByteArray> parts = name.replace(".zip","").split('-');
-						pkg.setName(parts.at(0));
-						pkg.setVersion(parts.at(1) + (parts.size() == 3 ? "-" + parts.at(2) : ""));
-					}
+					// desktop-translations-10.1-41.3.noarch.rpm
+					// kde3-i18n-vi-3.5.5-67.9.noarch.rpm
+                    // aspell-0.50.3-3.zip 
+
+                    // first remove ending
+                    int idx = name.lastIndexOf('.');
+                    if(idx != -1)
+                        name = name.left(idx);
+
+                    // now split a little bit :)
+					QList<QByteArray> parts;
+					QList<QByteArray> tempparts = name.split('-');
+                    // and once more on '.'
+                    for (int i = 0; i < tempparts.size(); ++i) {
+                        parts << tempparts[i].split('.');
+                        parts << "-";
+                    }
+                    // not a correct named file
+                    if(parts.size() <= 1)
+                        continue;
+
+                    parts.removeLast();
+
+#ifdef _DEBUG
+     				qDebug() << parts.size();
+					for (int i = 0; i < parts.size(); ++i) 
+     					qDebug() << parts.at(i);
+#endif
+
+                    int iVersionLow = 0, iVersionHigh = parts.size() - 1;
+                    for(; iVersionHigh > 0; iVersionHigh --) {
+                        if(parts[iVersionHigh][0] >= '0' && parts[iVersionHigh][0] <= '9')
+                            break;
+                    }
+                    if(iVersionHigh == 0)
+                        continue;
+                    iVersionHigh++;
+                    for(; iVersionLow < iVersionHigh; iVersionLow++) {
+                        bool ok;
+                        parts[iVersionLow].toInt(&ok);
+                        if(ok)
+                            break;
+                    }
+                    if(iVersionLow == iVersionHigh)
+                        continue;
+
+                    QByteArray version, patchlevel;
+                    name = "";
+                    for(int i = 0; i < iVersionLow; i++) {
+                        if(parts[i] == "-")
+                            break;
+                        if(name.size())
+                            name += '.';
+                        name += parts[i];
+                    }
+                    for(; iVersionLow < iVersionHigh; iVersionLow++) {
+                        if(parts[iVersionLow] == "-")
+                            break;
+                        if(version.size())
+                            version += '.';
+                        version += parts[iVersionLow];
+                    }
+                    iVersionLow++;
+                    for(; iVersionLow < iVersionHigh; iVersionLow++) {
+                        if(parts[iVersionLow] == "-")
+                            break;
+                        if(patchlevel.size())
+                            patchlevel += '.';
+                        patchlevel += parts[iVersionLow];
+                    }
+
+					if(!patchlevel.isEmpty())
+                        version + "-" + patchlevel;
+                    pkg.setVersion(version);
+					pkg.setName(name);
 					addPackage(pkg);
 				}
 			}
