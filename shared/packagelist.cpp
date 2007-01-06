@@ -345,6 +345,7 @@ int PackageList::size()
 	return packageList->size();
 }
 
+#ifdef USE_GUI
 void PackageList::setWidgetData(QTreeWidget *tree)
 {
  	QStringList labels;
@@ -453,6 +454,6 @@ bool PackageList::downloadPackages(QTreeWidget *tree, const QString &category)
 	}
 	return true;
 }
-
+#endif
 
 #include "packagelist.moc"
