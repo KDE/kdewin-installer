@@ -230,7 +230,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, SiteType type)
 						pkg.setVersion(parts.at(1) + (parts.size() == 3 ? "-" + parts.at(2) : ""));
 					}
 					else if (name.endsWith(".zip")) {
-						// openssl 0.9.8d.zip  
+						// openssl-0.9.8d.zip  
 						// aspell-0.50.3-3.zip  
 						QList<QByteArray> parts = name.replace(".zip","").split('-');
 						pkg.setName(parts.at(0));
