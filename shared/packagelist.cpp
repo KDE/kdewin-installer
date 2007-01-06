@@ -205,21 +205,37 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, SiteType type)
 #ifdef DEBUG
 					qDebug() << "3"  << name;
 #endif
-					// desktop-translations-10.1-41.3.noarch.rpm
-					// kde3-i18n-vi-3.5.5-67.9.noarch.rpm
-					QList<QByteArray> parts = name.split('-');
-#ifdef DEBUG
-     				qDebug() << parts.size();
-					for (int i = 0; i < parts.size(); ++i) 
-     					qDebug() << parts.at(i);
-#endif
-					QList<QByteArray> patchlevel = parts.at(parts.size()-1).split('.');
-					QByteArray version = parts.at(parts.size()-2) + "-" + patchlevel.at(0) + "." + patchlevel.at(1);
-					pkg.setVersion(version);
-					if (parts.size() == 4) 
-						pkg.setName(parts.at(0) + '-' + parts.at(1));
-					else if (parts.size() == 5) 
-						pkg.setName(parts.at(0) + '-' + parts.at(1) + '-' + parts.at(2));
+					if (name.endsWith(".noarch.rpm")) {
+						// desktop-translations-10.1-41.3.noarch.rpm
+						// kde3-i18n-vi-3.5.5-67.9.noarch.rpm
+						QList<QByteArray> parts = name.replace(".noarch.rpm","").split('-');
+	#ifdef DEBUG
+	     				qDebug() << parts.size();
+						for (int i = 0; i < parts.size(); ++i) 
+	     					qDebug() << parts.at(i);
+	#endif
+						QList<QByteArray> patchlevel = parts.at(parts.size()-1).split('.');
+						QByteArray version = parts.at(parts.size()-2) + "-" + patchlevel.at(0) + "." + patchlevel.at(1);
+						pkg.setVersion(version);
+						if (parts.size() == 4) 
+							pkg.setName(parts.at(0) + '-' + parts.at(1));
+						else if (parts.size() == 5) 
+							pkg.setName(parts.at(0) + '-' + parts.at(1) + '-' + parts.at(2));
+					}
+					else if (name.endsWith(".win32.zip")) {
+						// iconv-1.9.2.win32.zip 
+						// aspell-0.50.3-3.win32.zip  
+						QList<QByteArray> parts = name.replace(".win32.zip","").split('-');
+						pkg.setName(parts.at(0));
+						pkg.setVersion(parts.at(1) + (parts.size() == 3 ? "-" + parts.at(2) : ""));
+					}
+					else if (name.endsWith(".zip")) {
+						// openssl 0.9.8d.zip  
+						// aspell-0.50.3-3.zip  
+						QList<QByteArray> parts = name.replace(".zip","").split('-');
+						pkg.setName(parts.at(0));
+						pkg.setVersion(parts.at(1) + (parts.size() == 3 ? "-" + parts.at(2) : ""));
+					}
 					addPackage(pkg);
 				}
 			}
