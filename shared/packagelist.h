@@ -31,6 +31,7 @@ class Downloader;
 class InstallerBase;
 class QTreeWidget;
 class QTreeWidgetItem;
+class QIODevice;
 
 QStringList filterPackageFiles(const QStringList &list,const QString &mode);
 
