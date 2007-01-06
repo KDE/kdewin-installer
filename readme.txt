@@ -30,9 +30,11 @@ TODO
 - use QT_NO_DEBUG_OUTPUT instead of #ifdef DEBUG to avoid debug output 
 
 - gui 
-	- display file installing in gui
+	- display file installing in gui, currently redraw does not work 
 	- goto finish page directly when installing is ready 
-
+	- only enable package type when a relted package is available
+	
+	
 
 Happy hacking
 
