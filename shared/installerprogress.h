@@ -29,7 +29,7 @@
 #ifdef USE_GUI
 
 #include <QWidget>
-class ComplexWizard; 
+
 class QLabel;
 class QProgressBar;
 
