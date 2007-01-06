@@ -27,58 +27,6 @@
 #include "downloader.h"
 #include "installer.h"
 
-static struct Options
-{
-    bool verbose;
-    bool query;
-    bool download;
-    bool install;
-    bool list;
-    QString rootdir;
-}
-options;
-
-void usage()
-{
-	qDebug() << "... [options] <packagename> [<packagename>]"
-	 << "\nOptions"
-	 << "\n -l list packages"
-	 << "\n -q <packagename> query packages"
-	 << "\n -i <packagename> download and install package"
-	 << "\n -d <packagename> download package"
-	 ;
-}
-
-bool testDownloadApacheModIndex()
-{
-	Downloader downloader(/*blocking=*/ true);
-	PackageList packageList(&downloader);
-	
-	qDebug() << "trying to download kde related package list";
-	downloader.start("http://software.opensuse.org/download/KDE:/KDE3/SUSE_Linux_10.1/noarch/","packages.html");
-	if (!packageList.readFromHTMLFile("packages.html",PackageList::ApacheModIndex)) {
-		qDebug() << "... failed ";
-		return false; 
-	}
-	packageList.listPackages("Package List");
-	return true;
-}
-
-bool testDownloadSourceForge()
-{
-	Downloader downloader(/*blocking=*/ true);
-	PackageList packageList(&downloader);
-
-	qDebug() << "trying to download sourceforge related package list";
-	downloader.start("http://sourceforge.net/project/showfiles.php?group_id=23617","packages.html");
-
-	if (!packageList.readFromHTMLFile("packages.html",PackageList::SourceForge)) {
-		qDebug() << "... failed ";
-		return false; 
-	}
-	packageList.listPackages("Package List");
-	return true;
-}
 
 int main(int argc, char *argv[])
 {
