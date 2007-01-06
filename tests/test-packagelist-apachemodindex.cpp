@@ -26,23 +26,35 @@
 
 #include "packagelist.h"
 #include "downloader.h"
-#include "installer.h"
+#include "downloaderprogress.h"
 
-
-int main(int argc, char ** argv)
+int main(int argc, char *argv[])
 {
-	QCoreApplication(argc,argv);
-	
-	Downloader downloader(/*blocking=*/ true);
-	PackageList packageList(&downloader);
-	
-	qDebug() << "trying to download kde related package list";
-	downloader.start("http://www.abi-neuhaus.de/chris/win32libs/zip/","packages.html");
+
+	QCoreApplication app(argc, argv);
+
+ 	DownloaderProgress progress(0);
+	Downloader download(true,&progress);
+	PackageList packageList(&download);
+
+	qDebug() << "trying to download win32 related package list";
+	download.start("http://www.abi-neuhaus.de/chris/win32libs/zip/","packages.html");
 	if (!packageList.readHTMLFromFile("packages.html",PackageList::ApacheModIndex)) {
 		qDebug() << "... failed ";
 		return 1; 
 	}
-	packageList.listPackages("Package List");
+	packageList.listPackages("win32libs Package List");
+	
+	PackageList packageList2(&download);
+
+	download.start("http://software.opensuse.org/download/KDE:/KDE3/SUSE_Linux_10.1/noarch/","packages.html");
+	if (!packageList2.readHTMLFromFile("packages.html",PackageList::ApacheModIndex)) {
+		qDebug() << "... failed ";
+		return 1; 
+	}
+	packageList2.listPackages("KDE i18n Package List");
+
+	
 	return 0;
 }
 
