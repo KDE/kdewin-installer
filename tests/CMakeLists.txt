@@ -1,4 +1,5 @@
 # our targets
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
  
 set (test_mirrors_SOURCES 
 	test-mirrors.cpp 
@@ -6,7 +7,6 @@ set (test_mirrors_SOURCES
 	../shared/downloader.cpp
 	../shared/downloaderprogress.cpp
 )
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 qt4_automoc(${test_mirrors_SOURCES})
 
