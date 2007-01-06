@@ -22,7 +22,7 @@
 ****************************************************************************/
 
 #include <QtDebug>
-#include <QApplication>
+#include <QCoreApplication>
 
 #include "packagelist.h"
 #include "downloader.h"
@@ -31,7 +31,7 @@
 
 int main(int argc, char ** argv)
 {
-	QApplication(argc,argv);
+	QCoreApplication(argc,argv);
 	
 	Downloader downloader(/*blocking=*/ true);
 	PackageList packageList(&downloader);
