@@ -207,12 +207,14 @@ PathSettingsPage::PathSettingsPage(InstallWizard *wizard)
     	"<h1>Select Root Install Directory</h1>"
     	"<p>Select the directory where you want to install the KDE packages.</p>"
     	));
-
-		// @TODO: read rootPath from config
+		
     rootPathLabel = new QLabel(tr("&RootPath:"));
     rootPathEdit = new QLineEdit;
     rootPathLabel->setBuddy(rootPathEdit);
     setFocusProxy(rootPathEdit);
+    // FIXME: read rootPath from config
+    rootPathEdit->setText(QDir::currentPath());
+
  		rootPathSelect = new QPushButton("...", this);
     connect(rootPathSelect, SIGNAL(pressed()),this, SLOT(selectRootPath()));
 
