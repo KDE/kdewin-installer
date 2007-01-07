@@ -3,6 +3,11 @@ set (VERSION 0.1)
 
 find_package(Qt4 REQUIRED)
 
+if (CMAKE_BUILD_TYPE EQUAL Release) 
+  # disable qDebug output
+	add_definitions(-DQT_NO_DEBUG_OUTPUT)
+endif (CMAKE_BUILD_TYPE EQUAL Release)
+
 # we just need zlib include dir, linking to zlib is not needed
 include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${QT_INCLUDES} ${CMAKE_SOURCE_DIR}/3rdparty/zlib)
 
@@ -34,6 +39,8 @@ set(installer_shared_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/installer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/package.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/packagelist.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/mirrors.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/configparser.cpp
 )
 
 set(installer_shared_HEADERS
@@ -43,6 +50,7 @@ set(installer_shared_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/installer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/package.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/packagelist.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/site.h
 )
 set(installer_shared_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shared)
 
