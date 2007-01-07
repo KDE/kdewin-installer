@@ -21,36 +21,27 @@
 **
 ****************************************************************************/
 
-#ifndef CONFIGPARSER_H
-#define CONFIGPARSER_H
+#ifndef SITE_H
+#define SITE_H
 
 #include <QString>
-#include "site.h"
-
-class QIODevice;
 
 /**
- ConfigParser provides global config configuration options for the installer 
- like site supported site definitions and package definitions (see config.txt 
- in source root dir)
- 
- The global config configuration is located on a well known server/path location
- and is read on any start of the installer. 
- 
- This behavior could be used to collect usage informations about the installer. 
-*/
-class ConfigParser {
+	holds a site definition 
+*/ 
+class Site {
+
 	public:
-		ConfigParser();
-		bool parseFromFile(const QString &fileName);
-		bool parseFromByteArray(const QByteArray &ba);
-		QList<Site> *Sites() { return &m_sites; }
-	protected: 
-		bool parse(QIODevice *ioDev);
-
+		QString Name() {return m_name;}
+		QString URL()  {return m_url;}
+		QString type() {return m_type;}
+		void setName(const QString &name) {m_name = name;}
+		void setURL(const QString &url)  {m_url = url; }
+		void setType(const QString &type) {m_type = type; }
 	private:
-		QList<Site> m_sites;
-
+		QString m_name;
+		QString m_url;
+		QString m_type;
 };
 
 #endif 

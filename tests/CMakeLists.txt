@@ -41,3 +41,16 @@ qt4_automoc(${test-packagelist-sourceforge_SOURCES})
 
 add_executable(test-packagelist-sourceforge ${test-packagelist-sourceforge_SOURCES})
 target_link_libraries(test-packagelist-sourceforge ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY})
+
+set (test-configparser_SOURCES
+	test-configparser.cpp
+	../shared/downloader.cpp
+	../shared/downloaderprogress.cpp
+	../shared/configparser.cpp
+)
+
+qt4_automoc(${test-configparser_SOURCES})
+
+configure_file(${CMAKE_SOURCE_DIR}/config.txt ${CMAKE_BINARY_DIR}/tests/config.txt)
+add_executable(test-configparser ${test-configparser_SOURCES})
+target_link_libraries(test-configparser ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY})
