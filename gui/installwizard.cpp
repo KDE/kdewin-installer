@@ -39,16 +39,84 @@
 #include "installer.h"
 #include "installerprogress.h"
 #include "packagelist.h"
+#include "configparser.h"
 
 extern InstallWizard *wizard;
 
-// FIXME: put this into a class!
-PackageList *packageList;
-Installer *installer;
-Downloader *downloader;
+// must be global
 QTreeWidget *tree;
-InstallerProgress *instProgress;
 
+class InstallerEngine {
+	public:
+		InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
+		bool downloadGlobalConfig();
+		bool downloadPackageLists(); 
+		PackageList *packageList() { return m_packageList; }
+		Installer *installer() { return m_installer; }
+
+	private:
+		PackageList *m_packageList;
+		Installer *m_installer;
+		Downloader *m_downloader;
+		InstallerProgress *m_instProgress;
+		ConfigParser *m_configParser;
+};
+
+InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar)
+{
+	m_downloader = new Downloader(/*blocking=*/ true,progressBar);
+	m_packageList = new PackageList(m_downloader);
+	m_installer = new Installer(m_packageList,instProgressBar );
+	m_configParser = new ConfigParser();
+}
+
+bool InstallerEngine::downloadGlobalConfig()
+{
+#if 0
+ 	DownloaderProgress progress(0);
+	Downloader download(true,&progress);
+	
+	qDebug() << "trying to download global configuration file";
+	download.start("http://well-known-location-server/kde-installer/config.txt","config.txt");
+#endif
+
+	m_configParser->parseFromFile("config.txt");
+}
+
+
+/// download all packagelists, which are available on the configured sites
+bool InstallerEngine::downloadPackageLists()
+{
+	if ( !m_packageList->hasConfig() ) {
+    QByteArray ba;
+		// download package list 
+		m_downloader->start("http://sourceforge.net/project/showfiles.php?group_id=23617", ba);
+
+    	// load and parse 
+		if (!m_packageList->readHTMLFromByteArray(ba))
+			return 1; 
+
+		// save into file
+		if (!m_packageList->writeToFile())
+			return 1; 
+
+		// print list 
+		m_packageList->listPackages("Package List");
+	}
+	else {
+		// read list from file 
+		if (!m_packageList->readFromFile())
+			return 1; 
+
+		// print list 
+		m_packageList->listPackages("Package List");
+	}
+    return 1;
+}
+
+InstallerEngine *engine;
+
+/*
 int downloadPackageList()
 {
 	if ( !packageList->hasConfig() ) {
@@ -77,6 +145,8 @@ int downloadPackageList()
 	}
     return 1;
 }
+*/
+
 
 InstallWizard::InstallWizard(QWidget *parent)
     : ComplexWizard(parent)
@@ -88,9 +158,7 @@ InstallWizard::InstallWizard(QWidget *parent)
     setWindowTitle(tr("KDE Installer"));
     resize(480, 200);
 
-    downloader = new Downloader(/*blocking=*/ true,progressBar);
-    packageList = new PackageList(downloader);
-    installer = new Installer(packageList,instProgressBar );
+ 		engine = new InstallerEngine(progressBar,instProgressBar);
 }
 
 TitlePage::TitlePage(InstallWizard *wizard)
@@ -183,8 +251,8 @@ void PathSettingsPage::resetPage()
 
 WizardPage *PathSettingsPage::nextPage()
 {
-	installer->setRoot(rootPathEdit->text());
-	downloadPackageList();
+	engine->installer()->setRoot(rootPathEdit->text());
+	engine->downloadPackageLists();
   wizard->packageSelectorPage = new PackageSelectorPage(wizard);
 	return wizard->packageSelectorPage;
 }
@@ -200,7 +268,7 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
     topLabel = new QLabel(tr("<center><b>Please select the required packages</b></center>"));
 
     tree = new QTreeWidget();
-    packageList->setWidgetData(tree);
+    engine->packageList()->setWidgetData(tree);
     connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
 
     QVBoxLayout *layout = new QVBoxLayout;
@@ -211,7 +279,7 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
 
 void PackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
 {
-    packageList->itemClicked(item,column);
+    engine->packageList()->itemClicked(item,column);
 }
 
 void PackageSelectorPage::resetPage()
@@ -256,10 +324,10 @@ WizardPage *DownloadPage::nextPage()
 bool DownloadPage::isComplete()
 {
     wizard->nextButton->setEnabled(false);
-    packageList->downloadPackages(tree);
+    engine->packageList()->downloadPackages(tree);
     topLabel->setText(tr("<center><b>Installing packages</b></center>"));
     QApplication::instance()->processEvents();
-    packageList->installPackages(tree);
+    engine->packageList()->installPackages(tree);
     wizard->nextButton->setEnabled(true);
     // here the finish page should be called directly 
 		return 1;
@@ -287,7 +355,7 @@ WizardPage *InstallPage::nextPage()
 
 bool InstallPage::isComplete()
 {
-		return packageList->installPackages(tree);
+		return 1;
 }
 
 FinishPage::FinishPage(InstallWizard *wizard)
