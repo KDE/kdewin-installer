@@ -2,52 +2,14 @@ Design notes for KDE installer
 ==============================
 
 
+configuration file format
+-------------------------
 
-Prelimary configuration file format
------------------------------------
-
-@format 1.0
-; comment
-; a package definition
-@package perl ; package name
-@version 5.8.8 ; package version
-@url http://downloads.activestate.com/ActivePerl/Windows/5.8/ActivePerl-5.8.8.819-MSWin32-x86-267479.msi ; base url
-@url http://downloads.activestate.com/ActivePerl/Windows/5.8/ActivePerl-5.8.8.819-MSWin32-x86-267479.msi ; other url
-@options
-
-; another package definition
-@package cmake
-@version 2.4.5
-@url http://www.cmake.org/files/v2.4/cmake-2.4.5-win32-x86.zip
-@options
-
-; site definition
-@site  gnuwin32
-@packagesurl http://sourceforge.net/project/showfiles.php?group_id=23617
-@packagestype sourceforge
-@options
-
-; another definition
-@site  kde-win32
-@url http://sourceforge.net/project/showfiles.php?group_id=23617
-@type sourceforge
-@options
-
-
-; another definition
-@site  kde-i18n
-@url http://software.opensuse.org/download/KDE:/KDE3/SUSE_Linux_10.1/noarch/
-@type apachemodindex
-
+an example of the format is located in the top level file config.txt 
 
 
 classes 
 -------
-Downloader -    Class for downloading file lists and packages 
-PackageList -   holds a list of packages 
-Package -       holds a single packages 
-InstallerBase - a specific installer, derived classes are InstallerGNUWin32
 
-
-
+see doxygen generated docs or the source directly
 
