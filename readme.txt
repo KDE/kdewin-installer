@@ -35,7 +35,11 @@ TODO
 	- only enable package type when a related package is available
 	- center checkboxes in package selector page
 	- reduce column width of package types in package selector page
-	
+	- save selections in package selector page different from initial 
+	  installed packages to avoid reinstalling by default; before 
+	  downloading/installing a check must be performed, which packages 
+	  really have to be installed. 
+	  
 
 Happy hacking
 
