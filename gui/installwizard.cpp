@@ -30,6 +30,9 @@
 #include <QTreeWidgetItem>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QGridLayout>
+#include <QFileDialog>
+#include <QApplication>
 
 #include "installwizard.h"
 #include "downloader.h"
@@ -48,7 +51,6 @@ InstallerProgress *instProgress;
 
 int downloadPackageList()
 {
-	installer->setRoot("packages");
 	if ( !packageList->hasConfig() ) {
     	QByteArray ba;
 		// download package list 
@@ -125,10 +127,71 @@ void TitlePage::resetPage()
 WizardPage *TitlePage::nextPage()
 {
 	wizard->nextButton->setEnabled(false);
-	downloadPackageList();
 	wizard->nextButton->setEnabled(true);
+  wizard->pathSettingsPage = new PathSettingsPage(wizard);
+	return wizard->pathSettingsPage;
+}
+
+PathSettingsPage::PathSettingsPage(InstallWizard *wizard)
+    : InstallWizardPage(wizard)
+{
+    topLabel = new QLabel(tr(
+    	"<h1>Select Root Install Directory</h1>"
+    	"<p>Select the directory where you want to install the KDE packages.</p>"
+    	));
+
+		// @TODO: read rootPath from config
+    rootPathLabel = new QLabel(tr("&RootPath:"));
+    rootPathEdit = new QLineEdit;
+    rootPathLabel->setBuddy(rootPathEdit);
+    setFocusProxy(rootPathEdit);
+ 		rootPathSelect = new QPushButton("...", this);
+    connect(rootPathSelect, SIGNAL(pressed()),this, SLOT(selectRootPath()));
+
+/* 		
+    tempPathLabel = new QLabel(tr("&Temporay download path:"));
+    tempPathEdit = new QLineEdit;
+    tempPathLabel->setBuddy(tempPathEdit);
+*/
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(topLabel, 0, 0, 1, 2);
+    layout->setRowMinimumHeight(1, 10);
+    layout->addWidget(rootPathLabel, 2, 0);
+    layout->addWidget(rootPathEdit, 2, 1);
+    layout->addWidget(rootPathSelect, 2, 2);
+/*
+    layout->addWidget(tempPathLabel, 3, 0);
+    layout->addWidget(tempPathEdit, 3, 1);
+*/
+    layout->setRowMinimumHeight(4, 10);
+    layout->setRowStretch(6, 1);
+    setLayout(layout);
+}
+
+void PathSettingsPage::selectRootPath()
+{
+	QString fileName = QFileDialog::getExistingDirectory(this, 
+												tr("Select Root Installation Directory"),
+                        "",
+                        QFileDialog::ShowDirsOnly| QFileDialog::DontResolveSymlinks);
+	rootPathEdit->setText(fileName);                       
+}
+
+void PathSettingsPage::resetPage()
+{
+}
+
+WizardPage *PathSettingsPage::nextPage()
+{
+	installer->setRoot(rootPathEdit->text());
+	downloadPackageList();
   wizard->packageSelectorPage = new PackageSelectorPage(wizard);
 	return wizard->packageSelectorPage;
+}
+
+bool PathSettingsPage::isComplete()
+{
+    return 1;//!rootPathEdit->text().isEmpty();
 }
 
 PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
@@ -146,7 +209,7 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
     setLayout(layout);
 }
 
-void WizardPage::itemClicked(QTreeWidgetItem *item, int column)
+void PackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
 {
     packageList->itemClicked(item,column);
 }
@@ -192,8 +255,12 @@ WizardPage *DownloadPage::nextPage()
 
 bool DownloadPage::isComplete()
 {
+    wizard->nextButton->setEnabled(false);
     packageList->downloadPackages(tree);
+    topLabel->setText(tr("<center><b>Installing packages</b></center>"));
+    QApplication::instance()->processEvents();
     packageList->installPackages(tree);
+    wizard->nextButton->setEnabled(true);
     // here the finish page should be called directly 
 		return 1;
 }
@@ -243,3 +310,5 @@ bool FinishPage::isComplete()
 {
     return 1;
 }
+
+#include "installwizard.moc"

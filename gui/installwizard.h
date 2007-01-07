@@ -25,8 +25,7 @@
 #ifndef InstallWizard_H
 #define InstallWizard_H
 
-#include <QModelIndex>
-
+#include <QObject>
 #include "complexwizard.h"
 
 class QCheckBox;
@@ -34,6 +33,7 @@ class QLabel;
 class QLineEdit;
 class QRadioButton;
 class TitlePage;
+class PathSettingsPage;
 class PackageSelectorPage;
 class InstallPage;
 class DownloadPage;
@@ -46,12 +46,14 @@ public:
 
 private:
     TitlePage *titlePage;
+    PathSettingsPage *pathSettingsPage;
     PackageSelectorPage *packageSelectorPage;
     DownloadPage *downloadPage;
     InstallPage *installPage;
     FinishPage *finishPage;
 
     friend class TitlePage;
+    friend class PathSettingsPage;
     friend class PackageSelectorPage;
     friend class DownloadPage;
     friend class InstallPage;
@@ -82,11 +84,38 @@ private:
 //    QRadioButton *downloadAndInstallRadioButton;
 };
 
+class PathSettingsPage : public InstallWizardPage
+{
+    Q_OBJECT
+
+public:
+    PathSettingsPage(InstallWizard *wizard);
+
+    void resetPage();
+    WizardPage *nextPage();
+    bool isComplete();
+
+public slots:
+		void selectRootPath(void);
+
+private:
+    QLabel    *topLabel;
+    QLabel    *rootPathLabel;
+    QLineEdit *rootPathEdit;
+    QPushButton *rootPathSelect;
+/*
+    QLabel    *tempPathLabel;
+    QLineEdit *tempPathEdit;
+*/
+};
+
 class QTreeWidget;
 class QTreeWidgetItem;
 
 class PackageSelectorPage : public InstallWizardPage
 {
+    Q_OBJECT
+
 public:
     PackageSelectorPage(InstallWizard *wizard);
 

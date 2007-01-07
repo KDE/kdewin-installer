@@ -82,9 +82,6 @@ public:
 
 signals:
     void completeStateChanged();
-
-public slots:
-	void itemClicked(QTreeWidgetItem *item, int column);
 };
 
 #endif
