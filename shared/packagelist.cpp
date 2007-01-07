@@ -277,7 +277,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, SiteType type)
                     }
 
 					if(!patchlevel.isEmpty())
-                        version + "-" + patchlevel;
+                        version += "-" + patchlevel;
                     pkg.setVersion(version);
 					pkg.setName(name);
 					addPackage(pkg);
