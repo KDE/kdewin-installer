@@ -32,8 +32,9 @@ TODO
 - gui 
 	- display file installing in gui, currently redraw does not work 
 	- goto finish page directly when installing is ready 
-	- only enable package type when a relted package is available
-	
+	- only enable package type when a related package is available
+	- center checkboxes in package selector page
+	- reduce column width of package types in package selector page
 	
 
 Happy hacking
