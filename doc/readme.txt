@@ -1,4 +1,5 @@
 KDE-Installer 
+-------------
 
 
 The idea of the kde-installer is to have a command line and/or gui application, 
@@ -7,89 +8,89 @@ which makes it possible to download and install kde applications on windows.
 KDE on windows needs several runtime package, which are placed on different 
 locations and in different formats: 
 
-package		     site                          	   format 							notes 
+package        site                              format               notes 
 
 dbus       http://sf.net/projects/windbus      source/svn             
            
 qt4        http://ftp.iasi.roedu.net/mirrors/ftp.trolltech.com/qt/source/qt-win-opensource-4.2.1-mingw.exe
-																               source/zip					needs qdbus patch 
-			    																		
-bzip2			 http://sf.net/projects/gnuwin32		 binary/zip					required by kdelibs
-giflib							... 											 binary/zip					required by kdelibs
-jpeg      					...     									 binary/zip					required by kdelibs
-libagg23  					...												 binary/zip					required by kdelibs
-libiconv  					...												 binary/zip         required by kdelibs
-libintl   					...												 binary/zip         required by kdelibs
-libpng    					...												 binary/zip         required by kdelibs
-libxml2   					...												 binary/zip         required by kdelibs
-libxslt   					...												 binary/zip         required by kdelibs
-openssl   					...												 binary/zip         required by kdelibs
-pcre      					...												 binary/zip         required by kdelibs
-tiff      					...												 binary/zip         required by kdelibs
-zlib      					...												 binary/zip         required by kdelibs
+                                               source/zip         needs qdbus patch 
+                                              
+bzip2      http://sf.net/projects/gnuwin32     binary/zip         required by kdelibs
+giflib              ...                        binary/zip         required by kdelibs
+jpeg                ...                        binary/zip         required by kdelibs
+libagg23            ...                        binary/zip         required by kdelibs
+libiconv            ...                        binary/zip         required by kdelibs
+libintl             ...                        binary/zip         required by kdelibs
+libpng              ...                        binary/zip         required by kdelibs
+libxml2             ...                        binary/zip         required by kdelibs
+libxslt             ...                        binary/zip         required by kdelibs
+openssl             ...                        binary/zip         required by kdelibs
+pcre                ...                        binary/zip         required by kdelibs
+tiff                ...                        binary/zip         required by kdelibs
+zlib                ...                        binary/zip         required by kdelibs
 
-aspell				http://sf.net/projects/gnuwin32  binary/zip					required by kdelibs
-bzip2			 		 			...												 binary/zip					required by kdelibs
-expat								... 											 binary/zip					required by kdelibs
-giflib							... 											 binary/zip					required by kdelibs
-jasper              ... 											 binary/zip		      required by kdelibs
-jpeg      					...     									 binary/zip					required by kdelibs
-libagg23  					...												 binary/zip					required by kdelibs
-libiconv  					...												 binary/zip         required by kdelibs
-libintl   					...												 binary/zip         required by kdelibs
-libpng    					...												 binary/zip         required by kdelibs
-libxml2   					...												 binary/zip         required by kdelibs
-libxslt   					...												 binary/zip         required by kdelibs
-openssl   					...												 binary/zip         required by kdelibs
-pcre      					...												 binary/zip         required by kdelibs
-tiff      					...												 binary/zip         required by kdelibs
-zlib      					...												 binary/zip         required by kdelibs
-        					   or 
+aspell        http://sf.net/projects/gnuwin32  binary/zip         required by kdelibs
+bzip2               ...                        binary/zip         required by kdelibs
+expat               ...                        binary/zip         required by kdelibs
+giflib              ...                        binary/zip         required by kdelibs
+jasper              ...                        binary/zip         required by kdelibs
+jpeg                ...                        binary/zip         required by kdelibs
+libagg23            ...                        binary/zip         required by kdelibs
+libiconv            ...                        binary/zip         required by kdelibs
+libintl             ...                        binary/zip         required by kdelibs
+libpng              ...                        binary/zip         required by kdelibs
+libxml2             ...                        binary/zip         required by kdelibs
+libxslt             ...                        binary/zip         required by kdelibs
+openssl             ...                        binary/zip         required by kdelibs
+pcre                ...                        binary/zip         required by kdelibs
+tiff                ...                        binary/zip         required by kdelibs
+zlib                ...                        binary/zip         required by kdelibs
+                     or 
         http://www.abi-neuhaus.de/chris/win32libs/
 
-kdewin32		anonsvn.kde.org										source/svn					required by all kde packages
+kdewin32    anonsvn.kde.org                   source/svn          required by all kde packages
 
-perl				http://downloads.activestate.com/ActivePerl/Windows/5.8/ActivePerl-5.8.8.819-MSWin32-x86-267479.msi
-																							binary/msi				  required by kdelibs
+perl        http://downloads.activestate.com/ActivePerl/Windows/5.8/ActivePerl-5.8.8.819-MSWin32-x86-267479.msi
+                                              binary/msi          required by kdelibs
 
-python			http://www.python.org/ftp/python/2.5/python-2.5.msi
-						 																	 binary/msi					required by kdelibs
+python      http://www.python.org/ftp/python/2.5/python-2.5.msi
+                                               binary/msi         required by kdelibs
         
-db					http://www.oracle.com/technology/software/products/berkeley-db/db/index.html
-																							 binary/msi 				required by kdevelop
+db          http://www.oracle.com/technology/software/products/berkeley-db/db/index.html
+                                               binary/msi         required by kdevelop
 
-boost				http://sf.net/projects/boost 			 binary/exe         required by kdevelop
+boost       http://sf.net/projects/boost       binary/exe         required by kdevelop
 
-kdelibs			anonsvn.kde.org										 source/svn					
-																							 source/tar.bz2
+kdelibs     anonsvn.kde.org                    source/svn         
+                                               source/tar.bz2
 
-kdepimlibs	anonsvn.kde.org										 source/svn					
-																							 source/tar.bz2
+kdepimlibs  anonsvn.kde.org                    source/svn         
+                                               source/tar.bz2
 
-kdebase			anonsvn.kde.org										 source/svn					
-																							 source/tar.bz2
+kdebase     anonsvn.kde.org                    source/svn         
+                                               source/tar.bz2
 
-kdepim			anonsvn.kde.org										 source/svn					
-																							 source/tar.bz2
+kdepim      anonsvn.kde.org                    source/svn         
+                                               source/tar.bz2
 
-kdeedu			anonsvn.kde.org										 source/svn					
-																							 source/tar.bz2
+kdeedu      anonsvn.kde.org                    source/svn         
+                                               source/tar.bz2
 
-kdevelop		anonsvn.kde.org										 source/svn					
-																							 source/tar.bz2
+kdevelop    anonsvn.kde.org                    source/svn         
+                                               source/tar.bz2
 
 ... 
 
 For developers the following package are required too 
 
-cmake 	http://www.cmake.org/files/v2.4/			binary/exe+zip
+cmake   http://www.cmake.org/files/v2.4/      binary/exe+zip
 
 svn     http://subversion.tigris.org/files/documents/15/34093/svn-1.4.0-setup.exe
-																							binary/exe
+                                              binary/exe
 
 c++ compiler   either gcc or msvc 
-																							
-															
+                                              
+                              
 This installer will get all informations where the related packages 
 are located and would be able to download packages and to 
 install packages in gz, tar.bz2 or zip format. 
@@ -118,16 +119,17 @@ How the installer works:
    (This help also to track the usage of the installer) 
    
 2. The installer asks the user for his preferences, 
-		- installation root [2.1]
-		- mingw or msvc based installation 
-	 and may be some additional options like proxy settings 
+    - installation root [2.1]
+    - mingw or msvc based installation 
+   and may be some additional options like proxy settings 
  
 3. Then it downloads either
-		1. a recent package list from the specified site or 
-		2. a predefined package list from the server used in 1. 
-	 Case 2 allows a dependency tracking between packages on the site 
-	 and which kde package required which package on the site [3.1]
-	 while case 1 may be more actual. 
+    1. a recent package list from the specified site or 
+    2. a predefined package list from the server used in 1. 
+
+   case 2 allows a dependency tracking between packages on the same 
+   site and which kde package requires package on this site [3.1]
+   while case 1 may be more actual but without dependency tracking. 
 
 4. The installer displays a list of available packages and it's current 
    installation state. The user can select packages, the installer 
