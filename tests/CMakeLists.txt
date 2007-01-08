@@ -45,6 +45,15 @@ set (test-configparser_SOURCES
 
 qt4_automoc(${test-configparser_SOURCES})
 
-configure_file(${CMAKE_SOURCE_DIR}/config.txt ${CMAKE_BINARY_DIR}/tests/config.txt)
 add_executable(test-configparser ${test-configparser_SOURCES})
 target_link_libraries(test-configparser ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY})
+
+set (test-settings_SOURCES
+	test-settings.cpp
+	../shared/settings.cpp
+)
+
+qt4_automoc(${test-settings_SOURCES})
+
+add_executable(test-settings ${test-settings_SOURCES})
+target_link_libraries(test-settings ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY})

@@ -41,6 +41,7 @@ set(installer_shared_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/packagelist.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/mirrors.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/configparser.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/settings.cpp
 )
 
 set(installer_shared_HEADERS
@@ -51,6 +52,7 @@ set(installer_shared_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/package.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/packagelist.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/site.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/settings.h
 )
 set(installer_shared_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shared)
 
