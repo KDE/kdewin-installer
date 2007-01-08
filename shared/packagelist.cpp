@@ -192,29 +192,32 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type)
 			break; 
 
 		case PackageList::ApacheModIndex: 
-			char *lineKey = "alt=\"[   ]\"> <a href=\"";
-			char *fileKeyStart = "<a href=\"";
-			char *fileKeyEnd = "\">";
-			while (!ioDev->atEnd()) {
+			const char *lineKey1 = "alt=\"[   ]\"> <a href=\"";
+			const char *lineKey2 = "alt=\"[   ]\" /> <a href=\"";
+			const char *fileKeyStart = "<a href=\"";
+			const char *fileKeyEnd = "\">";
+            int i = 0;
+
+            while (!ioDev->atEnd()) {
 				QByteArray line = ioDev->readLine();
-#ifdef DEBUG
-				qDebug() << "2"  << line << " " << lineKey; 
-#endif
-				if (line.contains(lineKey)) {
+				if (line.contains(lineKey1) || line.contains(lineKey2)) {
 					int a = line.indexOf(fileKeyStart) + strlen(fileKeyStart);
 					int b = line.indexOf(fileKeyEnd,a);
 					QByteArray name = line.mid(a,b-a);
-#ifdef DEBUG
-					qDebug() << "3"  << name;
-#endif
-					// desktop-translations-10.1-41.3.noarch.rpm
+                    QByteArray ptype;
+
+                    // desktop-translations-10.1-41.3.noarch.rpm
 					// kde3-i18n-vi-3.5.5-67.9.noarch.rpm
-                    // aspell-0.50.3-3.zip 
+                    // aspell-0.50.3-3.zip
 
                     // first remove ending
                     int idx = name.lastIndexOf('.');
-                    if(idx != -1)
+                    if(idx != -1) {
+                        ptype = name.mid(idx + 1);
                         name = name.left(idx);
+                    } else {
+                        ptype = "unknown";
+                    }
 
                     // now split a little bit :)
 					QList<QByteArray> parts;
@@ -252,8 +255,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type)
                     }
                     if(iVersionLow == iVersionHigh)
                         continue;
-
-                    QByteArray version, patchlevel;
+                    QByteArray version, patchlevel, type;
                     name = "";
                     for(int i = 0; i < iVersionLow; i++) {
                         if(parts[i] == "-")
@@ -277,11 +279,26 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type)
                             patchlevel += '.';
                         patchlevel += parts[iVersionLow];
                     }
-
+                    // all after iVersionHigh is type
+                    if(iVersionHigh < parts.size()) {
+                        // should ever be true - have to think over :)
+                        if(parts[iVersionHigh] == "-")
+                            iVersionHigh++;
+                        for(; iVersionHigh < parts.size(); iVersionHigh++) {
+                            if(parts[iVersionHigh] == "-")
+                                break;
+                            if(type.size())
+                                type += '.';
+                            type += parts[iVersionHigh];
+                        }
+                    }
 					if(!patchlevel.isEmpty())
                         version += "-" + patchlevel;
                     pkg.setVersion(version);
 					pkg.setName(name);
+                    pkg.setPackageType(ptype);
+                    pkg.setType(type);
+                    // FIXME: do merging here, see http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/ for example
 					addPackage(pkg);
 				}
 			}

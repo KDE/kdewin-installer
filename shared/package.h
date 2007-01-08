@@ -33,10 +33,13 @@ class Package {
 
 		Package();
 		Package(QString const &_name, QString const &_version);
-		QString &Name() { return name; }
-		QString &Version() { return version; }
+
+        // FIXME: better use Q_PROPERTY here?
+        const QString &Name() const { return name; }
+		const QString &Version() const { return version; }
 		void setName(QString const &_name) { name = _name; }
 		void setVersion(QString const &_version) { version = _version; }
+		void setPackageType(QString const &_type) { packagetype = _type; }
 		void setType(const QString &typeString);
 		bool setFromVersionFile(const QString &verString);
 		QString toString(bool mode=false, const QString &delim="-");
@@ -57,6 +60,7 @@ class Package {
 	private:
 		QString name;
 		QString version; 
+        QString packagetype;
 		bool installedLIB;
 		bool installedBIN;
 		bool installedDOC;

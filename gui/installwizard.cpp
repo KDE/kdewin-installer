@@ -133,7 +133,7 @@ bool InstallerEngine::downloadPackageLists()
 		m_installer = installer;
 
 		if ( !packageList->hasConfig() ) {
-	    QByteArray ba;
+            QByteArray ba;
 			// download package list 
 			qDebug() << (*s)->URL();
 			m_downloader->start((*s)->URL(), ba);
@@ -378,7 +378,7 @@ PathSettingsPage::PathSettingsPage(InstallWizard *wizard)
     rootPathLabel->setBuddy(rootPathEdit);
     setFocusProxy(rootPathEdit);
     // FIXME: read rootPath from config
-    rootPathEdit->setText(QDir::currentPath());
+    rootPathEdit->setText(QDir::convertSeparators(QDir::currentPath()));
 
  		rootPathSelect = new QPushButton("...", this);
     connect(rootPathSelect, SIGNAL(pressed()),this, SLOT(selectRootPath()));

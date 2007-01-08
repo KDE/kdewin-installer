@@ -26,6 +26,8 @@
 #include <QIODevice>
 #include <QBuffer>
 #include <QtDebug>
+#include <QMessageBox>
+#include <QFileInfo>
 
 #include "site.h"
 #include "configparser.h"
@@ -34,11 +36,17 @@ ConfigParser::ConfigParser()
 {
 }
 
-bool ConfigParser::parseFromFile(const QString &fileName)
+bool ConfigParser::parseFromFile(const QString &_fileName)
 {
-	QFile configFile(fileName);
-	if (!configFile.exists())
-  	return false;
+	QString fileName(_fileName);
+    QFileInfo fi(fileName);
+    if(!fi.isAbsolute())
+        fileName = fi.absoluteFilePath();
+    QFile configFile(fileName);
+    if (!configFile.exists()) {
+        QMessageBox::warning(NULL, QString("File not found"), QString("Can't find %1").arg(fileName));
+        return false;
+    }
 
 	configFile.open(QIODevice::ReadOnly);
 
