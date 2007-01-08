@@ -41,6 +41,7 @@
 #include "package.h"
 #include "packagelist.h"
 #include "configparser.h"
+#include "settings.h"
 
 extern InstallWizard *wizard;
 
@@ -57,10 +58,12 @@ class InstallerEngine {
 		void itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column);
 		bool downloadPackages(QTreeWidget *tree, const QString &category="");
 		bool installPackages(QTreeWidget *tree, const QString &category="");
-		void setRoot(QString root) { m_root = root; }
+		void setRoot(QString root);
+		QString Root();
 		
 		PackageList *packageList() { return m_packageList; }
 		Installer *installer() { return m_installer; }
+		Settings *settings() { return &m_settings; }
 
 	private:
 		QList <PackageList*> m_packageListList;
@@ -72,7 +75,7 @@ class InstallerEngine {
 		ConfigParser *m_configParser;
 		InstallerProgress *m_instProgressBar;
 		QString m_root;
-		
+		Settings m_settings;
 };
 
 InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar)
@@ -307,6 +310,21 @@ bool InstallerEngine::installPackages(QTreeWidget *tree,const QString &category)
 	return true;
 }
 
+void InstallerEngine::setRoot(QString root) 
+{ 
+	m_root = root; 
+	m_settings.setValue("rootdir",root); 
+}
+
+QString InstallerEngine::Root() 
+{ 
+	m_root = m_settings.value("rootdir").toString(); 
+	if (m_root.isEmpty()) 
+		m_root= QDir::convertSeparators(QDir::currentPath());
+	return m_root;
+}
+
+
 
 
 InstallerEngine *engine;
@@ -377,10 +395,9 @@ PathSettingsPage::PathSettingsPage(InstallWizard *wizard)
     rootPathEdit = new QLineEdit;
     rootPathLabel->setBuddy(rootPathEdit);
     setFocusProxy(rootPathEdit);
-    // FIXME: read rootPath from config
-    rootPathEdit->setText(QDir::convertSeparators(QDir::currentPath()));
+    rootPathEdit->setText(engine->Root());
 
- 		rootPathSelect = new QPushButton("...", this);
+    rootPathSelect = new QPushButton("...", this);
     connect(rootPathSelect, SIGNAL(pressed()),this, SLOT(selectRootPath()));
 
 /* 		
@@ -409,7 +426,7 @@ void PathSettingsPage::selectRootPath()
 												tr("Select Root Installation Directory"),
                         "",
                         QFileDialog::ShowDirsOnly| QFileDialog::DontResolveSymlinks);
-	rootPathEdit->setText(fileName);                       
+	rootPathEdit->setText(fileName);
 }
 
 void PathSettingsPage::resetPage()
@@ -420,7 +437,7 @@ WizardPage *PathSettingsPage::nextPage()
 {
 	engine->setRoot(rootPathEdit->text());
 	engine->downloadPackageLists();
-  wizard->packageSelectorPage = new PackageSelectorPage(wizard);
+    wizard->packageSelectorPage = new PackageSelectorPage(wizard);
 	return wizard->packageSelectorPage;
 }
 
