@@ -349,11 +349,11 @@ QStringList PackageList::getFilesForDownload(QString const &pkgName)
 	Package *pkg = getPackage(pkgName);
 	if (!pkg)
 		return result;
-	result << pkg->getURL(Package::BIN);
-	result << pkg->getURL(Package::LIB);
+	result << pkg->getURL(Package::BIN,m_baseURL);
+	result << pkg->getURL(Package::LIB,m_baseURL);
 #ifdef INCLUDE_DOC_AND_SRC_PACKAGES
-	result << pkg->getURL(Package::DOC);
-	result << pkg->getURL(Package::SRC);
+	result << pkg->getURL(Package::DOC,m_baseURL);
+	result << pkg->getURL(Package::SRC,m_baseURL);
 #else
 	qDebug("downloading of DOC and SRC disabled for now");
 #endif

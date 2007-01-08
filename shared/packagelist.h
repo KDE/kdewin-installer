@@ -61,6 +61,8 @@ class PackageList : public QObject {
 		void setConfigFileName(const QString &file) {m_configFile = "/" + file; }
 		QString Name() { return m_name; }
 		void setName(const QString &name) { m_name = name; }
+		QString BaseURL() { return m_baseURL; }
+		void setBaseURL(const QString &baseURL) { m_baseURL = baseURL; }
 
 		// 0.5.3
 		bool hasConfig();
@@ -79,6 +81,7 @@ class PackageList : public QObject {
 		Downloader *downloader;
 		Installer *installer;
 		QString m_name;
+		QString m_baseURL;
 
 	friend class Installer;		
 };

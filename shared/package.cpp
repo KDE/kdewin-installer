@@ -54,13 +54,16 @@ const QString Package::getFileName(Package::Type type)
 	}
 }
 
-const QString Package::getURL(Package::Type type)
+const QString Package::getURL(Package::Type type, QString _baseURL)
 {
+	// for compatibility 
+	if (_baseURL.isEmpty())
+		_baseURL = baseURL;
 	switch (type) {
-		case BIN: return baseURL + name + "-" + version + "-bin.zip"; 
-		case LIB: return baseURL + name + "-" + version + "-lib.zip"; 
-		case SRC: return baseURL + name + "-" + version + "-doc.zip"; 
-		case DOC: return baseURL + name + "-" + version + "-src.zip"; 
+		case BIN: return _baseURL + name + "-" + version + "-bin.zip"; 
+		case LIB: return _baseURL + name + "-" + version + "-lib.zip"; 
+		case SRC: return _baseURL + name + "-" + version + "-doc.zip"; 
+		case DOC: return _baseURL + name + "-" + version + "-src.zip"; 
 		default:  return "";
 	}
 }

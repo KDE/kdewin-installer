@@ -43,7 +43,7 @@ class Package {
 		const QString getTypeAsString();
 
 		const QString getFileName(Package::Type type);
-		const QString getURL(Package::Type type);
+		const QString getURL(Package::Type type, QString baseURL="");
 		bool isEmpty() {return name == ""; }
 		void addInstalledTypes(const Package &pkg);
 		static QString baseURL;
