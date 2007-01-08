@@ -167,14 +167,14 @@ bool PackageList::readFromFile(const QString &_fileName)
 	return true;
 }
 
-bool PackageList::readHTMLInternal(QIODevice *ioDev, Site::SiteType type)
+bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type)
 {
   m_packageList->clear();
 	
 	Package pkg; 
 
 	switch (type) {
-		case Site::SourceForge: 
+		case PackageList::SourceForge: 
 			while (!ioDev->atEnd()) {
 				QByteArray line = ioDev->readLine();
 				if (line.contains("<td><a href=\"/project/showfiles.php?group_id=")) {
@@ -191,7 +191,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, Site::SiteType type)
 			}
 			break; 
 
-		case Site::ApacheModIndex: 
+		case PackageList::ApacheModIndex: 
 			char *lineKey = "alt=\"[   ]\"> <a href=\"";
 			char *fileKeyStart = "<a href=\"";
 			char *fileKeyEnd = "\">";
@@ -291,7 +291,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, Site::SiteType type)
 	return true;
 }
 
-bool PackageList::readHTMLFromByteArray(const QByteArray &_ba, Site::SiteType type)
+bool PackageList::readHTMLFromByteArray(const QByteArray &_ba, PackageList::Type type)
 {
 #ifdef DEBUG
 	qDebug() << __FUNCTION__;
@@ -306,7 +306,7 @@ bool PackageList::readHTMLFromByteArray(const QByteArray &_ba, Site::SiteType ty
   return readHTMLInternal(&buf, type);
 }
 
-bool PackageList::readHTMLFromFile(const QString &fileName, Site::SiteType type )
+bool PackageList::readHTMLFromFile(const QString &fileName, PackageList::Type type )
 {
 #ifdef DEBUG
 	qDebug() << __FUNCTION__;
