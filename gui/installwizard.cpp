@@ -52,6 +52,7 @@ class InstallerEngine {
 		InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
 		bool downloadGlobalConfig();
 		bool downloadPackageLists(); 
+		PackageList *getPackageListByName(const QString &name);
 		void setPageSelectorWidgetData(QTreeWidget *tree);
 		void itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column);
 		bool downloadPackages(QTreeWidget *tree, const QString &category="");
@@ -96,6 +97,15 @@ bool InstallerEngine::downloadGlobalConfig()
 	m_configParser->parseFromFile("config.txt");
 }
 
+PackageList *InstallerEngine::getPackageListByName(const QString &name)
+{
+	QList <PackageList *>::iterator k;
+	for (k = m_packageListList.begin(); k != m_packageListList.end(); ++k) {
+		if ((*k)->Name() == name)
+			return (*k);
+	}
+	return 0; 
+}
 
 /// download all packagelists, which are available on the configured sites
 bool InstallerEngine::downloadPackageLists()
@@ -106,9 +116,14 @@ bool InstallerEngine::downloadPackageLists()
 		qDebug() << "download package file list for site: " << (*s)->Name();
 		PackageList *packageList = new PackageList(m_downloader);
 		packageList->setConfigFileName("packages-" + (*s)->Name() + ".txt");
+		packageList->setName((*s)->Name());
 		m_packageList = packageList;
 		m_packageListList.append(packageList);
 		Installer *installer = new Installer(packageList,m_instProgressBar );
+
+		// FIXME:: hardcoded name, better to use an option in the config file ? 
+		if ((*s)->Name() == "gnuwin32")
+			installer->setType(Installer::GNUWIN32);
 		installer->setRoot(m_root);
 		m_installerList.append(installer);
 		m_installer = installer;
@@ -120,7 +135,7 @@ bool InstallerEngine::downloadPackageLists()
 			m_downloader->start((*s)->URL(), ba);
 	
 	    	// load and parse 
-			if (!packageList->readHTMLFromByteArray(ba,(*s)->Type())) {
+			if (!packageList->readHTMLFromByteArray(ba,(*s)->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge )) {
 				qDebug() << "error reading package list from download html file";
 				continue;
 			}
@@ -244,12 +259,18 @@ bool InstallerEngine::downloadPackages(QTreeWidget *tree, const QString &categor
 {
 	for (int i = 0; i < tree->topLevelItemCount(); i++) {
 		QTreeWidgetItem *item = tree->topLevelItem(i);
+		qDebug() << __FUNCTION__ << " " << item->text(0);
 		if (category.isEmpty() || item->text(0) == category) {
+			PackageList *packageList = getPackageListByName(item->text(0)); 
+			if (!packageList) {
+				qDebug() << __FUNCTION__ << " packagelist for " << item->text(0) << " not found";
+				continue;
+			}
 			for (int j = 0; j < item->childCount(); j++) {
 				QTreeWidgetItem *child = item->child(j);
 				qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
 				if (child->checkState(2) == Qt::Checked) {
-					if (!m_packageList->downloadPackage(child->text(0)))
+					if (!packageList->downloadPackage(child->text(0)))
 						qDebug() << "could not download package";
 				}
 			}
@@ -262,13 +283,19 @@ bool InstallerEngine::installPackages(QTreeWidget *tree,const QString &category)
 {
 	for (int i = 0; i < tree->topLevelItemCount(); i++) {
 		QTreeWidgetItem *item = tree->topLevelItem(i);
+		qDebug() << __FUNCTION__ << " " << item->text(0);
 		if (category.isEmpty() || item->text(0) == category) {
+			PackageList *packageList = getPackageListByName(item->text(0)); 
+			if (!packageList) {
+				qDebug() << __FUNCTION__ << " packagelist for " << item->text(0) << " not found";
+				continue;
+			}
 			for (int j = 0; j < item->childCount(); j++) {
 				QTreeWidgetItem *child = item->child(j);
 				qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
 				if (child->checkState(2) == Qt::Checked) {
-					if (!m_packageList->installPackage(child->text(0)))
-						qDebug() << "could not download package";
+					if (!packageList->installPackage(child->text(0)))
+						qDebug() << "could not install package";
 				}
 			}
 		}
