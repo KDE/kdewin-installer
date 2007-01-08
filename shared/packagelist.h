@@ -60,7 +60,7 @@ class PackageList : public QObject {
 		QList <Package> *packageList() { return m_packageList; }
 		void setConfigFileName(const QString &file) {m_configFile = "/" + file; }
 		QString Name() { return m_name; }
-		QString setName(const QString &name) { m_name = name; }
+		void setName(const QString &name) { m_name = name; }
 
 		// 0.5.3
 		bool hasConfig();

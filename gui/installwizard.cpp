@@ -94,7 +94,7 @@ bool InstallerEngine::downloadGlobalConfig()
 #endif
 
 	qDebug() << "parsing global configuration file";
-	m_configParser->parseFromFile("config.txt");
+	return m_configParser->parseFromFile("config.txt");
 }
 
 PackageList *InstallerEngine::getPackageListByName(const QString &name)
@@ -168,7 +168,7 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
 {
  	QStringList labels;
  	QList<QTreeWidgetItem *> items;
-	QTreeWidgetItem *item;
+//	QTreeWidgetItem *item;
 
  	labels 
  	<< "Package"
