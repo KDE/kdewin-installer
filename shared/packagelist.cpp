@@ -177,7 +177,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, Site::SiteType type)
 		case Site::SourceForge: 
 			while (!ioDev->atEnd()) {
 				QByteArray line = ioDev->readLine();
-				if (line.contains("<td><a href=\"/project/showfiles.php?group_id=23617")) {
+				if (line.contains("<td><a href=\"/project/showfiles.php?group_id=")) {
 					int a = line.indexOf("\">") + 2;
 					int b = line.indexOf("</a>");
 					QByteArray value = line.mid(a,b-a);
