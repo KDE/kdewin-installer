@@ -122,8 +122,6 @@ bool InstallerEngine::downloadPackageLists()
     return 1;
 }
 
-
-
 void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
 {
  	QStringList labels;
@@ -236,36 +234,6 @@ bool InstallerEngine::installPackages(QTreeWidget *tree,const QString &category)
 
 InstallerEngine *engine;
 
-/*
-int downloadPackageList()
-{
-	if ( !packageList->hasConfig() ) {
-    	QByteArray ba;
-		// download package list 
-		downloader->start("http://sourceforge.net/project/showfiles.php?group_id=23617", ba);
-
-    	// load and parse 
-		if (!packageList->readHTMLFromByteArray(ba))
-			return 1; 
-
-		// save into file
-		if (!packageList->writeToFile())
-			return 1; 
-
-		// print list 
-		packageList->listPackages("Package List");
-	}
-	else {
-		// read list from file 
-		if (!packageList->readFromFile())
-			return 1; 
-
-		// print list 
-		packageList->listPackages("Package List");
-	}
-    return 1;
-}
-*/
 
 
 InstallWizard::InstallWizard(QWidget *parent)
