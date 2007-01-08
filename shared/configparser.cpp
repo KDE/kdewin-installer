@@ -59,8 +59,7 @@ bool ConfigParser::parse(QIODevice *ioDev)
 {
 	bool inSite;
 	bool inPackage;
-	QString site;
-	Site aSite;
+	Site *site;
 
 	while (!ioDev->atEnd()) {
 		QByteArray line = ioDev->readLine().replace("\r\n","");
@@ -71,13 +70,15 @@ bool ConfigParser::parse(QIODevice *ioDev)
 			if (cmd[0] == "@format")
 				;
 			else if(cmd[0] == "@site") {
-				inSite = 1;
-				aSite.setName(cmd[1]);
+				site = new Site;
+				m_sites.append(site);
+				site->setName(cmd[1]);
 				qDebug() << "site " << cmd[1] << " detected";
 			}
 			else if(cmd[0] == "@siteurl")
-				aSite.setURL(cmd[1]);
+				site->setURL(cmd[1]);
 			else if(cmd[0] == "@sitetype") {
+				site->setType(cmd[1]);
 			}
 			else if(cmd[0] == "@package")
 				qDebug() << "package detected";

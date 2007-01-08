@@ -44,12 +44,12 @@ class ConfigParser {
 		ConfigParser();
 		bool parseFromFile(const QString &fileName);
 		bool parseFromByteArray(const QByteArray &ba);
-		QList<Site> *Sites() { return &m_sites; }
+		QList<Site*> *sites() { return &m_sites; }
 	protected: 
 		bool parse(QIODevice *ioDev);
 
 	private:
-		QList<Site> m_sites;
+		QList<Site*> m_sites;
 
 };
 
