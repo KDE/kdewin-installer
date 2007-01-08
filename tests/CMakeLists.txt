@@ -16,11 +16,8 @@ target_link_libraries(test-mirrors ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY})
 
 set (test-packagelist-apachemodindex_SOURCES
 	test-packagelist-apachemodindex.cpp
-	../shared/mirrors.cpp
-	../shared/downloader.cpp
-	../shared/downloaderprogress.cpp
-	../shared/packagelist.cpp
-	../shared/package.cpp
+	${installer_shared_SOURCES}
+	${quazip_SOURCES}
 )
 
 qt4_automoc(${test-packagelist-apachemodindex_SOURCES})
@@ -30,11 +27,8 @@ target_link_libraries(test-packagelist-apachemodindex ${QT_QTCORE_LIBRARY} ${QT_
 
 set (test-packagelist-sourceforge_SOURCES
 	test-packagelist-sourceforge.cpp
-	../shared/mirrors.cpp
-	../shared/downloader.cpp
-	../shared/downloaderprogress.cpp
-	../shared/packagelist.cpp
-	../shared/package.cpp
+	${installer_shared_SOURCES}
+	${quazip_SOURCES}
 )
 
 qt4_automoc(${test-packagelist-sourceforge_SOURCES})
