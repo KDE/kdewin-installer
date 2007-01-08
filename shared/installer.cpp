@@ -34,8 +34,8 @@
 # define __PRETTY_FUNCTION__ __FUNCTION__
 #endif
 
-InstallerBase::InstallerBase(PackageList *_packageList, InstallerProgress *_progress)
-	: QObject(), m_progress(_progress)
+Installer::Installer(PackageList *_packageList, InstallerProgress *_progress)
+	: QObject(), m_progress(_progress), m_type(Installer::Standard)
 {
 	root = ".";
 	packageList = _packageList;
@@ -46,11 +46,11 @@ InstallerBase::InstallerBase(PackageList *_packageList, InstallerProgress *_prog
 	connect (packageList,SIGNAL(loadedConfig()),this,SLOT(updatePackageList()));
 }
 
-InstallerBase::~InstallerBase()
+Installer::~Installer()
 {
 }
 
-void InstallerBase::setRoot(const QString &_root) 
+void Installer::setRoot(const QString &_root) 
 { 
 	root = _root; 
 	packageList->root = root;
@@ -58,12 +58,42 @@ void InstallerBase::setRoot(const QString &_root)
 	dir.mkdir(root);
 }
 
-bool InstallerBase::loadConfig()
+bool Installer::isEnabled() 
 {
+	if (m_type == GNUWIN32) {
+		return true;
+	}
 	return false;
 }
 
-void InstallerBase::updatePackageList()
+bool Installer::loadConfig()
+{
+#ifdef DEBUG
+	qDebug() << __PRETTY_FUNCTION__;
+#endif
+	if (m_type == GNUWIN32) {
+		// gnuwin32 related 
+		QDir dir(root + "/manifest");
+		dir.setFilter(QDir::Files);
+		dir.setNameFilters(QStringList("*.ver"));
+		dir.setSorting(QDir::Size | QDir::Reversed);
+		
+		QFileInfoList list = dir.entryInfoList();
+		for (int i = 0; i < list.size(); ++i) {
+		  QFileInfo fileInfo = list.at(i);
+		  Package pkg;
+		  pkg.setFromVersionFile(fileInfo.fileName());
+		  packageList->updatePackage(pkg);
+		}
+	}
+	else {
+		// default installer
+		// update config from package file 
+	}
+	return true;
+}
+
+void Installer::updatePackageList()
 {
 #ifdef DEBUG
 	qDebug() << __PRETTY_FUNCTION__;
@@ -74,7 +104,7 @@ void InstallerBase::updatePackageList()
 #ifndef QUNZIP_BUFFER
 # define QUNZIP_BUFFER (256 * 1024)
 #endif
-bool InstallerBase::unzipFile(const QString &destpath, const QString &zipFile)
+bool Installer::unzipFile(const QString &destpath, const QString &zipFile)
 {
   QDir path(destpath);
   QuaZip z(zipFile);
@@ -178,52 +208,17 @@ bool InstallerBase::unzipFile(const QString &destpath, const QString &zipFile)
 }
 
 
-void InstallerBase::setError(QByteArray format, QByteArray p1, QByteArray p2)
+void Installer::setError(QByteArray format, QByteArray p1, QByteArray p2)
 {
 	qDebug(format.data(),p1.data(),p2.data());
 }
  
-
-// InstallerGNUWin32
-
-InstallerGNUWin32::InstallerGNUWin32(PackageList *packageList, InstallerProgress *progress)  
- : InstallerBase(packageList,progress) 
+bool Installer::install(const QString &fileName)
 {
-}
-
-InstallerGNUWin32::~InstallerGNUWin32()  
-{
-}
-
-bool InstallerGNUWin32::isEnabled() 
-{
-	return true;
-}
-
-bool InstallerGNUWin32::loadConfig()
-{
-#ifdef DEBUG
-	qDebug() << __PRETTY_FUNCTION__;
-#endif
-	// gnuwin32 related 
-	QDir dir(root + "/manifest");
-	dir.setFilter(QDir::Files);
-	dir.setNameFilters(QStringList("*.ver"));
-	dir.setSorting(QDir::Size | QDir::Reversed);
-	
-	QFileInfoList list = dir.entryInfoList();
-	for (int i = 0; i < list.size(); ++i) {
-	  QFileInfo fileInfo = list.at(i);
-	  Package pkg;
-	  pkg.setFromVersionFile(fileInfo.fileName());
-	  packageList->updatePackage(pkg);
+	if (m_type == GNUWIN32) {
+		return unzipFile(root, fileName);
 	}
-	return true;
-}
-
-bool InstallerGNUWin32::install(const QString &fileName)
-{
-	return unzipFile(root, fileName);
+	return false;
 }
 
 #include "installer.moc"

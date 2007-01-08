@@ -26,50 +26,38 @@
 class PackageList;
 class InstallerProgress;
 
-class InstallerBase : public QObject {
+class Installer : public QObject {
 	Q_OBJECT
 
 	public:
-		InstallerBase(PackageList *packageList, InstallerProgress *progress=0);
-		virtual ~InstallerBase();
-		
-		virtual bool install(const QString &fileName /*, const QString &destdir=""*/) = 0;
+		enum InstallerType { Standard, GNUWIN32 };
+		Installer(PackageList *packageList, InstallerProgress *progress=0);
+		~Installer();
+		InstallerType Type() { return m_type; }
+		void setType(InstallerType type) { m_type = type; }
+		bool install(const QString &fileName /*, const QString &destdir=""*/);
 		// installPackage(Package *pkg) 
 //		bool readFromFile(QString const &fileName);
 //		bool writeToFile(QString const &fileName);
 		//bool loadConfig(const QString &destdir="");
-		virtual bool loadConfig();
+		bool loadConfig();
 
-		virtual bool isEnabled() = 0;
-		virtual void setRoot(const QString &_root);
+		bool isEnabled();
+		void setRoot(const QString &_root);
 
 	public slots:
 		void updatePackageList();
 
 	protected:
-    	bool unzipFile(const QString &destpath, const QString &zipFile);
+    bool unzipFile(const QString &destpath, const QString &zipFile);
 		void setError(QByteArray format, QByteArray p1="", QByteArray p2="");
 
 		PackageList *packageList;
 		QString root;
 		QString configFile;
 		InstallerProgress *m_progress;
+		InstallerType m_type;
 };
-
-class InstallerGNUWin32 : public InstallerBase {
-	public:
-		InstallerGNUWin32(PackageList *packageList, InstallerProgress *progress=0); 
-		virtual ~InstallerGNUWin32();
-
-		virtual bool install(const QString &fileName /*, const QString &destdir=""*/);
-		virtual bool loadConfig();
-
-		virtual bool isEnabled(); 
-		
-};
-
-// default installer 
-#define Installer InstallerGNUWin32
 
 #endif
 
