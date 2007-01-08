@@ -38,6 +38,7 @@
 #include "downloader.h"
 #include "installer.h"
 #include "installerprogress.h"
+#include "package.h"
 #include "packagelist.h"
 #include "configparser.h"
 
@@ -51,6 +52,11 @@ class InstallerEngine {
 		InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
 		bool downloadGlobalConfig();
 		bool downloadPackageLists(); 
+		void setPageSelectorWidgetData(QTreeWidget *tree);
+		void itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column);
+		bool downloadPackages(QTreeWidget *tree, const QString &category="");
+		bool installPackages(QTreeWidget *tree, const QString &category="");
+		
 		PackageList *packageList() { return m_packageList; }
 		Installer *installer() { return m_installer; }
 
@@ -60,6 +66,7 @@ class InstallerEngine {
 		Downloader *m_downloader;
 		InstallerProgress *m_instProgress;
 		ConfigParser *m_configParser;
+		
 };
 
 InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar)
@@ -80,6 +87,7 @@ bool InstallerEngine::downloadGlobalConfig()
 	download.start("http://well-known-location-server/kde-installer/config.txt","config.txt");
 #endif
 
+	qDebug() << "parsing global configuration file";
 	m_configParser->parseFromFile("config.txt");
 }
 
@@ -113,6 +121,118 @@ bool InstallerEngine::downloadPackageLists()
 	}
     return 1;
 }
+
+
+
+void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
+{
+ 	QStringList labels;
+ 	QList<QTreeWidgetItem *> items;
+	QTreeWidgetItem *item;
+
+ 	labels 
+ 	<< "Package"
+	<< "Version"
+	<< "all"
+	<< "bin"
+	<< "lib"
+	<< "src"
+	<< "doc"
+	<< "Notes";
+
+ 	tree->setColumnCount(8);
+ 	tree->setHeaderLabels(labels);
+
+	// adding top level items 
+ 	QList<QTreeWidgetItem *> categoryList;
+	QStringList categories;
+	categories << "windbus" << "gnuwin32" << "python" << "perl" << "KDE-i18n" << "KDE4";
+
+	foreach(QString aCategory, categories) {
+		QTreeWidgetItem *category = new QTreeWidgetItem((QTreeWidget*)0, QStringList(aCategory));
+		categoryList.append(category);
+	}
+
+	tree->insertTopLevelItems(0,categoryList);
+	
+	// adding sub items 
+	QList<Package>::iterator i;
+	for (i = m_packageList->packageList()->begin(); i != m_packageList->packageList()->end(); ++i) {
+		QStringList data; 
+		data << i->Name()
+			 << i->Version()
+             ;			 
+		QTreeWidgetItem *item = new QTreeWidgetItem(categoryList.at(1), data);
+		item->setCheckState(2, i->isInstalled(Package::BIN) ? Qt::Checked : Qt::Unchecked);
+		item->setCheckState(3, i->isInstalled(Package::LIB) ? Qt::Checked : Qt::Unchecked);
+		item->setCheckState(4, i->isInstalled(Package::SRC) ? Qt::Checked : Qt::Unchecked);
+		item->setCheckState(5, i->isInstalled(Package::DOC) ? Qt::Checked : Qt::Unchecked);
+
+//		items.append(item);
+  }
+// 	tree->insertTopLevelItems(0,items);
+
+	QStringList data; 
+	data.clear(); 
+	data << "kdelibs" << "4.1.2";
+	item = new QTreeWidgetItem(categoryList.at(5), data);
+	data.clear(); 
+	data << "kdebase" << "4.1.2";
+	item = new QTreeWidgetItem(categoryList.at(5), data);
+	data.clear(); 
+	data << "kdepim" << "4.1.2";
+	item = new QTreeWidgetItem(categoryList.at(5), data);
+}
+
+void InstallerEngine::itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column)
+{
+	if (column < 2)
+		return;
+	if (column == 2) {
+		item->setCheckState(3,item->checkState(column));
+		item->setCheckState(4,item->checkState(column));
+		item->setCheckState(5,item->checkState(column));
+		item->setCheckState(6,item->checkState(column));
+	}
+}   
+
+bool InstallerEngine::downloadPackages(QTreeWidget *tree, const QString &category)
+{
+	for (int i = 0; i < tree->topLevelItemCount(); i++) {
+		QTreeWidgetItem *item = tree->topLevelItem(i);
+		if (category.isEmpty() || item->text(0) == category) {
+			for (int j = 0; j < item->childCount(); j++) {
+				QTreeWidgetItem *child = item->child(j);
+				qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
+				if (child->checkState(2) == Qt::Checked) {
+					if (!m_packageList->downloadPackage(child->text(0)))
+						qDebug() << "could not download package";
+				}
+			}
+		}
+	}
+	return true;
+}
+
+bool InstallerEngine::installPackages(QTreeWidget *tree,const QString &category)
+{
+	for (int i = 0; i < tree->topLevelItemCount(); i++) {
+		QTreeWidgetItem *item = tree->topLevelItem(i);
+		if (category.isEmpty() || item->text(0) == category) {
+			for (int j = 0; j < item->childCount(); j++) {
+				QTreeWidgetItem *child = item->child(j);
+				qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
+				if (child->checkState(2) == Qt::Checked) {
+					if (!m_packageList->installPackage(child->text(0)))
+						qDebug() << "could not download package";
+				}
+			}
+		}
+	}
+	return true;
+}
+
+
 
 InstallerEngine *engine;
 
@@ -270,7 +390,7 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
     topLabel = new QLabel(tr("<center><b>Please select the required packages</b></center>"));
 
     tree = new QTreeWidget();
-    engine->packageList()->setWidgetData(tree);
+    engine->setPageSelectorWidgetData(tree);
     connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
 
     QVBoxLayout *layout = new QVBoxLayout;
@@ -281,7 +401,7 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
 
 void PackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
 {
-    engine->packageList()->itemClicked(item,column);
+    engine->itemClickedPackageSelectorPage(item,column);
 }
 
 void PackageSelectorPage::resetPage()
@@ -326,10 +446,10 @@ WizardPage *DownloadPage::nextPage()
 bool DownloadPage::isComplete()
 {
     wizard->nextButton->setEnabled(false);
-    engine->packageList()->downloadPackages(tree);
+    engine->downloadPackages(tree);
     topLabel->setText(tr("<center><b>Installing packages</b></center>"));
     QApplication::instance()->processEvents();
-    engine->packageList()->installPackages(tree);
+    engine->installPackages(tree);
     wizard->nextButton->setEnabled(true);
     // here the finish page should be called directly 
 		return 1;

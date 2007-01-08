@@ -56,19 +56,12 @@ class PackageList : public QObject {
 		QStringList getFilesForDownload(QString const &pkgName);
 		bool updatePackage(Package &pkg);
 		int size();
+		QList <Package> *packageList() { return m_packageList; }
 
 		// 0.5.3
 		bool hasConfig();
 		bool downloadPackage(const QString &pkgName);
 		bool installPackage(const QString &pkgName);
-
-		// Selector Page related methods
-#ifdef USE_GUI
-		void setWidgetData(QTreeWidget *tree);
-		void itemClicked(QTreeWidgetItem *item, int column);
-		bool downloadPackages(QTreeWidget *tree, const QString &category="");
-		bool installPackages(QTreeWidget *tree, const QString &category="");
-#endif
 
 	signals:
 		void loadedConfig();
@@ -76,7 +69,7 @@ class PackageList : public QObject {
 	private:
 		bool readHTMLInternal(QIODevice *ioDev, SiteType type);
 	private: 
-		QList<Package> *packageList;
+		QList<Package> *m_packageList;
 		QString root; 
 		QString configFile;
 		Downloader *downloader;

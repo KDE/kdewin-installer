@@ -67,7 +67,7 @@ PackageList::PackageList(Downloader *_downloader)
 	qDebug() << __FUNCTION__;
 #endif
     downloader = _downloader ? _downloader : new Downloader;
-	packageList = new QList<Package>;
+	m_packageList = new QList<Package>;
 	root = ".";
 	configFile = "/packages.txt";
 	
@@ -78,7 +78,7 @@ PackageList::~PackageList()
 #ifdef DEBUG
 	qDebug() << __FUNCTION__;
 #endif
-	delete packageList;
+	delete m_packageList;
 }
 
 bool PackageList::hasConfig()
@@ -91,7 +91,7 @@ void PackageList::addPackage(Package const &package)
 #ifdef DEBUG
 	qDebug() << __FUNCTION__;
 #endif
-	packageList->append(package);
+	m_packageList->append(package);
 }
 
 Package *PackageList::getPackage(QString const &pkgName)
@@ -100,7 +100,7 @@ Package *PackageList::getPackage(QString const &pkgName)
 	qDebug() << __FUNCTION__;
 #endif
 	QList<Package>::iterator i;
-	for (i = packageList->begin(); i != packageList->end(); ++i)
+	for (i = m_packageList->begin(); i != m_packageList->end(); ++i)
 		if (i->Name() == pkgName) 
 			return &*i;
 	return 0;
@@ -113,7 +113,7 @@ void PackageList::listPackages(const QString &title)
 #endif
 	qDebug() << title;
 	QList<Package>::iterator i;
-	for (i = packageList->begin(); i != packageList->end(); ++i)
+	for (i = m_packageList->begin(); i != m_packageList->end(); ++i)
 		qDebug(i->toString(true," - ").toLatin1());
 }
 
@@ -122,7 +122,7 @@ bool PackageList::writeToFile(const QString &_fileName)
 #ifdef DEBUG
 	qDebug() << __FUNCTION__;
 #endif
-	if (packageList->count() == 0)
+	if (m_packageList->count() == 0)
 		return false;
 
 	QString fileName = _fileName.isEmpty() ? root + configFile : _fileName;
@@ -133,7 +133,7 @@ bool PackageList::writeToFile(const QString &_fileName)
 	QTextStream out(&file);
 	out << "# package list" << "\n";
 	QList<Package>::iterator i;
-	for (i = packageList->begin(); i != packageList->end(); ++i)
+	for (i = m_packageList->begin(); i != m_packageList->end(); ++i)
 		out << i->Name() << "\t" << i->Version() << "\n";
 	return true;
 }
@@ -149,7 +149,7 @@ bool PackageList::readFromFile(const QString &_fileName)
   if (!file.open(QIODevice::ReadOnly| QIODevice::Text))
       return false;
 
-  packageList->clear();
+  m_packageList->clear();
 
 	Package pkg;
   while (!file.atEnd()) {
@@ -167,7 +167,7 @@ bool PackageList::readFromFile(const QString &_fileName)
 
 bool PackageList::readHTMLInternal(QIODevice *ioDev, SiteType type)
 {
-  packageList->clear();
+  m_packageList->clear();
 	
 	Package pkg; 
 
@@ -398,118 +398,7 @@ int PackageList::size()
 #ifdef DEBUG
 	qDebug() << __FUNCTION__;
 #endif
-	return packageList->size();
+	return m_packageList->size();
 }
-
-#ifdef USE_GUI
-void PackageList::setWidgetData(QTreeWidget *tree)
-{
- 	QStringList labels;
- 	QList<QTreeWidgetItem *> items;
-	QList<Package>::iterator i;
-	QTreeWidgetItem *item;
-
- 	labels 
- 	<< "Package"
-	<< "Version"
-	<< "all"
-	<< "bin"
-	<< "lib"
-	<< "src"
-	<< "doc"
-	<< "Notes";
-
- 	tree->setColumnCount(8);
- 	tree->setHeaderLabels(labels);
-
-	// adding top level items 
- 	QList<QTreeWidgetItem *> categoryList;
-	QStringList categories;
-	categories << "windbus" << "gnuwin32" << "python" << "perl" << "KDE-i18n" << "KDE4";
-
-	foreach(QString aCategory, categories) {
-		QTreeWidgetItem *category = new QTreeWidgetItem((QTreeWidget*)0, QStringList(aCategory));
-		categoryList.append(category);
-	}
-
-	tree->insertTopLevelItems(0,categoryList);
-	
-	// adding sub items 
-	for (i = packageList->begin(); i != packageList->end(); ++i) {
-		QStringList data; 
-		data << i->Name()
-			 << i->Version()
-             ;			 
-		QTreeWidgetItem *item = new QTreeWidgetItem(categoryList.at(1), data);
-		item->setCheckState(2, i->isInstalled(Package::BIN) ? Qt::Checked : Qt::Unchecked);
-		item->setCheckState(3, i->isInstalled(Package::LIB) ? Qt::Checked : Qt::Unchecked);
-		item->setCheckState(4, i->isInstalled(Package::SRC) ? Qt::Checked : Qt::Unchecked);
-		item->setCheckState(5, i->isInstalled(Package::DOC) ? Qt::Checked : Qt::Unchecked);
-
-//		items.append(item);
-  }
-// 	tree->insertTopLevelItems(0,items);
-
-	QStringList data; 
-	data.clear(); 
-	data << "kdelibs" << "4.1.2";
-	item = new QTreeWidgetItem(categoryList.at(5), data);
-	data.clear(); 
-	data << "kdebase" << "4.1.2";
-	item = new QTreeWidgetItem(categoryList.at(5), data);
-	data.clear(); 
-	data << "kdepim" << "4.1.2";
-	item = new QTreeWidgetItem(categoryList.at(5), data);
-}
-
-void PackageList::itemClicked(QTreeWidgetItem *item, int column)
-{
-	if (column < 2)
-		return;
-	if (column == 2) {
-		item->setCheckState(3,item->checkState(column));
-		item->setCheckState(4,item->checkState(column));
-		item->setCheckState(5,item->checkState(column));
-		item->setCheckState(6,item->checkState(column));
-	}
-}   
-
-bool PackageList::installPackages(QTreeWidget *tree,const QString &category)
-{
-	for (int i = 0; i < tree->topLevelItemCount(); i++) {
-		QTreeWidgetItem *item = tree->topLevelItem(i);
-		if (category.isEmpty() || item->text(0) == category) {
-			for (int j = 0; j < item->childCount(); j++) {
-				QTreeWidgetItem *child = item->child(j);
-				qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
-				if (child->checkState(2) == Qt::Checked) {
-					if (!installPackage(child->text(0)))
-						qDebug() << "could not download package";
-				}
-			}
-		}
-	}
-	return true;
-}
-
-
-bool PackageList::downloadPackages(QTreeWidget *tree, const QString &category)
-{
-	for (int i = 0; i < tree->topLevelItemCount(); i++) {
-		QTreeWidgetItem *item = tree->topLevelItem(i);
-		if (category.isEmpty() || item->text(0) == category) {
-			for (int j = 0; j < item->childCount(); j++) {
-				QTreeWidgetItem *child = item->child(j);
-				qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
-				if (child->checkState(2) == Qt::Checked) {
-					if (!downloadPackage(child->text(0)))
-						qDebug() << "could not download package";
-				}
-			}
-		}
-	}
-	return true;
-}
-#endif
 
 #include "packagelist.moc"
