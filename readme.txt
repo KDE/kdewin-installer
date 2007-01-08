@@ -38,7 +38,7 @@ TODO
 	  installed packages to avoid reinstalling by default; before 
 	  downloading/installing a check must be performed, which packages 
 	  really have to be installed. 
-	  
+	7 fix perl package list import	  
 
 Happy hacking
 
