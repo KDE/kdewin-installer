@@ -75,6 +75,7 @@ InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgre
 	m_packageList = new PackageList(m_downloader);
 	m_installer = new Installer(m_packageList,instProgressBar );
 	m_configParser = new ConfigParser();
+	downloadGlobalConfig();
 }
 
 bool InstallerEngine::downloadGlobalConfig()
@@ -143,11 +144,15 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
 
 	// adding top level items 
  	QList<QTreeWidgetItem *> categoryList;
-	QStringList categories;
-	categories << "windbus" << "gnuwin32" << "python" << "perl" << "KDE-i18n" << "KDE4";
 
-	foreach(QString aCategory, categories) {
-		QTreeWidgetItem *category = new QTreeWidgetItem((QTreeWidget*)0, QStringList(aCategory));
+	qDebug() << "adding categories";
+
+	QList<Site*>::iterator s;
+	
+	qDebug() << m_configParser->sites()->size();
+	for (s = m_configParser->sites()->begin(); s != m_configParser->sites()->end(); s++) {
+		qDebug() << (*s)->Name();
+		QTreeWidgetItem *category = new QTreeWidgetItem((QTreeWidget*)0, QStringList((*s)->Name()));
 		categoryList.append(category);
 	}
 
@@ -165,7 +170,7 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
 			 << (i->isInstalled(Package::SRC) ? "-I-" : "")
 			 << (i->isInstalled(Package::DOC) ? "-I-" : "")
 			;
-		QTreeWidgetItem *item = new QTreeWidgetItem(categoryList.at(1), data);
+		QTreeWidgetItem *item = new QTreeWidgetItem(categoryList.at(0), data);
 		bool installed = i->isInstalled(Package::BIN)
 						|| i->isInstalled(Package::LIB)
 						|| i->isInstalled(Package::SRC)
@@ -176,10 +181,11 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
 			item->setCheckState(3, Qt::Unchecked);
 			item->setCheckState(4, Qt::Unchecked);
 			item->setCheckState(5, Qt::Unchecked);
+			item->setCheckState(6, Qt::Unchecked);
 		}
 
  }
-
+/*
 	QStringList data; 
 	data.clear(); 
 	data << "kdelibs" << "4.1.2";
@@ -190,6 +196,7 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
 	data.clear(); 
 	data << "kdepim" << "4.1.2";
 	item = new QTreeWidgetItem(categoryList.at(5), data);
+*/
 }
 
 void InstallerEngine::itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column)
