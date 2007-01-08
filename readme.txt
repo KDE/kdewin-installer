@@ -23,19 +23,18 @@ NOTES
 
 TODO
 ====
-- add long command line options like 
-	- destdir/installation root 
-	- operation mode --install, --erase, --list --query, ... 
+1 add long command line options like 
+	1 operation mode --install, --erase, --list --query, ... 
 
-- use QT_NO_DEBUG_OUTPUT instead of #ifdef DEBUG to avoid debug output 
+2 use QT_NO_DEBUG_OUTPUT instead of #ifdef DEBUG to avoid debug output 
 
-- gui 
-	- display file installing in gui, currently redraw does not work 
-	- goto finish page directly when installing is ready 
-	- only enable package type when a related package is available
-	- center checkboxes in package selector page
-	- reduce column width of package types in package selector page
-	- save selections in package selector page different from initial 
+3 gui 
+	1 display file installing in gui, currently redraw does not work 
+	2 goto finish page directly when installing is ready 
+	3 only enable package type when a related package is available
+	4 center checkboxes in package selector page
+	5 reduce column width of package types in package selector page
+	6 save selections in package selector page different from initial 
 	  installed packages to avoid reinstalling by default; before 
 	  downloading/installing a check must be performed, which packages 
 	  really have to be installed. 
