@@ -122,8 +122,12 @@ bool InstallerEngine::downloadPackageLists()
 		Installer *installer = new Installer(packageList,m_instProgressBar );
 
 		// FIXME:: hardcoded name, better to use an option in the config file ? 
-		if ((*s)->Name() == "gnuwin32")
+		if ((*s)->Name() == "gnuwin32") {
 			installer->setType(Installer::GNUWIN32);
+			packageList->setBaseURL("http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/");
+		}
+		else 
+			packageList->setBaseURL((*s)->URL());
 		installer->setRoot(m_root);
 		m_installerList.append(installer);
 		m_installer = installer;
