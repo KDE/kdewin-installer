@@ -159,16 +159,26 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
 		QStringList data; 
 		data << i->Name()
 			 << i->Version()
-             ;			 
+       << ""			 
+			 << (i->isInstalled(Package::BIN) ? "-I-" : "")
+			 << (i->isInstalled(Package::LIB) ? "-I-" : "")
+			 << (i->isInstalled(Package::SRC) ? "-I-" : "")
+			 << (i->isInstalled(Package::DOC) ? "-I-" : "")
+			;
 		QTreeWidgetItem *item = new QTreeWidgetItem(categoryList.at(1), data);
-		item->setCheckState(2, i->isInstalled(Package::BIN) ? Qt::Checked : Qt::Unchecked);
-		item->setCheckState(3, i->isInstalled(Package::LIB) ? Qt::Checked : Qt::Unchecked);
-		item->setCheckState(4, i->isInstalled(Package::SRC) ? Qt::Checked : Qt::Unchecked);
-		item->setCheckState(5, i->isInstalled(Package::DOC) ? Qt::Checked : Qt::Unchecked);
+		bool installed = i->isInstalled(Package::BIN)
+						|| i->isInstalled(Package::LIB)
+						|| i->isInstalled(Package::SRC)
+						|| i->isInstalled(Package::DOC);
 
-//		items.append(item);
-  }
-// 	tree->insertTopLevelItems(0,items);
+		if (!installed) {
+			item->setCheckState(2, Qt::Unchecked);
+			item->setCheckState(3, Qt::Unchecked);
+			item->setCheckState(4, Qt::Unchecked);
+			item->setCheckState(5, Qt::Unchecked);
+		}
+
+ }
 
 	QStringList data; 
 	data.clear(); 
