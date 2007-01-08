@@ -20,6 +20,12 @@
 @siteurl http://software.opensuse.org/download/KDE:/KDE3/SUSE_Linux_10.1/noarch/
 @siteoptions
 
+@site perl
+@sitetype apachemodindex
+@siteurl http://downloads.activestate.com/ActivePerl/Windows/5.8/
+@siteoptions
+
+
 ; a package definition 
 @package perl ; package name
 @packagecategory perl 
