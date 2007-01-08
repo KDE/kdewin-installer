@@ -32,16 +32,17 @@
 class Site {
 
 	public:
+		enum SiteType {SourceForge, ApacheModIndex};
 		QString Name() {return m_name;}
 		QString URL()  {return m_url;}
-		QString type() {return m_type;}
+		SiteType Type() {return m_type;}
 		void setName(const QString &name) {m_name = name;}
 		void setURL(const QString &url)  {m_url = url; }
-		void setType(const QString &type) {m_type = type; }
+		void setType(SiteType type) {m_type = type; }
 	private:
 		QString m_name;
 		QString m_url;
-		QString m_type;
+		SiteType m_type;
 };
 
 #endif 

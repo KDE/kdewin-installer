@@ -9,15 +9,15 @@
 @siteoptions
 
 ; another definition
-@site kde-win32
-@siteurl http://sourceforge.net/project/showfiles.php?group_id=23617
-@sitetype sourceforge
+@site win32libs
+@sitetype apachemodindex
+@siteurl http://www.abi-neuhaus.de/chris/win32libs/zip/
 @siteoptions
 
 ; another definition
-@site  kde-i18n
+@site kde-i18n
+@sitetype apachemodindex
 @siteurl http://software.opensuse.org/download/KDE:/KDE3/SUSE_Linux_10.1/noarch/
-@sitetype 
 @siteoptions
 
 ; a package definition 

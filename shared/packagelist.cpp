@@ -69,7 +69,7 @@ PackageList::PackageList(Downloader *_downloader)
     downloader = _downloader ? _downloader : new Downloader;
 	m_packageList = new QList<Package>;
 	root = ".";
-	configFile = "/packages.txt";
+	m_configFile = "/packages.txt";
 	
 }
 		
@@ -83,7 +83,7 @@ PackageList::~PackageList()
 
 bool PackageList::hasConfig()
 {
-	return QFile::exists(root + configFile);
+	return QFile::exists(root + m_configFile);
 }
 
 void PackageList::addPackage(Package const &package)
@@ -125,10 +125,12 @@ bool PackageList::writeToFile(const QString &_fileName)
 	if (m_packageList->count() == 0)
 		return false;
 
-	QString fileName = _fileName.isEmpty() ? root + configFile : _fileName;
+	QString fileName = _fileName.isEmpty() ? root + m_configFile : _fileName;
 	QFile file(fileName);
-  if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-      return false;
+  if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+		qDebug() << "could not open '"  << fileName << "' for writing";
+		return false;
+	}
 
 	QTextStream out(&file);
 	out << "# package list" << "\n";
@@ -143,7 +145,7 @@ bool PackageList::readFromFile(const QString &_fileName)
 #ifdef DEBUG
 	qDebug() << __FUNCTION__;
 #endif
-	QString fileName = _fileName.isEmpty() ? root + configFile : _fileName;
+	QString fileName = _fileName.isEmpty() ? root + m_configFile : _fileName;
 	QFile file(fileName);
 
   if (!file.open(QIODevice::ReadOnly| QIODevice::Text))
@@ -165,14 +167,14 @@ bool PackageList::readFromFile(const QString &_fileName)
 	return true;
 }
 
-bool PackageList::readHTMLInternal(QIODevice *ioDev, SiteType type)
+bool PackageList::readHTMLInternal(QIODevice *ioDev, Site::SiteType type)
 {
   m_packageList->clear();
 	
 	Package pkg; 
 
 	switch (type) {
-		case SourceForge: 
+		case Site::SourceForge: 
 			while (!ioDev->atEnd()) {
 				QByteArray line = ioDev->readLine();
 				if (line.contains("<td><a href=\"/project/showfiles.php?group_id=23617")) {
@@ -189,7 +191,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, SiteType type)
 			}
 			break; 
 
-		case ApacheModIndex: 
+		case Site::ApacheModIndex: 
 			char *lineKey = "alt=\"[   ]\"> <a href=\"";
 			char *fileKeyStart = "<a href=\"";
 			char *fileKeyEnd = "\">";
@@ -289,7 +291,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, SiteType type)
 	return true;
 }
 
-bool PackageList::readHTMLFromByteArray(const QByteArray &_ba, SiteType type)
+bool PackageList::readHTMLFromByteArray(const QByteArray &_ba, Site::SiteType type)
 {
 #ifdef DEBUG
 	qDebug() << __FUNCTION__;
@@ -304,7 +306,7 @@ bool PackageList::readHTMLFromByteArray(const QByteArray &_ba, SiteType type)
   return readHTMLInternal(&buf, type);
 }
 
-bool PackageList::readHTMLFromFile(const QString &fileName, SiteType type )
+bool PackageList::readHTMLFromFile(const QString &fileName, Site::SiteType type )
 {
 #ifdef DEBUG
 	qDebug() << __FUNCTION__;

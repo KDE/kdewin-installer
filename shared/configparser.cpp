@@ -78,7 +78,7 @@ bool ConfigParser::parse(QIODevice *ioDev)
 			else if(cmd[0] == "@siteurl")
 				site->setURL(cmd[1]);
 			else if(cmd[0] == "@sitetype") {
-				site->setType(cmd[1]);
+				site->setType(cmd[1] == "apachemodindex" ? Site::ApacheModIndex : Site::SourceForge );
 			}
 			else if(cmd[0] == "@package")
 				qDebug() << "package detected";

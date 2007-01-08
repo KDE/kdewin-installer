@@ -26,6 +26,7 @@
 
 #include <QObject>
 #include "package.h"
+#include "site.h"
 
 class Downloader;
 class InstallerBase;
@@ -39,15 +40,14 @@ class PackageList : public QObject {
 	Q_OBJECT
 	
 	public:
-		enum SiteType {SourceForge, ApacheModIndex};
 		
 		PackageList(Downloader *downloader= NULL);
 		virtual ~PackageList();
 		void addPackage(Package const &package); 
 		void listPackages(const QString &title=QString::null);
 		bool readFromFile(const QString &_fileName=QString::null);
-		bool readHTMLFromFile(const QString &fileName, SiteType type=SourceForge);
-		bool readHTMLFromByteArray(const QByteArray &ba, SiteType type=SourceForge);
+		bool readHTMLFromFile(const QString &fileName, Site::SiteType type=Site::SourceForge);
+		bool readHTMLFromByteArray(const QByteArray &ba, Site::SiteType type=Site::SourceForge);
 		bool writeToFile(QString const &fileName=QString::null);
 //		static bool downloadPackage(QString const &pkgName);
 		QStringList getPackageFiles(QString const &pkgName);
@@ -57,6 +57,7 @@ class PackageList : public QObject {
 		bool updatePackage(Package &pkg);
 		int size();
 		QList <Package> *packageList() { return m_packageList; }
+		void setConfigFileName(const QString &file) {m_configFile = "/" + file; }
 
 		// 0.5.3
 		bool hasConfig();
@@ -67,11 +68,11 @@ class PackageList : public QObject {
 		void loadedConfig();
 	
 	private:
-		bool readHTMLInternal(QIODevice *ioDev, SiteType type);
+		bool readHTMLInternal(QIODevice *ioDev, Site::SiteType type);
 	private: 
 		QList<Package> *m_packageList;
 		QString root; 
-		QString configFile;
+		QString m_configFile;
 		Downloader *downloader;
 		InstallerBase *installer;
 

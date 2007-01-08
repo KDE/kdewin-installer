@@ -55,6 +55,7 @@ set(installer_shared_HEADERS
 set(installer_shared_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shared)
 
 include_directories(${quazip_INCLUDE_DIR} ${installer_shared_INCLUDE_DIR})
+configure_file(${CMAKE_SOURCE_DIR}/config.txt ${CMAKE_BINARY_DIR}/config.txt)
 
 add_definitions(-DINCLUDE_DOC_AND_SRC_PACKAGES)
 # our targets

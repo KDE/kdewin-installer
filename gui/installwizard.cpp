@@ -56,24 +56,28 @@ class InstallerEngine {
 		void itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column);
 		bool downloadPackages(QTreeWidget *tree, const QString &category="");
 		bool installPackages(QTreeWidget *tree, const QString &category="");
+		void setRoot(QString root) { m_root = root; }
 		
 		PackageList *packageList() { return m_packageList; }
 		Installer *installer() { return m_installer; }
 
 	private:
-		PackageList *m_packageList;
-		Installer *m_installer;
+		QList <PackageList*> m_packageListList;
+		QList <Installer*> m_installerList;
+		PackageList *m_packageList;		// currenty used packagelist
+		Installer *m_installer;				// currenty used installer
 		Downloader *m_downloader;
 		InstallerProgress *m_instProgress;
 		ConfigParser *m_configParser;
+		InstallerProgress *m_instProgressBar;
+		QString m_root;
 		
 };
 
 InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar)
 {
 	m_downloader = new Downloader(/*blocking=*/ true,progressBar);
-	m_packageList = new PackageList(m_downloader);
-	m_installer = new Installer(m_packageList,instProgressBar );
+	m_instProgressBar = instProgressBar;
 	m_configParser = new ConfigParser();
 	downloadGlobalConfig();
 }
@@ -96,31 +100,53 @@ bool InstallerEngine::downloadGlobalConfig()
 /// download all packagelists, which are available on the configured sites
 bool InstallerEngine::downloadPackageLists()
 {
-	if ( !m_packageList->hasConfig() ) {
-    QByteArray ba;
-		// download package list 
-		m_downloader->start("http://sourceforge.net/project/showfiles.php?group_id=23617", ba);
+	// FIXME: m_packageListList has to be synced with sites, may be packageList contains a name used in view 
+	QList<Site*>::iterator s;
+	for (s = m_configParser->sites()->begin(); s != m_configParser->sites()->end(); s++) {
+		qDebug() << "download package file list for site: " << (*s)->Name();
+		PackageList *packageList = new PackageList(m_downloader);
+		packageList->setConfigFileName("packages-" + (*s)->Name() + ".txt");
+		m_packageList = packageList;
+		m_packageListList.append(packageList);
+		Installer *installer = new Installer(packageList,m_instProgressBar );
+		installer->setRoot(m_root);
+		m_installerList.append(installer);
+		m_installer = installer;
 
-    	// load and parse 
-		if (!m_packageList->readHTMLFromByteArray(ba))
-			return 1; 
+		if ( !packageList->hasConfig() ) {
+	    QByteArray ba;
+			// download package list 
+			qDebug() << (*s)->URL();
+			m_downloader->start((*s)->URL(), ba);
+	
+	    	// load and parse 
+			if (!packageList->readHTMLFromByteArray(ba,(*s)->Type())) {
+				qDebug() << "error reading package list from download html file";
+				continue;
+			}
+	
+			// print list 
+			packageList->listPackages("Package List" + (*s)->Name());
 
-		// save into file
-		if (!m_packageList->writeToFile())
-			return 1; 
-
-		// print list 
-		m_packageList->listPackages("Package List");
+			// save into file
+			if (!packageList->writeToFile()) {
+				qDebug() << "error writing package list to file";
+				continue;
+			}
+	
+		}
+		else {
+			// read list from file 
+			if (!packageList->readFromFile()) {
+				qDebug() << "error reading package list from file";
+				continue;
+			}
+	
+			// print list 
+			packageList->listPackages("Package List" + (*s)->Name());
+		}
 	}
-	else {
-		// read list from file 
-		if (!m_packageList->readFromFile())
-			return 1; 
-
-		// print list 
-		m_packageList->listPackages("Package List");
-	}
-    return 1;
+	return true;
 }
 
 void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
@@ -145,11 +171,9 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
 	// adding top level items 
  	QList<QTreeWidgetItem *> categoryList;
 
-	qDebug() << "adding categories";
+	qDebug() << "adding categories size:" << m_configParser->sites()->size();
 
 	QList<Site*>::iterator s;
-	
-	qDebug() << m_configParser->sites()->size();
 	for (s = m_configParser->sites()->begin(); s != m_configParser->sites()->end(); s++) {
 		qDebug() << (*s)->Name();
 		QTreeWidgetItem *category = new QTreeWidgetItem((QTreeWidget*)0, QStringList((*s)->Name()));
@@ -158,32 +182,37 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
 
 	tree->insertTopLevelItems(0,categoryList);
 	
-	// adding sub items 
-	QList<Package>::iterator i;
-	for (i = m_packageList->packageList()->begin(); i != m_packageList->packageList()->end(); ++i) {
-		QStringList data; 
-		data << i->Name()
-			 << i->Version()
-       << ""			 
-			 << (i->isInstalled(Package::BIN) ? "-I-" : "")
-			 << (i->isInstalled(Package::LIB) ? "-I-" : "")
-			 << (i->isInstalled(Package::SRC) ? "-I-" : "")
-			 << (i->isInstalled(Package::DOC) ? "-I-" : "")
-			;
-		QTreeWidgetItem *item = new QTreeWidgetItem(categoryList.at(0), data);
-		bool installed = i->isInstalled(Package::BIN)
-						|| i->isInstalled(Package::LIB)
-						|| i->isInstalled(Package::SRC)
-						|| i->isInstalled(Package::DOC);
-
-		if (!installed) {
-			item->setCheckState(2, Qt::Unchecked);
-			item->setCheckState(3, Qt::Unchecked);
-			item->setCheckState(4, Qt::Unchecked);
-			item->setCheckState(5, Qt::Unchecked);
-			item->setCheckState(6, Qt::Unchecked);
+	QList <PackageList *>::iterator k; 
+	// FIXME: m_packageListList has to be synced with sites  
+	int t=0;
+	for (k = m_packageListList.begin(); k != m_packageListList.end(); ++k) {
+		// adding sub items 
+		QList<Package>::iterator i;
+		for (i = (*k)->packageList()->begin(); i != (*k)->packageList()->end(); ++i) {
+			QStringList data; 
+			data << i->Name()
+				 << i->Version()
+	       << ""			 
+				 << (i->isInstalled(Package::BIN) ? "-I-" : "")
+				 << (i->isInstalled(Package::LIB) ? "-I-" : "")
+				 << (i->isInstalled(Package::SRC) ? "-I-" : "")
+				 << (i->isInstalled(Package::DOC) ? "-I-" : "")
+				;
+			QTreeWidgetItem *item = new QTreeWidgetItem(categoryList.at(t), data);
+			bool installed = i->isInstalled(Package::BIN)
+							|| i->isInstalled(Package::LIB)
+							|| i->isInstalled(Package::SRC)
+							|| i->isInstalled(Package::DOC);
+	
+			if (!installed) {
+				item->setCheckState(2, Qt::Unchecked);
+				item->setCheckState(3, Qt::Unchecked);
+				item->setCheckState(4, Qt::Unchecked);
+				item->setCheckState(5, Qt::Unchecked);
+				item->setCheckState(6, Qt::Unchecked);
+			}
 		}
-
+		t++;
  }
 /*
 	QStringList data; 
@@ -358,7 +387,7 @@ void PathSettingsPage::resetPage()
 
 WizardPage *PathSettingsPage::nextPage()
 {
-	engine->installer()->setRoot(rootPathEdit->text());
+	engine->setRoot(rootPathEdit->text());
 	engine->downloadPackageLists();
   wizard->packageSelectorPage = new PackageSelectorPage(wizard);
 	return wizard->packageSelectorPage;
