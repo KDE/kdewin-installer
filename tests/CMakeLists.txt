@@ -46,7 +46,7 @@ set (test-configparser_SOURCES
 qt4_automoc(${test-configparser_SOURCES})
 
 add_executable(test-configparser ${test-configparser_SOURCES})
-target_link_libraries(test-configparser ${QT_NETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
+target_link_libraries(test-configparser ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
 
 set (test-settings_SOURCES
 	test-settings.cpp
