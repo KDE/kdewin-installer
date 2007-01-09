@@ -237,8 +237,8 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
         for (i = (*k)->packageList()->begin(); i != (*k)->packageList()->end(); ++i)
         {
             QStringList data;
-            data << i->Name()
-            << i->Version()
+            data << i->name()
+            << i->version()
             << ""
             << (i->isInstalled(Package::BIN) ? "-I-" : "")
             << (i->isInstalled(Package::LIB) ? "-I-" : "")

@@ -26,149 +26,123 @@
 QString Package::baseURL = "http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/";
 
 Package::Package()
-{
-    installedLIB = false;
-    installedBIN = false;
-    installedDOC = false;
-    installedSRC = false;
-}
+{}
 
-Package::Package(QString const &_name, QString const &_version)
+QString Package::getFileName(Package::Type contentType)
 {
-    name = _name;
-    version = _version;
-    installedLIB = false;
-    installedBIN = false;
-    installedDOC = false;
-    installedSRC = false;
-}
-
-
-const QString Package::getFileName(Package::Type type)
-{
-    switch (type)
-    {
-    case BIN:
-        return name + "-" + version + "-bin.zip";
-    case LIB:
-        return name + "-" + version + "-lib.zip";
-    case SRC:
-        return name + "-" + version + "-doc.zip";
-    case DOC:
-        return name + "-" + version + "-src.zip";
-    default:
-        return "";
+    QList<packageDescr>::iterator it = m_packages.begin();
+    for( ; it != m_packages.end(); ++it) {
+        if(contentType == (*it).contentType)
+            return (*it).fileName;
     }
+    return QString();
 }
 
-const QString Package::getURL(Package::Type type, QString _baseURL)
+QString Package::getURL(Package::Type contentType)
 {
-    // for compatibility
-    if (_baseURL.isEmpty())
-        _baseURL = baseURL;
-    switch (type)
-    {
-    case BIN:
-        return _baseURL + name + "-" + version + "-bin.zip";
-    case LIB:
-        return _baseURL + name + "-" + version + "-lib.zip";
-    case SRC:
-        return _baseURL + name + "-" + version + "-doc.zip";
-    case DOC:
-        return _baseURL + name + "-" + version + "-src.zip";
-    default:
-        return "";
+    QList<packageDescr>::iterator it = m_packages.begin();
+    for( ; it != m_packages.end(); ++it) {
+        if(contentType == (*it).contentType)
+            return (*it).path;
     }
+    return QString();
 }
 
-void Package::setType(const QString &typeString)
+void Package::add(const QString &path, const QByteArray &contentType, bool bInstalled)
 {
-    if (typeString == "bin")
-        installedBIN = true;
-    else if (typeString == "lib")
-        installedLIB = true;
-    else if (typeString == "src")
-        installedSRC = true;
-    else if (typeString == "doc")
-        installedDOC = true;
+    QByteArray ct = contentType.toLower();
+    if(ct == "bin")
+        add(path, BIN, bInstalled);
+    else
+    if(ct == "lib")
+        add(path, LIB, bInstalled);
+    else
+    if(ct == "doc")
+        add(path, DOC, bInstalled);
+    else
+    if(ct == "src")
+        add(path, SRC, bInstalled);
+}
+
+void Package::add(const QString &path, Package::Type contentType, bool bInstalled)
+{
+    packageDescr desc;
+    int idx;
+
+    QList<packageDescr>::iterator it = m_packages.begin();
+    desc.path = path;
+
+    idx = path.lastIndexOf('/');
+    if(idx == -1) {
+        qDebug("Invalid");    // FIXME
+        return;
+    }
+    desc.fileName = path.mid(idx + 1);
+
+    idx = desc.fileName.lastIndexOf('.');
+    if(idx == -1) {
+        qDebug("Invalid");    // FIXME
+    }
+    desc.packageType = desc.fileName.mid(idx + 1);
+    
+    desc.contentType = contentType;
+    desc.bInstalled  = bInstalled;
+    
+    for( ; it != m_packages.end(); ++it) {
+        if(desc.contentType == (*it).contentType &&
+           desc.packageType == (*it).packageType) {
+            qDebug("Already added");
+            return;
+        }
+    }
+
+    m_packages.append(desc);
 }
 
 QString Package::toString(bool mode, const QString &delim)
 {
-    QString result = name + delim + version;
+    QString result = m_name + delim + m_version;
     QString installedTypes = getTypeAsString();
     if (installedTypes != "")
         result += "   ( installed =" + getTypeAsString() + ")";
     return result;
 }
 
-const QString Package::getTypeAsString()
+QString Package::getTypeAsString()
 {
     QString types;
-    if (installedBIN)
-        types += " bin ";
-    if (installedLIB)
-        types += " lib ";
-    if (installedSRC)
-        types += " src ";
-    if (installedDOC)
-        types += " doc ";
+
+    QList<packageDescr>::iterator it = m_packages.begin();
+    for( ; it != m_packages.end(); ++it) {
+        if(!(*it).bInstalled)
+            continue;
+
+        switch((*it).contentType) {
+            case BIN:
+                types += " bin ";
+                break;
+            case LIB:
+                types += " lib ";
+                break;
+            case DOC:
+                types += " doc ";
+                break;
+            case SRC:
+                types += " src ";
+                break;
+        };
+    }
     return types;
 }
 
-bool Package::setFromVersionFile(const QString &str)
+bool Package::isInstalled(Package::Type contentType)
 {
-    QString verString = str;
-    verString.replace(".ver","");
-    int i = verString.indexOf("-");
-    int j = verString.lastIndexOf("-");
-    QString name = verString.left(i);
-    QString version = verString.mid(i+1,j-1-i);
-    QString type = verString.mid(j+1);
-    setName(name);
-    setVersion(version);
-    setType(type);
-    return true;
-}
-
-/*
-bool Package::updateFromVersionFile(const QString &str)
-{
- qDebug() << str;
- QString verString = str;
- verString.replace(".ver","");
- int i = verString.indexOf("-");
- int j = verString.lastIndexOf("-");
- QString name = verString.left(i);
- QString version = verString.mid(i+1,j-1-i+1);
- QString type = verString.right(j+1);
- return true;
-}
-*/
-
-void Package::addInstalledTypes(const Package &pkg)
-{
-    installedLIB = pkg.installedLIB ? pkg.installedLIB : installedLIB ;
-    installedBIN = pkg.installedBIN ? pkg.installedBIN : installedBIN ;
-    installedDOC = pkg.installedDOC ? pkg.installedDOC : installedDOC ;
-    installedSRC = pkg.installedSRC ? pkg.installedSRC : installedSRC ;
-}
-
-bool Package::isInstalled(Package::Type type)
-{
-    switch (type)
-    {
-    case BIN:
-        return installedBIN;
-    case LIB:
-        return installedLIB;
-    case SRC:
-        return installedSRC;
-    case DOC:
-        return installedDOC;
-    default:
-        return false;
+    QList<packageDescr>::iterator it = m_packages.begin();
+    for( ; it != m_packages.end(); ++it) {
+        if(contentType == (*it).contentType)
+            return (*it).bInstalled;
     }
+    return false;
 }
 
 void Package::logOutput()

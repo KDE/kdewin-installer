@@ -26,64 +26,72 @@
 #include <QObject>
 #include <QString>
 
+/* This class holds a package with all it's single files
+    a2ps-4.13b-1-bin.zip
+    a2ps-4.13b-1-dep.zip
+    a2ps-4.13b-1-doc.zip
+    a2ps-4.13b-1-lib.zip
+    a2ps-4.13b-1-src.exe
+    a2ps-4.13b-1-src.zip
+ */
 class Package
 {
-
 public:
     enum Type { BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8 };
 
+    struct packageDescr {
+        QString path;           // complete url (use QUrl?)
+        QString fileName;       // filename only
+        QString packageType;    // zip / msi / ...
+        Type    contentType;    // BIN / LIB / DOC / SRC
+        bool    bInstalled;     // true if already installed
+    };
+public:
+
     Package();
-    Package(QString const &_name, QString const &_version);
 
-    // FIXME: better use Q_PROPERTY here?
-    const QString &Name() const
+    const QString &name() const
     {
-        return name;
+        return m_name;
     }
-    const QString &Version() const
+    void setName(QString const &name)
     {
-        return version;
+        m_name = name;
     }
-    void setName(QString const &_name)
-    {
-        name = _name;
-    }
-    void setVersion(QString const &_version)
-    {
-        version = _version;
-    }
-    void setPackageType(QString const &_type)
-    {
-        packagetype = _type;
-    }
-    void setType(const QString &typeString);
-    bool setFromVersionFile(const QString &verString);
-    QString toString(bool mode=false, const QString &delim="-");
-    const QString getTypeAsString();
 
-    const QString getFileName(Package::Type type);
-    const QString getURL(Package::Type type, QString baseURL="");
-    bool isEmpty()
+    const QString &version() const
     {
-        return name == "";
+        return m_version;
     }
-    void addInstalledTypes(const Package &pkg);
+    void setVersion(const QString &version)
+    {
+        m_version = version;
+    }
+
+    QString toString(bool mode=false, const QString &delim = "-");
+    QString getTypeAsString();
+
+    // return packageDescr::fileName for specified contentType
+    QString getFileName(Package::Type contentType);
+    // return packageDescr::path for specified contentType
+    QString getURL(Package::Type type);
+    // add a file to this package
+    void add(const QString &path, Package::Type contentType, bool bInstalled = false);
+    void add(const QString &path, const QByteArray &contentType, bool bInstalled = false);
+
     static QString baseURL;
 
-    // 0.5.3
+    // check if specific content is already installed
     bool isInstalled(Package::Type type);
 
 private slots:
     void logOutput();
 
-private:
-    QString name;
-    QString version;
-    QString packagetype;
-    bool installedLIB;
-    bool installedBIN;
-    bool installedDOC;
-    bool installedSRC;
+protected:
+    QList<packageDescr> m_packages;
+
+    QString m_name;     // base name (a2ps)
+    QString m_version;  // base version (4.13b-1)
 };
 
 #endif

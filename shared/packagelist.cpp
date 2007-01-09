@@ -90,7 +90,7 @@ bool PackageList::hasConfig()
     return QFile::exists(root + m_configFile);
 }
 
-void PackageList::addPackage(Package const &package)
+void PackageList::addPackage(const Package &package)
 {
 #ifdef DEBUG
     qDebug() << __FUNCTION__;
@@ -99,17 +99,20 @@ void PackageList::addPackage(Package const &package)
     m_packageList->append(package);
 }
 
-Package *PackageList::getPackage(QString const &pkgName)
+Package *PackageList::getPackage(const QString &pkgName, const QByteArray &version)
 {
 #ifdef DEBUG
     qDebug() << __FUNCTION__;
 #endif
 
-    QList<Package>::iterator i;
-    for (i = m_packageList->begin(); i != m_packageList->end(); ++i)
-        if (i->Name() == pkgName)
-            return &*i;
-    return 0;
+    QList<Package>::iterator it = m_packageList->begin();
+    for ( ; it != m_packageList->end(); ++it)
+        if (it->name() == pkgName) {
+            if(!version.isEmpty() && it->version() != version)
+                continue;
+            return &(*it);
+        }
+    return NULL;
 }
 
 void PackageList::listPackages(const QString &title)
@@ -141,11 +144,13 @@ bool PackageList::writeToFile(const QString &_fileName)
         return false;
     }
 
+    // this needs to be enhanced to fit current Package content
+    // also maybe move this into class Package -> Package::save()/Package::load()
     QTextStream out(&file);
     out << "# package list" << "\n";
     QList<Package>::iterator i;
     for (i = m_packageList->begin(); i != m_packageList->end(); ++i)
-        out << i->Name() << "\t" << i->Version() << "\n";
+        out << i->name() << "\t" << i->version() << "\n";
     return true;
 }
 
@@ -220,8 +225,8 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type)
             {
                 int a = line.indexOf(fileKeyStart) + strlen(fileKeyStart);
                 int b = line.indexOf(fileKeyEnd,a);
-                QByteArray name = line.mid(a,b-a);
-                QByteArray ptype;
+                QByteArray path = line.mid(a,b-a);
+                QByteArray ptype, name = path;
 
                 // desktop-translations-10.1-41.3.noarch.rpm
                 // kde3-i18n-vi-3.5.5-67.9.noarch.rpm
@@ -281,10 +286,8 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type)
                     continue;
                 QByteArray version, patchlevel, type;
                 name = "";
-                for(int i = 0; i < iVersionLow; i++)
+                for(int i = 0; i < iVersionLow - 1; i++)
                 {
-                    if(parts[i] == "-")
-                        break;
                     if(name.size())
                         name += '.';
                     name += parts[i];
@@ -323,12 +326,17 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type)
                 }
                 if(!patchlevel.isEmpty())
                     version += "-" + patchlevel;
-                pkg.setVersion(version);
-                pkg.setName(name);
-                pkg.setPackageType(ptype);
-                pkg.setType(type);
-                // FIXME: do merging here, see http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/ for example
-                addPackage(pkg);
+
+                Package *pkg = getPackage(name, version);
+                if(!pkg) {
+                    Package p;
+                    p.setVersion(version);
+                    p.setName(name);
+                    p.add(m_baseURL + path, type);
+                    addPackage(p);
+                } else {
+                    pkg->add(m_baseURL + path, type);
+                }
             }
         }
         break;
@@ -401,12 +409,12 @@ QStringList PackageList::getFilesForDownload(QString const &pkgName)
     Package *pkg = getPackage(pkgName);
     if (!pkg)
         return result;
-    result << pkg->getURL(Package::BIN,m_baseURL);
-    result << pkg->getURL(Package::LIB,m_baseURL);
+    result << pkg->getURL(Package::BIN);
+    result << pkg->getURL(Package::LIB);
 #ifdef INCLUDE_DOC_AND_SRC_PACKAGES
 
-    result << pkg->getURL(Package::DOC,m_baseURL);
-    result << pkg->getURL(Package::SRC,m_baseURL);
+    result << pkg->getURL(Package::DOC);
+    result << pkg->getURL(Package::SRC);
 #else
 
     qDebug("downloading of DOC and SRC disabled for now");
@@ -415,18 +423,19 @@ QStringList PackageList::getFilesForDownload(QString const &pkgName)
     return result;
 }
 
+/*
 bool PackageList::updatePackage(Package &apkg)
 {
-    Package *pkg = getPackage(apkg.Name());
+    Package *pkg = getPackage(apkg.name());
     if (!pkg)
     {
-        qDebug() << __FUNCTION__ << "package " << apkg.Name() << " not found";
+        qDebug() << __FUNCTION__ << "package " << apkg.name() << " not found";
         return false;
     }
     pkg->addInstalledTypes(apkg);
     return true;
 }
-
+*/
 bool PackageList::downloadPackage(const QString &pkgName)
 {
     QStringList files = getFilesForDownload(pkgName);

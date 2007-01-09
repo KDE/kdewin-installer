@@ -53,7 +53,7 @@ public:
     bool writeToFile(QString const &fileName=QString::null);
     //  static bool downloadPackage(QString const &pkgName);
     QStringList getPackageFiles(QString const &pkgName);
-    Package *getPackage(QString const &pkgName);
+    Package *getPackage(QString const &pkgName, const QByteArray &version = QByteArray());
     QStringList getFilesForInstall(QString const &pkgName);
     QStringList getFilesForDownload(QString const &pkgName);
     bool updatePackage(Package &pkg);

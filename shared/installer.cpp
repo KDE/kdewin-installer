@@ -85,9 +85,9 @@ bool Installer::loadConfig()
         for (int i = 0; i < list.size(); ++i)
         {
             QFileInfo fileInfo = list.at(i);
-            Package pkg;
-            pkg.setFromVersionFile(fileInfo.fileName());
-            packageList->updatePackage(pkg);
+            //Package pkg;
+            //pkg.setFromVersionFile(fileInfo.fileName());
+            //packageList->updatePackage(pkg);
         }
     }
     else
