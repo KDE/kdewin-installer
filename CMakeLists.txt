@@ -1,6 +1,9 @@
 project(kdewin-installer)
 set (VERSION 0.1)
 
+# where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
+
 find_package(Qt4 REQUIRED)
 
 if (CMAKE_BUILD_TYPE EQUAL Release) 
@@ -60,6 +63,17 @@ include_directories(${quazip_INCLUDE_DIR} ${installer_shared_INCLUDE_DIR})
 configure_file(${CMAKE_SOURCE_DIR}/config.txt ${CMAKE_BINARY_DIR}/config.txt)
 
 add_definitions(-DINCLUDE_DOC_AND_SRC_PACKAGES)
+if (UNIX)
+  find_package(X11)
+  find_package(freetype)
+  set (LIBS pthread dl z)
+  set (GUI_LIBS pthread dl z)
+else(UNIX)
+  set (LIBS)
+  set (GUI_LIBS)
+endif (UNIX)
+
+
 # our targets
 add_subdirectory(console)
 add_subdirectory(gui)
