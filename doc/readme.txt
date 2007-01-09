@@ -73,6 +73,9 @@ cmake   http://www.cmake.org/files/v2.4/      binary/exe+zip
 
 svn     http://subversion.tigris.org/files/documents/15/34093/svn-1.4.0-setup.exe
                                               binary/exe
+   or
+TortoiseSVN    http://prdownloads.sourceforge.net/tortoisesvn/TortoiseSVN-1.4.1.7992-win32-svn-1.4.2.msi?download
+                                              binary/msi
 
 c++ compiler   either gcc or msvc 
                                               
