@@ -59,20 +59,22 @@ public:
     void itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column);
     bool downloadPackages(QTreeWidget *tree, const QString &category="");
     bool installPackages(QTreeWidget *tree, const QString &category="");
-    void setRoot(QString root);
-    QString Root();
+    
+    void setRoot(const QString &root);
+    QString root() const;
 
     PackageList *packageList()
     {
         return m_packageList;
     }
+
     Installer *installer()
     {
         return m_installer;
     }
-    Settings *settings()
+    const Settings &settings() const
     {
-        return &m_settings;
+        return m_settings;
     }
 
 private:
@@ -84,7 +86,6 @@ private:
     InstallerProgress *m_instProgress;
     ConfigParser *m_configParser;
     InstallerProgress *m_instProgressBar;
-    QString m_root;
     Settings m_settings;
 };
 
@@ -144,7 +145,7 @@ bool InstallerEngine::downloadPackageLists()
         }
         else
             packageList->setBaseURL((*s)->URL());
-        installer->setRoot(m_root);
+        installer->setRoot(m_settings.value("rootdir").toString());
         m_installerList.append(installer);
         m_installer = installer;
 
@@ -207,6 +208,9 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
 
     tree->setColumnCount(8);
     tree->setHeaderLabels(labels);
+    // see http://lists.trolltech.com/qt-interest/2006-06/thread00441-0.html
+    // and Task Tracker Entry 106731
+    //tree->setAlignment(Center);
 
     // adding top level items
     QList<QTreeWidgetItem *> categoryList;
@@ -343,26 +347,20 @@ bool InstallerEngine::installPackages(QTreeWidget *tree,const QString &category)
     return true;
 }
 
-void InstallerEngine::setRoot(QString root)
+void InstallerEngine::setRoot(const QString &root)
 {
-    m_root = root;
-    m_settings.setValue("rootdir",root);
+    m_settings.setValue("rootdir", QDir::convertSeparators(root));
 }
 
-QString InstallerEngine::Root()
+QString InstallerEngine::root() const
 {
-    m_root = m_settings.value("rootdir").toString();
-    if (m_root.isEmpty())
-        m_root= QDir::convertSeparators(QDir::currentPath());
-    return m_root;
+    QString root = m_settings.value("rootdir").toString();
+    if (root.isEmpty())
+        return QDir::convertSeparators(QDir::currentPath());
+    return root;
 }
-
-
-
 
 InstallerEngine *engine;
-
-
 
 InstallWizard::InstallWizard(QWidget *parent)
         : ComplexWizard(parent)
@@ -428,7 +426,7 @@ PathSettingsPage::PathSettingsPage(InstallWizard *wizard)
     rootPathEdit = new QLineEdit;
     rootPathLabel->setBuddy(rootPathEdit);
     setFocusProxy(rootPathEdit);
-    rootPathEdit->setText(engine->Root());
+    rootPathEdit->setText(engine->root());
 
     rootPathSelect = new QPushButton("...", this);
     connect(rootPathSelect, SIGNAL(pressed()),this, SLOT(selectRootPath()));

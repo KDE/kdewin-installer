@@ -74,10 +74,17 @@ void ComplexWizard::backButtonClicked()
 
 void ComplexWizard::nextButtonClicked()
 {
+    nextButton->setEnabled(false);
+    finishButton->setDefault(false);
+
     WizardPage *oldPage = history.last();
     WizardPage *newPage = oldPage->nextPage();
     newPage->resetPage();
     history.append(newPage);
+
+    nextButton->setEnabled(false);
+    finishButton->setDefault(false);
+
     switchPage(oldPage);
 }
 
