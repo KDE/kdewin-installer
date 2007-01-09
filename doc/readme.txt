@@ -15,27 +15,11 @@ dbus       http://sf.net/projects/windbus      source/svn
 qt4        http://ftp.iasi.roedu.net/mirrors/ftp.trolltech.com/qt/source/qt-win-opensource-4.2.1-mingw.exe
                                                source/zip         needs qdbus patch 
                                               
-bzip2      http://sf.net/projects/gnuwin32     binary/zip         required by kdelibs
-giflib              ...                        binary/zip         required by kdelibs
-jpeg                ...                        binary/zip         required by kdelibs
-libagg23            ...                        binary/zip         required by kdelibs
-libiconv            ...                        binary/zip         required by kdelibs
-libintl             ...                        binary/zip         required by kdelibs
-libpng              ...                        binary/zip         required by kdelibs
-libxml2             ...                        binary/zip         required by kdelibs
-libxslt             ...                        binary/zip         required by kdelibs
-openssl             ...                        binary/zip         required by kdelibs
-pcre                ...                        binary/zip         required by kdelibs
-tiff                ...                        binary/zip         required by kdelibs
-zlib                ...                        binary/zip         required by kdelibs
-
-aspell        http://sf.net/projects/gnuwin32  binary/zip         required by kdelibs
+aspell     http://sf.net/projects/gnuwin32     binary/zip         required by kdelibs
 bzip2               ...                        binary/zip         required by kdelibs
 expat               ...                        binary/zip         required by kdelibs
 giflib              ...                        binary/zip         required by kdelibs
-jasper              ...                        binary/zip         required by kdelibs
 jpeg                ...                        binary/zip         required by kdelibs
-libagg23            ...                        binary/zip         required by kdelibs
 libiconv            ...                        binary/zip         required by kdelibs
 libintl             ...                        binary/zip         required by kdelibs
 libpng              ...                        binary/zip         required by kdelibs
@@ -55,6 +39,8 @@ perl        http://downloads.activestate.com/ActivePerl/Windows/5.8/ActivePerl-5
 
 python      http://www.python.org/ftp/python/2.5/python-2.5.msi
                                                binary/msi         required by kdelibs
+
+md5sum      gnuwin32 													 binary/zip					required by kdebase
         
 db          http://www.oracle.com/technology/software/products/berkeley-db/db/index.html
                                                binary/msi         required by kdevelop
