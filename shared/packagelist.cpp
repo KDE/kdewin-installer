@@ -93,7 +93,8 @@ bool PackageList::hasConfig()
 void PackageList::addPackage(const Package &package)
 {
 #ifdef DEBUG
-    qDebug() << __FUNCTION__;
+    Package pkg = package;
+    qDebug() << __FUNCTION__ << pkg.toString();
 #endif
 
     m_packageList->append(package);
@@ -145,7 +146,7 @@ bool PackageList::writeToFile(const QString &_fileName)
     }
 
     // this needs to be enhanced to fit current Package content
-    // also maybe move this into class Package -> Package::save()/Package::load()
+    // also maybe move this into class Package -> Package::write(QTextStream &out)
     QTextStream out(&file);
     out << "# package list" << "\n";
     QList<Package>::iterator i;
@@ -171,6 +172,8 @@ bool PackageList::readFromFile(const QString &_fileName)
     Package pkg;
     while (!file.atEnd())
     {
+        // this needs to be enhanced to fit current Package content
+        // also maybe move this into class Package -> Package::read(QTextStream &in)
         QByteArray line = file.readLine();
         if (line.startsWith("#"))
             continue;
@@ -203,6 +206,12 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type)
                 if (line.indexOf("release_id") > -1)
                 {
                     pkg.setVersion(value);
+                    // available types could not be determined on this web page
+                    // so assume all types are available
+                    pkg.add(m_baseURL+pkg.name()+"-"+value+"-bin.zip",Package::BIN,false);
+                    pkg.add(m_baseURL+pkg.name()+"-"+value+"-lib.zip",Package::LIB,false);
+                    pkg.add(m_baseURL+pkg.name()+"-"+value+"-src.zip",Package::SRC,false);
+                    pkg.add(m_baseURL+pkg.name()+"-"+value+"-doc.zip",Package::DOC,false);
                     addPackage(pkg);
                 }
                 else
@@ -408,7 +417,12 @@ QStringList PackageList::getFilesForDownload(QString const &pkgName)
     QStringList result;
     Package *pkg = getPackage(pkgName);
     if (!pkg)
+    {
+#ifdef DEBUG
+        qDebug() << __FUNCTION__ << "package not found";
+#endif
         return result;
+    }
     result << pkg->getURL(Package::BIN);
     result << pkg->getURL(Package::LIB);
 #ifdef INCLUDE_DOC_AND_SRC_PACKAGES

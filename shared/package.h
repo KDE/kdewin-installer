@@ -68,8 +68,8 @@ public:
         m_version = version;
     }
 
-    QString toString(bool mode=false, const QString &delim = "-");
-    QString getTypeAsString();
+    QString toString(bool installed=false, const QString &delim = "-");
+    QString getTypeAsString(bool requiredIsInstalled=false);
 
     // return packageDescr::fileName for specified contentType
     QString getFileName(Package::Type contentType);

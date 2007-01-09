@@ -21,6 +21,7 @@
 **
 ****************************************************************************/
 
+#include <QtDebug>
 #include "package.h"
 
 QString Package::baseURL = "http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/";
@@ -50,6 +51,9 @@ QString Package::getURL(Package::Type contentType)
 
 void Package::add(const QString &path, const QByteArray &contentType, bool bInstalled)
 {
+#ifdef DEBUG
+    qDebug() << __FUNCTION__ << " " << path << " " << contentType << " " << bInstalled;
+#endif
     QByteArray ct = contentType.toLower();
     if(ct == "bin")
         add(path, BIN, bInstalled);
@@ -68,7 +72,9 @@ void Package::add(const QString &path, Package::Type contentType, bool bInstalle
 {
     packageDescr desc;
     int idx;
-
+#ifdef DEBUG
+    qDebug() << __FUNCTION__ << " " << path << " " << contentType << " " << bInstalled;
+#endif
     QList<packageDescr>::iterator it = m_packages.begin();
     desc.path = path;
 
@@ -99,22 +105,24 @@ void Package::add(const QString &path, Package::Type contentType, bool bInstalle
     m_packages.append(desc);
 }
 
-QString Package::toString(bool mode, const QString &delim)
+QString Package::toString(bool installed, const QString &delim)
 {
     QString result = m_name + delim + m_version;
-    QString installedTypes = getTypeAsString();
-    if (installedTypes != "")
+    QString availableTypes = getTypeAsString(installed);
+    if (availableTypes != "" && !installed )
+        result += "   ( found =" + getTypeAsString() + ")";
+    else if (availableTypes != "" && installed )
         result += "   ( installed =" + getTypeAsString() + ")";
     return result;
 }
 
-QString Package::getTypeAsString()
+QString Package::getTypeAsString(bool requiredIsInstalled)
 {
     QString types;
 
     QList<packageDescr>::iterator it = m_packages.begin();
     for( ; it != m_packages.end(); ++it) {
-        if(!(*it).bInstalled)
+        if(requiredIsInstalled && !(*it).bInstalled)
             continue;
 
         switch((*it).contentType) {
