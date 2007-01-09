@@ -26,45 +26,64 @@
 #include <QObject>
 #include <QString>
 
-class Package {
-	
-	public:
-		enum Type { BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8 };
+class Package
+{
 
-		Package();
-		Package(QString const &_name, QString const &_version);
+public:
+    enum Type { BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8 };
 
-        // FIXME: better use Q_PROPERTY here?
-        const QString &Name() const { return name; }
-		const QString &Version() const { return version; }
-		void setName(QString const &_name) { name = _name; }
-		void setVersion(QString const &_version) { version = _version; }
-		void setPackageType(QString const &_type) { packagetype = _type; }
-		void setType(const QString &typeString);
-		bool setFromVersionFile(const QString &verString);
-		QString toString(bool mode=false, const QString &delim="-");
-		const QString getTypeAsString();
+    Package();
+    Package(QString const &_name, QString const &_version);
 
-		const QString getFileName(Package::Type type);
-		const QString getURL(Package::Type type, QString baseURL="");
-		bool isEmpty() {return name == ""; }
-		void addInstalledTypes(const Package &pkg);
-		static QString baseURL;
+    // FIXME: better use Q_PROPERTY here?
+    const QString &Name() const
+    {
+        return name;
+    }
+    const QString &Version() const
+    {
+        return version;
+    }
+    void setName(QString const &_name)
+    {
+        name = _name;
+    }
+    void setVersion(QString const &_version)
+    {
+        version = _version;
+    }
+    void setPackageType(QString const &_type)
+    {
+        packagetype = _type;
+    }
+    void setType(const QString &typeString);
+    bool setFromVersionFile(const QString &verString);
+    QString toString(bool mode=false, const QString &delim="-");
+    const QString getTypeAsString();
 
-		// 0.5.3
-		bool isInstalled(Package::Type type);
-		
-	private slots:
-		void logOutput();
-		
-	private:
-		QString name;
-		QString version; 
-        QString packagetype;
-		bool installedLIB;
-		bool installedBIN;
-		bool installedDOC;
-		bool installedSRC;
-}; 
+    const QString getFileName(Package::Type type);
+    const QString getURL(Package::Type type, QString baseURL="");
+    bool isEmpty()
+    {
+        return name == "";
+    }
+    void addInstalledTypes(const Package &pkg);
+    static QString baseURL;
+
+    // 0.5.3
+    bool isInstalled(Package::Type type);
+
+private slots:
+    void logOutput();
+
+private:
+    QString name;
+    QString version;
+    QString packagetype;
+    bool installedLIB;
+    bool installedBIN;
+    bool installedDOC;
+    bool installedSRC;
+};
 
 #endif

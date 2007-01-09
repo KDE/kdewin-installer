@@ -33,39 +33,39 @@ class QIODevice;
 
 class Downloader: public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	Downloader(bool blocking=false, DownloaderProgress *progress=0);
+    Downloader(bool blocking=false, DownloaderProgress *progress=0);
 
-  virtual ~Downloader();
-  bool start(const QString &url, const QString &fileName = QString::null);
-  bool start(const QString &url, QByteArray &ba);
-	void cancel();
+    virtual ~Downloader();
+    bool start(const QString &url, const QString &fileName = QString::null);
+    bool start(const QString &url, QByteArray &ba);
+    void cancel();
 
 signals:
-	void done(bool error);
+    void done(bool error);
 
 private slots:
-	void httpRequestFinished(int requestId, bool error);
-	void readResponseHeader(const QHttpResponseHeader &responseHeader);
-	void updateDataReadProgress(int bytesRead, int totalBytes);
-	void allDone(bool error);
-	void stateChanged(int state);
+    void httpRequestFinished(int requestId, bool error);
+    void readResponseHeader(const QHttpResponseHeader &responseHeader);
+    void updateDataReadProgress(int bytesRead, int totalBytes);
+    void allDone(bool error);
+    void stateChanged(int state);
 
 private:
-	void init();
-	void setError(const QString&);
-  bool startInternal(const QString &_url, QIODevice *ioDev);
+    void init();
+    void setError(const QString&);
+    bool startInternal(const QString &_url, QIODevice *ioDev);
 private:
-  DownloaderProgress *m_progress;
-  QHttp      *m_http;
-  QIODevice  *m_ioDevice;
-  QFile      *m_file;
-  int         m_httpGetId;
-  bool        m_httpRequestAborted;
-  bool        m_blocking;
-  QEventLoop *m_eventLoop;
+    DownloaderProgress *m_progress;
+    QHttp      *m_http;
+    QIODevice  *m_ioDevice;
+    QFile      *m_file;
+    int         m_httpGetId;
+    bool        m_httpRequestAborted;
+    bool        m_blocking;
+    QEventLoop *m_eventLoop;
 };
 
 #endif

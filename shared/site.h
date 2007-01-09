@@ -27,22 +27,41 @@
 #include <QString>
 
 /**
-	holds a site definition 
-*/ 
-class Site {
+ holds a site definition 
+*/
+class Site
+{
 
-	public:
-		enum SiteType {SourceForge, ApacheModIndex};
-		QString Name() {return m_name;}
-		QString URL()  {return m_url;}
-		SiteType Type() {return m_type;}
-		void setName(const QString &name) {m_name = name;}
-		void setURL(const QString &url)  {m_url = url; }
-		void setType(SiteType type) {m_type = type; }
-	private:
-		QString m_name;
-		QString m_url;
-		SiteType m_type;
+public:
+    enum SiteType {SourceForge, ApacheModIndex};
+    QString Name()
+    {
+        return m_name;
+    }
+    QString URL()
+    {
+        return m_url;
+    }
+    SiteType Type()
+    {
+        return m_type;
+    }
+    void setName(const QString &name)
+    {
+        m_name = name;
+    }
+    void setURL(const QString &url)
+    {
+        m_url = url;
+    }
+    void setType(SiteType type)
+    {
+        m_type = type;
+    }
+private:
+    QString m_name;
+    QString m_url;
+    SiteType m_type;
 };
 
-#endif 
+#endif

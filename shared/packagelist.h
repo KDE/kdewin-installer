@@ -36,54 +36,73 @@ class QIODevice;
 
 QStringList filterPackageFiles(const QStringList &list,const QString &mode);
 
-class PackageList : public QObject {
-	Q_OBJECT
-	
-	public:
-		enum Type {SourceForge, ApacheModIndex};
+class PackageList : public QObject
+{
+    Q_OBJECT
 
-		PackageList(Downloader *downloader= NULL);
-		virtual ~PackageList();
-		void addPackage(Package const &package); 
-		void listPackages(const QString &title=QString::null);
-		bool readFromFile(const QString &_fileName=QString::null);
-		bool readHTMLFromFile(const QString &fileName, PackageList::Type type=PackageList::SourceForge);
-		bool readHTMLFromByteArray(const QByteArray &ba, PackageList::Type type=PackageList::SourceForge);
-		bool writeToFile(QString const &fileName=QString::null);
-//		static bool downloadPackage(QString const &pkgName);
-		QStringList getPackageFiles(QString const &pkgName);
-		Package *getPackage(QString const &pkgName);
-		QStringList getFilesForInstall(QString const &pkgName);
-		QStringList getFilesForDownload(QString const &pkgName);
-		bool updatePackage(Package &pkg);
-		int size();
-		QList <Package> *packageList() { return m_packageList; }
-		void setConfigFileName(const QString &file) {m_configFile = "/" + file; }
-		QString Name() { return m_name; }
-		void setName(const QString &name) { m_name = name; }
-		QString BaseURL() { return m_baseURL; }
-		void setBaseURL(const QString &baseURL) { m_baseURL = baseURL; }
+public:
+    enum Type {SourceForge, ApacheModIndex};
 
-		// 0.5.3
-		bool hasConfig();
-		bool downloadPackage(const QString &pkgName);
-		bool installPackage(const QString &pkgName);
+    PackageList(Downloader *downloader= NULL);
+    virtual ~PackageList();
+    void addPackage(Package const &package);
+    void listPackages(const QString &title=QString::null);
+    bool readFromFile(const QString &_fileName=QString::null);
+    bool readHTMLFromFile(const QString &fileName, PackageList::Type type=PackageList::SourceForge);
+    bool readHTMLFromByteArray(const QByteArray &ba, PackageList::Type type=PackageList::SourceForge);
+    bool writeToFile(QString const &fileName=QString::null);
+    //  static bool downloadPackage(QString const &pkgName);
+    QStringList getPackageFiles(QString const &pkgName);
+    Package *getPackage(QString const &pkgName);
+    QStringList getFilesForInstall(QString const &pkgName);
+    QStringList getFilesForDownload(QString const &pkgName);
+    bool updatePackage(Package &pkg);
+    int size();
+    QList <Package> *packageList()
+    {
+        return m_packageList;
+    }
+    void setConfigFileName(const QString &file)
+    {
+        m_configFile = "/" + file;
+    }
+    QString Name()
+    {
+        return m_name;
+    }
+    void setName(const QString &name)
+    {
+        m_name = name;
+    }
+    QString BaseURL()
+    {
+        return m_baseURL;
+    }
+    void setBaseURL(const QString &baseURL)
+    {
+        m_baseURL = baseURL;
+    }
 
-	signals:
-		void loadedConfig();
-	
-	private:
-		bool readHTMLInternal(QIODevice *ioDev, PackageList::Type type);
-	private: 
-		QList<Package> *m_packageList;
-		QString root; 
-		QString m_configFile;
-		Downloader *downloader;
-		Installer *installer;
-		QString m_name;
-		QString m_baseURL;
+    // 0.5.3
+    bool hasConfig();
+    bool downloadPackage(const QString &pkgName);
+    bool installPackage(const QString &pkgName);
 
-	friend class Installer;		
+signals:
+    void loadedConfig();
+
+private:
+    bool readHTMLInternal(QIODevice *ioDev, PackageList::Type type);
+private:
+    QList<Package> *m_packageList;
+    QString root;
+    QString m_configFile;
+    Downloader *downloader;
+    Installer *installer;
+    QString m_name;
+    QString m_baseURL;
+
+    friend class Installer;
 };
 
 #endif

@@ -29,10 +29,10 @@
 
 int main(int argc, char *argv[])
 {
-	QCoreApplication app(argc, argv);
+    QCoreApplication app(argc, argv);
 
-	Mirrors mirrorList(Mirrors::KDE);
-	qDebug("%s", mirrorList.get().join("\n").toAscii().data());
-	return 0;
-	
+    Mirrors mirrorList(Mirrors::KDE);
+    qDebug("%s", mirrorList.get().join("\n").toAscii().data());
+    return 0;
+
 }

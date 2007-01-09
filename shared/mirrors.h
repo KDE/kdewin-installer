@@ -30,26 +30,31 @@ class QStringList;
 class QByteArray;
 class QFile;
 
-class Mirrors /* : public QObject */{
-	
-	//Q_OBJECT
-	
-	public:
-		enum MirrorType { KDE = 1 ,CYGWIN= 2 };
+class Mirrors /* : public QObject */
+{
 
-		Mirrors(MirrorType type);
-		~Mirrors();
-		QStringList get();
+    //Q_OBJECT
 
-	protected:
-		bool parse(const QString &fileName);
-		bool parse(const QByteArray &data);
-		bool parse(QIODevice *ioDev);
-		QStringList getList() { return m_mirrorList; }
+public:
+    enum MirrorType { KDE = 1 ,CYGWIN= 2 };
 
-	private:
-		MirrorType m_type;
-		QStringList m_mirrorList;
-}; 
+    Mirrors(MirrorType type);
+    ~Mirrors();
+    QStringList get
+        ();
+
+protected:
+    bool parse(const QString &fileName);
+    bool parse(const QByteArray &data);
+    bool parse(QIODevice *ioDev);
+    QStringList getList()
+    {
+        return m_mirrorList;
+    }
+
+private:
+    MirrorType m_type;
+    QStringList m_mirrorList;
+};
 
 #endif

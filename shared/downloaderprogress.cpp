@@ -33,10 +33,10 @@
 
 #include "complexwizard.h"
 
-DownloaderProgress::DownloaderProgress(QWidget *parent) 
-{ 
+DownloaderProgress::DownloaderProgress(QWidget *parent)
+{
     statusLabel = new QLabel();
-    progress = new QProgressBar(parent); 
+    progress = new QProgressBar(parent);
 
     QHBoxLayout *statusLayout = new QHBoxLayout;
     statusLayout->addWidget(statusLabel);
@@ -52,88 +52,88 @@ DownloaderProgress::DownloaderProgress(QWidget *parent)
 
 DownloaderProgress::~DownloaderProgress()
 {
-	delete titleLabel;
-	delete statusLabel;
-	delete progress;
+    delete titleLabel;
+    delete statusLabel;
+    delete progress;
 }
 
-void DownloaderProgress::hide() 
-{ 
-	qDebug() << __FUNCTION__;
-	titleLabel->hide(); 
-	statusLabel->hide(); 
-	progress->hide(); 
+void DownloaderProgress::hide()
+{
+    qDebug() << __FUNCTION__;
+    titleLabel->hide();
+    statusLabel->hide();
+    progress->hide();
 }
 
-void DownloaderProgress::setTitle(const QString &label) 
-{ 
-	qDebug() << __FUNCTION__ << " " << label; 
-	titleLabel->setText(label); 
+void DownloaderProgress::setTitle(const QString &label)
+{
+    qDebug() << __FUNCTION__ << " " << label;
+    titleLabel->setText(label);
 }
 
-void DownloaderProgress::setStatus(const QString &label) 
-{ 
-	qDebug() << __FUNCTION__ << " " << label;
-	statusLabel->setText(label); 
+void DownloaderProgress::setStatus(const QString &label)
+{
+    qDebug() << __FUNCTION__ << " " << label;
+    statusLabel->setText(label);
 }
 
-void DownloaderProgress::show() 
-{ 
-	qDebug() << __FUNCTION__;
-	titleLabel->show(); 
-	statusLabel->show();
-	progress->show(); 
+void DownloaderProgress::show()
+{
+    qDebug() << __FUNCTION__;
+    titleLabel->show();
+    statusLabel->show();
+    progress->show();
 }
 
-void DownloaderProgress::setMaximum(int value) 
-{ 
-	progress->setMaximum(value); 
-} 
+void DownloaderProgress::setMaximum(int value)
+{
+    progress->setMaximum(value);
+}
 
-void DownloaderProgress::setValue(int value)   
-{ 
-	progress->setValue(value); 
-} 
+void DownloaderProgress::setValue(int value)
+{
+    progress->setValue(value);
+}
 
-#else // console implementation 
+#else // console implementation
 
 DownloaderProgress::DownloaderProgress(QObject *parent)
 {
     hide();
 }
 
-void DownloaderProgress::hide() 
-{ 
-	visible = false; 
-}
-
-void DownloaderProgress::setTitle(const QString &title) 
-{ 
-	qDebug() << title; 
-}
-
-void DownloaderProgress::setStatus(const QString &status) 
-{ 
-	qDebug() << status; 
-}
-
-void DownloaderProgress::setMaximum(int value) 
+void DownloaderProgress::hide()
 {
-} 
-
-void DownloaderProgress::setValue(int value) 
-{ 
-	int unit = value/10240;
-	if (oldunit != value/10240) {
-		if (visible)
-			putchar('.');
-		oldunit = unit;
-	}
+    visible = false;
 }
 
-void DownloaderProgress::show() 
-{ 
-	visible = true; 
+void DownloaderProgress::setTitle(const QString &title)
+{
+    qDebug() << title;
+}
+
+void DownloaderProgress::setStatus(const QString &status)
+{
+    qDebug() << status;
+}
+
+void DownloaderProgress::setMaximum(int value)
+{}
+
+void DownloaderProgress::setValue(int value)
+{
+    int unit = value/10240;
+    if (oldunit != value/10240)
+    {
+        if (visible)
+            putchar('.');
+        oldunit = unit;
+    }
+}
+
+void DownloaderProgress::show()
+{
+    visible = true;
 }
 
 #endif

@@ -29,7 +29,7 @@
 #include "installerprogress.h"
 
 ComplexWizard::ComplexWizard(QWidget *parent)
-    : QDialog(parent)
+        : QDialog(parent)
 {
     setWindowFlags(Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);
     cancelButton = new QPushButton(tr("Cancel"));
@@ -92,7 +92,8 @@ void ComplexWizard::completeStateChanged()
 
 void ComplexWizard::switchPage(WizardPage *oldPage)
 {
-    if (oldPage) {
+    if (oldPage)
+    {
         oldPage->hide();
         mainLayout->removeWidget(oldPage);
         disconnect(oldPage, SIGNAL(completeStateChanged()),
@@ -107,10 +108,13 @@ void ComplexWizard::switchPage(WizardPage *oldPage)
             this, SLOT(completeStateChanged()));
 
     backButton->setEnabled(history.size() != 1);
-    if (newPage->isLastPage()) {
+    if (newPage->isLastPage())
+    {
         nextButton->setEnabled(false);
         finishButton->setDefault(true);
-    } else {
+    }
+    else
+    {
         nextButton->setDefault(true);
         finishButton->setEnabled(false);
     }
@@ -118,14 +122,13 @@ void ComplexWizard::switchPage(WizardPage *oldPage)
 }
 
 WizardPage::WizardPage(QWidget *parent)
-    : QWidget(parent)
+        : QWidget(parent)
 {
     hide();
 }
 
 void WizardPage::resetPage()
-{
-}
+{}
 
 WizardPage *WizardPage::nextPage()
 {

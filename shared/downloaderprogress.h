@@ -29,42 +29,44 @@
 #ifdef USE_GUI
 
 #include <QWidget>
-class ComplexWizard; 
+class ComplexWizard;
 class QLabel;
 class QProgressBar;
 
-class DownloaderProgress : public QWidget {
-	public:
-		DownloaderProgress(QWidget *parent);
-		~DownloaderProgress();
-		void hide();
-		void setTitle(const QString &title);
-		void setStatus(const QString &status);
-		void setMaximum(int value);
-		void setValue(int value);
-		void show();
-	private:
-		QLabel *titleLabel;
-		QLabel *statusLabel;
-		QProgressBar *progress;
+class DownloaderProgress : public QWidget
+{
+public:
+    DownloaderProgress(QWidget *parent);
+    ~DownloaderProgress();
+    void hide();
+    void setTitle(const QString &title);
+    void setStatus(const QString &status);
+    void setMaximum(int value);
+    void setValue(int value);
+    void show();
+private:
+    QLabel *titleLabel;
+    QLabel *statusLabel;
+    QProgressBar *progress;
 };
 
 #else
-class DownloaderProgress {
-	public:
-		DownloaderProgress(QObject *parent);
-		void hide();
-		void setTitle(const QString &title);
-		void setStatus(const QString &status);
-		void setMaximum(int value);
-		void setValue(int value);
-		void show();
-		
-	private:
-		int oldunit;
-		bool visible;		
+class DownloaderProgress
+{
+public:
+    DownloaderProgress(QObject *parent);
+    void hide();
+    void setTitle(const QString &title);
+    void setStatus(const QString &status);
+    void setMaximum(int value);
+    void setValue(int value);
+    void show();
+
+private:
+    int oldunit;
+    bool visible;
 };
 #endif
 
 
-#endif 
+#endif

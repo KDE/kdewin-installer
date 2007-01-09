@@ -39,18 +39,22 @@ class QIODevice;
  
  This behavior could be used to collect usage informations about the installer. 
 */
-class ConfigParser {
-	public:
-		ConfigParser();
-		bool parseFromFile(const QString &fileName);
-		bool parseFromByteArray(const QByteArray &ba);
-		QList<Site*> *sites() { return &m_sites; }
-	protected: 
-		bool parse(QIODevice *ioDev);
+class ConfigParser
+{
+public:
+    ConfigParser();
+    bool parseFromFile(const QString &fileName);
+    bool parseFromByteArray(const QByteArray &ba);
+    QList<Site*> *sites()
+    {
+        return &m_sites;
+    }
+protected:
+    bool parse(QIODevice *ioDev);
 
-	private:
-		QList<Site*> m_sites;
+private:
+    QList<Site*> m_sites;
 
 };
 
-#endif 
+#endif

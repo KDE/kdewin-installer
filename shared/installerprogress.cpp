@@ -30,10 +30,10 @@
 #include "installerprogress.h"
 
 #ifdef USE_GUI
-InstallerProgress::InstallerProgress(QWidget *parent) 
-{ 
+InstallerProgress::InstallerProgress(QWidget *parent)
+{
     statusLabel = new QLabel();
-    progress = new QProgressBar(parent); 
+    progress = new QProgressBar(parent);
 
     QHBoxLayout *statusLayout = new QHBoxLayout;
     statusLayout->addWidget(statusLabel);
@@ -49,84 +49,84 @@ InstallerProgress::InstallerProgress(QWidget *parent)
 
 InstallerProgress::~InstallerProgress()
 {
-	delete titleLabel;
-	delete statusLabel;
-	delete progress;
+    delete titleLabel;
+    delete statusLabel;
+    delete progress;
 }
 
-void InstallerProgress::hide() 
-{ 
-	titleLabel->hide(); 
-	statusLabel->hide(); 
-	progress->hide(); 
+void InstallerProgress::hide()
+{
+    titleLabel->hide();
+    statusLabel->hide();
+    progress->hide();
 }
 
-void InstallerProgress::setTitle(const QString &label) 
-{ 
-	titleLabel->setText(label); 
+void InstallerProgress::setTitle(const QString &label)
+{
+    titleLabel->setText(label);
 }
 
-void InstallerProgress::setStatus(const QString &label) 
-{ 
-	statusLabel->setText(label); 
+void InstallerProgress::setStatus(const QString &label)
+{
+    statusLabel->setText(label);
 }
 
-void InstallerProgress::show() 
-{ 
-	titleLabel->show(); 
-	statusLabel->show();
-	progress->show(); 
+void InstallerProgress::show()
+{
+    titleLabel->show();
+    statusLabel->show();
+    progress->show();
 }
 
-void InstallerProgress::setMaximum(int value) 
-{ 
-	progress->setMaximum(value); 
-} 
+void InstallerProgress::setMaximum(int value)
+{
+    progress->setMaximum(value);
+}
 
-void InstallerProgress::setValue(int value)   
-{ 
-	progress->setValue(value); 
-} 
+void InstallerProgress::setValue(int value)
+{
+    progress->setValue(value);
+}
 
-#else // console implementation 
+#else // console implementation
 
 InstallerProgress::InstallerProgress(QObject *parent)
 {
     hide();
 }
 
-void InstallerProgress::hide() 
-{ 
-	visible = false; 
-}
-
-void InstallerProgress::setTitle(const QString &title) 
-{ 
-	qDebug() << title; 
-}
-
-void InstallerProgress::setStatus(const QString &status) 
-{ 
-	qDebug() << status; 
-}
-
-void InstallerProgress::setMaximum(int value) 
+void InstallerProgress::hide()
 {
-} 
-
-void InstallerProgress::setValue(int value) 
-{ 
-	int unit = value/10240;
-	if (oldunit != value/10240) {
-		if (visible)
-			putchar('.');
-		oldunit = unit;
-	}
+    visible = false;
 }
 
-void InstallerProgress::show() 
-{ 
-	visible = true; 
+void InstallerProgress::setTitle(const QString &title)
+{
+    qDebug() << title;
+}
+
+void InstallerProgress::setStatus(const QString &status)
+{
+    qDebug() << status;
+}
+
+void InstallerProgress::setMaximum(int value)
+{}
+
+void InstallerProgress::setValue(int value)
+{
+    int unit = value/10240;
+    if (oldunit != value/10240)
+    {
+        if (visible)
+            putchar('.');
+        oldunit = unit;
+    }
+}
+
+void InstallerProgress::show()
+{
+    visible = true;
 }
 
 #endif

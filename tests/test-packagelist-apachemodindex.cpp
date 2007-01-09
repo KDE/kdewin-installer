@@ -31,30 +31,32 @@
 int main(int argc, char *argv[])
 {
 
-	QCoreApplication app(argc, argv);
+    QCoreApplication app(argc, argv);
 
- 	DownloaderProgress progress(0);
-	Downloader download(true,&progress);
-	PackageList packageList(&download);
+    DownloaderProgress progress(0);
+    Downloader download(true,&progress);
+    PackageList packageList(&download);
 
-	qDebug() << "trying to download win32 related package list";
-	download.start("http://www.abi-neuhaus.de/chris/win32libs/zip/","packages.html");
-	if (!packageList.readHTMLFromFile("packages.html",PackageList::ApacheModIndex)) {
-		qDebug() << "... failed ";
-		return 1; 
-	}
-	packageList.listPackages("win32libs Package List");
-	
-	PackageList packageList2(&download);
+    qDebug() << "trying to download win32 related package list";
+    download.start("http://www.abi-neuhaus.de/chris/win32libs/zip/","packages.html");
+    if (!packageList.readHTMLFromFile("packages.html",PackageList::ApacheModIndex))
+    {
+        qDebug() << "... failed ";
+        return 1;
+    }
+    packageList.listPackages("win32libs Package List");
 
-	download.start("http://software.opensuse.org/download/KDE:/KDE3/SUSE_Linux_10.1/noarch/","packages.html");
-	if (!packageList2.readHTMLFromFile("packages.html",PackageList::ApacheModIndex)) {
-		qDebug() << "... failed ";
-		return 1; 
-	}
-	packageList2.listPackages("KDE i18n Package List");
+    PackageList packageList2(&download);
 
-	
-	return 0;
+    download.start("http://software.opensuse.org/download/KDE:/KDE3/SUSE_Linux_10.1/noarch/","packages.html");
+    if (!packageList2.readHTMLFromFile("packages.html",PackageList::ApacheModIndex))
+    {
+        qDebug() << "... failed ";
+        return 1;
+    }
+    packageList2.listPackages("KDE i18n Package List");
+
+
+    return 0;
 }
 

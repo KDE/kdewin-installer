@@ -33,38 +33,40 @@
 class QLabel;
 class QProgressBar;
 
-class InstallerProgress : public QWidget {
-	public:
-		InstallerProgress(QWidget *parent);
-		~InstallerProgress();
-		void hide();
-		void setTitle(const QString &title);
-		void setStatus(const QString &status);
-		void setMaximum(int value);
-		void setValue(int value);
-		void show();
-	private:
-		QLabel *titleLabel;
-		QLabel *statusLabel;
-		QProgressBar *progress;
+class InstallerProgress : public QWidget
+{
+public:
+    InstallerProgress(QWidget *parent);
+    ~InstallerProgress();
+    void hide();
+    void setTitle(const QString &title);
+    void setStatus(const QString &status);
+    void setMaximum(int value);
+    void setValue(int value);
+    void show();
+private:
+    QLabel *titleLabel;
+    QLabel *statusLabel;
+    QProgressBar *progress;
 };
 
 #else
-class InstallerProgress {
-	public:
-		InstallerProgress(QObject *parent);
-		void hide();
-		void setTitle(const QString &title);
-		void setStatus(const QString &status);
-		void setMaximum(int value);
-		void setValue(int value);
-		void show();
-		
-	private:
-		int oldunit;
-		bool visible;		
+class InstallerProgress
+{
+public:
+    InstallerProgress(QObject *parent);
+    void hide();
+    void setTitle(const QString &title);
+    void setStatus(const QString &status);
+    void setMaximum(int value);
+    void setValue(int value);
+    void show();
+
+private:
+    int oldunit;
+    bool visible;
 };
 #endif
 
 
-#endif 
+#endif

@@ -29,26 +29,27 @@
 
 int main(int argc, char *argv[])
 {
-	QCoreApplication app(argc, argv);
+    QCoreApplication app(argc, argv);
 
 #if 0
- 	DownloaderProgress progress(0);
-	Downloader download(true,&progress);
-	
-	qDebug() << "trying to download global configuration file";
-	download.start("http://well-known-location-server/kde-installer/config.txt","config.txt");
+
+    DownloaderProgress progress(0);
+    Downloader download(true,&progress);
+
+    qDebug() << "trying to download global configuration file";
+    download.start("http://well-known-location-server/kde-installer/config.txt","config.txt");
 #endif
 
-	ConfigParser configParser;
-	configParser.parseFromFile("config.txt");
-/*
-	foreach (Site aSite, *configParser.Sites) {
-		qDebug() << aSite.Name();
-		qDebug() << aSite.URL();
-		qDebug() << aSite.type();
-	}
-*/
-	
-	return 0;
+    ConfigParser configParser;
+    configParser.parseFromFile("config.txt");
+    /*
+     foreach (Site aSite, *configParser.Sites) {
+      qDebug() << aSite.Name();
+      qDebug() << aSite.URL();
+      qDebug() << aSite.type();
+     }
+    */
+
+    return 0;
 }
-	
+

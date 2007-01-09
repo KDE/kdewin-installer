@@ -30,11 +30,11 @@
 
 int main(int argc, char *argv[])
 {
-	QCoreApplication app(argc, argv);
+    QCoreApplication app(argc, argv);
 
-	testDownloadApacheModIndex();
-	testDownloadSourceForge();
+    testDownloadApacheModIndex();
+    testDownloadSourceForge();
 
-	return 0;
-	
+    return 0;
+
 }

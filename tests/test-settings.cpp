@@ -29,14 +29,14 @@
 
 int main(int argc, char *argv[])
 {
-	QCoreApplication app(argc, argv);
+    QCoreApplication app(argc, argv);
 
-	Settings settings;
-	
-	settings.setValue("root",QDir::currentPath());
-	if (settings.value("root").toString() != QDir::currentPath()) 
-		qDebug() << "error reading config file";
-	
-	return 0;
+    Settings settings;
+
+    settings.setValue("root",QDir::currentPath());
+    if (settings.value("root").toString() != QDir::currentPath())
+        qDebug() << "error reading config file";
+
+    return 0;
 }
-	
+

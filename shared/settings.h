@@ -29,11 +29,12 @@
 /**
  holds global options, which are stored in a local user specific config file
 */
-class Settings : public QSettings {
-	public:
-		Settings();
-	protected: 
-	private:
+class Settings : public QSettings
+{
+public:
+    Settings();
+protected:
+private:
 };
 
-#endif 
+#endif

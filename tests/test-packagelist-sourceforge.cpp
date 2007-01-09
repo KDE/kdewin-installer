@@ -31,19 +31,20 @@
 
 int main(int argc, char ** argv)
 {
-	QCoreApplication app(argc,argv);
-	
-	Downloader downloader(/*blocking=*/ true);
-	PackageList packageList(&downloader);
+    QCoreApplication app(argc,argv);
 
-	qDebug() << "trying to download sourceforge related package list";
-	downloader.start("http://sourceforge.net/project/showfiles.php?group_id=23617","packages.html");
+    Downloader downloader(/*blocking=*/ true);
+    PackageList packageList(&downloader);
 
-	if (!packageList.readHTMLFromFile("packages.html",PackageList::SourceForge)) {
-		qDebug() << "... failed ";
-		return false; 
-	}
-	packageList.listPackages("Package List");
-	return 0;
+    qDebug() << "trying to download sourceforge related package list";
+    downloader.start("http://sourceforge.net/project/showfiles.php?group_id=23617","packages.html");
+
+    if (!packageList.readHTMLFromFile("packages.html",PackageList::SourceForge))
+    {
+        qDebug() << "... failed ";
+        return false;
+    }
+    packageList.listPackages("Package List");
+    return 0;
 }
 

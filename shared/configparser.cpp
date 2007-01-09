@@ -33,66 +33,73 @@
 #include "configparser.h"
 
 ConfigParser::ConfigParser()
-{
-}
+{}
 
 bool ConfigParser::parseFromFile(const QString &_fileName)
 {
-	QString fileName(_fileName);
+    QString fileName(_fileName);
     QFileInfo fi(fileName);
     if(!fi.isAbsolute())
         fileName = fi.absoluteFilePath();
     QFile configFile(fileName);
-    if (!configFile.exists()) {
+    if (!configFile.exists())
+    {
+#ifdef USE_GUI
         QMessageBox::warning(NULL, QString("File not found"), QString("Can't find %1").arg(fileName));
+#endif
+
         return false;
     }
 
-	configFile.open(QIODevice::ReadOnly);
+    configFile.open(QIODevice::ReadOnly);
 
-  return parse(&configFile);
+    return parse(&configFile);
 }
 
 bool ConfigParser::parseFromByteArray(const QByteArray &_ba)
 {
-  QByteArray ba(_ba);
-  QBuffer buf(&ba);
+    QByteArray ba(_ba);
+    QBuffer buf(&ba);
 
-  if (!buf.open(QIODevice::ReadOnly| QIODevice::Text))
-		return false;
-	return parse(&buf);
+    if (!buf.open(QIODevice::ReadOnly| QIODevice::Text))
+        return false;
+    return parse(&buf);
 }
 
 bool ConfigParser::parse(QIODevice *ioDev)
 {
-	bool inSite;
-	bool inPackage;
-	Site *site;
+    bool inSite;
+    bool inPackage;
+    Site *site;
 
-	while (!ioDev->atEnd()) {
-		QByteArray line = ioDev->readLine().replace("\r\n","");
-		if (line.startsWith(";")) 
-			continue;
-		else if (line.startsWith("@")) {
-			QList<QByteArray> cmd = line.split(' ');
-			if (cmd[0] == "@format")
-				;
-			else if(cmd[0] == "@site") {
-				site = new Site;
-				m_sites.append(site);
-				site->setName(cmd[1]);
-				qDebug() << "site " << cmd[1] << " detected";
-			}
-			else if(cmd[0] == "@siteurl")
-				site->setURL(cmd[1]);
-			else if(cmd[0] == "@sitetype") {
-				site->setType(cmd[1] == "apachemodindex" ? Site::ApacheModIndex : Site::SourceForge );
-			}
-			else if(cmd[0] == "@package")
-				qDebug() << "package detected";
+    while (!ioDev->atEnd())
+    {
+        QByteArray line = ioDev->readLine().replace("\r\n","");
+        if (line.startsWith(";"))
+            continue;
+        else if (line.startsWith("@"))
+        {
+            QList<QByteArray> cmd = line.split(' ');
+            if (cmd[0] == "@format")
+                ;
+            else if(cmd[0] == "@site")
+            {
+                site = new Site;
+                m_sites.append(site);
+                site->setName(cmd[1]);
+                qDebug() << "site " << cmd[1] << " detected";
+            }
+            else if(cmd[0] == "@siteurl")
+                site->setURL(cmd[1]);
+            else if(cmd[0] == "@sitetype")
+            {
+                site->setType(cmd[1] == "apachemodindex" ? Site::ApacheModIndex : Site::SourceForge );
+            }
+            else if(cmd[0] == "@package")
+                qDebug() << "package detected";
 
-		}
-	}
-	return true;
+        }
+    }
+    return true;
 }
 

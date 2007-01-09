@@ -64,7 +64,8 @@ class InstallWizardPage : public WizardPage
 {
 public:
     InstallWizardPage(InstallWizard *wizard)
-        : WizardPage(wizard), wizard(wizard) {}
+            : WizardPage(wizard), wizard(wizard)
+    {}
 
 protected:
     InstallWizard *wizard;
@@ -80,8 +81,8 @@ public:
 
 private:
     QLabel *topLabel;
-//    QRadioButton *downloadPackagesRadioButton;
-//    QRadioButton *downloadAndInstallRadioButton;
+    //    QRadioButton *downloadPackagesRadioButton;
+    //    QRadioButton *downloadAndInstallRadioButton;
 };
 
 class PathSettingsPage : public InstallWizardPage
@@ -96,17 +97,17 @@ public:
     bool isComplete();
 
 public slots:
-		void selectRootPath(void);
+    void selectRootPath(void);
 
 private:
     QLabel    *topLabel;
     QLabel    *rootPathLabel;
     QLineEdit *rootPathEdit;
     QPushButton *rootPathSelect;
-/*
-    QLabel    *tempPathLabel;
-    QLineEdit *tempPathEdit;
-*/
+    /*
+        QLabel    *tempPathLabel;
+        QLineEdit *tempPathEdit;
+    */
 };
 
 class QTreeWidget;
@@ -123,7 +124,7 @@ public:
     WizardPage *nextPage();
     bool isComplete();
 
-public slots: 
+public slots:
     void itemClicked(QTreeWidgetItem *item, int column);
 
 private:
@@ -162,7 +163,10 @@ public:
     FinishPage(InstallWizard *wizard);
 
     void resetPage();
-    bool isLastPage() { return true; }
+    bool isLastPage()
+    {
+        return true;
+    }
     bool isComplete();
 
 private:
