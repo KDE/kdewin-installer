@@ -40,12 +40,15 @@ class Package
 public:
     enum Type { BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8 };
 
-    struct packageDescr {
-        QString path;           // complete url (use QUrl?)
-        QString fileName;       // filename only
-        QString packageType;    // zip / msi / ...
-        Type    contentType;    // BIN / LIB / DOC / SRC
-        bool    bInstalled;     // true if already installed
+    class packageDescr {
+        public:
+            // dump content
+    	    void dump(const QString &title="");
+            QString path;           // complete url (use QUrl?)
+            QString fileName;       // filename only
+            QString packageType;    // zip / msi / ...
+            Type    contentType;    // BIN / LIB / DOC / SRC
+            bool    bInstalled;     // true if already installed
     };
 public:
 
@@ -92,6 +95,9 @@ public:
     // load package from stream
     bool read(QTextStream &in);
     
+    // dump package content
+    void dump(const QString &title="");
+
 private slots:
     void logOutput();
 

@@ -26,7 +26,16 @@
 
 #include "package.h"
 
-#define DEBUG
+void Package::packageDescr::dump(const QString &title)
+{
+    qDebug() << "class packageDesc dump: " << title;
+    qDebug() << "path:        " << path;           
+    qDebug() << "fileName:    " << fileName;       
+    qDebug() << "packageType: " << packageType;    
+    qDebug() << "contentType: " << contentType;    
+    qDebug() << "bInstalled:  " << bInstalled;     
+}
+
 
 // FIXME: this should be in PackageList to have access from Package, 
 // Package class should store PackageList pointer as parent
@@ -86,14 +95,14 @@ void Package::add(const QString &path, Package::Type contentType, bool bInstalle
 
     idx = path.lastIndexOf('/');
     if(idx == -1) {
-        qDebug("Invalid");    // FIXME
+        qDebug("Invalid - no '/' in path");    // FIXME
         return;
     }
     desc.fileName = path.mid(idx + 1);
 
     idx = desc.fileName.lastIndexOf('.');
     if(idx == -1) {
-        qDebug("Invalid");    // FIXME
+        qDebug("Invalid - dot in filename expected");    // FIXME
     }
     desc.packageType = desc.fileName.mid(idx + 1);
     
@@ -212,6 +221,18 @@ bool Package::read(QTextStream &in)
 #endif
     ;
     return true;
+}
+
+void Package::dump(const QString &title)
+{
+    qDebug() << "class Package dump" << title;
+    qDebug() << "m_name:    " << m_name;
+    qDebug() << "m_version: " << m_version;
+
+    QList<packageDescr>::iterator it = m_packages.begin();
+    for( ; it != m_packages.end(); ++it) {
+    	it->dump();
+    }
 }
 
 void Package::logOutput()
