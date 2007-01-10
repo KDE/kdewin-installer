@@ -12,6 +12,7 @@ INCLUDEPATH += .
 INCLUDEPATH += ..\..\zlib
 LIBS += -L..\..\zlib
 
+DEFINES += QT_NO_MOC_INCLUDES
 
 # Input
 HEADERS += crypt.h \

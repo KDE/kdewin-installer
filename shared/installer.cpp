@@ -239,11 +239,12 @@ void Installer::setError(QByteArray format, QByteArray p1, QByteArray p2)
 
 bool Installer::install(const QString &fileName)
 {
-    if (m_type == GNUWIN32)
+    if (fileName.endsWith(".zip"))
     {
         return unzipFile(root, fileName);
     }
+    qDebug() << fileName << " is a not supported archive type ";
     return false;
 }
 
-#include "installer.moc"
+//#include "installer.moc"

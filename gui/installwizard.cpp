@@ -307,6 +307,7 @@ bool InstallerEngine::downloadPackages(QTreeWidget *tree, const QString &categor
             {
                 QTreeWidgetItem *child = item->child(j);
                 qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
+                // handle downloading "all" packages types
                 if (child->checkState(2) == Qt::Checked)
                 {
                     if (!packageList->downloadPackage(child->text(0)))
@@ -336,12 +337,15 @@ bool InstallerEngine::installPackages(QTreeWidget *tree,const QString &category)
             {
                 QTreeWidgetItem *child = item->child(j);
                 qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
+                // handle installing "all" packages types
                 if (child->checkState(2) == Qt::Checked)
                 {
                     if (!packageList->installPackage(child->text(0)))
                         qDebug() << "could not install package";
                 }
             }
+            // save updated package list to file 
+            packageList->writeToFile();
         }
     }
     return true;

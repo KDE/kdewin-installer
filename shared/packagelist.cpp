@@ -145,8 +145,6 @@ bool PackageList::writeToFile(const QString &_fileName)
         return false;
     }
 
-    // this needs to be enhanced to fit current Package content
-    // also maybe move this into class Package -> Package::write(QTextStream &out)
     QTextStream out(&file);
     out << "# package list" << "\n";
     QList<Package>::iterator i;
@@ -168,7 +166,7 @@ bool PackageList::readFromFile(const QString &_fileName)
         return false;
 
     m_packageList->clear();
-	QTextStream in(&file);
+    QTextStream in(&file);
 		
     while (!in.atEnd())
     {
@@ -378,60 +376,6 @@ bool PackageList::readHTMLFromFile(const QString &fileName, PackageList::Type ty
     return readHTMLInternal(&pkglist, type);
 }
 
-// obsolate
-QStringList PackageList::getFilesForInstall(QString const &pkgName)
-{
-#ifdef DEBUG
-    qDebug() << __FUNCTION__;
-#endif
-
-    QStringList result;
-    Package *pkg = getPackage(pkgName);
-    if (!pkg)
-        return result;
-    result << pkg->getFileName(Package::BIN);
-    result << pkg->getFileName(Package::LIB);
-#ifdef INCLUDE_DOC_AND_SRC_PACKAGES
-
-    result << pkg->getFileName(Package::DOC);
-    result << pkg->getFileName(Package::SRC);
-#else
-
-    qDebug("downloading of DOC and SRC disabled for now");
-#endif
-
-    return result;
-}
-
-QStringList PackageList::getFilesForDownload(QString const &pkgName)
-{
-#ifdef DEBUG
-    qDebug() << __FUNCTION__;
-#endif
-
-    QStringList result;
-    Package *pkg = getPackage(pkgName);
-    if (!pkg)
-    {
-#ifdef DEBUG
-        qDebug() << __FUNCTION__ << "package not found";
-#endif
-        return result;
-    }
-    result << pkg->getURL(Package::BIN);
-    result << pkg->getURL(Package::LIB);
-#ifdef INCLUDE_DOC_AND_SRC_PACKAGES
-
-    result << pkg->getURL(Package::DOC);
-    result << pkg->getURL(Package::SRC);
-#else
-
-    qDebug("downloading of DOC and SRC disabled for now");
-#endif
-
-    return result;
-}
-
 /*
 bool PackageList::updatePackage(Package &apkg)
 {
@@ -495,4 +439,4 @@ void PackageList::dump(const QString &title)
         it->dump();
 }
 
-#include "packagelist.moc"
+//#include "packagelist.moc"

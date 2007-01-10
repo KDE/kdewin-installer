@@ -69,7 +69,7 @@ if (UNIX)
   set (LIBS pthread dl z)
   set (GUI_LIBS pthread dl z)
 else(UNIX)
-  set (LIBS)
+  set (LIBS kernel32 user32 shell32 uuid ole32 advapi32 ws2_32)
   set (GUI_LIBS)
 endif (UNIX)
 
