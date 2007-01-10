@@ -32,6 +32,7 @@
 
 class QLabel;
 class QProgressBar;
+class QListWidget;
 
 class InstallerProgress : public QWidget
 {
@@ -47,7 +48,8 @@ public:
 private:
     QLabel *titleLabel;
     QLabel *statusLabel;
-    QProgressBar *progress;
+//    QProgressBar *progress;
+		QListWidget *progress;
 };
 
 #else

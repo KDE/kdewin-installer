@@ -26,6 +26,8 @@
 #include <QProgressBar>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QListWidget>
+#include <QApplication>
 
 #include "installerprogress.h"
 
@@ -33,7 +35,8 @@
 InstallerProgress::InstallerProgress(QWidget *parent)
 {
     statusLabel = new QLabel();
-    progress = new QProgressBar(parent);
+//    progress = new QProgressBar(parent);
+    progress = new QListWidget(parent);
 
     QHBoxLayout *statusLayout = new QHBoxLayout;
     statusLayout->addWidget(statusLabel);
@@ -63,7 +66,13 @@ void InstallerProgress::hide()
 
 void InstallerProgress::setTitle(const QString &label)
 {
-    titleLabel->setText(label);
+    static int i = 0;
+    //titleLabel->setText(label);
+    progress->addItem(label);
+    if (i++ % 10 == 0) {
+        progress->scrollToBottom();
+        QApplication::instance()->processEvents();
+    }
 }
 
 void InstallerProgress::setStatus(const QString &label)
@@ -80,12 +89,12 @@ void InstallerProgress::show()
 
 void InstallerProgress::setMaximum(int value)
 {
-    progress->setMaximum(value);
+    //progress->setMaximum(value);
 }
 
 void InstallerProgress::setValue(int value)
 {
-    progress->setValue(value);
+    //progress->setValue(value);
 }
 
 #else // console implementation
