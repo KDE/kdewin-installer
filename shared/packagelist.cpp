@@ -384,6 +384,7 @@ bool PackageList::readHTMLFromFile(const QString &fileName, PackageList::Type ty
     return readHTMLInternal(&pkglist, type);
 }
 
+// obsolate
 QStringList PackageList::getFilesForInstall(QString const &pkgName)
 {
 #ifdef DEBUG
@@ -483,6 +484,14 @@ int PackageList::size()
 #endif
 
     return m_packageList->size();
+}
+
+void PackageList::dump(const QString &title)
+{
+    qDebug() << "class PackageList dump: " << title;
+    QList<Package>::iterator it = m_packageList->begin();
+    for ( ; it != m_packageList->end(); ++it)
+        it->dump();
 }
 
 #include "packagelist.moc"

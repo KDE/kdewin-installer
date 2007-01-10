@@ -88,6 +88,8 @@ public:
     bool downloadPackage(const QString &pkgName);
     bool installPackage(const QString &pkgName);
 
+    void dump(const QString &title="");
+
 signals:
     void loadedConfig();
 
