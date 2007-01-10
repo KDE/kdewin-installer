@@ -157,7 +157,7 @@ QString Package::getTypeAsString(bool requiredIsInstalled, const QString &delim)
                 types += "doc" + delim;
                 break;
             case SRC:
-                types += "src" + delim;
+                types += "src";
                 break;
         };
     }
@@ -190,14 +190,13 @@ bool Package::write(QTextStream &out)
 #endif
     out << m_name << "\t" << m_version 
 // FIXME enable when read could parse this
-#if 0
     << "\t" 
-    << getFileName(BIN) << ":"
-    << getFileName(LIB) << ":"
-    << getFileName(DOC) << ":"
-    << getFileName(SRC) << ":"
-    << getTypeAsString(true," ") 
-#endif
+    << getTypeAsString(true,":") << ";"
+    << baseURL << ";"
+    << getFileName(BIN) << ";"
+    << getFileName(LIB) << ";"
+    << getFileName(DOC) << ";"
+    << getFileName(SRC)
     << "\n";
     return true;
 }
