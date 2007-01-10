@@ -68,6 +68,9 @@ void InstallerProgress::setTitle(const QString &label)
 {
     static int i = 0;
     //titleLabel->setText(label);
+#ifdef DEBUG
+    qDebug() << label;
+#endif
     progress->addItem(label);
     if (i++ % 10 == 0) {
         progress->scrollToBottom();
