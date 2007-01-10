@@ -23,8 +23,11 @@
 
 #include <QtDebug>
 #include <QStringList>
+#include <QFile>
 
 #include "package.h"
+#include "downloader.h"
+
 
 void Package::packageDescr::dump(const QString &title)
 {
@@ -234,6 +237,24 @@ void Package::dump(const QString &title)
     	it->dump();
     }
 }
+
+bool Package::download(Downloader *downloader, Package::Type type)
+{
+    QString URL = getURL(type);
+    if (URL.isEmpty())
+    {
+        qDebug() << __FUNCTION__ << " empty URL for type " << type;
+        return false;
+    }
+    else if(QFile::exists(getFileName(type)))
+    {
+        qDebug() << __FUNCTION__ << " URL " << URL << " already downloaded for type " << type;
+        return false; 
+    }
+    qDebug() << __FUNCTION__ << " downloading URL " << URL << " for type " << type;
+    return downloader->start(URL);
+}
+
 
 void Package::logOutput()
 {}
