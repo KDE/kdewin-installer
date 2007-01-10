@@ -37,6 +37,7 @@ static struct Options
     bool download;
     bool install;
     bool list;
+    bool dump;
     QString rootdir;
 }
 options;
@@ -49,6 +50,7 @@ void usage()
     << "\n -q <packagename> query packages"
     << "\n -i <packagename> download and install package"
     << "\n -d <packagename> download package"
+    << "\n -D dump internal data"
     ;
 }
 //#define CYGWIN_INSTALLER
@@ -78,6 +80,8 @@ int main(int argc, char *argv[])
                 options.query = true;
             else if (option == "-d")
                 options.download = true;
+            else if (option == "-D")
+                options.dump = true;
             else if (option == "-i")
             {
                 options.download = true;
@@ -105,6 +109,8 @@ int main(int argc, char *argv[])
     Downloader downloader(/*blocking=*/ true);
     PackageList packageList(&downloader);
     Installer installer(&packageList);
+    // FIXME: set according type of used site
+    installer.setType(Installer::GNUWIN32);
     // installer.setVerbose(options.verbose);
     installer.setRoot(options.rootdir.isEmpty() ? "packages" : options.rootdir);
 
@@ -147,6 +153,9 @@ int main(int argc, char *argv[])
             return 1;
     }
 
+    if (options.dump)
+        packageList.dump();
+        
     if (options.list)
         packageList.listPackages("Package List");
 
