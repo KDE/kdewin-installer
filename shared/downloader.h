@@ -24,7 +24,6 @@
 #ifndef DOWNLOADER_H
 #define DOWNLOADER_H
 
-#include <QObject>
 class DownloaderProgress;
 class QEventLoop;
 class QFile;

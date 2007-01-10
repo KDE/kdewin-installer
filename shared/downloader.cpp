@@ -244,4 +244,4 @@ void Downloader::stateChanged(int state)
         m_progress->setStatus(stateLabel);
 }
 
-//#include "downloader.moc"
+#include "downloader.moc"
