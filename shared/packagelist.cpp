@@ -454,11 +454,12 @@ bool PackageList::downloadPackage(const QString &pkgName)
     	  qDebug() << __FUNCTION__ << " package not found";
         return false;
     }
-    // in "all" case iterate through all types
-    pkg->download(downloader,Package::BIN);
-    pkg->download(downloader,Package::LIB);
-    pkg->download(downloader,Package::DOC);
-    pkg->download(downloader,Package::SRC);
+    // FIXME: the package Item list this is gnuwin32 specific 
+    // FIXME: handle error code
+    pkg->downloadItem(downloader,Package::BIN);
+    pkg->downloadItem(downloader,Package::LIB);
+    pkg->downloadItem(downloader,Package::DOC);
+    pkg->downloadItem(downloader,Package::SRC);
     return true;
 }
 
@@ -468,19 +469,12 @@ bool PackageList::installPackage(const QString &pkgName)
     Package *pkg = getPackage(pkgName);
     if (!pkg)
         return false;
-    // in "all" case iterate through all types
-    QString fileName = pkg->getFileName(Package::BIN);
-    if (!fileName.isEmpty() && installer->install(fileName))
-        pkg->setInstalled(Package::BIN);
-    fileName = pkg->getFileName(Package::LIB);
-    if (!fileName.isEmpty() && installer->install(fileName))
-        pkg->setInstalled(Package::LIB);
-    fileName = pkg->getFileName(Package::DOC);
-    if (!fileName.isEmpty() && installer->install(fileName))
-        pkg->setInstalled(Package::DOC);
-    fileName = pkg->getFileName(Package::SRC);
-    if (!fileName.isEmpty() && installer->install(fileName))
-        pkg->setInstalled(Package::SRC);
+    // FIXME: the package Item list this is gnuwin32 specific 
+    // FIXME: handle error code
+    pkg->installItem(installer,Package::BIN);
+    pkg->installItem(installer,Package::LIB);
+    pkg->installItem(installer,Package::DOC);
+    pkg->installItem(installer,Package::SRC);
     return true;
 }
 

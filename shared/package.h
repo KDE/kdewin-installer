@@ -27,6 +27,7 @@
 #include <QString>
 class QTextStream;
 class Downloader;
+class Installer;
 
 /* This class holds a package with all it's single files
     a2ps-4.13b-1-bin.zip
@@ -100,7 +101,8 @@ public:
     void dump(const QString &title="");
     
     // download a package item
-    bool download(Downloader *downloader, Package::Type type);
+    bool downloadItem(Downloader *downloader, Package::Type type);
+    bool installItem(Installer *installer, Package::Type type);
 
 private slots:
     void logOutput();

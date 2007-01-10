@@ -27,6 +27,7 @@
 
 #include "package.h"
 #include "downloader.h"
+#include "installer.h"
 
 
 void Package::packageDescr::dump(const QString &title)
@@ -238,7 +239,7 @@ void Package::dump(const QString &title)
     }
 }
 
-bool Package::download(Downloader *downloader, Package::Type type)
+bool Package::downloadItem(Downloader *downloader, Package::Type type)
 {
     QString URL = getURL(type);
     if (URL.isEmpty())
@@ -253,6 +254,23 @@ bool Package::download(Downloader *downloader, Package::Type type)
     }
     qDebug() << __FUNCTION__ << " downloading URL " << URL << " for type " << type;
     return downloader->start(URL);
+}
+
+bool Package::installItem(Installer *installer, Package::Type type)
+{
+    QString fileName = getFileName(type);
+    if (fileName.isEmpty())
+    {
+        qDebug() << __FUNCTION__ << " empty fileName for type " << type;
+        return false;
+    }
+    if (!installer->install(fileName)) 
+    {
+        qDebug() << __FUNCTION__ << " install failure for file " << fileName << " type " << type;
+        return false;
+    }
+    
+    setInstalled(type);
 }
 
 
