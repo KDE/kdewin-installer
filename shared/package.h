@@ -25,6 +25,7 @@
 
 #include <QObject>
 #include <QString>
+class QTextStream;
 
 /* This class holds a package with all it's single files
     a2ps-4.13b-1-bin.zip
@@ -69,7 +70,7 @@ public:
     }
 
     QString toString(bool installed=false, const QString &delim = "-");
-    QString getTypeAsString(bool requiredIsInstalled=false);
+    QString getTypeAsString(bool requiredIsInstalled=false, const QString &delim = " ");
 
     // return packageDescr::fileName for specified contentType
     QString getFileName(Package::Type contentType);
@@ -83,7 +84,14 @@ public:
 
     // check if specific content is already installed
     bool isInstalled(Package::Type type);
+    // set that a specific content is already installed
+    void setInstalled(Package::Type type);
 
+    // save package to stream
+    bool write(QTextStream &out);
+    // load package from stream
+    bool read(QTextStream &in);
+    
 private slots:
     void logOutput();
 

@@ -22,8 +22,14 @@
 ****************************************************************************/
 
 #include <QtDebug>
+#include <QStringList>
+
 #include "package.h"
 
+#define DEBUG
+
+// FIXME: this should be in PackageList to have access from Package, 
+// Package class should store PackageList pointer as parent
 QString Package::baseURL = "http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/";
 
 Package::Package()
@@ -93,7 +99,9 @@ void Package::add(const QString &path, Package::Type contentType, bool bInstalle
     
     desc.contentType = contentType;
     desc.bInstalled  = bInstalled;
-    
+#ifdef DEBUG
+    qDebug() << __FUNCTION__ << desc.contentType << desc.bInstalled;
+#endif    
     for( ; it != m_packages.end(); ++it) {
         if(desc.contentType == (*it).contentType &&
            desc.packageType == (*it).packageType) {
@@ -116,7 +124,7 @@ QString Package::toString(bool installed, const QString &delim)
     return result;
 }
 
-QString Package::getTypeAsString(bool requiredIsInstalled)
+QString Package::getTypeAsString(bool requiredIsInstalled, const QString &delim)
 {
     QString types;
 
@@ -127,16 +135,16 @@ QString Package::getTypeAsString(bool requiredIsInstalled)
 
         switch((*it).contentType) {
             case BIN:
-                types += " bin ";
+                types += "bin" + delim;
                 break;
             case LIB:
-                types += " lib ";
+                types += "lib" + delim;
                 break;
             case DOC:
-                types += " doc ";
+                types += "doc" + delim;
                 break;
             case SRC:
-                types += " src ";
+                types += "src" + delim;
                 break;
         };
     }
@@ -151,6 +159,59 @@ bool Package::isInstalled(Package::Type contentType)
             return (*it).bInstalled;
     }
     return false;
+}
+
+void Package::setInstalled(Package::Type contentType)
+{
+    QList<packageDescr>::iterator it = m_packages.begin();
+    for( ; it != m_packages.end(); ++it) {
+        if(contentType == (*it).contentType)
+            (*it).bInstalled = true;
+    }
+}
+
+bool Package::write(QTextStream &out)
+{
+#ifdef DEBUG
+    qDebug() << __FUNCTION__ << m_name << "\t" << m_version << "\t" << getTypeAsString(true,"\t") << "\n";
+#endif
+    out << m_name << "\t" << m_version 
+// FIXME enable when read could parse this
+#if 0
+    << "\t" 
+    << getFileName(BIN) << ":"
+    << getFileName(LIB) << ":"
+    << getFileName(DOC) << ":"
+    << getFileName(SRC) << ":"
+    << getTypeAsString(true," ") 
+#endif
+    << "\n";
+    return true;
+}
+
+bool Package::read(QTextStream &in)
+{
+    QString line = in.readLine();
+    while (line.startsWith("#")) {
+        line = in.readLine();
+    }
+    if (in.atEnd())
+        return false;
+    QStringList parts = line.split("\t");
+    setName(parts.at(0));
+    setVersion(parts.at(1));
+    // FIXME: this is a hack 
+    add(baseURL+parts.at(0)+"-"+parts.at(1)+"-bin.zip",BIN);
+    add(baseURL+parts.at(0)+"-"+parts.at(1)+"-lib.zip",LIB);
+    add(baseURL+parts.at(0)+"-"+parts.at(1)+"-doc.zip",DOC);
+    add(baseURL+parts.at(0)+"-"+parts.at(1)+"-src.zip",SRC);
+    qDebug() << __FUNCTION__ << " " << toString() 
+// FIXME: see write()
+#if 0
+    << "type found " << parts.at(2) 
+#endif
+    ;
+    return true;
 }
 
 void Package::logOutput()
