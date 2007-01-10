@@ -22,6 +22,7 @@
 ****************************************************************************/
 
 #include <QtCore>
+#include <QtDebug>
 
 #include "installer.h"
 #include "packagelist.h"
@@ -37,12 +38,12 @@
 Installer::Installer(PackageList *_packageList, InstallerProgress *_progress)
         : QObject(), m_progress(_progress), m_type(Installer::Standard)
 {
-    root = ".";
+    m_root = ".";
     packageList = _packageList;
     if(packageList)
     {
         packageList->installer = this;
-        packageList->root = root;
+        packageList->root = m_root;
     }
     connect (packageList,SIGNAL(loadedConfig()),this,SLOT(updatePackageList()));
 }
@@ -50,12 +51,12 @@ Installer::Installer(PackageList *_packageList, InstallerProgress *_progress)
 Installer::~Installer()
 {}
 
-void Installer::setRoot(const QString &_root)
+void Installer::setRoot(const QString &root)
 {
-    root = _root;
-    packageList->root = root;
+    m_root = root;
+    packageList->root = m_root;
     QDir dir;
-    dir.mkdir(root);
+    dir.mkdir(m_root);
 }
 
 bool Installer::isEnabled()
@@ -76,7 +77,7 @@ bool Installer::loadConfig()
     if (m_type == GNUWIN32)
     {
         // gnuwin32 related
-        QDir dir(root + "/manifest");
+        QDir dir(m_root + "/manifest");
         dir.setFilter(QDir::Files);
         dir.setNameFilters(QStringList("*.ver"));
         dir.setSorting(QDir::Size | QDir::Reversed);
@@ -85,6 +86,7 @@ bool Installer::loadConfig()
         for (int i = 0; i < list.size(); ++i)
         {
             QFileInfo fileInfo = list.at(i);
+            qDebug() << __FUNCTION__ << "importing gnuwin32 package database is disabled";
             //Package pkg;
             //pkg.setFromVersionFile(fileInfo.fileName());
             //packageList->updatePackage(pkg);
@@ -171,7 +173,9 @@ bool Installer::unzipFile(const QString &destpath, const QString &zipFile)
         {
             if(!path.exists(fi.absolutePath()))
             {
+#ifdef DEBUG
                 setError("create directory %s", fi.absolutePath().toAscii().data());
+#endif
                 if (!path.mkpath(fi.absolutePath()))
                 {
                     setError("Can not create directory %s", fi.absolutePath().toAscii().data());
@@ -201,7 +205,6 @@ bool Installer::unzipFile(const QString &destpath, const QString &zipFile)
 
         if (m_progress)
         {
-            qDebug() << tr("Installing %1 ").arg(newFile.fileName().toAscii().data());
             m_progress->setTitle(tr("Installing %1 ").arg(newFile.fileName().toAscii().data()));
         }
         // copy data
@@ -241,7 +244,7 @@ bool Installer::install(const QString &fileName)
 {
     if (m_type == GNUWIN32)
     {
-        return unzipFile(root, fileName);
+        return unzipFile(m_root, fileName);
     }
     return false;
 }

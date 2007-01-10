@@ -50,7 +50,8 @@ public:
     bool loadConfig();
 
     bool isEnabled();
-    void setRoot(const QString &_root);
+    void setRoot(const QString &root);
+    const QString Root() { return m_root; }
 
 public slots:
     void updatePackageList();
@@ -60,7 +61,7 @@ protected:
     void setError(QByteArray format, QByteArray p1="", QByteArray p2="");
 
     PackageList *packageList;
-    QString root;
+    QString m_root;
     QString configFile;
     InstallerProgress *m_progress;
     InstallerType m_type;
