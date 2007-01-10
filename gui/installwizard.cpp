@@ -342,6 +342,7 @@ bool InstallerEngine::installPackages(QTreeWidget *tree,const QString &category)
                         qDebug() << "could not install package";
                 }
             }
+        		packageList->writeToFile();
         }
     }
     return true;
@@ -525,23 +526,21 @@ void DownloadPage::resetPage()
 
 WizardPage *DownloadPage::nextPage()
 {
-    /*
-        wizard->installPage = new InstallPage(wizard);
-        return wizard->installPage;
-    */
+    wizard->installPage = new InstallPage(wizard);
+    return wizard->installPage;
+/*
     wizard->finishPage = new FinishPage(wizard);
     return wizard->finishPage;
+*/
 }
 
 bool DownloadPage::isComplete()
 {
     wizard->nextButton->setEnabled(false);
     engine->downloadPackages(tree);
-    topLabel->setText(tr("<center><b>Installing packages</b></center>"));
     QApplication::instance()->processEvents();
-    engine->installPackages(tree);
     wizard->nextButton->setEnabled(true);
-    // here the finish page should be called directly
+    // here the download page should be called directly
     return 1;
 }
 
@@ -550,8 +549,11 @@ InstallPage::InstallPage(InstallWizard *wizard)
 {
     topLabel = new QLabel(tr("<center><b>Installing packages</b></center>"));
 
+    fileList = wizard->instProgressBar;
+   
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(topLabel);
+    layout->addWidget(fileList);
     setLayout(layout);
 }
 
@@ -566,6 +568,8 @@ WizardPage *InstallPage::nextPage()
 
 bool InstallPage::isComplete()
 {
+    QApplication::instance()->processEvents();
+    engine->installPackages(tree);
     return 1;
 }
 

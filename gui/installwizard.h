@@ -155,6 +155,7 @@ public:
 
 private:
     QLabel *topLabel;
+    InstallerProgress *fileList;
 };
 
 class FinishPage : public InstallWizardPage
