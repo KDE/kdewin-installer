@@ -151,7 +151,7 @@ bool PackageList::writeToFile(const QString &_fileName)
     out << "# package list" << "\n";
     QList<Package>::iterator i;
     for (i = m_packageList->begin(); i != m_packageList->end(); ++i)
-        out << i->name() << "\t" << i->version() << "\n";
+        i->write(out);
     return true;
 }
 
@@ -168,19 +168,13 @@ bool PackageList::readFromFile(const QString &_fileName)
         return false;
 
     m_packageList->clear();
-
-    Package pkg;
-    while (!file.atEnd())
+	QTextStream in(&file);
+		
+    while (!in.atEnd())
     {
-        // this needs to be enhanced to fit current Package content
-        // also maybe move this into class Package -> Package::read(QTextStream &in)
-        QByteArray line = file.readLine();
-        if (line.startsWith("#"))
-            continue;
-        int i = line.lastIndexOf('\t');
-        pkg.setName(line.mid(0,i));
-        pkg.setVersion(line.mid(i+1,line.size()-i-2));
-        addPackage(pkg);
+        Package pkg;
+        if (pkg.read(in))
+            addPackage(pkg);
     }
     emit loadedConfig();
     return true;
