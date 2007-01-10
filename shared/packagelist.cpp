@@ -447,27 +447,40 @@ bool PackageList::updatePackage(Package &apkg)
 */
 bool PackageList::downloadPackage(const QString &pkgName)
 {
-    QStringList files = getFilesForDownload(pkgName);
-    files = filterPackageFiles(files,"URL");
-    bool ret = true;
-    for (int j = 0; j < files.size(); ++j)
+    qDebug() << __FUNCTION__ << " " << pkgName; 
+    Package *pkg = getPackage(pkgName);
+    if (!pkg) 
     {
-        if (!downloader->start(files.at(j)))
-            ret = false;
+    	  qDebug() << __FUNCTION__ << " package not found";
+        return false;
     }
+    // in "all" case iterate through all types
+    pkg->download(downloader,Package::BIN);
+    pkg->download(downloader,Package::LIB);
+    pkg->download(downloader,Package::DOC);
+    pkg->download(downloader,Package::SRC);
     return true;
 }
 
+// FIXME: add types to install 
 bool PackageList::installPackage(const QString &pkgName)
 {
-    QStringList files = getFilesForInstall(pkgName);
-    files = filterPackageFiles(files,"PATH");
-    bool ret = true;
-    for (int j = 0; j < files.size(); ++j)
-    {
-        if (!installer->install(files.at(j)))
-            ret = false;
-    }
+    Package *pkg = getPackage(pkgName);
+    if (!pkg)
+        return false;
+    // in "all" case iterate through all types
+    QString fileName = pkg->getFileName(Package::BIN);
+    if (!fileName.isEmpty() && installer->install(fileName))
+        pkg->setInstalled(Package::BIN);
+    fileName = pkg->getFileName(Package::LIB);
+    if (!fileName.isEmpty() && installer->install(fileName))
+        pkg->setInstalled(Package::LIB);
+    fileName = pkg->getFileName(Package::DOC);
+    if (!fileName.isEmpty() && installer->install(fileName))
+        pkg->setInstalled(Package::DOC);
+    fileName = pkg->getFileName(Package::SRC);
+    if (!fileName.isEmpty() && installer->install(fileName))
+        pkg->setInstalled(Package::SRC);
     return true;
 }
 
