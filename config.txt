@@ -8,33 +8,33 @@
 @siteurl http://sourceforge.net/project/showfiles.php?group_id=23617
 @siteoptions
 
-; another definition
-@site win32libs
-@sitetype apachemodindex
-@siteurl http://www.abi-neuhaus.de/chris/win32libs/zip/
-@siteoptions
+; another definition (installing not implemented yet)
+;@site win32libs
+;@sitetype apachemodindex
+;@siteurl http://www.abi-neuhaus.de/chris/win32libs/zip/
+;@siteoptions
 
-; another definition
-@site kde-i18n
-@sitetype apachemodindex
-@siteurl http://software.opensuse.org/download/KDE:/KDE3/SUSE_Linux_10.1/noarch/
-@siteoptions
+; another definition (installing not implemented yet)
+;@site kde-i18n
+;@sitetype apachemodindex
+;@siteurl http://software.opensuse.org/download/KDE:/KDE3/SUSE_Linux_10.1/noarch/
+;@siteoptions
 
-@site perl
-@sitetype apachemodindex
-@siteurl http://downloads.activestate.com/ActivePerl/Windows/5.8/
-@siteoptions
+;@site perl (installing not implemented yet)
+;@sitetype apachemodindex
+;@siteurl http://downloads.activestate.com/ActivePerl/Windows/5.8/
+;@siteoptions
 
 
-; a package definition 
-@package perl ; package name
-@packagecategory perl 
-@packageversion 5.8.8 ; package version
-@packageurl http://downloads.activestate.com/ActivePerl/Windows/5.8/ActivePerl-5.8.8.819-MSWin32-x86-267479.msi ; base url
-@packageoptions
+; a package definition  (not implemented yet)
+;@package perl ; package name
+;@packagecategory perl 
+;@packageversion 5.8.8 ; package version
+;@packageurl http://downloads.activestate.com/ActivePerl/Windows/5.8/ActivePerl-5.8.8.819-MSWin32-x86-267479.msi ; base url
+;@packageoptions
 
-; another package definition 
-@package cmake 
-@packageversion 2.4.5
-@packageurl http://www.cmake.org/files/v2.4/cmake-2.4.5-win32-x86.zip
-@packageoptions
+; another package definition  (not implemented yet)
+;@package cmake 
+;@packageversion 2.4.5
+;@packageurl http://www.cmake.org/files/v2.4/cmake-2.4.5-win32-x86.zip
+;@packageoptions
