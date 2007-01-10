@@ -69,8 +69,9 @@ if (UNIX)
   set (LIBS pthread dl z)
   set (GUI_LIBS pthread dl z)
 else(UNIX)
-  set (LIBS)
-  set (GUI_LIBS)
+  # required for static linking
+  set (LIBS kernel32 user32 shell32 uuid ole32 advapi32 ws2_32)
+  set (GUI_LIBS gdi32 comdlg32 oleaut32 imm32 winmm winspool ws2_32 ole32 uuid user32 advapi32)
 endif (UNIX)
 
 
