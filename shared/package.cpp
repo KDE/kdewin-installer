@@ -29,7 +29,6 @@
 #include "downloader.h"
 #include "installer.h"
 
-
 void Package::packageDescr::dump(const QString &title)
 {
     qDebug() << "class packageDesc dump: " << title;
@@ -39,7 +38,6 @@ void Package::packageDescr::dump(const QString &title)
     qDebug() << "contentType: " << contentType;    
     qDebug() << "bInstalled:  " << bInstalled;     
 }
-
 
 // FIXME: this should be in PackageList to have access from Package, 
 // Package class should store PackageList pointer as parent
@@ -118,7 +116,7 @@ void Package::add(const QString &path, Package::Type contentType, bool bInstalle
     for( ; it != m_packages.end(); ++it) {
         if(desc.contentType == (*it).contentType &&
            desc.packageType == (*it).packageType) {
-            qDebug("Already added");
+            qDebug() << __FUNCTION__ << m_name << " type already added";
             return;
         }
     }
@@ -157,7 +155,7 @@ QString Package::getTypeAsString(bool requiredIsInstalled, const QString &delim)
                 types += "doc" + delim;
                 break;
             case SRC:
-                types += "src";
+                types += "src" + delim;
                 break;
         };
     }
@@ -191,7 +189,11 @@ bool Package::write(QTextStream &out)
     out << m_name << "\t" << m_version 
 // FIXME enable when read could parse this
     << "\t" 
-    << getTypeAsString(true,":") << ";"
+    << (isInstalled(BIN) ? "bin:" : ":")
+    << (isInstalled(LIB) ? "lib:" : ":")
+    << (isInstalled(DOC) ? "doc:" : ":")
+    << (isInstalled(SRC) ? "src:" : "")
+    << ";"
     << baseURL << ";"
     << getFileName(BIN) << ";"
     << getFileName(LIB) << ";"
@@ -204,25 +206,18 @@ bool Package::write(QTextStream &out)
 bool Package::read(QTextStream &in)
 {
     QString line = in.readLine();
-    while (line.startsWith("#")) {
-        line = in.readLine();
-    }
     if (in.atEnd())
         return false;
     QStringList parts = line.split("\t");
     setName(parts.at(0));
     setVersion(parts.at(1));
-    // FIXME: this is a hack 
-    add(baseURL+parts.at(0)+"-"+parts.at(1)+"-bin.zip",BIN);
-    add(baseURL+parts.at(0)+"-"+parts.at(1)+"-lib.zip",LIB);
-    add(baseURL+parts.at(0)+"-"+parts.at(1)+"-doc.zip",DOC);
-    add(baseURL+parts.at(0)+"-"+parts.at(1)+"-src.zip",SRC);
-    qDebug() << __FUNCTION__ << " " << toString() 
-// FIXME: see write()
-#if 0
-    << "type found " << parts.at(2) 
-#endif
-    ;
+    QStringList options = parts.at(2).split(";");
+    QStringList state = options.at(0).split(":");
+    QString baseURL = options.at(1);
+    add(baseURL+options.at(2), BIN, state.size() > 0 && state.at(0) == "bin");
+    add(baseURL+options.at(3), LIB, state.size() > 0 && state.at(1) == "lib");
+    add(baseURL+options.at(4), DOC, state.size() > 0 && state.at(2) == "doc");
+    add(baseURL+options.at(5), SRC, state.size() > 0 && state.at(3) == "src");
     return true;
 }
 

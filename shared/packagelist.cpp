@@ -33,35 +33,6 @@
 #include "downloader.h"
 #include "installer.h"
 
-QStringList filterPackageFiles(const QStringList &list,const QString &mode)
-{
-    QStringList result;
-    for (int j = 0; j < list.size(); ++j)
-    {
-        QUrl url(list.at(j));
-        QFileInfo fileInfo(url.path());
-        QString fileName = fileInfo.fileName();
-
-        // only download package not already downloaded and only bin and lib packages
-        if (mode == "URL" && QFile::exists(fileName))
-            qDebug() << fileName << " - already downloaded";
-        //  else if(fileName.contains("src") )
-        //     qDebug() << fileName << " - ignored";
-        else
-        {
-            if (mode == "URL")
-                qDebug() << fileName << " - downloading";
-            else
-                qDebug() << fileName << " - installing";
-            if (mode == "URL")
-                result << list.at(j);
-            else
-                result << fileName;
-        }
-    }
-    return result;
-}
-
 PackageList::PackageList(Downloader *_downloader)
         : QObject()
 {
@@ -149,6 +120,7 @@ bool PackageList::writeToFile(const QString &_fileName)
     // also maybe move this into class Package -> Package::write(QTextStream &out)
     QTextStream out(&file);
     out << "# package list" << "\n";
+    out << "@format 1.0" << "\n";
     QList<Package>::iterator i;
     for (i = m_packageList->begin(); i != m_packageList->end(); ++i)
         i->write(out);
@@ -168,7 +140,10 @@ bool PackageList::readFromFile(const QString &_fileName)
         return false;
 
     m_packageList->clear();
-	QTextStream in(&file);
+    QTextStream in(&file);
+
+    QString comment = in.readLine();
+    QString format = in.readLine();
 		
     while (!in.atEnd())
     {
@@ -184,7 +159,6 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type)
 {
     m_packageList->clear();
 
-    Package pkg;
 
     switch (type)
     {
@@ -194,22 +168,23 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type)
             QByteArray line = ioDev->readLine();
             if (line.contains("<td><a href=\"/project/showfiles.php?group_id="))
             {
+                Package pkg;
                 int a = line.indexOf("\">") + 2;
                 int b = line.indexOf("</a>");
-                QByteArray value = line.mid(a,b-a);
-                if (line.indexOf("release_id") > -1)
-                {
-                    pkg.setVersion(value);
-                    // available types could not be determined on this web page
-                    // so assume all types are available
-                    pkg.add(m_baseURL+pkg.name()+"-"+value+"-bin.zip",Package::BIN,false);
-                    pkg.add(m_baseURL+pkg.name()+"-"+value+"-lib.zip",Package::LIB,false);
-                    pkg.add(m_baseURL+pkg.name()+"-"+value+"-src.zip",Package::SRC,false);
-                    pkg.add(m_baseURL+pkg.name()+"-"+value+"-doc.zip",Package::DOC,false);
-                    addPackage(pkg);
-                }
-                else
-                    pkg.setName(value);
+                QByteArray name = line.mid(a,b-a);
+                pkg.setName(name);
+                line = ioDev->readLine();
+                a = line.indexOf("\">") + 2;
+                b = line.indexOf("</a>");
+                QByteArray version = line.mid(a,b-a);
+                pkg.setVersion(version);
+                // available types could not be determined on this web page
+                // so assume all types are available
+                pkg.add(m_baseURL+name+"-"+version+"-bin.zip",Package::BIN,false);
+                pkg.add(m_baseURL+name+"-"+version+"-lib.zip",Package::LIB,false);
+                pkg.add(m_baseURL+name+"-"+version+"-src.zip",Package::SRC,false);
+                pkg.add(m_baseURL+name+"-"+version+"-doc.zip",Package::DOC,false);
+                addPackage(pkg);
             }
         }
         break;
