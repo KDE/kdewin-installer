@@ -26,8 +26,10 @@
 
 #include <QString>
 #include "site.h"
+#include "package.h"
 
 class QIODevice;
+class PackageList;
 
 /**
  ConfigParser provides global config configuration options for the installer 
@@ -42,18 +44,20 @@ class QIODevice;
 class ConfigParser
 {
 public:
-    ConfigParser();
+    ConfigParser(PackageList *packageList);
     bool parseFromFile(const QString &fileName);
     bool parseFromByteArray(const QByteArray &ba);
     QList<Site*> *sites()
     {
         return &m_sites;
     }
+
 protected:
     bool parse(QIODevice *ioDev);
 
 private:
     QList<Site*> m_sites;
+    PackageList *m_packageList;
 
 };
 

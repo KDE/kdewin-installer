@@ -31,9 +31,11 @@
 
 #include "site.h"
 #include "configparser.h"
+#include "packagelist.h"
 
-ConfigParser::ConfigParser()
-{}
+ConfigParser::ConfigParser(PackageList *packageList) : m_packageList(packageList)
+{
+}
 
 bool ConfigParser::parseFromFile(const QString &_fileName)
 {
@@ -69,42 +71,78 @@ bool ConfigParser::parseFromByteArray(const QByteArray &_ba)
 bool ConfigParser::parse(QIODevice *ioDev)
 {
     bool inSite;
-    bool inPackage;
+    bool inPackage = false;
     Site *site;
+    Package *pkg;
 
     while (!ioDev->atEnd())
     {
         QByteArray line = ioDev->readLine().replace("\x0a",""); // support unix format file
         if (line.startsWith(";"))
             continue;
+        else if (line.size() < 2)
+        { 
+           if (inPackage)
+           {
+               pkg->dump();
+               if(pkg)
+                   m_packageList->addPackage(*pkg);
+               inPackage=false;
+           }
+           else if (inSite)
+             inSite=false;
+           continue;
+        }           
         else if (line.startsWith("@"))
         {
             QList<QByteArray> cmd = line.split(' ');
             if (cmd[0] == "@format")
                 ;
+            else if(inPackage)
+            {
+                if(cmd[0] == "@version")
+                    pkg->setVersion(cmd[1]);
+                else if(cmd[0] == "@url-bin")
+                    pkg->add(cmd[1],Package::BIN);
+                else if(cmd[0] == "@url-lib")
+                    pkg->add(cmd[1],Package::LIB);
+                else if(cmd[0] == "@url-doc")
+                    pkg->add(cmd[1],Package::DOC);
+                else if(cmd[0] == "@url-src")
+                    pkg->add(cmd[1],Package::SRC);
+                else if(cmd[0] == "@require")
+                {
+                	  for (int i = 1; i < cmd.size(); ++i)
+                        pkg->deps() += cmd.at(i);
+                    
+                }
+                else if(cmd[0] == "@category")
+                    pkg->category() = cmd[1];
+            }
+            else if (inSite)
+            {
+                if(cmd[0] == "@siteurl" || cmd[0] == "@url")
+                    site->setURL(cmd[1]);
+                else if(cmd[0] == "@sitetype" || cmd[0] == "@type")
+                    site->setType(cmd[1] == "apachemodindex" ? Site::ApacheModIndex : Site::SourceForge );
+            }
             else if(cmd[0] == "@site")
             {
                 site = new Site;
                 m_sites.append(site);
                 site->setName(cmd[1]);
-#ifdef DEBUG
-                qDebug() << "site " << cmd[1] << " detected";
-#endif
+                inSite = true;
             }
-            else if(cmd[0] == "@siteurl")
-                site->setURL(cmd[1]);
-            else if(cmd[0] == "@sitetype")
+            else if(cmd[0] == "@package") 
             {
-                site->setType(cmd[1] == "apachemodindex" ? Site::ApacheModIndex : Site::SourceForge );
-            }
-            else if(cmd[0] == "@package")
-            {
-#ifdef DEBUG
-                qDebug() << "package detected";
-#endif
+                 pkg = new Package;
+                 pkg->setName(cmd[1]);
+                 inPackage=true;
             }
         }
     }
+#ifdef DEBUG
+    m_packageList->dump();
+#endif
     return true;
 }
-
