@@ -6,13 +6,12 @@ State
 
 - The command line tool works currently well for gnuwin32 related packages. 
 
-- The gui installer is in a very early state and is able to download and install 
-  gnuwin32 packages too. 
+- The gui installer is able to download and install gnuwin32 packages too. 
 
 
 NOTES
 ===== 
-- The installer created a file packages.txt, which contains all packages 
+- The installer created package databases (flat textfile), which contains all packages 
   available on the download mirror. 
  
 - see doc/readme.txt for more informations about the idea and 
@@ -29,15 +28,10 @@ TODO
 2 use QT_NO_DEBUG_OUTPUT instead of #ifdef DEBUG to avoid debug output 
 
 3 gui 
-	1 display file installing in gui, currently redraw does not work 
 	2 goto finish page directly when installing is ready 
 	3 only enable package type when a related package is available
-	4 center checkboxes in package selector page
+	4 center checkboxes in package selector page -> not possible yet, see comment in source
 	5 reduce column width of package types in package selector page
-	6 save selections in package selector page different from initial 
-	  installed packages to avoid reinstalling by default; before 
-	  downloading/installing a check must be performed, which packages 
-	  really have to be installed. 
 	7 fix perl package list import	  
 
 Happy hacking

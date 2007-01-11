@@ -1,8 +1,8 @@
 /****************************************************************************
 **
-** Copyright (C) 2004-2005 Trolltech AS. All rights reserved.
+** Copyright (C) 2006 Ralf Habacker. All rights reserved.
 **
-** This file is part of the example classes of the Qt Toolkit.
+** This file is part of the KDE installer for windows
 **
 ** This file may be used under the terms of the GNU General Public
 ** License version 2.0 as published by the Free Software Foundation

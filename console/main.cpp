@@ -21,6 +21,8 @@
 **
 ****************************************************************************/
 
+#include "config.h"
+
 #include <QCoreApplication>
 #include <QDebug>
 #include <QFile>
@@ -45,7 +47,8 @@ options;
 void usage()
 {
     qDebug() << "... [options] <packagename> [<packagename>]"
-    << "\nOptions"
+    << "\nRelease: " << VERSION
+    << "\nOptions: "
     << "\n -l list packages"
     << "\n -q <packagename> query packages"
     << "\n -i <packagename> download and install package"
@@ -99,12 +102,11 @@ int main(int argc, char *argv[])
         i++;
     }
 
-#ifdef CYGWIN_INSTALLER
-    Cygwin::main(app);
-#else
-
     Package::baseURL = "http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/";
     // other mirror http://www.mesh-solutions.com/sf/
+
+    ConfigParser configParser;
+    configParser.parseFromFile("config.txt");
 
     Downloader downloader(/*blocking=*/ true);
     PackageList packageList(&downloader);
@@ -186,6 +188,5 @@ int main(int argc, char *argv[])
         }
     }
 
-#endif
     return 0;
 }

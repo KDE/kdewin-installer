@@ -1,8 +1,8 @@
 /****************************************************************************
 **
-** Copyright (C) 2004-2005 Trolltech AS. All rights reserved.
+** Copyright (C) 2006 Ralf Habacker. All rights reserved.
 **
-** This file is part of the example classes of the Qt Toolkit.
+** This file is part of the KDE installer for windows
 **
 ** This file may be used under the terms of the GNU General Public
 ** License version 2.0 as published by the Free Software Foundation
@@ -21,6 +21,7 @@
 **
 ****************************************************************************/
 
+#include "config.h"
 #include <QCheckBox>
 #include <QDebug>
 #include <QFile>
@@ -33,6 +34,7 @@
 #include <QGridLayout>
 #include <QFileDialog>
 #include <QApplication>
+
 
 #include "installwizard.h"
 #include "downloader.h"
@@ -48,6 +50,8 @@ extern InstallWizard *wizard;
 // must be global
 QTreeWidget *tree;
 
+#if 1
+// FIXME: move into shared directory
 class InstallerEngine
 {
 public:
@@ -363,6 +367,10 @@ QString InstallerEngine::root() const
     return root;
 }
 
+#else
+#include "installerengine.h"
+#endif
+
 InstallerEngine *engine;
 
 InstallWizard::InstallWizard(QWidget *parent)
@@ -383,6 +391,7 @@ TitlePage::TitlePage(InstallWizard *wizard)
 {
     topLabel = new QLabel(tr(
                               "<h1>KDE for Windows Installer</h1>"
+                              "<h2>Release " VERSION "</h2>"
                               "<p>This setup program is used for the initial installation of KDE for Windows application.</p>"
                               "<p>The pages that follow will guide you through the installation."
                               "<br>Please note that by default this installer will install "
