@@ -23,4 +23,4 @@ qt4_automoc(${all_sources})
 
 add_executable(kdewin-installer-console ${all_sources})
 
-target_link_libraries(kdewin-installer-console ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
+target_link_libraries(kdewin-installer-console ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
