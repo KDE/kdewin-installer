@@ -16,12 +16,19 @@ InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgre
 {
     m_downloader = new Downloader(/*blocking=*/ true,progressBar);
     m_instProgressBar = instProgressBar;
-    m_configParser = new ConfigParser();
+
+    PackageList *packageList = new PackageList(m_downloader);
+    packageList->setConfigFileName("packages-other.txt");
+    packageList->setName("Other");
+    m_packageListList.append(packageList);
+    m_configParser = new ConfigParser(packageList);
     downloadGlobalConfig();
+    packageList->writeToFile();
 }
 
 bool InstallerEngine::downloadGlobalConfig()
 {
+
 #if 1
     QFileInfo cfi("config.txt");
     //if (!cfi.exists()) 
@@ -144,21 +151,12 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
 
     qDebug() << "adding categories size:" << m_configParser->sites()->size();
 
-    QList<Site*>::iterator s;
-    for (s = m_configParser->sites()->begin(); s != m_configParser->sites()->end(); s++)
-    {
-        qDebug() << (*s)->Name();
-        QTreeWidgetItem *category = new QTreeWidgetItem((QTreeWidget*)0, QStringList((*s)->Name()));
-        categoryList.append(category);
-    }
-
-    tree->insertTopLevelItems(0,categoryList);
-
     QList <PackageList *>::iterator k;
-    // FIXME: m_packageListList has to be synced with sites
-    int t=0;
     for (k = m_packageListList.begin(); k != m_packageListList.end(); ++k)
     {
+        QTreeWidgetItem *category = new QTreeWidgetItem((QTreeWidget*)0, QStringList((*k)->Name()));
+        categoryList.append(category);
+
         // adding sub items
         QList<Package>::iterator i;
         for (i = (*k)->packageList()->begin(); i != (*k)->packageList()->end(); ++i)
@@ -172,7 +170,7 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
             << (i->isInstalled(Package::SRC) ? "-I-" : "")
             << (i->isInstalled(Package::DOC) ? "-I-" : "")
             ;
-            QTreeWidgetItem *item = new QTreeWidgetItem(categoryList.at(t), data);
+            QTreeWidgetItem *item = new QTreeWidgetItem(category, data);
             bool installed = i->isInstalled(Package::BIN)
                              || i->isInstalled(Package::LIB)
                              || i->isInstalled(Package::SRC)
@@ -181,14 +179,17 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
             if (!installed)
             {
                 item->setCheckState(2, Qt::Unchecked);
+#if 0 
+// currently no support for selecting single package types
                 item->setCheckState(3, Qt::Unchecked);
                 item->setCheckState(4, Qt::Unchecked);
                 item->setCheckState(5, Qt::Unchecked);
                 item->setCheckState(6, Qt::Unchecked);
+#endif
             }
         }
-        t++;
     }
+    tree->insertTopLevelItems(0,categoryList);
     /*
      QStringList data; 
      data.clear(); 
@@ -279,17 +280,11 @@ bool InstallerEngine::installPackages(QTreeWidget *tree,const QString &category)
 
 void InstallerEngine::listPackages(const QString &title)
 {
-    QList<Site*>::iterator s;
-    for (s = m_configParser->sites()->begin(); s != m_configParser->sites()->end(); s++)
+    QList <PackageList *>::iterator k;
+    for (k = m_packageListList.begin(); k != m_packageListList.end(); ++k)
     {
-       qDebug() << (*s)->Name();
-       PackageList *packageList = getPackageListByName((*s)->Name());
-       if (!packageList)
-       {
-           qDebug() << __FUNCTION__ << " packagelist for " << (*s)->Name() << " not found";
-           continue;
-       }
-       packageList->listPackages(title);
+       qDebug() << (*k)->Name();
+       (*k)->listPackages(title);
    }
 }
 
