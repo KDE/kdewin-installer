@@ -22,14 +22,14 @@ InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgre
 
 bool InstallerEngine::downloadGlobalConfig()
 {
-#if 0
-    DownloaderProgress progress(0);
-    Downloader download(true,&progress);
-
-    qDebug() << "trying to download global configuration file";
-    download.start("http://well-known-location-server/kde-installer/config.txt","config.txt");
+#if 1
+    QFileInfo cfi("config.txt");
+    //if (!cfi.exists()) 
+    {
+        qDebug() << "download global configuration file";
+        m_downloader->start("http://82.149.170.66/kde-windows/installer/config.txt",cfi.fileName());
+    }
 #endif
-
     qDebug() << "parsing global configuration file";
     return m_configParser->parseFromFile("config.txt");
 }

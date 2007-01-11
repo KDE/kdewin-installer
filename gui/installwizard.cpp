@@ -71,7 +71,7 @@ TitlePage::TitlePage(InstallWizard *wizard)
 {
     topLabel = new QLabel(tr(
                               "<h1>KDE for Windows Installer</h1>"
-                              "<h2>Release " VERSION "</h2>"
+                              "<h3>Release " VERSION "</h3>"
                               "<p>This setup program is used for the initial installation of KDE for Windows application.</p>"
                               "<p>The pages that follow will guide you through the installation."
                               "<br>Please note that by default this installer will install "
@@ -267,8 +267,20 @@ bool InstallPage::isComplete()
 FinishPage::FinishPage(InstallWizard *wizard)
         : InstallWizardPage(wizard)
 {
-    topLabel = new QLabel(tr("<center><b>Installation finished"
-                             "</b></center>"));
+    topLabel = new QLabel(tr("<center><b>Installation finished</b></center>"
+                             "<p></p>"
+                             "<p>Now you are able to run the installed kde application by .... </p>"
+                             "<p>If you have questions or problems using this installer or KDE applications, "
+                             "please ask on the <a href=\"http://mail.kde.org/mailman/listinfo/kde-windows\">"
+                             "kde-windows@kde.org</a> mailing list. </p>"
+                             "<p>If you would like to join this famous project, please contact also the "
+                             "<a href=\"http://mail.kde.org/mailman/listinfo/kde-windows\">kde-windows@kde.org</a> mailing list.</p>"
+                             "<p></p>"
+                             "<p>Have fun using KDE on windows.</p>" 
+                             "<p></p>"
+                             "<p></p>"
+                             "<p>The KDE on windows team</p>"
+                             ));
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(topLabel);

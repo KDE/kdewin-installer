@@ -51,7 +51,7 @@ bool ConfigParser::parseFromFile(const QString &_fileName)
         return false;
     }
 
-    configFile.open(QIODevice::ReadOnly);
+    configFile.open(QIODevice::ReadOnly | QIODevice::Text);
 
     return parse(&configFile);
 }
@@ -61,7 +61,7 @@ bool ConfigParser::parseFromByteArray(const QByteArray &_ba)
     QByteArray ba(_ba);
     QBuffer buf(&ba);
 
-    if (!buf.open(QIODevice::ReadOnly| QIODevice::Text))
+    if (!buf.open(QIODevice::ReadOnly | QIODevice::Text))
         return false;
     return parse(&buf);
 }
@@ -74,7 +74,7 @@ bool ConfigParser::parse(QIODevice *ioDev)
 
     while (!ioDev->atEnd())
     {
-        QByteArray line = ioDev->readLine().replace("\r\n","");
+        QByteArray line = ioDev->readLine().replace("\x0a",""); // support unix format file
         if (line.startsWith(";"))
             continue;
         else if (line.startsWith("@"))
