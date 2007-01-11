@@ -265,6 +265,8 @@ bool Package::installItem(Installer *installer, Package::Type type)
     }
     
     setInstalled(type);
+
+    return true;
 }
 
 
