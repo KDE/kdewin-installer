@@ -31,6 +31,7 @@
 #include "packagelist.h"
 #include "downloader.h"
 #include "installer.h"
+#include "installerengine.h"
 
 static struct Options
 {
@@ -102,12 +103,20 @@ int main(int argc, char *argv[])
         i++;
     }
 
-    Package::baseURL = "http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/";
-    // other mirror http://www.mesh-solutions.com/sf/
-
-    ConfigParser configParser;
-    configParser.parseFromFile("config.txt");
-
+#if 1
+    InstallerEngine engine(0,0);
+    if (!options.rootdir.isEmpty())
+    	engine.setRoot(options.rootdir);
+    	
+    engine.downloadPackageLists();
+    if (options.list)
+        engine.listPackages("Package List");
+    if((options.download || options.install) && packages.size() > 0)
+		    engine.downloadPackages(packages);
+    if(options.install && packages.size() > 0)
+        engine.installPackages(packages);
+    return 0;
+#else
     Downloader downloader(/*blocking=*/ true);
     PackageList packageList(&downloader);
     Installer installer(&packageList);
@@ -187,6 +196,7 @@ int main(int argc, char *argv[])
                     qDebug() << "error installing package " << packages.at(i);
         }
     }
+#endif
 
     return 0;
 }

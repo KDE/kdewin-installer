@@ -45,7 +45,7 @@ set(installer_shared_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/mirrors.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/configparser.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/settings.cpp
-#    ${CMAKE_CURRENT_SOURCE_DIR}/shared/installerengine.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/installerengine.cpp
 )
 
 set(installer_shared_HEADERS
@@ -57,7 +57,7 @@ set(installer_shared_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/packagelist.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/site.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/settings.h
-#    ${CMAKE_CURRENT_SOURCE_DIR}/shared/installerengine.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/installerengine.h
 )
 set(installer_shared_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shared)
 
@@ -65,7 +65,6 @@ include_directories(${quazip_INCLUDE_DIR} ${installer_shared_INCLUDE_DIR})
 configure_file(${CMAKE_SOURCE_DIR}/config.txt ${CMAKE_BINARY_DIR}/config.txt)
 configure_file(${CMAKE_SOURCE_DIR}/config.h.cmake ${CMAKE_BINARY_DIR}/config.h)
 
-add_definitions(-DINCLUDE_DOC_AND_SRC_PACKAGES)
 if (UNIX)
   find_package(X11)
   find_package(Freetype)
