@@ -141,6 +141,7 @@ bool InstallerEngine::downloadPackageLists()
         if ((*s)->Name() == "gnuwin32")
         {
             installer->setType(Installer::GNUWIN32);
+            // FIXME: add additional option in config.txt for mirrors
             packageList->setBaseURL("http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/");
         }
         else
@@ -151,20 +152,24 @@ bool InstallerEngine::downloadPackageLists()
 
         if ( !packageList->hasConfig() )
         {
-            QByteArray ba;
             // download package list
             qDebug() << (*s)->URL();
-            m_downloader->start((*s)->URL(), ba);
+#ifdef DEBUG
+            QFileInfo tmpFile(installer->Root() + "/packages-"+(*s)->Name()+".html");
+            if (!tmpFile.exists())
+                m_downloader->start((*s)->URL(), ba));
 
             // load and parse
+            if (!packageList->readHTMLFromFile(tmpFile.absoluteFilePath(),(*s)->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge ))
+#else            
+            QByteArray ba;
+            m_downloader->start((*s)->URL(), ba);
             if (!packageList->readHTMLFromByteArray(ba,(*s)->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge ))
+#endif
             {
                 qDebug() << "error reading package list from download html file";
                 continue;
             }
-
-            // print list
-            packageList->listPackages("Package List" + (*s)->Name());
 
             // save into file
             if (!packageList->writeToFile())
@@ -182,9 +187,6 @@ bool InstallerEngine::downloadPackageLists()
                 qDebug() << "error reading package list from file";
                 continue;
             }
-
-            // print list
-            packageList->listPackages("Package List" + (*s)->Name());
         }
     }
     return true;
