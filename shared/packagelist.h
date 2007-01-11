@@ -51,11 +51,7 @@ public:
     bool readHTMLFromFile(const QString &fileName, PackageList::Type type=PackageList::SourceForge);
     bool readHTMLFromByteArray(const QByteArray &ba, PackageList::Type type=PackageList::SourceForge);
     bool writeToFile(QString const &fileName=QString::null);
-    //  static bool downloadPackage(QString const &pkgName);
-    QStringList getPackageFiles(QString const &pkgName);
     Package *getPackage(QString const &pkgName, const QByteArray &version = QByteArray());
-    QStringList getFilesForInstall(QString const &pkgName);
-    QStringList getFilesForDownload(QString const &pkgName);
     bool updatePackage(Package &pkg);
     int size();
     QList <Package> *packageList()
@@ -85,8 +81,8 @@ public:
 
     // 0.5.3
     bool hasConfig();
-    bool downloadPackage(const QString &pkgName);
-    bool installPackage(const QString &pkgName);
+    bool downloadPackage(const QString &pkgName, Package::Types types=Package::ALL);
+    bool installPackage(const QString &pkgName, Package::Types types=Package::ALL);
 
     void dump(const QString &title="");
 

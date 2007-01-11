@@ -353,60 +353,6 @@ bool PackageList::readHTMLFromFile(const QString &fileName, PackageList::Type ty
     return readHTMLInternal(&pkglist, type);
 }
 
-// obsolate
-QStringList PackageList::getFilesForInstall(QString const &pkgName)
-{
-#ifdef DEBUG
-    qDebug() << __FUNCTION__;
-#endif
-
-    QStringList result;
-    Package *pkg = getPackage(pkgName);
-    if (!pkg)
-        return result;
-    result << pkg->getFileName(Package::BIN);
-    result << pkg->getFileName(Package::LIB);
-#ifdef INCLUDE_DOC_AND_SRC_PACKAGES
-
-    result << pkg->getFileName(Package::DOC);
-    result << pkg->getFileName(Package::SRC);
-#else
-
-    qDebug("downloading of DOC and SRC disabled for now");
-#endif
-
-    return result;
-}
-
-QStringList PackageList::getFilesForDownload(QString const &pkgName)
-{
-#ifdef DEBUG
-    qDebug() << __FUNCTION__;
-#endif
-
-    QStringList result;
-    Package *pkg = getPackage(pkgName);
-    if (!pkg)
-    {
-#ifdef DEBUG
-        qDebug() << __FUNCTION__ << "package not found";
-#endif
-        return result;
-    }
-    result << pkg->getURL(Package::BIN);
-    result << pkg->getURL(Package::LIB);
-#ifdef INCLUDE_DOC_AND_SRC_PACKAGES
-
-    result << pkg->getURL(Package::DOC);
-    result << pkg->getURL(Package::SRC);
-#else
-
-    qDebug("downloading of DOC and SRC disabled for now");
-#endif
-
-    return result;
-}
-
 /*
 bool PackageList::updatePackage(Package &apkg)
 {
@@ -420,7 +366,7 @@ bool PackageList::updatePackage(Package &apkg)
     return true;
 }
 */
-bool PackageList::downloadPackage(const QString &pkgName)
+bool PackageList::downloadPackage(const QString &pkgName, Package::Types types)
 {
     qDebug() << __FUNCTION__ << " " << pkgName; 
     Package *pkg = getPackage(pkgName);
@@ -431,25 +377,34 @@ bool PackageList::downloadPackage(const QString &pkgName)
     }
     // FIXME: the package Item list this is gnuwin32 specific 
     // FIXME: handle error code
-    pkg->downloadItem(downloader,Package::BIN);
-    pkg->downloadItem(downloader,Package::LIB);
-    pkg->downloadItem(downloader,Package::DOC);
-    pkg->downloadItem(downloader,Package::SRC);
+    qDebug() << types;
+
+    if (types & Package::BIN)
+        pkg->downloadItem(downloader,Package::BIN);
+    if (types & Package::LIB)
+        pkg->downloadItem(downloader,Package::LIB);
+    if (types & Package::DOC)
+        pkg->downloadItem(downloader,Package::DOC);
+    if (types & Package::SRC)
+        pkg->downloadItem(downloader,Package::SRC);
     return true;
 }
 
 // FIXME: add types to install 
-bool PackageList::installPackage(const QString &pkgName)
+bool PackageList::installPackage(const QString &pkgName, Package::Types types)
 {
     Package *pkg = getPackage(pkgName);
     if (!pkg)
         return false;
-    // FIXME: the package Item list this is gnuwin32 specific 
     // FIXME: handle error code
-    pkg->installItem(installer,Package::BIN);
-    pkg->installItem(installer,Package::LIB);
-    pkg->installItem(installer,Package::DOC);
-    pkg->installItem(installer,Package::SRC);
+    if (types & Package::BIN)
+        pkg->installItem(installer,Package::BIN);
+    if (types & Package::LIB)
+        pkg->installItem(installer,Package::LIB);
+    if (types & Package::DOC)
+        pkg->installItem(installer,Package::DOC);
+    if (types & Package::SRC)
+        pkg->installItem(installer,Package::SRC);
     return true;
 }
 

@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
     download.start("http://well-known-location-server/kde-installer/config.txt","config.txt");
 #endif
 
-    ConfigParser configParser;
+    ConfigParser configParser(0);
     configParser.parseFromFile("config.txt");
     /*
      foreach (Site aSite, *configParser.Sites) {

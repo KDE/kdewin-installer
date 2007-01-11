@@ -40,7 +40,8 @@ class Installer;
 class Package
 {
 public:
-    enum Type { BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8 };
+    enum Type { NONE = 0, BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8, ALL = 15};
+    Q_DECLARE_FLAGS(Types,Type);
 
     class packageDescr {
         public:
@@ -119,5 +120,7 @@ protected:
     QString m_category;   
     QStringList m_deps;       
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Package::Types);
 
 #endif

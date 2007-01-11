@@ -1,15 +1,23 @@
-@format 1.0
+@format 1.1
 ; this is a sample config file specification - please note 
 ; that this format is *prelimary* and may be changed without prior notice
 
 ; site definition
 @site gnuwin32
-@sitetype sourceforge
-@siteurl http://sourceforge.net/project/showfiles.php?group_id=23617
-@siteoptions
+@type sourceforge
+@url http://sourceforge.net/project/showfiles.php?group_id=23617
+@options
 ; not supported yet
-;@sitedeps upx ucl
+;@deps upx ucl
 
+; a package definition  (not implemented yet)
+@package KDELIBS
+@category KDE
+@version 20070110
+@url-bin http://82.149.170.66/kde-windows/KDE/kdelibs-mingw-20070110-bin.zip
+@url-lib http://82.149.170.66/kde-windows/KDE/kdelibs-mingw-20070110-lib.zip
+@url-src http://82.149.170.66/kde-windows/KDE/kdelibs-mingw-20070110-src.zip
+@require aspell bzip2 expat giflib iconv jpeg libpng libxml2 libxlst openssl pcre tiff zlib
 
 ; another definition (installing not implemented yet)
 ;@site win32libs

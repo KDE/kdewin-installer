@@ -1,7 +1,8 @@
 
 #include <QtDebug>
 #include <QDir>
-#include <QtreeWidget>
+#include <QTreeWidget>
+#include <QFlags>
 
 #include "installerengine.h"
 
@@ -179,13 +180,10 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
             if (!installed)
             {
                 item->setCheckState(2, Qt::Unchecked);
-#if 0 
-// currently no support for selecting single package types
                 item->setCheckState(3, Qt::Unchecked);
                 item->setCheckState(4, Qt::Unchecked);
                 item->setCheckState(5, Qt::Unchecked);
                 item->setCheckState(6, Qt::Unchecked);
-#endif
             }
         }
     }
@@ -235,11 +233,14 @@ bool InstallerEngine::downloadPackages(QTreeWidget *tree, const QString &categor
             {
                 QTreeWidgetItem *child = item->child(j);
                 qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
-                if (child->checkState(2) == Qt::Checked)
-                {
-                    if (!packageList->downloadPackage(child->text(0)))
-                        qDebug() << "could not download package";
-                }
+                Package::Types types;
+                types |= child->checkState(3) == Qt::Checked ? Package::BIN : Package::NONE;
+                types |= child->checkState(4) == Qt::Checked ? Package::LIB : Package::NONE;
+                types |= child->checkState(5) == Qt::Checked ? Package::DOC : Package::NONE;
+                types |= child->checkState(6) == Qt::Checked ? Package::SRC : Package::NONE;
+               	types |= child->checkState(2) == Qt::Checked ? Package::ALL: Package::NONE;
+                if (!packageList->downloadPackage(child->text(0), types))
+                    qDebug() << "could not download package";
             }
         }
     }
@@ -264,13 +265,16 @@ bool InstallerEngine::installPackages(QTreeWidget *tree,const QString &category)
             {
                 QTreeWidgetItem *child = item->child(j);
                 qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
-                if (child->checkState(2) == Qt::Checked)
-                {
-                    if (!packageList->installPackage(child->text(0)))
-                        qDebug() << "could not install package";
-                }
+                Package::Types types;
+                types |= child->checkState(3) == Qt::Checked ? Package::BIN : Package::NONE;
+                types |= child->checkState(4) == Qt::Checked ? Package::LIB : Package::NONE;
+                types |= child->checkState(5) == Qt::Checked ? Package::DOC : Package::NONE;
+                types |= child->checkState(6) == Qt::Checked ? Package::SRC : Package::NONE;
+               	types |= child->checkState(2) == Qt::Checked ? Package::ALL: Package::NONE;
+                if (!packageList->installPackage(child->text(0),types))
+                    qDebug() << "could not install package";
             }
-        		packageList->writeToFile();
+            packageList->writeToFile();
         }
     }
     return true;
