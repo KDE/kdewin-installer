@@ -226,6 +226,8 @@ void Package::dump(const QString &title)
     qDebug() << "class Package dump" << title;
     qDebug() << "m_name:    " << m_name;
     qDebug() << "m_version: " << m_version;
+    qDebug() << "m_category: " << m_category;
+    qDebug() << "m_deps: " << m_deps.join(" ");
 
     QList<packageDescr>::iterator it = m_packages.begin();
     for( ; it != m_packages.end(); ++it) {

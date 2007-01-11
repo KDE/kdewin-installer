@@ -104,6 +104,10 @@ public:
     bool downloadItem(Downloader *downloader, Package::Type type);
     bool installItem(Installer *installer, Package::Type type);
 
+    QString &category() { return m_category; }   
+    QStringList &deps() { return m_deps; }   
+
+
 private slots:
     void logOutput();
 
@@ -112,6 +116,8 @@ protected:
 
     QString m_name;     // base name (a2ps)
     QString m_version;  // base version (4.13b-1)
+    QString m_category;   
+    QStringList m_deps;       
 };
 
 #endif
