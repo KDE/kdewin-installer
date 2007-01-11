@@ -465,6 +465,10 @@ int PackageList::size()
 void PackageList::dump(const QString &title)
 {
     qDebug() << "class PackageList dump: " << title;
+    qDebug() << "m_name       " << m_name;
+    qDebug() << "root         " << root;
+    qDebug() << "m_configFile " << m_configFile;
+    qDebug() << "m_baseURL    " << m_baseURL;
     QList<Package>::iterator it = m_packageList->begin();
     for ( ; it != m_packageList->end(); ++it)
         it->dump();
