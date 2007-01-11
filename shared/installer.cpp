@@ -86,7 +86,9 @@ bool Installer::loadConfig()
         for (int i = 0; i < list.size(); ++i)
         {
             QFileInfo fileInfo = list.at(i);
+#ifdef DEBUG
             qDebug() << __FUNCTION__ << "importing gnuwin32 package database is disabled";
+#endif
             //Package pkg;
             //pkg.setFromVersionFile(fileInfo.fileName());
             //packageList->updatePackage(pkg);
