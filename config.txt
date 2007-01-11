@@ -7,6 +7,9 @@
 @sitetype sourceforge
 @siteurl http://sourceforge.net/project/showfiles.php?group_id=23617
 @siteoptions
+; not supported yet
+;@sitedeps upx ucl
+
 
 ; another definition (installing not implemented yet)
 ;@site win32libs
