@@ -138,8 +138,8 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
     << "all"
     << "bin"
     << "lib"
-    << "src"
     << "doc"
+    << "src"
     << "Notes";
 
     tree->setColumnCount(8);
@@ -169,14 +169,14 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
             << ""
             << (i->isInstalled(Package::BIN) ? "-I-" : "")
             << (i->isInstalled(Package::LIB) ? "-I-" : "")
-            << (i->isInstalled(Package::SRC) ? "-I-" : "")
             << (i->isInstalled(Package::DOC) ? "-I-" : "")
+            << (i->isInstalled(Package::SRC) ? "-I-" : "")
             ;
             QTreeWidgetItem *item = new QTreeWidgetItem(category, data);
-            if (!i->isInstalled(Package::BIN)) item->setCheckState(3, Qt::Unchecked);
-            if (!i->isInstalled(Package::LIB)) item->setCheckState(4, Qt::Unchecked);
-            if (!i->isInstalled(Package::SRC)) item->setCheckState(5, Qt::Unchecked);
-            if (!i->isInstalled(Package::DOC)) item->setCheckState(6, Qt::Unchecked);
+            if (i->hasType(Package::BIN) && !i->isInstalled(Package::BIN)) item->setCheckState(3, Qt::Unchecked);
+            if (i->hasType(Package::LIB) && !i->isInstalled(Package::LIB)) item->setCheckState(4, Qt::Unchecked);
+            if (i->hasType(Package::DOC) && !i->isInstalled(Package::DOC)) item->setCheckState(5, Qt::Unchecked);
+            if (i->hasType(Package::SRC) && !i->isInstalled(Package::SRC)) item->setCheckState(6, Qt::Unchecked);
             item->setCheckState(2, Qt::Unchecked);
         }
     }
@@ -201,17 +201,19 @@ void InstallerEngine::itemClickedPackageSelectorPage(QTreeWidgetItem *item, int 
 {
     if (column < 2)
         return;
-    if (column == 2)
-    {
-        item->setCheckState(3,item->checkState(column));
-        item->setCheckState(4,item->checkState(column));
-        item->setCheckState(5,item->checkState(column));
-        item->setCheckState(6,item->checkState(column));
-    }
-    // select depending packages
+
     Package *pkg = getPackageByName(item->text(0));
-    pkg->dump();
-    if (pkg) 
+
+    if (column == 2 && pkg)
+    {
+        if (pkg->hasType(Package::BIN) && !pkg->isInstalled(Package::BIN)) item->setCheckState(3,item->checkState(column)); 
+        if (pkg->hasType(Package::LIB) && !pkg->isInstalled(Package::LIB)) item->setCheckState(4,item->checkState(column)); 
+        if (pkg->hasType(Package::DOC) && !pkg->isInstalled(Package::DOC)) item->setCheckState(5,item->checkState(column)); 
+        if (pkg->hasType(Package::SRC) && !pkg->isInstalled(Package::SRC)) item->setCheckState(6,item->checkState(column)); 
+    }
+    // select depending packages in case all or bin is selected
+    //pkg->dump();
+    if (column == 2 || column == 3 && pkg) 
     {
         QStringList deps = pkg->deps();
     
