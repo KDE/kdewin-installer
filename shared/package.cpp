@@ -139,9 +139,9 @@ QString Package::toString(bool installed, const QString &delim)
 {
     QString result = m_name + delim + m_version;
     QString availableTypes = getTypeAsString(installed);
-    if (availableTypes != "" && !installed )
+    if (!availableTypes.isEmpty() && !installed )
         result += "   ( found =" + getTypeAsString() + ")";
-    else if (availableTypes != "" && installed )
+    else if (!availableTypes.isEmpty() && installed )
         result += "   ( installed =" + getTypeAsString() + ")";
     return result;
 }
@@ -203,7 +203,7 @@ bool Package::write(QTextStream &out)
     << (isInstalled(BIN) ? "bin:" : ":")
     << (isInstalled(LIB) ? "lib:" : ":")
     << (isInstalled(DOC) ? "doc:" : ":")
-    << (isInstalled(SRC) ? "src:" : "")
+    << (isInstalled(SRC) ? "src:" : QString())
     << ";"
     << baseURL << ";"
     << getFileName(BIN) << ";"

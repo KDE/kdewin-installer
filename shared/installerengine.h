@@ -52,12 +52,12 @@ public:
 #ifdef USE_GUI
     void setPageSelectorWidgetData(QTreeWidget *tree);
     void itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column);
-    bool downloadPackages(QTreeWidget *tree, const QString &category="");
-    bool installPackages(QTreeWidget *tree, const QString &category="");
+    bool downloadPackages(QTreeWidget *tree, const QString &category=QString());
+    bool installPackages(QTreeWidget *tree, const QString &category=QString());
 #else
     void listPackages(const QString &title);
-    bool downloadPackages(const QStringList &packages, const QString &category="");
-    bool installPackages(const QStringList &packages, const QString &category="");
+    bool downloadPackages(const QStringList &packages, const QString &category=QString());
+    bool installPackages(const QStringList &packages, const QString &category=QString());
 #endif
     PackageList *getPackageListByName(const QString &name);
     Package *getPackageByName(const QString &name);

@@ -46,7 +46,7 @@ public:
     // installPackage(Package *pkg)
     //  bool readFromFile(QString const &fileName);
     //  bool writeToFile(QString const &fileName);
-    //bool loadConfig(const QString &destdir="");
+    //bool loadConfig(const QString &destdir=QString());
     bool loadConfig();
 
     bool isEnabled();

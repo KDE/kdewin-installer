@@ -119,7 +119,7 @@ bool Downloader::startInternal(const QString &_url, QIODevice *ioDev)
     QByteArray query = url.encodedQuery();
     m_httpRequestAborted = false;
     m_httpGetId = m_http->get
-                  (url.path() + (!query.isEmpty() ? "?" + url.encodedQuery() : ""), m_ioDevice);
+                  (url.path() + (!query.isEmpty() ? "?" + url.encodedQuery() : QString()), m_ioDevice);
 
     if (m_progress)
         m_progress->show();

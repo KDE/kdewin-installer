@@ -84,7 +84,7 @@ public:
     bool downloadPackage(const QString &pkgName, Package::Types types=Package::ALL);
     bool installPackage(const QString &pkgName, Package::Types types=Package::ALL);
 
-    void dump(const QString &title="");
+    void dump(const QString &title=QString());
 
 signals:
     void loadedConfig();

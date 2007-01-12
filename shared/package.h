@@ -47,7 +47,7 @@ public:
     class packageDescr {
         public:
             // dump content
-    	    void dump(const QString &title="");
+    	    void dump(const QString &title=QString());
             QString path;           // complete url (use QUrl?)
             QString fileName;       // filename only
             QString packageType;    // zip / msi / ...
@@ -102,7 +102,7 @@ public:
     bool read(QTextStream &in);
     
     // dump package content
-    void dump(const QString &title="");
+    void dump(const QString &title=QString());
     
     // download a package item
     bool downloadItem(Downloader *downloader, Package::Type type);

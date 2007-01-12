@@ -166,11 +166,11 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
             QStringList data;
             data << i->name()
             << i->version()
-            << ""
-            << (i->isInstalled(Package::BIN) ? "-I-" : "")
-            << (i->isInstalled(Package::LIB) ? "-I-" : "")
-            << (i->isInstalled(Package::DOC) ? "-I-" : "")
-            << (i->isInstalled(Package::SRC) ? "-I-" : "")
+            << QString()
+            << (i->isInstalled(Package::BIN) ? "-I-" : QString())
+            << (i->isInstalled(Package::LIB) ? "-I-" : QString())
+            << (i->isInstalled(Package::DOC) ? "-I-" : QString())
+            << (i->isInstalled(Package::SRC) ? "-I-" : QString())
             ;
             QTreeWidgetItem *item = new QTreeWidgetItem(category, data);
             if (i->hasType(Package::BIN) && !i->isInstalled(Package::BIN)) item->setCheckState(3, Qt::Unchecked);
