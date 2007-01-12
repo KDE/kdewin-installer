@@ -38,9 +38,8 @@ target_link_libraries(test-packagelist-sourceforge ${QT_QTMAIN_LIBRARIES} ${QT_Q
 
 set (test-configparser_SOURCES
 	test-configparser.cpp
-	../shared/downloader.cpp
-	../shared/downloaderprogress.cpp
-	../shared/configparser.cpp
+	${installer_shared_SOURCES}
+	${quazip_SOURCES}
 )
 
 qt4_automoc(${test-configparser_SOURCES})
