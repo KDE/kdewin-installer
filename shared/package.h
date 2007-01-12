@@ -25,6 +25,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QStringList>
 class QTextStream;
 class Downloader;
 class Installer;
