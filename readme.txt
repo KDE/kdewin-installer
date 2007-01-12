@@ -28,11 +28,12 @@ TODO
 2 use QT_NO_DEBUG_OUTPUT instead of #ifdef DEBUG to avoid debug output 
 
 3 gui 
+    1 add check for partial downloads
 	2 goto finish page directly when installing is ready 
 	3 only enable package type when a related package is available
 	4 center checkboxes in package selector page -> not possible yet, see comment in source
 	5 reduce column width of package types in package selector page
-	7 fix perl package list import	  
+	7 fix perl package list import	  	
 
 Happy hacking
 
