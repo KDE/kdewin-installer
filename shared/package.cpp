@@ -124,6 +124,17 @@ void Package::add(const QString &path, Package::Type contentType, bool bInstalle
     m_packages.append(desc);
 }
 
+bool Package::hasType(Package::Type contentType)
+{
+    QList<packageDescr>::iterator it = m_packages.begin();
+    for( ; it != m_packages.end(); ++it) {
+        if(contentType == (*it).contentType)
+            return true;
+    }
+    return false;
+}
+
+
 QString Package::toString(bool installed, const QString &delim)
 {
     QString result = m_name + delim + m_version;

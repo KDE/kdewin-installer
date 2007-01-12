@@ -86,6 +86,8 @@ public:
     // add a file to this package
     void add(const QString &path, Package::Type contentType, bool bInstalled = false);
     void add(const QString &path, const QByteArray &contentType, bool bInstalled = false);
+    // return state of a specific item type is available
+    bool hasType(Package::Type contentType);
 
     static QString baseURL;
 
