@@ -114,6 +114,7 @@ bool ConfigParser::parse(QIODevice *ioDev)
                     pkg->add(cmd[1],Package::SRC);
                 else if(cmd[0] == "@require")
                 {
+                    cmd.removeFirst();
                     pkg->addDeps(cmd);
                 }
                 else if(cmd[0] == "@category")
