@@ -21,8 +21,12 @@
 **
 ****************************************************************************/
 
+#include <windows.h>
+
 #include <QtCore>
 #include <QtDebug>
+
+
 
 #include "installer.h"
 #include "packagelist.h"
@@ -244,6 +248,11 @@ bool Installer::install(const QString &fileName)
     if (fileName.endsWith(".zip"))
     {
         return unzipFile(m_root, fileName);
+    }
+    else // for all other formats use windows assignments
+    {
+        ShellExecute(0, "open", fileName.toAscii().data(), NULL, NULL, SW_SHOWNORMAL);
+        return true;
     }
     return false;
 }
