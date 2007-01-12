@@ -58,10 +58,16 @@ public:
     {
         m_type = type;
     }
+    QString &mirror()
+    {
+        return m_mirror;
+    }
+
 private:
     QString m_name;
     QString m_url;
     SiteType m_type;
+    QString m_mirror;
 };
 
 #endif
