@@ -61,11 +61,7 @@ void Installer::setRoot(const QString &root)
 
 bool Installer::isEnabled()
 {
-    if (m_type == GNUWIN32)
-    {
-        return true;
-    }
-    return false;
+    return true;
 }
 
 bool Installer::loadConfig()
@@ -73,7 +69,7 @@ bool Installer::loadConfig()
 #ifdef DEBUG
     qDebug() << __PRETTY_FUNCTION__;
 #endif
-
+       // this belongs to PackageList
     if (m_type == GNUWIN32)
     {
         // gnuwin32 related
@@ -90,6 +86,7 @@ bool Installer::loadConfig()
             qDebug() << __FUNCTION__ << "importing gnuwin32 package database is disabled";
 #endif
             //Package pkg;
+            // why is this method remove ? 
             //pkg.setFromVersionFile(fileInfo.fileName());
             //packageList->updatePackage(pkg);
         }
@@ -244,7 +241,7 @@ void Installer::setError(QByteArray format, QByteArray p1, QByteArray p2)
 
 bool Installer::install(const QString &fileName)
 {
-    if (m_type == GNUWIN32)
+    if (fileName.endsWith(".zip"))
     {
         return unzipFile(m_root, fileName);
     }
