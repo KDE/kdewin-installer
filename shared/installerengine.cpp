@@ -215,7 +215,7 @@ void InstallerEngine::itemClickedPackageSelectorPage(QTreeWidgetItem *item, int 
     //pkg->dump();
     if (column == 2 || column == 3 && pkg) 
     {
-        QStringList deps = pkg->deps();
+        const QStringList &deps = pkg->deps();
     
         for (int i = 0; i < deps.size(); ++i)
         {  

@@ -95,7 +95,9 @@ bool ConfigParser::parse(QIODevice *ioDev)
         }           
         else if (line.startsWith("@"))
         {
-            QList<QByteArray> cmd = line.split(' ');
+            // TODO: encoding of config file! Currently: ascii
+            QString l = line;
+            QStringList cmd = l.split(' ');
             if (cmd[0] == "@format")
                 ;
             else if(inPackage)
@@ -112,12 +114,10 @@ bool ConfigParser::parse(QIODevice *ioDev)
                     pkg->add(cmd[1],Package::SRC);
                 else if(cmd[0] == "@require")
                 {
-                	  for (int i = 1; i < cmd.size(); ++i)
-                        pkg->deps() += cmd.at(i);
-                    
+                    pkg->addDeps(cmd);
                 }
                 else if(cmd[0] == "@category")
-                    pkg->category() = cmd[1];
+                    pkg->setCategory(cmd[1]);
             }
             else if (inSite)
             {

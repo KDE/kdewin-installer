@@ -108,8 +108,10 @@ public:
     bool downloadItem(Downloader *downloader, Package::Type type);
     bool installItem(Installer *installer, Package::Type type);
 
-    QString &category() { return m_category; }   
-    QStringList &deps() { return m_deps; }   
+    const QString &category() const { return m_category; }
+    void setCategory(const QString &cat);
+    const QStringList &deps() const { return m_deps; }
+    void addDeps(const QStringList &addDeps);
 
 
 private slots:

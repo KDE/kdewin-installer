@@ -286,7 +286,12 @@ bool Package::installItem(Installer *installer, Package::Type type)
 void Package::logOutput()
 {}
 
+void Package::setCategory(const QString &cat)
+{
+    m_category = cat;
+}
 
-
-
-
+void Package::addDeps(const QStringList &deps)
+{
+    m_deps << deps;
+}

@@ -251,7 +251,7 @@ bool Installer::install(const QString &fileName)
     }
     else // for all other formats use windows assignments
     {
-        ShellExecute(0, "open", fileName.toAscii().data(), NULL, NULL, SW_SHOWNORMAL);
+        ShellExecuteW(0, L"open", (WCHAR*)fileName.utf16(), NULL, NULL, SW_SHOWNORMAL);
         return true;
     }
     return false;
