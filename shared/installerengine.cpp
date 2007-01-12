@@ -42,17 +42,6 @@ bool InstallerEngine::downloadGlobalConfig()
     return m_configParser->parseFromFile("config.txt");
 }
 
-PackageList *InstallerEngine::getPackageListByName(const QString &name)
-{
-    QList <PackageList *>::iterator k;
-    for (k = m_packageListList.begin(); k != m_packageListList.end(); ++k)
-    {
-        if ((*k)->Name() == name)
-            return (*k);
-    }
-    return 0;
-}
-
 /// download all packagelists, which are available on the configured sites
 bool InstallerEngine::downloadPackageLists()
 {
@@ -172,19 +161,11 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
             << (i->isInstalled(Package::DOC) ? "-I-" : "")
             ;
             QTreeWidgetItem *item = new QTreeWidgetItem(category, data);
-            bool installed = i->isInstalled(Package::BIN)
-                             || i->isInstalled(Package::LIB)
-                             || i->isInstalled(Package::SRC)
-                             || i->isInstalled(Package::DOC);
-
-            if (!installed)
-            {
-                item->setCheckState(2, Qt::Unchecked);
-                item->setCheckState(3, Qt::Unchecked);
-                item->setCheckState(4, Qt::Unchecked);
-                item->setCheckState(5, Qt::Unchecked);
-                item->setCheckState(6, Qt::Unchecked);
-            }
+            if (!i->isInstalled(Package::BIN)) item->setCheckState(3, Qt::Unchecked);
+            if (!i->isInstalled(Package::LIB)) item->setCheckState(4, Qt::Unchecked);
+            if (!i->isInstalled(Package::SRC)) item->setCheckState(5, Qt::Unchecked);
+            if (!i->isInstalled(Package::DOC)) item->setCheckState(6, Qt::Unchecked);
+            item->setCheckState(2, Qt::Unchecked);
         }
     }
     tree->insertTopLevelItems(0,categoryList);
@@ -201,6 +182,7 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
      item = new QTreeWidgetItem(categoryList.at(5), data);
     */
 }
+extern QTreeWidget *tree;
 
 void InstallerEngine::itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column)
 {
@@ -213,6 +195,30 @@ void InstallerEngine::itemClickedPackageSelectorPage(QTreeWidgetItem *item, int 
         item->setCheckState(5,item->checkState(column));
         item->setCheckState(6,item->checkState(column));
     }
+    // select depending packages
+    Package *pkg = getPackageByName(item->text(0));
+    pkg->dump();
+    if (pkg) 
+    {
+        QStringList deps = pkg->deps();
+    
+        for (int i = 0; i < deps.size(); ++i)
+        {  
+        	 qDebug() << deps.at(i);
+        	 QString dep = deps.at(i);
+           QList<QTreeWidgetItem *> items = tree->findItems(deps.at(i),Qt::MatchFixedString | Qt::MatchRecursive);
+           qDebug() << items.size();
+           for (int j = 0; j < items.size(); ++j) 
+           {
+           	   qDebug() << items.at(j);
+               QTreeWidgetItem * depItem = items.at(j);
+               /// the dependency is only for bin package and one way to switch on
+               if (depItem->text(3) != "-I-")
+                   depItem->setCheckState(3,item->checkState(column));
+           }
+       }    
+    }
+
 }
 
 bool InstallerEngine::downloadPackages(QTreeWidget *tree, const QString &category)
@@ -335,6 +341,30 @@ bool InstallerEngine::installPackages(const QStringList &packages,const QString 
    return true;
 }
 #endif
+
+PackageList *InstallerEngine::getPackageListByName(const QString &name)
+{
+    QList <PackageList *>::iterator k;
+    for (k = m_packageListList.begin(); k != m_packageListList.end(); ++k)
+    {
+        if ((*k)->Name() == name)
+            return (*k);
+    }
+    return 0;
+}
+
+Package *InstallerEngine::getPackageByName(const QString &name)
+{
+	  Package *pkg;
+    QList <PackageList *>::iterator k;
+    for (k = m_packageListList.begin(); k != m_packageListList.end(); ++k)
+    {
+       pkg = (*k)->getPackage(name);
+       if (pkg)
+           return pkg;
+    }
+    return 0;
+}
 
 void InstallerEngine::setRoot(const QString &root)
 {

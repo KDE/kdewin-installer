@@ -36,6 +36,7 @@ class Installer;
 class InstallerProgress;
 class ConfigParser;
 class Settings;
+class Package;
 class InstallWizard;
 class QTreeWidget;
 class QTreeWidgetItem;
@@ -46,7 +47,7 @@ public:
     InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
     bool downloadGlobalConfig();
     bool downloadPackageLists();
-    PackageList *getPackageListByName(const QString &name);
+
 #ifdef USE_GUI
     void setPageSelectorWidgetData(QTreeWidget *tree);
     void itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column);
@@ -57,6 +58,8 @@ public:
     bool downloadPackages(const QStringList &packages, const QString &category="");
     bool installPackages(const QStringList &packages, const QString &category="");
 #endif
+    PackageList *getPackageListByName(const QString &name);
+    Package *getPackageByName(const QString &name);
     
     void setRoot(const QString &root);
     QString root() const;
