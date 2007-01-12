@@ -24,6 +24,7 @@
 #ifndef SITE_H
 #define SITE_H
 
+#include <QtDebug>
 #include <QString>
 
 /**
@@ -63,6 +64,13 @@ public:
         return m_mirror;
     }
 
+    void dump()
+    {
+        qDebug() << "m_name  " << m_name;  
+        qDebug() << "m_url   " << m_url;   
+        qDebug() << "m_type  " << m_type;  
+        qDebug() << "m_mirror" << m_mirror;
+    }
 private:
     QString m_name;
     QString m_url;
