@@ -64,6 +64,7 @@ public:
     void setRoot(const QString &root);
     QString root() const;
 
+
     PackageList *packageList()
     {
         return m_packageList;

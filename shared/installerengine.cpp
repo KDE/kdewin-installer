@@ -17,18 +17,23 @@ InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgre
 {
     m_downloader = new Downloader(/*blocking=*/ true,progressBar);
     m_instProgressBar = instProgressBar;
-
-    PackageList *packageList = new PackageList(m_downloader);
-    packageList->setConfigFileName("packages-other.txt");
-    packageList->setName("Other");
-    m_packageListList.append(packageList);
-    m_configParser = new ConfigParser(packageList);
     downloadGlobalConfig();
-    packageList->writeToFile();
 }
 
 bool InstallerEngine::downloadGlobalConfig()
 {
+    PackageList *packageList = new PackageList(m_downloader);
+    packageList->setConfigFileName("packages-other.txt");
+    packageList->setName("Other");
+    m_packageListList.append(packageList);
+
+    // FIXME: must not be standalone 
+    Installer *installer = new Installer(packageList,m_instProgressBar );
+    installer->setRoot(m_settings.value("rootdir").toString());
+    m_configParser = new ConfigParser(packageList);
+    packageList->writeToFile();
+
+
 
 #if 1
     QFileInfo cfi("config.txt");
@@ -181,6 +186,7 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
      data << "kdepim" << "4.1.2";
      item = new QTreeWidgetItem(categoryList.at(5), data);
     */
+    tree->expandAll();
 }
 extern QTreeWidget *tree;
 
