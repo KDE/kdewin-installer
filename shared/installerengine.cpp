@@ -31,20 +31,27 @@ bool InstallerEngine::downloadGlobalConfig()
     Installer *installer = new Installer(packageList,m_instProgressBar );
     installer->setRoot(m_settings.value("rootdir").toString());
     m_configParser = new ConfigParser(packageList);
-    packageList->writeToFile();
-
-
 
 #if 1
     QFileInfo cfi("config.txt");
     //if (!cfi.exists()) 
     {
         qDebug() << "download global configuration file";
+        // FIXME uses version related config file to have more room for format changes
         m_downloader->start("http://82.149.170.66/kde-windows/installer/config.txt",cfi.fileName());
     }
 #endif
-    qDebug() << "parsing global configuration file";
-    return m_configParser->parseFromFile("config.txt");
+    qDebug() << "parsing remote configuration file";
+    int ret = m_configParser->parseFromFile("config.txt");
+    QFileInfo fi("config-local.txt");
+    if (fi.exists()) 
+    {
+        ret = m_configParser->parseFromFile(fi.absoluteFilePath());
+        qDebug() << "parsing local configuration file";
+    }
+    packageList->dump();
+    packageList->writeToFile();
+    return true;
 }
 
 /// download all packagelists, which are available on the configured sites

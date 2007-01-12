@@ -1,0 +1,15 @@
+@format 1.1
+; this is a sample for a local config file specification 
+; the local config file will be read in after the remote config file
+; please note that this format is *prelimary* and may be changed without prior notice
+
+; package definition 
+@package perl
+; not suppported yet
+;@category KDE
+@version 5.8.8.819
+@url-bin http://downloads.activestate.com/ActivePerl/Windows/5.8/ActivePerl-5.8.8.819-MSWin32-x86-267479.msi
+; don't know where to unpack this 
+;@url-lib http://downloads.activestate.com/ActivePerl/Windows/5.8/ActivePerl-5.8.8.819-MSWin32-x86-267479-symbols.zip
+@require 
+
