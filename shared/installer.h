@@ -34,7 +34,7 @@ public:
     enum InstallerType { Standard, GNUWIN32 };
     Installer(PackageList *packageList, InstallerProgress *progress=0);
     ~Installer();
-    InstallerType Type()
+    InstallerType Type() const
     {
         return m_type;
     }
@@ -51,14 +51,14 @@ public:
 
     bool isEnabled();
     void setRoot(const QString &root);
-    const QString Root() { return m_root; }
+    const QString root() const { return m_root; }
 
 public slots:
     void updatePackageList();
 
 protected:
     bool unzipFile(const QString &destpath, const QString &zipFile);
-    void setError(QByteArray format, QByteArray p1="", QByteArray p2="");
+    void setError(const QString &str);
 
     PackageList *packageList;
     QString m_root;

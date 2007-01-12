@@ -39,7 +39,7 @@ ComplexWizard::ComplexWizard(QWidget *parent)
     progressBar = new DownloaderProgress(this);
     instProgressBar = new InstallerProgress(this);
 
-    connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
+    connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelButtonClicked()));
     connect(backButton, SIGNAL(clicked()), this, SLOT(backButtonClicked()));
     connect(nextButton, SIGNAL(clicked()), this, SLOT(nextButtonClicked()));
     connect(finishButton, SIGNAL(clicked()), this, SLOT(accept()));
@@ -74,6 +74,7 @@ void ComplexWizard::backButtonClicked()
 
 void ComplexWizard::nextButtonClicked()
 {
+    backButton->setEnabled(false);
     nextButton->setEnabled(false);
     finishButton->setDefault(false);
 
@@ -81,9 +82,6 @@ void ComplexWizard::nextButtonClicked()
     WizardPage *newPage = oldPage->nextPage();
     newPage->resetPage();
     history.append(newPage);
-
-    nextButton->setEnabled(false);
-    finishButton->setDefault(false);
 
     switchPage(oldPage);
 }
@@ -118,38 +116,22 @@ void ComplexWizard::switchPage(WizardPage *oldPage)
     if (newPage->isLastPage())
     {
         nextButton->setEnabled(false);
+        finishButton->setEnabled(true);
         finishButton->setDefault(true);
     }
     else
     {
         nextButton->setDefault(true);
+        nextButton->setEnabled(true);
         finishButton->setEnabled(false);
     }
     completeStateChanged();
 }
 
-WizardPage::WizardPage(QWidget *parent)
-        : QWidget(parent)
+void ComplexWizard::cancelButtonClicked()
 {
-    hide();
-}
-
-void WizardPage::resetPage()
-{}
-
-WizardPage *WizardPage::nextPage()
-{
-    return 0;
-}
-
-bool WizardPage::isLastPage()
-{
-    return false;
-}
-
-bool WizardPage::isComplete()
-{
-    return true;
+    history.last()->reject();
+    reject();
 }
 
 #include "complexwizard.moc"

@@ -394,3 +394,7 @@ QString InstallerEngine::root() const
     return root;
 }
 
+void InstallerEngine::stop()
+{
+    m_downloader->cancel();
+}

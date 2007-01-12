@@ -28,6 +28,7 @@
 #include <QHttp>
 #include <QString>
 #include <QUrl>
+#include <QDateTime>
 
 #include "packagelist.h"
 #include "package.h"
@@ -57,9 +58,17 @@ Downloader::~Downloader()
     delete m_file;
 }
 
-void Downloader::setError(const QString &text)
+void Downloader::setError(const QString &str)
 {
-    qDebug() << text;
+    // FIXME: merge with Installer::setError
+    qDebug(str.toLocal8Bit().data());
+    QFile f("kdewin-installer.log");
+    if(f.open(QIODevice::WriteOnly)) {
+        f.write(QDateTime::currentDateTime().toString("yymmdd,hh:mm: ").toLocal8Bit().data());
+        f.write(str.toLocal8Bit().data());
+        f.write("\n");
+        f.close();
+    }
 }
 
 bool Downloader::start(const QString &_url, const QString &_fileName)
@@ -219,25 +228,25 @@ void Downloader::stateChanged(int state)
     switch (state)
     {
     case QHttp::Unconnected  :
-        stateLabel = "Unconnected";
+        stateLabel = tr("Unconnected");
         break;
     case QHttp::HostLookup   :
-        stateLabel = "HostLookup ";
+        stateLabel = tr("HostLookup ");
         break;
     case QHttp::Connecting   :
-        stateLabel = "Connecting ";
+        stateLabel = tr("Connecting ");
         break;
     case QHttp::Sending      :
-        stateLabel = "Sending    ";
+        stateLabel = tr("Sending    ");
         break;
     case QHttp::Reading      :
-        stateLabel = "Reading    ";
+        stateLabel = tr("Reading    ");
         break;
     case QHttp::Connected    :
-        stateLabel = "Connected  ";
+        stateLabel = tr("Connected  ");
         break;
     case QHttp::Closing      :
-        stateLabel = "Closing    ";
+        stateLabel = tr("Closing    ");
         break;
     }
     if (m_progress)

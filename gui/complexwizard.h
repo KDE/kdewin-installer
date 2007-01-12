@@ -58,6 +58,7 @@ private slots:
     void backButtonClicked();
     void nextButtonClicked();
     void completeStateChanged();
+    void cancelButtonClicked();
 
 private:
     void switchPage(WizardPage *oldPage);
@@ -76,12 +77,17 @@ class WizardPage : public QWidget
     Q_OBJECT
 
 public:
-    WizardPage(QWidget *parent = 0);
+    WizardPage(QWidget *parent = 0)
+        : QWidget(parent)
+    {
+        hide();
+    }
 
-    virtual void resetPage();
-    virtual WizardPage *nextPage();
-    virtual bool isLastPage();
-    virtual bool isComplete();
+    virtual void resetPage() = 0;
+    virtual WizardPage *nextPage() = 0;
+    virtual bool isLastPage() { return false; }
+    virtual bool isComplete() { return true; }
+    virtual void reject() {};
 
 signals:
     void completeStateChanged();

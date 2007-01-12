@@ -70,7 +70,7 @@ bool ConfigParser::parseFromByteArray(const QByteArray &_ba)
 
 bool ConfigParser::parse(QIODevice *ioDev)
 {
-    bool inSite;
+    bool inSite = true; // is this correct?
     bool inPackage = false;
     Site *site;
     Package *pkg;
@@ -78,7 +78,7 @@ bool ConfigParser::parse(QIODevice *ioDev)
     while (!ioDev->atEnd())
     {
         QByteArray line = ioDev->readLine().replace("\x0a",""); // support unix format file
-        if (line.startsWith(";"))
+        if (line.startsWith(';'))
             continue;
         else if (line.size() < 2)
         { 
@@ -93,7 +93,7 @@ bool ConfigParser::parse(QIODevice *ioDev)
              inSite=false;
            continue;
         }           
-        else if (line.startsWith("@"))
+        else if (line.startsWith('@'))
         {
             // TODO: encoding of config file! Currently: ascii
             QString l = line;

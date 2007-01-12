@@ -45,7 +45,7 @@ static struct Options
 }
 options;
 
-void usage()
+static void usage()
 {
     qDebug() << "... [options] <packagename> [<packagename>]"
     << "\nRelease: " << VERSION
@@ -65,10 +65,9 @@ int main(int argc, char *argv[])
 
     QStringList packages;
 
-    int i=1;
-    while(i < app.arguments().size())
+    for(int i = 1; i < app.arguments().size(); i++)
     {
-        if (app.arguments().at(i).startsWith("-"))
+        if (app.arguments().at(i).startsWith('-'))
         {
             QString option = app.arguments().at(i);
             if (option == "-h")
@@ -100,7 +99,6 @@ int main(int argc, char *argv[])
         }
         else
             packages << app.arguments().at(i);
-        i++;
     }
 
 #if 1

@@ -165,7 +165,7 @@ WizardPage *PathSettingsPage::nextPage()
 
 bool PathSettingsPage::isComplete()
 {
-    return 1;//!rootPathEdit->text().isEmpty();
+    return (!rootPathEdit->text().isEmpty());
 }
 
 PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
@@ -232,7 +232,12 @@ bool DownloadPage::isComplete()
     QApplication::instance()->processEvents();
     wizard->nextButton->setEnabled(true);
     // here the download page should be called directly
-    return 1;
+    return true;
+}
+
+void DownloadPage::reject()
+{
+    engine->stop();
 }
 
 InstallPage::InstallPage(InstallWizard *wizard)

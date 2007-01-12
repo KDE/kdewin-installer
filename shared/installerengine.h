@@ -47,6 +47,7 @@ public:
     InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
     bool downloadGlobalConfig();
     bool downloadPackageLists();
+    void stop();
 
 #ifdef USE_GUI
     void setPageSelectorWidgetData(QTreeWidget *tree);
@@ -81,14 +82,14 @@ public:
 
 private:
     QList <PackageList*> m_packageListList;
-    QList <Installer*> m_installerList;
-    PackageList *m_packageList;  // currenty used packagelist
-    Installer *m_installer;    // currenty used installer
-    Downloader *m_downloader;
-    InstallerProgress *m_instProgress;
-    ConfigParser *m_configParser;
-    InstallerProgress *m_instProgressBar;
-    Settings m_settings;
+    QList <Installer*>   m_installerList;
+    PackageList         *m_packageList;  // currenty used packagelist
+    Installer           *m_installer;    // currenty used installer
+    Downloader          *m_downloader;
+    InstallerProgress   *m_instProgress;
+    ConfigParser        *m_configParser;
+    InstallerProgress   *m_instProgressBar;
+    Settings             m_settings;
 };
 
 #endif

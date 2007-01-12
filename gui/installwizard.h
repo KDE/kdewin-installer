@@ -136,8 +136,9 @@ public:
     DownloadPage(InstallWizard *wizard);
 
     void resetPage();
-    WizardPage *nextPage();
-    bool isComplete();
+    virtual WizardPage *nextPage();
+    virtual bool isComplete();
+    virtual void reject();
 
 private:
     QLabel *topLabel;
@@ -162,12 +163,10 @@ class FinishPage : public InstallWizardPage
 public:
     FinishPage(InstallWizard *wizard);
 
-    void resetPage();
-    bool isLastPage()
-    {
-        return true;
-    }
-    bool isComplete();
+    virtual WizardPage *nextPage() { return NULL; }
+    virtual void resetPage();
+    virtual bool isLastPage() { return true; }
+    virtual bool isComplete();
 
 private:
     QLabel *topLabel;

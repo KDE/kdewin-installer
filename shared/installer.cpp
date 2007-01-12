@@ -122,13 +122,13 @@ bool Installer::unzipFile(const QString &destpath, const QString &zipFile)
 
     if(!z.open(QuaZip::mdUnzip))
     {
-        setError("Can not open %s", zipFile.toAscii().data());
+        setError(tr("Can not open %1").arg(zipFile));
         return false;
     }
 
     if(!path.exists())
     {
-        setError("Internal Error - Path %s does not exist", path.absolutePath().toAscii().data());
+        setError(tr("Internal Error - Path %1 does not exist").arg(path.absolutePath()));
         return false;
     }
 
@@ -147,7 +147,7 @@ bool Installer::unzipFile(const QString &destpath, const QString &zipFile)
         // get file informations
         if(!z.getCurrentFileInfo(&info))
         {
-            setError("Can not get file information from zip file ", zipFile.toAscii());
+            setError(tr("Can not get file information from zip file %1").arg(zipFile));
             return false;
         }
         QFileInfo fi(path.filePath(info.name));
@@ -159,14 +159,14 @@ bool Installer::unzipFile(const QString &destpath, const QString &zipFile)
             {
                 if(!fi.isDir())
                 {
-                    setError("Can not create directory %s", fi.absoluteFilePath().toAscii().data());
+                    setError(tr("Can not create directory %1").arg(fi.absoluteFilePath()));
                     return false;
                 }
                 continue;
             }
             if(!path.mkpath(fi.absoluteFilePath()))
             {
-                setError("Can not create directory %s", fi.absolutePath().toAscii().data());
+                setError(tr("Can not create directory %1").arg(fi.absolutePath()));
                 return false;
             }
             continue;
@@ -176,12 +176,9 @@ bool Installer::unzipFile(const QString &destpath, const QString &zipFile)
         {
             if(!path.exists(fi.absolutePath()))
             {
-#ifdef DEBUG
-                setError("create directory %s", fi.absolutePath().toAscii().data());
-#endif
                 if (!path.mkpath(fi.absolutePath()))
                 {
-                    setError("Can not create directory %s", fi.absolutePath().toAscii().data());
+                    setError(tr("Can not create directory %1").arg(fi.absolutePath()));
                     return false;
                 }
             }
@@ -189,12 +186,12 @@ bool Installer::unzipFile(const QString &destpath, const QString &zipFile)
         // open file
         if(!file.open(QIODevice::ReadOnly))
         {
-            setError("Can not open file %s from zip file %s", info.name.toAscii().data(), zipFile.toAscii().data());
+            setError(tr("Can not open file %1 from zip file %2").arg(info.name).arg(zipFile));
             return false;
         }
         if(file.getZipError() != UNZ_OK)
         {
-            setError("Error reading zip file %s", zipFile.toAscii().data());
+            setError(tr("Error reading zip file %1").arg(zipFile));
             return false;
         }
 
@@ -202,13 +199,13 @@ bool Installer::unzipFile(const QString &destpath, const QString &zipFile)
         QFile newFile(fi.absoluteFilePath());
         if(!newFile.open(QIODevice::WriteOnly))
         {
-            setError("Can not creating file %s ", fi.absoluteFilePath().toAscii().data());
+            setError(tr("Can not creating file %1").arg(fi.absoluteFilePath()));
             return false;
         }
 
         if (m_progress)
         {
-            m_progress->setTitle(tr("Installing %1 ").arg(newFile.fileName().toAscii().data()));
+            m_progress->setTitle(tr("Installing %1").arg(newFile.fileName()));
         }
         // copy data
         // FIXME: check for not that huge filesize ?
@@ -224,23 +221,31 @@ bool Installer::unzipFile(const QString &destpath, const QString &zipFile)
 
         if(file.getZipError() != UNZ_OK)
         {
-            setError("Error reading zip file %s", zipFile.toAscii().data());
+            setError(tr("Error reading zip file %1").arg(zipFile));
             return false;
         }
     }
     z.close();
     if(z.getZipError() != UNZ_OK)
     {
-        setError("Error reading zip file %s", zipFile.toAscii().data());
+        setError(tr("Error reading zip file %1").arg(zipFile));
         return false;
     }
     return true;
 }
 
 
-void Installer::setError(QByteArray format, QByteArray p1, QByteArray p2)
+void Installer::setError(const QString &str)
 {
-    qDebug(format.data(),p1.data(),p2.data());
+    // FIXME: merge with Downloader::setError
+    qDebug(str.toLocal8Bit().data());
+    QFile f("kdewin-installer.log");
+    if(f.open(QIODevice::WriteOnly)) {
+        f.write(QDateTime::currentDateTime().toString("yymmdd,hh:mm: ").toLocal8Bit().data());
+        f.write(str.toLocal8Bit().data());
+        f.write("\n");
+        f.close();
+    }
 }
 
 bool Installer::install(const QString &fileName)
@@ -251,6 +256,7 @@ bool Installer::install(const QString &fileName)
     }
     else // for all other formats use windows assignments
     {
+        // fixme: use QProcess to determine if all worked fine?
         ShellExecuteW(0, L"open", (WCHAR*)fileName.utf16(), NULL, NULL, SW_SHOWNORMAL);
         return true;
     }
