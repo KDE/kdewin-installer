@@ -53,6 +53,14 @@ set (test-settings_SOURCES
 )
 
 qt4_automoc(${test-settings_SOURCES})
-
 add_executable(test-settings ${test-settings_SOURCES})
 target_link_libraries(test-settings ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
+
+set (test-packager_SOURCES
+	test-packager.cpp
+	../shared/packager.cpp
+)
+
+qt4_automoc(${test-packager_SOURCES})
+add_executable(test-packager ${test-packager_SOURCES})
+target_link_libraries(test-packager ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
