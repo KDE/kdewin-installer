@@ -34,12 +34,14 @@ class Packager {
       bool generateFileList(const QString &dir, const QString &filter="*.*", const QString &exclude=QString());
       bool generatePackageFileList(const QString &dir, Packager::Type=Packager::BIN);
       bool makePackage(const QString &dir, const QString &packageName, const QString &packageVersion);
-
+      bool createZipFile(const QString &fileName, const QStringList &files);
+      
       QStringList &fileList() { return m_fileList; }
       
     private: 
       QStringList m_fileList; 
       QStringList m_excludeList;
+      QString m_root;
 }; 
 
 #endif

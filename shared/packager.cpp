@@ -39,7 +39,7 @@
 #endif
 
 
-bool createZipFile(const QString &fileName, const QStringList &files)
+bool Packager::createZipFile(const QString &fileName, const QStringList &files)
 {
     QuaZip zip(fileName);
     if(!zip.open(QuaZip::mdCreate)) {
@@ -59,7 +59,9 @@ bool createZipFile(const QString &fileName, const QStringList &files)
            qWarning("testCreate(): inFile.open(): %s", inFile.errorString().toLocal8Bit().constData());
            return false;
        }
-       if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(inFile.fileName(), inFile.fileName()))) 
+       QString fileName = QDir::convertSeparators(inFile.fileName());
+       fileName.replace(m_root+"\\","");
+       if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(fileName, inFile.fileName()))) 
        {
            qWarning("testCreate(): outFile.open(): %d", outFile.getZipError());
            return false;
@@ -138,12 +140,13 @@ bool Packager::generateFileList(const QString &dir, const QString &filter, const
            generateFileList( d.absolutePath() + "/" + fi.fileName(), filter, exclude);
        else 
        {
-           m_fileList.append( dir + "/" + fi.fileName() );
+           m_fileList.append( QDir::convertSeparators(dir + "/" + fi.fileName()) );
        }
    }
 }
 bool Packager::generatePackageFileList(const QString &dir,Packager::Type type)
 {
+   m_root = QDir::convertSeparators(dir);
    if (type == Packager::BIN)
    {
        m_fileList.clear();
@@ -180,7 +183,6 @@ bool Packager::makePackage(const QString &dir, const QString &packageName, const
     // generate file lists
     // create manifest files 
     // create zip file 
-
     QString zipFileName;
     zipFileName = packageName+"-"+packageVersion+"-bin.zip";
     generatePackageFileList(dir,Packager::BIN);
@@ -202,4 +204,3 @@ bool Packager::makePackage(const QString &dir, const QString &packageName, const
     if (m_fileList.size() > 0)
         createZipFile(zipFileName,m_fileList);
 }
-
