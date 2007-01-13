@@ -46,6 +46,7 @@ set(installer_shared_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/configparser.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/settings.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/installerengine.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/packager.cpp
 )
 
 set(installer_shared_HEADERS
