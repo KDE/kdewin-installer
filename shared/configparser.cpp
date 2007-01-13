@@ -70,7 +70,7 @@ bool ConfigParser::parseFromByteArray(const QByteArray &_ba)
 
 bool ConfigParser::parse(QIODevice *ioDev)
 {
-    bool inSite = true; // is this correct?
+    bool inSite = false;
     bool inPackage = false;
     Site *site;
     Package *pkg;
