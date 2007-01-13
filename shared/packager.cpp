@@ -26,10 +26,74 @@
 #include <QDir>
 #include <QFileInfo>
 
-#include <packager.h> 
+#include "packager.h"
+#include "quazip.h" 
+#include "quazipfile.h" 
 
 
 // FIXME: generate manifest files 
+// FIXME: do not display full path only beginning from given dir
+
+#ifndef QZIP_BUFFER
+# define QZIP_BUFFER (256 * 1024)
+#endif
+
+
+bool createZipFile(const QString &fileName, const QStringList &files)
+{
+    QuaZip zip(fileName);
+    if(!zip.open(QuaZip::mdCreate)) {
+       qWarning("testCreate(): zip.open(): %d", zip.getZipError());
+       return false;
+    }
+       
+    QFile inFile;
+    QuaZipFile outFile(&zip);
+       
+    for (int l = 0; l < files.size(); l++)
+    {
+       inFile.setFileName(files.at(l));
+   
+       if(!inFile.open(QIODevice::ReadOnly)) 
+       {
+           qWarning("testCreate(): inFile.open(): %s", inFile.errorString().toLocal8Bit().constData());
+           return false;
+       }
+       if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(inFile.fileName(), inFile.fileName()))) 
+       {
+           qWarning("testCreate(): outFile.open(): %d", outFile.getZipError());
+           return false;
+       }
+       // copy data
+       // FIXME: check for not that huge filesize ?
+       qint64 iBytesRead;
+       QByteArray ba;
+       ba.resize(QZIP_BUFFER);
+
+       while((iBytesRead = inFile.read(ba.data(), QZIP_BUFFER)) > 0)
+          outFile.write(ba.data(), iBytesRead);
+
+       if(outFile.getZipError()!=UNZ_OK) 
+       {
+          qWarning("testCreate(): outFile.putChar(): %d", outFile.getZipError());
+          return false;
+       }
+       outFile.close();
+       if(outFile.getZipError()!=UNZ_OK) 
+       {
+          qWarning("testCreate(): outFile.close(): %d", outFile.getZipError());
+          return false;
+       }
+       inFile.close();
+   }
+    
+    zip.close();
+    if(zip.getZipError()!=0) {
+        qWarning("testCreate(): zip.close(): %d", zip.getZipError());
+        return false;
+    }
+    return true;
+} 
 
 
 
@@ -111,9 +175,31 @@ bool Packager::generatePackageFileList(const QString &dir,Packager::Type type)
    }
 }
 
-bool Packager::makePackage(const QString &dir, const QString &zipFileName)
+bool Packager::makePackage(const QString &dir, const QString &packageName, const QString &packageVersion)
 {
     // generate file lists
     // create manifest files 
     // create zip file 
+
+    QString zipFileName;
+    zipFileName = packageName+"-"+packageVersion+"-bin.zip";
+    generatePackageFileList(dir,Packager::BIN);
+    if (m_fileList.size() > 0)
+        createZipFile(zipFileName,m_fileList);
+
+    zipFileName = packageName+"-"+packageVersion+"-lib.zip";
+    generatePackageFileList(dir,Packager::LIB);
+    if (m_fileList.size() > 0)
+        createZipFile(zipFileName,m_fileList);
+
+    zipFileName = packageName+"-"+packageVersion+"-doc.zip";    
+    generatePackageFileList(dir,Packager::DOC);
+    if (m_fileList.size() > 0)
+        createZipFile(zipFileName,m_fileList);
+
+    zipFileName = packageName+"-"+packageVersion+"-src.zip";    
+    generatePackageFileList(dir,Packager::SRC);
+    if (m_fileList.size() > 0)
+        createZipFile(zipFileName,m_fileList);
 }
+

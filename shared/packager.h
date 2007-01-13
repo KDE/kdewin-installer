@@ -33,7 +33,8 @@ class Packager {
       Packager::Packager();
       bool generateFileList(const QString &dir, const QString &filter="*.*", const QString &exclude=QString());
       bool generatePackageFileList(const QString &dir, Packager::Type=Packager::BIN);
-      bool makePackage(const QString &dir, const QString &zipFileName);
+      bool makePackage(const QString &dir, const QString &packageName, const QString &packageVersion);
+
       QStringList &fileList() { return m_fileList; }
       
     private: 

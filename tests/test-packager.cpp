@@ -55,6 +55,7 @@ int main(int argc, char *argv[])
     qDebug() << packager.fileList().join("\n");
 
     // FIXME: create manifest files
+    packager.makePackage(dir,"dbus","1.0.1");
 
     return 0;
 }

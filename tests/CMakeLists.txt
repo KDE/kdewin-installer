@@ -59,6 +59,7 @@ target_link_libraries(test-settings ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRAR
 set (test-packager_SOURCES
 	test-packager.cpp
 	../shared/packager.cpp
+	${quazip_SOURCES}
 )
 
 qt4_automoc(${test-packager_SOURCES})
