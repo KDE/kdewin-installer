@@ -2,7 +2,7 @@
 * A general introduction to the work you are doing.
 
 Several people are working currently on an installer for KDE on windows applications for 
-end user and developers. 
+end user and developers. The aim is to make installing KDE on windows as simple as it could be. 
 
 * What you hope to achieve through the work, the functionality and the problems it solves/helps. 
 
@@ -48,12 +48,14 @@ or additional sites having kde on windows applications are available.
 
 * Any technical comments on this specifically, or more generally your other win32 KDE work. 
 
-... will follow
+The KDE installer is build as a static Qt4 application and is designed like an installation wizard. 
 
+See screenshots. 
 
 * And anything else you want to talk about is fine also :D 
 
-.. I have to think over 
+The user experience for KDE on windows in this area should be that KDE applications are simple 
+to install. 
 
 > Several paragraphs are ideal and (new, unseen! ;D) screenshots are also great ;) 
 
