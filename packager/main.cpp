@@ -62,12 +62,14 @@ int main(int argc, char *argv[])
        printHelp(QString("Root path %1 is not accessible").arg(root));
     
 
-    Packager packager;
+    Packager packager("Test", version, "Testnotes");
     // packager.generatePackageFileList()
+
+    QStringList files;
     
-    packager.generateFileList(fi.filePath(), "*.*", "*.bak;manifest");
-    qDebug() << packager.fileList().join("\n");
-    packager.makePackage(fi.filePath(),"dbus","1.0.1");
+    packager.generatePackageFileList(files, fi.filePath(), Packager::BIN);
+    qDebug() << files.join("\n");
+    packager.makePackage(fi.filePath());
 
     return 0;
 }

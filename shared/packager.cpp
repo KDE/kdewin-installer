@@ -205,6 +205,7 @@ bool Packager::generatePackageFileList(QStringList &fileList, const QString &dir
        //fileList += "manifest/"+m_name+"-"+m_version+"-src.ver";
        return true;
    }
+   return false;
 }
 
 bool Packager::createManifestFiles(QStringList &fileList, const QString &dir, Packager::Type type)
@@ -282,4 +283,6 @@ bool Packager::makePackage(const QString &dir, const QString &destdir)
     createManifestFiles(fileList,dir,Packager::SRC);
     if (fileList.size() > 0)
         createZipFile(zipFileName,fileList,dir);
+
+    return true;
 }
