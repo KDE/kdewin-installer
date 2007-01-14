@@ -1,6 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2007  Christian Ehrlicher <ch.ehrlicher@gmx.de>.
+** Copyright (C) 2007  Ralf Habacker 
 ** All rights reserved.
 **
 ** This file is part of the KDE installer for windows
@@ -42,6 +43,7 @@ int main(int argc, char *argv[])
     QStringList args = app.arguments();
     QString name, root, version, notes;
     QFileInfo rootDir;
+    bool strip = false;
     
     int idx = args.indexOf("--name");
     if(idx != -1 && idx < args.count() -1) {
@@ -66,6 +68,11 @@ int main(int argc, char *argv[])
         args.removeAt(idx);
     }
 
+    idx = args.indexOf("--strip");
+    if(idx != -1) {
+        strip = 1;
+    }
+
     idx = args.indexOf("--notes");
     if(idx != -1 && idx < args.count() -1) {
         notes = args[idx + 1];
@@ -85,6 +92,8 @@ int main(int argc, char *argv[])
     
 
     Packager packager(name, version, notes);
+    if (strip)
+       packager.stripFiles(rootDir.filePath());
     packager.makePackage(rootDir.filePath());
 
     return 0;
