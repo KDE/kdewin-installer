@@ -209,58 +209,46 @@ bool Packager::generatePackageFileList(QStringList &fileList, const QString &dir
 
 bool Packager::createManifestFiles(QStringList &fileList, const QString &dir, Packager::Type type)
 {
-/*
- does not compile 
-   if (type == Packager::BIN) 
-   {
-       QFile mftFile(dir+"/"+m_name+"-"+m_version+"-bin.mft");
-       mftFile.open(QIODevice::WriteOnly);
-       mftFile.write(fileList.join("\n"));
-       mftFile.close();
-       QFile verFile(dir+"/"+m_name+"-"+m_version+"-bin.ver");
-       verFile.open(QIODevice::WriteOnly);
-       verFile.write(m_name + " " + m_version+": Binaries\n");
-       verFile.write(m_name + ": " + m_notes+"\n");
-       verfile.close();
-   } 
-   else if (type == Packager::LIB)
-   {
-       QFile mftFile(dir+"/"+m_name+"-"+m_version+"-lib.mft");
-       mftFile.open(QIODevice::WriteOnly);
-       mftFile.write(fileList.join("\n"));
-       mftFile.close();
-       QFile verFile(dir+"/"+m_name+"-"+m_version+"-lib.ver");
-       verFile.open(QIODevice::WriteOnly);
-       verFile.write(m_name + " " + m_version+": developer files\n");
-       verFile.write(m_name + ": " + m_notes+"\n");
-       verFile.close();
-   } 
-   else if (type == Packager::DOC)
-   {
-       QFile mftFile(dir+"/"+m_name+"-"+m_version+"-doc.mft");
-       mftFile.open(QIODevice::WriteOnly);
-       mftFile.write(fileList.join("\n"));
-       mftFile.close();
-       QFile verFile(dir+"/"+m_name+"-"+m_version+"-doc.ver");
-       verFile.open(QIODevice::WriteOnly);
-       verFile.write(m_name + " " + m_version+": documentation\n");
-       verFile.write(m_name + ": " + m_notes+"\n");
-       verfile.close();
-   } 
-   else if (type == Packager::SRC)
-   {
-       QFile mftFile(dir+"/"+m_name+"-"+m_version+"-src.mft");
-       mftFile.open(QIODevice::WriteOnly);
-       mftFile.write(fileList.join("\n"));
-       mftFile.close();
-       QFile verFile(dir+"/"+m_name+"-"+m_version+"-src.ver");
-       verFile.open(QIODevice::WriteOnly);
-       verFile.write(m_name + " " + m_version+": source code\n");
-       verFile.write(m_name + ": " + m_notes+"\n");
-       verFile.close();
-   } 
-*/
-   return true;    
+    QString fileNameBase; 
+    QString notes;
+    
+    if (type == Packager::BIN) 
+    {
+       fileNameBase = m_name+"-"+m_version+"-bin";
+       notes = "Binaries";
+    } 
+    else if (type == Packager::LIB)
+    {
+       fileNameBase = m_name+"-"+m_version+"-lib";
+       notes = "developer files";
+    } 
+    else if (type == Packager::DOC)
+    {
+       fileNameBase = m_name+"-"+m_version+"-doc";
+       notes = "documentation";
+    } 
+    else if (type == Packager::SRC)
+    {
+       fileNameBase = m_name+"-"+m_version+"-src";
+       notes = "source code";
+    } 
+    QDir root(dir);
+    root.mkdir("manifest");
+    
+    QFile mftFile(dir+"/manifest/"+fileNameBase+".mft");
+    mftFile.open(QIODevice::WriteOnly);
+    QTextStream out(&mftFile);
+    out << fileList.join("\n");
+    mftFile.close();
+
+    QFile verFile(dir+"/manifest/"+fileNameBase+".ver");
+    verFile.open(QIODevice::WriteOnly);
+    QTextStream outver(&verFile);
+    outver << m_name+" " +m_version+": source code\n" << "\n";
+    outver << m_name+": "+m_notes+"\n";
+    verFile.close();
+    
+    return true;    
 }
 
 bool Packager::makePackage(const QString &dir, const QString &destdir)
