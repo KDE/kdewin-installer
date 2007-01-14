@@ -53,7 +53,6 @@ class Packager {
       QString m_name;
       QString m_version;
       QString m_notes;
-      QString m_baseName;
 }; 
 
 #endif

@@ -33,9 +33,6 @@
 #include "quazipfile.h" 
 
 
-// FIXME: generate manifest files 
-// FIXME: do not display full path only beginning from given dir
-
 #ifndef QZIP_BUFFER
 # define QZIP_BUFFER (256 * 1024)
 #endif
@@ -221,6 +218,9 @@ bool Packager::generatePackageFileList(QStringList &fileList, const QString &dir
         case SRC:
             generateFileList(fileList, dir, "src", "*.*");
             return true;
+        case NONE:
+            generateFileList(fileList, dir, "", "*.*", "manifest");
+            return true;
         default:
             break;
    }
@@ -230,23 +230,26 @@ bool Packager::generatePackageFileList(QStringList &fileList, const QString &dir
 bool Packager::createManifestFiles(QStringList &fileList, Packager::Type type, QList<MemFile> &manifestFiles)
 {
     QString fileNameBase = getBaseName(type); 
-    QString notes;
+    QString descr;
     MemFile mf;
     
     manifestFiles.clear();
 
     switch(type) {
         case Packager::BIN:
-            notes = "Binaries";
+            descr = "Binaries";
             break;
         case Packager::LIB:
-            notes = "developer files";
+            descr = "developer files";
             break;
         case Packager::DOC:
-            notes = "documentation";
+            descr = "documentation";
             break;
         case Packager::SRC:
-            notes = "source code";
+            descr = "source code";
+            break;
+        case Packager::NONE:
+            descr = "complete package";
             break;
         default:
             break;
@@ -255,8 +258,9 @@ bool Packager::createManifestFiles(QStringList &fileList, Packager::Type type, Q
     QBuffer b(&mf.data);
     b.open(QIODevice::WriteOnly);
     QTextStream out(&b);
-    out << fileList.join("\n")
-        << "manifest/" + fileNameBase + ".mft" << "manifest/" + fileNameBase + ".ver";
+    out << fileList.join("\n") << '\n'
+        << "manifest/" + fileNameBase + ".mft" << '\n'
+        << "manifest/" + fileNameBase + ".ver" << '\n';
     b.close();
     mf.filename = "manifest/" + fileNameBase + ".mft";
     manifestFiles += mf;
@@ -266,7 +270,7 @@ bool Packager::createManifestFiles(QStringList &fileList, Packager::Type type, Q
     b.setBuffer(&mf.data);
     b.open(QIODevice::WriteOnly);
     out.setDevice(&b);
-    out << m_name + ' ' + m_version + ": source code\n" << "\n"
+    out << m_name + ' ' + m_version + ' ' + descr << '\n'
         << m_name + ": " + m_notes + '\n';
     b.close();
     mf.filename = "manifest/" + fileNameBase + ".ver";
@@ -305,6 +309,11 @@ bool Packager::makePackage(const QString &dir, const QString &destdir)
     createManifestFiles(fileList, Packager::SRC, manifestFiles);
     if (fileList.size() > 0)
         createZipFile(getBaseName(Packager::SRC), fileList, dir, manifestFiles);
+
+    generatePackageFileList(fileList, dir, Packager::NONE);
+    createManifestFiles(fileList, Packager::NONE, manifestFiles);
+    if (fileList.size() > 0)
+        createZipFile(getBaseName(Packager::NONE), fileList, dir, manifestFiles);
 
     return true;
 }
