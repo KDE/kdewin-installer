@@ -34,7 +34,9 @@ TODO
 	4 center checkboxes in package selector page -> not possible yet, see comment in source
 	5 reduce column width of package types in package selector page
 	7 fix perl package list import	  	
-
+    8 fix not store of installed packages, when in OTHER group
+    
+    
 Happy hacking
 
 
