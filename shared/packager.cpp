@@ -365,3 +365,29 @@ bool Packager::stripFiles(const QString &dir)
         qDebug() << QProcess::execute("strip -s " + fi.absoluteFilePath());
     }
 }
+// create debug files for mingw
+//  see http://www.daemon-systems.org/man/strip.1.html
+
+bool Packager::createDebugFiles(const QString &dir)
+{
+    QStringList fileList; 
+    generateFileList(fileList,dir,"bin","*.exe *.dll");
+    generateFileList(fileList,dir,"lib","*.exe *.dll");
+    for (int i = 0; i < fileList.size(); i++) 
+    {
+        QFileInfo fi(dir + "/" + fileList.at(i));
+        // FIXME: add file in use detection, isWritable() returns not the required state
+        // if no windows related functions is available at least parsing the output for 
+        // the string "strip: unable to rename" indicates this condition
+#if 0
+        if (!fi.isWritable())
+        {
+            qDebug() << "file " << fi.absoluteFilePath() << " is in use"; 
+            exit(1);
+        }
+#endif
+        QProcess::execute("objcopy --only-keep-debug " + fi.absoluteFilePath() + " " + fi.absoluteFilePath() + ".dbg");
+        QProcess::execute("objcopy --strip-debug " + fi.absoluteFilePath());
+        QProcess::execute("objcopy --add-gnu-debuglink=" + fi.absoluteFilePath() + ".dbg " + fi.absoluteFilePath());
+    }
+}
