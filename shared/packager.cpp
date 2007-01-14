@@ -44,11 +44,11 @@ Packager::Packager(const QString &packageName, const QString &packageVersion, co
 {
 }
 
-bool Packager::createZipFile(const QString &baseName, const QStringList &files, const QString &root, const QList<MemFile> &memFiles)
+bool Packager::createZipFile(const QString &baseName, const QString &root, const QStringList &files, const QList<MemFile> &memFiles)
 {
     QuaZip zip(baseName + ".zip");
     if(!zip.open(QuaZip::mdCreate)) {
-       qWarning("testCreate(): zip.open(): %d", zip.getZipError());
+       qWarning("createZipFile(): zip.open(): %d", zip.getZipError());
        return false;
     }
        
@@ -61,12 +61,12 @@ bool Packager::createZipFile(const QString &baseName, const QStringList &files, 
    
        if(!inFile.open(QIODevice::ReadOnly)) 
        {
-           qWarning("testCreate(): inFile.open(): %s", inFile.errorString().toLocal8Bit().constData());
+           qWarning("createZipFile(): inFile.open(): %s", inFile.errorString().toLocal8Bit().constData());
            return false;
        }
        if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(files.at(l), inFile.fileName()))) 
        {
-           qWarning("testCreate(): outFile.open(): %d", outFile.getZipError());
+           qWarning("createZipFile(): outFile.open(): %d", outFile.getZipError());
            return false;
        }
        // copy data
@@ -80,51 +80,52 @@ bool Packager::createZipFile(const QString &baseName, const QStringList &files, 
 
        if(outFile.getZipError()!=UNZ_OK) 
        {
-          qWarning("testCreate(): outFile.putChar(): %d", outFile.getZipError());
+          qWarning("createZipFile(): outFile.putChar(): %d", outFile.getZipError());
           return false;
        }
        outFile.close();
        if(outFile.getZipError()!=UNZ_OK) 
        {
-          qWarning("testCreate(): outFile.close(): %d", outFile.getZipError());
+          qWarning("createZipFile(): outFile.close(): %d", outFile.getZipError());
           return false;
        }
        inFile.close();
     }
+
     QList<MemFile>::ConstIterator it = memFiles.constBegin();
     for( ; it != memFiles.constEnd(); ++it) {
        if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo((*it).filename))) 
        {
-           qWarning("testCreate(): outFile.open(): %d", outFile.getZipError());
+           qWarning("createZipFile(): outFile.open(): %d", outFile.getZipError());
            return false;
        }
        outFile.write((*it).data, (*it).data.size());
        if(outFile.getZipError()!=UNZ_OK) 
        {
-          qWarning("testCreate(): outFile.putChar(): %d", outFile.getZipError());
+          qWarning("createZipFile(): outFile.putChar(): %d", outFile.getZipError());
           return false;
        }
        outFile.close();
        if(outFile.getZipError()!=UNZ_OK) 
        {
-          qWarning("testCreate(): outFile.close(): %d", outFile.getZipError());
+          qWarning("createZipFile(): outFile.close(): %d", outFile.getZipError());
           return false;
        }
     }
     
     zip.close();
     if(zip.getZipError()!=0) {
-        qWarning("testCreate(): zip.close(): %d", zip.getZipError());
+        qWarning("createZipFile(): zip.close(): %d", zip.getZipError());
         return false;
         if(outFile.getZipError()!=UNZ_OK) 
         {
-            qWarning("testCreate(): outFile.putChar(): %d", outFile.getZipError());
+            qWarning("createZipFile(): outFile.putChar(): %d", outFile.getZipError());
             return false;
         }
         outFile.close();
         if(outFile.getZipError()!=UNZ_OK) 
         {
-            qWarning("testCreate(): outFile.close(): %d", outFile.getZipError());
+            qWarning("createZipFile(): outFile.close(): %d", outFile.getZipError());
             return false;
         }
     }
@@ -292,29 +293,29 @@ bool Packager::makePackage(const QString &dir, const QString &destdir)
     generatePackageFileList(fileList, dir, Packager::BIN);
     createManifestFiles(fileList, Packager::BIN, manifestFiles);
     if (fileList.size() > 0)
-        createZipFile(getBaseName(Packager::BIN), fileList, dir, manifestFiles);
+        createZipFile(getBaseName(Packager::BIN), dir, fileList, manifestFiles);
     else
         qDebug() << "no binary files found!";
 
     generatePackageFileList(fileList, dir, Packager::LIB);
     createManifestFiles(fileList, Packager::LIB, manifestFiles);
     if (fileList.size() > 0)
-        createZipFile(getBaseName(Packager::LIB), fileList, dir, manifestFiles);
+        createZipFile(getBaseName(Packager::LIB), dir, fileList, manifestFiles);
 
     generatePackageFileList(fileList, dir, Packager::DOC);
     createManifestFiles(fileList, Packager::DOC, manifestFiles);
     if (fileList.size() > 0)
-        createZipFile(getBaseName(Packager::DOC), fileList, dir, manifestFiles);
+        createZipFile(getBaseName(Packager::DOC), dir, fileList, manifestFiles);
 
     generatePackageFileList(fileList, dir, Packager::SRC);
     createManifestFiles(fileList, Packager::SRC, manifestFiles);
     if (fileList.size() > 0)
-        createZipFile(getBaseName(Packager::SRC), fileList, dir, manifestFiles);
+        createZipFile(getBaseName(Packager::SRC), dir, fileList, manifestFiles);
 
     generatePackageFileList(fileList, dir, Packager::NONE);
     createManifestFiles(fileList, Packager::NONE, manifestFiles);
     if (fileList.size() > 0)
-        createZipFile(getBaseName(Packager::NONE), fileList, dir, manifestFiles);
+        createZipFile(getBaseName(Packager::NONE), dir, fileList, manifestFiles);
 
     return true;
 }

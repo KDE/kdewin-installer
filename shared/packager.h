@@ -44,7 +44,7 @@ class Packager {
             QString    filename;
             QByteArray data;
         };
-      bool createZipFile(const QString &baseName, const QStringList &files, const QString &rootDir, const QList<MemFile> &memFiles);
+      bool createZipFile(const QString &baseName, const QString &rootDir, const QStringList &files, const QList<MemFile> &memFiles=QList<MemFile>());
       bool generateFileList(QStringList &result, const QString &root, const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList);
       bool generateFileList(QStringList &result, const QString &root, const QString &subdir, const QString &filter, const QString &exclude = QString());
       bool generatePackageFileList(QStringList &result, const QString &dir, Packager::Type type);
