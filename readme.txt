@@ -28,7 +28,8 @@ TODO
   2 complete methods for writing windows start menues entries 
   3 write environment settings scripts (KDELIBS,PATH ??), this may also affect 
     windows start menu entries writing 
-  4 test, test, test
+  4 add mode for installing from local package directory
+  5 test, test, test
   
 2 command line installer 
     1 add long command line options like operation mode --install, --erase, --list --query, ... 
