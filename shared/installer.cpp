@@ -263,4 +263,25 @@ bool Installer::install(const QString &fileName)
     return false;
 }
 
+#if 0
+/* 
+ * create start menu entries from installed desktop files 
+ */
+bool Installer::createStartMenuEntries(const QString &dir, const QString &category)
+{
+		// use Packager::generateFileList to build a list of files with ending .desktop 
+		// -> generateFileList should be independent from Packager 
+		// for all found files create entry in windows startmenu 
+		// question: how to do ? 
+		// note: this method should be called after installing when the related setting page 
+		//       entry is checked 
+}
+
+bool Installer::removeStartMenuEntries(const QString &dir, const QString &category)
+{
+		// delete all installed startmenu for this package 
+		// question: how to store created start menu entries 
+}
+#endif
+
 #include "installer.moc"
