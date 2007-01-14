@@ -34,21 +34,26 @@ class Packager {
       enum Type { NONE = 0, BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8, ALL = 15};
       Packager::Packager(const QString &packageName, const QString &packageVersion,const QString &notes=QString());
 
-
-      bool generatePackageFileList(QStringList &result, const QString &dir, Packager::Type=Packager::BIN);
-      bool createManifestFiles(QStringList &fileList, const QString &dir, Packager::Type type);
-
       bool makePackage(const QString &dir, const QString &destdir=QString());
-      bool createZipFile(const QString &fileName, const QStringList &files, const QString &rootDir=QString());
       
     protected: 
+        struct MemFile {
+            QString    filename;
+            QByteArray data;
+        };
+      bool createZipFile(const QString &baseName, const QStringList &files, const QString &rootDir, const QList<MemFile> &memFiles);
       bool generateFileList(QStringList &result, const QString &root, const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList);
-      bool generateFileList(QStringList &result, const QString &root, const QString &subdir, const QString &filter, const QString &exclude);
+      bool generateFileList(QStringList &result, const QString &root, const QString &subdir, const QString &filter, const QString &exclude = QString());
+      bool generatePackageFileList(QStringList &result, const QString &dir, Packager::Type type);
+      bool createManifestFiles(QStringList &fileList, Packager::Type type, QList<MemFile> &manifestFiles);
+
+      QString getBaseName(Packager::Type type);
       
     private: 
       QString m_name;
       QString m_version;
       QString m_notes;
+      QString m_baseName;
 }; 
 
 #endif

@@ -40,36 +40,52 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
 
     QStringList args = app.arguments();
-    QString root, version;
-    QFileInfo fi;
+    QString name, root, version, notes;
+    QFileInfo rootDir;
     
-    int idx = args.indexOf("--root");
+    int idx = args.indexOf("--name");
+    if(idx != -1 && idx < args.count() -1) {
+        name = args[idx + 1];
+        args.removeAt(idx + 1);
+        args.removeAt(idx);
+    }
+
+
+    idx = args.indexOf("--root");
     if(idx != -1 && idx < args.count() -1) {
         root = args[idx + 1];
-        fi = QFileInfo(root);
+        rootDir = QFileInfo(root);
+        args.removeAt(idx + 1);
+        args.removeAt(idx);
     }
 
     idx = args.indexOf("--version");
-    if(idx != -1 && idx < args.count() -1)
+    if(idx != -1 && idx < args.count() -1) {
         version = args[idx + 1];
+        args.removeAt(idx + 1);
+        args.removeAt(idx);
+    }
 
+    idx = args.indexOf("--notes");
+    if(idx != -1 && idx < args.count() -1) {
+        notes = args[idx + 1];
+        args.removeAt(idx + 1);
+        args.removeAt(idx);
+    }
+
+    if(name.isEmpty())
+       printHelp("--name not specified");
     if(root.isEmpty())
        printHelp("--root not specified");
     if(version.isEmpty())
        printHelp("--version not specified");
     
-    if(!fi.isDir() || !fi.isReadable())
+    if(!rootDir.isDir() || !rootDir.isReadable())
        printHelp(QString("Root path %1 is not accessible").arg(root));
     
 
-    Packager packager("Test", version, "Testnotes");
-    // packager.generatePackageFileList()
-
-    QStringList files;
-    
-    packager.generatePackageFileList(files, fi.filePath(), Packager::BIN);
-    qDebug() << files.join("\n");
-    packager.makePackage(fi.filePath());
+    Packager packager(name, version, notes);
+    packager.makePackage(rootDir.filePath());
 
     return 0;
 }
