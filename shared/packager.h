@@ -24,24 +24,31 @@
 #define PACKAGER_H
 
 #include <QStringList>
+#include <QList>
+#include <QRegExp>
 #include "package.h"
 
 class Packager {
     public: 
       // don't know how to make usable package::Type
       enum Type { NONE = 0, BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8, ALL = 15};
-      Packager::Packager(const QString &packageName, const QString &packageVersion);
+      Packager::Packager(const QString &packageName, const QString &packageVersion,const QString &notes=QString());
+
 
       bool generatePackageFileList(QStringList &result, const QString &dir, Packager::Type=Packager::BIN);
+      bool createManifestFiles(QStringList &fileList, const QString &dir, Packager::Type type);
+
       bool makePackage(const QString &dir, const QString &destdir=QString());
       bool createZipFile(const QString &fileName, const QStringList &files, const QString &rootDir=QString());
       
     protected: 
-      bool generateFileList(QStringList &result, const QString &dir, const QString &filter, const QString &exclude=QString());
+      bool generateFileList(QStringList &result, const QString &root, const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList);
+      bool generateFileList(QStringList &result, const QString &dir, const QString &filter, const QString &exclude);
       
     private: 
       QString m_name;
       QString m_version;
+      QString m_notes;
 }; 
 
 #endif

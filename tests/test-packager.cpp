@@ -35,9 +35,10 @@ int main(int argc, char *argv[])
     QString dir = argc > 1 ? argv[1] : dbusDir + "/dbus" ;
     QString name = argc > 2 ? argv[2] : "test" ;
     QString version = argc > 3 ? argv[3] : "1.0.1" ;
+    QString notes = argc > 4 ? argv[4] : "" ;
     QStringList result;
     
-    Packager packager(name,version); 
+    Packager packager(name,version,notes); 
         
     qDebug() << "BIN packages list";
     packager.generatePackageFileList(result,dir,Packager::BIN);

@@ -24,6 +24,7 @@
 
 #include <QDebug>
 #include <QDir>
+#include <QFile>
 #include <QFileInfo>
 
 #include "packager.h"
@@ -39,8 +40,8 @@
 #endif
 
 
-Packager::Packager(const QString &packageName, const QString &packageVersion)
-: m_name(packageName), m_version(packageVersion)
+Packager::Packager(const QString &packageName, const QString &packageVersion, const QString &packageNotes)
+: m_name(packageName), m_version(packageVersion), m_notes(packageNotes)
 {
 }
 
@@ -103,43 +104,67 @@ bool Packager::createZipFile(const QString &fileName, const QStringList &files, 
     return true;
 } 
 
-bool Packager::generateFileList(QStringList &result, const QString &dir, const QString &filter, const QString &exclude)
+bool Packager::generateFileList(QStringList &fileList, const QString &dir, const QString &filter, const QString &exclude)
 {
-   QDir d(dir);
-   if ( !d.exists() ) 
-   {
-       qDebug() <<"Skipping not existing directory" << QDir::convertSeparators( dir );
+   // create a QListQRegExp
+   QStringList sl = exclude.split(';');
+   QList<QRegExp> rxList;
+
+   // FIXME: add m_excludeList, or use only m_excludeList ?
+
+   QStringList::ConstIterator it = sl.constBegin();
+   for( ; it != sl.constEnd(); ++it) {
+       QRegExp rx(*it);
+       rx.setPatternSyntax(QRegExp::Wildcard);
+
+       rxList += rx;
+   }
+
+   return generateFileList(fileList, dir, QString(), filter, rxList);
+}
+
+bool Packager::generateFileList(QStringList &fileList, const QString &root, const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList)
+{
+   QDir d;
+   if(subdir.isEmpty())
+       d = QDir(root);
+   else
+       d = QDir(root + '/' + subdir);
+   if (!d.exists()) {
+       qDebug() <<"Can't read directory" << QDir::convertSeparators(d.absolutePath());
        return false;
    }
-   d.setFilter( QDir::NoDotAndDotDot | QDir::AllEntries | QDir::AllDirs);
+   d.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries | QDir::AllDirs);
    d.setNameFilters(filter.split(' '));
-   d.setSorting( QDir::Name );
-   // FIXME: use wildcard
-   QString excludeWithoutWildCard = exclude;
-   QStringList excludeList = excludeWithoutWildCard.replace("*","").split(' ');
-    
-   const QFileInfoList list = d.entryInfoList();
+   d.setSorting(QDir::Name);
+
+   QFileInfoList list = d.entryInfoList();
    QFileInfo fi;
      
    for (int i = 0; i < list.size(); i++) {
-       QFileInfo fi = list.at(i);
+       const QFileInfo &fi = list[i];
+       QString fn = fi.fileName();
 
-       bool excluded = false;
-       for(int j = 0; j < excludeList.size(); j++)
-       {
-           if ( excludeList.at(j).size() > 0 && fi.fileName().contains(excludeList.at(j)) )
-               excluded = true;
+       bool bFound = false;
+       QList<QRegExp>::ConstIterator it = excludeList.constBegin();
+       for( ; it != excludeList.constEnd(); ++it) {
+           if((*it).exactMatch(fn)) {
+               bFound = true;
+               break;
+           }
+           if (bFound)
                break;
        }
-       if (excluded)
+       if (bFound)
            continue;
-           
-       if ( fi.isDir() )
-           generateFileList(result, d.absolutePath() + "/" + fi.fileName(), filter, exclude);
-       else 
-       {
-           result.append( QDir::convertSeparators(dir + "/" + fi.fileName()) );
+
+       if (fi.isDir()) {
+           if(!subdir.isEmpty())
+               fn = subdir + '/' + fn;
+           generateFileList(fileList, root, fn, filter, excludeList);
        }
+       else 
+           fileList.append(subdir + '/' + fn);
    }
    return true;
 }
@@ -154,7 +179,8 @@ bool Packager::generatePackageFileList(QStringList &fileList, const QString &dir
        generateFileList(fileList,dir + "/share","*.*","*.bak");
        generateFileList(fileList,dir + "/data","*.*","*.bak");
        generateFileList(fileList,dir + "/etc","*.*","*.bak");
-       generateFileList(fileList,dir + "/manifest","*-bin.*");
+       fileList += dir + "/manifest/"+m_name+"-"+m_version+"-bin.mft";
+       fileList += dir + "/manifest/"+m_name+"-"+m_version+"-bin.ver";
        return true;
    }        
    else if (type == Packager::LIB)
@@ -162,21 +188,83 @@ bool Packager::generatePackageFileList(QStringList &fileList, const QString &dir
        fileList.clear();
        generateFileList(fileList,dir + "/lib","*.dll.a","*.bak");
        generateFileList(fileList,dir + "/include","*.*","*.bak");
-       generateFileList(fileList,dir + "/manifest","*-lib.*");
+       generateFileList(fileList,dir + "/manifest","*-lib.*","*.bak");
+       fileList += dir + "/manifest/"+m_name+"-"+m_version+"-lib.mft";
+       fileList += dir + "/manifest/"+m_name+"-"+m_version+"-lib.ver";
        return true;
    }
    else if (type == Packager::DOC)
    {
        // FIXME: add doc package generating
        fileList.clear();
+       //fileList += dir + "/manifest/"+m_name+"-"+m_version+"-doc.mft";
+       //fileList += dir + "/manifest/"+m_name+"-"+m_version+"-doc.ver";
        return true;
    }
    else if (type == Packager::SRC)
    {
        // FIXME: add src package generating 
        fileList.clear();
+       //fileList += dir + "/manifest/"+m_name+"-"+m_version+"-src.mft";
+       //fileList += dir + "/manifest/"+m_name+"-"+m_version+"-src.ver";
        return true;
    }
+}
+
+bool Packager::createManifestFiles(QStringList &fileList, const QString &dir, Packager::Type type)
+{
+/*
+ does not compile 
+   if (type == Packager::BIN) 
+   {
+       QFile mftFile(dir+"/"+m_name+"-"+m_version+"-bin.mft");
+       mftFile.open(QIODevice::WriteOnly);
+       mftFile.write(fileList.join("\n"));
+       mftFile.close();
+       QFile verFile(dir+"/"+m_name+"-"+m_version+"-bin.ver");
+       verFile.open(QIODevice::WriteOnly);
+       verFile.write(m_name + " " + m_version+": Binaries\n");
+       verFile.write(m_name + ": " + m_notes+"\n");
+       verfile.close();
+   } 
+   else if (type == Packager::LIB)
+   {
+       QFile mftFile(dir+"/"+m_name+"-"+m_version+"-lib.mft");
+       mftFile.open(QIODevice::WriteOnly);
+       mftFile.write(fileList.join("\n"));
+       mftFile.close();
+       QFile verFile(dir+"/"+m_name+"-"+m_version+"-lib.ver");
+       verFile.open(QIODevice::WriteOnly);
+       verFile.write(m_name + " " + m_version+": developer files\n");
+       verFile.write(m_name + ": " + m_notes+"\n");
+       verFile.close();
+   } 
+   else if (type == Packager::DOC)
+   {
+       QFile mftFile(dir+"/"+m_name+"-"+m_version+"-doc.mft");
+       mftFile.open(QIODevice::WriteOnly);
+       mftFile.write(fileList.join("\n"));
+       mftFile.close();
+       QFile verFile(dir+"/"+m_name+"-"+m_version+"-doc.ver");
+       verFile.open(QIODevice::WriteOnly);
+       verFile.write(m_name + " " + m_version+": documentation\n");
+       verFile.write(m_name + ": " + m_notes+"\n");
+       verfile.close();
+   } 
+   else if (type == Packager::SRC)
+   {
+       QFile mftFile(dir+"/"+m_name+"-"+m_version+"-src.mft");
+       mftFile.open(QIODevice::WriteOnly);
+       mftFile.write(fileList.join("\n"));
+       mftFile.close();
+       QFile verFile(dir+"/"+m_name+"-"+m_version+"-src.ver");
+       verFile.open(QIODevice::WriteOnly);
+       verFile.write(m_name + " " + m_version+": source code\n");
+       verFile.write(m_name + ": " + m_notes+"\n");
+       verFile.close();
+   } 
+*/
+   return true;    
 }
 
 bool Packager::makePackage(const QString &dir, const QString &destdir)
@@ -189,21 +277,25 @@ bool Packager::makePackage(const QString &dir, const QString &destdir)
     QString zipFileName;
     zipFileName = m_name+"-"+m_version+"-bin.zip";
     generatePackageFileList(fileList,dir,Packager::BIN);
+    createManifestFiles(fileList,dir,Packager::BIN);
     if (fileList.size() > 0)
         createZipFile(zipFileName,fileList,dir);
 
     zipFileName = m_name+"-"+m_version+"-lib.zip";
     generatePackageFileList(fileList,dir,Packager::LIB);
+    createManifestFiles(fileList,dir,Packager::LIB);
     if (fileList.size() > 0)
         createZipFile(zipFileName,fileList,dir);
 
     zipFileName = m_name+"-"+m_version+"-doc.zip";
     generatePackageFileList(fileList,dir,Packager::DOC);
+    createManifestFiles(fileList,dir,Packager::DOC);
     if (fileList.size() > 0)
         createZipFile(zipFileName,fileList,dir);
 
     zipFileName = m_name+"-"+m_version+"-src.zip";    
     generatePackageFileList(fileList,dir,Packager::SRC);
+    createManifestFiles(fileList,dir,Packager::SRC);
     if (fileList.size() > 0)
         createZipFile(zipFileName,fileList,dir);
 }

@@ -56,9 +56,11 @@ qt4_automoc(${test-settings_SOURCES})
 add_executable(test-settings ${test-settings_SOURCES})
 target_link_libraries(test-settings ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
 
+include_directories(${CMAKE_CURRENT_BINARY_DIR} )
+
 set (test-packager_SOURCES
 	test-packager.cpp
-	../packager/packager.cpp
+	../shared/packager.cpp
 	${quazip_SOURCES}
 )
 

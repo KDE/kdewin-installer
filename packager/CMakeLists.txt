@@ -4,12 +4,12 @@ set (VER_PATCH 0)
 
 set (packager_SOURCES
 	main.cpp
-	packager.cpp
+	../shared/packager.cpp
 	${quazip_SOURCES}
 )
 
 set (packager_HEADERS
-	packager.h
+    ../shared/packager.h
 	${quazip_HEADERS}
 )
 
