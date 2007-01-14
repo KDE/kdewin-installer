@@ -22,10 +22,16 @@ NOTES
 
 TODO
 ====
-1 add long command line options like 
-	1 operation mode --install, --erase, --list --query, ... 
-
-2 use QT_NO_DEBUG_OUTPUT instead of #ifdef DEBUG to avoid debug output 
+1 main 
+  1 use QT_NO_DEBUG_OUTPUT instead of #ifdef DEBUG to avoid debug output 
+  2 build up settings page 
+  2 complete methods for writing windows start menues entries 
+  3 write environment settings scripts (KDELIBS,PATH ??), this may also affect 
+    windows start menu entries writing 
+  4 test, test, test
+  
+2 command line installer 
+    1 add long command line options like operation mode --install, --erase, --list --query, ... 
 
 3 gui 
     1 add check for partial downloads
@@ -44,6 +50,13 @@ Happy hacking
 
 History
 =======
+
+
+version 0.6.0
+-------------
+- first public version 
+- got it compiled as static 
+
 
 version 0.5.1
 -------------
