@@ -312,11 +312,12 @@ bool Packager::makePackage(const QString &dir, const QString &destdir)
     if (fileList.size() > 0)
         createZipFile(getBaseName(Packager::SRC), dir, fileList, manifestFiles);
 
+#ifdef CREATE_COMPLETE_PACKAGE
     generatePackageFileList(fileList, dir, Packager::NONE);
     createManifestFiles(fileList, Packager::NONE, manifestFiles);
     if (fileList.size() > 0)
         createZipFile(getBaseName(Packager::NONE), dir, fileList, manifestFiles);
-
+#endif
     return true;
 }
 
@@ -362,7 +363,7 @@ bool Packager::stripFiles(const QString &dir)
         }
 #endif
         qDebug() << "strip -s " + fi.absoluteFilePath(); 
-        qDebug() << QProcess::execute("strip -s " + fi.absoluteFilePath());
+        QProcess::execute("strip -s " + fi.absoluteFilePath());
     }
 }
 // create debug files for mingw
