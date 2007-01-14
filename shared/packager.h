@@ -34,6 +34,9 @@ class Packager {
       enum Type { NONE = 0, BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8, ALL = 15};
       Packager::Packager(const QString &packageName, const QString &packageVersion,const QString &notes=QString());
 
+      // mingw only: strip all debugging symbols from files to reduce size
+      bool stripFiles(const QString &dir);
+
       bool makePackage(const QString &dir, const QString &destdir=QString());
       
     protected: 

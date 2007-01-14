@@ -26,6 +26,7 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QProcess>
 #include <QBuffer>
 
 #include "packager.h"
@@ -341,3 +342,25 @@ QString Packager::getBaseName(Packager::Type type)
     return name;
 }
 
+bool Packager::stripFiles(const QString &dir)
+{
+    QStringList fileList; 
+    generateFileList(fileList,dir,"bin","*.exe *.dll");
+    generateFileList(fileList,dir,"lib","*.exe *.dll");
+    for (int i = 0; i < fileList.size(); i++) 
+    {
+        QFileInfo fi(dir + "/" + fileList.at(i));
+        // FIXME: add file in use detection, isWritable() returns not the required state
+        // if no windows related functions is available at least parsing the output for 
+        // the string "strip: unable to rename" indicates this condition
+#if 0
+        if (!fi.isWritable())
+        {
+            qDebug() << "file " << fi.absoluteFilePath() << " is in use"; 
+            exit(1);
+        }
+#endif
+        qDebug() << "strip -s " + fi.absoluteFilePath(); 
+        qDebug() << QProcess::execute("strip -s " + fi.absoluteFilePath());
+    }
+}

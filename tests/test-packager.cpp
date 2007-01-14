@@ -56,8 +56,11 @@ int main(int argc, char *argv[])
     packager.generatePackageFileList(result,dir,Packager::SRC);
     qDebug() << result.join("\n");
 
+    packager.stripFiles(dir);
+
     // FIXME: create manifest files
     packager.makePackage(dir);
+
 
     return 0;
 }
