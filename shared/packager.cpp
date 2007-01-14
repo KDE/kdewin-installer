@@ -45,7 +45,7 @@ Packager::Packager(const QString &packageName, const QString &packageVersion, co
 {
 }
 
-bool Packager::createZipFile(const QString &fileName, const QStringList &files, const QString &rootdir)
+bool Packager::createZipFile(const QString &fileName, const QStringList &files, const QString &root)
 {
     QuaZip zip(fileName);
     if(!zip.open(QuaZip::mdCreate)) {
@@ -58,17 +58,14 @@ bool Packager::createZipFile(const QString &fileName, const QStringList &files, 
        
     for (int l = 0; l < files.size(); l++)
     {
-       inFile.setFileName(files.at(l));
+       inFile.setFileName(root + "/" + files.at(l));
    
        if(!inFile.open(QIODevice::ReadOnly)) 
        {
            qWarning("testCreate(): inFile.open(): %s", inFile.errorString().toLocal8Bit().constData());
            return false;
        }
-       QString fileName = QDir::convertSeparators(inFile.fileName());
-       // FIXME: check if trailing '\' is already there 
-       fileName.replace(QDir::convertSeparators(rootdir)+"\\","");
-       if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(fileName, inFile.fileName()))) 
+       if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(files.at(l), inFile.fileName()))) 
        {
            qWarning("testCreate(): outFile.open(): %d", outFile.getZipError());
            return false;
@@ -104,7 +101,7 @@ bool Packager::createZipFile(const QString &fileName, const QStringList &files, 
     return true;
 } 
 
-bool Packager::generateFileList(QStringList &fileList, const QString &dir, const QString &filter, const QString &exclude)
+bool Packager::generateFileList(QStringList &fileList, const QString &root, const QString &subdir, const QString &filter, const QString &exclude)
 {
    // create a QListQRegExp
    QStringList sl = exclude.split(';');
@@ -120,7 +117,7 @@ bool Packager::generateFileList(QStringList &fileList, const QString &dir, const
        rxList += rx;
    }
 
-   return generateFileList(fileList, dir, QString(), filter, rxList);
+   return generateFileList(fileList, root, subdir, filter, rxList);
 }
 
 bool Packager::generateFileList(QStringList &fileList, const QString &root, const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList)
@@ -174,39 +171,38 @@ bool Packager::generatePackageFileList(QStringList &fileList, const QString &dir
    if (type == Packager::BIN)
    {
        fileList.clear();
-       generateFileList(fileList,dir + "/bin","*.exe *.dll","*.bak");
-       generateFileList(fileList,dir + "/lib","*.dll","*.bak");
-       generateFileList(fileList,dir + "/share","*.*","*.bak");
-       generateFileList(fileList,dir + "/data","*.*","*.bak");
-       generateFileList(fileList,dir + "/etc","*.*","*.bak");
-       fileList += dir + "/manifest/"+m_name+"-"+m_version+"-bin.mft";
-       fileList += dir + "/manifest/"+m_name+"-"+m_version+"-bin.ver";
+       generateFileList(fileList,dir,"bin","*.exe *.dll","*.bak");
+       generateFileList(fileList,dir,"lib","*.dll","*.bak");
+       generateFileList(fileList,dir,"share","*.*","*.bak");
+       generateFileList(fileList,dir,"data","*.*","*.bak");
+       generateFileList(fileList,dir,"etc","*.*","*.bak");
+       fileList += "manifest/"+m_name+"-"+m_version+"-bin.mft";
+       fileList += "manifest/"+m_name+"-"+m_version+"-bin.ver";
        return true;
    }        
    else if (type == Packager::LIB)
    {
        fileList.clear();
-       generateFileList(fileList,dir + "/lib","*.dll.a","*.bak");
-       generateFileList(fileList,dir + "/include","*.*","*.bak");
-       generateFileList(fileList,dir + "/manifest","*-lib.*","*.bak");
-       fileList += dir + "/manifest/"+m_name+"-"+m_version+"-lib.mft";
-       fileList += dir + "/manifest/"+m_name+"-"+m_version+"-lib.ver";
+       generateFileList(fileList,dir,"lib","*.dll.a","*.bak");
+       generateFileList(fileList,dir,"include","*.*","*.bak");
+       fileList += "manifest/"+m_name+"-"+m_version+"-lib.mft";
+       fileList += "manifest/"+m_name+"-"+m_version+"-lib.ver";
        return true;
    }
    else if (type == Packager::DOC)
    {
        // FIXME: add doc package generating
        fileList.clear();
-       //fileList += dir + "/manifest/"+m_name+"-"+m_version+"-doc.mft";
-       //fileList += dir + "/manifest/"+m_name+"-"+m_version+"-doc.ver";
+       //fileList += "manifest/"+m_name+"-"+m_version+"-doc.mft";
+       //fileList += "manifest/"+m_name+"-"+m_version+"-doc.ver";
        return true;
    }
    else if (type == Packager::SRC)
    {
        // FIXME: add src package generating 
        fileList.clear();
-       //fileList += dir + "/manifest/"+m_name+"-"+m_version+"-src.mft";
-       //fileList += dir + "/manifest/"+m_name+"-"+m_version+"-src.ver";
+       //fileList += "manifest/"+m_name+"-"+m_version+"-src.mft";
+       //fileList += "manifest/"+m_name+"-"+m_version+"-src.ver";
        return true;
    }
 }
