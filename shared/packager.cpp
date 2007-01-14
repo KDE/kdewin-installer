@@ -39,7 +39,12 @@
 #endif
 
 
-bool Packager::createZipFile(const QString &fileName, const QStringList &files)
+Packager::Packager(const QString &packageName, const QString &packageVersion)
+: m_name(packageName), m_version(packageVersion)
+{
+}
+
+bool Packager::createZipFile(const QString &fileName, const QStringList &files, const QString &rootdir)
 {
     QuaZip zip(fileName);
     if(!zip.open(QuaZip::mdCreate)) {
@@ -60,7 +65,8 @@ bool Packager::createZipFile(const QString &fileName, const QStringList &files)
            return false;
        }
        QString fileName = QDir::convertSeparators(inFile.fileName());
-       fileName.replace(m_root+"\\","");
+       // FIXME: check if trailing '\' is already there 
+       fileName.replace(QDir::convertSeparators(rootdir)+"\\","");
        if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(fileName, inFile.fileName()))) 
        {
            qWarning("testCreate(): outFile.open(): %d", outFile.getZipError());
@@ -97,20 +103,12 @@ bool Packager::createZipFile(const QString &fileName, const QStringList &files)
     return true;
 } 
 
-
-
-Packager::Packager()
-{
-    m_excludeList << "*.bak";
-}
-
-
-bool Packager::generateFileList(const QString &dir, const QString &filter, const QString &exclude)
+bool Packager::generateFileList(QStringList &result, const QString &dir, const QString &filter, const QString &exclude)
 {
    QDir d(dir);
    if ( !d.exists() ) 
    {
-       qDebug() <<"Can't read directory" << QDir::convertSeparators( dir );
+       qDebug() <<"Skipping not existing directory" << QDir::convertSeparators( dir );
        return false;
    }
    d.setFilter( QDir::NoDotAndDotDot | QDir::AllEntries | QDir::AllDirs);
@@ -137,70 +135,75 @@ bool Packager::generateFileList(const QString &dir, const QString &filter, const
            continue;
            
        if ( fi.isDir() )
-           generateFileList( d.absolutePath() + "/" + fi.fileName(), filter, exclude);
+           generateFileList(result, d.absolutePath() + "/" + fi.fileName(), filter, exclude);
        else 
        {
-           m_fileList.append( QDir::convertSeparators(dir + "/" + fi.fileName()) );
+           result.append( QDir::convertSeparators(dir + "/" + fi.fileName()) );
        }
    }
+   return true;
 }
-bool Packager::generatePackageFileList(const QString &dir,Packager::Type type)
+
+bool Packager::generatePackageFileList(QStringList &fileList, const QString &dir, Packager::Type type)
 {
-   m_root = QDir::convertSeparators(dir);
    if (type == Packager::BIN)
    {
-       m_fileList.clear();
-       generateFileList(dir + "/bin","*.exe *.dll","*.bak");
-       generateFileList(dir + "/lib","*.dll","*.bak");
-       generateFileList(dir + "/share","*.*","*.bak");
-       generateFileList(dir + "/data","*.*","*.bak");
-       generateFileList(dir + "/etc","*.*","*.bak");
-       generateFileList(dir + "/manifest","*-bin.*");
+       fileList.clear();
+       generateFileList(fileList,dir + "/bin","*.exe *.dll","*.bak");
+       generateFileList(fileList,dir + "/lib","*.dll","*.bak");
+       generateFileList(fileList,dir + "/share","*.*","*.bak");
+       generateFileList(fileList,dir + "/data","*.*","*.bak");
+       generateFileList(fileList,dir + "/etc","*.*","*.bak");
+       generateFileList(fileList,dir + "/manifest","*-bin.*");
        return true;
    }        
    else if (type == Packager::LIB)
    {
-       m_fileList.clear();
-       generateFileList(dir + "/lib","*.dll.a","*.bak");
-       generateFileList(dir + "/include","*.*","*.bak");
-       generateFileList(dir + "/manifest","*-lib.*");
+       fileList.clear();
+       generateFileList(fileList,dir + "/lib","*.dll.a","*.bak");
+       generateFileList(fileList,dir + "/include","*.*","*.bak");
+       generateFileList(fileList,dir + "/manifest","*-lib.*");
        return true;
    }
    else if (type == Packager::DOC)
    {
-       m_fileList.clear();
-       return false;
+       // FIXME: add doc package generating
+       fileList.clear();
+       return true;
    }
    else if (type == Packager::SRC)
    {
-       m_fileList.clear();
-       return false;
+       // FIXME: add src package generating 
+       fileList.clear();
+       return true;
    }
 }
 
-bool Packager::makePackage(const QString &dir, const QString &packageName, const QString &packageVersion)
+bool Packager::makePackage(const QString &dir, const QString &destdir)
 {
     // generate file lists
     // create manifest files 
     // create zip file 
+    QStringList fileList; 
+    
     QString zipFileName;
-    zipFileName = packageName+"-"+packageVersion+"-bin.zip";
-    generatePackageFileList(dir,Packager::BIN);
-    if (m_fileList.size() > 0)
-        createZipFile(zipFileName,m_fileList);
+    zipFileName = m_name+"-"+m_version+"-bin.zip";
+    generatePackageFileList(fileList,dir,Packager::BIN);
+    if (fileList.size() > 0)
+        createZipFile(zipFileName,fileList,dir);
 
-    zipFileName = packageName+"-"+packageVersion+"-lib.zip";
-    generatePackageFileList(dir,Packager::LIB);
-    if (m_fileList.size() > 0)
-        createZipFile(zipFileName,m_fileList);
+    zipFileName = m_name+"-"+m_version+"-lib.zip";
+    generatePackageFileList(fileList,dir,Packager::LIB);
+    if (fileList.size() > 0)
+        createZipFile(zipFileName,fileList,dir);
 
-    zipFileName = packageName+"-"+packageVersion+"-doc.zip";    
-    generatePackageFileList(dir,Packager::DOC);
-    if (m_fileList.size() > 0)
-        createZipFile(zipFileName,m_fileList);
+    zipFileName = m_name+"-"+m_version+"-doc.zip";
+    generatePackageFileList(fileList,dir,Packager::DOC);
+    if (fileList.size() > 0)
+        createZipFile(zipFileName,fileList,dir);
 
-    zipFileName = packageName+"-"+packageVersion+"-src.zip";    
-    generatePackageFileList(dir,Packager::SRC);
-    if (m_fileList.size() > 0)
-        createZipFile(zipFileName,m_fileList);
+    zipFileName = m_name+"-"+m_version+"-src.zip";    
+    generatePackageFileList(fileList,dir,Packager::SRC);
+    if (fileList.size() > 0)
+        createZipFile(zipFileName,fileList,dir);
 }

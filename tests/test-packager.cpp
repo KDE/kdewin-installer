@@ -31,31 +31,32 @@ int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
-    Packager packager; 
     QString dbusDir = getenv("PROGRAMFILES");
     QString dir = argc > 1 ? argv[1] : dbusDir + "/dbus" ;
+    QString name = argc > 2 ? argv[2] : "test" ;
+    QString version = argc > 3 ? argv[3] : "1.0.1" ;
+    QStringList result;
+    
+    Packager packager(name,version); 
         
-    packager.generateFileList(dir,"*.*",".bak");
-    qDebug() << packager.fileList().join("\n");
-
     qDebug() << "BIN packages list";
-    packager.generatePackageFileList(dir,Packager::BIN);
-    qDebug() << packager.fileList().join("\n");
+    packager.generatePackageFileList(result,dir,Packager::BIN);
+    qDebug() << result.join("\n");
 
     qDebug() << "LIB packages list";
-    packager.generatePackageFileList(dir,Packager::LIB);
-    qDebug() << packager.fileList().join("\n");
+    packager.generatePackageFileList(result,dir,Packager::LIB);
+    qDebug() << result.join("\n");
 
     qDebug() << "DOC packages list";
-    packager.generatePackageFileList(dir,Packager::DOC);
-    qDebug() << packager.fileList().join("\n");
+    packager.generatePackageFileList(result,dir,Packager::DOC);
+    qDebug() << result.join("\n");
 
     qDebug() << "SRC packages list";
-    packager.generatePackageFileList(dir,Packager::SRC);
-    qDebug() << packager.fileList().join("\n");
+    packager.generatePackageFileList(result,dir,Packager::SRC);
+    qDebug() << result.join("\n");
 
     // FIXME: create manifest files
-    packager.makePackage(dir,"dbus","1.0.1");
+    packager.makePackage(dir);
 
     return 0;
 }

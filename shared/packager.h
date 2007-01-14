@@ -30,18 +30,18 @@ class Packager {
     public: 
       // don't know how to make usable package::Type
       enum Type { NONE = 0, BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8, ALL = 15};
-      Packager::Packager();
-      bool generateFileList(const QString &dir, const QString &filter="*.*", const QString &exclude=QString());
-      bool generatePackageFileList(const QString &dir, Packager::Type=Packager::BIN);
-      bool makePackage(const QString &dir, const QString &packageName, const QString &packageVersion);
-      bool createZipFile(const QString &fileName, const QStringList &files);
+      Packager::Packager(const QString &packageName, const QString &packageVersion);
+
+      bool generatePackageFileList(QStringList &result, const QString &dir, Packager::Type=Packager::BIN);
+      bool makePackage(const QString &dir, const QString &destdir=QString());
+      bool createZipFile(const QString &fileName, const QStringList &files, const QString &rootDir=QString());
       
-      QStringList &fileList() { return m_fileList; }
+    protected: 
+      bool generateFileList(QStringList &result, const QString &dir, const QString &filter, const QString &exclude=QString());
       
     private: 
-      QStringList m_fileList; 
-      QStringList m_excludeList;
-      QString m_root;
+      QString m_name;
+      QString m_version;
 }; 
 
 #endif
