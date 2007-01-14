@@ -1,4 +1,4 @@
-#include <Dialog>
+#include <QDialog>
 
 #include "ui_settingspage.h"
 
