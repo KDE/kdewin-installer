@@ -3,6 +3,7 @@
 
 #include <QDialog>
 
+#include "settings.h"
 #include "ui_settingspage.h"
 
 class SettingsPage : public QDialog
@@ -15,6 +16,8 @@ class SettingsPage : public QDialog
  private slots: 
      void accept();
      void reject();
+     void rootPathSelectClicked();
+     void tempPathSelectClicked();
      
  private:
      Ui::SettingsDialog ui;

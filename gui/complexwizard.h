@@ -42,6 +42,7 @@ class ComplexWizard : public QDialog
 
 public:
     ComplexWizard(QWidget *parent = 0);
+    QPushButton *settingsButton;
 
     const QList<WizardPage *> &historyPages() const
     {
@@ -59,7 +60,7 @@ private slots:
     void nextButtonClicked();
     void completeStateChanged();
     void cancelButtonClicked();
-
+    virtual void settingsButtonClicked();
 private:
     void switchPage(WizardPage *oldPage);
 

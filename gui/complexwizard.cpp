@@ -32,6 +32,7 @@ ComplexWizard::ComplexWizard(QWidget *parent)
         : QDialog(parent)
 {
     setWindowFlags(Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);
+    settingsButton = new QPushButton(tr("Settings"));
     cancelButton = new QPushButton(tr("Cancel"));
     backButton = new QPushButton(tr("< &Back"));
     nextButton = new QPushButton(tr("Next >"));
@@ -43,10 +44,12 @@ ComplexWizard::ComplexWizard(QWidget *parent)
     connect(backButton, SIGNAL(clicked()), this, SLOT(backButtonClicked()));
     connect(nextButton, SIGNAL(clicked()), this, SLOT(nextButtonClicked()));
     connect(finishButton, SIGNAL(clicked()), this, SLOT(accept()));
+    connect(settingsButton, SIGNAL(clicked()), this, SLOT(settingsButtonClicked()));
 
 
     buttonLayout = new QHBoxLayout;
     buttonLayout->addStretch(1);
+    buttonLayout->addWidget(settingsButton);
     buttonLayout->addWidget(cancelButton);
     buttonLayout->addWidget(backButton);
     buttonLayout->addWidget(nextButton);
@@ -129,6 +132,12 @@ void ComplexWizard::switchPage(WizardPage *oldPage)
 }
 
 void ComplexWizard::cancelButtonClicked()
+{
+    history.last()->reject();
+    reject();
+}
+
+void ComplexWizard::settingsButtonClicked()
 {
     history.last()->reject();
     reject();

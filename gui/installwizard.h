@@ -26,6 +26,7 @@
 
 #include <QObject>
 #include "complexwizard.h"
+#include "settingspage.h"
 
 class QCheckBox;
 class QLabel;
@@ -37,12 +38,17 @@ class PackageSelectorPage;
 class InstallPage;
 class DownloadPage;
 class FinishPage;
+class SettingsPage;
 
 class InstallWizard : public ComplexWizard
 {
+    Q_OBJECT
 public:
     InstallWizard(QWidget *parent = 0);
 
+private slots:
+    virtual void settingsButtonClicked();
+    
 private:
     TitlePage *titlePage;
     PathSettingsPage *pathSettingsPage;
@@ -50,7 +56,9 @@ private:
     DownloadPage *downloadPage;
     InstallPage *installPage;
     FinishPage *finishPage;
+    SettingsPage *settingsPage;
 
+    friend class SettingsPage;
     friend class TitlePage;
     friend class PathSettingsPage;
     friend class PackageSelectorPage;
@@ -61,6 +69,7 @@ private:
 
 class InstallWizardPage : public WizardPage
 {
+
 public:
     InstallWizardPage(InstallWizard *wizard)
             : WizardPage(wizard), wizard(wizard)

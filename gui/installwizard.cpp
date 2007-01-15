@@ -44,18 +44,22 @@
 #include "configparser.h"
 #include "settings.h"
 #include "installerengine.h"
+#include "settingspage.h"
 
 extern InstallWizard *wizard;
 
 // must be global
 QTreeWidget *tree;
 
-
 InstallerEngine *engine;
 
 InstallWizard::InstallWizard(QWidget *parent)
         : ComplexWizard(parent)
 {
+    settingsPage = new SettingsPage(this);
+#ifndef SETTING_PAGE
+    settingsButton->hide();
+#endif
     titlePage = new TitlePage(this);
     //    packageSelectorPage = new PackageSelectorPage(this);
     setFirstPage(titlePage);
@@ -65,6 +69,12 @@ InstallWizard::InstallWizard(QWidget *parent)
 
     engine = new InstallerEngine(progressBar,instProgressBar);
 }
+
+void InstallWizard::settingsButtonClicked()
+{
+    settingsPage->exec();
+}
+
 
 TitlePage::TitlePage(InstallWizard *wizard)
         : InstallWizardPage(wizard)
