@@ -21,11 +21,12 @@
 **
 ****************************************************************************/
 
-#include <windows.h>
-
 #include <QtCore>
 #include <QtDebug>
 
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
 
 
 #include "installer.h"
@@ -254,12 +255,15 @@ bool Installer::install(const QString &fileName)
     {
         return unzipFile(m_root, fileName);
     }
+#ifdef Q_WS_WIN
     else // for all other formats use windows assignments
     {
         // fixme: use QProcess to determine if all worked fine?
         ShellExecuteW(0, L"open", (WCHAR*)fileName.utf16(), NULL, NULL, SW_SHOWNORMAL);
         return true;
     }
+#else
+#endif
     return false;
 }
 
