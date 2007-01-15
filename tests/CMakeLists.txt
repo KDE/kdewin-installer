@@ -61,9 +61,21 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR} )
 set (test-packager_SOURCES
 	test-packager.cpp
 	../shared/packager.cpp
+	../shared/misc.cpp
 	${quazip_SOURCES}
 )
 
 qt4_automoc(${test-packager_SOURCES})
 add_executable(test-packager ${test-packager_SOURCES})
 target_link_libraries(test-packager ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
+
+
+set (test-startmenu_SOURCES
+	test-startmenu.cpp
+	../shared/misc.cpp
+)
+
+qt4_automoc(${test-startmenu_SOURCES})
+add_executable(test-startmenu ${test-startmenu_SOURCES})
+target_link_libraries(test-startmenu ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
+

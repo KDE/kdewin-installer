@@ -32,7 +32,7 @@
 #include "packager.h"
 #include "quazip.h" 
 #include "quazipfile.h" 
-
+#include "misc.h"
 
 #ifndef QZIP_BUFFER
 # define QZIP_BUFFER (256 * 1024)
@@ -131,72 +131,6 @@ bool Packager::createZipFile(const QString &baseName, const QString &root, const
     }
     return true;
 } 
-
-bool Packager::generateFileList(QStringList &fileList, const QString &root, const QString &subdir, const QString &filter, const QString &exclude)
-{
-   // create a QListQRegExp
-   QStringList sl = exclude.split(' ');
-   QList<QRegExp> rxList;
-
-   if(!sl.contains("*.bak"))
-       sl += "*.bak";
-
-   QStringList::ConstIterator it = sl.constBegin();
-   for( ; it != sl.constEnd(); ++it) {
-       QRegExp rx(*it);
-       rx.setPatternSyntax(QRegExp::Wildcard);
-
-       rxList += rx;
-   }
-
-   return generateFileList(fileList, root, subdir, filter, rxList);
-}
-
-bool Packager::generateFileList(QStringList &fileList, const QString &root, const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList)
-{
-   QDir d;
-   if(subdir.isEmpty())
-       d = QDir(root);
-   else
-       d = QDir(root + '/' + subdir);
-   if (!d.exists()) {
-       qDebug() << "Can't read directory" << QDir::convertSeparators(d.absolutePath());
-       return false;
-   }
-   d.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries | QDir::AllDirs);
-   d.setNameFilters(filter.split(' '));
-   d.setSorting(QDir::Name);
-
-   QFileInfoList list = d.entryInfoList();
-   QFileInfo fi;
-     
-   for (int i = 0; i < list.size(); i++) {
-       const QFileInfo &fi = list[i];
-       QString fn = fi.fileName();
-
-       bool bFound = false;
-       QList<QRegExp>::ConstIterator it = excludeList.constBegin();
-       for( ; it != excludeList.constEnd(); ++it) {
-           if((*it).exactMatch(fn)) {
-               bFound = true;
-               break;
-           }
-           if (bFound)
-               break;
-       }
-       if (bFound)
-           continue;
-
-       if (fi.isDir()) {
-           if(!subdir.isEmpty())
-               fn = subdir + '/' + fn;
-           generateFileList(fileList, root, fn, filter, excludeList);
-       }
-       else 
-           fileList.append(subdir + '/' + fn);
-   }
-   return true;
-}
 
 bool Packager::generatePackageFileList(QStringList &fileList, const QString &dir, Packager::Type type)
 {

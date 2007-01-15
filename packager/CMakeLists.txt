@@ -5,11 +5,13 @@ set (VER_PATCH 0)
 set (packager_SOURCES
 	main.cpp
 	../shared/packager.cpp
+	../shared/misc.cpp
 	${quazip_SOURCES}
 )
 
 set (packager_HEADERS
     ../shared/packager.h
+	../shared/misc.h
 	${quazip_HEADERS}
 )
 
