@@ -4,19 +4,16 @@
 #include "settingspage.h"
 
  
-SettingsDialog::SettingsDialog(QWidget *parent)
+SettingsPage::SettingsPage(QWidget *parent)
      : QDialog(parent)
 {
      ui.setupUi(this);
 
      ui.rootPathEdit->setText(settings.value("rootdir").toString());
      ui.tempPathEdit->setText(settings.value("tempdir").toString());
-
-     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }
 
-void SettingsDialog::accept()
+void SettingsPage::accept()
 {
     if (ui.createStartMenuEntries->checkState() == Qt::Checked)
         ;
@@ -24,7 +21,7 @@ void SettingsDialog::accept()
     settings.setValue("tempdir",ui.tempPathEdit->text());
 }
 
-void SettingsDialog::reject()
+void SettingsPage::reject()
 {
 }
  
@@ -41,3 +38,5 @@ int main(int argc, char **argv)
 }
  	
 #endif
+
+#include "settingspage.moc"

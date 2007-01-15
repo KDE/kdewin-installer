@@ -1,13 +1,16 @@
+#ifndef SETTINGSPAGE_H
+#define SETTINGSPAGE_H
+
 #include <QDialog>
 
 #include "ui_settingspage.h"
 
-class SettingsDialog : public QDialog
+class SettingsPage : public QDialog
 {
      Q_OBJECT
 
  public:
-     SettingsDialog(QWidget *parent = 0);
+     SettingsPage(QWidget *parent = 0);
 
  private slots: 
      void accept();
@@ -18,3 +21,5 @@ class SettingsDialog : public QDialog
      Settings settings;
 };
  
+
+#endif
