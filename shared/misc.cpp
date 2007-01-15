@@ -94,6 +94,67 @@ bool generateFileList(QStringList &fileList, const QString &root, const QString 
    return true;
 }
 
+#include <windows.h>
+#include <windowsx.h>
+#include <objbase.h>
+#include <shlobj.h>
+#include <initguid.h>
+
+// from http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/platform/shell/programmersguide/shell_int/shell_int_programming/shortcuts/shortcut.asp
+// CreateLink - uses the Shell's IShellLink and IPersistFile interfaces 
+//              to create and store a shortcut to the specified object. 
+//
+// Returns the result of calling the member functions of the interfaces. 
+//
+// Parameters:
+// lpszPathObj  - address of a buffer containing the path of the object. 
+// lpszPathLink - address of a buffer containing the path where the 
+//                Shell link is to be stored. 
+// lpszDesc     - address of a buffer containing the description of the 
+//                Shell link. 
+
+HRESULT CreateLink(LPCSTR lpszPathObj, LPCSTR lpszPathLink, LPCSTR lpszDesc) 
+{ 
+    HRESULT hres; 
+    IShellLink* psl; 
+ 
+    // Get a pointer to the IShellLink interface. 
+    hres = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, 
+                            IID_IShellLink, (LPVOID*)&psl); 
+    if (SUCCEEDED(hres)) 
+    { 
+        IPersistFile* ppf; 
+ 
+        // Set the path to the shortcut target and add the description. 
+        psl->SetPath(lpszPathObj); 
+        psl->SetDescription(lpszDesc); 
+ 
+        // Query IShellLink for the IPersistFile interface for saving the 
+        // shortcut in persistent storage. 
+        hres = psl->QueryInterface(IID_IPersistFile, (LPVOID*)&ppf); 
+ 
+        if (SUCCEEDED(hres)) 
+        { 
+            WCHAR wsz[MAX_PATH]; 
+ 
+            // Ensure that the string is Unicode. 
+            MultiByteToWideChar(CP_ACP, 0, lpszPathLink, -1, wsz, MAX_PATH); 
+			
+            // Add code here to check return value from MultiByteWideChar 
+            // for success.
+ 
+            // Save the link by calling IPersistFile::Save. 
+            hres = ppf->Save(wsz, TRUE); 
+            ppf->Release(); 
+        } 
+        else 
+        	qDebug() << "error" ;
+        psl->Release(); 
+    } 
+    return hres; 
+}
+
+
 /* 
  * create start menu entries from installed desktop files 
  */
@@ -108,13 +169,17 @@ bool createStartMenuEntries(const QString &dir, const QString &category)
 		{
 		  QSettings settings(dir + "/" + fileList[i], QSettings::IniFormat);
 	    QString name = settings.value("Desktop Entry/Name").toString();
-	    QString MimeType = settings.value("Desktop Entry/Mime Type").toString();
-	    QString GenericName = settings.value("Desktop Entry/GenericName").toString();
-	    QString Exec = settings.value("Desktop Entry/Exec").toString();
-	    QString Icon = settings.value("Desktop Entry/Icon").toString();
-			QString Categories = settings.value("Desktop Entry/Categories").toString();
+	    QString mimeType = settings.value("Desktop Entry/Mime Type").toString();
+	    QString genericName = settings.value("Desktop Entry/GenericName").toString();
+	    QString exec = settings.value("Desktop Entry/Exec").toString();
+	    QString icon = settings.value("Desktop Entry/Icon").toString();
+			QString categories = settings.value("Desktop Entry/Categories").toString();
 			
-			qDebug() << name << MimeType << GenericName << Exec << Icon << Categories; 
+			if (!exec.isEmpty()) 
+			{
+    			qDebug() << fileList[i].replace(".desktop",".lnk").replace("/","_") << name << mimeType << genericName << exec << icon << categories; 
+          CreateLink(exec.toAscii().data(),fileList[i].replace(".desktop",".lnk").replace("/","_").toAscii().data(),"description");
+      }
     }
  		// for all found files create entry in windows startmenu 
 		// question: how to do ? 
