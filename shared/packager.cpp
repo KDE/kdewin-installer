@@ -365,6 +365,7 @@ bool Packager::stripFiles(const QString &dir)
         qDebug() << "strip -s " + fi.absoluteFilePath(); 
         QProcess::execute("strip -s " + fi.absoluteFilePath());
     }
+    return true;
 }
 // create debug files for mingw
 //  see http://www.daemon-systems.org/man/strip.1.html
@@ -391,4 +392,5 @@ bool Packager::createDebugFiles(const QString &dir)
         QProcess::execute("objcopy --strip-debug " + fi.absoluteFilePath());
         QProcess::execute("objcopy --add-gnu-debuglink=" + fi.absoluteFilePath() + ".dbg " + fi.absoluteFilePath());
     }
+    return true;
 }
