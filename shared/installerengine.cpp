@@ -13,6 +13,19 @@
 #include "packagelist.h"
 #include "configparser.h"
 
+class MyQTreeWidgetItem : public QTreeWidgetItem
+{
+public:
+    MyQTreeWidgetItem(QTreeWidget *parent, const QStringList &strings, int type = Type)
+        : QTreeWidgetItem(parent, strings, type)
+    {}
+    MyQTreeWidgetItem(QTreeWidgetItem *parent, const QStringList &strings, int type = Type)
+        : QTreeWidgetItem(parent, strings, type)
+    {}
+    virtual ~MyQTreeWidgetItem() {}
+
+};
+
 InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar)
 {
     m_downloader = new Downloader(/*blocking=*/ true,progressBar);
@@ -135,8 +148,8 @@ bool InstallerEngine::downloadPackageLists()
 void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
 {
     QStringList labels;
-    QList<QTreeWidgetItem *> items;
-    // QTreeWidgetItem *item;
+    QList<MyQTreeWidgetItem *> items;
+    // MyQTreeWidgetItem *item;
 
     labels
     << "Package"
@@ -162,7 +175,7 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
     QList <PackageList *>::iterator k;
     for (k = m_packageListList.begin(); k != m_packageListList.end(); ++k)
     {
-        QTreeWidgetItem *category = new QTreeWidgetItem((QTreeWidget*)0, QStringList((*k)->Name()));
+        MyQTreeWidgetItem *category = new MyQTreeWidgetItem((QTreeWidget*)0, QStringList((*k)->Name()));
         categoryList.append(category);
 
         // adding sub items
@@ -178,7 +191,7 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
             << (i->isInstalled(Package::DOC) ? "-I-" : QString())
             << (i->isInstalled(Package::SRC) ? "-I-" : QString())
             ;
-            QTreeWidgetItem *item = new QTreeWidgetItem(category, data);
+            MyQTreeWidgetItem *item = new MyQTreeWidgetItem(category, data);
             if (i->hasType(Package::BIN) && !i->isInstalled(Package::BIN)) item->setCheckState(3, Qt::Unchecked);
             if (i->hasType(Package::LIB) && !i->isInstalled(Package::LIB)) item->setCheckState(4, Qt::Unchecked);
             if (i->hasType(Package::DOC) && !i->isInstalled(Package::DOC)) item->setCheckState(5, Qt::Unchecked);
@@ -191,13 +204,13 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
      QStringList data; 
      data.clear(); 
      data << "kdelibs" << "4.1.2";
-     item = new QTreeWidgetItem(categoryList.at(5), data);
+     item = new MyQTreeWidgetItem(categoryList.at(5), data);
      data.clear(); 
      data << "kdebase" << "4.1.2";
-     item = new QTreeWidgetItem(categoryList.at(5), data);
+     item = new MyQTreeWidgetItem(categoryList.at(5), data);
      data.clear(); 
      data << "kdepim" << "4.1.2";
-     item = new QTreeWidgetItem(categoryList.at(5), data);
+     item = new MyQTreeWidgetItem(categoryList.at(5), data);
     */
     tree->expandAll();
 }
@@ -232,7 +245,7 @@ void InstallerEngine::itemClickedPackageSelectorPage(QTreeWidgetItem *item, int 
            for (int j = 0; j < items.size(); ++j) 
            {
            	   qDebug() << items.at(j);
-               QTreeWidgetItem * depItem = items.at(j);
+               MyQTreeWidgetItem * depItem = static_cast<MyQTreeWidgetItem*>(items[j]);
                /// the dependency is only for bin package and one way to switch on
                if (depItem->text(3) != "-I-")
                    depItem->setCheckState(3,item->checkState(column));
@@ -246,7 +259,7 @@ bool InstallerEngine::downloadPackages(QTreeWidget *tree, const QString &categor
 {
     for (int i = 0; i < tree->topLevelItemCount(); i++)
     {
-        QTreeWidgetItem *item = tree->topLevelItem(i);
+        MyQTreeWidgetItem *item = static_cast<MyQTreeWidgetItem*>(tree->topLevelItem(i));
         qDebug() << __FUNCTION__ << " " << item->text(0);
         if (category.isEmpty() || item->text(0) == category)
         {
@@ -258,7 +271,7 @@ bool InstallerEngine::downloadPackages(QTreeWidget *tree, const QString &categor
             }
             for (int j = 0; j < item->childCount(); j++)
             {
-                QTreeWidgetItem *child = item->child(j);
+                MyQTreeWidgetItem *child = static_cast<MyQTreeWidgetItem*>(item->child(j));
                 qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
                 Package::Types types;
                 types |= child->checkState(3) == Qt::Checked ? Package::BIN : Package::NONE;
@@ -278,7 +291,7 @@ bool InstallerEngine::installPackages(QTreeWidget *tree,const QString &category)
 {
     for (int i = 0; i < tree->topLevelItemCount(); i++)
     {
-        QTreeWidgetItem *item = tree->topLevelItem(i);
+        MyQTreeWidgetItem *item = static_cast<MyQTreeWidgetItem*>(tree->topLevelItem(i));
         qDebug() << __FUNCTION__ << " " << item->text(0);
         if (category.isEmpty() || item->text(0) == category)
         {
@@ -290,7 +303,7 @@ bool InstallerEngine::installPackages(QTreeWidget *tree,const QString &category)
             }
             for (int j = 0; j < item->childCount(); j++)
             {
-                QTreeWidgetItem *child = item->child(j);
+                MyQTreeWidgetItem *child = static_cast<MyQTreeWidgetItem*>(item->child(j));
                 qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
                 Package::Types types;
                 types |= child->checkState(3) == Qt::Checked ? Package::BIN : Package::NONE;
