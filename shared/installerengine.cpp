@@ -29,7 +29,13 @@ bool InstallerEngine::downloadGlobalConfig()
 
     // FIXME: must not be standalone 
     Installer *installer = new Installer(packageList,m_instProgressBar );
-    installer->setRoot(m_settings.value("rootdir").toString());
+    QString root = m_settings.value("rootdir").toString();
+    QFileInfo fi(root);
+    if(!fi.exists() || !fi.isDir()) {
+        root = QDir::currentPath();
+        setRoot(root);
+    }
+    installer->setRoot(root);
     m_configParser = new ConfigParser(packageList);
 
 #if 1
@@ -43,7 +49,7 @@ bool InstallerEngine::downloadGlobalConfig()
 #endif
     qDebug() << "parsing remote configuration file";
     int ret = m_configParser->parseFromFile("config.txt");
-    QFileInfo fi("config-local.txt");
+    fi = QFileInfo("config-local.txt");
     if (fi.exists()) 
     {
         ret = m_configParser->parseFromFile(fi.absoluteFilePath());

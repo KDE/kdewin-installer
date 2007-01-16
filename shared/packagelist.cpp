@@ -112,7 +112,7 @@ bool PackageList::writeToFile(const QString &_fileName)
     QFile file(fileName);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
-        qDebug() << "could not open '"  << fileName << "' for writing";
+        qDebug() << "could not open '"  << fileName << "' for writing (" << file.errorString() << ")";
         return false;
     }
 
