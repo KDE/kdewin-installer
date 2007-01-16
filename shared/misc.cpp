@@ -185,10 +185,12 @@ bool createStartMenuEntries(const QString &dir, const QString &category)
 		// question: how to do ? 
 		// note: this method should be called after installing when the related setting page 
 		//       entry is checked 
+    return true;
 }
 
 bool removeStartMenuEntries(const QString &dir, const QString &category)
 {
 		// delete all installed startmenu for this package 
 		// question: how to store created start menu entries 
+    return true;
 }
