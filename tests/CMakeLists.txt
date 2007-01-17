@@ -8,6 +8,8 @@ set (test_mirrors_SOURCES
 	../shared/downloaderprogress.cpp
 )
 
+source_group(quazip FILES ${quazip_SOURCES} ${quazip_HEADERS})
+
 qt4_automoc(${test_mirrors_SOURCES})
 
 add_executable(test-mirrors ${test_mirrors_SOURCES})

@@ -28,6 +28,8 @@ set(all_sources ${installer_GUI_SOURCES}
                 ${quazip_SOURCES}
                 ${quazip_HEADERS})
 
+source_group(quazip FILES ${quazip_SOURCES} ${quazip_HEADERS})
+
 qt4_automoc(${all_sources})
 
 add_executable(kdewin-installer-gui ${all_sources})

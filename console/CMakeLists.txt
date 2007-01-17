@@ -19,6 +19,8 @@ set(all_sources ${installer_CONSOLE_SOURCES}
                 ${quazip_SOURCES}
                 ${quazip_HEADERS})
 
+source_group(quazip FILES ${quazip_SOURCES} ${quazip_HEADERS})
+
 qt4_automoc(${all_sources})
 
 add_executable(kdewin-installer-console ${all_sources})
