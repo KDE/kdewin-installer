@@ -87,12 +87,12 @@ public:
     void add(const QString &path, Package::Type contentType, bool bInstalled = false);
     void add(const QString &path, const QByteArray &contentType, bool bInstalled = false);
     // return state of a specific item type is available
-    bool hasType(Package::Type contentType);
+    bool hasType(Package::Type contentType) const;
 
-    static QString baseURL;
+    static QString baseURL;     // FIXME: why is this static?
 
     // check if specific content is already installed
-    bool isInstalled(Package::Type type);
+    bool isInstalled(Package::Type type) const;
     // set that a specific content is already installed
     void setInstalled(Package::Type type);
 

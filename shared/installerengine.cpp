@@ -172,15 +172,15 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
 
     qDebug() << "adding categories size:" << m_configParser->sites()->size();
 
-    QList <PackageList *>::iterator k;
-    for (k = m_packageListList.begin(); k != m_packageListList.end(); ++k)
+    QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
+    for ( ; k != m_packageListList.constEnd(); ++k)
     {
         MyQTreeWidgetItem *category = new MyQTreeWidgetItem((QTreeWidget*)0, QStringList((*k)->Name()));
         categoryList.append(category);
 
         // adding sub items
-        QList<Package>::iterator i;
-        for (i = (*k)->packageList()->begin(); i != (*k)->packageList()->end(); ++i)
+        QList<Package>::ConstIterator i = (*k)->packageList().constBegin();
+        for ( ; i != (*k)->packageList().constEnd(); ++i)
         {
             QStringList data;
             data << i->name()

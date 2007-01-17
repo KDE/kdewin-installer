@@ -43,26 +43,30 @@ class PackageList : public QObject
 public:
     enum Type {SourceForge, ApacheModIndex};
 
-    PackageList(Downloader *downloader= NULL);
+    PackageList(Downloader *downloader=NULL);
     virtual ~PackageList();
-    void addPackage(Package const &package);
-    void listPackages(const QString &title=QString::null);
-    bool readFromFile(const QString &_fileName=QString::null);
+    void addPackage(const Package &package);
+    void listPackages(const QString &title=QString());
+    bool readFromFile(const QString &_fileName=QString());
     bool readHTMLFromFile(const QString &fileName, PackageList::Type type=PackageList::SourceForge);
     bool readHTMLFromByteArray(const QByteArray &ba, PackageList::Type type=PackageList::SourceForge);
     bool writeToFile(QString const &fileName=QString::null);
     Package *getPackage(QString const &pkgName, const QByteArray &version = QByteArray());
     bool updatePackage(Package &pkg);
-    int size();
-    QList <Package> *packageList()
+
+    int size() const
+    {
+        return m_packageList.size();
+    }
+    const QList <Package> &packageList() const
     {
         return m_packageList;
     }
     void setConfigFileName(const QString &file)
     {
-        m_configFile = "/" + file;
+        m_configFile = '/' + file;
     }
-    QString Name()
+    const QString &Name() const
     {
         return m_name;
     }
@@ -70,7 +74,7 @@ public:
     {
         m_name = name;
     }
-    QString BaseURL()
+    const QString &BaseURL() const
     {
         return m_baseURL;
     }
@@ -92,7 +96,7 @@ signals:
 private:
     bool readHTMLInternal(QIODevice *ioDev, PackageList::Type type);
 private:
-    QList<Package> *m_packageList;
+    QList<Package> m_packageList;
     QString root;
     QString m_configFile;
     Downloader *downloader;

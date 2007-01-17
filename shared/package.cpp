@@ -124,10 +124,10 @@ void Package::add(const QString &path, Package::Type contentType, bool bInstalle
     m_packages.append(desc);
 }
 
-bool Package::hasType(Package::Type contentType)
+bool Package::hasType(Package::Type contentType) const
 {
-    QList<packageDescr>::iterator it = m_packages.begin();
-    for( ; it != m_packages.end(); ++it) {
+    QList<packageDescr>::ConstIterator it = m_packages.constBegin();
+    for( ; it != m_packages.constEnd(); ++it) {
         if(contentType == (*it).contentType)
             return true;
     }
@@ -173,10 +173,10 @@ QString Package::getTypeAsString(bool requiredIsInstalled, const QString &delim)
     return types;
 }
 
-bool Package::isInstalled(Package::Type contentType)
+bool Package::isInstalled(Package::Type contentType) const
 {
-    QList<packageDescr>::iterator it = m_packages.begin();
-    for( ; it != m_packages.end(); ++it) {
+    QList<packageDescr>::ConstIterator it = m_packages.constBegin();
+    for( ; it != m_packages.constEnd(); ++it) {
         if(contentType == (*it).contentType)
             return (*it).bInstalled;
     }

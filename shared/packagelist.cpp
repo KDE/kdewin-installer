@@ -41,7 +41,6 @@ PackageList::PackageList(Downloader *_downloader)
 #endif
 
     downloader = _downloader ? _downloader : new Downloader;
-    m_packageList = new QList<Package>;
     root = ".";
     m_configFile = "/packages.txt";
 
@@ -52,8 +51,6 @@ PackageList::~PackageList()
 #ifdef DEBUG
     qDebug() << __FUNCTION__;
 #endif
-
-    delete m_packageList;
 }
 
 bool PackageList::hasConfig()
@@ -68,7 +65,7 @@ void PackageList::addPackage(const Package &package)
     qDebug() << __FUNCTION__ << pkg.toString();
 #endif
 
-    m_packageList->append(package);
+    m_packageList.append(package);
 }
 
 Package *PackageList::getPackage(const QString &pkgName, const QByteArray &version)
@@ -77,8 +74,8 @@ Package *PackageList::getPackage(const QString &pkgName, const QByteArray &versi
     qDebug() << __FUNCTION__;
 #endif
 
-    QList<Package>::iterator it = m_packageList->begin();
-    for ( ; it != m_packageList->end(); ++it)
+    QList<Package>::iterator it = m_packageList.begin();
+    for ( ; it != m_packageList.end(); ++it)
         if (it->name() == pkgName) {
             if(!version.isEmpty() && it->version() != version)
                 continue;
@@ -95,7 +92,7 @@ void PackageList::listPackages(const QString &title)
 
     qDebug() << title;
     QList<Package>::iterator i;
-    for (i = m_packageList->begin(); i != m_packageList->end(); ++i)
+    for (i = m_packageList.begin(); i != m_packageList.end(); ++i)
         qDebug(i->toString(true," - ").toLatin1());
 }
 
@@ -105,7 +102,7 @@ bool PackageList::writeToFile(const QString &_fileName)
     qDebug() << __FUNCTION__;
 #endif
 
-    if (m_packageList->count() == 0)
+    if (m_packageList.count() == 0)
         return false;
 
     QString fileName = _fileName.isEmpty() ? root + m_configFile : _fileName;
@@ -122,7 +119,7 @@ bool PackageList::writeToFile(const QString &_fileName)
     out << "# package list" << "\n";
     out << "@format 1.0" << "\n";
     QList<Package>::iterator i;
-    for (i = m_packageList->begin(); i != m_packageList->end(); ++i)
+    for (i = m_packageList.begin(); i != m_packageList.end(); ++i)
         i->write(out);
     return true;
 }
@@ -139,7 +136,7 @@ bool PackageList::readFromFile(const QString &_fileName)
     if (!file.open(QIODevice::ReadOnly| QIODevice::Text))
         return false;
 
-    m_packageList->clear();
+    m_packageList.clear();
     QTextStream in(&file);
 
     QString comment = in.readLine();
@@ -157,7 +154,7 @@ bool PackageList::readFromFile(const QString &_fileName)
 
 bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type)
 {
-    m_packageList->clear();
+    m_packageList.clear();
 
 
     switch (type)
@@ -408,15 +405,6 @@ bool PackageList::installPackage(const QString &pkgName, Package::Types types)
     return true;
 }
 
-int PackageList::size()
-{
-#ifdef DEBUG
-    qDebug() << __FUNCTION__;
-#endif
-
-    return m_packageList->size();
-}
-
 void PackageList::dump(const QString &title)
 {
     qDebug() << "class PackageList dump: " << title;
@@ -424,8 +412,8 @@ void PackageList::dump(const QString &title)
     qDebug() << "root         " << root;
     qDebug() << "m_configFile " << m_configFile;
     qDebug() << "m_baseURL    " << m_baseURL;
-    QList<Package>::iterator it = m_packageList->begin();
-    for ( ; it != m_packageList->end(); ++it)
+    QList<Package>::iterator it = m_packageList.begin();
+    for ( ; it != m_packageList.end(); ++it)
         it->dump();
 }
 
