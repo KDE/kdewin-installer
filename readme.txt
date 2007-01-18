@@ -30,6 +30,7 @@ TODO
     windows start menu entries writing 
   4 add mode for installing from local package directory
   5 test, test, test
+  6 add exclude package config item
   
 2 command line installer 
     1 add long command line options like operation mode --install, --erase, --list --query, ... 
