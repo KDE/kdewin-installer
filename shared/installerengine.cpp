@@ -13,19 +13,6 @@
 #include "packagelist.h"
 #include "configparser.h"
 
-class MyQTreeWidgetItem : public QTreeWidgetItem
-{
-public:
-    MyQTreeWidgetItem(QTreeWidget *parent, const QStringList &strings, int type = Type)
-        : QTreeWidgetItem(parent, strings, type)
-    {}
-    MyQTreeWidgetItem(QTreeWidgetItem *parent, const QStringList &strings, int type = Type)
-        : QTreeWidgetItem(parent, strings, type)
-    {}
-    virtual ~MyQTreeWidgetItem() {}
-
-};
-
 InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar)
 {
     m_downloader = new Downloader(/*blocking=*/ true,progressBar);
@@ -145,11 +132,161 @@ bool InstallerEngine::downloadPackageLists()
 
 #ifdef USE_GUI
 
+
+int typeToColumn(Package::Type type)
+{
+    switch (type)
+    {
+        case Package::BIN : return 3;
+        case Package::LIB : return 4;
+        case Package::DOC : return 5;
+        case Package::SRC : return 6;
+        default: return 2;
+    }	
+}
+
+Package::Type columnToType(int column)
+{
+    switch (column)
+    {
+        case 3: return Package::BIN;
+        case 4: return Package::LIB; 
+        case 5: return Package::DOC; 
+        case 6: return Package::SRC; 
+        case 2: return Package::ALL;
+        default : return Package::NONE;
+    }	
+}
+
+enum iconType {_install, _autoinstall,_keepinstalled, _update, _remove, _nothing, _disable}; 
+
+void setIcon(QTreeWidgetItem &item, Package::Type type, iconType action)
+{
+    static QIcon *ai;
+    static QIcon *ii;
+    static QIcon *ki;
+    static QIcon *ni;
+    static QIcon *id;
+    static QIcon *dl;
+    static QIcon *up;
+ 
+    if (!ii) 
+    {
+        ai = new QIcon(":/images/autoinstall.xpm");
+        ii = new QIcon(":/images/install.xpm");
+        ki = new QIcon(":/images/keepinstalled.xpm");
+        ni = new QIcon(":/images/noinst.xpm");
+        id = new QIcon(":/images/install_disabled.xpm");
+        dl = new QIcon(":/images/del.xpm");
+        up = new QIcon(":/images/update.xpm");
+    }
+
+    int column = typeToColumn(type);
+	switch(action)
+	{
+        case _autoinstall: item.setIcon(column,*ai); return;
+        case _install: item.setIcon(column,*ii); return;
+        case _keepinstalled: item.setIcon(column,*ki); return;
+        case _remove:  item.setIcon(column,*dl); return;
+        case _update:  item.setIcon(column,*up); return;
+        case _nothing: item.setIcon(column,*ni); return;
+        case _disable: item.setIcon(column,*id); return;
+    }
+    // FIXME: does not work, don't know how to set the icon size 
+    // item.icon(column).setIconSize(QSize(22,22));
+}
+
+enum actionType { _initial, _next, _deps}; 
+enum stateType { _Install, _Update, _Remove, _Nothing}; 
+
+void setState(QTreeWidgetItem &item, const Package &pkg, int column, actionType action)
+{
+    Package::Type type = columnToType(column);
+
+    if (type != Package::ALL && !pkg.hasType(type)) 
+    {
+        setIcon(item,type,_disable);
+        qDebug() << "disabled";
+        return; 
+    }
+
+    switch (action)
+    {
+        case _initial: 
+            if (pkg.isInstalled(type))
+            {
+                setIcon(item,type,_keepinstalled );
+                item.setData(column,Qt::UserRole,_Nothing);
+            }
+            else
+            {
+                setIcon(item,type,_nothing);
+                item.setData(column,Qt::UserRole,_Nothing);
+            }
+            break;
+        
+        case _next:
+            stateType state = (stateType)item.data(column,Qt::UserRole).toInt();
+            qDebug() << __FUNCTION__ << state << type;
+            // enter next state depending on current state 
+            switch(state)
+            {
+                case _Nothing:  
+                    if (pkg.isInstalled(type))
+                    {
+                        setIcon(item,type,_remove);
+                        item.setData(column,Qt::UserRole,_Remove);
+                    }
+                    else
+                    {
+                        setIcon(item,type,_install);
+                        item.setData(column,Qt::UserRole,_Install);
+                    }
+                    break;
+
+                case _Remove:  
+                    item.setData(column,Qt::UserRole,_Nothing);
+                    setIcon(item,type,_nothing);  
+                    break;
+
+                case _Install:  
+                    item.setData(column,Qt::UserRole,_Nothing);
+                    setIcon(item,type,_nothing);  
+                    break;
+            }
+        case _deps:
+            if (pkg.isInstalled(type))
+            {
+            }
+            else
+            {
+                // FIXME: should be _autoinstall, but then the main package is using this icon too 
+                setIcon(item,type,_install);
+                item.setData(column,Qt::UserRole,_install);
+            }
+
+       }        
+}
+
+bool isMarkedForInstall(QTreeWidgetItem &item,Package::Type type)
+{
+    int column = typeToColumn(type);
+    stateType state = (stateType)item.data(column,Qt::UserRole).toInt();
+    return state == _Install;
+}
+
+bool isMarkedForRemoval(QTreeWidgetItem &item,Package::Type type)
+{
+    int column = typeToColumn(type);
+    stateType state = (stateType)item.data(column,Qt::UserRole).toInt();
+    return state == _Remove;
+}
+
 void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
 {
     QStringList labels;
-    QList<MyQTreeWidgetItem *> items;
-    // MyQTreeWidgetItem *item;
+    QList<QTreeWidgetItem *> items;
+    // QTreeWidgetItem *item;
 
     labels
     << "Package"
@@ -175,7 +312,7 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
     QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
     for ( ; k != m_packageListList.constEnd(); ++k)
     {
-        MyQTreeWidgetItem *category = new MyQTreeWidgetItem((QTreeWidget*)0, QStringList((*k)->Name()));
+        QTreeWidgetItem *category = new QTreeWidgetItem((QTreeWidget*)0, QStringList((*k)->Name()));
         categoryList.append(category);
 
         // adding sub items
@@ -186,32 +323,16 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
             data << i->name()
             << i->version()
             << QString()
-            << (i->isInstalled(Package::BIN) ? "-I-" : QString())
-            << (i->isInstalled(Package::LIB) ? "-I-" : QString())
-            << (i->isInstalled(Package::DOC) ? "-I-" : QString())
-            << (i->isInstalled(Package::SRC) ? "-I-" : QString())
             ;
-            MyQTreeWidgetItem *item = new MyQTreeWidgetItem(category, data);
-            if (i->hasType(Package::BIN) && !i->isInstalled(Package::BIN)) item->setCheckState(3, Qt::Unchecked);
-            if (i->hasType(Package::LIB) && !i->isInstalled(Package::LIB)) item->setCheckState(4, Qt::Unchecked);
-            if (i->hasType(Package::DOC) && !i->isInstalled(Package::DOC)) item->setCheckState(5, Qt::Unchecked);
-            if (i->hasType(Package::SRC) && !i->isInstalled(Package::SRC)) item->setCheckState(6, Qt::Unchecked);
-            item->setCheckState(2, Qt::Unchecked);
+            QTreeWidgetItem *item = new QTreeWidgetItem(category, data);
+            setState(*item,*i,2,_initial);
+            setState(*item,*i,3,_initial);
+            setState(*item,*i,4,_initial);
+            setState(*item,*i,5,_initial);
+            setState(*item,*i,6,_initial);
         }
     }
     tree->insertTopLevelItems(0,categoryList);
-    /*
-     QStringList data; 
-     data.clear(); 
-     data << "kdelibs" << "4.1.2";
-     item = new MyQTreeWidgetItem(categoryList.at(5), data);
-     data.clear(); 
-     data << "kdebase" << "4.1.2";
-     item = new MyQTreeWidgetItem(categoryList.at(5), data);
-     data.clear(); 
-     data << "kdepim" << "4.1.2";
-     item = new MyQTreeWidgetItem(categoryList.at(5), data);
-    */
     tree->expandAll();
 }
 extern QTreeWidget *tree;
@@ -225,32 +346,36 @@ void InstallerEngine::itemClickedPackageSelectorPage(QTreeWidgetItem *item, int 
 
     if (column == 2 && pkg)
     {
-        if (pkg->hasType(Package::BIN) && !pkg->isInstalled(Package::BIN)) item->setCheckState(3,item->checkState(column)); 
-        if (pkg->hasType(Package::LIB) && !pkg->isInstalled(Package::LIB)) item->setCheckState(4,item->checkState(column)); 
-        if (pkg->hasType(Package::DOC) && !pkg->isInstalled(Package::DOC)) item->setCheckState(5,item->checkState(column)); 
-        if (pkg->hasType(Package::SRC) && !pkg->isInstalled(Package::SRC)) item->setCheckState(6,item->checkState(column)); 
+       setState(*item,*pkg,3,_next);
+       setState(*item,*pkg,4,_next);
+       setState(*item,*pkg,5,_next);
+       setState(*item,*pkg,6,_next);
     }
+    else
+       setState(*item,*pkg,column,_next);
+
     // select depending packages in case all or bin is selected
     //pkg->dump();
     if (column == 2 || column == 3 && pkg) 
     {
         const QStringList &deps = pkg->deps();
-    
+
+        qDebug() << deps.join(" ");    
         for (int i = 0; i < deps.size(); ++i)
         {  
-        	 qDebug() << deps.at(i);
-        	 QString dep = deps.at(i);
-           QList<QTreeWidgetItem *> items = tree->findItems(deps.at(i),Qt::MatchFixedString | Qt::MatchRecursive);
-           qDebug() << items.size();
-           for (int j = 0; j < items.size(); ++j) 
-           {
-           	   qDebug() << items.at(j);
-               MyQTreeWidgetItem * depItem = static_cast<MyQTreeWidgetItem*>(items[j]);
-               /// the dependency is only for bin package and one way to switch on
-               if (depItem->text(3) != "-I-")
-                   depItem->setCheckState(3,item->checkState(column));
-           }
-       }    
+            QString dep = deps.at(i);
+            QList<QTreeWidgetItem *> items = tree->findItems(deps.at(i),Qt::MatchFixedString | Qt::MatchRecursive);
+            qDebug() << items.size();
+            for (int j = 0; j < items.size(); ++j) 
+            {
+           	    qDebug() << items.at(j);
+                QTreeWidgetItem * depItem = static_cast<QTreeWidgetItem*>(items[j]);
+                /// the dependency is only for bin package and one way to switch on
+                Package *depPkg = getPackageByName(dep);
+
+                setState(*depItem,*depPkg,3,_deps);
+            }
+        }    
     }
 
 }
@@ -259,7 +384,7 @@ bool InstallerEngine::downloadPackages(QTreeWidget *tree, const QString &categor
 {
     for (int i = 0; i < tree->topLevelItemCount(); i++)
     {
-        MyQTreeWidgetItem *item = static_cast<MyQTreeWidgetItem*>(tree->topLevelItem(i));
+        QTreeWidgetItem *item = static_cast<QTreeWidgetItem*>(tree->topLevelItem(i));
         qDebug() << __FUNCTION__ << " " << item->text(0);
         if (category.isEmpty() || item->text(0) == category)
         {
@@ -271,14 +396,14 @@ bool InstallerEngine::downloadPackages(QTreeWidget *tree, const QString &categor
             }
             for (int j = 0; j < item->childCount(); j++)
             {
-                MyQTreeWidgetItem *child = static_cast<MyQTreeWidgetItem*>(item->child(j));
-                qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
+                QTreeWidgetItem *child = static_cast<QTreeWidgetItem*>(item->child(j));
+//                qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
                 Package::Types types;
-                types |= child->checkState(3) == Qt::Checked ? Package::BIN : Package::NONE;
-                types |= child->checkState(4) == Qt::Checked ? Package::LIB : Package::NONE;
-                types |= child->checkState(5) == Qt::Checked ? Package::DOC : Package::NONE;
-                types |= child->checkState(6) == Qt::Checked ? Package::SRC : Package::NONE;
-               	types |= child->checkState(2) == Qt::Checked ? Package::ALL: Package::NONE;
+                types |= isMarkedForInstall(*child,Package::BIN) ? Package::BIN : Package::NONE;
+                types |= isMarkedForInstall(*child,Package::LIB) ? Package::LIB : Package::NONE;
+                types |= isMarkedForInstall(*child,Package::DOC) ? Package::DOC : Package::NONE;
+                types |= isMarkedForInstall(*child,Package::SRC) ? Package::SRC : Package::NONE;
+//               	types |= isMarkedForInstall(child,Package::ALL) ? Package::ALL: Package::NONE;
                 if (!packageList->downloadPackage(child->text(0), types))
                     qDebug() << "could not download package";
             }
@@ -291,7 +416,7 @@ bool InstallerEngine::installPackages(QTreeWidget *tree,const QString &category)
 {
     for (int i = 0; i < tree->topLevelItemCount(); i++)
     {
-        MyQTreeWidgetItem *item = static_cast<MyQTreeWidgetItem*>(tree->topLevelItem(i));
+        QTreeWidgetItem *item = static_cast<QTreeWidgetItem*>(tree->topLevelItem(i));
         qDebug() << __FUNCTION__ << " " << item->text(0);
         if (category.isEmpty() || item->text(0) == category)
         {
@@ -303,14 +428,14 @@ bool InstallerEngine::installPackages(QTreeWidget *tree,const QString &category)
             }
             for (int j = 0; j < item->childCount(); j++)
             {
-                MyQTreeWidgetItem *child = static_cast<MyQTreeWidgetItem*>(item->child(j));
-                qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
+                QTreeWidgetItem *child = static_cast<QTreeWidgetItem*>(item->child(j));
+//                qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
                 Package::Types types;
-                types |= child->checkState(3) == Qt::Checked ? Package::BIN : Package::NONE;
-                types |= child->checkState(4) == Qt::Checked ? Package::LIB : Package::NONE;
-                types |= child->checkState(5) == Qt::Checked ? Package::DOC : Package::NONE;
-                types |= child->checkState(6) == Qt::Checked ? Package::SRC : Package::NONE;
-               	types |= child->checkState(2) == Qt::Checked ? Package::ALL: Package::NONE;
+                types |= isMarkedForInstall(*child,Package::BIN) ? Package::BIN : Package::NONE;
+                types |= isMarkedForInstall(*child,Package::LIB) ? Package::LIB : Package::NONE;
+                types |= isMarkedForInstall(*child,Package::DOC) ? Package::DOC : Package::NONE;
+                types |= isMarkedForInstall(*child,Package::SRC) ? Package::SRC : Package::NONE;
+//               	types |= child->checkState(2) == Qt::Checked ? Package::ALL: Package::NONE;
                 if (!packageList->installPackage(child->text(0),types))
                     qDebug() << "could not install package";
             }

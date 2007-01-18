@@ -1,0 +1,10 @@
+ <!DOCTYPE RCC><RCC version="1.0">
+ <qresource>
+     <file>images/autoinstall.xpm</file>
+     <file>images/del.xpm</file>
+     <file>images/install.xpm</file>
+     <file>images/keepinstalled.xpm</file>
+     <file>images/noinst.xpm</file>
+     <file>images/update.xpm</file>
+ </qresource>
+ </RCC>

@@ -20,6 +20,7 @@ if(CMAKE_COMPILER_2005)
 endif(CMAKE_COMPILER_2005)
 
 QT4_WRAP_UI(installer_GUI_SOURCES settingspage.ui)
+QT4_ADD_RESOURCES(installer_GUI_SOURCES gui.qrc)
 
 set(all_sources ${installer_GUI_SOURCES}
                 ${installer_GUI_HEADERS}

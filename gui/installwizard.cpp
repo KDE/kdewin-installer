@@ -57,9 +57,6 @@ InstallWizard::InstallWizard(QWidget *parent)
         : ComplexWizard(parent)
 {
     settingsPage = new SettingsPage(this);
-#ifndef SETTING_PAGE
-    settingsButton->hide();
-#endif
     titlePage = new TitlePage(this);
     //    packageSelectorPage = new PackageSelectorPage(this);
     setFirstPage(titlePage);
