@@ -29,7 +29,7 @@
 #include "downloader.h"
 #include "installer.h"
 
-void Package::packageDescr::dump(const QString &title)
+void Package::PackageItem::dump(const QString &title) const
 {
     qDebug() << "class packageDesc dump: " << title;
     qDebug() << "path:        " << path;           
@@ -48,21 +48,15 @@ Package::Package()
 
 QString Package::getFileName(Package::Type contentType)
 {
-    QList<packageDescr>::iterator it = m_packages.begin();
-    for( ; it != m_packages.end(); ++it) {
-        if(contentType == (*it).contentType)
-            return (*it).fileName;
-    }
+    if(m_packages.contains(contentType))
+        return m_packages[contentType].fileName;
     return QString();
 }
 
 QString Package::getURL(Package::Type contentType)
 {
-    QList<packageDescr>::iterator it = m_packages.begin();
-    for( ; it != m_packages.end(); ++it) {
-        if(contentType == (*it).contentType)
-            return (*it).path;
-    }
+    if(m_packages.contains(contentType))
+        return m_packages[contentType].path;
     return QString();
 }
 
@@ -87,12 +81,11 @@ void Package::add(const QString &path, const QByteArray &contentType, bool bInst
 
 void Package::add(const QString &path, Package::Type contentType, bool bInstalled)
 {
-    packageDescr desc;
+    PackageItem desc;
     int idx;
 #ifdef DEBUG
     qDebug() << __FUNCTION__ << " " << path << " " << contentType << " " << bInstalled;
 #endif
-    QList<packageDescr>::iterator it = m_packages.begin();
     desc.path = path;
 
     idx = path.lastIndexOf('/');
@@ -113,25 +106,22 @@ void Package::add(const QString &path, Package::Type contentType, bool bInstalle
 #ifdef DEBUG
     qDebug() << __FUNCTION__ << desc.contentType << desc.bInstalled;
 #endif    
-    for( ; it != m_packages.end(); ++it) {
-        if(desc.contentType == (*it).contentType &&
-           desc.packageType == (*it).packageType) {
-            qDebug() << __FUNCTION__ << m_name << " type already added";
-            return;
-        }
+    if(m_packages.contains(contentType)) {
+        qDebug() << __FUNCTION__ << m_name << " type already added";
+        return;
     }
 
-    m_packages.append(desc);
+    m_packages[contentType] = desc;
+}
+
+void Package::setInstalled(const Package &other)
+{
+    // FIXME!
 }
 
 bool Package::hasType(Package::Type contentType) const
 {
-    QList<packageDescr>::ConstIterator it = m_packages.constBegin();
-    for( ; it != m_packages.constEnd(); ++it) {
-        if(contentType == (*it).contentType)
-            return true;
-    }
-    return false;
+    return m_packages.contains(contentType);
 }
 
 
@@ -150,8 +140,8 @@ QString Package::getTypeAsString(bool requiredIsInstalled, const QString &delim)
 {
     QString types;
 
-    QList<packageDescr>::iterator it = m_packages.begin();
-    for( ; it != m_packages.end(); ++it) {
+    QHash<Type, PackageItem>::ConstIterator it = m_packages.constBegin();
+    for( ; it != m_packages.constEnd(); ++it) {
         if(requiredIsInstalled && !(*it).bInstalled)
             continue;
 
@@ -175,21 +165,15 @@ QString Package::getTypeAsString(bool requiredIsInstalled, const QString &delim)
 
 bool Package::isInstalled(Package::Type contentType) const
 {
-    QList<packageDescr>::ConstIterator it = m_packages.constBegin();
-    for( ; it != m_packages.constEnd(); ++it) {
-        if(contentType == (*it).contentType)
-            return (*it).bInstalled;
-    }
+    if(m_packages.contains(contentType))
+        return m_packages[contentType].bInstalled;
     return false;
 }
 
 void Package::setInstalled(Package::Type contentType)
 {
-    QList<packageDescr>::iterator it = m_packages.begin();
-    for( ; it != m_packages.end(); ++it) {
-        if(contentType == (*it).contentType)
-            (*it).bInstalled = true;
-    }
+    if(m_packages.contains(contentType))
+        m_packages[contentType].bInstalled = true;
 }
 
 bool Package::write(QTextStream &out)
@@ -240,8 +224,8 @@ void Package::dump(const QString &title)
     qDebug() << "m_category: " << m_category;
     qDebug() << "m_deps: " << m_deps.join(" ");
 
-    QList<packageDescr>::iterator it = m_packages.begin();
-    for( ; it != m_packages.end(); ++it) {
+    QHash<Type, PackageItem>::ConstIterator it = m_packages.constBegin();
+    for( ; it != m_packages.constEnd(); ++it) {
     	it->dump();
     }
 }
@@ -294,4 +278,19 @@ void Package::setCategory(const QString &cat)
 void Package::addDeps(const QStringList &deps)
 {
     m_deps << deps;
+}
+
+bool Package::setFromVersionFile(const QString &str)
+{
+    QString verString = str;
+    verString.remove(".ver");
+    int i = verString.indexOf('-');
+    int j = verString.lastIndexOf('-');
+    QString name = verString.left(i);
+    QString version = verString.mid(i+1,j-1-i);
+    QString type = verString.mid(j+1);
+    setName(name);
+    setVersion(version);
+//    setType(type);
+    return true;
 }

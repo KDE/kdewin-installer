@@ -1,14 +1,15 @@
 # our targets
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
  
+source_group(quazip  FILES ${quazip_SOURCES}  ${quazip_HEADERS})
+source_group(qua7zip FILES ${qua7zip_SOURCES} ${qua7zip_HEADERS})
+
 set (test_mirrors_SOURCES 
 	test-mirrors.cpp 
 	../shared/mirrors.cpp
 	../shared/downloader.cpp
 	../shared/downloaderprogress.cpp
 )
-
-source_group(quazip FILES ${quazip_SOURCES} ${quazip_HEADERS})
 
 qt4_automoc(${test_mirrors_SOURCES})
 
@@ -19,7 +20,10 @@ target_link_libraries(test-mirrors ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY
 set (test-packagelist-apachemodindex_SOURCES
 	test-packagelist-apachemodindex.cpp
 	${installer_shared_SOURCES}
-	${quazip_SOURCES}
+        ${quazip_HEADERS}
+        ${quazip_SOURCES}
+        ${qua7zip_SOURCES}
+        ${qua7zip_HEADERS}
 )
 
 qt4_automoc(${test-packagelist-apachemodindex_SOURCES})
@@ -30,7 +34,10 @@ target_link_libraries(test-packagelist-apachemodindex ${QT_QTMAIN_LIBRARIES} ${Q
 set (test-packagelist-sourceforge_SOURCES
 	test-packagelist-sourceforge.cpp
 	${installer_shared_SOURCES}
-	${quazip_SOURCES}
+        ${quazip_HEADERS}
+        ${quazip_SOURCES}
+        ${qua7zip_SOURCES}
+        ${qua7zip_HEADERS}
 )
 
 qt4_automoc(${test-packagelist-sourceforge_SOURCES})
@@ -41,7 +48,10 @@ target_link_libraries(test-packagelist-sourceforge ${QT_QTMAIN_LIBRARIES} ${QT_Q
 set (test-configparser_SOURCES
 	test-configparser.cpp
 	${installer_shared_SOURCES}
-	${quazip_SOURCES}
+        ${quazip_HEADERS}
+        ${quazip_SOURCES}
+        ${qua7zip_SOURCES}
+        ${qua7zip_HEADERS}
 )
 
 qt4_automoc(${test-configparser_SOURCES})
@@ -64,7 +74,10 @@ set (test-packager_SOURCES
 	test-packager.cpp
 	../shared/packager.cpp
 	../shared/misc.cpp
-	${quazip_SOURCES}
+        ${quazip_HEADERS}
+        ${quazip_SOURCES}
+        ${qua7zip_SOURCES}
+        ${qua7zip_HEADERS}
 )
 
 qt4_automoc(${test-packager_SOURCES})

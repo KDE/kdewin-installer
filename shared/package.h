@@ -26,6 +26,7 @@
 #include <QObject>
 #include <QString>
 #include <QStringList>
+#include <QHash>
 class QTextStream;
 class Downloader;
 class Installer;
@@ -44,10 +45,10 @@ public:
     enum Type { NONE = 0, BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8, ALL = 15};
     Q_DECLARE_FLAGS(Types,Type);
 
-    class packageDescr {
+    class PackageItem {
         public:
             // dump content
-    	    void dump(const QString &title=QString());
+    	    void dump(const QString &title=QString()) const;
             QString path;           // complete url (use QUrl?)
             QString fileName;       // filename only
             QString packageType;    // zip / msi / ...
@@ -79,13 +80,15 @@ public:
     QString toString(bool installed=false, const QString &delim = "-");
     QString getTypeAsString(bool requiredIsInstalled=false, const QString &delim = " ");
 
-    // return packageDescr::fileName for specified contentType
+    // return PackageItem::fileName for specified contentType
     QString getFileName(Package::Type contentType);
-    // return packageDescr::path for specified contentType
+    // return PackageItem::path for specified contentType
     QString getURL(Package::Type type);
     // add a file to this package
     void add(const QString &path, Package::Type contentType, bool bInstalled = false);
     void add(const QString &path, const QByteArray &contentType, bool bInstalled = false);
+    // set Install state of a package type (e.g. from gnuwin32 manifests)
+    void setInstalled(const Package &other);
     // return state of a specific item type is available
     bool hasType(Package::Type contentType) const;
 
@@ -113,12 +116,13 @@ public:
     const QStringList &deps() const { return m_deps; }
     void addDeps(const QStringList &addDeps);
 
+    bool setFromVersionFile(const QString &str);
 
 private slots:
     void logOutput();
 
 protected:
-    QList<packageDescr> m_packages;
+    QHash<Type, PackageItem> m_packages;
 
     QString m_name;     // base name (a2ps)
     QString m_version;  // base version (4.13b-1)

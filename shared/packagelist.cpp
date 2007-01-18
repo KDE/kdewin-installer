@@ -350,8 +350,7 @@ bool PackageList::readHTMLFromFile(const QString &fileName, PackageList::Type ty
     return readHTMLInternal(&pkglist, type);
 }
 
-/*
-bool PackageList::updatePackage(Package &apkg)
+bool PackageList::setInstalledPackage(const Package &apkg)
 {
     Package *pkg = getPackage(apkg.name());
     if (!pkg)
@@ -359,10 +358,10 @@ bool PackageList::updatePackage(Package &apkg)
         qDebug() << __FUNCTION__ << "package " << apkg.name() << " not found";
         return false;
     }
-    pkg->addInstalledTypes(apkg);
+    pkg->setInstalled(apkg);
     return true;
 }
-*/
+
 bool PackageList::downloadPackage(const QString &pkgName, Package::Types types)
 {
     qDebug() << __FUNCTION__ << " " << pkgName; 

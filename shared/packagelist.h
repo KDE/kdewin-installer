@@ -52,7 +52,7 @@ public:
     bool readHTMLFromByteArray(const QByteArray &ba, PackageList::Type type=PackageList::SourceForge);
     bool writeToFile(QString const &fileName=QString::null);
     Package *getPackage(QString const &pkgName, const QByteArray &version = QByteArray());
-    bool updatePackage(Package &pkg);
+    bool setInstalledPackage(const Package &pkg);
 
     int size() const
     {

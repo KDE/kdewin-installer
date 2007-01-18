@@ -17,6 +17,7 @@ set(all_sources ${installer_CONSOLE_SOURCES}
                 ${installer_shared_SOURCES}
                 ${installer_shared_HEADERS}
                 ${quazip_HEADERS}
+                ${quazip_SOURCES}
                 ${qua7zip_SOURCES}
                 ${qua7zip_HEADERS}
         )
