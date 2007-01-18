@@ -13,3 +13,48 @@ classes
 
 see doxygen generated docs or the source directly
 
+
+
+detailed operation mode
+=======================
+
+1. if first run 
+   1. if gui mode
+      1. ask user for installation root and other settings
+   2. if console mode 
+      1. exit with warning if no installation root is given 
+
+2. download global config file (configparser) 
+3. parse global config file and create site instance from it. ( Each site has a packagelist, which contains one or more packages )
+4. parse local config file and creates sites from it too. 
+
+5. For each site 
+    1. if site uses autoscan option 
+        1. scan the related website for a package list 
+        2. import identified packages into the packagelist instance 
+      
+    2. if there is a local package list file available 
+        1. update packagelist instance with the content of this file  -> check for conflicts or missing packages !!!
+    TODO: version update handling        
+
+6. if gui mode
+    1. create PackageSelectorPage instance 
+    2. setup tree widget with available packages  -> InstallEngine::setPageSelectorWidgetData()
+    3. display package selector page and let user select/deselect packages
+        1. if user selects a package 
+            1. if other packages are required select them for download/install if not installed
+        2. if user deselects a package 
+            1. if other packages are required and they are not installed before deselect them 
+    TODO: version update handling        
+ 
+7. download selected packages  -> InstallerEngine::downloadPackages()
+    1. for all selected packages 
+        check if already downloaded and perform the download if not so  -> check for broken downloads 
+         
+8. install/remove selected packages  -> InstallerEngine::installPackages()
+    1. for all selected packages 
+        1. check if already downloaded and install package
+        2. mark installed state 
+    2. update local package file list 
+    TODO: version update handling        
+   
