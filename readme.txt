@@ -40,8 +40,12 @@ TODO
     3 display message when downloading and installing is ready 
 	4 center checkboxes in package selector page -> not possible yet, see comment in source
 	5 reduce column width of package types in package selector page
-	7 fix perl package list import	 
- 	
+	7 fix perl package list import or reduce to one package
+	8 add reinstall package support 
+	9 deal with package name clashes from different locations (dependency checking)
+	
+4 config
+    1 exclude upx from gnuwin32, it is outdated. 
   
     
 Happy hacking
