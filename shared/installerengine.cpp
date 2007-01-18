@@ -225,7 +225,8 @@ void setState(QTreeWidgetItem &item, const Package &pkg, int column, actionType 
             }
             break;
         
-        case _next: {
+        case _next: 
+        {
             stateType state = (stateType)item.data(column,Qt::UserRole).toInt();
             qDebug() << __FUNCTION__ << state << type;
             // enter next state depending on current state 
@@ -256,7 +257,8 @@ void setState(QTreeWidgetItem &item, const Package &pkg, int column, actionType 
             }
             break;
         }
-        case _deps: {
+        case _deps: 
+        {
             if (pkg.isInstalled(type))
             {
             }
@@ -269,7 +271,7 @@ void setState(QTreeWidgetItem &item, const Package &pkg, int column, actionType 
             break;
         }
 
-       }        
+	}        
 }
 
 bool isMarkedForInstall(QTreeWidgetItem &item,Package::Type type)
