@@ -91,13 +91,16 @@ void Package::add(const QString &path, Package::Type contentType, bool bInstalle
     idx = path.lastIndexOf('/');
     if(idx == -1) {
         qDebug("Invalid - no '/' in path");    // FIXME
-        return;
+        //return;
+        desc.fileName = path;
     }
-    desc.fileName = path.mid(idx + 1);
+    else
+        desc.fileName = path.mid(idx + 1);
 
     idx = desc.fileName.lastIndexOf('.');
     if(idx == -1) {
         qDebug("Invalid - dot in filename expected");    // FIXME
+        return;
     }
     desc.packageType = desc.fileName.mid(idx + 1);
     
