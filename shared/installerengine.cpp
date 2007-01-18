@@ -200,10 +200,10 @@ void setIcon(QTreeWidgetItem &item, Package::Type type, iconType action)
     // item.icon(column).setIconSize(QSize(22,22));
 }
 
-enum actionType { _initial, _next, _deps}; 
+enum actionType { _initial, _next, _deps, _sync}; 
 enum stateType { _Install, _Update, _Remove, _Nothing}; 
 
-void setState(QTreeWidgetItem &item, const Package &pkg, int column, actionType action)
+void setState(QTreeWidgetItem &item, const Package &pkg, int column, actionType action, int syncColumn=0)
 {
     Package::Type type = columnToType(column);
 
@@ -232,6 +232,7 @@ void setState(QTreeWidgetItem &item, const Package &pkg, int column, actionType 
         case _next: 
         {
             stateType state = (stateType)item.data(column,Qt::UserRole).toInt();
+
             switch(state)
             {
                 case _Nothing:  
@@ -280,11 +281,33 @@ void setState(QTreeWidgetItem &item, const Package &pkg, int column, actionType 
             {
                 // FIXME: should be _autoinstall, but then the main package is using this icon too 
                 setIcon(item,type,_install);
-                item.setData(column,Qt::UserRole,_install);
+                item.setData(column,Qt::UserRole,_Install);
             }
             break;
         }
-
+        case _sync: 
+            stateType state = (stateType)item.data(syncColumn,Qt::UserRole).toInt();
+            switch(state) 
+            {
+                case _Install: 
+                    if (!pkg.isInstalled(type))
+                    {
+                        setIcon(item,type,_install);
+                        item.setData(column,Qt::UserRole,_Install);
+                    }
+                    break;
+                case _Nothing: 
+                    if (!pkg.isInstalled(type))
+                    {
+                        setIcon(item,type,_nothing);
+                        item.setData(column,Qt::UserRole,_Nothing);
+                    }
+                    break;
+// FIXME: add remove support
+#if 0
+                case _Remove:
+                    break;
+            }                       
 	}        
 }
 
@@ -366,8 +389,11 @@ void InstallerEngine::itemClickedPackageSelectorPage(QTreeWidgetItem *item, int 
 
     if (column == 2 && pkg)
     {
-       // FIXME: how to deal selecting 'all'
        setState(*item,*pkg,2,_next);
+       setState(*item,*pkg,3,_sync,2);
+       setState(*item,*pkg,4,_sync,2);
+       setState(*item,*pkg,5,_sync,2);
+       setState(*item,*pkg,6,_sync,2);
     }
     else
        setState(*item,*pkg,column,_next);
