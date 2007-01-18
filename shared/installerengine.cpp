@@ -307,6 +307,7 @@ void setState(QTreeWidgetItem &item, const Package &pkg, int column, actionType 
 #if 0
                 case _Remove:
                     break;
+#endif
             }                       
 	}        
 }
