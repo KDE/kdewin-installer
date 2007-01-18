@@ -48,6 +48,7 @@ public:
     void addPackage(const Package &package);
     void listPackages(const QString &title=QString());
     bool readFromFile(const QString &_fileName=QString());
+    bool syncWithFile(const QString &_fileName=QString());
     bool readHTMLFromFile(const QString &fileName, PackageList::Type type=PackageList::SourceForge);
     bool readHTMLFromByteArray(const QByteArray &ba, PackageList::Type type=PackageList::SourceForge);
     bool writeToFile(QString const &fileName=QString::null);

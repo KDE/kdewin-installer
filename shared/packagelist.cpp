@@ -152,6 +152,41 @@ bool PackageList::readFromFile(const QString &_fileName)
     return true;
 }
 
+bool PackageList::syncWithFile(const QString &_fileName)
+{
+#ifdef DEBUG
+    qDebug() << __FUNCTION__;
+#endif
+
+    QString fileName = _fileName.isEmpty() ? root + m_configFile : _fileName;
+    QFile file(fileName);
+
+    if (!file.open(QIODevice::ReadOnly| QIODevice::Text))
+        return false;
+
+    QTextStream in(&file);
+
+    QString comment = in.readLine();
+    QString format = in.readLine();
+		
+    Package *apkg;
+    while (!in.atEnd())
+    {
+        Package pkg;
+        if (pkg.read(in))
+        {
+            apkg = getPackage(pkg.name());
+            if (apkg)
+                *apkg = pkg;
+            else
+                addPackage(pkg);
+        }
+    }
+    emit loadedConfig();
+    return true;
+}
+
+
 bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type)
 {
     m_packageList.clear();

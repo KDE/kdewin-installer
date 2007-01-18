@@ -55,7 +55,12 @@ bool InstallerEngine::downloadGlobalConfig()
         ret = m_configParser->parseFromFile(fi.absoluteFilePath());
         qDebug() << "parsing local configuration file";
     }
+#ifdef DEBUG
     packageList->dump();
+#endif
+    if (packageList->hasConfig())
+        packageList->syncWithFile();
+
     packageList->writeToFile();
     return true;
 }
@@ -88,6 +93,8 @@ bool InstallerEngine::downloadPackageLists()
         m_installerList.append(installer);
         m_installer = installer;
 
+		// FIXME: it is probably better to download package list every 
+		//        time and to sync with local copy 
         if ( !packageList->hasConfig() )
         {
             // download package list
