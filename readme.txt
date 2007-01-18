@@ -37,14 +37,14 @@ TODO
 3 gui 
     1 add check for partial downloads
 	2 goto finish page directly when installing is ready 
-	3 only enable package type when a related package is available
 	4 center checkboxes in package selector page -> not possible yet, see comment in source
 	5 reduce column width of package types in package selector page
 	7 fix perl package list import	  	
-    8 fix not store of installed packages, when in OTHER group
-    
+  
     
 Happy hacking
+
+
 
 
 
@@ -56,6 +56,7 @@ History
 version 0.6.4
 -------------
 - bug fixed not display installed packages located in the "other" category 
+- added selecting 'all' feature 
 
 version 0.6.3
 -------------
