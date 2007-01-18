@@ -200,9 +200,9 @@ bool Package::write(QTextStream &out)
 
 bool Package::read(QTextStream &in)
 {
-    QString line = in.readLine();
     if (in.atEnd())
         return false;
+    QString line = in.readLine();
     QStringList parts = line.split("\t");
     setName(parts.at(0));
     setVersion(parts.at(1));
