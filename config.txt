@@ -10,42 +10,50 @@
 ; not supported yet
 ;@deps upx ucl
 
-; a package definition  (not implemented yet)
+; a package definition  
 @package KDELIBS
-@category KDE
+; packages are currently listed in "other" category 
+;@category KDE
 @version 20070110
 @url-bin http://82.149.170.66/kde-windows/KDE/kdelibs-mingw-20070110-bin.zip
 @url-lib http://82.149.170.66/kde-windows/KDE/kdelibs-mingw-20070110-lib.zip
 @url-src http://82.149.170.66/kde-windows/KDE/kdelibs-mingw-20070110-src.zip
 @require aspell bzip2 expat giflib iconv jpeg libpng libxml2 libxlst openssl pcre tiff zlib
 
+@package upx 
+@version 2.0.3
+@url-bin http://upx.sourceforge.net/download/upx203w.zip
+; relocate directories in zip files 
+@relocate upx203w bin
+
 ; another definition (installing not implemented yet)
 ;@site win32libs
-;@sitetype apachemodindex
-;@siteurl http://www.abi-neuhaus.de/chris/win32libs/zip/
-;@siteoptions
+;@type apachemodindex
+;@url http://www.abi-neuhaus.de/chris/win32libs/zip/
+;@options
 
 ; another definition (installing not implemented yet)
 ;@site kde-i18n
-;@sitetype apachemodindex
-;@siteurl http://software.opensuse.org/download/KDE:/KDE3/SUSE_Linux_10.1/noarch/
-;@siteoptions
+;@type apachemodindex
+;@url http://software.opensuse.org/download/KDE:/KDE3/SUSE_Linux_10.1/noarch/
+;@options
 
 ;@site perl (installing not implemented yet)
-;@sitetype apachemodindex
-;@siteurl http://downloads.activestate.com/ActivePerl/Windows/5.8/
-;@siteoptions
+;@type apachemodindex
+;@url http://downloads.activestate.com/ActivePerl/Windows/5.8/
+;@options
 
 
 ; a package definition  (not implemented yet)
 ;@package perl ; package name
-;@packagecategory perl 
-;@packageversion 5.8.8 ; package version
-;@packageurl http://downloads.activestate.com/ActivePerl/Windows/5.8/ActivePerl-5.8.8.819-MSWin32-x86-267479.msi ; base url
-;@packageoptions
+;@category perl 
+;@version 5.8.8 ; package version
+;@url http://downloads.activestate.com/ActivePerl/Windows/5.8/ActivePerl-5.8.8.819-MSWin32-x86-267479.msi ; base url
+;@options
 
 ; another package definition  (not implemented yet)
 ;@package cmake 
-;@packageversion 2.4.5
-;@packageurl http://www.cmake.org/files/v2.4/cmake-2.4.5-win32-x86.zip
-;@packageoptions
+;@version 2.4.5
+;@url http://www.cmake.org/files/v2.4/cmake-2.4.5-win32-x86.zip
+;@options
+

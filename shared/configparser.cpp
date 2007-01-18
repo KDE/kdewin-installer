@@ -119,6 +119,8 @@ bool ConfigParser::parse(QIODevice *ioDev)
                 }
                 else if(cmd[0] == "@category")
                     pkg->setCategory(cmd[1]);
+                else if(cmd[0] == "@relocate")
+                    pkg->addPathRelocation(cmd[1],cmd[2]);
             }
             else if (inSite)
             {

@@ -255,7 +255,7 @@ bool Package::installItem(Installer *installer, Package::Type type)
         qDebug() << __FUNCTION__ << " empty fileName for type " << type;
         return false;
     }
-    if (!installer->install(fileName)) 
+    if (!installer->install(fileName,pathRelocations())) 
     {
         qDebug() << __FUNCTION__ << " install failure for file " << fileName << " type " << type;
         return false;

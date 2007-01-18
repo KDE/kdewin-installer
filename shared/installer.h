@@ -23,6 +23,7 @@
 #ifndef INSTALLER_H
 #define INSTALLER_H
 
+#include "package.h"
 class PackageList;
 class InstallerProgress;
 
@@ -42,7 +43,7 @@ public:
     {
         m_type = type;
     }
-    bool install(const QString &fileName /*, const QString &destdir=""*/);
+    bool install(const QString &fileName, const StringHash &pathRelocations=StringHash());
     // installPackage(Package *pkg)
     //  bool readFromFile(QString const &fileName);
     //  bool writeToFile(QString const &fileName);
@@ -57,7 +58,7 @@ public slots:
     void updatePackageList();
 
 protected:
-    bool unzipFile(const QString &destpath, const QString &zipFile);
+    bool unzipFile(const QString &destpath, const QString &zipFile, const StringHash &pathRelocations=StringHash());
     bool un7zipFile(const QString &destpath, const QString &zipFile);
     void setError(const QString &str);
 

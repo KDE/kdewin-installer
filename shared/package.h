@@ -31,6 +31,8 @@ class QTextStream;
 class Downloader;
 class Installer;
 
+typedef QHash<QString, QString> StringHash;
+
 /* This class holds a package with all it's single files
     a2ps-4.13b-1-bin.zip
     a2ps-4.13b-1-dep.zip
@@ -111,10 +113,17 @@ public:
     bool downloadItem(Downloader *downloader, Package::Type type);
     bool installItem(Installer *installer, Package::Type type);
 
+    // package category 
     const QString &category() const { return m_category; }
     void setCategory(const QString &cat);
-    const QStringList &deps() const { return m_deps; }
+
+    // package dependencies
     void addDeps(const QStringList &addDeps);
+    const QStringList &deps() const { return m_deps; }
+
+    // filepath relocations for installing 
+    void addPathRelocation(const QString &key, const QString &value) { m_pathRelocs[key] = value; }
+    StringHash &pathRelocations() { return m_pathRelocs; }
 
     bool setFromVersionFile(const QString &str);
 
@@ -128,6 +137,7 @@ protected:
     QString m_version;  // base version (4.13b-1)
     QString m_category;   
     QStringList m_deps;       
+    StringHash m_pathRelocs;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Package::Types);

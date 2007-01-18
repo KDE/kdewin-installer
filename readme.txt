@@ -52,6 +52,16 @@ Happy hacking
 History
 =======
 
+version 0.6.3
+-------------
+
+- added new config file keyword @relocate for relocating package file path into real path
+- better icon selection in gui mode 
+- added 7zip package format to installer
+
+version 0.6.2
+-------------
+- some bugs fix 
 
 version 0.6.0
 -------------

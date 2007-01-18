@@ -116,7 +116,7 @@ void Installer::updatePackageList()
 #ifndef QUNZIP_BUFFER
 # define QUNZIP_BUFFER (256 * 1024)
 #endif
-bool Installer::unzipFile(const QString &destpath, const QString &zipFile)
+bool Installer::unzipFile(const QString &destpath, const QString &zipFile, const StringHash &pathRelocations)
 {
     QDir path(destpath);
     QuaZip z(zipFile);
@@ -151,7 +151,13 @@ bool Installer::unzipFile(const QString &destpath, const QString &zipFile)
             setError(tr("Can not get file information from zip file %1").arg(zipFile));
             return false;
         }
-        QFileInfo fi(path.filePath(info.name));
+        // relocate path names 
+        QString outPath = path.filePath(info.name);
+        for(StringHash::const_iterator i = pathRelocations.constBegin(); i != pathRelocations.constEnd(); i++) 
+        {
+            outPath.replace(i.key(),i.value());
+        }
+        QFileInfo fi(outPath);
 
         // is it's a subdir ?
         if(info.compressedSize == 0 && info.uncompressedSize == 0)
@@ -368,11 +374,11 @@ void Installer::setError(const QString &str)
     }
 }
 
-bool Installer::install(const QString &fileName)
+bool Installer::install(const QString &fileName, const StringHash &pathRelocations)
 {
     if (fileName.endsWith(".zip"))
     {
-        return unzipFile(m_root, fileName);
+        return unzipFile(m_root, fileName,pathRelocations);
     }
     if (fileName.endsWith(".7z"))
     {
