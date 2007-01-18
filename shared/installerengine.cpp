@@ -55,9 +55,6 @@ bool InstallerEngine::downloadGlobalConfig()
         ret = m_configParser->parseFromFile(fi.absoluteFilePath());
         qDebug() << "parsing local configuration file";
     }
-#ifdef DEBUG
-    packageList->dump();
-#endif
     if (packageList->hasConfig())
         packageList->syncWithFile();
 
@@ -213,7 +210,6 @@ void setState(QTreeWidgetItem &item, const Package &pkg, int column, actionType 
     if (type != Package::ALL && !pkg.hasType(type)) 
     {
         setIcon(item,type,_disable);
-        qDebug() << "disabled";
         return; 
     }
 
@@ -232,18 +228,20 @@ void setState(QTreeWidgetItem &item, const Package &pkg, int column, actionType 
             }
             break;
         
+        // enter next state depending on current state 
         case _next: 
         {
             stateType state = (stateType)item.data(column,Qt::UserRole).toInt();
-            qDebug() << __FUNCTION__ << state << type;
-            // enter next state depending on current state 
             switch(state)
             {
                 case _Nothing:  
                     if (pkg.isInstalled(type))
                     {
+// FIXME: add remove support
+#if 0
                         setIcon(item,type,_remove);
                         item.setData(column,Qt::UserRole,_Remove);
+#endif
                     }
                     else
                     {
@@ -253,8 +251,16 @@ void setState(QTreeWidgetItem &item, const Package &pkg, int column, actionType 
                     break;
 
                 case _Remove:  
-                    item.setData(column,Qt::UserRole,_Nothing);
-                    setIcon(item,type,_nothing);  
+                    if (pkg.isInstalled(type))
+                    {
+                        setIcon(item,type,_keepinstalled );
+                        item.setData(column,Qt::UserRole,_Nothing);
+                    }
+                    else
+                    {
+                        item.setData(column,Qt::UserRole,_Nothing);
+                        setIcon(item,type,_nothing);  
+                    }
                     break;
 
                 case _Install:  
@@ -264,6 +270,7 @@ void setState(QTreeWidgetItem &item, const Package &pkg, int column, actionType 
             }
             break;
         }
+        // handle dependeny selecting 
         case _deps: 
         {
             if (pkg.isInstalled(type))
@@ -359,10 +366,8 @@ void InstallerEngine::itemClickedPackageSelectorPage(QTreeWidgetItem *item, int 
 
     if (column == 2 && pkg)
     {
-       setState(*item,*pkg,3,_next);
-       setState(*item,*pkg,4,_next);
-       setState(*item,*pkg,5,_next);
-       setState(*item,*pkg,6,_next);
+       // FIXME: how to deal selecting 'all'
+       setState(*item,*pkg,2,_next);
     }
     else
        setState(*item,*pkg,column,_next);

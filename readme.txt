@@ -52,6 +52,11 @@ Happy hacking
 History
 =======
 
+
+version 0.6.4
+-------------
+- bug fixed not display installed packages located in the "other" category 
+
 version 0.6.3
 -------------
 
