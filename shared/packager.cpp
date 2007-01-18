@@ -137,7 +137,7 @@ bool Packager::generatePackageFileList(QStringList &fileList, const QString &dir
     fileList.clear();
     switch (type) {
         case BIN:
-            generateFileList(fileList, dir, "bin",   "*.exe *.dll");
+            generateFileList(fileList, dir, "bin",   "*.exe *.dll *.bat");
             generateFileList(fileList, dir, "lib",   "*.dll");
             generateFileList(fileList, dir, "share", "*.*");
             generateFileList(fileList, dir, "data",  "*.*");
