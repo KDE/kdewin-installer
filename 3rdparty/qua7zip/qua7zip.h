@@ -86,6 +86,8 @@ public:
         Same as Qua7zip::getCurrentFileInfo()
     */
     bool getFileInfo(Qua7zipFileInfo &info) const;
+    //! Return last operation status.
+    SZ_RESULT get7zipError() const { return res; }
     // QIODevice
     virtual bool open(OpenMode mode);
     virtual void close();
@@ -123,7 +125,7 @@ public:
     OpenMode getMode() const { return m_mode; }
 
     //! Return last operation status.
-	SZ_RESULT status() const;
+    SZ_RESULT get7zipError() const { return res; }
 	//! Reinitialization of manager.
 	bool reInit( const QString & zipName );
 

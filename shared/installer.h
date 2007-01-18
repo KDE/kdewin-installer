@@ -58,6 +58,7 @@ public slots:
 
 protected:
     bool unzipFile(const QString &destpath, const QString &zipFile);
+    bool un7zipFile(const QString &destpath, const QString &zipFile);
     void setError(const QString &str);
 
     PackageList *packageList;

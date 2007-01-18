@@ -16,10 +16,13 @@ set(all_sources ${installer_CONSOLE_SOURCES}
                 ${installer_CONSOLE_HEADERS}
                 ${installer_shared_SOURCES}
                 ${installer_shared_HEADERS}
-                ${quazip_SOURCES}
-                ${quazip_HEADERS})
+                ${quazip_HEADERS}
+                ${qua7zip_SOURCES}
+                ${qua7zip_HEADERS}
+        )
 
 source_group(quazip FILES ${quazip_SOURCES} ${quazip_HEADERS})
+source_group(qua7zip FILES ${qua7zip_SOURCES} ${qua7zip_HEADERS})
 
 qt4_automoc(${all_sources})
 

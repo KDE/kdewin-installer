@@ -182,12 +182,6 @@ void Qua7zip::close()
     res = SZ_OK;
 }
 
-SZ_RESULT
-Qua7zip::status() const
-{
-	return res;
-}
-
 unsigned int
 Qua7zip::getEntriesCount() const
 {

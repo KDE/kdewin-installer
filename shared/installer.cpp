@@ -32,8 +32,12 @@
 #include "installer.h"
 #include "packagelist.h"
 #include "installerprogress.h"
+
 #include "quazip.h"
 #include "quazipfile.h"
+#include "qua7zip.h"
+
+using namespace qua7zip;
 
 //#define DEBUG
 #ifdef Q_CC_MSVC
@@ -235,6 +239,125 @@ bool Installer::unzipFile(const QString &destpath, const QString &zipFile)
     return true;
 }
 
+bool Installer::un7zipFile(const QString &destpath, const QString &zipFile)
+{
+    QDir path(destpath);
+    Qua7zip z(zipFile);
+
+    if(!z.open(Qua7zip::mdUnpack))
+    {
+        setError(tr("Can not open %1").arg(zipFile));
+        return false;
+    }
+
+    if(!path.exists())
+    {
+        setError(tr("Internal Error - Path %1 does not exist").arg(path.absolutePath()));
+        return false;
+    }
+
+    // z.setFileNameCodec("Windows-1252"); // important!
+
+    Qua7zipFile file(&z);
+    Qua7zipFileInfo info;
+    if (m_progress)
+    {
+        m_progress->setMaximum(z.getEntriesCount());
+        m_progress->show();
+    }
+
+    for(bool bOk = z.goToFirstFile(); bOk; bOk = z.goToNextFile())
+    {
+        // get file informations
+        if(!z.getCurrentFileInfo(info))
+        {
+            setError(tr("Can not get file information from zip file %1").arg(zipFile));
+            return false;
+        }
+        QFileInfo fi(path.filePath(info.fileName));
+
+        // is it's a subdir ?
+        if(info.isDir)
+        {
+            if(fi.exists())
+            {
+                if(!fi.isDir())
+                {
+                    setError(tr("Can not create directory %1").arg(fi.absoluteFilePath()));
+                    return false;
+                }
+                continue;
+            }
+            if(!path.mkpath(fi.absoluteFilePath()))
+            {
+                setError(tr("Can not create directory %1").arg(fi.absolutePath()));
+                return false;
+            }
+            continue;
+        }
+        // some archives does not have directory entries
+        else
+        {
+            if(!path.exists(fi.absolutePath()))
+            {
+                if (!path.mkpath(fi.absolutePath()))
+                {
+                    setError(tr("Can not create directory %1").arg(fi.absolutePath()));
+                    return false;
+                }
+            }
+        }
+        // open file
+        if(!file.open(QIODevice::ReadOnly))
+        {
+            setError(tr("Can not open file %1 from zip file %2").arg(info.fileName).arg(zipFile));
+            return false;
+        }
+        if(file.get7zipError() != SZ_OK)
+        {
+            setError(tr("Error reading zip file %1").arg(zipFile));
+            return false;
+        }
+
+        // create new file
+        QFile newFile(fi.absoluteFilePath());
+        if(!newFile.open(QIODevice::WriteOnly))
+        {
+            setError(tr("Can not creating file %1").arg(fi.absoluteFilePath()));
+            return false;
+        }
+
+        if (m_progress)
+        {
+            m_progress->setTitle(tr("Installing %1").arg(newFile.fileName()));
+        }
+        // copy data
+        // FIXME: check for not that huge filesize ?
+        qint64 iBytesRead;
+        QByteArray ba;
+        ba.resize(QUNZIP_BUFFER);
+
+        while((iBytesRead = file.read(ba.data(), QUNZIP_BUFFER)) > 0)
+            newFile.write(ba.data(), iBytesRead);
+
+        file.close();
+        newFile.close();
+
+        if(file.get7zipError() != SZ_OK)
+        {
+            setError(tr("Error reading zip file %1").arg(zipFile));
+            return false;
+        }
+    }
+    z.close();
+    if(z.get7zipError() != SZ_OK)
+    {
+        setError(tr("Error reading zip file %1").arg(zipFile));
+        return false;
+    }
+    return true;
+}
+
 
 void Installer::setError(const QString &str)
 {
@@ -254,6 +377,10 @@ bool Installer::install(const QString &fileName)
     if (fileName.endsWith(".zip"))
     {
         return unzipFile(m_root, fileName);
+    }
+    if (fileName.endsWith(".7z"))
+    {
+        return un7zipFile(m_root, fileName);
     }
 #ifdef Q_WS_WIN
     else // for all other formats use windows assignments
