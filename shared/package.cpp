@@ -185,7 +185,7 @@ bool Package::write(QTextStream &out)
     qDebug() << __FUNCTION__ << m_name << "\t" << m_version << "\t" << getTypeAsString(true,"\t") << "\n";
 #endif
     out << m_name << "\t" << m_version 
-// FIXME enable when read could parse this
+// FIXME store path relocation information for removing too
     << "\t" 
     << (isInstalled(BIN) ? "bin:" : ":")
     << (isInstalled(LIB) ? "lib:" : ":")
@@ -226,6 +226,13 @@ void Package::dump(const QString &title)
     qDebug() << "m_version: " << m_version;
     qDebug() << "m_category: " << m_category;
     qDebug() << "m_deps: " << m_deps.join(" ");
+
+    QString d;
+    for(StringHash::ConstIterator it = m_pathRelocs.constBegin(); it != m_pathRelocs.constEnd(); it++) 
+    {
+    	d += it.key() + " = " + it.value() + " ";
+    }
+    qDebug() << "m_pathRelocs: " << d;
 
     QHash<Type, PackageItem>::ConstIterator it = m_packages.constBegin();
     for( ; it != m_packages.constEnd(); ++it) {
