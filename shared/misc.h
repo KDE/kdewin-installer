@@ -31,7 +31,7 @@ class QRegExp;
 bool generateFileList(QStringList &result, const QString &root, const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList);
 bool generateFileList(QStringList &result, const QString &root, const QString &subdir, const QString &filter, const QString &exclude = QString());
 
-bool createStartMenuEntries(const QString &dir, const QString &category="");
-bool removeStartMenuEntries(const QString &dir, const QString &category="");
+bool createStartMenuEntries(const QString &dir, const QString &category=QString());
+bool removeStartMenuEntries(const QString &dir, const QString &category=QString());
 
 #endif

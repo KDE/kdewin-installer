@@ -21,6 +21,8 @@
 #ifndef _UTILS_H_
 #define _UTILS_H_
 
+#include <stdio.h>
+
 #include "lzma_sdk/7zip/Archive/7z_C/7zIn.h"
 #include "lzma_sdk/7zip/Archive/7z_C/7zCrc.h"
 #include "lzma_sdk/7zip/Archive/7z_C/7zExtract.h"
