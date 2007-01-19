@@ -44,6 +44,9 @@ TODO
 	7 fix perl package list import or reduce to one package
 	8 add reinstall package support 
 	9 deal with package name clashes from different locations (dependency checking)
+	10 add a switch to select end user/developer operation (end user by default)
+	   in end user mode only the bin packages are visible 
+	
 	
 4 config
     1 exclude upx from gnuwin32, it is outdated. 
