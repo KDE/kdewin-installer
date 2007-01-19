@@ -24,9 +24,9 @@
 #ifndef MISC_H
 #define MISC_H
 
-class QDir;
-class QStringList;
-class QRegExp;
+#include <QRegExp>
+#include <QString>
+#include <QStringList>
 
 bool generateFileList(QStringList &result, const QString &root, const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList);
 bool generateFileList(QStringList &result, const QString &root, const QString &subdir, const QString &filter, const QString &exclude = QString());
