@@ -65,7 +65,6 @@ bool InstallerEngine::downloadGlobalConfig()
 /// download all packagelists, which are available on the configured sites
 bool InstallerEngine::downloadPackageLists()
 {
-    // FIXME: m_packageListList has to be synced with sites, may be packageList contains a name used in view
     QList<Site*>::iterator s;
     for (s = m_configParser->sites()->begin(); s != m_configParser->sites()->end(); s++)
     {

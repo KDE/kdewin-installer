@@ -415,10 +415,10 @@ bool PackageList::downloadPackage(const QString &pkgName, Package::Types types)
     	  qDebug() << __FUNCTION__ << " package not found";
         return false;
     }
-    // FIXME: the package Item list this is gnuwin32 specific 
     // FIXME: handle error code
+#ifdef DEBUG
     qDebug() << types;
-
+#endif
     if (types & Package::BIN)
         pkg->downloadItem(downloader,Package::BIN);
     if (types & Package::LIB)
@@ -430,7 +430,6 @@ bool PackageList::downloadPackage(const QString &pkgName, Package::Types types)
     return true;
 }
 
-// FIXME: add types to install 
 bool PackageList::installPackage(const QString &pkgName, Package::Types types)
 {
     Package *pkg = getPackage(pkgName);

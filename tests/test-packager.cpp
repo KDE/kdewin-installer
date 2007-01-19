@@ -58,7 +58,6 @@ int main(int argc, char *argv[])
 
     packager.stripFiles(dir);
 
-    // FIXME: create manifest files
     packager.makePackage(dir);
 
 
