@@ -177,7 +177,16 @@ bool PackageList::syncWithFile(const QString &_fileName)
         {
             apkg = getPackage(pkg.name());
             if (apkg)
-                *apkg = pkg;
+            {
+                if (pkg.isInstalled(Package::BIN))
+                    apkg->setInstalled(Package::BIN);
+                if (pkg.isInstalled(Package::LIB))
+                    apkg->setInstalled(Package::LIB);
+                if (pkg.isInstalled(Package::DOC))
+                    apkg->setInstalled(Package::DOC);
+                if (pkg.isInstalled(Package::SRC))
+                    apkg->setInstalled(Package::SRC);
+            }
             else
                 addPackage(pkg);
         }
