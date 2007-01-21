@@ -145,15 +145,15 @@ bool Installer::unzipFile(const QString &destpath, const QString &zipFile, const
 
     for(bool bOk = z.goToFirstFile(); bOk; bOk = z.goToNextFile())
     {
-        // get file informations
+        // get file information
         if(!z.getCurrentFileInfo(&info))
         {
             setError(tr("Can not get file information from zip file %1").arg(zipFile));
             return false;
         }
-        // relocate path names 
+        // relocate path names
         QString outPath = path.filePath(info.name);
-        for(StringHash::const_iterator i = pathRelocations.constBegin(); i != pathRelocations.constEnd(); i++) 
+        for(StringHash::const_iterator i = pathRelocations.constBegin(); i != pathRelocations.constEnd(); i++)
         {
             outPath.replace(i.key(),i.value());
         }
@@ -270,7 +270,7 @@ bool Installer::un7zipFile(const QString &destpath, const QString &zipFile)
 
     for(bool bOk = z.goToFirstFile(); bOk; bOk = z.goToNextFile())
     {
-        // get file informations
+        // get file information
         if(!z.getCurrentFileInfo(info))
         {
             setError(tr("Can not get file information from zip file %1").arg(zipFile));

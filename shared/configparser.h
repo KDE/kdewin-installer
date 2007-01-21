@@ -39,7 +39,7 @@ class PackageList;
  The global config configuration is located on a well known server/path location
  and is read on any start of the installer. 
  
- This behavior could be used to collect usage informations about the installer. 
+ This behavior could be used to collect usage information about the installer. 
 */
 class ConfigParser
 {

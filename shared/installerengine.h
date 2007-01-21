@@ -83,8 +83,8 @@ public:
 private:
     QList <PackageList*> m_packageListList;
     QList <Installer*>   m_installerList;
-    PackageList         *m_packageList;  // currenty used packagelist
-    Installer           *m_installer;    // currenty used installer
+    PackageList         *m_packageList;  // currently used packagelist
+    Installer           *m_installer;    // currently used installer
     Downloader          *m_downloader;
     InstallerProgress   *m_instProgress;
     ConfigParser        *m_configParser;
