@@ -328,3 +328,12 @@ bool Packager::createDebugFiles(const QString &dir)
     }
     return true;
 }
+
+bool Packager::createQtConfigFile(const QString &rootDir, const QString &fileName)
+{
+	QSettings qtConfigFile(fileName,QSettings::IniFormat,QSettings::UserScope);
+	qtConfigFile.setValue("Paths/Prefix="+rootDir);
+	qtConfigFile.setValue("Paths/Translations=i18n");
+	qtConfigFile.sync();
+}
+
