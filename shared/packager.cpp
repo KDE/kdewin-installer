@@ -28,6 +28,7 @@
 #include <QFileInfo>
 #include <QProcess>
 #include <QBuffer>
+#include <QSettings>
 
 #include "packager.h"
 #include "quazip.h" 
@@ -331,9 +332,9 @@ bool Packager::createDebugFiles(const QString &dir)
 
 bool Packager::createQtConfigFile(const QString &rootDir, const QString &fileName)
 {
-	QSettings qtConfigFile(fileName,QSettings::IniFormat,QSettings::UserScope);
-	qtConfigFile.setValue("Paths/Prefix="+rootDir);
-	qtConfigFile.setValue("Paths/Translations=i18n");
+	QSettings qtConfigFile(fileName,QSettings::IniFormat);
+	qtConfigFile.setValue("Paths/Prefix",rootDir);
+	qtConfigFile.setValue("Paths/Translations","i18n");
 	qtConfigFile.sync();
 }
 
