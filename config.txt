@@ -7,8 +7,18 @@
 @type sourceforge
 @url http://sourceforge.net/project/showfiles.php?group_id=23617
 @options
-; not supported yet
+; FIXME: dependencies are not supported yet
 ;@deps upx ucl
+;@deps findutils libintl
+;@deps grep pcre
+; grep require pcre.dll but the pcre package provides pcre3.dll, 
+; a copy of pcre3.dll to pcre.dll is required 
+; FIXME: implement such support maybe using new keyword copy ? 
+; @copy pcre bin\pcre3.dll:bin\pcre.dll 
+
+; FIXME: exclude is not supported yet
+; there is an updated version of upx (exclude is not supported yet)
+;@exclude upx 
 
 ; a package definition  
 @package KDELIBS
