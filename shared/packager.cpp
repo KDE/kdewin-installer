@@ -28,7 +28,7 @@
 #include <QFileInfo>
 #include <QProcess>
 #include <QBuffer>
-#include <QSettings>
+#include <QTextStream>
 
 #include "packager.h"
 #include "quazip.h" 
@@ -226,7 +226,7 @@ bool Packager::makePackage(const QString &dir, const QString &destdir)
     QList<MemFile> manifestFiles;
     
     generatePackageFileList(fileList, dir, Packager::BIN);
-    createManifestFiles(fileList, Packager::BIN, manifestFiles);
+    createManifestFiles(fileList, Packager::BIN, manifestFiles);    
     if (fileList.size() > 0)
         createZipFile(getBaseName(Packager::BIN), dir, fileList, manifestFiles);
     else
@@ -329,12 +329,3 @@ bool Packager::createDebugFiles(const QString &dir)
     }
     return true;
 }
-
-bool Packager::createQtConfigFile(const QString &rootDir, const QString &fileName)
-{
-	QSettings qtConfigFile(fileName,QSettings::IniFormat);
-	qtConfigFile.setValue("Paths/Prefix",rootDir);
-	qtConfigFile.setValue("Paths/Translations","i18n");
-	qtConfigFile.sync();
-}
-

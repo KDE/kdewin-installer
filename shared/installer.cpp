@@ -374,11 +374,22 @@ void Installer::setError(const QString &str)
     }
 }
 
+bool Installer::createQtConfigFile()
+{
+    QSettings qtConfig(m_root + "/bin/qt.conf",QSettings::IniFormat);
+    qtConfig.setValue("Paths/Prefix",m_root);
+    qtConfig.setValue("Translations","i18n");
+    qtConfig.sync();
+}
+
 bool Installer::install(const QString &fileName, const StringHash &pathRelocations)
 {
     if (fileName.endsWith(".zip"))
     {
-        return unzipFile(m_root, fileName,pathRelocations);
+        int ret = unzipFile(m_root, fileName,pathRelocations);
+        if (ret && fileName.startsWith("qt"))
+            createQtConfigFile();
+        return ret; 
     }
     if (fileName.endsWith(".7z"))
     {

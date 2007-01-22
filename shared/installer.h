@@ -61,6 +61,7 @@ protected:
     bool unzipFile(const QString &destpath, const QString &zipFile, const StringHash &pathRelocations=StringHash());
     bool un7zipFile(const QString &destpath, const QString &zipFile);
     void setError(const QString &str);
+    bool createQtConfigFile();
 
     PackageList *packageList;
     QString m_root;
