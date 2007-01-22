@@ -380,6 +380,7 @@ bool Installer::createQtConfigFile()
     qtConfig.setValue("Paths/Prefix",m_root);
     qtConfig.setValue("Translations","i18n");
     qtConfig.sync();
+    return true;
 }
 
 bool Installer::install(const QString &fileName, const StringHash &pathRelocations)

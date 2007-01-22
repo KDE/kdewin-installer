@@ -213,6 +213,9 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type)
                 int a = line.indexOf("\">") + 2;
                 int b = line.indexOf("</a>");
                 QByteArray name = line.mid(a,b-a);
+                if(m_curSite->isExclude(name))
+                    continue;
+                pkg.addDeps(m_curSite->getDependencies(name));
                 pkg.setName(name);
                 line = ioDev->readLine();
                 a = line.indexOf("\">") + 2;
@@ -311,6 +314,8 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type)
                         name += '.';
                     name += parts[i];
                 }
+                if(m_curSite->isExclude(name))
+                    continue;
                 for(; iVersionLow < iVersionHigh; iVersionLow++)
                 {
                     if(parts[iVersionLow] == "-")
@@ -353,8 +358,10 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type)
                     p.setName(name);
                     p.add(m_baseURL + path, type);
                     addPackage(p);
+                    p.addDeps(m_curSite->getDependencies(name));
                 } else {
                     pkg->add(m_baseURL + path, type);
+                    pkg->addDeps(m_curSite->getDependencies(name));
                 }
             }
         }

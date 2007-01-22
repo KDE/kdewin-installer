@@ -74,6 +74,7 @@ set(installer_shared_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/installer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/package.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/packagelist.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/site.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/mirrors.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/configparser.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/settings.cpp

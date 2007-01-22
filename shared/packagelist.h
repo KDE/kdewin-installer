@@ -33,6 +33,7 @@ class Installer;
 class QTreeWidget;
 class QTreeWidgetItem;
 class QIODevice;
+class Site;
 
 QStringList filterPackageFiles(const QStringList &list,const QString &mode);
 
@@ -84,6 +85,12 @@ public:
         m_baseURL = baseURL;
     }
 
+    // sets the current Site to get access to dep & deny lists
+    void setCurrentSite(Site *s)
+    {
+        m_curSite = s;
+    }
+
     // 0.5.3
     bool hasConfig();
     bool downloadPackage(const QString &pkgName, Package::Types types=Package::ALL);
@@ -104,6 +111,7 @@ private:
     Installer *installer;
     QString m_name;
     QString m_baseURL;
+    Site *m_curSite;
 
     friend class Installer;
 };

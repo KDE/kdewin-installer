@@ -128,8 +128,18 @@ bool ConfigParser::parse(QIODevice *ioDev)
                     site->setURL(cmd[1]);
                 else if(cmd[0] == "@sitetype" || cmd[0] == "@type")
                     site->setType(cmd[1] == "apachemodindex" ? Site::ApacheModIndex : Site::SourceForge );
-                if(cmd[0] == "@mirrorurl")
-                    site->mirror() = cmd[1];
+                else if(cmd[0] == "@mirrorurl")
+                    site->addMirror(cmd[1]);
+                else if(cmd[0] == "@deps") {
+                    QString dep = cmd[1];
+                    cmd.removeFirst();
+                    cmd.removeFirst();
+                    site->addDependencies(dep, cmd);
+                }
+                else if(cmd[0] == "@exclude") {
+                    cmd.removeFirst();
+                    site->addExcludes(cmd);
+                }
             }
             else if(cmd[0] == "@site")
             {

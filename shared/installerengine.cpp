@@ -68,23 +68,25 @@ bool InstallerEngine::downloadPackageLists()
     QList<Site*>::iterator s;
     for (s = m_configParser->sites()->begin(); s != m_configParser->sites()->end(); s++)
     {
-        qDebug() << "download package file list for site: " << (*s)->Name();
+        qDebug() << "download package file list for site: " << (*s)->name();
         PackageList *packageList = new PackageList(m_downloader);
-        packageList->setConfigFileName("packages-" + (*s)->Name() + ".txt");
-        packageList->setName((*s)->Name());
+        packageList->setConfigFileName("packages-" + (*s)->name() + ".txt");
+        packageList->setName((*s)->name());
         m_packageList = packageList;
         m_packageListList.append(packageList);
         Installer *installer = new Installer(packageList,m_instProgressBar );
+        // packagelist needs to access Site::getDependencies() && Site::isExclude()
+        packageList->setCurrentSite(*s);
 
         // FIXME:: hardcoded name, better to use an option in the config file ?
-        if ((*s)->Name() == "gnuwin32")
+        if ((*s)->name() == "gnuwin32")
         {
             installer->setType(Installer::GNUWIN32);
             // FIXME: add additional option in config.txt for mirrors
             packageList->setBaseURL("http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/");
         }
         else
-            packageList->setBaseURL((*s)->URL());
+            packageList->setBaseURL((*s)->url());
         installer->setRoot(m_settings.value("rootdir").toString());
         m_installerList.append(installer);
         m_installer = installer;
@@ -94,7 +96,7 @@ bool InstallerEngine::downloadPackageLists()
         if ( !packageList->hasConfig() )
         {
             // download package list
-            qDebug() << (*s)->URL();
+            qDebug() << (*s)->url();
 #ifdef DEBUG
             QFileInfo tmpFile(installer->Root() + "/packages-"+(*s)->Name()+".html");
             if (!tmpFile.exists())
@@ -104,7 +106,7 @@ bool InstallerEngine::downloadPackageLists()
             if (!packageList->readHTMLFromFile(tmpFile.absoluteFilePath(),(*s)->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge ))
 #else            
             QByteArray ba;
-            m_downloader->start((*s)->URL(), ba);
+            m_downloader->start((*s)->url(), ba);
             if (!packageList->readHTMLFromByteArray(ba,(*s)->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge ))
 #endif
             {

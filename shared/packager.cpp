@@ -312,7 +312,7 @@ bool Packager::createDebugFiles(const QString &dir)
     generateFileList(fileList,dir,"lib","*.exe *.dll");
     for (int i = 0; i < fileList.size(); i++) 
     {
-        QFileInfo fi(dir + "/" + fileList.at(i));
+        QFileInfo fi(dir + '/' + fileList.at(i));
         // FIXME: add file in use detection, isWritable() returns not the required state
         // if no windows related functions is available at least parsing the output for 
         // the string "strip: unable to rename" indicates this condition

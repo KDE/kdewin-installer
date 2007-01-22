@@ -26,6 +26,8 @@
 
 #include <QtDebug>
 #include <QString>
+#include <QStringList>
+#include <QHash>
 
 /**
  holds a site definition 
@@ -35,47 +37,52 @@ class Site
 
 public:
     enum SiteType {SourceForge, ApacheModIndex};
-    QString Name()
-    {
-        return m_name;
-    }
-    QString URL()
-    {
-        return m_url;
-    }
-    SiteType Type()
-    {
-        return m_type;
-    }
+
+    const QString &name() const { return m_name; }
     void setName(const QString &name)
     {
         m_name = name;
     }
+
+    const QString &url() const { return m_url; }
     void setURL(const QString &url)
     {
         m_url = url;
     }
+
+    const QStringList &mirrors() const { return m_mirrors; }
+    void addMirror(const QString &mirror)
+    {
+        if(!m_mirrors.contains(mirror))
+            m_mirrors += mirror;
+    }
+
+    SiteType Type() const { return m_type; }
     void setType(SiteType type)
     {
         m_type = type;
     }
-    QString &mirror()
-    {
-        return m_mirror;
-    }
+
+    void addDependencies(const QString &package, const QStringList &deps);
+    QStringList getDependencies(const QString &package);
+
+    void addExcludes(const QStringList &excludes);
+    bool isExclude(const QString &package);
 
     void dump()
     {
         qDebug() << "m_name  " << m_name;  
         qDebug() << "m_url   " << m_url;   
         qDebug() << "m_type  " << m_type;  
-        qDebug() << "m_mirror" << m_mirror;
+        qDebug() << "m_mirror" << m_mirrors.join(" ");
     }
 private:
-    QString m_name;
-    QString m_url;
-    SiteType m_type;
-    QString m_mirror;
+    QString     m_name;
+    QString     m_url;
+    SiteType    m_type;
+    QStringList m_mirrors;
+    QStringList m_excludes;
+    QHash<QString, QStringList> m_dependencies;
 };
 
 #endif
