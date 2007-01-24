@@ -20,15 +20,44 @@
 ; there is an updated version of upx (exclude is not supported yet)
 ;@exclude upx 
 
-; a package definition  
-@package KDELIBS
-; packages are currently listed in "other" category 
+
+; chris mirror 
+@site win32libs
+@type apachemodindex
+@url http://www.abi-neuhaus.de/chris/win32libs/zip/
+;@options
+
+; a package definition 
+@package qt-mingw
+;@category KDE
+@version 20070119
+@url-bin http://82.149.170.66/kde-windows/qt/qt-mingw-4.2.2-20070119-bin.zip
+@url-lib http://82.149.170.66/kde-windows/qt/qt-mingw-4.2.2-20070119-lib.zip
+@url-doc http://82.149.170.66/kde-windows/qt/qt-mingw-4.2.2-20070119-doc.zip
+@url-src http://82.149.170.66/kde-windows/qt/qt-mingw-4.2.2-20070119-src.zip
+
+; a package definition 
+@package kdelibs-mingw
 ;@category KDE
 @version 20070110
 @url-bin http://82.149.170.66/kde-windows/KDE/kdelibs-mingw-20070110-bin.zip
 @url-lib http://82.149.170.66/kde-windows/KDE/kdelibs-mingw-20070110-lib.zip
 @url-src http://82.149.170.66/kde-windows/KDE/kdelibs-mingw-20070110-src.zip
-@require aspell bzip2 expat giflib iconv jpeg libpng libxml2 libxlst openssl pcre tiff zlib
+@require aspell bzip2 expat giflib iconv jpeg libpng libxml2 libxslt openssl pcre tiff zlib dbus kdewin32-mingw qt-mingw
+
+@package kdewin32-mingw
+@category KDE
+@version 20070118
+@url-bin http://82.149.170.66/kde-windows/KDE/kdewin32-mingw-20070118-bin.zip
+@url-lib http://82.149.170.66/kde-windows/KDE/kdewin32-mingw-20070118-lib.zip
+@require qt-mingw
+
+@package dbus
+@category KDE
+@version 20070114
+@url-bin http://82.149.170.66/kde-windows/dbus/dbus-20070122-bin.zip
+@url-lib http://82.149.170.66/kde-windows/dbus/dbus-20070122-lib.zip
+@require libxml2
 
 @package upx 
 @version 2.0.3
@@ -37,39 +66,40 @@
 @relocate upx203w bin
 
 ; another definition (installing not implemented yet)
-;@site win32libs
-;@type apachemodindex
-;@url http://www.abi-neuhaus.de/chris/win32libs/zip/
-;@options
-
-; another definition (installing not implemented yet)
 ;@site kde-i18n
-;@type apachemodindex
-;@url http://software.opensuse.org/download/KDE:/KDE3/SUSE_Linux_10.1/noarch/
-;@options
+;@sitetype apachemodindex
+;@siteurl http://software.opensuse.org/download/KDE:/KDE3/SUSE_Linux_10.1/noarch/
+;@siteoptions
 
 ;@site perl (installing not implemented yet)
-;@type apachemodindex
-;@url http://downloads.activestate.com/ActivePerl/Windows/5.8/
-;@options
-
-
-; a package definition  (not implemented yet)
-;@package perl ; package name
-;@category perl 
-;@version 5.8.8 ; package version
-;@url http://downloads.activestate.com/ActivePerl/Windows/5.8/ActivePerl-5.8.8.819-MSWin32-x86-267479.msi ; base url
-;@options
+;@sitetype apachemodindex
+;@siteurl http://downloads.activestate.com/ActivePerl/Windows/5.8/
+;@siteoptions
 
 ; another package definition  (not implemented yet)
-;@package cmake 
-;@version 2.4.5
-;@url http://www.cmake.org/files/v2.4/cmake-2.4.5-win32-x86.zip
+@package cmake 
+@version 2.4.6
+@url-bin http://www.cmake.org/files/v2.4/cmake-2.4.6-win32-x86.zip
+@url-src http://www.cmake.org/files/v2.4/cmake-2.4.6.zip
 ;@options
 
+; a package definition  (not implemented yet)
+@package perl ; package name
+;@category perl 
+@version 5.8.8 ; package version
+@url-bin http://downloads.activestate.com/ActivePerl/Windows/5.8/ActivePerl-5.8.8.819-MSWin32-x86-267479.msi 
+;@packageoptions
+
+@package ruby
+@version 1.8.5-21
+; must we really download a 26 MB big exe for running kdesdk/cmake/scripts/am2cmake ? 
+;@description ruby installer used by am2cmake
+; the original url is http://rubyforge.org/frs/download.php/12751/ruby185-21.exe 
+; and is redirected by a 302 found return header to the url below  
+; this may be implemented in Downloader class
+@url-bin http://rubyforge-files.ruby-forum.com/rubyinstaller/ruby185-21.exe
 
 @package psdk-msvc
 @version R2
-; not supported yet
-;@description Windows Platform SDK's 
 @url-bin http://download.microsoft.com/download/f/a/d/fad9efde-8627-4e7a-8812-c351ba099151/PSDK-x86.exe
+
