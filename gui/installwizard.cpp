@@ -41,7 +41,6 @@
 #include "installerprogress.h"
 #include "package.h"
 #include "packagelist.h"
-#include "configparser.h"
 #include "settings.h"
 #include "installerengine.h"
 #include "settingspage.h"
@@ -56,15 +55,26 @@ InstallerEngine *engine;
 InstallWizard::InstallWizard(QWidget *parent)
         : ComplexWizard(parent)
 {
+    engine = new InstallerEngine(progressBar,instProgressBar);
     settingsPage = new SettingsPage(this);
-    titlePage = new TitlePage(this);
-    //    packageSelectorPage = new PackageSelectorPage(this);
-    setFirstPage(titlePage);
 
     setWindowTitle(tr("KDE Installer"));
     resize(480, 200);
 
-    engine = new InstallerEngine(progressBar,instProgressBar);
+
+    if (engine->settings().value("FirstRun",true).toBool() 
+        || engine->settings().value("displayTitlePage",false).toBool())
+    {
+        titlePage = new TitlePage(this);
+        setFirstPage(titlePage);
+        settingsButton->hide();
+    }
+    else
+    {
+        engine->downloadPackageLists();
+        packageSelectorPage = new PackageSelectorPage(this);
+        setFirstPage(packageSelectorPage);
+    }        
 }
 
 void InstallWizard::settingsButtonClicked()
@@ -167,6 +177,8 @@ WizardPage *PathSettingsPage::nextPage()
     engine->setRoot(rootPathEdit->text());
     engine->downloadPackageLists();
     wizard->packageSelectorPage = new PackageSelectorPage(wizard);
+    engine->settings().setValue("FirstRun",false);
+    wizard->settingsButton->show();
     return wizard->packageSelectorPage;
 }
 

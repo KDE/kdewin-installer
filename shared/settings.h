@@ -28,11 +28,15 @@
 
 /**
  holds global options, which are stored in a local user specific config file
+ FIXME: add access functions to hide internals, the settings class should be the 
+ FIXME: common place for application settings 
+ FIXME: InstallerEngine and SettingsPage class should also use access functions 
+ 
 */
 class Settings : public QSettings
 {
 public:
-    Settings();
+    Settings();   
 protected:
 private:
 };

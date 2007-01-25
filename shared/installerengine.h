@@ -75,7 +75,7 @@ public:
     {
         return m_installer;
     }
-    const Settings &settings() const
+    Settings &settings()
     {
         return m_settings;
     }

@@ -7,19 +7,24 @@
 SettingsPage::SettingsPage(QWidget *parent)
      : QDialog(parent)
 {
-     ui.setupUi(this);
+    ui.setupUi(this);
 
-     ui.rootPathEdit->setText(settings.value("rootdir").toString());
-     ui.tempPathEdit->setText(settings.value("tempdir").toString());
-     connect( ui.rootPathSelect,SIGNAL(clicked()),this,SLOT(rootPathSelectClicked()) );
-     connect( ui.tempPathSelect,SIGNAL(clicked()),this,SLOT(tempPathSelectClicked()) );
+    ui.createStartMenuEntries->setEnabled(false);
+    ui.displayTitlePage->setCheckState(settings.value("displayTitlePage",false).toBool() ? Qt::Checked : Qt::Unchecked);
+
+    ui.rootPathEdit->setText(settings.value("rootdir").toString());
+    ui.tempPathEdit->setText(settings.value("tempdir").toString());
+    connect( ui.rootPathSelect,SIGNAL(clicked()),this,SLOT(rootPathSelectClicked()) );
+    connect( ui.tempPathSelect,SIGNAL(clicked()),this,SLOT(tempPathSelectClicked()) );
 }
 
 void SettingsPage::accept()
 {
     hide();
-    if (ui.createStartMenuEntries->checkState() == Qt::Checked)
-        ;
+    // FIXME: move to Settings
+    settings.setValue("createStartMenuEntries",ui.createStartMenuEntries->checkState() == Qt::Checked ? true : false);
+    settings.setValue("displayTitlePage",ui.displayTitlePage->checkState() == Qt::Checked ? true : false);
+    // FIXME: update installerengine-> Settings class should emit a signal 
     settings.setValue("rootdir",ui.rootPathEdit->text());
     settings.setValue("tempdir",ui.tempPathEdit->text());
 }
