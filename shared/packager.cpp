@@ -136,31 +136,66 @@ bool Packager::createZipFile(const QString &baseName, const QString &root, const
 bool Packager::generatePackageFileList(QStringList &fileList, const QString &dir, Packager::Type type)
 {
     fileList.clear();
-    switch (type) {
-        case BIN:
-            generateFileList(fileList, dir, "bin",   "*.exe *.dll *.bat");
-            generateFileList(fileList, dir, "lib",   "*.dll");
-            generateFileList(fileList, dir, "share", "*.*");
-            generateFileList(fileList, dir, "data",  "*.*");
-            generateFileList(fileList, dir, "etc",   "*.*");
-            return true;
-        case LIB:
-            generateFileList(fileList, dir, "lib",     "*.dll.a");
-            generateFileList(fileList, dir, "include", "*.*");
-            return true;
-        case DOC:
-            generateFileList(fileList, dir, "doc", "*.dll.a");
-            generateFileList(fileList, dir, "man", "*.*");
-            return true;
-        case SRC:
-            generateFileList(fileList, dir, "src", "*.*");
-            return true;
-        case NONE:
-            generateFileList(fileList, dir, "", "*.*", "manifest");
-            return true;
-        default:
-            break;
-   }
+    if (m_name.startsWith("qt") || m_name.startsWith("q++") || m_name.startsWith("q.."))
+        switch (type) {
+            case BIN:
+                generateFileList(fileList, dir, "bin", "*.dll qdbus.exe dbus-viewer.exe", "*d.dll *d4.dll");
+                generateFileList(fileList, dir, "plugins", "*.dll","*d.dll *d1.dll");
+                generateFileList(fileList, dir, "translations",  "*.qm");
+                return true;
+            case LIB:
+                generateFileList(fileList, dir, "bin",   "*.exe *.bat *d4.dll", "assistant.exe qtdemo.exe qdbus.exe dbus-viewer.exe");
+                generateFileList(fileList, dir, ".",     ".qmake.cache");
+                generateFileList(fileList, dir, "lib",     "*.a");
+                generateFileList(fileList, dir, "include", "*.*");
+                generateFileList(fileList, dir, "src/corelib", "*.h", "*_*.h");
+                generateFileList(fileList, dir, "src/gui", "*.h", "*_*.h");
+                generateFileList(fileList, dir, "src/qt3support", "*.h", "*_*.h");
+                generateFileList(fileList, dir, "src/xml", "*.h", "*_*.h");
+                generateFileList(fileList, dir, "src/network", "*.h", "*_*.h");
+                generateFileList(fileList, dir, "src/svg", "*.h", "*_*.h");
+                generateFileList(fileList, dir, "src/opengl", "*.h", "*_*.h");
+                return true;
+            case DOC:
+                generateFileList(fileList, dir, "bin", "qtdemo.exe assistant.exe");
+                generateFileList(fileList, dir, "doc", "*.*");
+                return true;
+            case SRC:
+                // not supported yet
+                //generateFileList(fileList, dir, "src", "*.*");
+                return true;
+            case NONE:
+                generateFileList(fileList, dir, "", "*.*", "manifest");
+                return true;
+            default:
+                break;
+        }
+    else    
+        switch (type) {
+            case BIN:
+                generateFileList(fileList, dir, "bin",   "*.exe *.dll *.bat");
+                generateFileList(fileList, dir, "lib",   "*.dll");
+                generateFileList(fileList, dir, "share", "*.*");
+                generateFileList(fileList, dir, "data",  "*.*");
+                generateFileList(fileList, dir, "etc",   "*.*");
+                return true;
+            case LIB:
+                generateFileList(fileList, dir, "lib",     "*.dll.a");
+                generateFileList(fileList, dir, "include", "*.*");
+                return true;
+            case DOC:
+                generateFileList(fileList, dir, "doc", "*.dll.a");
+                generateFileList(fileList, dir, "man", "*.*");
+                return true;
+            case SRC:
+                generateFileList(fileList, dir, "src", "*.*");
+                return true;
+            case NONE:
+                generateFileList(fileList, dir, "", "*.*", "manifest");
+                return true;
+            default:
+                break;
+       }
    return false;
 }
 
