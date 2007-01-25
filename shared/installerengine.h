@@ -34,7 +34,7 @@ class Downloader;
 class DownloaderProgress;
 class Installer;
 class InstallerProgress;
-class ConfigParser;
+class GlobalConfig;
 class Settings;
 class Package;
 class InstallWizard;
@@ -45,7 +45,7 @@ class InstallerEngine
 {
 public:
     InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
-    bool downloadGlobalConfig();
+    void createMainPackagelist();
     bool downloadPackageLists();
     void stop();
 
@@ -62,8 +62,8 @@ public:
     PackageList *getPackageListByName(const QString &name);
     Package *getPackageByName(const QString &name);
     
-    void setRoot(const QString &root);
-    QString root() const;
+    void setRoot(QString root);
+    const QString root();
 
 
     PackageList *packageList()
@@ -87,7 +87,7 @@ private:
     Installer           *m_installer;    // currently used installer
     Downloader          *m_downloader;
     InstallerProgress   *m_instProgress;
-    ConfigParser        *m_configParser;
+    GlobalConfig        *m_globalConfig;
     InstallerProgress   *m_instProgressBar;
     Settings             m_settings;
 };

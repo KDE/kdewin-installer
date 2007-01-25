@@ -11,62 +11,45 @@
 #include "installerprogress.h"
 #include "package.h"
 #include "packagelist.h"
-#include "configparser.h"
+#include "globalconfig.h"
 
 InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar)
 {
     m_downloader = new Downloader(/*blocking=*/ true,progressBar);
     m_instProgressBar = instProgressBar;
-    downloadGlobalConfig();
+    m_globalConfig = new GlobalConfig(QString("http://82.149.170.66/kde-windows/installer/config.txt"),*m_downloader);
+    createMainPackagelist();
 }
 
-bool InstallerEngine::downloadGlobalConfig()
+void InstallerEngine::createMainPackagelist()
 {
+    // package list is build from packages defined in global configuration
     PackageList *packageList = new PackageList(m_downloader);
     packageList->setConfigFileName("packages-other.txt");
-    packageList->setName("Other");
+    packageList->setName("main");
     m_packageListList.append(packageList);
 
-    // FIXME: must not be standalone 
     Installer *installer = new Installer(packageList,m_instProgressBar );
-    QString root = m_settings.value("rootdir").toString();
-    QFileInfo fi(root);
-    if(!fi.exists() || !fi.isDir()) {
-        root = QDir::currentPath();
-        setRoot(root);
-    }
-    installer->setRoot(root);
-    m_configParser = new ConfigParser(packageList);
+    installer->setRoot(root());
+    m_installerList.append(installer);
 
-#if 1
-    QFileInfo cfi("config.txt");
-    //if (!cfi.exists()) 
+    QList<Package*>::iterator p;
+    for (p = m_globalConfig->packages()->begin(); p != m_globalConfig->packages()->end(); p++)
     {
-        qDebug() << "download global configuration file";
-        // FIXME uses version related config file to have more room for format changes
-        m_downloader->start("http://82.149.170.66/kde-windows/installer/config.txt",cfi.fileName());
+        packageList->addPackage(*(*p));
     }
-#endif
-    qDebug() << "parsing remote configuration file";
-    int ret = m_configParser->parseFromFile("config.txt");
-    fi = QFileInfo("config-local.txt");
-    if (fi.exists()) 
-    {
-        ret = m_configParser->parseFromFile(fi.absoluteFilePath());
-        qDebug() << "parsing local configuration file";
-    }
+    
     if (packageList->hasConfig())
         packageList->syncWithFile();
 
     packageList->writeToFile();
-    return true;
 }
 
 /// download all packagelists, which are available on the configured sites
 bool InstallerEngine::downloadPackageLists()
 {
     QList<Site*>::iterator s;
-    for (s = m_configParser->sites()->begin(); s != m_configParser->sites()->end(); s++)
+    for (s = m_globalConfig->sites()->begin(); s != m_globalConfig->sites()->end(); s++)
     {
         qDebug() << "download package file list for site: " << (*s)->name();
         PackageList *packageList = new PackageList(m_downloader);
@@ -87,7 +70,7 @@ bool InstallerEngine::downloadPackageLists()
         }
         else
             packageList->setBaseURL((*s)->url());
-        installer->setRoot(m_settings.value("rootdir").toString());
+        installer->setRoot(root());
         m_installerList.append(installer);
         m_installer = installer;
 
@@ -352,7 +335,7 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
     // adding top level items
     QList<QTreeWidgetItem *> categoryList;
 
-    qDebug() << "adding categories size:" << m_configParser->sites()->size();
+    qDebug() << "adding categories size:" << m_globalConfig->sites()->size();
 
     QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
     for ( ; k != m_packageListList.constEnd(); ++k)
@@ -571,16 +554,19 @@ Package *InstallerEngine::getPackageByName(const QString &name)
     return 0;
 }
 
-void InstallerEngine::setRoot(const QString &root)
+void InstallerEngine::setRoot(QString root)
 {
     m_settings.setValue("rootdir", QDir::convertSeparators(root));
 }
 
-QString InstallerEngine::root() const
+const QString InstallerEngine::root()
 {
     QString root = m_settings.value("rootdir").toString();
     if (root.isEmpty())
-        return QDir::convertSeparators(QDir::currentPath());
+    {
+        root = QDir::convertSeparators(QDir::currentPath());
+        m_settings.setValue("rootdir", QDir::convertSeparators(root));
+    }
     return root;
 }
 
