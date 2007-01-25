@@ -24,7 +24,7 @@
 #include <QtDebug>
 #include <QCoreApplication>
 
-#include "configparser.h"
+#include "globalconfig.h"
 #include "site.h"
 #include "packagelist.h"
 
@@ -39,10 +39,9 @@ int main(int argc, char *argv[])
 
     qDebug() << "trying to download global configuration file";
     download.start("http://well-known-location-server/kde-installer/config.txt","config.txt");
-#endif
 
     PackageList packageList; 
-    ConfigParser configParser(&packageList);
+    GlobalConfig configParser(&packageList);
     configParser.parseFromFile("config.txt");
     /*
      foreach (Site aSite, *configParser.Sites) {
@@ -51,6 +50,7 @@ int main(int argc, char *argv[])
       qDebug() << aSite.type();
      }
     */
+#endif
 
     return 0;
 }

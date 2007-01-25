@@ -488,14 +488,14 @@ void InstallerEngine::listPackages(const QString &title)
 
 bool InstallerEngine::downloadPackages(const QStringList &packages, const QString &category)
 {
-    QList<Site*>::iterator s;
-    for (s = m_configParser->sites()->begin(); s != m_configParser->sites()->end(); s++)
+    QList<Site*>::ConstIterator s = m_globalConfig->sites()->constBegin();
+    for ( ; s != m_globalConfig->sites()->constEnd(); s++)
     {
-       qDebug() << (*s)->Name();
-       PackageList *packageList = getPackageListByName((*s)->Name());
+       qDebug() << (*s)->name();
+       PackageList *packageList = getPackageListByName((*s)->name());
        if (!packageList)
        {
-           qDebug() << __FUNCTION__ << " packagelist for " << (*s)->Name() << " not found";
+           qDebug() << __FUNCTION__ << " packagelist for " << (*s)->name() << " not found";
            continue;
        }
        foreach(QString package, packages)
@@ -509,14 +509,14 @@ bool InstallerEngine::downloadPackages(const QStringList &packages, const QStrin
 
 bool InstallerEngine::installPackages(const QStringList &packages,const QString &category)
 {
-    QList<Site*>::iterator s;
-    for (s = m_configParser->sites()->begin(); s != m_configParser->sites()->end(); s++)
+    QList<Site*>::ConstIterator s = m_globalConfig->sites()->constBegin();
+    for ( ; s != m_globalConfig->sites()->constEnd(); s++)
     {
-       qDebug() << (*s)->Name();
-       PackageList *packageList = getPackageListByName((*s)->Name());
+       qDebug() << (*s)->name();
+       PackageList *packageList = getPackageListByName((*s)->name());
        if (!packageList)
        {
-           qDebug() << __FUNCTION__ << " packagelist for " << (*s)->Name() << " not found";
+           qDebug() << __FUNCTION__ << " packagelist for " << (*s)->name() << " not found";
            continue;
        }
        foreach(QString package, packages)
