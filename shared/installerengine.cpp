@@ -414,7 +414,9 @@ bool InstallerEngine::downloadPackages(QTreeWidget *tree, const QString &categor
     for (int i = 0; i < tree->topLevelItemCount(); i++)
     {
         QTreeWidgetItem *item = static_cast<QTreeWidgetItem*>(tree->topLevelItem(i));
+#ifdef DEBUG
         qDebug() << __FUNCTION__ << " " << item->text(0);
+#endif
         if (category.isEmpty() || item->text(0) == category)
         {
             PackageList *packageList = getPackageListByName(item->text(0));
@@ -446,7 +448,9 @@ bool InstallerEngine::installPackages(QTreeWidget *tree,const QString &category)
     for (int i = 0; i < tree->topLevelItemCount(); i++)
     {
         QTreeWidgetItem *item = static_cast<QTreeWidgetItem*>(tree->topLevelItem(i));
+#ifdef DEBUG
         qDebug() << __FUNCTION__ << " " << item->text(0);
+#endif
         if (category.isEmpty() || item->text(0) == category)
         {
             PackageList *packageList = getPackageListByName(item->text(0));

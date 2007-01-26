@@ -415,7 +415,9 @@ bool PackageList::setInstalledPackage(const Package &apkg)
 
 bool PackageList::downloadPackage(const QString &pkgName, Package::Types types)
 {
+#ifdef DEBUG
     qDebug() << __FUNCTION__ << " " << pkgName; 
+#endif
     Package *pkg = getPackage(pkgName);
     if (!pkg) 
     {
