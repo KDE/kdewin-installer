@@ -213,8 +213,10 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type)
                 int a = line.indexOf("\">") + 2;
                 int b = line.indexOf("</a>");
                 QByteArray name = line.mid(a,b-a);
-                if(m_curSite->isExclude(name))
+                if(m_curSite->isExclude(name)) {
+                    ioDev->readLine();
                     continue;
+                }
                 pkg.addDeps(m_curSite->getDependencies(name));
                 pkg.setName(name);
                 line = ioDev->readLine();

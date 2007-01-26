@@ -30,7 +30,6 @@ TODO
     windows start menu entries writing 
   4 add mode for installing from local package directory
   5 test, test, test
-  6 add exclude package config item
   
 2 command line installer 
     1 add long command line options like operation mode --install, --erase, --list --query, ... 
@@ -46,12 +45,7 @@ TODO
 	9 deal with package name clashes from different locations (dependency checking)
 	10 add a switch to select end user/developer operation (end user by default)
 	   in end user mode only the bin packages are visible 
-	
-	
-4 config
-    1 exclude upx from gnuwin32, it is outdated. 
-  
-    
+
 Happy hacking
 
 
