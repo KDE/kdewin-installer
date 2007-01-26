@@ -190,7 +190,7 @@ bool Package::write(QTextStream &out)
     << (isInstalled(BIN) ? "bin:" : ":")
     << (isInstalled(LIB) ? "lib:" : ":")
     << (isInstalled(DOC) ? "doc:" : ":")
-    << (isInstalled(SRC) ? "src:" : QString())
+    << (isInstalled(SRC) ? "src" : QString())
     << ";"
     << baseURL << ";"
     << getFileName(BIN) << ";"
@@ -206,16 +206,20 @@ bool Package::read(QTextStream &in)
     if (in.atEnd())
         return false;
     QString line = in.readLine();
-    QStringList parts = line.split("\t");
+    QStringList parts = line.split('\t');
     setName(parts.at(0));
     setVersion(parts.at(1));
-    QStringList options = parts.at(2).split(";");
-    QStringList state = options.at(0).split(":");
+    QStringList options = parts.at(2).split(';');
+    QStringList state = options.at(0).split(':');
     QString baseURL = options.at(1);
-    add(baseURL+options.at(2), BIN, state.size() > 0 && state.at(0) == "bin");
-    add(baseURL+options.at(3), LIB, state.size() > 0 && state.at(1) == "lib");
-    add(baseURL+options.at(4), DOC, state.size() > 0 && state.at(2) == "doc");
-    add(baseURL+options.at(5), SRC, state.size() > 0 && state.at(3) == "src");
+    if(!options.at(2).isEmpty())
+        add(baseURL+options.at(2), BIN, state.size() > 0 && state.at(0) == "bin");
+    if(!options.at(3).isEmpty())
+        add(baseURL+options.at(3), LIB, state.size() > 1 && state.at(1) == "lib");
+    if(!options.at(4).isEmpty())
+        add(baseURL+options.at(4), DOC, state.size() > 2 && state.at(2) == "doc");
+    if(!options.at(5).isEmpty())
+        add(baseURL+options.at(5), SRC, state.size() > 3 && state.at(3) == "src");
     return true;
 }
 
