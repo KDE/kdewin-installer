@@ -51,7 +51,7 @@ public:
         public:
             // dump content
     	    void dump(const QString &title=QString()) const;
-            QString path;           // complete url (use QUrl?)
+            QString path;           // path without filename
             QString fileName;       // filename only
             QString packageType;    // zip / msi / ...
             Type    contentType;    // BIN / LIB / DOC / SRC
@@ -70,15 +70,17 @@ public:
     QString toString(bool installed=false, const QString &delim = "-");
     QString getTypeAsString(bool requiredIsInstalled=false, const QString &delim = " ");
 
-    // return PackageItem::fileName for specified contentType
+    // returns PackageItem::fileName for specified contentType
     QString getFileName(Package::Type contentType);
-    // return PackageItem::path for specified contentType
+    // returns PackageItem::path + '/' + PackageItem::fileName
+    QString getFullFileName(Package::Type contentType);
+    // returns PackageItem::path for specified contentType
     QString getURL(Package::Type type);
     // returns the base Url of all packages (if possible, otherqsie QString())
     QString getBaseURL();
     // add a file to this package
-    void add(const QString &path, Package::Type contentType, bool bInstalled = false);
-    void add(const QString &path, const QByteArray &contentType, bool bInstalled = false);
+    void add(const QString &path, const QString &fn, Package::Type contentType, bool bInstalled = false);
+    void add(const QString &path, const QString &fn, const QByteArray &contentType, bool bInstalled = false);
     // set Install state of a package type (e.g. from gnuwin32 manifests)
     void setInstalled(const Package &other);
     // return state of a specific item type is available

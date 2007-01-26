@@ -49,6 +49,13 @@ QString Package::getFileName(Package::Type contentType)
     return QString();
 }
 
+QString Package::getFullFileName(Package::Type contentType)
+{
+    if(m_packages.contains(contentType))
+        return m_packages[contentType].path + '/' + m_packages[contentType].fileName;
+    return QString();
+}
+
 QString Package::getURL(Package::Type contentType)
 {
     if(m_packages.contains(contentType))
@@ -62,58 +69,56 @@ QString Package::getBaseURL()
     QHash<Type, PackageItem>::ConstIterator it = m_packages.constBegin();
     for( ; it != m_packages.constEnd(); ++it) {
         if(baseUrl.isEmpty()) {
-            int idx = (*it).path.lastIndexOf('/');
-            if(idx == -1)
-                continue;
-            baseUrl = (*it).path.left(idx);
+            baseUrl = (*it).path;
         } else {
-            int idx = (*it).path.lastIndexOf('/');
-            if(idx == -1)
-                return QString();
-            QString s = (*it).path.left(idx);
-            if(s != baseUrl)
+            if((*it).path != baseUrl)
                 return QString();
         }
     }
     return baseUrl;
 }
 
-void Package::add(const QString &path, const QByteArray &contentType, bool bInstalled)
+void Package::add(const QString &path, const QString &fn, const QByteArray &contentType, bool bInstalled)
 {
 #ifdef DEBUG
     qDebug() << __FUNCTION__ << " " << path << " " << contentType << " " << bInstalled;
 #endif
     QByteArray ct = contentType.toLower();
     if(ct == "bin")
-        add(path, BIN, bInstalled);
+        add(path, fn, BIN, bInstalled);
     else
     if(ct == "lib")
-        add(path, LIB, bInstalled);
+        add(path, fn, LIB, bInstalled);
     else
     if(ct == "doc")
-        add(path, DOC, bInstalled);
+        add(path, fn, DOC, bInstalled);
     else
     if(ct == "src")
-        add(path, SRC, bInstalled);
+        add(path, fn, SRC, bInstalled);
 }
 
-void Package::add(const QString &path, Package::Type contentType, bool bInstalled)
+void Package::add(const QString &path, const QString &fn, Package::Type contentType, bool bInstalled)
 {
     PackageItem desc;
     int idx;
 #ifdef DEBUG
     qDebug() << __FUNCTION__ << " " << path << " " << contentType << " " << bInstalled;
 #endif
-    desc.path = path;
 
-    idx = path.lastIndexOf('/');
-    if(idx == -1) {
-        qDebug("Invalid - no '/' in path");    // FIXME
-        //return;
-        desc.fileName = path;
+    if(path.isEmpty()) {
+        // every package has different baseUrl
+        idx = fn.lastIndexOf('/');
+        if(idx == -1) {
+            qDebug("Parser error! - no '/' in path");    // FIXME
+            return;
+        }
+        desc.path = fn.left(idx);
+        desc.fileName = fn.mid(idx + 1);
+    } else {
+        // every package has same baseUrl
+        desc.path = path;
+        desc.fileName = fn;
     }
-    else
-        desc.fileName = path.mid(idx + 1);
 
     idx = desc.fileName.lastIndexOf('.');
     if(idx == -1) {
@@ -213,10 +218,10 @@ bool Package::write(QTextStream &out)
     << (isInstalled(SRC) ? "src" : QString())
     << ";"
     << baseUrl << ";"
-    << (baseUrl.isEmpty() ? getURL(BIN) : getFileName(BIN)) << ";"
-    << (baseUrl.isEmpty() ? getURL(LIB) : getFileName(LIB)) << ";"
-    << (baseUrl.isEmpty() ? getURL(DOC) : getFileName(DOC)) << ";"
-    << (baseUrl.isEmpty() ? getURL(SRC) : getFileName(SRC))
+    << (baseUrl.isEmpty() ? getURL(BIN) + '/' : QString()) + getFileName(BIN) << ";"
+    << (baseUrl.isEmpty() ? getURL(LIB) + '/' : QString()) + getFileName(LIB) << ";"
+    << (baseUrl.isEmpty() ? getURL(DOC) + '/' : QString()) + getFileName(DOC) << ";"
+    << (baseUrl.isEmpty() ? getURL(SRC) + '/' : QString()) + getFileName(SRC)
     << "\n";
     return true;
 }
@@ -233,13 +238,13 @@ bool Package::read(QTextStream &in)
     QStringList state = options.at(0).split(':');
     QString baseURL = options.at(1);
     if(!options.at(2).isEmpty())
-        add(baseURL+options.at(2), BIN, state.size() > 0 && state.at(0) == "bin");
+        add(baseURL, options.at(2), BIN, state.size() > 0 && state.at(0) == "bin");
     if(!options.at(3).isEmpty())
-        add(baseURL+options.at(3), LIB, state.size() > 1 && state.at(1) == "lib");
+        add(baseURL, options.at(3), LIB, state.size() > 1 && state.at(1) == "lib");
     if(!options.at(4).isEmpty())
-        add(baseURL+options.at(4), DOC, state.size() > 2 && state.at(2) == "doc");
+        add(baseURL, options.at(4), DOC, state.size() > 2 && state.at(2) == "doc");
     if(!options.at(5).isEmpty())
-        add(baseURL+options.at(5), SRC, state.size() > 3 && state.at(3) == "src");
+        add(baseURL, options.at(5), SRC, state.size() > 3 && state.at(3) == "src");
     return true;
 }
 

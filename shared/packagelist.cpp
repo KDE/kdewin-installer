@@ -226,10 +226,10 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type)
                 pkg.setVersion(version);
                 // available types could not be determined on this web page
                 // so assume all types are available
-                pkg.add(m_baseURL+name+"-"+version+"-bin.zip",Package::BIN,false);
-                pkg.add(m_baseURL+name+"-"+version+"-lib.zip",Package::LIB,false);
-                pkg.add(m_baseURL+name+"-"+version+"-src.zip",Package::SRC,false);
-                pkg.add(m_baseURL+name+"-"+version+"-doc.zip",Package::DOC,false);
+                pkg.add(m_baseURL,name+"-"+version+"-bin.zip",Package::BIN,false);
+                pkg.add(m_baseURL,name+"-"+version+"-lib.zip",Package::LIB,false);
+                pkg.add(m_baseURL,name+"-"+version+"-src.zip",Package::SRC,false);
+                pkg.add(m_baseURL,name+"-"+version+"-doc.zip",Package::DOC,false);
                 addPackage(pkg);
             }
         }
@@ -358,11 +358,11 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type)
                     Package p;
                     p.setVersion(version);
                     p.setName(name);
-                    p.add(m_baseURL + path, type);
+                    p.add(m_baseURL, path, type);
                     addPackage(p);
                     p.addDeps(m_curSite->getDependencies(name));
                 } else {
-                    pkg->add(m_baseURL + path, type);
+                    pkg->add(m_baseURL, path, type);
                     pkg->addDeps(m_curSite->getDependencies(name));
                 }
             }

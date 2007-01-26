@@ -38,7 +38,7 @@
 #ifndef QZIP_BUFFER
 # define QZIP_BUFFER (256 * 1024)
 #endif
-
+#define CREATE_COMPLETE_PACKAGE
 
 Packager::Packager(const QString &packageName, const QString &packageVersion, const QString &packageNotes)
 : m_name(packageName), m_version(packageVersion), m_notes(packageNotes)
@@ -184,7 +184,7 @@ bool Packager::generatePackageFileList(QStringList &fileList, const QString &dir
                 generateFileList(fileList, dir, "include", "*.*");
                 return true;
             case DOC:
-                generateFileList(fileList, dir, "doc", "*.dll.a");
+                generateFileList(fileList, dir, "doc", "*.*");
                 generateFileList(fileList, dir, "man", "*.*");
                 return true;
             case SRC:

@@ -119,13 +119,13 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 if(cmd[0] == "@version")
                     pkg->setVersion(cmd[1]);
                 else if(cmd[0] == "@url-bin")
-                    pkg->add(cmd[1],Package::BIN);
+                    pkg->add(QString(), cmd[1],Package::BIN);
                 else if(cmd[0] == "@url-lib")
-                    pkg->add(cmd[1],Package::LIB);
+                    pkg->add(QString(), cmd[1],Package::LIB);
                 else if(cmd[0] == "@url-doc")
-                    pkg->add(cmd[1],Package::DOC);
+                    pkg->add(QString(), cmd[1],Package::DOC);
                 else if(cmd[0] == "@url-src")
-                    pkg->add(cmd[1],Package::SRC);
+                    pkg->add(QString(), cmd[1],Package::SRC);
                 else if(cmd[0] == "@require")
                 {
                     cmd.removeFirst();
