@@ -45,6 +45,8 @@ TODO
 	9 deal with package name clashes from different locations (dependency checking)
 	10 add a switch to select end user/developer operation (end user by default)
 	   in end user mode only the bin packages are visible 
+	11 add package delete support 
+	11 implement download package path already available in the gui
 
 Happy hacking
 
