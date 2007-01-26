@@ -39,10 +39,6 @@ void Package::PackageItem::dump(const QString &title) const
     qDebug() << "bInstalled:  " << bInstalled;     
 }
 
-// FIXME: this should be in PackageList to have access from Package, 
-// Package class should store PackageList pointer as parent
-QString Package::baseURL = "http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/";
-
 Package::Package()
 {}
 
@@ -58,6 +54,28 @@ QString Package::getURL(Package::Type contentType)
     if(m_packages.contains(contentType))
         return m_packages[contentType].path;
     return QString();
+}
+
+QString Package::getBaseURL()
+{
+    QString baseUrl;
+    QHash<Type, PackageItem>::ConstIterator it = m_packages.constBegin();
+    for( ; it != m_packages.constEnd(); ++it) {
+        if(baseUrl.isEmpty()) {
+            int idx = (*it).path.lastIndexOf('/');
+            if(idx == -1)
+                continue;
+            baseUrl = (*it).path.left(idx);
+        } else {
+            int idx = (*it).path.lastIndexOf('/');
+            if(idx == -1)
+                return QString();
+            QString s = (*it).path.left(idx);
+            if(s != baseUrl)
+                return QString();
+        }
+    }
+    return baseUrl;
 }
 
 void Package::add(const QString &path, const QByteArray &contentType, bool bInstalled)
@@ -184,6 +202,8 @@ bool Package::write(QTextStream &out)
 #ifdef DEBUG
     qDebug() << __FUNCTION__ << m_name << "\t" << m_version << "\t" << getTypeAsString(true,"\t") << "\n";
 #endif
+    QString baseUrl = getBaseURL();
+
     out << m_name << "\t" << m_version 
 // FIXME store path relocation information for removing too
     << "\t" 
@@ -192,11 +212,11 @@ bool Package::write(QTextStream &out)
     << (isInstalled(DOC) ? "doc:" : ":")
     << (isInstalled(SRC) ? "src" : QString())
     << ";"
-    << baseURL << ";"
-    << getFileName(BIN) << ";"
-    << getFileName(LIB) << ";"
-    << getFileName(DOC) << ";"
-    << getFileName(SRC)
+    << baseUrl << ";"
+    << (baseUrl.isEmpty() ? getURL(BIN) : getFileName(BIN)) << ";"
+    << (baseUrl.isEmpty() ? getURL(LIB) : getFileName(LIB)) << ";"
+    << (baseUrl.isEmpty() ? getURL(DOC) : getFileName(DOC)) << ";"
+    << (baseUrl.isEmpty() ? getURL(SRC) : getFileName(SRC))
     << "\n";
     return true;
 }

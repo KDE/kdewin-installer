@@ -61,23 +61,11 @@ public:
 
     Package();
 
-    const QString &name() const
-    {
-        return m_name;
-    }
-    void setName(QString const &name)
-    {
-        m_name = name;
-    }
+    const QString &name() const { return m_name; }
+    void setName(QString const &name) { m_name = name; }
 
-    const QString &version() const
-    {
-        return m_version;
-    }
-    void setVersion(const QString &version)
-    {
-        m_version = version;
-    }
+    const QString &version() const { return m_version; }
+    void setVersion(const QString &version) { m_version = version; }
 
     QString toString(bool installed=false, const QString &delim = "-");
     QString getTypeAsString(bool requiredIsInstalled=false, const QString &delim = " ");
@@ -86,6 +74,8 @@ public:
     QString getFileName(Package::Type contentType);
     // return PackageItem::path for specified contentType
     QString getURL(Package::Type type);
+    // returns the base Url of all packages (if possible, otherqsie QString())
+    QString getBaseURL();
     // add a file to this package
     void add(const QString &path, Package::Type contentType, bool bInstalled = false);
     void add(const QString &path, const QByteArray &contentType, bool bInstalled = false);
@@ -93,8 +83,6 @@ public:
     void setInstalled(const Package &other);
     // return state of a specific item type is available
     bool hasType(Package::Type contentType) const;
-
-    static QString baseURL;     // FIXME: why is this static?
 
     // check if specific content is already installed
     bool isInstalled(Package::Type type) const;
