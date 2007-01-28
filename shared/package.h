@@ -70,13 +70,11 @@ public:
     QString toString(bool installed=false, const QString &delim = "-");
     QString getTypeAsString(bool requiredIsInstalled=false, const QString &delim = " ");
 
-    // returns PackageItem::fileName for specified contentType
+    // returns fileName of package item e.g. xyz-1.2.3-bin.zip
     QString getFileName(Package::Type contentType);
-    // returns PackageItem::path + '/' + PackageItem::fileName
-    QString getFullFileName(Package::Type contentType);
-    // returns PackageItem::path for specified contentType
+    // returns complete url of package item e.g. http://host/path.../fileName
     QString getURL(Package::Type type);
-    // returns the base Url of all packages (if possible, otherqsie QString())
+    // returns the base Url of all packages (if possible, otherwise QString())
     QString getBaseURL();
     // add a file to this package
     void add(const QString &path, const QString &fn, Package::Type contentType, bool bInstalled = false);

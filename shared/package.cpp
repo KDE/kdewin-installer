@@ -49,17 +49,10 @@ QString Package::getFileName(Package::Type contentType)
     return QString();
 }
 
-QString Package::getFullFileName(Package::Type contentType)
-{
-    if(m_packages.contains(contentType))
-        return m_packages[contentType].path + '/' + m_packages[contentType].fileName;
-    return QString();
-}
-
 QString Package::getURL(Package::Type contentType)
 {
     if(m_packages.contains(contentType))
-        return m_packages[contentType].path;
+        return m_packages[contentType].path + '/' + m_packages[contentType].fileName;
     return QString();
 }
 
