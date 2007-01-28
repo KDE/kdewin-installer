@@ -97,6 +97,7 @@ class GlobalConfig {
         ~GlobalConfig();
         QList<Site*> *sites()  { return &m_sites;   } 
         QList<Package*> *packages() { return &m_packages; }
+        void dump(const QString &title=QString());
     protected:
         bool parseFromFile(const QString &fileName);
         bool parseFromByteArray(const QByteArray &ba);

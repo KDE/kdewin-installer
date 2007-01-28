@@ -30,13 +30,23 @@
 
 GlobalConfig::GlobalConfig(const QString &url, Downloader &downloader)
 {
-    QFileInfo cfi("config.txt");
-    qDebug() << "download global configuration file";
-    // FIXME uses version related config file to have more room for format changes
-    downloader.start(url,cfi.fileName());
-
-    qDebug() << "parsing remote configuration file";
-    int ret = parseFromFile("config.txt");
+    int ret; 
+    // FIXME: place config files into package download path
+    QFileInfo cfr("config-remote.txt");
+    if (cfr.exists())
+    {
+        ret = parseFromFile("config-remote.txt");
+    }
+    else 
+    {
+        QFileInfo cfi("config.txt");
+        qDebug() << "download global configuration file";
+        // FIXME uses version related config file to have more room for format changes
+        downloader.start(url,cfi.fileName());
+    
+        qDebug() << "parsing remote configuration file";
+        ret = parseFromFile("config.txt");
+    }
     QFileInfo fi("config-local.txt");
     if (fi.exists()) 
     {
@@ -100,7 +110,9 @@ bool GlobalConfig::parse(QIODevice *ioDev)
         { 
            if (inPackage)
            {
-               pkg->dump();
+#ifdef DEBUG
+               pkg->dump(__FUNCTION__);
+#endif
                inPackage=false;
            }
            else if (inSite)
@@ -151,6 +163,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     site->addDependencies(dep, cmd);
                 }
                 else if(cmd[0] == "@exclude") {
+                    qDebug() << __FUNCTION__ << "add Exclude" << cmd;
                     cmd.removeFirst();
                     site->addExcludes(cmd);
                 }
@@ -172,4 +185,12 @@ bool GlobalConfig::parse(QIODevice *ioDev)
         }
     }
     return true;
+}
+
+void GlobalConfig::dump(const QString &title)
+{
+    qDebug() << title;
+    QList<Site*>::iterator s;
+    for (s = sites()->begin(); s != sites()->end(); s++)
+        (*s)->dump();    
 }
