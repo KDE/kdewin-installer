@@ -32,7 +32,6 @@
 
 static void printHelp(const QString &addInfo)
 {
-    // too lazy atm 
     QTextStream ts(stderr);
     ts << QDir::convertSeparators(QCoreApplication::applicationFilePath());
     if(!addInfo.isEmpty())
@@ -43,6 +42,7 @@ static void printHelp(const QString &addInfo)
        << "\n\t\t"      << "--version <package version>"
        << "\n\t\t"      << "--strip <strip debug infos> (MinGW only)"
        << "\n\t\t"      << "--notes <additional notes for manifest files>"
+	   << "\n\t\t"      << "--type type of package (mingw, msvc)"
        << "\n";
 
     ts.flush();
@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
 
     QStringList args = app.arguments();
-    QString name, root, version, notes;
+    QString name, root, version, notes, type;
     QFileInfo rootDir;
     bool strip = false;
     
@@ -65,6 +65,12 @@ int main(int argc, char *argv[])
         args.removeAt(idx);
     }
 
+    idx = args.indexOf("--type");
+    if(idx != -1 && idx < args.count() -1) {
+        name = args[idx + 1];
+        args.removeAt(idx + 1);
+        args.removeAt(idx);
+    }
 
     idx = args.indexOf("--root");
     if(idx != -1 && idx < args.count() -1) {
@@ -103,6 +109,8 @@ int main(int argc, char *argv[])
     if(!rootDir.isDir() || !rootDir.isReadable())
        printHelp(QString("Root path %1 is not accessible").arg(root));
     
+    if (!type.isEmpty())
+        name += "-"+type;
 
     Packager packager(name, version, notes);
     if (strip)
