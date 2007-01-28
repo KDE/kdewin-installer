@@ -26,14 +26,27 @@
 #include <QtDebug>
 #include <QCoreApplication>
 #include <QFileInfo>
+#include <QDir>
 
 #include "packager.h"
 
 static void printHelp(const QString &addInfo)
 {
     // too lazy atm 
-    
-    exit(1);    
+    QTextStream ts(stderr);
+    ts << QDir::convertSeparators(QCoreApplication::applicationFilePath());
+    if(!addInfo.isEmpty())
+        ts << ": " << addInfo;
+    ts << "\n";
+    ts << "Options: \t" << "--name <packageName>"
+       << "\n\t\t"      << "--root <path to package files>"
+       << "\n\t\t"      << "--version <package version>"
+       << "\n\t\t"      << "--strip <strip debug infos> (MinGW only)"
+       << "\n\t\t"      << "--notes <additional notes for manifest files>"
+       << "\n";
+
+    ts.flush();
+    exit(1);
 }
 
 int main(int argc, char *argv[])
