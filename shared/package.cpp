@@ -71,39 +71,44 @@ QString Package::getBaseURL()
     return baseUrl;
 }
 
-void Package::add(const QString &path, const QString &fn, const QByteArray &contentType, bool bInstalled)
+bool Package::add(const QString &path, const QString &fn, const QByteArray &contentType, bool bInstalled)
 {
 #ifdef DEBUG
     qDebug() << __FUNCTION__ << " " << path << " " << contentType << " " << bInstalled;
 #endif
     QByteArray ct = contentType.toLower();
     if(ct == "bin")
-        add(path, fn, BIN, bInstalled);
+        return add(path, fn, BIN, bInstalled);
     else
     if(ct == "lib")
-        add(path, fn, LIB, bInstalled);
+        return add(path, fn, LIB, bInstalled);
     else
     if(ct == "doc")
-        add(path, fn, DOC, bInstalled);
+        return add(path, fn, DOC, bInstalled);
     else
     if(ct == "src")
-        add(path, fn, SRC, bInstalled);
+        return add(path, fn, SRC, bInstalled);
+    // unknown type 
+    return false;
 }
 
-void Package::add(const QString &path, const QString &fn, Package::Type contentType, bool bInstalled)
+bool Package::add(const QString &path, const QString &fn, Package::Type contentType, bool bInstalled)
 {
     PackageItem desc;
     int idx;
 #ifdef DEBUG
-    qDebug() << __FUNCTION__ << " " << path << " " << contentType << " " << bInstalled;
+    qDebug() << __FUNCTION__ << path << fn << contentType << bInstalled;
 #endif
+    // FIXME:  fn=="/" is an unwanted condition 
+    if(fn.isEmpty() || fn == "/" && path.isEmpty()) 
+        return false;
 
     if(path.isEmpty()) {
         // every package has different baseUrl
         idx = fn.lastIndexOf('/');
         if(idx == -1) {
-            qDebug("Parser error! - no '/' in path");    // FIXME
-            return;
+            qDebug() << __FUNCTION__ << "Parser error! - no '/' in path";    // FIXME
+            return false;
         }
         desc.path = fn.left(idx);
         desc.fileName = fn.mid(idx + 1);
@@ -115,8 +120,8 @@ void Package::add(const QString &path, const QString &fn, Package::Type contentT
 
     idx = desc.fileName.lastIndexOf('.');
     if(idx == -1) {
-        qDebug("Invalid - dot in filename expected");    // FIXME
-        return;
+        qDebug() << "Invalid - dot in filename expected" << desc.fileName;    // FIXME
+        return false;
     }
     desc.packageType = desc.fileName.mid(idx + 1);
     
@@ -127,10 +132,11 @@ void Package::add(const QString &path, const QString &fn, Package::Type contentT
 #endif    
     if(m_packages.contains(contentType)) {
         qDebug() << __FUNCTION__ << m_name << " type already added";
-        return;
+        return false;
     }
 
     m_packages[contentType] = desc;
+    return true;
 }
 
 void Package::setInstalled(const Package &other)

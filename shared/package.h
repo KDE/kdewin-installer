@@ -77,8 +77,8 @@ public:
     // returns the base Url of all packages (if possible, otherwise QString())
     QString getBaseURL();
     // add a file to this package
-    void add(const QString &path, const QString &fn, Package::Type contentType, bool bInstalled = false);
-    void add(const QString &path, const QString &fn, const QByteArray &contentType, bool bInstalled = false);
+    bool add(const QString &path, const QString &fn, Package::Type contentType, bool bInstalled = false);
+    bool add(const QString &path, const QString &fn, const QByteArray &contentType, bool bInstalled = false);
     // set Install state of a package type (e.g. from gnuwin32 manifests)
     void setInstalled(const Package &other);
     // return state of a specific item type is available
