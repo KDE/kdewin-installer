@@ -56,10 +56,7 @@ void Site::addExcludes(const QStringList &excludes)
     for( ; it != excludes.constEnd(); ++it) {
         QString s = (*it).toLower();
         if(!m_excludes.contains(s))
-        {
             m_excludes += s;
-            qDebug() << __FUNCTION__ << s;
-        }   
     }
 }
 
