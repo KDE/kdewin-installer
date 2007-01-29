@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 
     idx = args.indexOf("--type");
     if(idx != -1 && idx < args.count() -1) {
-        name = args[idx + 1];
+        type = args[idx + 1];
         args.removeAt(idx + 1);
         args.removeAt(idx);
     }
