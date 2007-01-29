@@ -21,6 +21,7 @@
 **
 ****************************************************************************/
 
+#include "config.h"
 #include "globalconfig.h"
 #include "downloader.h"
 
@@ -189,8 +190,11 @@ bool GlobalConfig::parse(QIODevice *ioDev)
 
 void GlobalConfig::dump(const QString &title)
 {
-    qDebug() << title;
-    QList<Site*>::iterator s;
-    for (s = sites()->begin(); s != sites()->end(); s++)
-        (*s)->dump();    
+    DUMP_HEADER(title);
+    for (QList<Site*>::iterator s = sites()->begin(); s != sites()->end(); s++)
+        (*s)->dump(title);    
+  
+    for (QList<Package*>::iterator p = packages()->begin(); p != packages()->end(); p++)
+        (*p)->dump(title);
+    DUMP_FOOTER(title);
 }

@@ -21,6 +21,8 @@
 **
 ****************************************************************************/
 
+#include "config.h"
+
 #include <QtDebug>
 #include <QStringList>
 #include <QFile>
@@ -31,12 +33,13 @@
 
 void Package::PackageItem::dump(const QString &title) const
 {
-    qDebug() << "class packageDesc dump: " << title;
+    DUMP_HEADER(title,"PackageItem");
     qDebug() << "path:        " << path;           
     qDebug() << "fileName:    " << fileName;       
     qDebug() << "packageType: " << packageType;    
     qDebug() << "contentType: " << contentType;    
     qDebug() << "bInstalled:  " << bInstalled;     
+    DUMP_FOOTER(title,"PackageItem");
 }
 
 Package::Package()
@@ -249,7 +252,7 @@ bool Package::read(QTextStream &in)
 
 void Package::dump(const QString &title)
 {
-    qDebug() << "class Package dump" << title;
+    DUMP_HEADER(title,"Package");
     qDebug() << "m_name:    " << m_name;
     qDebug() << "m_version: " << m_version;
     qDebug() << "m_category: " << m_category;
@@ -266,6 +269,7 @@ void Package::dump(const QString &title)
     for( ; it != m_packages.constEnd(); ++it) {
     	it->dump();
     }
+    DUMP_FOOTER(title,"Package");
 }
 
 bool Package::downloadItem(Downloader *downloader, Package::Type type)

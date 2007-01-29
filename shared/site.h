@@ -69,13 +69,7 @@ public:
     void addExcludes(const QStringList &excludes);
     bool isExclude(const QString &package);
 
-    void dump()
-    {
-        qDebug() << "m_name  " << m_name;  
-        qDebug() << "m_url   " << m_url;   
-        qDebug() << "m_type  " << m_type;  
-        qDebug() << "m_mirror" << m_mirrors.join(" ");
-    }
+    void dump(const QString &title=QString());
 private:
     QString     m_name;
     QString     m_url;

@@ -22,6 +22,7 @@
 **
 ****************************************************************************/
 
+#include "config.h"
 #include "site.h"
 
 void Site::addDependencies(const QString &_package, const QStringList &deps)
@@ -55,7 +56,10 @@ void Site::addExcludes(const QStringList &excludes)
     for( ; it != excludes.constEnd(); ++it) {
         QString s = (*it).toLower();
         if(!m_excludes.contains(s))
+        {
             m_excludes += s;
+            qDebug() << __FUNCTION__ << s;
+        }   
     }
 }
 
@@ -63,4 +67,17 @@ bool Site::isExclude(const QString &_package)
 {
     QString package = _package.toLower();
     return (m_excludes.contains(package));
+}
+
+void Site::dump(const QString &title)
+{
+    DUMP_HEADER(title,"Site");
+    qDebug() << "m_name  " << m_name;  
+    qDebug() << "m_url   " << m_url;   
+    qDebug() << "m_type  " << m_type;  
+    qDebug() << "m_mirror" << m_mirrors.join(" ");
+    qDebug() << "m_excludes" << m_excludes.join(" ");
+    // FIXME: dump dependencies 
+    DUMP_FOOTER(title,"Site");
+
 }
