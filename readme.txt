@@ -46,7 +46,8 @@ TODO
 	10 add a switch to select end user/developer operation (end user by default)
 	   in end user mode only the bin packages are visible 
 	11 add package delete support 
-	11 implement download package path already available in the gui
+	12 implement download package path already available in the gui
+	13 if remote config is not available only display installed packages
 
 Happy hacking
 
