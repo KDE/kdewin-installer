@@ -146,6 +146,10 @@ bool Packager::generatePackageFileList(QStringList &fileList, const QString &dir
             case LIB:
                 generateFileList(fileList, dir, "bin",   "*.exe *.bat *d4.dll", "assistant.exe qtdemo.exe qdbus.exe dbus-viewer.exe");
                 generateFileList(fileList, dir, ".",     ".qmake.cache");
+                generateFileList(fileList, dir, "mkspecs",  "qconfig.pri");
+                if (m_name.endsWith("mingw"))
+                    generateFileList(fileList, dir, "mkspecs/win32-g++", "*.*");
+                // FIXME: add other compiler support 
                 generateFileList(fileList, dir, "lib",     "*.a");
                 generateFileList(fileList, dir, "include", "*.*");
                 generateFileList(fileList, dir, "src/corelib", "*.h", "*_*.h");
