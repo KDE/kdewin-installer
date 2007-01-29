@@ -45,8 +45,8 @@ qt4_automoc(${test-packagelist-sourceforge_SOURCES})
 add_executable(test-packagelist-sourceforge ${test-packagelist-sourceforge_SOURCES})
 target_link_libraries(test-packagelist-sourceforge ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
 
-set (test-configparser_SOURCES
-	test-configparser.cpp
+set (test-globalconfig_SOURCES
+	test-globalconfig.cpp
 	${installer_shared_SOURCES}
         ${quazip_HEADERS}
         ${quazip_SOURCES}
@@ -54,10 +54,10 @@ set (test-configparser_SOURCES
         ${qua7zip_HEADERS}
 )
 
-qt4_automoc(${test-configparser_SOURCES})
+qt4_automoc(${test-globalconfig_SOURCES})
 
-add_executable(test-configparser ${test-configparser_SOURCES})
-target_link_libraries(test-configparser ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
+add_executable(test-globalconfig ${test-globalconfig_SOURCES})
+target_link_libraries(test-globalconfig ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
 
 set (test-settings_SOURCES
 	test-settings.cpp
