@@ -76,46 +76,36 @@ bool InstallerEngine::downloadPackageLists()
 
 		// FIXME: it is probably better to download package list every 
 		//        time and to sync with local copy 
-        if ( !packageList->hasConfig() )
-        {
-            // download package list
-            qDebug() << (*s)->url();
+
+		// download package list
+        qDebug() << (*s)->url();
 #ifdef DEBUG
-            QFileInfo tmpFile(installer->Root() + "/packages-"+(*s)->Name()+".html");
-            if (!tmpFile.exists())
-                m_downloader->start((*s)->URL(), ba));
+        QFileInfo tmpFile(installer->Root() + "/packages-"+(*s)->Name()+".html");
+        if (!tmpFile.exists())
+            m_downloader->start((*s)->URL(), ba));
 
-            // load and parse
-            if (!packageList->readHTMLFromFile(tmpFile.absoluteFilePath(),(*s)->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge ))
+        // load and parse
+        if (!packageList->readHTMLFromFile(tmpFile.absoluteFilePath(),(*s)->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge ))
 #else            
-            QByteArray ba;
-            m_downloader->start((*s)->url(), ba);
-            if (!packageList->readHTMLFromByteArray(ba,(*s)->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge ))
+        QByteArray ba;
+        m_downloader->start((*s)->url(), ba);
+        if (!packageList->readHTMLFromByteArray(ba,(*s)->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge ))
 #endif
-            {
-                qDebug() << "error reading package list from download html file";
-                continue;
-            }
-
-            // save into file
-            if (!packageList->writeToFile())
-            {
-                qDebug() << "error writing package list to file";
-                continue;
-            }
-
-        }
-        else
         {
-            // read list from file
-            if (!packageList->readFromFile())
-            {
-                qDebug() << "error reading package list from file";
-                continue;
-            }
+            qDebug() << "error reading package list from download html file";
+            continue;
         }
-    }
-    return true;
+	
+		if (packageList->hasConfig())
+			packageList->syncWithFile();
+
+		if (!packageList->writeToFile())
+		{
+			  qDebug() << "error writing package list to file";
+			continue;
+		}
+	}
+	return true;
 }
 
 #ifdef USE_GUI
