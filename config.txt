@@ -92,7 +92,9 @@
 ; the original url is http://rubyforge.org/frs/download.php/12751/ruby185-21.exe 
 ; and is redirected by a 302 found return header to the url below  
 ; this may be implemented in Downloader class
-@url-bin http://rubyforge-files.ruby-forum.com/rubyinstaller/ruby185-21.exe
+; warning: do not install this this ruby release, it modifies the PATHEXT environment variable in a way 
+; that no application or script could be started 
+;@url-bin http://rubyforge-files.ruby-forum.com/rubyinstaller/ruby185-21.exe
 
 @package psdk-msvc
 @version R2
