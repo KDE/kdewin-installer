@@ -24,21 +24,44 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+#include <QObject>
 #include <QSettings>
 
 /**
  holds global options, which are stored in a local user specific config file
- FIXME: add access functions to hide internals, the settings class should be the 
- FIXME: common place for application settings 
- FIXME: InstallerEngine and SettingsPage class should also use access functions 
- 
 */
-class Settings : public QSettings
+
+class Settings : public QObject
 {
+    Q_OBJECT
 public:
-    Settings();   
+    Settings();
+
+    // Place where the packages should be installed to
+    QString installDir();
+    void setInstallDir(const QString &dir);
+
+    // Place where the packages should be downloaded to
+    QString downloadDir();
+    void setDownloadDir(const QString &dir);
+
+    // show title page
+    bool showTitlePage();
+    void setShowTitlePage(bool bShow);
+
+    // create start menu entries fomr .desktop files
+    bool createStartMenuEntries();
+    void setCreateStartMenuEntries(bool bCreate);
+
+    // true on first run
+    bool isFirstRun();
+
+Q_SIGNALS:
+    void installDirChanged(const QString &newDir);
+    void downloadDirChanged(const QString &newDir);
 protected:
 private:
+    QSettings m_settings;
 };
 
 #endif

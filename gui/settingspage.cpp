@@ -10,10 +10,12 @@ SettingsPage::SettingsPage(QWidget *parent)
     ui.setupUi(this);
 
     ui.createStartMenuEntries->setEnabled(false);
-    ui.displayTitlePage->setCheckState(settings.value("displayTitlePage",false).toBool() ? Qt::Checked : Qt::Unchecked);
+    ui.displayTitlePage->setCheckState(settings.showTitlePage() ? Qt::Checked : Qt::Unchecked);
+    ui.displayTitlePage->setCheckState(settings.createStartMenuEntries() ? Qt::Checked : Qt::Unchecked);
 
-    ui.rootPathEdit->setText(settings.value("rootdir").toString());
-    ui.tempPathEdit->setText(settings.value("tempdir").toString());
+    ui.rootPathEdit->setText(settings.installDir());
+    ui.tempPathEdit->setText(settings.downloadDir());
+
     connect( ui.rootPathSelect,SIGNAL(clicked()),this,SLOT(rootPathSelectClicked()) );
     connect( ui.tempPathSelect,SIGNAL(clicked()),this,SLOT(tempPathSelectClicked()) );
 }
@@ -21,12 +23,12 @@ SettingsPage::SettingsPage(QWidget *parent)
 void SettingsPage::accept()
 {
     hide();
-    // FIXME: move to Settings
-    settings.setValue("createStartMenuEntries",ui.createStartMenuEntries->checkState() == Qt::Checked ? true : false);
-    settings.setValue("displayTitlePage",ui.displayTitlePage->checkState() == Qt::Checked ? true : false);
-    // FIXME: update installerengine-> Settings class should emit a signal 
-    settings.setValue("rootdir",ui.rootPathEdit->text());
-    settings.setValue("tempdir",ui.tempPathEdit->text());
+
+    settings.setCreateStartMenuEntries(ui.createStartMenuEntries->checkState() == Qt::Checked ? true : false);
+    settings.setShowTitlePage(ui.displayTitlePage->checkState() == Qt::Checked ? true : false);
+
+    settings.setInstallDir(ui.rootPathEdit->text());
+    settings.setDownloadDir(ui.tempPathEdit->text());
 }
 
 void SettingsPage::reject()

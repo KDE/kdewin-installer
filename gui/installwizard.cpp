@@ -62,8 +62,7 @@ InstallWizard::InstallWizard(QWidget *parent)
     resize(480, 200);
 
 
-    if (engine->settings().value("FirstRun",true).toBool() 
-        || engine->settings().value("displayTitlePage",false).toBool())
+    if (engine->settings().isFirstRun() || engine->settings().showTitlePage())
     {
         titlePage = new TitlePage(this);
         setFirstPage(titlePage);
@@ -177,7 +176,6 @@ WizardPage *PathSettingsPage::nextPage()
     engine->setRoot(rootPathEdit->text());
     engine->downloadPackageLists();
     wizard->packageSelectorPage = new PackageSelectorPage(wizard);
-    engine->settings().setValue("FirstRun",false);
     wizard->settingsButton->show();
     return wizard->packageSelectorPage;
 }
@@ -285,7 +283,7 @@ bool InstallPage::isComplete()
 {
     QApplication::instance()->processEvents();
     engine->installPackages(tree);
-    return 1;
+    return true;
 }
 
 FinishPage::FinishPage(InstallWizard *wizard)

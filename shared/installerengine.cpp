@@ -550,18 +550,18 @@ Package *InstallerEngine::getPackageByName(const QString &name)
 
 void InstallerEngine::setRoot(QString root)
 {
-    m_settings.setValue("rootdir", QDir::convertSeparators(root));
+    m_settings.setInstallDir(root);
 }
 
 const QString InstallerEngine::root()
 {
-    QString root = m_settings.value("rootdir").toString();
+    QString root = m_settings.installDir();
     if (root.isEmpty())
     {
-        root = QDir::convertSeparators(QDir::currentPath());
-        m_settings.setValue("rootdir", QDir::convertSeparators(root));
+        root = QDir::currentPath();
+        m_settings.setInstallDir(root);
     }
-    return root;
+    return QDir::convertSeparators(root);
 }
 
 void InstallerEngine::stop()

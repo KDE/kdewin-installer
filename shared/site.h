@@ -24,7 +24,6 @@
 #ifndef SITE_H
 #define SITE_H
 
-#include <QtDebug>
 #include <QString>
 #include <QStringList>
 #include <QHash>

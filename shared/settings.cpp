@@ -23,6 +23,58 @@
 
 #include "settings.h"
 
-Settings::Settings() : QSettings(QSettings::IniFormat,QSettings::UserScope,"KDE","Installer")
+Settings::Settings()
+ : m_settings(QSettings::IniFormat, QSettings::UserScope, "KDE", "Installer")
 {}
 
+QString Settings::installDir()
+{
+    return m_settings.value("rootdir").toString();
+}
+
+void Settings::setInstallDir(const QString &dir)
+{
+    m_settings.setValue("rootdir", dir);
+    emit installDirChanged(dir);
+}
+
+QString Settings::downloadDir()
+{
+    return m_settings.value("tempdir").toString();
+}
+
+void Settings::setDownloadDir(const QString &dir)
+{
+    m_settings.setValue("tempdir", dir);
+    emit downloadDirChanged(dir);
+}
+
+bool Settings::showTitlePage()
+{
+    return m_settings.value("displayTitlePage").toBool();
+}
+
+void Settings::setShowTitlePage(bool bShow)
+{
+    m_settings.setValue("displayTitlePage", bShow);
+}
+
+bool Settings::createStartMenuEntries()
+{
+    return m_settings.value("createStartMenuEntries").toBool();
+}
+
+void Settings::setCreateStartMenuEntries(bool bCreate)
+{
+    m_settings.setValue("createStartMenuEntries", bCreate);
+}
+
+bool Settings::isFirstRun()
+{
+    bool bFirst = m_settings.value("FirstRun", true).toBool();
+    if(!bFirst)
+        m_settings.setValue("FirstRun", false);
+    return bFirst;
+}
+
+#include "settings.moc"
