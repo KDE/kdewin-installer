@@ -21,21 +21,24 @@
 **
 ****************************************************************************/
 
+#include <stdio.h>
+
 #include <QtDebug>
 #include <QCoreApplication>
-#include <stdio.h>
+#include <QFile>
 
 #include "packager.h"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
+    QStringList args = QCoreApplication::arguments();
 
-    QString dbusDir = getenv("PROGRAMFILES");
-    QString dir = argc > 1 ? argv[1] : dbusDir + "/dbus" ;
-    QString name = argc > 2 ? argv[2] : "test" ;
-    QString version = argc > 3 ? argv[3] : "1.0.1" ;
-    QString notes = argc > 4 ? argv[4] : "" ;
+    QString dbusDir = QFile::decodeName(qgetenv("PROGRAMFILES"));
+    QString dir = args.size() > 1 ? args[1] : dbusDir + "/dbus" ;
+    QString name = args.size() > 2 ? args[2] : "test" ;
+    QString version = args.size() > 3 ? args[3] : "1.0.1" ;
+    QString notes = args.size() > 4 ? args[4] : QString() ;
     QStringList result;
     
     Packager packager(name,version,notes); 
@@ -63,4 +66,5 @@ int main(int argc, char *argv[])
 
     return 0;
 }
+
 

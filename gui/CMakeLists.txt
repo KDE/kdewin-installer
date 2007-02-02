@@ -53,7 +53,13 @@ endif(CMAKE_COMPILER_2005)
 
 QT4_WRAP_UI(installer_GUI_SOURCES settingspage.ui)
 QT4_ADD_RESOURCES(installer_GUI_SOURCES gui.qrc)
-QT4_ADD_RESOURCES2(installer_GUI_SOURCES gui.rc)
+if(WIN32)
+ if(MINGW)
+   QT4_ADD_RESOURCES2(installer_GUI_SOURCES gui.rc)
+ else(MINGW)
+   set(installer_GUI_SOURCES ${installer_GUI_SOURCES} gui.rc)
+ endif(MINGW)
+endif(WIN32)
 
 set(all_sources ${installer_GUI_SOURCES}
                 ${installer_GUI_HEADERS}

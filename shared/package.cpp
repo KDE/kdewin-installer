@@ -259,9 +259,10 @@ void Package::dump(const QString &title)
     qDebug() << "m_deps: " << m_deps.join(" ");
 
     QString d;
-    for(StringHash::ConstIterator it = m_pathRelocs.constBegin(); it != m_pathRelocs.constEnd(); it++) 
+    StringHash::ConstIterator its = m_pathRelocs.constBegin();
+    for( ; its != m_pathRelocs.constEnd(); its++) 
     {
-    	d += it.key() + " = " + it.value() + " ";
+    	d += its.key() + " = " + its.value() + " ";
     }
     qDebug() << "m_pathRelocs: " << d;
 
