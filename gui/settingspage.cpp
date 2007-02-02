@@ -13,8 +13,8 @@ SettingsPage::SettingsPage(QWidget *parent)
     ui.displayTitlePage->setCheckState(settings.showTitlePage() ? Qt::Checked : Qt::Unchecked);
     ui.displayTitlePage->setCheckState(settings.createStartMenuEntries() ? Qt::Checked : Qt::Unchecked);
 
-    ui.rootPathEdit->setText(settings.installDir());
-    ui.tempPathEdit->setText(settings.downloadDir());
+    ui.rootPathEdit->setText(QDir::convertSeparators(settings.installDir()));
+    ui.tempPathEdit->setText(QDir::convertSeparators(settings.downloadDir()));
 
     connect( ui.rootPathSelect,SIGNAL(clicked()),this,SLOT(rootPathSelectClicked()) );
     connect( ui.tempPathSelect,SIGNAL(clicked()),this,SLOT(tempPathSelectClicked()) );

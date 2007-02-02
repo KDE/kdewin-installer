@@ -31,7 +31,15 @@ Settings::Settings()
 
 QString Settings::installDir()
 {
-    return m_settings.value("rootdir", QDir::currentPath () ).toString();
+    QString dir = m_settings.value("rootdir", QDir::currentPath () ).toString();
+    QFileInfo fi(dir);
+    if(!fi.exists()) {
+        if(!QDir().mkdir(dir))
+            return QDir::currentPath();
+    }
+    if(!fi.isDir())
+        return QDir::currentPath();
+    return dir;
 }
 
 void Settings::setInstallDir(const QString &dir)
@@ -42,7 +50,15 @@ void Settings::setInstallDir(const QString &dir)
 
 QString Settings::downloadDir()
 {
-    return m_settings.value("tempdir", QDir::currentPath()).toString();
+    QString dir = m_settings.value("tempdir", QDir::currentPath()).toString();
+    QFileInfo fi(dir);
+    if(!fi.exists()) {
+        if(!QDir().mkdir(dir))
+            return QDir::currentPath();
+    }
+    if(!fi.isDir())
+        return QDir::currentPath();
+    return dir;
 }
 
 void Settings::setDownloadDir(const QString &dir)

@@ -301,13 +301,14 @@ bool Package::downloadItem(Downloader *downloader, Package::Type type)
 
 bool Package::installItem(Installer *installer, Package::Type type)
 {
-    QString fileName = m_settings.downloadDir() + '/' + getFileName(type);
+    QString fileName = getFileName(type);
     if (fileName.isEmpty())
     {
         qDebug() << __FUNCTION__ << " empty fileName for type " << type;
         return false;
     }
-    if (!installer->install(fileName,pathRelocations())) 
+    fileName = m_settings.downloadDir() + '/' + fileName;
+    if (!installer->install(fileName, pathRelocations())) 
     {
         qDebug() << __FUNCTION__ << " install failure for file " << fileName << " type " << type;
         return false;
