@@ -40,8 +40,8 @@ PackageList::PackageList(Downloader *_downloader)
     qDebug() << __FUNCTION__;
 #endif
 
-    downloader = _downloader ? _downloader : new Downloader;
-    root = ".";
+    m_downloader = _downloader ? _downloader : new Downloader(this);
+    m_root = ".";
     m_configFile = "/packages.txt";
 
 }
@@ -55,7 +55,7 @@ PackageList::~PackageList()
 
 bool PackageList::hasConfig()
 {
-    return QFile::exists(root + m_configFile);
+    return QFile::exists(m_root + m_configFile);
 }
 
 void PackageList::addPackage(const Package &package)
@@ -105,7 +105,7 @@ bool PackageList::writeToFile(const QString &_fileName)
     if (m_packageList.count() == 0)
         return false;
 
-    QString fileName = _fileName.isEmpty() ? root + m_configFile : _fileName;
+    QString fileName = _fileName.isEmpty() ? m_root + m_configFile : _fileName;
     QFile file(fileName);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
@@ -130,7 +130,7 @@ bool PackageList::readFromFile(const QString &_fileName)
     qDebug() << __FUNCTION__;
 #endif
 
-    QString fileName = _fileName.isEmpty() ? root + m_configFile : _fileName;
+    QString fileName = _fileName.isEmpty() ? m_root + m_configFile : _fileName;
     QFile file(fileName);
 
     if (!file.open(QIODevice::ReadOnly| QIODevice::Text))
@@ -158,7 +158,7 @@ bool PackageList::syncWithFile(const QString &_fileName)
     qDebug() << __FUNCTION__;
 #endif
 
-    QString fileName = _fileName.isEmpty() ? root + m_configFile : _fileName;
+    QString fileName = _fileName.isEmpty() ? m_root + m_configFile : _fileName;
     QFile file(fileName);
 
     if (!file.open(QIODevice::ReadOnly| QIODevice::Text))
@@ -431,13 +431,13 @@ bool PackageList::downloadPackage(const QString &pkgName, Package::Types types)
     qDebug() << types;
 #endif
     if (types & Package::BIN)
-        pkg->downloadItem(downloader,Package::BIN);
+        pkg->downloadItem(m_downloader, Package::BIN);
     if (types & Package::LIB)
-        pkg->downloadItem(downloader,Package::LIB);
+        pkg->downloadItem(m_downloader, Package::LIB);
     if (types & Package::DOC)
-        pkg->downloadItem(downloader,Package::DOC);
+        pkg->downloadItem(m_downloader, Package::DOC);
     if (types & Package::SRC)
-        pkg->downloadItem(downloader,Package::SRC);
+        pkg->downloadItem(m_downloader, Package::SRC);
     return true;
 }
 
@@ -448,13 +448,13 @@ bool PackageList::installPackage(const QString &pkgName, Package::Types types)
         return false;
     // FIXME: handle error code
     if (types & Package::BIN)
-        pkg->installItem(installer,Package::BIN);
+        pkg->installItem(m_installer, Package::BIN);
     if (types & Package::LIB)
-        pkg->installItem(installer,Package::LIB);
+        pkg->installItem(m_installer, Package::LIB);
     if (types & Package::DOC)
-        pkg->installItem(installer,Package::DOC);
+        pkg->installItem(m_installer, Package::DOC);
     if (types & Package::SRC)
-        pkg->installItem(installer,Package::SRC);
+        pkg->installItem(m_installer, Package::SRC);
     return true;
 }
 
@@ -462,11 +462,11 @@ void PackageList::dump(const QString &title)
 {
     qDebug() << "class PackageList dump: " << title;
     qDebug() << "m_name       " << m_name;
-    qDebug() << "root         " << root;
+    qDebug() << "root         " << m_root;
     qDebug() << "m_configFile " << m_configFile;
     qDebug() << "m_baseURL    " << m_baseURL;
-    QList<Package>::iterator it = m_packageList.begin();
-    for ( ; it != m_packageList.end(); ++it)
+    QList<Package>::ConstIterator it = m_packageList.constBegin();
+    for ( ; it != m_packageList.constEnd(); ++it)
         it->dump();
 }
 

@@ -95,7 +95,7 @@ public:
     bool read(QTextStream &in);
     
     // dump package content
-    void dump(const QString &title=QString());
+    void dump(const QString &title=QString()) const;
     
     // download a package item
     bool downloadItem(Downloader *downloader, Package::Type type);

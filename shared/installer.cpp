@@ -51,8 +51,8 @@ Installer::Installer(PackageList *_packageList, InstallerProgress *_progress)
     packageList = _packageList;
     if(packageList)
     {
-        packageList->installer = this;
-        packageList->root = m_root;
+        packageList->m_installer = this;
+        packageList->m_root = m_root;
     }
     connect (packageList,SIGNAL(loadedConfig()),this,SLOT(updatePackageList()));
 }
@@ -62,10 +62,8 @@ Installer::~Installer()
 
 void Installer::setRoot(const QString &root)
 {
-    m_root = root;
-    packageList->root = m_root;
-    QDir dir;
-    dir.mkdir(m_root);
+    packageList->m_root = m_root = root;
+    QDir().mkdir(m_root);
 }
 
 bool Installer::isEnabled()

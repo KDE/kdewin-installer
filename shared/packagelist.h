@@ -105,10 +105,10 @@ private:
     bool readHTMLInternal(QIODevice *ioDev, PackageList::Type type);
 private:
     QList<Package> m_packageList;
-    QString root;
+    QString m_root;
     QString m_configFile;
-    Downloader *downloader;
-    Installer *installer;
+    Downloader *m_downloader;
+    Installer *m_installer;
     QString m_name;
     QString m_baseURL;
     Site *m_curSite;

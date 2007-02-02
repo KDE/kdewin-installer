@@ -250,7 +250,7 @@ bool Package::read(QTextStream &in)
     return true;
 }
 
-void Package::dump(const QString &title)
+void Package::dump(const QString &title) const
 {
     DUMP_HEADER(title,"Package");
     qDebug() << "m_name:    " << m_name;
