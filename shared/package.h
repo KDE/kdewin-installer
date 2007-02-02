@@ -27,6 +27,9 @@
 #include <QString>
 #include <QStringList>
 #include <QHash>
+
+#include "settings.h"
+
 class QTextStream;
 class Downloader;
 class Installer;
@@ -60,6 +63,7 @@ public:
 public:
 
     Package();
+    Package(const Package &other);
 
     const QString &name() const { return m_name; }
     void setName(QString const &name) { m_name = name; }
@@ -126,6 +130,7 @@ protected:
     QString m_category;   
     QStringList m_deps;       
     StringHash m_pathRelocs;
+    Settings m_settings;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Package::Types);

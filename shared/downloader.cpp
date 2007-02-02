@@ -34,6 +34,7 @@
 #include "package.h"
 #include "downloader.h"
 #include "downloaderprogress.h"
+#include "settings.h"
 
 Downloader::Downloader(bool _blocking, DownloaderProgress *_progress)
         : m_progress(_progress), m_ioDevice(0), m_file(0), m_httpGetId(~0U),
@@ -71,19 +72,15 @@ void Downloader::setError(const QString &str)
     }
 }
 
-bool Downloader::start(const QString &_url, const QString &_fileName)
+bool Downloader::start(const QString &_url, const QString &fileName)
 {
-    QString fileName = _fileName;
+    if(fileName.isEmpty())
+        return false;
 
-    if(_fileName.isEmpty())
-    {
-        QFileInfo fi(QUrl(_url).path());
-        fileName = fi.fileName();
-    }
     m_file = new QFile(fileName);
     if (!m_file->open(QIODevice::WriteOnly))
     {
-        setError(tr("Unable to open file %1: %2.").arg(_fileName).arg(m_file->errorString()));
+        setError(tr("Unable to open file %1: %2.").arg(fileName).arg(m_file->errorString()));
         delete m_file;
         m_file = 0;
         return false;

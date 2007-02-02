@@ -61,11 +61,10 @@ bool PackageList::hasConfig()
 void PackageList::addPackage(const Package &package)
 {
 #ifdef DEBUG
-    Package pkg = package;
-    qDebug() << __FUNCTION__ << pkg.toString();
+    qDebug() << __FUNCTION__ << package.toString();
 #endif
 
-    m_packageList.append(package);
+    m_packageList.append(new Package(package));
 }
 
 Package *PackageList::getPackage(const QString &pkgName, const QByteArray &version)
@@ -74,12 +73,12 @@ Package *PackageList::getPackage(const QString &pkgName, const QByteArray &versi
     qDebug() << __FUNCTION__;
 #endif
 
-    QList<Package>::iterator it = m_packageList.begin();
+    QList<Package*>::iterator it = m_packageList.begin();
     for ( ; it != m_packageList.end(); ++it)
-        if (it->name() == pkgName) {
-            if(!version.isEmpty() && it->version() != version)
+        if ((*it)->name() == pkgName) {
+            if(!version.isEmpty() && (*it)->version() != version)
                 continue;
-            return &(*it);
+            return (*it);
         }
     return NULL;
 }
@@ -91,9 +90,9 @@ void PackageList::listPackages(const QString &title)
 #endif
 
     qDebug() << title;
-    QList<Package>::iterator i;
-    for (i = m_packageList.begin(); i != m_packageList.end(); ++i)
-        qDebug(i->toString(true," - ").toLatin1());
+    QList<Package*>::iterator it;
+    for (it = m_packageList.begin(); it != m_packageList.end(); ++it)
+        qDebug() << (*it)->toString(true," - ");
 }
 
 bool PackageList::writeToFile(const QString &_fileName)
@@ -118,9 +117,9 @@ bool PackageList::writeToFile(const QString &_fileName)
     QTextStream out(&file);
     out << "# package list" << "\n";
     out << "@format 1.0" << "\n";
-    QList<Package>::iterator i;
-    for (i = m_packageList.begin(); i != m_packageList.end(); ++i)
-        i->write(out);
+    QList<Package*>::iterator it;
+    for (it = m_packageList.begin(); it != m_packageList.end(); ++it)
+        (*it)->write(out);
     return true;
 }
 
@@ -465,9 +464,9 @@ void PackageList::dump(const QString &title)
     qDebug() << "root         " << m_root;
     qDebug() << "m_configFile " << m_configFile;
     qDebug() << "m_baseURL    " << m_baseURL;
-    QList<Package>::ConstIterator it = m_packageList.constBegin();
+    QList<Package*>::ConstIterator it = m_packageList.constBegin();
     for ( ; it != m_packageList.constEnd(); ++it)
-        it->dump();
+        (*it)->dump();
 }
 
 #include "packagelist.moc"

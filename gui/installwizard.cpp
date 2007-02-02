@@ -43,6 +43,7 @@
 #include "packagelist.h"
 #include "settings.h"
 #include "installerengine.h"
+#include "settings.h"
 #include "settingspage.h"
 
 extern InstallWizard *wizard;
@@ -60,9 +61,9 @@ InstallWizard::InstallWizard(QWidget *parent)
 
     setWindowTitle(tr("KDE Installer"));
     resize(480, 200);
+    Settings s;
 
-
-    if (engine->settings().isFirstRun() || engine->settings().showTitlePage())
+    if (s.isFirstRun() || s.showTitlePage())
     {
         titlePage = new TitlePage(this);
         setFirstPage(titlePage);

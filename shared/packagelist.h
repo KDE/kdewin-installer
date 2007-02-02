@@ -60,7 +60,7 @@ public:
     {
         return m_packageList.size();
     }
-    const QList <Package> &packageList() const
+    const QList <Package*> &packageList() const
     {
         return m_packageList;
     }
@@ -104,7 +104,7 @@ signals:
 private:
     bool readHTMLInternal(QIODevice *ioDev, PackageList::Type type);
 private:
-    QList<Package> m_packageList;
+    QList<Package*> m_packageList;
     QString m_root;
     QString m_configFile;
     Downloader *m_downloader;

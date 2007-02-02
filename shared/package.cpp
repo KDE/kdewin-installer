@@ -45,6 +45,16 @@ void Package::PackageItem::dump(const QString &title) const
 Package::Package()
 {}
 
+Package::Package(const Package &other)
+{
+    m_packages   = other.m_packages;
+    m_name       = other.m_name;
+    m_version    = other.m_version;
+    m_category   = other.m_category;
+    m_deps       = other.m_deps;
+    m_pathRelocs = other.m_pathRelocs;
+}
+
 QString Package::getFileName(Package::Type contentType)
 {
     if(m_packages.contains(contentType))
@@ -276,23 +286,22 @@ void Package::dump(const QString &title) const
 bool Package::downloadItem(Downloader *downloader, Package::Type type)
 {
     QString URL = getURL(type);
-    if (URL.isEmpty())
-    {
+    if (URL.isEmpty()) {
         qDebug() << __FUNCTION__ << " empty URL for type " << type;
         return false;
     }
-    else if(QFile::exists(getFileName(type)))
-    {
+    QString fn = m_settings.downloadDir() + '/' + getFileName(type);
+    if(QFile::exists(fn)) {
         qDebug() << __FUNCTION__ << " URL " << URL << " already downloaded for type " << type;
         return false; 
     }
     qDebug() << __FUNCTION__ << " downloading URL " << URL << " for type " << type;
-    return downloader->start(URL);
+    return downloader->start(URL, fn);
 }
 
 bool Package::installItem(Installer *installer, Package::Type type)
 {
-    QString fileName = getFileName(type);
+    QString fileName = m_settings.downloadDir() + '/' + getFileName(type);
     if (fileName.isEmpty())
     {
         qDebug() << __FUNCTION__ << " empty fileName for type " << type;

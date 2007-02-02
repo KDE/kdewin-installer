@@ -177,11 +177,13 @@ void setIcon(QTreeWidgetItem &item, Package::Type type, iconType action)
 enum actionType { _initial, _next, _deps, _sync}; 
 enum stateType { _Install, _Update, _Remove, _Nothing}; 
 
-void setState(QTreeWidgetItem &item, const Package &pkg, int column, actionType action, int syncColumn=0)
+void setState(QTreeWidgetItem &item, const Package *pkg, int column, actionType action, int syncColumn=0)
 {
     Package::Type type = columnToType(column);
 
-    if (type != Package::ALL && !pkg.hasType(type)) 
+    if(!pkg)
+        return;
+    if (type != Package::ALL && !pkg->hasType(type)) 
     {
         setIcon(item,type,_disable);
         return; 
@@ -190,7 +192,7 @@ void setState(QTreeWidgetItem &item, const Package &pkg, int column, actionType 
     switch (action)
     {
         case _initial: 
-            if (pkg.isInstalled(type))
+            if (pkg->isInstalled(type))
             {
                 setIcon(item,type,_keepinstalled );
                 item.setData(column,Qt::UserRole,_Nothing);
@@ -210,7 +212,7 @@ void setState(QTreeWidgetItem &item, const Package &pkg, int column, actionType 
             switch(state)
             {
                 case _Nothing:  
-                    if (pkg.isInstalled(type))
+                    if (pkg->isInstalled(type))
                     {
 // FIXME: add remove support
 #if 0
@@ -226,7 +228,7 @@ void setState(QTreeWidgetItem &item, const Package &pkg, int column, actionType 
                     break;
 
                 case _Remove:  
-                    if (pkg.isInstalled(type))
+                    if (pkg->isInstalled(type))
                     {
                         setIcon(item,type,_keepinstalled );
                         item.setData(column,Qt::UserRole,_Nothing);
@@ -248,7 +250,7 @@ void setState(QTreeWidgetItem &item, const Package &pkg, int column, actionType 
         // handle dependeny selecting 
         case _deps: 
         {
-            if (pkg.isInstalled(type))
+            if (pkg->isInstalled(type))
             {
             }
             else
@@ -264,14 +266,14 @@ void setState(QTreeWidgetItem &item, const Package &pkg, int column, actionType 
             switch(state) 
             {
                 case _Install: 
-                    if (!pkg.isInstalled(type))
+                    if (!pkg->isInstalled(type))
                     {
                         setIcon(item,type,_install);
                         item.setData(column,Qt::UserRole,_Install);
                     }
                     break;
                 case _Nothing: 
-                    if (!pkg.isInstalled(type))
+                    if (!pkg->isInstalled(type))
                     {
                         setIcon(item,type,_nothing);
                         item.setData(column,Qt::UserRole,_Nothing);
@@ -334,14 +336,13 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
         categoryList.append(category);
 
         // adding sub items
-        QList<Package>::ConstIterator i = (*k)->packageList().constBegin();
+        QList<Package*>::ConstIterator i = (*k)->packageList().constBegin();
         for ( ; i != (*k)->packageList().constEnd(); ++i)
         {
             QStringList data;
-            data << i->name()
-            << i->version()
-            << QString()
-            ;
+            data << (*i)->name()
+                 << (*i)->version()
+                 << QString();
             QTreeWidgetItem *item = new QTreeWidgetItem(category, data);
             setState(*item,*i,2,_initial);
             setState(*item,*i,3,_initial);
@@ -364,14 +365,14 @@ void InstallerEngine::itemClickedPackageSelectorPage(QTreeWidgetItem *item, int 
 
     if (column == 2 && pkg)
     {
-       setState(*item,*pkg,2,_next);
-       setState(*item,*pkg,3,_sync,2);
-       setState(*item,*pkg,4,_sync,2);
-       setState(*item,*pkg,5,_sync,2);
-       setState(*item,*pkg,6,_sync,2);
+       setState(*item,pkg,2,_next);
+       setState(*item,pkg,3,_sync,2);
+       setState(*item,pkg,4,_sync,2);
+       setState(*item,pkg,5,_sync,2);
+       setState(*item,pkg,6,_sync,2);
     }
     else
-       setState(*item,*pkg,column,_next);
+       setState(*item,pkg,column,_next);
 
     // select depending packages in case all or bin is selected
     //pkg->dump();
@@ -392,7 +393,7 @@ void InstallerEngine::itemClickedPackageSelectorPage(QTreeWidgetItem *item, int 
                 /// the dependency is only for bin package and one way to switch on
                 Package *depPkg = getPackageByName(dep);
 
-                setState(*depItem,*depPkg,3,_deps);
+                setState(*depItem,depPkg,3,_deps);
             }
         }    
     }

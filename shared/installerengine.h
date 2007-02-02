@@ -75,10 +75,6 @@ public:
     {
         return m_installer;
     }
-    Settings &settings()
-    {
-        return m_settings;
-    }
 
 private:
     QList <PackageList*> m_packageListList;

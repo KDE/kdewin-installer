@@ -21,6 +21,8 @@
 **
 ****************************************************************************/
 
+#include <QDir>
+
 #include "settings.h"
 
 Settings::Settings()
@@ -29,7 +31,7 @@ Settings::Settings()
 
 QString Settings::installDir()
 {
-    return m_settings.value("rootdir").toString();
+    return m_settings.value("rootdir", QDir::currentPath () ).toString();
 }
 
 void Settings::setInstallDir(const QString &dir)
@@ -40,7 +42,7 @@ void Settings::setInstallDir(const QString &dir)
 
 QString Settings::downloadDir()
 {
-    return m_settings.value("tempdir").toString();
+    return m_settings.value("tempdir", QDir::currentPath()).toString();
 }
 
 void Settings::setDownloadDir(const QString &dir)
