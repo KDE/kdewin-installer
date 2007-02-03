@@ -15,7 +15,6 @@
 ; FIXME: implement such support maybe using new keyword copy ? 
 ; @copy pcre bin\pcre3.dll:bin\pcre.dll 
 
-
 ; chris mirror 
 @site win32libs
 @type apachemodindex
@@ -87,12 +86,12 @@
 
 ;@package ruby
 ;@version 1.8.5-21
-; must we really download a 26 MB big exe for running kdesdk/cmake/scripts/am2cmake ? 
+; do we really have to download a 100 MB big interpreter exe for running kdesdk/cmake/scripts/am2cmake ? 
 ;@description ruby installer used by am2cmake
 ; the original url is http://rubyforge.org/frs/download.php/12751/ruby185-21.exe 
 ; and is redirected by a 302 found return header to the url below  
 ; this may be implemented in Downloader class
-; warning: do not install this this ruby release, it modifies the PATHEXT environment variable in a way 
+; warning: do not install this ruby release, it modifies the PATHEXT environment variable in a way 
 ; that no application or script could be started 
 ;@url-bin http://rubyforge-files.ruby-forum.com/rubyinstaller/ruby185-21.exe
 
