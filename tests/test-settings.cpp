@@ -33,8 +33,8 @@ int main(int argc, char *argv[])
 
     Settings settings;
 
-    settings.setValue("root",QDir::currentPath());
-    if (settings.value("root").toString() != QDir::currentPath())
+    settings.setInstallDir(QDir::currentPath());
+    if (settings.installDir() != QDir::currentPath())
         qDebug() << "error reading config file";
 
     return 0;
