@@ -28,69 +28,6 @@
 #include "package.h"
 class Downloader;
 
-#define APROPERTY(type,read,write)  private: \
-type m_##read; \
-public:  \
-const type & read() { return m_##read; } \
-void write(const type &read) { m_##read = read; } \
-
-#define DUMPPROPERTY(read)  qDebug() << "m_"##read << " " << m_##read
-
-
-/**
- holds global configuration downloaded from a remote site and/or local config file. 
-*/
-#if 0
-class ConfigItem
-{
-    APROPERTY (QString,name,setName);
-    APROPERTY (QString,url,setURL);
-    APROPERTY (QString,description,setDescription);
-public:
-    void dump()
-    {
-        DUMPPROPERTY(name);
-        qDebug() << "m_name  " << m_name;  
-        qDebug() << "m_url   " << m_url;   
-        qDebug() << "m_description " << m_description;   
-    }
-};
-
-
-class LinkConfigItem : public ConfigItem {
-};        
-
-class PackageConfigItem : public ConfigItem {
-    APROPERTY (QStringList,require,setRequire);
-    APROPERTY (QStringList,exclude,setExclude);
-    public: 
-        void dump()
-        {
-            ConfigItem::dump();
-            qDebug() << "m_require " << m_require;  
-            qDebug() << "m_exclude " << m_exclude;
-        }
-};        
-
-class SiteConfigItem : public ConfigItem {
-    public:
-        enum SiteType {SourceForge, ApacheModIndex};
-
-    APROPERTY (SiteType,Type,Type);
-    APROPERTY (QString,mirror,setMirror);
-    public:
-        void dump()
-        {
-            ConfigItem::dump();
-            qDebug() << "m_Type  " << m_Type;  
-            qDebug() << "m_mirror" << m_mirror;
-        }
-};
-
-class SiteConfigItem : public Site {
-};
-#endif
-
 class GlobalConfig {
     public:
         GlobalConfig(const QString &url, Downloader &downloader);

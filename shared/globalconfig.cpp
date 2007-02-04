@@ -164,9 +164,12 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     site->addDependencies(dep, cmd);
                 }
                 else if(cmd[0] == "@exclude") {
-                    qDebug() << __FUNCTION__ << "add Exclude" << cmd;
                     cmd.removeFirst();
                     site->addExcludes(cmd);
+                }
+                else if(cmd[0] == "@copy") {
+                    cmd.removeFirst();
+                    site->addCopy(cmd.join(" "));
                 }
             }
             else if(cmd[0] == "@site")

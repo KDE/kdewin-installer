@@ -56,6 +56,12 @@ public:
             m_mirrors += mirror;
     }
 
+    const QStringList &copies() const { return m_copies; }
+    void addCopy(const QString &copy)
+    {
+        m_copies += copy;
+    }
+
     SiteType Type() const { return m_type; }
     void setType(SiteType type)
     {
@@ -75,6 +81,7 @@ private:
     SiteType    m_type;
     QStringList m_mirrors;
     QStringList m_excludes;
+    QStringList m_copies;
     QHash<QString, QStringList> m_dependencies;
 };
 
