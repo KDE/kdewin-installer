@@ -58,10 +58,8 @@ GlobalConfig::GlobalConfig(const QString &url, Downloader &downloader)
 
 GlobalConfig::~GlobalConfig()
 {
-    for (QList<Site*>::iterator s = m_sites.begin(); s != m_sites.end(); s++)
-        delete (*s);
-    for (QList<Package*>::iterator s = m_packages.begin(); s != m_packages.end(); s++)
-        delete (*s);
+    qDeleteAll(m_sites);
+    qDeleteAll(m_packages);
 }
 
 bool GlobalConfig::parseFromFile(const QString &_fileName)

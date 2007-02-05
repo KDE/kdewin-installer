@@ -126,18 +126,23 @@ bool generateFileList(QStringList &fileList, const QString &root, const QString 
 // linkName     - full path to the link to be created 
 // description  - description of the link (for tooltip)
 
-bool CreateLink(const QString &_fileName, const QString &_linkName, const QString &description) 
+bool CreateLink(const QString &_fileName, const QString &_linkName, const QString &description, const QString &workingDir = QString()) 
 { 
     HRESULT hres; 
-    IShellLinkW* psl; 
+    IShellLinkA* psl; 
 
-    QString fileName = longFileName(_fileName);
+    QString fileName = _fileName;
     QString linkName = longFileName(_linkName);
 
-    LPCWSTR lpszPathObj  = (LPCWSTR)fileName.utf16();
+//    LPCWSTR lpszPathObj  = (LPCWSTR)fileName.utf16();
     LPCWSTR lpszPathLink = (LPCWSTR)linkName.utf16();
-    LPCWSTR lpszDesc     = (LPCWSTR)description.utf16();
- 
+//    LPCWSTR lpszDesc     = (LPCWSTR)description.utf16();
+//    LPCWSTR lpszWorkDir  = (LPCWSTR)workingDir.utf16();
+
+    QByteArray lpszPathObj  = fileName.toUtf8();
+    QByteArray lpszDesc     = description.toUtf8();
+    QByteArray lpszWorkDir  = workingDir.toUtf8();
+
     // Get a pointer to the IShellLink interface. 
     hres = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, 
                             IID_IShellLink, (LPVOID*)&psl); 
@@ -151,11 +156,17 @@ bool CreateLink(const QString &_fileName, const QString &_linkName, const QStrin
             psl->Release();
             return false;
         }
-        if(!SUCCEEDED(psl->SetDescription(lpszDesc))) {
+        if(!SUCCEEDED(psl->SetDescription(lpszDesc.data()))) {
             qDebug() << "error setting description for link to " << description;
             psl->Release();
             return false;
         }
+        if(!SUCCEEDED(psl->SetWorkingDirectory(lpszWorkDir.data()))) {
+            qDebug() << "error setting description for link to " << description;
+            psl->Release();
+            return false;
+        }
+        
  
         // Query IShellLink for the IPersistFile interface for saving the 
         // shortcut in persistent storage. 
@@ -163,19 +174,33 @@ bool CreateLink(const QString &_fileName, const QString &_linkName, const QStrin
  
         if (SUCCEEDED(hres)) 
         { 
+            hres = ppf->Save(lpszPathLink, TRUE);
             // Save the link by calling IPersistFile::Save. 
-            if(!SUCCEEDED(ppf->Save(lpszPathLink, TRUE))) {
-                qDebug() << "error saveing link to " << linkName;
-            }
+            if(!SUCCEEDED(hres))
+                qDebug() << "error saving link to " << linkName;
+
             ppf->Release(); 
         } 
-        else 
-        	qDebug() << "error";
         psl->Release(); 
     } 
     return SUCCEEDED(hres); 
 }
 
+
+QString getStartMenuPath(bool bAllUsers)
+{
+    int idl = bAllUsers ? CSIDL_COMMON_PROGRAMS : CSIDL_PROGRAMS;
+    HRESULT hRes;
+    WCHAR wPath[MAX_PATH+1];
+
+    hRes = SHGetFolderPathW(NULL, idl, NULL, 0, wPath);
+    if (SUCCEEDED(hRes)) 
+    {
+        QString s = QString::fromUtf16((unsigned short*)wPath);
+        return s;
+    }
+    return QString();
+}
 
 /* 
  * create start menu entries from installed desktop files 
@@ -203,10 +228,33 @@ bool createStartMenuEntries(const QString &dir, const QString &category)
         
         if (!exec.isEmpty()) 
         {
-            // FIXME: full path for exec and pathLink needed!
-            QString pathLink = fileList[i].replace(".desktop",".lnk").replace('/','_');
-            qDebug() << pathLink << name << mimeType << genericName << exec << icon << categories; 
-            CreateLink(exec, pathLink, "description");
+            QString p = getStartMenuPath(false);
+            if(p.isEmpty()) {
+                qDebug() << "Can't determine Start menu folder!";
+                continue;
+            }
+
+            QString dir = p + '/' + category + '/';
+            QDir d(dir);
+            if(!d.exists()) {
+                if(!d.mkdir(dir)) {
+                    qDebug() << "Can't create directory " << d;
+                    continue;
+                }
+            }
+            QString pathLink = dir + fileList[i].replace(".desktop",".lnk").replace('/','_');
+            QFile f(pathLink);
+            if(f.exists()) {
+                if(!f.remove()) {
+                    qDebug() << "Can't remove already existant file " << d;
+                    continue;
+                }
+            }
+
+            if(!CreateLink(exec, pathLink, "description")) {
+                qDebug() << "Can't create link!";
+                continue;
+            }
             registry.setValue("exec", pathLink);
         }
     }

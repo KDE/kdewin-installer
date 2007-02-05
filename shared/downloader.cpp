@@ -172,8 +172,7 @@ void Downloader::httpRequestFinished(int requestId, bool error)
 
     if (error)
     {
-        m_file->remove
-        ();
+        m_file->remove();
         setError(tr("Download failed: %1.").arg(m_http->errorString()));
     }
     else
