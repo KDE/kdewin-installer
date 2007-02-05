@@ -85,7 +85,6 @@ private:
     InstallerProgress   *m_instProgress;
     GlobalConfig        *m_globalConfig;
     InstallerProgress   *m_instProgressBar;
-    Settings             m_settings;
 };
 
 #endif

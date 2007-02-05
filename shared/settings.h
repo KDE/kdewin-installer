@@ -56,6 +56,8 @@ public:
     // true on first run
     bool isFirstRun();
 
+    static Settings &getInstance();
+    
 Q_SIGNALS:
     void installDirChanged(const QString &newDir);
     void downloadDirChanged(const QString &newDir);
@@ -63,5 +65,7 @@ protected:
 private:
     QSettings m_settings;
 };
+
+
 
 #endif

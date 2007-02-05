@@ -130,7 +130,6 @@ protected:
     QString m_category;   
     QStringList m_deps;       
     StringHash m_pathRelocs;
-    Settings m_settings;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Package::Types);

@@ -551,16 +551,16 @@ Package *InstallerEngine::getPackageByName(const QString &name)
 
 void InstallerEngine::setRoot(QString root)
 {
-    m_settings.setInstallDir(root);
+    Settings::getInstance().setInstallDir(root);
 }
 
 const QString InstallerEngine::root()
 {
-    QString root = m_settings.installDir();
+    QString root = Settings::getInstance().installDir();
     if (root.isEmpty())
     {
         root = QDir::currentPath();
-        m_settings.setInstallDir(root);
+        Settings::getInstance().setInstallDir(root);
     }
     return QDir::convertSeparators(root);
 }

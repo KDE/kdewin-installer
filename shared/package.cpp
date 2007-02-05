@@ -290,7 +290,7 @@ bool Package::downloadItem(Downloader *downloader, Package::Type type)
         qDebug() << __FUNCTION__ << " empty URL for type " << type;
         return false;
     }
-    QString fn = m_settings.downloadDir() + '/' + getFileName(type);
+    QString fn = Settings::getInstance().downloadDir() + '/' + getFileName(type);
     if(QFile::exists(fn)) {
         qDebug() << __FUNCTION__ << " URL " << URL << " already downloaded for type " << type;
         return false; 
@@ -307,7 +307,7 @@ bool Package::installItem(Installer *installer, Package::Type type)
         qDebug() << __FUNCTION__ << " empty fileName for type " << type;
         return false;
     }
-    fileName = m_settings.downloadDir() + '/' + fileName;
+    fileName = Settings::getInstance().downloadDir() + '/' + fileName;
     if (!installer->install(fileName, pathRelocations())) 
     {
         qDebug() << __FUNCTION__ << " install failure for file " << fileName << " type " << type;

@@ -3,7 +3,6 @@
 
 #include <QDialog>
 
-#include "settings.h"
 #include "ui_settingspage.h"
 
 class SettingsPage : public QDialog
@@ -21,7 +20,6 @@ class SettingsPage : public QDialog
      
  private:
      Ui::SettingsDialog ui;
-     Settings settings;
 };
  
 

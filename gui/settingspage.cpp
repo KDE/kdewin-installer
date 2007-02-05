@@ -1,12 +1,14 @@
 #include <QtDebug>
 #include <QFileDialog>
 
+#include "settings.h"
 #include "settingspage.h"
 
  
 SettingsPage::SettingsPage(QWidget *parent)
      : QDialog(parent)
 {
+    Settings &settings = Settings::getInstance();
     ui.setupUi(this);
 
     ui.createStartMenuEntries->setEnabled(false);
@@ -23,6 +25,7 @@ SettingsPage::SettingsPage(QWidget *parent)
 void SettingsPage::accept()
 {
     hide();
+    Settings &settings = Settings::getInstance();
 
     settings.setCreateStartMenuEntries(ui.createStartMenuEntries->checkState() == Qt::Checked ? true : false);
     settings.setShowTitlePage(ui.displayTitlePage->checkState() == Qt::Checked ? true : false);
