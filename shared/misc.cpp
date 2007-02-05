@@ -129,19 +129,15 @@ bool generateFileList(QStringList &fileList, const QString &root, const QString 
 bool CreateLink(const QString &_fileName, const QString &_linkName, const QString &description, const QString &workingDir = QString()) 
 { 
     HRESULT hres; 
-    IShellLinkA* psl; 
+    IShellLinkW* psl; 
 
     QString fileName = _fileName;
     QString linkName = longFileName(_linkName);
 
-//    LPCWSTR lpszPathObj  = (LPCWSTR)fileName.utf16();
+    LPCWSTR lpszPathObj  = (LPCWSTR)fileName.utf16();
     LPCWSTR lpszPathLink = (LPCWSTR)linkName.utf16();
-//    LPCWSTR lpszDesc     = (LPCWSTR)description.utf16();
-//    LPCWSTR lpszWorkDir  = (LPCWSTR)workingDir.utf16();
-
-    QByteArray lpszPathObj  = fileName.toUtf8();
-    QByteArray lpszDesc     = description.toUtf8();
-    QByteArray lpszWorkDir  = workingDir.toUtf8();
+    LPCWSTR lpszDesc     = (LPCWSTR)description.utf16();
+    LPCWSTR lpszWorkDir  = (LPCWSTR)workingDir.utf16();
 
     // Get a pointer to the IShellLink interface. 
     hres = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, 
@@ -156,12 +152,12 @@ bool CreateLink(const QString &_fileName, const QString &_linkName, const QStrin
             psl->Release();
             return false;
         }
-        if(!SUCCEEDED(psl->SetDescription(lpszDesc.data()))) {
+        if(!SUCCEEDED(psl->SetDescription(lpszDesc))) {
             qDebug() << "error setting description for link to " << description;
             psl->Release();
             return false;
         }
-        if(!SUCCEEDED(psl->SetWorkingDirectory(lpszWorkDir.data()))) {
+        if(!SUCCEEDED(psl->SetWorkingDirectory(lpszWorkDir))) {
             qDebug() << "error setting description for link to " << description;
             psl->Release();
             return false;
