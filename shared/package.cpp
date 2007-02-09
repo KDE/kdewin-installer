@@ -26,6 +26,7 @@
 #include <QtDebug>
 #include <QStringList>
 #include <QFile>
+#include <QDir>
 
 #include "package.h"
 #include "downloader.h"
@@ -272,7 +273,7 @@ void Package::dump(const QString &title) const
     StringHash::ConstIterator its = m_pathRelocs.constBegin();
     for( ; its != m_pathRelocs.constEnd(); its++) 
     {
-    	d += its.key() + " = " + its.value() + " ";
+    	d += its.key() + " = " + its.value() + ' ';
     }
     qDebug() << "m_pathRelocs: " << d;
 
@@ -283,6 +284,39 @@ void Package::dump(const QString &title) const
     DUMP_FOOTER(title,"Package");
 }
 
+static bool makeDir(const QDir &dir)
+{
+    if(dir.exists())
+        return true;
+    if(dir.isRoot())
+        return false;
+    QString d = dir.absolutePath();
+    qDebug() << d;
+    int idx = d.lastIndexOf('/');
+    if(idx == -1)
+        return false;
+    if(makeDir(QDir(d.left(idx)))) {
+        return dir.mkdir(d);
+    }
+    return false;
+}
+
+QString Package::makeFileName(Package::Type type, bool bCreateDir)
+{
+    QString dir = Settings::getInstance().downloadDir();
+    dir += '/' + m_name + '/' + m_name + '-' + m_version + '/';
+    QDir d(dir);
+
+    if(bCreateDir) {
+        if(!d.exists(".")) {
+            if(!makeDir(d)) {
+                qDebug() << "Can't create directory " << dir;
+            }
+        }
+    }
+    return d.absoluteFilePath(getFileName(type));
+}
+
 bool Package::downloadItem(Downloader *downloader, Package::Type type)
 {
     QString URL = getURL(type);
@@ -290,7 +324,7 @@ bool Package::downloadItem(Downloader *downloader, Package::Type type)
         qDebug() << __FUNCTION__ << " empty URL for type " << type;
         return false;
     }
-    QString fn = Settings::getInstance().downloadDir() + '/' + getFileName(type);
+    QString fn = makeFileName(type, true);
     if(QFile::exists(fn)) {
         qDebug() << __FUNCTION__ << " URL " << URL << " already downloaded for type " << type;
         return false; 
@@ -307,7 +341,7 @@ bool Package::installItem(Installer *installer, Package::Type type)
         qDebug() << __FUNCTION__ << " empty fileName for type " << type;
         return false;
     }
-    fileName = Settings::getInstance().downloadDir() + '/' + fileName;
+    fileName = makeFileName(type);
     if (!installer->install(fileName, pathRelocations())) 
     {
         qDebug() << __FUNCTION__ << " install failure for file " << fileName << " type " << type;

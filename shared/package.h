@@ -119,6 +119,9 @@ public:
 
     bool setFromVersionFile(const QString &str);
 
+    // Creates the full path + filename for a package type, creates path when wanted
+    QString makeFileName(Package::Type type, bool bCreateDir = false);
+
 private slots:
     void logOutput();
 
