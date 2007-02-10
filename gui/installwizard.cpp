@@ -34,6 +34,7 @@
 #include <QGridLayout>
 #include <QFileDialog>
 #include <QApplication>
+#include <QTextEdit>
 
 #include "installwizard.h"
 #include "downloader.h"
@@ -85,9 +86,13 @@ void InstallWizard::settingsButtonClicked()
 TitlePage::TitlePage(InstallWizard *wizard)
         : InstallWizardPage(wizard)
 {
-    topLabel = new QLabel(tr(
-                              "<h1>KDE for Windows Installer</h1>"
-                              "<h3>Release " VERSION "</h3>"
+    QGroupBox* box = new QGroupBox;
+
+    topLabel = new QLabel(tr("<h1>KDE for Windows Installer</h1>"));
+    QLabel* version = new QLabel(tr("<h3>Release " VERSION "</h3>"));
+    version->setAlignment(Qt::AlignRight);
+
+    QTextEdit* description = new QTextEdit(tr(
                               "<p>This setup program is used for the initial installation of KDE for Windows application.</p>"
                               "<p>The pages that follow will guide you through the installation."
                               "<br>Please note that by default this installer will install "
@@ -95,6 +100,7 @@ TitlePage::TitlePage(InstallWizard *wizard)
                               "<br>run this program at any time in the future to add, remove, or "
                               "<br>upgrade packages if necessary.</p>"
                           ));
+    description->setReadOnly(true);
 
     //    downloadPackagesRadioButton = new QRadioButton(tr("&download packages"));
     //    downloadAndInstallRadioButton = new QRadioButton(tr("&download and install packages"));
@@ -102,6 +108,8 @@ TitlePage::TitlePage(InstallWizard *wizard)
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(topLabel);
+    layout->addWidget(description);
+    layout->addWidget(version);
     layout->addSpacing(10);
     //    layout->addWidget(downloadPackagesRadioButton);
     //    layout->addWidget(downloadAndInstallRadioButton);
