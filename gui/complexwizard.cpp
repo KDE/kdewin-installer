@@ -59,6 +59,8 @@ ComplexWizard::ComplexWizard(QWidget *parent)
     mainLayout->addWidget(progressBar);
     mainLayout->addLayout(buttonLayout);
     setLayout(mainLayout);
+
+    setSizeGripEnabled(true);
 }
 
 void ComplexWizard::setFirstPage(WizardPage *page)
