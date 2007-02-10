@@ -193,6 +193,9 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
 
     tree = new QTreeWidget();
     engine->setPageSelectorWidgetData(tree);
+    for (int i = 0; i < tree->columnCount(); i++)
+        tree->resizeColumnToContents(i);
+
     connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
 
     QVBoxLayout *layout = new QVBoxLayout;
