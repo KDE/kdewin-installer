@@ -23,6 +23,8 @@
 
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QSettings>
+#include <QCloseEvent>
 
 #include "complexwizard.h"
 #include "downloaderprogress.h"
@@ -61,6 +63,34 @@ ComplexWizard::ComplexWizard(QWidget *parent)
     setLayout(mainLayout);
 
     setSizeGripEnabled(true);
+
+    readSettings();
+}
+
+void ComplexWizard::closeEvent(QCloseEvent *event)
+{
+    writeSettings();
+    event->accept();
+}
+
+void ComplexWizard::writeSettings()
+{
+    QSettings settings("KDEOnWindows", "Installer");
+
+    settings.beginGroup("Geometry");
+    settings.setValue("size", size());
+    settings.setValue("pos", pos());
+    settings.endGroup();
+}
+
+void ComplexWizard::readSettings()
+{
+    QSettings settings("KDEOnWindows", "Installer");
+
+    settings.beginGroup("Geometry");
+    resize(settings.value("size", QSize(400, 400)).toSize());
+    move(settings.value("pos", QPoint(200, 200)).toPoint());
+    settings.endGroup();
 }
 
 void ComplexWizard::setFirstPage(WizardPage *page)
@@ -136,6 +166,7 @@ void ComplexWizard::switchPage(WizardPage *oldPage)
 void ComplexWizard::cancelButtonClicked()
 {
     history.last()->reject();
+    writeSettings();
     reject();
 }
 

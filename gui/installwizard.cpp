@@ -60,7 +60,6 @@ InstallWizard::InstallWizard(QWidget *parent)
     settingsPage = new SettingsPage(this);
 
     setWindowTitle(tr("KDE Installer"));
-    resize(480, 200);
     Settings &s = Settings::getInstance();
 
     if (s.isFirstRun() || s.showTitlePage())

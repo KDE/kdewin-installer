@@ -71,6 +71,10 @@ private:
     QHBoxLayout *buttonLayout;
     QVBoxLayout *mainLayout;
 
+    void writeSettings();
+    void readSettings();
+    void closeEvent(QCloseEvent *event);
+
 };
 
 class WizardPage : public QWidget
