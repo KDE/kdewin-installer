@@ -23,9 +23,9 @@
 
 #include <QHBoxLayout>
 #include <QPushButton>
-#include <QSettings>
 #include <QCloseEvent>
 
+#include "settings.h"
 #include "complexwizard.h"
 #include "downloaderprogress.h"
 #include "installerprogress.h"
@@ -75,7 +75,7 @@ void ComplexWizard::closeEvent(QCloseEvent *event)
 
 void ComplexWizard::writeSettings()
 {
-    QSettings settings("KDEOnWindows", "Installer");
+    Settings &settings = Settings::getInstance();
 
     settings.beginGroup("Geometry");
     settings.setValue("size", size());
@@ -85,7 +85,7 @@ void ComplexWizard::writeSettings()
 
 void ComplexWizard::readSettings()
 {
-    QSettings settings("KDEOnWindows", "Installer");
+    Settings &settings = Settings::getInstance();
 
     settings.beginGroup("Geometry");
     resize(settings.value("size", QSize(400, 400)).toSize());

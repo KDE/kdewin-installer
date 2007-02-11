@@ -58,6 +58,12 @@ public:
 
     static Settings &getInstance();
     
+    // QSettings compatible interface
+    void beginGroup(const QString &prefix) { m_settings.beginGroup(prefix); }
+    void endGroup() { m_settings.endGroup(); }
+    QVariant value(const QString &key, const QVariant &defaultValue = QVariant()) const { return m_settings.value(key,defaultValue); }
+    void setValue(const QString &key, const QVariant &value) { m_settings.setValue(key,value); }
+
 Q_SIGNALS:
     void installDirChanged(const QString &newDir);
     void downloadDirChanged(const QString &newDir);
