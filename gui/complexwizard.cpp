@@ -69,8 +69,7 @@ ComplexWizard::ComplexWizard(QWidget *parent)
 
 void ComplexWizard::closeEvent(QCloseEvent *event)
 {
-    writeSettings();
-    event->accept();
+    cancelButtonClicked();
 }
 
 void ComplexWizard::writeSettings()
