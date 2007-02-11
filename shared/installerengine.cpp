@@ -177,7 +177,7 @@ void setIcon(QTreeWidgetItem &item, Package::Type type, iconType action)
 enum actionType { _initial, _next, _deps, _sync}; 
 enum stateType { _Install, _Update, _Remove, _Nothing}; 
 
-void setState(QTreeWidgetItem &item, const Package *pkg, int column, actionType action, int syncColumn=0)
+static void setState(QTreeWidgetItem &item, const Package *pkg, int column, actionType action, int syncColumn=0)
 {
     Package::Type type = columnToType(column);
 
@@ -349,6 +349,7 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
             setState(*item,*i,4,_initial);
             setState(*item,*i,5,_initial);
             setState(*item,*i,6,_initial);
+            item->setText(7, (*i)->notes());
         }
     }
     tree->insertTopLevelItems(0,categoryList);

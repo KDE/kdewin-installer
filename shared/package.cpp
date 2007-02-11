@@ -291,13 +291,11 @@ static bool makeDir(const QDir &dir)
     if(dir.isRoot())
         return false;
     QString d = dir.absolutePath();
-    qDebug() << d;
     int idx = d.lastIndexOf('/');
     if(idx == -1)
         return false;
-    if(makeDir(QDir(d.left(idx)))) {
+    if(makeDir(QDir(d.left(idx))))
         return dir.mkdir(d);
-    }
     return false;
 }
 

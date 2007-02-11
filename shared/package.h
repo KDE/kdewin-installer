@@ -71,6 +71,9 @@ public:
     const QString &version() const { return m_version; }
     void setVersion(const QString &version) { m_version = version; }
 
+    const QString &notes() const { return m_notes; }
+    void setNotes(const QString &notes) { m_notes = notes; }
+
     QString toString(bool installed=false, const QString &delim = "-");
     QString getTypeAsString(bool requiredIsInstalled=false, const QString &delim = " ");
 
@@ -130,6 +133,7 @@ protected:
 
     QString m_name;     // base name (a2ps)
     QString m_version;  // base version (4.13b-1)
+    QString m_notes;    // notes from package.notes
     QString m_category;   
     QStringList m_deps;       
     StringHash m_pathRelocs;

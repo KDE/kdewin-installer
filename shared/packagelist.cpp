@@ -198,7 +198,7 @@ bool PackageList::syncWithFile(const QString &_fileName)
 bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type)
 {
     m_packageList.clear();
-
+    Downloader d(true); // for notes, maybe async?
 
     switch (type)
     {
@@ -254,6 +254,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type)
                 // desktop-translations-10.1-41.3.noarch.rpm
                 // kde3-i18n-vi-3.5.5-67.9.noarch.rpm
                 // aspell-0.50.3-3.zip
+                // bzip2-1.0.4.notes
 
                 // first remove ending
                 int idx = name.lastIndexOf('.');
@@ -353,16 +354,31 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type)
                     version += "-" + patchlevel;
 
                 Package *pkg = getPackage(name, version);
-                if(!pkg) {
-                    Package p;
-                    p.setVersion(version);
-                    p.setName(name);
-                    p.add(m_baseURL, path, type);
-                    addPackage(p);
-                    p.addDeps(m_curSite->getDependencies(name));
+                if(ptype == "notes") {
+                    // Download package
+                    QByteArray ba;
+                    d.start(m_baseURL + '/' + path, ba);
+                    if(!pkg) {
+                        Package p;
+                        p.setVersion(version);
+                        p.setName(name);
+                        p.setNotes(QString::fromUtf8(ba));
+                        addPackage(p);
+                    } else {
+                        pkg->setNotes(QString::fromUtf8(ba));
+                    }
                 } else {
-                    pkg->add(m_baseURL, path, type);
-                    pkg->addDeps(m_curSite->getDependencies(name));
+                    if(!pkg) {
+                        Package p;
+                        p.setVersion(version);
+                        p.setName(name);
+                        p.add(m_baseURL, path, type);
+                        addPackage(p);
+                        p.addDeps(m_curSite->getDependencies(name));
+                    } else {
+                        pkg->add(m_baseURL, path, type);
+                        pkg->addDeps(m_curSite->getDependencies(name));
+                    }
                 }
             }
         }
