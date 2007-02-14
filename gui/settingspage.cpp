@@ -14,6 +14,7 @@ SettingsPage::SettingsPage(QWidget *parent)
     ui.createStartMenuEntries->setEnabled(false);
     ui.displayTitlePage->setCheckState(settings.showTitlePage() ? Qt::Checked : Qt::Unchecked);
     ui.displayTitlePage->setCheckState(settings.createStartMenuEntries() ? Qt::Checked : Qt::Unchecked);
+	ui.nestedDownloadTree->setCheckState(settings.nestedDownloadTree() ? Qt::Checked : Qt::Unchecked);
 
     ui.rootPathEdit->setText(QDir::convertSeparators(settings.installDir()));
     ui.tempPathEdit->setText(QDir::convertSeparators(settings.downloadDir()));
@@ -29,9 +30,10 @@ void SettingsPage::accept()
 
     settings.setCreateStartMenuEntries(ui.createStartMenuEntries->checkState() == Qt::Checked ? true : false);
     settings.setShowTitlePage(ui.displayTitlePage->checkState() == Qt::Checked ? true : false);
-
+    settings.setNestedDownloadTree(ui.nestedDownloadTree->checkState() == Qt::Checked ? true : false);
     settings.setInstallDir(ui.rootPathEdit->text());
     settings.setDownloadDir(ui.tempPathEdit->text());
+	
 }
 
 void SettingsPage::reject()

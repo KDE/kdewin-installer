@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>563</width>
-    <height>277</height>
+    <height>311</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -40,7 +40,7 @@ p, li { white-space: pre-wrap; }
    <property name="geometry" >
     <rect>
      <x>360</x>
-     <y>240</y>
+     <y>280</y>
      <width>191</width>
      <height>25</height>
     </rect>
@@ -55,10 +55,10 @@ p, li { white-space: pre-wrap; }
   <widget class="QGroupBox" name="groupBox_2" >
    <property name="geometry" >
     <rect>
-     <x>9</x>
-     <y>154</y>
-     <width>261</width>
-     <height>111</height>
+     <x>10</x>
+     <y>230</y>
+     <width>197</width>
+     <height>76</height>
     </rect>
    </property>
    <property name="title" >
@@ -72,23 +72,6 @@ p, li { white-space: pre-wrap; }
      <number>6</number>
     </property>
     <item row="1" column="0" >
-     <widget class="QCheckBox" name="createStartMenuEntries" >
-      <property name="enabled" >
-       <bool>false</bool>
-      </property>
-      <property name="text" >
-       <string>Create startmenu entries for desktop files</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0" >
-     <widget class="QCheckBox" name="displayTitlePage" >
-      <property name="text" >
-       <string>display title page on every start</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0" >
      <widget class="QCheckBox" name="checkBox" >
       <property name="enabled" >
        <bool>false</bool>
@@ -104,19 +87,26 @@ p, li { white-space: pre-wrap; }
       </property>
      </widget>
     </item>
+    <item row="0" column="0" >
+     <widget class="QCheckBox" name="displayTitlePage" >
+      <property name="text" >
+       <string>display title page on every start</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
-  <widget class="QGroupBox" name="groupBox" >
+  <widget class="QGroupBox" name="groupBox_3" >
    <property name="geometry" >
     <rect>
-     <x>9</x>
-     <y>58</y>
-     <width>545</width>
-     <height>90</height>
+     <x>10</x>
+     <y>140</y>
+     <width>541</width>
+     <height>85</height>
     </rect>
    </property>
    <property name="title" >
-    <string>Path settings</string>
+    <string>Download settings</string>
    </property>
    <layout class="QGridLayout" >
     <property name="margin" >
@@ -125,13 +115,84 @@ p, li { white-space: pre-wrap; }
     <property name="spacing" >
      <number>6</number>
     </property>
-    <item row="1" column="2" >
+    <item row="0" column="1" >
+     <widget class="QLineEdit" name="tempPathEdit" >
+      <property name="enabled" >
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1" >
+     <widget class="QCheckBox" name="nestedDownloadTree" >
+      <property name="toolTip" >
+       <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">nested directory tree means to place every downloaded file into a separate sub directory. &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">If checked the file dbus-1.2.3-bin.zip for example would be placed into the subdirectory dbus/dbus-1.2.3. &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">If this option is not ckecked all downloaded files are placed directly into the package download path. &lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>&lt;/body>&lt;/html></string>
+      </property>
+      <property name="text" >
+       <string>use nested directory tree (cygwin like)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0" >
+     <widget class="QLabel" name="label_3" >
+      <property name="text" >
+       <string>package download path</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2" >
      <widget class="QPushButton" name="tempPathSelect" >
       <property name="enabled" >
        <bool>true</bool>
       </property>
       <property name="text" >
        <string>...</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="groupBox" >
+   <property name="geometry" >
+    <rect>
+     <x>10</x>
+     <y>40</y>
+     <width>541</width>
+     <height>85</height>
+    </rect>
+   </property>
+   <property name="title" >
+    <string>Install settings</string>
+   </property>
+   <layout class="QGridLayout" >
+    <property name="margin" >
+     <number>9</number>
+    </property>
+    <property name="spacing" >
+     <number>6</number>
+    </property>
+    <item row="1" column="1" >
+     <widget class="QCheckBox" name="createStartMenuEntries" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
+      <property name="text" >
+       <string>Create startmenu entries for desktop files</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1" >
+     <widget class="QLineEdit" name="rootPathEdit" />
+    </item>
+    <item row="0" column="0" >
+     <widget class="QLabel" name="label" >
+      <property name="text" >
+       <string>Intallation root path</string>
       </property>
      </widget>
     </item>
@@ -142,38 +203,12 @@ p, li { white-space: pre-wrap; }
       </property>
      </widget>
     </item>
-    <item row="0" column="0" >
-     <widget class="QLabel" name="label" >
-      <property name="text" >
-       <string>Intallation root path</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1" >
-     <widget class="QLineEdit" name="rootPathEdit" />
-    </item>
-    <item row="1" column="1" >
-     <widget class="QLineEdit" name="tempPathEdit" >
-      <property name="enabled" >
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0" >
-     <widget class="QLabel" name="label_3" >
-      <property name="text" >
-       <string>package download path</string>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
  </widget>
  <tabstops>
   <tabstop>rootPathEdit</tabstop>
   <tabstop>rootPathSelect</tabstop>
-  <tabstop>tempPathEdit</tabstop>
-  <tabstop>tempPathSelect</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>

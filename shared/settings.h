@@ -56,6 +56,10 @@ public:
     // true on first run
     bool isFirstRun();
 
+	// use nested download directory tree 
+	bool nestedDownloadTree() { return m_settings.value("nestedDownloadTree", false).toBool(); }
+	void setNestedDownloadTree(bool value) { m_settings.setValue("nestedDownloadTree", value); }
+
     static Settings &getInstance();
     
     // QSettings compatible interface
