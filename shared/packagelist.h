@@ -43,7 +43,6 @@ class PackageList : public QObject
 
 public:
     enum Type {SourceForge, ApacheModIndex};
-	typedef QList <Package*> PackageListType;
 
     PackageList(Downloader *downloader=NULL);
     virtual ~PackageList();
@@ -55,8 +54,6 @@ public:
     bool readHTMLFromByteArray(const QByteArray &ba, PackageList::Type type=PackageList::SourceForge);
     bool writeToFile(QString const &fileName=QString::null);
     Package *getPackage(QString const &pkgName, const QByteArray &version = QByteArray());
-	QList <Package*> getPackages(const QString &pkgName);
-
     bool setInstalledPackage(const Package &pkg);
 
     int size() const

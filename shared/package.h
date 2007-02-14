@@ -122,14 +122,14 @@ public:
 
     bool setFromVersionFile(const QString &str);
 
+    // Creates the full path + filename for a package type, creates path when wanted
+    QString makeFileName(Package::Type type, bool bCreateDir = false);
+
 private slots:
     void logOutput();
 
 protected:
-    // Creates the full path + filename for a package type, creates path when wanted
-    QString makeFileName(Package::Type type, bool bCreateDir = false);
-
-	QHash<Type, PackageItem> m_packages;
+    QHash<Type, PackageItem> m_packages;
 
     QString m_name;     // base name (a2ps)
     QString m_version;  // base version (4.13b-1)

@@ -63,7 +63,8 @@ void PackageList::addPackage(const Package &package)
 #ifdef DEBUG
     qDebug() << __FUNCTION__ << package.toString();
 #endif
-	m_packageList.append(new Package(package));
+
+    m_packageList.append(new Package(package));
 }
 
 Package *PackageList::getPackage(const QString &pkgName, const QByteArray &version)
@@ -80,20 +81,6 @@ Package *PackageList::getPackage(const QString &pkgName, const QByteArray &versi
             return (*it);
         }
     return NULL;
-}
-
-QList <Package*> PackageList::getPackages(const QString &pkgName)
-{
-#ifdef DEBUG
-    qDebug() << __FUNCTION__;
-#endif
-	QList<Package*> pkgs;
-    QList<Package*>::iterator it = m_packageList.begin();
-    for ( ; it != m_packageList.end(); ++it)
-        if ((*it)->name() == pkgName) {
-			pkgs.append(*it);
-        }
-    return pkgs;
 }
 
 void PackageList::listPackages(const QString &title)
@@ -157,13 +144,8 @@ bool PackageList::readFromFile(const QString &_fileName)
     while (!in.atEnd())
     {
         Package pkg;
-        
         if (pkg.read(in))
-        {
-            qDebug() << __FUNCTION__ << pkg.name() << m_curSite->isExclude(pkg.name());
-            if ( pkg.isInstalled(Package::BIN) || !m_curSite->isExclude(pkg.name()))
-                addPackage(pkg);
-        }
+            addPackage(pkg);
     }
     emit loadedConfig();
     return true;
@@ -230,7 +212,6 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type)
                 int a = line.indexOf("\">") + 2;
                 int b = line.indexOf("</a>");
                 QByteArray name = line.mid(a,b-a);
-                qDebug() << __FUNCTION__ << name << m_curSite->isExclude(name);
                 if(m_curSite->isExclude(name)) {
                     ioDev->readLine();
                     continue;
