@@ -145,7 +145,11 @@ bool PackageList::readFromFile(const QString &_fileName)
     {
         Package pkg;
         if (pkg.read(in))
-            addPackage(pkg);
+        {
+            qDebug() << __FUNCTION__ << pkg.name() << m_curSite->isExclude(pkg.name());
+            if ( pkg.isInstalled(Package::BIN) || !m_curSite->isExclude(pkg.name()))
+                addPackage(pkg);
+        }
     }
     emit loadedConfig();
     return true;
