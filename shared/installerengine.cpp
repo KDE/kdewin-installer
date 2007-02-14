@@ -81,27 +81,27 @@ bool InstallerEngine::downloadPackageLists()
             m_downloader->start((*s)->URL(), ba));
 
         // load and parse
-        if (!packageList->readHTMLFromFile(tmpFile.absoluteFilePath(),(*s)->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge ))
+        if (!packageList->readHTMLFromFile(tmpFile.absoluteFilePath(),(*s)->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge, true))
 #else            
         QByteArray ba;
         m_downloader->start((*s)->url(), ba);
-        if (!packageList->readHTMLFromByteArray(ba,(*s)->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge ))
+        if (!packageList->readHTMLFromByteArray(ba,(*s)->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge, true))
 #endif
         {
             qDebug() << "error reading package list from download html file";
             continue;
         }
 	
-		if (packageList->hasConfig())
-			packageList->syncWithFile();
-
-		if (!packageList->writeToFile())
-		{
-			  qDebug() << "error writing package list to file";
-			continue;
-		}
 	}
 
+	if (packageList->hasConfig())
+		packageList->syncWithFile();
+
+	if (!packageList->writeToFile())
+	{
+		qDebug() << "error writing package list to file";
+		return false;
+	}
 	return true;
 }
 
