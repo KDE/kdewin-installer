@@ -50,8 +50,8 @@ public:
     void listPackages(const QString &title=QString());
     bool readFromFile(const QString &_fileName=QString());
     bool syncWithFile(const QString &_fileName=QString());
-    bool readHTMLFromFile(const QString &fileName, PackageList::Type type=PackageList::SourceForge);
-    bool readHTMLFromByteArray(const QByteArray &ba, PackageList::Type type=PackageList::SourceForge);
+    bool readHTMLFromFile(const QString &fileName, PackageList::Type type=PackageList::SourceForge, bool append=false);
+    bool readHTMLFromByteArray(const QByteArray &ba, PackageList::Type type=PackageList::SourceForge, bool append=false);
     bool writeToFile(QString const &fileName=QString::null);
     Package *getPackage(QString const &pkgName, const QByteArray &version = QByteArray());
     bool setInstalledPackage(const Package &pkg);
@@ -102,7 +102,7 @@ signals:
     void loadedConfig();
 
 private:
-    bool readHTMLInternal(QIODevice *ioDev, PackageList::Type type);
+    bool readHTMLInternal(QIODevice *ioDev, PackageList::Type type, bool append=false);
 private:
     QList<Package*> m_packageList;
     QString m_root;

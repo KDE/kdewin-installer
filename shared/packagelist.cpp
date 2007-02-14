@@ -199,9 +199,10 @@ bool PackageList::syncWithFile(const QString &_fileName)
 }
 
 
-bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type)
+bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, bool append)
 {
-    m_packageList.clear();
+    if (!append)
+        m_packageList.clear();
     Downloader d(true); // for notes, maybe async?
 
     switch (type)
@@ -392,7 +393,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type)
     return true;
 }
 
-bool PackageList::readHTMLFromByteArray(const QByteArray &_ba, PackageList::Type type)
+bool PackageList::readHTMLFromByteArray(const QByteArray &_ba, PackageList::Type type, bool append)
 {
 #ifdef DEBUG
     qDebug() << __FUNCTION__;
@@ -404,10 +405,10 @@ bool PackageList::readHTMLFromByteArray(const QByteArray &_ba, PackageList::Type
     if (!buf.open(QIODevice::ReadOnly| QIODevice::Text))
         return false;
 
-    return readHTMLInternal(&buf, type);
+    return readHTMLInternal(&buf, type, append);
 }
 
-bool PackageList::readHTMLFromFile(const QString &fileName, PackageList::Type type )
+bool PackageList::readHTMLFromFile(const QString &fileName, PackageList::Type type, bool append)
 {
 #ifdef DEBUG
     qDebug() << __FUNCTION__;
@@ -419,7 +420,7 @@ bool PackageList::readHTMLFromFile(const QString &fileName, PackageList::Type ty
 
     pkglist.open(QIODevice::ReadOnly);
 
-    return readHTMLInternal(&pkglist, type);
+    return readHTMLInternal(&pkglist, type, append);
 }
 
 bool PackageList::setInstalledPackage(const Package &apkg)
