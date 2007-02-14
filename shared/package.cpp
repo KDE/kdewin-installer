@@ -301,8 +301,9 @@ static bool makeDir(const QDir &dir)
 
 QString Package::makeFileName(Package::Type type, bool bCreateDir)
 {
-    QString dir = Settings::getInstance().downloadDir();
-    dir += '/' + m_name + '/' + m_name + '-' + m_version + '/';
+	QString dir = Settings::getInstance().downloadDir();
+	if (Settings::getInstance().nestedDownloadTree())
+	    dir += '/' + m_name + '/' + m_name + '-' + m_version + '/';
     QDir d(dir);
 
     if(bCreateDir) {

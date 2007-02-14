@@ -18,61 +18,57 @@ InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgre
     m_downloader = new Downloader(/*blocking=*/ true,progressBar);
     m_instProgressBar = instProgressBar;
     m_globalConfig = new GlobalConfig(QString("http://82.149.170.66/kde-windows/installer/config.txt"),*m_downloader);
+    m_globalConfig->dump(__FUNCTION__);
     createMainPackagelist();
 }
 
 void InstallerEngine::createMainPackagelist()
 {
     // package list is build from packages defined in global configuration
-    PackageList *packageList = new PackageList(m_downloader);
-    packageList->setConfigFileName("packages-other.txt");
-    packageList->setName("main");
-    m_packageListList.append(packageList);
+    m_packageList = new PackageList(m_downloader);
+    m_packageList->setConfigFileName("packages.txt");
+	m_packageList->setName("main");
+    m_packageListList.append(m_packageList);
 
-    Installer *installer = new Installer(packageList,m_instProgressBar );
-    installer->setRoot(root());
-    m_installerList.append(installer);
+    m_installer = new Installer(m_packageList,m_instProgressBar );
+    m_installer->setRoot(root());
+    m_installerList.append(m_installer);
 
     QList<Package*>::iterator p;
     for (p = m_globalConfig->packages()->begin(); p != m_globalConfig->packages()->end(); p++)
     {
-        packageList->addPackage(*(*p));
+        m_packageList->addPackage(*(*p));
     }
     
-    if (packageList->hasConfig())
-        packageList->syncWithFile();
+    if (m_packageList->hasConfig())
+        m_packageList->syncWithFile();
 
-    packageList->writeToFile();
+    m_packageList->writeToFile();
 }
 
 /// download all packagelists, which are available on the configured sites
 bool InstallerEngine::downloadPackageLists()
 {
+    m_installer->setRoot(root());
     QList<Site*>::iterator s;
+	PackageList *packageList = m_packageList;
     for (s = m_globalConfig->sites()->begin(); s != m_globalConfig->sites()->end(); s++)
     {
         qDebug() << "download package file list for site: " << (*s)->name();
-        PackageList *packageList = new PackageList(m_downloader);
-        packageList->setConfigFileName("packages-" + (*s)->name() + ".txt");
-        packageList->setName((*s)->name());
-        m_packageList = packageList;
-        m_packageListList.append(packageList);
-        Installer *installer = new Installer(packageList,m_instProgressBar );
         // packagelist needs to access Site::getDependencies() && Site::isExclude()
         packageList->setCurrentSite(*s);
+        qDebug() << __FUNCTION__; 
+        (*s)->dump();
 
         // FIXME:: hardcoded name, better to use an option in the config file ?
         if ((*s)->name() == "gnuwin32")
         {
-            installer->setType(Installer::GNUWIN32);
+            m_installer->setType(Installer::GNUWIN32);
             // FIXME: add additional option in config.txt for mirrors
             packageList->setBaseURL("http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/");
         }
         else
             packageList->setBaseURL((*s)->url());
-        installer->setRoot(root());
-        m_installerList.append(installer);
-        m_installer = installer;
 
 		// FIXME: it is probably better to download package list every 
 		//        time and to sync with local copy 
@@ -105,6 +101,7 @@ bool InstallerEngine::downloadPackageLists()
 			continue;
 		}
 	}
+
 	return true;
 }
 
@@ -318,7 +315,7 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
     << "src"
     << "Notes";
 
-    tree->setColumnCount(8);
+	tree->setColumnCount(8);
     tree->setHeaderLabels(labels);
     // see http://lists.trolltech.com/qt-interest/2006-06/thread00441-0.html
     // and Task Tracker Entry 106731
@@ -354,6 +351,7 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
     }
     tree->insertTopLevelItems(0,categoryList);
     tree->expandAll();
+	tree->sortItems(0,Qt::AscendingOrder);
 }
 extern QTreeWidget *tree;
 
