@@ -38,11 +38,16 @@
 #ifndef QZIP_BUFFER
 # define QZIP_BUFFER (256 * 1024)
 #endif
-#define CREATE_COMPLETE_PACKAGE
+
+//#define CREATE_COMPLETE_PACKAGE
 
 Packager::Packager(const QString &packageName, const QString &packageVersion, const QString &packageNotes)
 : m_name(packageName), m_version(packageVersion), m_notes(packageNotes)
 {
+       qDebug() << m_name;
+       qDebug() << m_version;
+       qDebug() << m_notes;
+       m_verbose = true;
 }
 
 bool Packager::createZipFile(const QString &baseName, const QString &root, const QStringList &files, const QList<MemFile> &memFiles)
@@ -151,14 +156,15 @@ bool Packager::generatePackageFileList(QStringList &fileList, const QString &dir
                     generateFileList(fileList, dir, "mkspecs/win32-g++", "*.*");
                 // FIXME: add other compiler support 
                 generateFileList(fileList, dir, "lib",     "*.a");
-                generateFileList(fileList, dir, "include", "*.*");
-                generateFileList(fileList, dir, "src/corelib", "*.h", "*_*.h");
-                generateFileList(fileList, dir, "src/gui", "*.h", "*_*.h");
-                generateFileList(fileList, dir, "src/qt3support", "*.h", "*_*.h");
-                generateFileList(fileList, dir, "src/xml", "*.h", "*_*.h");
-                generateFileList(fileList, dir, "src/network", "*.h", "*_*.h");
-                generateFileList(fileList, dir, "src/svg", "*.h", "*_*.h");
-                generateFileList(fileList, dir, "src/opengl", "*.h", "*_*.h");
+                generateFileList(fileList, dir, "include", "*","*_p.h");
+                generateFileList(fileList, dir, "src/corelib", "*.h", "*_p.h");
+                generateFileList(fileList, dir, "src/gui", "*.h", "*_p.h");
+                generateFileList(fileList, dir, "src/qt3support", "*.h", "*_p.h");
+                generateFileList(fileList, dir, "src/xml", "*.h", "*_p.h");
+                generateFileList(fileList, dir, "src/network", "*.h", "*_p.h");
+                generateFileList(fileList, dir, "src/svg", "*.h", "*_p.h");
+                generateFileList(fileList, dir, "src/opengl", "*.h", "*_p.h");
+                qDebug() << fileList;
                 return true;
             case DOC:
                 generateFileList(fileList, dir, "bin", "qtdemo.exe assistant.exe");
@@ -263,7 +269,8 @@ bool Packager::makePackage(const QString &dir, const QString &destdir)
 
     QStringList fileList; 
     QList<MemFile> manifestFiles;
-    
+    if (m_verbose)
+        qDebug() << "creating bin package" << getBaseName(Packager::BIN); 
     generatePackageFileList(fileList, dir, Packager::BIN);
     createManifestFiles(fileList, Packager::BIN, manifestFiles);    
     if (fileList.size() > 0)
@@ -271,22 +278,30 @@ bool Packager::makePackage(const QString &dir, const QString &destdir)
     else
         qDebug() << "no binary files found!";
 
+    if (m_verbose)
+        qDebug() << "creating lib package" << getBaseName(Packager::LIB); 
     generatePackageFileList(fileList, dir, Packager::LIB);
     createManifestFiles(fileList, Packager::LIB, manifestFiles);
     if (fileList.size() > 0)
         createZipFile(getBaseName(Packager::LIB), dir, fileList, manifestFiles);
 
+    if (m_verbose)
+        qDebug() << "creating lib package" << getBaseName(Packager::DOC); 
     generatePackageFileList(fileList, dir, Packager::DOC);
     createManifestFiles(fileList, Packager::DOC, manifestFiles);
     if (fileList.size() > 0)
         createZipFile(getBaseName(Packager::DOC), dir, fileList, manifestFiles);
 
+    if (m_verbose)
+        qDebug() << "creating lib package" << getBaseName(Packager::SRC); 
     generatePackageFileList(fileList, dir, Packager::SRC);
     createManifestFiles(fileList, Packager::SRC, manifestFiles);
     if (fileList.size() > 0)
         createZipFile(getBaseName(Packager::SRC), dir, fileList, manifestFiles);
 
 #ifdef CREATE_COMPLETE_PACKAGE
+    if (m_verbose)
+        qDebug() << "creating complete package" << getBaseName(Packager::NONE); 
     generatePackageFileList(fileList, dir, Packager::NONE);
     createManifestFiles(fileList, Packager::NONE, manifestFiles);
     if (fileList.size() > 0)
@@ -321,8 +336,7 @@ QString Packager::getBaseName(Packager::Type type)
 bool Packager::stripFiles(const QString &dir)
 {
     QStringList fileList; 
-    generateFileList(fileList,dir,"bin","*.exe *.dll");
-    generateFileList(fileList,dir,"lib","*.exe *.dll");
+    generateFileList(fileList,dir,"bin","*.exe *.dll","*d.dll *d4.dll");
     for (int i = 0; i < fileList.size(); i++) 
     {
         QFileInfo fi(dir + "/" + fileList.at(i));
