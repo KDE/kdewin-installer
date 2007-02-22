@@ -230,10 +230,15 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                 pkg.setVersion(version);
                 // available types could not be determined on this web page
                 // so assume all types are available
-                pkg.add(m_baseURL,name+"-"+version+"-bin.zip",Package::BIN,false);
-                pkg.add(m_baseURL,name+"-"+version+"-lib.zip",Package::LIB,false);
-                pkg.add(m_baseURL,name+"-"+version+"-src.zip",Package::SRC,false);
-                pkg.add(m_baseURL,name+"-"+version+"-doc.zip",Package::DOC,false);
+				Package::PackageItem item;
+                item.set(m_baseURL,name+"-"+version+"-bin.zip",Package::BIN,false);
+				pkg.add(item);
+                item.set(m_baseURL,name+"-"+version+"-lib.zip",Package::LIB,false);
+				pkg.add(item);
+                item.set(m_baseURL,name+"-"+version+"-src.zip",Package::SRC,false);
+				pkg.add(item);
+                item.set(m_baseURL,name+"-"+version+"-doc.zip",Package::DOC,false);
+				pkg.add(item);
                 addPackage(pkg);
             }
         }
@@ -377,12 +382,18 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                         Package p;
                         p.setVersion(version);
                         p.setName(name);
-                        p.add(m_baseURL, path, type);
+						Package::PackageItem item;
+                        item.set(m_baseURL, path, type);
+						p.add(item);
                         addPackage(p);
                         p.addDeps(m_curSite->getDependencies(name));
                     } else {
-                        pkg->add(m_baseURL, path, type);
-                        pkg->addDeps(m_curSite->getDependencies(name));
+						if (type.size() == 0) 
+							type = "bin";
+						Package::PackageItem item;
+						item.set(m_baseURL, path, type);
+						pkg->add(item);
+						pkg->addDeps(m_curSite->getDependencies(name));
                     }
                 }
             }

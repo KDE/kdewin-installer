@@ -85,71 +85,13 @@ QString Package::getBaseURL()
     return baseUrl;
 }
 
-bool Package::add(const QString &path, const QString &fn, const QByteArray &contentType, bool bInstalled)
+bool Package::add(const PackageItem &item)
 {
-#ifdef DEBUG
-    qDebug() << __FUNCTION__ << " " << path << " " << contentType << " " << bInstalled;
-#endif
-    QByteArray ct = contentType.toLower();
-    if(ct == "bin")
-        return add(path, fn, BIN, bInstalled);
-    else
-    if(ct == "lib")
-        return add(path, fn, LIB, bInstalled);
-    else
-    if(ct == "doc")
-        return add(path, fn, DOC, bInstalled);
-    else
-    if(ct == "src")
-        return add(path, fn, SRC, bInstalled);
-    // unknown type 
-    return false;
-}
-
-bool Package::add(const QString &path, const QString &fn, Package::Type contentType, bool bInstalled)
-{
-    PackageItem desc;
-    int idx;
-#ifdef DEBUG
-    qDebug() << __FUNCTION__ << path << fn << contentType << bInstalled;
-#endif
-    // FIXME:  fn=="/" is an unwanted condition 
-    if(fn.isEmpty() || fn == "/" && path.isEmpty()) 
-        return false;
-
-    if(path.isEmpty()) {
-        // every package has different baseUrl
-        idx = fn.lastIndexOf('/');
-        if(idx == -1) {
-            qDebug() << __FUNCTION__ << "Parser error! - no '/' in path";    // FIXME
-            return false;
-        }
-        desc.path = fn.left(idx);
-        desc.fileName = fn.mid(idx + 1);
-    } else {
-        // every package has same baseUrl
-        desc.path = path;
-        desc.fileName = fn;
-    }
-
-    idx = desc.fileName.lastIndexOf('.');
-    if(idx == -1) {
-        qDebug() << "Invalid - dot in filename expected" << desc.fileName;    // FIXME
+    if(m_packages.contains(item.contentType)) {
+        qDebug() << __FUNCTION__ << m_name << " type " << item.contentType << "already added";
         return false;
     }
-    desc.packageType = desc.fileName.mid(idx + 1);
-    
-    desc.contentType = contentType;
-    desc.bInstalled  = bInstalled;
-#ifdef DEBUG
-    qDebug() << __FUNCTION__ << desc.contentType << desc.bInstalled;
-#endif    
-    if(m_packages.contains(contentType)) {
-        qDebug() << __FUNCTION__ << m_name << " type already added";
-        return false;
-    }
-
-    m_packages[contentType] = desc;
+    m_packages[item.contentType] = item;
     return true;
 }
 
@@ -251,13 +193,29 @@ bool Package::read(QTextStream &in)
     QStringList state = options.at(0).split(':');
     QString baseURL = options.at(1);
     if(!options.at(2).isEmpty())
-        add(baseURL, options.at(2), BIN, state.size() > 0 && state.at(0) == "bin");
+	{	
+		Package::PackageItem item;
+        item.set(baseURL, options.at(2), BIN, state.size() > 0 && state.at(0) == "bin");
+		add(item);
+	}
     if(!options.at(3).isEmpty())
-        add(baseURL, options.at(3), LIB, state.size() > 1 && state.at(1) == "lib");
+	{	
+		Package::PackageItem item;
+        item.set(baseURL, options.at(3), LIB, state.size() > 1 && state.at(1) == "lib");
+		add(item);
+	}
     if(!options.at(4).isEmpty())
-        add(baseURL, options.at(4), DOC, state.size() > 2 && state.at(2) == "doc");
+	{	
+		Package::PackageItem item;
+        item.set(baseURL, options.at(4), DOC, state.size() > 2 && state.at(2) == "doc");
+		add(item);
+	}
     if(!options.at(5).isEmpty())
-        add(baseURL, options.at(5), SRC, state.size() > 3 && state.at(3) == "src");
+	{	
+		Package::PackageItem item;
+        item.set(baseURL, options.at(5), SRC, state.size() > 3 && state.at(3) == "src");
+		add(item);
+	}
     return true;
 }
 
@@ -379,4 +337,67 @@ bool Package::setFromVersionFile(const QString &str)
     setVersion(version);
 //    setType(type);
     return true;
+}
+
+bool Package::PackageItem::set(const QString &path, const QString &fn, const QByteArray &contentType, bool bInstalled)
+{
+#ifdef DEBUG
+    qDebug() << __FUNCTION__ << " " << path << " " << contentType << " " << bInstalled;
+#endif
+    QByteArray ct = contentType.toLower();
+    if(ct == "bin")
+        return set(path, fn, BIN, bInstalled);
+    else
+    if(ct == "lib")
+        return set(path, fn, LIB, bInstalled);
+    else
+    if(ct == "doc")
+        return set(path, fn, DOC, bInstalled);
+    else
+    if(ct == "src")
+        return set(path, fn, SRC, bInstalled);
+    // unknown type 
+    return false;
+}
+
+bool Package::PackageItem::set(const QString &path, const QString &fn, Package::Type contentType, bool bInstalled)
+{
+    PackageItem desc;
+    int idx;
+#ifdef DEBUG
+    qDebug() << __FUNCTION__ << path << fn << contentType << bInstalled;
+#endif
+    // FIXME:  fn=="/" is an unwanted condition 
+    if(fn.isEmpty() || fn == "/" && path.isEmpty()) 
+        return false;
+
+    if(path.isEmpty()) {
+        // every package has different baseUrl
+        idx = fn.lastIndexOf('/');
+        if(idx == -1) {
+            qDebug() << __FUNCTION__ << "Parser error! - no '/' in path";    // FIXME
+            return false;
+        }
+        desc.path = fn.left(idx);
+        desc.fileName = fn.mid(idx + 1);
+    } else {
+        // every package has same baseUrl
+        desc.path = path;
+        desc.fileName = fn;
+    }
+
+    idx = desc.fileName.lastIndexOf('.');
+    if(idx == -1) {
+        qDebug() << "Invalid - dot in filename expected" << desc.fileName;    // FIXME
+        return false;
+    }
+    desc.packageType = desc.fileName.mid(idx + 1);
+    
+    desc.contentType = contentType;
+    desc.bInstalled  = bInstalled;
+#ifdef DEBUG
+    qDebug() << __FUNCTION__ << desc.contentType << desc.bInstalled;
+#endif    
+	*this = desc;
+	return true;
 }
