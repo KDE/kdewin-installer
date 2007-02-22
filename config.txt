@@ -18,7 +18,7 @@
 ; chris mirror 
 @site win32libs
 @type apachemodindex
-@url http://www.abi-neuhaus.de/chris/win32libs/zip/
+@url http://82.149.170.66/kde-windows/win32libs/
 ;@options
 
 ; a package definition 
@@ -99,3 +99,6 @@
 @version R2
 @url-bin http://download.microsoft.com/download/f/a/d/fad9efde-8627-4e7a-8812-c351ba099151/PSDK-x86.exe
 
+@package vcexpress
+@version 2005
+@url-bin http://go.microsoft.com/fwlink/?LinkId=51410&clcid=0x409
