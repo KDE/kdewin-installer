@@ -34,6 +34,7 @@ GlobalConfig::GlobalConfig(const QString &url, Downloader &downloader)
     int ret; 
     // FIXME: place config files into package download path
     QFileInfo cfr("config-remote.txt");
+	qDebug() << "I would use " << cfr.absoluteFilePath() << "for parsing remote config file";
     if (cfr.exists())
     {
         ret = parseFromFile("config-remote.txt");
