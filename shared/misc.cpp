@@ -234,7 +234,7 @@ bool createStartMenuEntries(const QString &dir, const QString &category)
             QDir d(dir);
             if(!d.exists()) {
                 if(!d.mkdir(dir)) {
-                    qDebug() << "Can't create directory " << d;
+                    qDebug() << "Can't create directory " << d.absolutePath();
                     continue;
                 }
             }
@@ -242,7 +242,7 @@ bool createStartMenuEntries(const QString &dir, const QString &category)
             QFile f(pathLink);
             if(f.exists()) {
                 if(!f.remove()) {
-                    qDebug() << "Can't remove already existant file " << d;
+                    qDebug() << "Can't remove already existant file " << d.absolutePath();
                     continue;
                 }
             }
