@@ -8,7 +8,8 @@
 @url http://sourceforge.net/project/showfiles.php?group_id=23617
 @deps findutils libintl
 @deps grep pcre
-@exclude upx
+; the following packages are outdated or buggy and are provided by another site
+@exclude upx aspell bzip2 expat giflib iconv jasper jpeg libpng libxml2 libxslt openssl pcre tiff zlib
 @options
 ; grep require pcre.dll but the pcre package provides pcre3.dll,
 ; a copy of pcre3.dll to pcre.dll is required 
