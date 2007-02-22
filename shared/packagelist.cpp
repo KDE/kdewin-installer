@@ -43,6 +43,7 @@ PackageList::PackageList(Downloader *_downloader)
     m_downloader = _downloader ? _downloader : new Downloader(this);
     m_root = ".";
     m_configFile = "/packages.txt";
+	m_curSite = 0;
 
 }
 
@@ -146,8 +147,7 @@ bool PackageList::readFromFile(const QString &_fileName)
         Package pkg;
         if (pkg.read(in))
         {
-            qDebug() << __FUNCTION__ << pkg.name() << m_curSite->isExclude(pkg.name());
-            if ( pkg.isInstalled(Package::BIN) || !m_curSite->isExclude(pkg.name()))
+            if ( pkg.isInstalled(Package::BIN) || m_curSite && !m_curSite->isExclude(pkg.name()))
                 addPackage(pkg);
         }
     }
@@ -217,11 +217,12 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                 int a = line.indexOf("\">") + 2;
                 int b = line.indexOf("</a>");
                 QByteArray name = line.mid(a,b-a);
-                if(m_curSite->isExclude(name)) {
+                if(m_curSite && m_curSite->isExclude(name)) {
                     ioDev->readLine();
                     continue;
                 }
-                pkg.addDeps(m_curSite->getDependencies(name));
+                if (m_curSite)
+					pkg.addDeps(m_curSite->getDependencies(name));
                 pkg.setName(name);
                 line = ioDev->readLine();
                 a = line.indexOf("\">") + 2;
@@ -326,7 +327,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                         name += '.';
                     name += parts[i];
                 }
-                if(m_curSite->isExclude(name))
+                if(m_curSite && m_curSite->isExclude(name))
                     continue;
                 for(; iVersionLow < iVersionHigh; iVersionLow++)
                 {
@@ -360,7 +361,13 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                         type += parts[iVersionHigh];
                     }
                 }
-                if(!patchlevel.isEmpty())
+				// set type to bin in case no package type is given
+				// this may result in ignoring the combined package 
+				// if separated package are found before
+				if (type.size() == 0) 
+					type = "bin";
+
+				if(!patchlevel.isEmpty())
                     version += "-" + patchlevel;
 
                 Package *pkg = getPackage(name, version);
@@ -386,14 +393,14 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                         item.set(m_baseURL, path, type);
 						p.add(item);
                         addPackage(p);
-                        p.addDeps(m_curSite->getDependencies(name));
+                        if (m_curSite)
+							p.addDeps(m_curSite->getDependencies(name));
                     } else {
-						if (type.size() == 0) 
-							type = "bin";
 						Package::PackageItem item;
 						item.set(m_baseURL, path, type);
 						pkg->add(item);
-						pkg->addDeps(m_curSite->getDependencies(name));
+						if (m_curSite)
+							pkg->addDeps(m_curSite->getDependencies(name));
                     }
                 }
             }
