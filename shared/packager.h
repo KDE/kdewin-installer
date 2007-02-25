@@ -40,7 +40,7 @@ class Packager {
 
       bool generatePackageFileList(QStringList &result, const QString &dir, Packager::Type type);
 
-      bool makePackage(const QString &dir, const QString &destdir=QString());
+      bool makePackage(const QString &dir, const QString &destdir=QString(), bool bComplete=false);
       
     protected: 
         struct MemFile {

@@ -39,8 +39,6 @@
 # define QZIP_BUFFER (256 * 1024)
 #endif
 
-//#define CREATE_COMPLETE_PACKAGE
-
 Packager::Packager(const QString &packageName, const QString &packageVersion, const QString &packageNotes)
 : m_name(packageName), m_version(packageVersion), m_notes(packageNotes)
 {
@@ -261,7 +259,7 @@ bool Packager::createManifestFiles(QStringList &fileList, Packager::Type type, Q
     return true;    
 }
 
-bool Packager::makePackage(const QString &dir, const QString &destdir)
+bool Packager::makePackage(const QString &dir, const QString &destdir, bool bComplete)
 {
     // generate file lists
     // create manifest files 
@@ -299,14 +297,14 @@ bool Packager::makePackage(const QString &dir, const QString &destdir)
     if (fileList.size() > 0)
         createZipFile(getBaseName(Packager::SRC), dir, fileList, manifestFiles);
 
-#ifdef CREATE_COMPLETE_PACKAGE
-    if (m_verbose)
-        qDebug() << "creating complete package" << getBaseName(Packager::NONE); 
-    generatePackageFileList(fileList, dir, Packager::NONE);
-    createManifestFiles(fileList, Packager::NONE, manifestFiles);
-    if (fileList.size() > 0)
-        createZipFile(getBaseName(Packager::NONE), dir, fileList, manifestFiles);
-#endif
+    if(bComplete) {
+        if (m_verbose)
+            qDebug() << "creating complete package" << getBaseName(Packager::NONE); 
+        generatePackageFileList(fileList, dir, Packager::NONE);
+        createManifestFiles(fileList, Packager::NONE, manifestFiles);
+        if (fileList.size() > 0)
+            createZipFile(getBaseName(Packager::NONE), dir, fileList, manifestFiles);
+    }
     return true;
 }
 

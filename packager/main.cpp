@@ -43,6 +43,8 @@ static void printHelp(const QString &addInfo)
        << "\n\t\t"      << "--strip <strip debug infos> (MinGW only)"
        << "\n\t\t"      << "--notes <additional notes for manifest files>"
 	   << "\n\t\t"      << "--type type of package (mingw, msvc)"
+	   << "\n\t\t"      << "--destdir directory where to store the zip files to"
+	   << "\n\t\t"      << "--complete also create all-in-one package with all files"
        << "\n";
 
     ts.flush();
@@ -54,7 +56,8 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
 
     QStringList args = app.arguments();
-    QString name, root, version, notes, type;
+    QString name, root, version, notes, type, destdir;
+    bool bComplete = false;
     QFileInfo rootDir;
     bool strip = false;
     
@@ -99,6 +102,19 @@ int main(int argc, char *argv[])
         args.removeAt(idx);
     }
 
+    idx = args.indexOf("--destdir");
+    if(idx != -1 && idx < args.count() -1) {
+        destdir = args[idx + 1];
+        args.removeAt(idx + 1);
+        args.removeAt(idx);
+    }
+
+    idx = args.indexOf("--complete");
+    if(idx != -1 && idx < args.count()) {
+        bComplete = true;
+        args.removeAt(idx);
+    }
+
     if(name.isEmpty())
        printHelp("--name not specified");
     if(root.isEmpty())
@@ -110,12 +126,12 @@ int main(int argc, char *argv[])
        printHelp(QString("Root path %1 is not accessible").arg(root));
     
     if (!type.isEmpty())
-        name += "-"+type;
+        name += '-' + type;
 
     Packager packager(name, version, notes);
     if (strip)
        packager.stripFiles(rootDir.filePath());
-    packager.makePackage(rootDir.filePath());
+    packager.makePackage(rootDir.filePath(), destdir, bComplete);
 
     return 0;
 }
