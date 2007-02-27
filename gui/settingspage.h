@@ -17,6 +17,7 @@ class SettingsPage : public QDialog
      void reject();
      void rootPathSelectClicked();
      void tempPathSelectClicked();
+	 void switchProxyFields(bool checked);
      
  private:
      Ui::SettingsDialog ui;

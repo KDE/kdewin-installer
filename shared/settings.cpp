@@ -34,6 +34,9 @@ Settings::Settings()
     qDebug() << "showTitlePage:" << showTitlePage();
     qDebug() << "createStartMenuEntries:" << createStartMenuEntries();
     qDebug() << "isFirstRun" << isFirstRun();
+	qDebug() << "proxyMode" << proxyMode();
+	qDebug() << "proxyHost" << proxyHost();
+	qDebug() << "proxyPort" << proxyPort();
 }
 
 QString Settings::installDir()

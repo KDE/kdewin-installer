@@ -71,6 +71,7 @@ InstallWizard::InstallWizard(QWidget *parent)
     }
     else
     {
+        engine->readGlobalConfig();
         engine->downloadPackageLists();
         packageSelectorPage = new PackageSelectorPage(this);
         setFirstPage(packageSelectorPage);
@@ -133,35 +134,39 @@ WizardPage *TitlePage::nextPage()
 PathSettingsPage::PathSettingsPage(InstallWizard *wizard)
         : InstallWizardPage(wizard)
 {
+    Settings &s = Settings::getInstance();
     topLabel = new QLabel(tr(
-                              "<h1>Select Root Install Directory</h1>"
-                              "<p>Select the directory where you want to install the KDE packages.</p>"
+                              "<h1>Select Directories</h1>"
+                              "<p>Select the directory where you want to install the KDE packages and where to download packages.</p>"
                           ));
 
     rootPathLabel = new QLabel(tr("&RootPath:"));
     rootPathEdit = new QLineEdit;
     rootPathLabel->setBuddy(rootPathEdit);
     setFocusProxy(rootPathEdit);
-    rootPathEdit->setText(engine->root());
+    rootPathEdit->setText(s.installDir());
 
     rootPathSelect = new QPushButton("...", this);
     connect(rootPathSelect, SIGNAL(pressed()),this, SLOT(selectRootPath()));
 
-    /*
-        tempPathLabel = new QLabel(tr("&Temporay download path:"));
-        tempPathEdit = new QLineEdit;
-        tempPathLabel->setBuddy(tempPathEdit);
-    */
+    tempPathLabel = new QLabel(tr("&Temporay download path:"));
+    tempPathEdit = new QLineEdit;
+    tempPathLabel->setBuddy(tempPathEdit);
+	tempPathEdit->setText(s.downloadDir());
+
+	tempPathSelect = new QPushButton("...", this);
+    connect(tempPathSelect, SIGNAL(pressed()),this, SLOT(selectTempPath()));
+
+
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(topLabel, 0, 0, 1, 2);
     layout->setRowMinimumHeight(1, 10);
     layout->addWidget(rootPathLabel, 2, 0);
     layout->addWidget(rootPathEdit, 2, 1);
     layout->addWidget(rootPathSelect, 2, 2);
-    /*
-        layout->addWidget(tempPathLabel, 3, 0);
-        layout->addWidget(tempPathEdit, 3, 1);
-    */
+    layout->addWidget(tempPathLabel, 3, 0);
+    layout->addWidget(tempPathEdit, 3, 1);
+    layout->addWidget(tempPathSelect, 3, 2);
     layout->setRowMinimumHeight(4, 10);
     layout->setRowStretch(6, 1);
     setLayout(layout);
@@ -176,22 +181,94 @@ void PathSettingsPage::selectRootPath()
     rootPathEdit->setText(fileName);
 }
 
+void PathSettingsPage::selectTempPath()
+{
+    QString fileName = QFileDialog::getExistingDirectory(this,
+                       tr("Select Download Directory"),
+                       "",
+                       QFileDialog::ShowDirsOnly| QFileDialog::DontResolveSymlinks);
+    tempPathEdit->setText(fileName);
+}
+
 void PathSettingsPage::resetPage()
 {}
 
 WizardPage *PathSettingsPage::nextPage()
 {
-    engine->setRoot(rootPathEdit->text());
-    engine->downloadPackageLists();
+    Settings &s = Settings::getInstance();
+	s.setInstallDir(rootPathEdit->text());
+	s.setDownloadDir(tempPathEdit->text());
+	wizard->proxySettingsPage = new ProxySettingsPage(wizard);
+    return wizard->proxySettingsPage;
+}
+
+bool PathSettingsPage::isComplete()
+{
+    return (!rootPathEdit->text().isEmpty());
+}
+
+ProxySettingsPage::ProxySettingsPage(InstallWizard *wizard)
+        : InstallWizardPage(wizard)
+{
+    topLabel = new QLabel(tr(
+                              "<h1>Select Proxy Settings</h1>"
+                              "<p>Choose the proxy type and enter proxy host and port if required.</p>"
+                          ));
+    proxyHostLabel = new QLabel(tr("Host"));
+    proxyPortLabel = new QLabel(tr("Port"));
+    proxyPort = new QLineEdit();
+    proxyHost = new QLineEdit();
+    proxyManual = new QRadioButton();
+    proxyIE = new QRadioButton();
+    proxyIE->setEnabled(false);
+    proxyOff = new QRadioButton();
+    proxyManual->setText(QApplication::translate("SettingsDialog", "manual settings", 0, QApplication::UnicodeUTF8));
+    proxyIE->setText(QApplication::translate("SettingsDialog", "IE settings", 0, QApplication::UnicodeUTF8));
+    proxyOff->setText(QApplication::translate("SettingsDialog", "direct connection", 0, QApplication::UnicodeUTF8));
+
+    Settings &s = Settings::getInstance();
+	switch (s.proxyMode()) {
+		case 1: proxyIE->setChecked(true); break;
+		case 2: proxyManual->setChecked(true); break;
+		case 0: 
+		default: proxyOff->setChecked(true); break;
+	}
+	proxyHost->setText(s.proxyHost());
+	proxyPort->setText(QString("%1").arg(s.proxyPort()));
+
+	QGridLayout *layout = new QGridLayout;
+    layout->setRowMinimumHeight(1, 10);
+    layout->addWidget(topLabel, 0, 0, 1, 2);
+    layout->addWidget(proxyOff, 2, 0);
+    layout->addWidget(proxyIE, 3, 0);
+    layout->addWidget(proxyManual, 4, 0);
+    layout->addWidget(proxyHostLabel, 4, 2);
+    layout->addWidget(proxyHost, 4, 3);
+    layout->addWidget(proxyPortLabel, 4, 4);
+    layout->addWidget(proxyPort, 4, 5);
+    setLayout(layout);
+}
+void ProxySettingsPage::resetPage()
+{}
+
+WizardPage *ProxySettingsPage::nextPage()
+{
+    Settings &s = Settings::getInstance();
+	s.setProxy(proxyOff->isChecked(),proxyIE->isChecked(),proxyManual->isChecked(),
+		proxyHost->text(),proxyPort->text());
+
+	engine->setRoot(s.installDir());
+    engine->readGlobalConfig();
+	engine->downloadPackageLists();
     wizard->packageSelectorPage = new PackageSelectorPage(wizard);
     wizard->settingsButton->show();
     Settings::getInstance().setFirstRun(false);
     return wizard->packageSelectorPage;
 }
 
-bool PathSettingsPage::isComplete()
+bool ProxySettingsPage::isComplete()
 {
-    return (!rootPathEdit->text().isEmpty());
+    return true;
 }
 
 PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)

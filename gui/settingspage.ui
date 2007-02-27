@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>563</width>
-    <height>311</height>
+    <width>559</width>
+    <height>355</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -36,33 +36,17 @@ p, li { white-space: pre-wrap; }
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:12pt; font-weight:600;">Installer &lt;/span>&lt;span style=" font-size:12pt; font-weight:600;">Settings&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
    </property>
   </widget>
-  <widget class="QDialogButtonBox" name="buttonBox" >
-   <property name="geometry" >
-    <rect>
-     <x>360</x>
-     <y>280</y>
-     <width>191</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="orientation" >
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons" >
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
-   </property>
-  </widget>
-  <widget class="QGroupBox" name="groupBox_2" >
+  <widget class="QGroupBox" name="groupBox" >
    <property name="geometry" >
     <rect>
      <x>10</x>
-     <y>230</y>
-     <width>197</width>
-     <height>76</height>
+     <y>40</y>
+     <width>541</width>
+     <height>85</height>
     </rect>
    </property>
    <property name="title" >
-    <string>Options</string>
+    <string>Install settings</string>
    </property>
    <layout class="QGridLayout" >
     <property name="margin" >
@@ -71,26 +55,30 @@ p, li { white-space: pre-wrap; }
     <property name="spacing" >
      <number>6</number>
     </property>
-    <item row="1" column="0" >
-     <widget class="QCheckBox" name="checkBox" >
+    <item row="1" column="1" >
+     <widget class="QCheckBox" name="createStartMenuEntries" >
       <property name="enabled" >
        <bool>false</bool>
       </property>
-      <property name="toolTip" >
-       <string comment="Uncheck to disable developer related package display" />
-      </property>
       <property name="text" >
-       <string>Developer Mode</string>
-      </property>
-      <property name="checked" >
-       <bool>true</bool>
+       <string>Create startmenu entries for desktop files</string>
       </property>
      </widget>
     </item>
+    <item row="0" column="1" >
+     <widget class="QLineEdit" name="rootPathEdit" />
+    </item>
     <item row="0" column="0" >
-     <widget class="QCheckBox" name="displayTitlePage" >
+     <widget class="QLabel" name="label" >
       <property name="text" >
-       <string>display title page on every start</string>
+       <string>Intallation root path</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2" >
+     <widget class="QPushButton" name="rootPathSelect" >
+      <property name="text" >
+       <string>...</string>
       </property>
      </widget>
     </item>
@@ -100,7 +88,7 @@ p, li { white-space: pre-wrap; }
    <property name="geometry" >
     <rect>
      <x>10</x>
-     <y>140</y>
+     <y>130</y>
      <width>541</width>
      <height>85</height>
     </rect>
@@ -157,53 +145,170 @@ p, li { white-space: pre-wrap; }
     </item>
    </layout>
   </widget>
-  <widget class="QGroupBox" name="groupBox" >
+  <widget class="QGroupBox" name="groupBox_2" >
    <property name="geometry" >
     <rect>
      <x>10</x>
-     <y>40</y>
-     <width>541</width>
-     <height>85</height>
+     <y>220</y>
+     <width>201</width>
+     <height>91</height>
     </rect>
    </property>
    <property name="title" >
-    <string>Install settings</string>
+    <string>Options</string>
    </property>
-   <layout class="QGridLayout" >
-    <property name="margin" >
-     <number>9</number>
+   <widget class="QCheckBox" name="displayTitlePage" >
+    <property name="geometry" >
+     <rect>
+      <x>10</x>
+      <y>29</y>
+      <width>193</width>
+      <height>18</height>
+     </rect>
     </property>
-    <property name="spacing" >
-     <number>6</number>
+    <property name="text" >
+     <string>display title page on every start</string>
     </property>
-    <item row="1" column="1" >
-     <widget class="QCheckBox" name="createStartMenuEntries" >
-      <property name="enabled" >
-       <bool>false</bool>
-      </property>
-      <property name="text" >
-       <string>Create startmenu entries for desktop files</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1" >
-     <widget class="QLineEdit" name="rootPathEdit" />
-    </item>
-    <item row="0" column="0" >
-     <widget class="QLabel" name="label" >
-      <property name="text" >
-       <string>Intallation root path</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="2" >
-     <widget class="QPushButton" name="rootPathSelect" >
-      <property name="text" >
-       <string>...</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
+   </widget>
+   <widget class="QCheckBox" name="checkBox" >
+    <property name="enabled" >
+     <bool>false</bool>
+    </property>
+    <property name="geometry" >
+     <rect>
+      <x>10</x>
+      <y>58</y>
+      <width>193</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="toolTip" >
+     <string comment="Uncheck to disable developer related package display" />
+    </property>
+    <property name="text" >
+     <string>Developer Mode</string>
+    </property>
+    <property name="checked" >
+     <bool>true</bool>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_4" >
+   <property name="geometry" >
+    <rect>
+     <x>220</x>
+     <y>220</y>
+     <width>331</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="title" >
+    <string>Proxy settings</string>
+   </property>
+   <widget class="QLabel" name="label_4" >
+    <property name="geometry" >
+     <rect>
+      <x>110</x>
+      <y>40</y>
+      <width>22</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text" >
+     <string>Host</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5" >
+    <property name="geometry" >
+     <rect>
+      <x>270</x>
+      <y>40</y>
+      <width>46</width>
+      <height>14</height>
+     </rect>
+    </property>
+    <property name="text" >
+     <string>Port</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="proxyPort" >
+    <property name="geometry" >
+     <rect>
+      <x>270</x>
+      <y>60</y>
+      <width>51</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="proxyHost" >
+    <property name="geometry" >
+     <rect>
+      <x>110</x>
+      <y>60</y>
+      <width>151</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="proxyManual" >
+    <property name="geometry" >
+     <rect>
+      <x>10</x>
+      <y>60</y>
+      <width>101</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="text" >
+     <string>manuel settings</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="proxyIE" >
+    <property name="enabled" >
+     <bool>false</bool>
+    </property>
+    <property name="geometry" >
+     <rect>
+      <x>10</x>
+      <y>40</y>
+      <width>83</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="text" >
+     <string>IE settings</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="proxyOff" >
+    <property name="geometry" >
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>141</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="text" >
+     <string>direct connection</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QDialogButtonBox" name="buttonBox" >
+   <property name="geometry" >
+    <rect>
+     <x>360</x>
+     <y>320</y>
+     <width>191</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="orientation" >
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons" >
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+   </property>
   </widget>
  </widget>
  <tabstops>

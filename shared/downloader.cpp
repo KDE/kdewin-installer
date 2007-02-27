@@ -77,6 +77,20 @@ bool Downloader::start(const QString &_url, const QString &fileName)
     if(fileName.isEmpty())
         return false;
 
+	Settings &s = Settings::getInstance();
+	int mode = s.proxyMode();
+	QString host = s.proxyHost();
+	int port  = s.proxyPort();
+
+	// FIXME: read proxy settings from registry
+	qDebug() << __FUNCTION__ << mode << host << port;
+	if (mode == 2)
+		m_http->setProxy(host,port);
+	else if (mode == 1)
+		qWarning() << "reading proxy settings from registry not supported yet";
+	else 
+		m_http->setProxy(QString(),0);
+
     m_file = new QFile(fileName);
     if (!m_file->open(QIODevice::WriteOnly))
     {

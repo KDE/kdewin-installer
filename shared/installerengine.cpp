@@ -15,8 +15,13 @@
 
 InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar)
 {
-    m_downloader = new Downloader(/*blocking=*/ true,progressBar);
-    m_instProgressBar = instProgressBar;
+	m_progressBar = progressBar;
+	m_instProgressBar = instProgressBar; 
+}
+
+void InstallerEngine::readGlobalConfig()
+{
+	m_downloader = new Downloader(/*blocking=*/ true,m_progressBar);
     m_globalConfig = new GlobalConfig(QString("http://82.149.170.66/kde-windows/installer/config.txt"),*m_downloader);
     createMainPackagelist();
 }

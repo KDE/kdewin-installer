@@ -45,6 +45,7 @@ class InstallerEngine
 {
 public:
     InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
+	void readGlobalConfig();
     void createMainPackagelist();
     bool downloadPackageLists();
     void stop();
@@ -85,6 +86,7 @@ private:
     InstallerProgress   *m_instProgress;
     GlobalConfig        *m_globalConfig;
     InstallerProgress   *m_instProgressBar;
+	DownloaderProgress  *m_progressBar;
 };
 
 #endif

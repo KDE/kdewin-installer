@@ -61,6 +61,19 @@ public:
 	bool nestedDownloadTree() { return m_settings.value("nestedDownloadTree", false).toBool(); }
 	void setNestedDownloadTree(bool value) { m_settings.setValue("nestedDownloadTree", value); sync(); }
 
+	int proxyMode() { return m_settings.value("proxyMode",0).toInt(); }
+	const QString proxyHost() { return m_settings.value("proxyHost").toString(); }
+	int proxyPort() { return m_settings.value("proxyPort").toInt(); }
+	void setProxy(bool off, bool ie, bool manual, const QString &host, const QString &port) 
+	{
+		if (off) m_settings.setValue("proxyMode",0);
+		if (ie) m_settings.setValue("proxyMode",1);
+		if (manual) m_settings.setValue("proxyMode",2);
+		m_settings.setValue("proxyHost",host);
+		m_settings.setValue("proxyPort",port);
+		sync();
+	}
+
     static Settings &getInstance();
     
     // QSettings compatible interface

@@ -34,6 +34,7 @@ class QLineEdit;
 class QRadioButton;
 class TitlePage;
 class PathSettingsPage;
+class ProxySettingsPage;
 class PackageSelectorPage;
 class InstallPage;
 class DownloadPage;
@@ -52,6 +53,7 @@ private slots:
 private:
     TitlePage *titlePage;
     PathSettingsPage *pathSettingsPage;
+	ProxySettingsPage *proxySettingsPage;
     PackageSelectorPage *packageSelectorPage;
     DownloadPage *downloadPage;
     InstallPage *installPage;
@@ -61,6 +63,7 @@ private:
     friend class SettingsPage;
     friend class TitlePage;
     friend class PathSettingsPage;
+    friend class ProxySettingsPage;
     friend class PackageSelectorPage;
     friend class DownloadPage;
     friend class InstallPage;
@@ -106,16 +109,34 @@ public:
 
 public slots:
     void selectRootPath(void);
+    void selectTempPath(void);
 
 private:
     QLabel    *topLabel;
     QLabel    *rootPathLabel;
     QLineEdit *rootPathEdit;
     QPushButton *rootPathSelect;
-    /*
-        QLabel    *tempPathLabel;
-        QLineEdit *tempPathEdit;
-    */
+	QLabel    *tempPathLabel;
+    QLineEdit *tempPathEdit;
+    QPushButton *tempPathSelect;
+};
+
+class ProxySettingsPage : public InstallWizardPage
+{
+    Q_OBJECT
+
+public:
+    ProxySettingsPage(InstallWizard *wizard);
+
+    void resetPage();
+    WizardPage *nextPage();
+    bool isComplete();
+
+private:
+    QLabel    *topLabel;
+	QLabel    *proxyHostLabel,*proxyPortLabel;
+	QLineEdit *proxyPort,*proxyHost;
+	QRadioButton *proxyOff,*proxyManual,*proxyIE;
 };
 
 class QTreeWidget;
