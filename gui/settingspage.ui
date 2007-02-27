@@ -261,7 +261,7 @@ p, li { white-space: pre-wrap; }
      </rect>
     </property>
     <property name="text" >
-     <string>manuel settings</string>
+     <string>manual settings</string>
     </property>
    </widget>
    <widget class="QRadioButton" name="proxyIE" >
