@@ -67,6 +67,8 @@ public:
     void endGroup() { m_settings.endGroup(); }
     QVariant value(const QString &key, const QVariant &defaultValue = QVariant()) const { return m_settings.value(key,defaultValue); }
     void setValue(const QString &key, const QVariant &value) { m_settings.setValue(key,value); }
+	// sync database 
+	void sync() { m_settings.sync(); }
 
 Q_SIGNALS:
     void installDirChanged(const QString &newDir);

@@ -40,18 +40,27 @@ QString Settings::installDir()
 {
     QString dir = m_settings.value("rootdir", QDir::currentPath () ).toString();
     QFileInfo fi(dir);
-    if(!fi.exists()) {
-        if(!QDir().mkdir(dir))
+    if(!fi.exists()) 
+	{
+        if(!QDir().mkpath(dir))
+		{
+			qWarning() << "could not create directory" << dir;
             return QDir::currentPath();
+		}
+	    return dir;
     }
-    if(!fi.isDir())
+	if(!fi.isDir()) 
+	{
+		qWarning() << "rootdir is no directory " << dir;
         return QDir::currentPath();
+	}
     return dir;
 }
 
 void Settings::setInstallDir(const QString &dir)
 {
     m_settings.setValue("rootdir", dir);
+	m_settings.sync();
     emit installDirChanged(dir);
 }
 
@@ -71,6 +80,7 @@ QString Settings::downloadDir()
 void Settings::setDownloadDir(const QString &dir)
 {
     m_settings.setValue("tempdir", dir);
+	m_settings.sync();
     emit downloadDirChanged(dir);
 }
 
@@ -82,6 +92,7 @@ bool Settings::showTitlePage()
 void Settings::setShowTitlePage(bool bShow)
 {
     m_settings.setValue("displayTitlePage", bShow);
+	m_settings.sync();
 }
 
 bool Settings::createStartMenuEntries()
@@ -92,13 +103,17 @@ bool Settings::createStartMenuEntries()
 void Settings::setCreateStartMenuEntries(bool bCreate)
 {
     m_settings.setValue("createStartMenuEntries", bCreate);
+	m_settings.sync();
 }
 
 bool Settings::isFirstRun()
 {
     bool bFirst = m_settings.value("FirstRun", true).toBool();
-    if(!bFirst)
+	if(!bFirst) 
+	{
         m_settings.setValue("FirstRun", false);
+		m_settings.sync();
+	}
     return bFirst;
 }
 
