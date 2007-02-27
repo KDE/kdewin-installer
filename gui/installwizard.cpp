@@ -185,6 +185,7 @@ WizardPage *PathSettingsPage::nextPage()
     engine->downloadPackageLists();
     wizard->packageSelectorPage = new PackageSelectorPage(wizard);
     wizard->settingsButton->show();
+    Settings::getInstance().setFirstRun(false);
     return wizard->packageSelectorPage;
 }
 
