@@ -70,10 +70,17 @@ QString Settings::downloadDir()
     QFileInfo fi(dir);
     if(!fi.exists()) {
         if(!QDir().mkdir(dir))
+		{
+			qWarning() << "could not create directory" << dir;
             return QDir::currentPath();
+		}
+		return dir;
     }
     if(!fi.isDir())
+	{
+		qWarning() << "tempdir is no directory " << dir;
         return QDir::currentPath();
+	}
     return dir;
 }
 
@@ -104,17 +111,6 @@ void Settings::setCreateStartMenuEntries(bool bCreate)
 {
     m_settings.setValue("createStartMenuEntries", bCreate);
 	m_settings.sync();
-}
-
-bool Settings::isFirstRun()
-{
-    bool bFirst = m_settings.value("FirstRun", true).toBool();
-	if(!bFirst) 
-	{
-        m_settings.setValue("FirstRun", false);
-		m_settings.sync();
-	}
-    return bFirst;
 }
 
 Settings &Settings::getInstance()

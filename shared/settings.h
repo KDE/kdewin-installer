@@ -54,11 +54,12 @@ public:
     void setCreateStartMenuEntries(bool bCreate);
 
     // true on first run
-    bool isFirstRun();
+	bool isFirstRun() { return m_settings.value("FirstRun", true).toBool(); }
+	void setFirstRun(bool bFirstRun) { m_settings.setValue("FirstRun", bFirstRun); sync(); }
 
 	// use nested download directory tree 
 	bool nestedDownloadTree() { return m_settings.value("nestedDownloadTree", false).toBool(); }
-	void setNestedDownloadTree(bool value) { m_settings.setValue("nestedDownloadTree", value); }
+	void setNestedDownloadTree(bool value) { m_settings.setValue("nestedDownloadTree", value); sync(); }
 
     static Settings &getInstance();
     
