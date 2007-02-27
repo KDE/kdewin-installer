@@ -24,7 +24,6 @@ TODO
 ====
 1 main 
   1 use QT_NO_DEBUG_OUTPUT instead of #ifdef DEBUG to avoid debug output 
-  2 build up settings page 
   2 complete methods for writing windows start menues entries 
   3 write environment settings scripts (KDELIBS,PATH ??), this may also affect 
     windows start menu entries writing 
@@ -58,6 +57,11 @@ Happy hacking
 History
 =======
 
+version 0.6.5
+-------------
+- fixed package identifying problem with apache provided sites 
+- added proxy support 
+- added ftp download support 
 
 version 0.6.4
 -------------
