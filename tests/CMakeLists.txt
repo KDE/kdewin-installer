@@ -7,6 +7,7 @@ source_group(qua7zip FILES ${qua7zip_SOURCES} ${qua7zip_HEADERS})
 set (test_mirrors_SOURCES 
 	test-mirrors.cpp 
 	../shared/mirrors.cpp
+	../shared/settings.cpp
 	../shared/downloader.cpp
 	../shared/downloaderprogress.cpp
 )
