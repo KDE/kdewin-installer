@@ -188,6 +188,8 @@ bool Packager::generatePackageFileList(QStringList &fileList, const QString &dir
                 generateFileList(fileList, dir, "etc",   "*.*");
                 return true;
             case LIB:
+                generateFileList(fileList, dir, "lib",     "*.lib");
+                generateFileList(fileList, dir, "lib",     "*.a");
                 generateFileList(fileList, dir, "lib",     "*.dll.a");
                 generateFileList(fileList, dir, "include", "*.*");
                 return true;
