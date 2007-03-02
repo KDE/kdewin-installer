@@ -125,7 +125,7 @@ Settings &Settings::getInstance()
 
 
 
-bool Settings::getIEProxySettings(QString &host, int &port)
+bool Settings::getIEProxySettings(const QString &url, QString &host, int &port)
 {
 	host = "";
 	port = 0;
@@ -152,7 +152,7 @@ bool Settings::getIEProxySettings(QString &host, int &port)
     return true;
 }
 
-bool Settings::getFireFoxProxySettings(QString &host, int &port)
+bool Settings::getFireFoxProxySettings(const QString &url, QString &host, int &port)
 {
 	static QHash<QString,QString> prefs;
 	static bool prefsRead = false;
@@ -195,23 +195,16 @@ bool Settings::getFireFoxProxySettings(QString &host, int &port)
 		// 4 automatic detection, how to do ? 
 		if (mode == 1) 
 		{
-			host = prefs["network.proxy.http"];
-			port = prefs["network.proxy.http_port"].toInt();
-
-			QString ftphost;
-			int ftpport;
-			if (prefs.contains("network.proxy.share_proxy_settings")
+			if (url.startsWith("http") || 
+					   prefs.contains("network.proxy.share_proxy_settings")
 					&& prefs["network.proxy.share_proxy_settings"] == "true")
 			{
-				QString ftphost = host;
-				ftpport = port;
+				host = prefs["network.proxy.http"];
+				port = prefs["network.proxy.http_port"].toInt();
+				return true;
 			}
-			else  
-			{
-				ftphost = prefs["network.proxy.ftp"];
-				ftpport = prefs["network.proxy.ftp_port"].toInt();
-			}
-			// FIXME: add support for different ftp proxy settings 
+			host = prefs["network.proxy.ftp"];
+			port = prefs["network.proxy.ftp_port"].toInt();
 			return true;
 		}
 	}
@@ -226,7 +219,7 @@ bool Settings::getProxySettings(const QString &url, QString &host, int &port)
 	// FIXME: add support for different ftp proxy settings
 	int mode = proxyMode();
 	if (mode == 1)
-		return getIEProxySettings(host,port);
+		return getIEProxySettings(url,host,port);
 	else if (mode == 2) 
 	{
 		host = proxyHost();
@@ -234,7 +227,7 @@ bool Settings::getProxySettings(const QString &url, QString &host, int &port)
 		return true; 
 	}
 	else if (mode == 3)
-		return getFireFoxProxySettings(host,port);
+		return getFireFoxProxySettings(url,host,port);
 	else 
 	{
 		host="";

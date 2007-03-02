@@ -96,8 +96,8 @@ Q_SIGNALS:
 protected:
 private:
     QSettings m_settings;
-	bool getIEProxySettings(QString &host, int &port);
-	bool getFireFoxProxySettings(QString &host, int &port);
+	bool getIEProxySettings(const QString &url, QString &host, int &port);
+	bool getFireFoxProxySettings(const QString &url, QString &host, int &port);
 };
 
 
