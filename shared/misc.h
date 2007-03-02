@@ -34,7 +34,7 @@ bool generateFileList(QStringList &result, const QString &root, const QString &s
 bool createStartMenuEntries(const QString &dir, const QString &category=QString());
 bool removeStartMenuEntries(const QString &dir, const QString &category=QString());
 
-bool getIEProxySettings(QString &host, int &port);
-
+typedef enum RegKey { hKEY_CURRENT_USER, hKEY_LOCAL_MACHINE, hKEY_CLASSES_ROOT };
+QString getWin32RegistryValue(RegKey key, const QString& subKey, const QString& item, bool *ok = 0);
 
 #endif

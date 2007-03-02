@@ -62,20 +62,26 @@ public:
 	void setNestedDownloadTree(bool value) { m_settings.setValue("nestedDownloadTree", value); sync(); }
 
 	int proxyMode() { return m_settings.value("proxyMode",0).toInt(); }
-	const QString proxyHost() { return m_settings.value("proxyHost").toString(); }
-	int proxyPort() { return m_settings.value("proxyPort").toInt(); }
-	void setProxy(bool off, bool ie, bool manual, const QString &host, const QString &port) 
+	void setProxyMode(bool off, bool ie, bool manual,bool ff ) 
 	{
 		if (off) m_settings.setValue("proxyMode",0);
 		if (ie) m_settings.setValue("proxyMode",1);
 		if (manual) m_settings.setValue("proxyMode",2);
+		if (ff) m_settings.setValue("proxyMode",3);
+	}
+	const QString proxyHost() { return m_settings.value("proxyHost").toString(); }
+	int proxyPort() { return m_settings.value("proxyPort").toInt(); }
+	void setProxy(const QString &host, const QString &port) 
+	{
 		m_settings.setValue("proxyHost",host);
 		m_settings.setValue("proxyPort",port);
 		sync();
 	}
+	bool getProxySettings(const QString &url, QString &host, int &port);
 
     static Settings &getInstance();
-    
+
+	
     // QSettings compatible interface
     void beginGroup(const QString &prefix) { m_settings.beginGroup(prefix); }
     void endGroup() { m_settings.endGroup(); }
@@ -90,6 +96,8 @@ Q_SIGNALS:
 protected:
 private:
     QSettings m_settings;
+	bool getIEProxySettings(QString &host, int &port);
+	bool getFireFoxProxySettings(QString &host, int &port);
 };
 
 

@@ -61,6 +61,7 @@ public:
             QString packageType;    // zip / msi / ...
             Type    contentType;    // BIN / LIB / DOC / SRC
             bool    bInstalled;     // true if already installed
+            QString version;        // package item version
     };
 public:
 

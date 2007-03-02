@@ -221,18 +221,22 @@ ProxySettingsPage::ProxySettingsPage(InstallWizard *wizard)
     proxyManual = new QRadioButton();
     proxyIE = new QRadioButton();
     proxyOff = new QRadioButton();
-    proxyManual->setText(QApplication::translate("SettingsDialog", "manual settings", 0, QApplication::UnicodeUTF8));
-    proxyIE->setText(QApplication::translate("SettingsDialog", "IE settings", 0, QApplication::UnicodeUTF8));
+    proxyFireFox = new QRadioButton();
     proxyOff->setText(QApplication::translate("SettingsDialog", "direct connection", 0, QApplication::UnicodeUTF8));
+    proxyIE->setText(QApplication::translate("SettingsDialog", "IE settings", 0, QApplication::UnicodeUTF8));
+    proxyFireFox->setText(QApplication::translate("SettingsDialog", "FireFox settings", 0, QApplication::UnicodeUTF8));
+    proxyManual->setText(QApplication::translate("SettingsDialog", "manual settings", 0, QApplication::UnicodeUTF8));
 
-	connect( proxyManual,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
-    connect( proxyIE,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
     connect( proxyOff,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
+    connect( proxyIE,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
+    connect( proxyFireFox,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
+	connect( proxyManual,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
 
     Settings &s = Settings::getInstance();
 	switch (s.proxyMode()) {
 		case 1: proxyIE->setChecked(true); break;
 		case 2: proxyManual->setChecked(true); break;
+		case 3: proxyFireFox->setChecked(true); break;
 		case 0: 
 		default: proxyOff->setChecked(true); break;
 	}
@@ -245,11 +249,12 @@ ProxySettingsPage::ProxySettingsPage(InstallWizard *wizard)
     layout->addWidget(topLabel, 0, 0, 1, 2);
     layout->addWidget(proxyOff, 2, 0);
     layout->addWidget(proxyIE, 3, 0);
-    layout->addWidget(proxyManual, 4, 0);
-    layout->addWidget(proxyHostLabel, 4, 2);
-    layout->addWidget(proxyHost, 4, 3);
-    layout->addWidget(proxyPortLabel, 4, 4);
-    layout->addWidget(proxyPort, 4, 5);
+    layout->addWidget(proxyFireFox, 4, 0);
+    layout->addWidget(proxyManual, 5, 0);
+    layout->addWidget(proxyHostLabel, 5, 2);
+    layout->addWidget(proxyHost, 5, 3);
+    layout->addWidget(proxyPortLabel, 5, 4);
+    layout->addWidget(proxyPort, 5, 5);
     setLayout(layout);
 }
 
@@ -265,8 +270,9 @@ void ProxySettingsPage::resetPage()
 WizardPage *ProxySettingsPage::nextPage()
 {
     Settings &s = Settings::getInstance();
-	s.setProxy(proxyOff->isChecked(),proxyIE->isChecked(),proxyManual->isChecked(),
-		proxyHost->text(),proxyPort->text());
+	s.setProxyMode(proxyOff->isChecked(),proxyIE->isChecked(),proxyManual->isChecked(),proxyFireFox->isChecked());
+	if (proxyManual->isChecked())
+		s.setProxy(proxyHost->text(),proxyPort->text());
 
 	engine->setRoot(s.installDir());
     engine->readGlobalConfig();

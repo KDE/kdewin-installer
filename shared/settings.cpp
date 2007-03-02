@@ -25,6 +25,7 @@
 #include <QtDebug>
 
 #include "settings.h"
+#include "misc.h"
 
 Settings::Settings()
  : m_settings(QSettings::IniFormat, QSettings::UserScope, "KDE", "Installer")
@@ -121,5 +122,126 @@ Settings &Settings::getInstance()
     static Settings settings;
     return settings;
 }
+
+
+
+bool Settings::getIEProxySettings(QString &host, int &port)
+{
+	host = "";
+	port = 0;
+
+	bool ok; 
+    QString enable = getWin32RegistryValue(hKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings","ProxyEnable",&ok);
+    if (!ok)
+        return false; 
+	// FIXME: getWin32RegistryValue does not return propper dword values 
+	// the only way is using the size to detect 0 value from other values.
+    qDebug() << enable; 
+	if (enable.size() == 0)
+		return false;
+    
+    QString proxyServer = getWin32RegistryValue(hKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings","ProxyServer",&ok);
+    if (!ok)
+        return false; 
+    
+    QStringList parts = proxyServer.split(":");
+    host = parts[0]; 
+    port = parts[1].toInt(); 
+
+    qDebug() << enable << host << port;
+    return true;
+}
+
+bool Settings::getFireFoxProxySettings(QString &host, int &port)
+{
+	static QHash<QString,QString> prefs;
+	static bool prefsRead = false;
+
+	if (!prefsRead) 
+	{
+		QString mozillaProfileDir = getenv("APPDATA");///lb4kyocy.default";
+		QDir d(mozillaProfileDir + "/Mozilla/Firefox/Profiles");
+
+		d.setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
+		d.setNameFilters(QStringList("*.default"));
+		d.setSorting(QDir::Name);
+
+		QFileInfoList list = d.entryInfoList();
+		const QFileInfo &fi = list[0];
+		QString prefsFile = d.absolutePath()+"/"+fi.fileName() + "/prefs.js";
+		QFile f(prefsFile);
+		f.open(QIODevice::ReadOnly | QIODevice::Text);
+		QTextStream in(&f);
+		while (!in.atEnd()) 
+		{
+			QString line = in.readLine();
+			if (line.startsWith("user_pref("))
+			{
+				QString data = line.mid(10,line.length()-11-1);
+				QStringList attr = data.split(',');
+				QString key = attr[0].mid(1,attr[0].length()-2);
+				QString value = attr[1].mid(1,attr[1].length()-1).replace("\"","");
+				prefs[key] = value;
+			}
+		}
+		prefsRead = true;
+	}
+	
+	if (prefs.contains("network.proxy.type"))
+	{
+		int mode = prefs["network.proxy.type"].toInt();
+		// 1 manual proxy
+		// 2 use autoconfig url -> network.proxy.autoconfig_url
+		// 4 automatic detection, how to do ? 
+		if (mode == 1) 
+		{
+			host = prefs["network.proxy.http"];
+			port = prefs["network.proxy.http_port"].toInt();
+
+			QString ftphost;
+			int ftpport;
+			if (prefs.contains("network.proxy.share_proxy_settings")
+					&& prefs["network.proxy.share_proxy_settings"] == "true")
+			{
+				QString ftphost = host;
+				ftpport = port;
+			}
+			else  
+			{
+				ftphost = prefs["network.proxy.ftp"];
+				ftpport = prefs["network.proxy.ftp_port"].toInt();
+			}
+			// FIXME: add support for different ftp proxy settings 
+			return true;
+		}
+	}
+	host = "";
+	port = 0;
+	return false;
+}
+
+
+bool Settings::getProxySettings(const QString &url, QString &host, int &port)
+{
+	// FIXME: add support for different ftp proxy settings
+	int mode = proxyMode();
+	if (mode == 1)
+		return getIEProxySettings(host,port);
+	else if (mode == 2) 
+	{
+		host = proxyHost();
+		port = proxyPort();
+		return true; 
+	}
+	else if (mode == 3)
+		return getFireFoxProxySettings(host,port);
+	else 
+	{
+		host="";
+		port = 0;
+		return false;
+	}
+}
+
 
 #include "settings.moc"

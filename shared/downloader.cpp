@@ -78,19 +78,13 @@ bool Downloader::start(const QString &_url, const QString &fileName)
     if(fileName.isEmpty())
         return false;
 
+	QString host;
+	int port;
 	Settings &s = Settings::getInstance();
-	int mode = s.proxyMode();
-	QString host = s.proxyHost();
-	int port  = s.proxyPort();
+	s.getProxySettings(_url,host,port);
+	m_http->setProxy(host,port);
 
-	if (mode == 2)
-		m_http->setProxy(host,port);
-	else if (mode == 1 && getIEProxySettings(host,port))
-   		m_http->setProxy(host,port);
-	else 
-		m_http->setProxy(QString(),0);
-
-	qDebug() << __FUNCTION__ << mode << host << port;
+	qDebug() << __FUNCTION__ << host << port;
 
     m_file = new QFile(fileName);
     if (!m_file->open(QIODevice::WriteOnly))

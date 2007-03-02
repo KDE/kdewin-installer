@@ -280,9 +280,6 @@ bool removeStartMenuEntries(const QString &dir, const QString &category)
 # define WIN32_CAST_CHAR (LPCWSTR)
 #endif
 
-typedef enum RegKey { hKEY_CURRENT_USER, hKEY_LOCAL_MACHINE, hKEY_CLASSES_ROOT };
-//QString getWin32RegistryValue(RegKey key, const QString& subKey, const QString& item, bool *ok = 0);
-
 /**
  \return a value from MS Windows native registry.
  @param key is usually one of HKEY_CLASSES_ROOT, HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE
@@ -335,23 +332,3 @@ QString getWin32RegistryValue(RegKey akey, const QString& subKey, const QString&
 	return res;
 }
 
-
-bool getIEProxySettings(QString &host, int &port)
-{
-    bool ok; 
-    QString enable = getWin32RegistryValue(hKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings","ProxyEnable",&ok);
-    if (!ok)
-        return false; 
-    qDebug() << enable; 
-    
-    QString proxyServer = getWin32RegistryValue(hKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings","ProxyServer",&ok);
-    if (!ok)
-        return false; 
-    
-    QStringList parts = proxyServer.split(":");
-    host = parts[0]; 
-    port = parts[1].toInt(); 
-
-    qDebug() << enable << host << port;
-    return true;
-}

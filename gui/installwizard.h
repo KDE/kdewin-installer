@@ -139,7 +139,7 @@ private:
     QLabel    *topLabel;
 	QLabel    *proxyHostLabel,*proxyPortLabel;
 	QLineEdit *proxyPort,*proxyHost;
-	QRadioButton *proxyOff,*proxyManual,*proxyIE;
+	QRadioButton *proxyOff,*proxyManual,*proxyIE,*proxyFireFox;
 };
 
 class QTreeWidget;

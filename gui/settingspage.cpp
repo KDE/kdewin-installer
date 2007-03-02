@@ -13,6 +13,7 @@ SettingsPage::SettingsPage(QWidget *parent)
     connect( ui.tempPathSelect,SIGNAL(clicked()),this,SLOT(tempPathSelectClicked()) );
 
     connect( ui.proxyManual,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
+    connect( ui.proxyFireFox,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
     connect( ui.proxyIE,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
     connect( ui.proxyOff,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
     init();
@@ -31,6 +32,7 @@ void SettingsPage::init()
     switch (settings.proxyMode()) {
         case 1: ui.proxyIE->setChecked(true); break;
         case 2: ui.proxyManual->setChecked(true); break;
+        case 3: ui.proxyFireFox->setChecked(true); break;
         case 0: 
         default: ui.proxyOff->setChecked(true); break;
     }
@@ -50,7 +52,9 @@ void SettingsPage::accept()
     settings.setNestedDownloadTree(ui.nestedDownloadTree->checkState() == Qt::Checked ? true : false);
     settings.setInstallDir(ui.rootPathEdit->text());
     settings.setDownloadDir(ui.tempPathEdit->text());
-    settings.setProxy(ui.proxyOff->isChecked(),ui.proxyIE->isChecked(),ui.proxyManual->isChecked(),ui.proxyHost->text(),ui.proxyPort->text());
+    settings.setProxyMode(ui.proxyOff->isChecked(),ui.proxyIE->isChecked(),ui.proxyManual->isChecked(),ui.proxyFireFox->isChecked());
+	if (ui.proxyManual->isChecked())
+		settings.setProxy(ui.proxyHost->text(),ui.proxyPort->text());
 }
 
 void SettingsPage::reject()

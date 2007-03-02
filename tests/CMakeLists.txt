@@ -95,3 +95,13 @@ qt4_automoc(${test-startmenu_SOURCES})
 add_executable(test-startmenu ${test-startmenu_SOURCES})
 target_link_libraries(test-startmenu ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
 
+set (test-proxy_SOURCES
+	test-proxy.cpp
+	../shared/misc.cpp
+	../shared/settings.cpp
+)
+
+qt4_automoc(${test-proxy_SOURCES})
+add_executable(test-proxy ${test-proxy_SOURCES})
+target_link_libraries(test-proxy ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
+
