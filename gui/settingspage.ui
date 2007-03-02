@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>559</width>
-    <height>391</height>
+    <height>343</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -145,29 +145,13 @@ p, li { white-space: pre-wrap; }
     </item>
    </layout>
   </widget>
-  <widget class="QDialogButtonBox" name="buttonBox" >
-   <property name="geometry" >
-    <rect>
-     <x>360</x>
-     <y>320</y>
-     <width>191</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="orientation" >
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons" >
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
-   </property>
-  </widget>
   <widget class="QGroupBox" name="groupBox_2" >
    <property name="geometry" >
     <rect>
      <x>350</x>
      <y>220</y>
      <width>201</width>
-     <height>91</height>
+     <height>81</height>
     </rect>
    </property>
    <property name="title" >
@@ -199,7 +183,16 @@ p, li { white-space: pre-wrap; }
      </rect>
     </property>
     <property name="toolTip" >
-     <string comment="Uncheck to disable developer related package display" />
+     <string comment="Uncheck to disable developer related package display" >&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">The installer could be used in an &lt;span style=" font-weight:600;">End User mode&lt;/span> and a &lt;span style=" font-weight:600;">developer mode&lt;/span>. &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">- In End User mode only binary packages are visible and installable. &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">- In Developer mode additional library and doc packages are visible and installable &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">and are selected by the installer too if the related binary package was selected as dependency. &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Library package contains development libraries and header. &lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>&lt;/body>&lt;/html></string>
     </property>
     <property name="text" >
      <string>Developer Mode</string>
@@ -322,6 +315,22 @@ p, li { white-space: pre-wrap; }
      <string>Firefox settings</string>
     </property>
    </widget>
+  </widget>
+  <widget class="QDialogButtonBox" name="buttonBox" >
+   <property name="geometry" >
+    <rect>
+     <x>360</x>
+     <y>310</y>
+     <width>191</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="orientation" >
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons" >
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+   </property>
   </widget>
  </widget>
  <tabstops>
