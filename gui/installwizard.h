@@ -132,6 +132,9 @@ public:
     WizardPage *nextPage();
     bool isComplete();
 
+private slots:
+    void switchProxyFields(bool checked);
+
 private:
     QLabel    *topLabel;
 	QLabel    *proxyHostLabel,*proxyPortLabel;

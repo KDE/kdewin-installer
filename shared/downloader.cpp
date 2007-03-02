@@ -35,6 +35,7 @@
 #include "downloader.h"
 #include "downloaderprogress.h"
 #include "settings.h"
+#include "misc.h"
 
 Downloader::Downloader(bool _blocking, DownloaderProgress *_progress)
         : m_progress(_progress), m_ioDevice(0), m_file(0), m_httpGetId(~0U),
@@ -82,14 +83,14 @@ bool Downloader::start(const QString &_url, const QString &fileName)
 	QString host = s.proxyHost();
 	int port  = s.proxyPort();
 
-	// FIXME: read proxy settings from registry
-	qDebug() << __FUNCTION__ << mode << host << port;
 	if (mode == 2)
 		m_http->setProxy(host,port);
-	else if (mode == 1)
-		qWarning() << "reading proxy settings from registry not supported yet";
+	else if (mode == 1 && getIEProxySettings(host,port))
+   		m_http->setProxy(host,port);
 	else 
 		m_http->setProxy(QString(),0);
+
+	qDebug() << __FUNCTION__ << mode << host << port;
 
     m_file = new QFile(fileName);
     if (!m_file->open(QIODevice::WriteOnly))

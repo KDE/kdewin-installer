@@ -264,22 +264,6 @@ p, li { white-space: pre-wrap; }
      <string>manual settings</string>
     </property>
    </widget>
-   <widget class="QRadioButton" name="proxyIE" >
-    <property name="enabled" >
-     <bool>false</bool>
-    </property>
-    <property name="geometry" >
-     <rect>
-      <x>10</x>
-      <y>40</y>
-      <width>83</width>
-      <height>18</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>IE settings</string>
-    </property>
-   </widget>
    <widget class="QRadioButton" name="proxyOff" >
     <property name="geometry" >
      <rect>
@@ -291,6 +275,22 @@ p, li { white-space: pre-wrap; }
     </property>
     <property name="text" >
      <string>direct connection</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="proxyIE" >
+    <property name="enabled" >
+     <bool>true</bool>
+    </property>
+    <property name="geometry" >
+     <rect>
+      <x>10</x>
+      <y>40</y>
+      <width>83</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="text" >
+     <string>IE settings</string>
     </property>
    </widget>
   </widget>

@@ -273,3 +273,85 @@ bool removeStartMenuEntries(const QString &dir, const QString &category)
     }
     return true;
 }
+
+#if defined(__MINGW32__)
+# define WIN32_CAST_CHAR (WCHAR*)
+#else
+# define WIN32_CAST_CHAR (LPCWSTR)
+#endif
+
+typedef enum RegKey { hKEY_CURRENT_USER, hKEY_LOCAL_MACHINE, hKEY_CLASSES_ROOT };
+//QString getWin32RegistryValue(RegKey key, const QString& subKey, const QString& item, bool *ok = 0);
+
+/**
+ \return a value from MS Windows native registry.
+ @param key is usually one of HKEY_CLASSES_ROOT, HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE
+        constants defined in WinReg.h. 
+ @param subKey is a registry subkey defined as a path to a registry folder, eg.
+        "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"
+        ('\' delimiter must be used)
+ @param item is an item inside subKey or "" if default folder's value should be returned
+ @param ok if not null, will be set to true on success and false on failure
+*/
+QString getWin32RegistryValue(RegKey akey, const QString& subKey, const QString& item, bool *ok)
+{
+#define FAILURE \
+	{ if (ok) \
+		*ok = false; \
+	return QString(); }
+
+	if (subKey.isEmpty())
+		FAILURE;
+		
+	HKEY key;
+    switch(akey) {
+        case hKEY_CURRENT_USER: key = HKEY_CURRENT_USER; break; 
+        case hKEY_LOCAL_MACHINE: key = HKEY_LOCAL_MACHINE; break; 
+        case hKEY_CLASSES_ROOT: key = HKEY_CLASSES_ROOT; break;
+		default: FAILURE;
+	}
+	
+	HKEY hKey;
+	TCHAR *lszValue;
+	DWORD dwType=REG_SZ;
+	DWORD dwSize;
+
+	if (ERROR_SUCCESS!=RegOpenKeyEx(key, WIN32_CAST_CHAR subKey.utf16(), 0, KEY_READ, &hKey))
+		FAILURE;
+
+	if (ERROR_SUCCESS!=RegQueryValueEx(hKey, WIN32_CAST_CHAR item.utf16(), NULL, NULL, NULL, &dwSize))
+		FAILURE;
+
+	lszValue = new TCHAR[dwSize];
+
+	if (ERROR_SUCCESS!=RegQueryValueEx(hKey, WIN32_CAST_CHAR item.utf16(), NULL, &dwType, (LPBYTE)lszValue, &dwSize)) {
+		delete [] lszValue;
+		FAILURE;
+	}
+	RegCloseKey(hKey);
+
+	QString res = QString::fromUtf16( (const ushort*)lszValue );
+	delete [] lszValue;
+	return res;
+}
+
+
+bool getIEProxySettings(QString &host, int &port)
+{
+    bool ok; 
+    QString enable = getWin32RegistryValue(hKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings","ProxyEnable",&ok);
+    if (!ok)
+        return false; 
+    qDebug() << enable; 
+    
+    QString proxyServer = getWin32RegistryValue(hKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings","ProxyServer",&ok);
+    if (!ok)
+        return false; 
+    
+    QStringList parts = proxyServer.split(":");
+    host = parts[0]; 
+    port = parts[1].toInt(); 
+
+    qDebug() << enable << host << port;
+    return true;
+}

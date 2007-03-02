@@ -220,11 +220,14 @@ ProxySettingsPage::ProxySettingsPage(InstallWizard *wizard)
     proxyHost = new QLineEdit();
     proxyManual = new QRadioButton();
     proxyIE = new QRadioButton();
-    proxyIE->setEnabled(false);
     proxyOff = new QRadioButton();
     proxyManual->setText(QApplication::translate("SettingsDialog", "manual settings", 0, QApplication::UnicodeUTF8));
     proxyIE->setText(QApplication::translate("SettingsDialog", "IE settings", 0, QApplication::UnicodeUTF8));
     proxyOff->setText(QApplication::translate("SettingsDialog", "direct connection", 0, QApplication::UnicodeUTF8));
+
+	connect( proxyManual,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
+    connect( proxyIE,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
+    connect( proxyOff,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
 
     Settings &s = Settings::getInstance();
 	switch (s.proxyMode()) {
@@ -233,6 +236,7 @@ ProxySettingsPage::ProxySettingsPage(InstallWizard *wizard)
 		case 0: 
 		default: proxyOff->setChecked(true); break;
 	}
+	switchProxyFields(true);
 	proxyHost->setText(s.proxyHost());
 	proxyPort->setText(QString("%1").arg(s.proxyPort()));
 
@@ -248,6 +252,13 @@ ProxySettingsPage::ProxySettingsPage(InstallWizard *wizard)
     layout->addWidget(proxyPort, 4, 5);
     setLayout(layout);
 }
+
+void ProxySettingsPage::switchProxyFields(bool checked)
+{
+	proxyHost->setEnabled(proxyManual->isChecked());
+	proxyPort->setEnabled(proxyManual->isChecked());
+}
+
 void ProxySettingsPage::resetPage()
 {}
 

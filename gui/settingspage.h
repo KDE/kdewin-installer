@@ -11,6 +11,7 @@ class SettingsPage : public QDialog
 
  public:
      SettingsPage(QWidget *parent = 0);
+     void init();
 
  private slots: 
      void accept();
