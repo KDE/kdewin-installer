@@ -270,7 +270,15 @@ void ProxySettingsPage::resetPage()
 WizardPage *ProxySettingsPage::nextPage()
 {
     Settings &s = Settings::getInstance();
-	s.setProxyMode(proxyOff->isChecked(),proxyIE->isChecked(),proxyManual->isChecked(),proxyFireFox->isChecked());
+
+    Settings::ProxyMode m = Settings::None;
+    if(proxyIE->isChecked())
+        m = Settings::InternetExplorer;
+    if(proxyFireFox->isChecked())
+        m = Settings::FireFox;
+    if(proxyManual->isChecked())
+        m = Settings::Manual;
+    s.setProxyMode(m);
 	if (proxyManual->isChecked())
 		s.setProxy(proxyHost->text(),proxyPort->text());
 

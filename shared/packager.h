@@ -32,13 +32,14 @@ class Packager {
     public: 
       // don't know how to make usable package::Type
       enum Type { NONE = 0, BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8, ALL = 15};
-      Packager::Packager(const QString &packageName, const QString &packageVersion,const QString &notes=QString());
+
+      Packager(const QString &packageName, const QString &packageVersion,const QString &notes=QString());
 
       // mingw only: strip all debugging symbols from files to reduce size
       bool stripFiles(const QString &dir);
       bool createDebugFiles(const QString &dir);
 
-      bool generatePackageFileList(QStringList &result, Packager::Type type);
+      bool generatePackageFileList(QStringList &result, Packager::Type type, const QString &dir=QString());
 
       bool makePackage(const QString &dir, const QString &destdir=QString(), bool bComplete=false);
       

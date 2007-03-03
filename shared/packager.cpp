@@ -137,9 +137,9 @@ bool Packager::createZipFile(const QString &baseName, const QStringList &files, 
     return true;
 } 
 
-bool Packager::generatePackageFileList(QStringList &fileList, Packager::Type type)
+bool Packager::generatePackageFileList(QStringList &fileList, Packager::Type type, const QString &root)
 {
-    QString dir = m_rootDir;
+    QString dir = root.isEmpty() ? m_rootDir : root;
 
     fileList.clear();
     if (m_name.startsWith("qt") || m_name.startsWith("q++") || m_name.startsWith("q.."))

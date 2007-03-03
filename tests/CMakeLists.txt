@@ -1,6 +1,7 @@
 # our targets
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
- 
+include_directories(${md5_INCLUDE_DIR})
+
 source_group(quazip  FILES ${quazip_SOURCES}  ${quazip_HEADERS})
 source_group(qua7zip FILES ${qua7zip_SOURCES} ${qua7zip_HEADERS})
 
@@ -10,6 +11,7 @@ set (test_mirrors_SOURCES
 	../shared/settings.cpp
 	../shared/downloader.cpp
 	../shared/downloaderprogress.cpp
+	../shared/misc.cpp
 )
 
 qt4_automoc(${test_mirrors_SOURCES})
@@ -63,6 +65,7 @@ target_link_libraries(test-globalconfig ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LI
 set (test-settings_SOURCES
 	test-settings.cpp
 	../shared/settings.cpp
+	../shared/misc.cpp
 )
 
 qt4_automoc(${test-settings_SOURCES})
@@ -79,6 +82,8 @@ set (test-packager_SOURCES
         ${quazip_SOURCES}
         ${qua7zip_SOURCES}
         ${qua7zip_HEADERS}
+        ${md5_SOURCES}
+		${md5_HEADERS}
 )
 
 qt4_automoc(${test-packager_SOURCES})

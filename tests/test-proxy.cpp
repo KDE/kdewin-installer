@@ -31,15 +31,31 @@ int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
+    QString http("http://www.heise.de");
+    QString ftp("ftp://www.heise.de");
     QString host; 
 	int port; 
+    bool ret;
 	Settings &s = Settings::getInstance();
 
-	bool ret = s.getIEProxySettings(host,port);
-	qDebug() << "IE settings" << ret << host << port;
+    s.setProxyMode(Settings::InternetExplorer);
+    ret = s.getProxySettings(http, host, port);
+    qDebug() << "IE settings for " << http << ":" << ret << host << port;
+    ret = s.getProxySettings(ftp, host, port);
+    qDebug() << "IE settings for " << ftp << ":" << ret << host << port;
 
-	ret = s.getFireFoxProxySettings(host,port);
-	qDebug() << "Firefox settings" << ret << host << port;
+    s.setProxyMode(Settings::FireFox);
+	ret = s.getProxySettings(http, host, port);
+    qDebug() << "Firefox settings for " << http << ":" << ret << host << port;
+	ret = s.getProxySettings(ftp, host, port);
+    qDebug() << "Firefox settings for " << ftp << ":" << ret << host << port;
+
+    s.setProxyMode(Settings::Manual);
+	ret = s.getProxySettings(http, host, port);
+    qDebug() << "Manual settings for " << http << ":" << ret << host << port;
+	ret = s.getProxySettings(ftp, host, port);
+    qDebug() << "Manual settings for " << ftp << ":" << ret << host << port;
+
     return 0;
 }
 

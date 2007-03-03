@@ -44,19 +44,19 @@ int main(int argc, char *argv[])
     Packager packager(name,version,notes); 
         
     qDebug() << "BIN packages list";
-    packager.generatePackageFileList(result,dir,Packager::BIN);
+    packager.generatePackageFileList(result,Packager::BIN,dir);
     qDebug() << result.join("\n");
 
     qDebug() << "LIB packages list";
-    packager.generatePackageFileList(result,dir,Packager::LIB);
+    packager.generatePackageFileList(result,Packager::LIB,dir);
     qDebug() << result.join("\n");
 
     qDebug() << "DOC packages list";
-    packager.generatePackageFileList(result,dir,Packager::DOC);
+    packager.generatePackageFileList(result,Packager::DOC,dir);
     qDebug() << result.join("\n");
 
     qDebug() << "SRC packages list";
-    packager.generatePackageFileList(result,dir,Packager::SRC);
+    packager.generatePackageFileList(result,Packager::SRC,dir);
     qDebug() << result.join("\n");
 
     packager.stripFiles(dir);

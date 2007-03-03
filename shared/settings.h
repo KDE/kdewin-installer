@@ -61,13 +61,11 @@ public:
 	bool nestedDownloadTree() { return m_settings.value("nestedDownloadTree", false).toBool(); }
 	void setNestedDownloadTree(bool value) { m_settings.setValue("nestedDownloadTree", value); sync(); }
 
-	int proxyMode() { return m_settings.value("proxyMode",0).toInt(); }
-	void setProxyMode(bool off, bool ie, bool manual,bool ff ) 
+    enum ProxyMode { None = 0, InternetExplorer, FireFox, Manual };
+    ProxyMode proxyMode() { return (ProxyMode)m_settings.value("proxyMode",0).toInt(); }
+	void setProxyMode(ProxyMode mode) 
 	{
-		if (off) m_settings.setValue("proxyMode",0);
-		if (ie) m_settings.setValue("proxyMode",1);
-		if (manual) m_settings.setValue("proxyMode",2);
-		if (ff) m_settings.setValue("proxyMode",3);
+		m_settings.setValue("proxyMode", mode);
 	}
 	const QString proxyHost() { return m_settings.value("proxyHost").toString(); }
 	int proxyPort() { return m_settings.value("proxyPort").toInt(); }

@@ -159,7 +159,7 @@ bool Settings::getFireFoxProxySettings(const QString &url, QString &host, int &p
 
 	if (!prefsRead) 
 	{
-		QString mozillaProfileDir = getenv("APPDATA");///lb4kyocy.default";
+		QString mozillaProfileDir = qgetenv("APPDATA");///lb4kyocy.default";
 		QDir d(mozillaProfileDir + "/Mozilla/Firefox/Profiles");
 
 		d.setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
@@ -167,6 +167,8 @@ bool Settings::getFireFoxProxySettings(const QString &url, QString &host, int &p
 		d.setSorting(QDir::Name);
 
 		QFileInfoList list = d.entryInfoList();
+        if(!list.count())
+            return false;
 		const QFileInfo &fi = list[0];
 		QString prefsFile = d.absolutePath()+"/"+fi.fileName() + "/prefs.js";
 		QFile f(prefsFile);
@@ -180,7 +182,7 @@ bool Settings::getFireFoxProxySettings(const QString &url, QString &host, int &p
 				QString data = line.mid(10,line.length()-11-1);
 				QStringList attr = data.split(',');
 				QString key = attr[0].mid(1,attr[0].length()-2);
-				QString value = attr[1].mid(1,attr[1].length()-1).replace("\"","");
+				QString value = attr[1].mid(1,attr[1].length()-1).remove('\"');
 				prefs[key] = value;
 			}
 		}
@@ -208,7 +210,7 @@ bool Settings::getFireFoxProxySettings(const QString &url, QString &host, int &p
 			return true;
 		}
 	}
-	host = "";
+	host = QString();
 	port = 0;
 	return false;
 }
@@ -217,23 +219,22 @@ bool Settings::getFireFoxProxySettings(const QString &url, QString &host, int &p
 bool Settings::getProxySettings(const QString &url, QString &host, int &port)
 {
 	// FIXME: add support for different ftp proxy settings
-	int mode = proxyMode();
-	if (mode == 1)
-		return getIEProxySettings(url,host,port);
-	else if (mode == 2) 
-	{
-		host = proxyHost();
-		port = proxyPort();
-		return true; 
-	}
-	else if (mode == 3)
-		return getFireFoxProxySettings(url,host,port);
-	else 
-	{
-		host="";
-		port = 0;
-		return false;
-	}
+    switch(proxyMode()) {
+        case InternetExplorer:
+            return getIEProxySettings(url, host, port);
+        case FireFox:
+            return getFireFoxProxySettings(url, host, port);
+        case Manual:
+		    host = proxyHost();
+		    port = proxyPort();
+		    return true; 
+        case None:
+        default:
+            host = QString();
+            port = 0;
+            break;
+    };
+    return false;
 }
 
 

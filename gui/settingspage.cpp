@@ -52,7 +52,14 @@ void SettingsPage::accept()
     settings.setNestedDownloadTree(ui.nestedDownloadTree->checkState() == Qt::Checked ? true : false);
     settings.setInstallDir(ui.rootPathEdit->text());
     settings.setDownloadDir(ui.tempPathEdit->text());
-    settings.setProxyMode(ui.proxyOff->isChecked(),ui.proxyIE->isChecked(),ui.proxyManual->isChecked(),ui.proxyFireFox->isChecked());
+    Settings::ProxyMode m = Settings::None;
+    if(ui.proxyIE->isChecked())
+        m = Settings::InternetExplorer;
+    if(ui.proxyFireFox->isChecked())
+        m = Settings::FireFox;
+    if(ui.proxyManual->isChecked())
+        m = Settings::Manual;
+    settings.setProxyMode(m);
 	if (ui.proxyManual->isChecked())
 		settings.setProxy(ui.proxyHost->text(),ui.proxyPort->text());
 }
