@@ -89,6 +89,7 @@ set(installer_shared_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/settings.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/installerengine.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/misc.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/database.cpp
 )
 
 set(installer_shared_HEADERS
@@ -103,6 +104,7 @@ set(installer_shared_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/installerengine.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/misc.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/globalconfig.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/database.h
 )
 set(installer_shared_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shared)
 

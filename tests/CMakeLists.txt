@@ -105,3 +105,16 @@ qt4_automoc(${test-proxy_SOURCES})
 add_executable(test-proxy ${test-proxy_SOURCES})
 target_link_libraries(test-proxy ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
 
+set (TEST_NAME test-database)
+set (${TEST_NAME}_SOURCES
+	${TEST_NAME}.cpp
+	${installer_shared_SOURCES}
+    ${quazip_HEADERS}
+    ${quazip_SOURCES}
+    ${qua7zip_SOURCES}
+    ${qua7zip_HEADERS}
+)
+
+qt4_automoc(${${TEST_NAME}_SOURCES})
+add_executable(${TEST_NAME} ${${TEST_NAME}_SOURCES})
+target_link_libraries(${TEST_NAME} ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})

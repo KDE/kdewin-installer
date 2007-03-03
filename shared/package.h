@@ -54,6 +54,7 @@ public:
         public:
 		    bool set(const QString &path, const QString &fn, Package::Type contentType, bool bInstalled = false);
 			bool set(const QString &path, const QString &fn, const QByteArray &contentType, bool bInstalled = false);
+			bool setContentType(const QString &type);
             // dump content
     	    void dump(const QString &title=QString()) const;
             QString path;           // path without filename

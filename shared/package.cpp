@@ -32,6 +32,36 @@
 #include "downloader.h"
 #include "installer.h"
 
+bool Package::PackageItem::setContentType(const QString &type)
+{
+    QString ct = type.toLower();
+    if(ct == "bin")
+	{
+        contentType = BIN;
+		return true;
+	}
+    else if(ct == "lib")
+	{
+        contentType = LIB;
+		return true;
+	}
+    else if(ct == "doc")
+	{
+        contentType = DOC;
+		return true;
+	}
+    else if(ct == "src")
+	{
+        contentType = SRC;
+		return true;
+	}
+	else 
+	{
+		contentType = NONE;
+		return false;
+	}
+}
+
 void Package::PackageItem::dump(const QString &title) const
 {
     DUMP_HEADER(title,"PackageItem");
