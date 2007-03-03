@@ -66,6 +66,15 @@ set(qua7zip_HEADERS
 
 set(qua7zip_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip)
 
+set(md5_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/md5/md5.cpp
+	)
+
+set(md5_HEADERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/md5/md5.h
+	)
+set(md5_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/md5)
+
 # set installer_shared_SOURCES/installer_shared_HEADERS
 set(installer_shared_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/downloader.cpp
@@ -79,7 +88,6 @@ set(installer_shared_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/globalconfig.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/settings.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/installerengine.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/packager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/misc.cpp
 )
 

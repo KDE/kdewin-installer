@@ -7,15 +7,21 @@ set (packager_SOURCES
 	../shared/packager.cpp
 	../shared/misc.cpp
 	${quazip_SOURCES}
+	${md5_SOURCES}
 )
 
 set (packager_HEADERS
     ../shared/packager.h
 	../shared/misc.h
 	${quazip_HEADERS}
+	${md5_HEADERS}
 )
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+include_directories(
+	${CMAKE_CURRENT_SOURCE_DIR}
+	${CMAKE_CURRENT_BINARY_DIR}
+	${md5_INCLUDE_DIR}
+	)
 
 add_definitions(-DPACKAGER_VERSION=${VER_MAJ}.${VER_MIN}.${VER_PATCH})
 

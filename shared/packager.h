@@ -38,7 +38,7 @@ class Packager {
       bool stripFiles(const QString &dir);
       bool createDebugFiles(const QString &dir);
 
-      bool generatePackageFileList(QStringList &result, const QString &dir, Packager::Type type);
+      bool generatePackageFileList(QStringList &result, Packager::Type type);
 
       bool makePackage(const QString &dir, const QString &destdir=QString(), bool bComplete=false);
       
@@ -47,7 +47,7 @@ class Packager {
             QString    filename;
             QByteArray data;
         };
-      bool createZipFile(const QString &baseName, const QString &rootDir, const QStringList &files, const QList<MemFile> &memFiles=QList<MemFile>());
+      bool createZipFile(const QString &baseName, const QStringList &files, const QList<MemFile> &memFiles=QList<MemFile>());
       bool createManifestFiles(QStringList &fileList, Packager::Type type, QList<MemFile> &manifestFiles);
 
       QString getBaseName(Packager::Type type);
@@ -56,6 +56,7 @@ class Packager {
       QString m_name;
       QString m_version;
       QString m_notes;
+      QString m_rootDir;
       bool m_verbose;
 }; 
 

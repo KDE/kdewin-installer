@@ -34,6 +34,7 @@
 #include "quazip.h" 
 #include "quazipfile.h" 
 #include "misc.h"
+#include "md5.h"
 
 #ifndef QZIP_BUFFER
 # define QZIP_BUFFER (256 * 1024)
@@ -48,7 +49,7 @@ Packager::Packager(const QString &packageName, const QString &packageVersion, co
        m_verbose = true;
 }
 
-bool Packager::createZipFile(const QString &baseName, const QString &root, const QStringList &files, const QList<MemFile> &memFiles)
+bool Packager::createZipFile(const QString &baseName, const QStringList &files, const QList<MemFile> &memFiles)
 {
     QuaZip zip(baseName + ".zip");
     if(!zip.open(QuaZip::mdCreate)) {
@@ -61,7 +62,7 @@ bool Packager::createZipFile(const QString &baseName, const QString &root, const
        
     for (int l = 0; l < files.size(); l++)
     {
-       inFile.setFileName(root + '/' + files[l]);
+       inFile.setFileName(m_rootDir + '/' + files[l]);
    
        if(!inFile.open(QIODevice::ReadOnly)) 
        {
@@ -136,8 +137,10 @@ bool Packager::createZipFile(const QString &baseName, const QString &root, const
     return true;
 } 
 
-bool Packager::generatePackageFileList(QStringList &fileList, const QString &dir, Packager::Type type)
+bool Packager::generatePackageFileList(QStringList &fileList, Packager::Type type)
 {
+    QString dir = m_rootDir;
+
     fileList.clear();
     if (m_name.startsWith("qt") || m_name.startsWith("q++") || m_name.startsWith("q.."))
         switch (type) {
@@ -188,9 +191,9 @@ bool Packager::generatePackageFileList(QStringList &fileList, const QString &dir
                 generateFileList(fileList, dir, "etc",   "*.*");
                 return true;
             case LIB:
-                generateFileList(fileList, dir, "lib",     "*.lib");
-                generateFileList(fileList, dir, "lib",     "*.a");
-                generateFileList(fileList, dir, "lib",     "*.dll.a");
+                generateFileList(fileList, dir, "lib",     "*.lib");    // msvc libs (static & import libs)
+                generateFileList(fileList, dir, "lib",     "*.a");      // gcc (static) libs
+                generateFileList(fileList, dir, "lib",     "*.dll.a");  // gcc import libs
                 generateFileList(fileList, dir, "include", "*.*");
                 return true;
             case DOC:
@@ -240,7 +243,24 @@ bool Packager::createManifestFiles(QStringList &fileList, Packager::Type type, Q
     QBuffer b(&mf.data);
     b.open(QIODevice::WriteOnly);
     QTextStream out(&b);
-    out << fileList.join("\n") << '\n'
+    QStringList::ConstIterator it = fileList.begin();
+    QStringList::ConstIterator end = fileList.end();
+    QStringList toRemove;
+    for( ; it != end; ++it ) {
+        QString fn = *it;
+        QFile f(m_rootDir + '/' + fn);
+        if(!f.open(QIODevice::ReadOnly)) {
+            qWarning("Can't open %s - removing from filelist!", qPrintable(fn));
+            toRemove += fn;
+            continue;
+        }
+        QByteArray ba = f.readAll();    // mmmmh
+        QString md5Hash = qtMD5(ba);
+        QByteArray fnUtf8 = (*it).toUtf8();
+        fnUtf8.replace(' ', "\\ "); // escape ' '
+        out << fnUtf8 << ' ' << md5Hash << '\n';
+    }
+    out << '\n'
         << "manifest/" + fileNameBase + ".mft" << '\n'
         << "manifest/" + fileNameBase + ".ver" << '\n';
     b.close();
@@ -261,11 +281,12 @@ bool Packager::createManifestFiles(QStringList &fileList, Packager::Type type, Q
     return true;    
 }
 
-bool Packager::makePackage(const QString &dir, const QString &destdir, bool bComplete)
+bool Packager::makePackage(const QString &root, const QString &destdir, bool bComplete)
 {
     // generate file lists
     // create manifest files 
-    // create zip file 
+    // create zip file
+    m_rootDir = root;
 
     QStringList fileList; 
     QList<MemFile> manifestFiles;
@@ -274,41 +295,41 @@ bool Packager::makePackage(const QString &dir, const QString &destdir, bool bCom
 		_destdir += "/"; 
     if (m_verbose)
         qDebug() << "creating bin package" << destdir + getBaseName(Packager::BIN); 
-    generatePackageFileList(fileList, dir, Packager::BIN);
+    generatePackageFileList(fileList, Packager::BIN);
     createManifestFiles(fileList, Packager::BIN, manifestFiles);    
     if (fileList.size() > 0)
-        createZipFile(_destdir + getBaseName(Packager::BIN), dir, fileList, manifestFiles);
+        createZipFile(_destdir + getBaseName(Packager::BIN), fileList, manifestFiles);
     else
         qDebug() << "no binary files found!";
 
     if (m_verbose)
         qDebug() << "creating lib package" << getBaseName(Packager::LIB); 
-    generatePackageFileList(fileList, dir, Packager::LIB);
+    generatePackageFileList(fileList, Packager::LIB);
     createManifestFiles(fileList, Packager::LIB, manifestFiles);
     if (fileList.size() > 0)
-        createZipFile(_destdir + getBaseName(Packager::LIB), dir, fileList, manifestFiles);
+        createZipFile(_destdir + getBaseName(Packager::LIB), fileList, manifestFiles);
 
     if (m_verbose)
         qDebug() << "creating lib package" << getBaseName(Packager::DOC); 
-    generatePackageFileList(fileList, dir, Packager::DOC);
+    generatePackageFileList(fileList, Packager::DOC);
     createManifestFiles(fileList, Packager::DOC, manifestFiles);
     if (fileList.size() > 0)
-        createZipFile(_destdir + getBaseName(Packager::DOC), dir, fileList, manifestFiles);
+        createZipFile(_destdir + getBaseName(Packager::DOC), fileList, manifestFiles);
 
     if (m_verbose)
         qDebug() << "creating lib package" << getBaseName(Packager::SRC); 
-    generatePackageFileList(fileList, dir, Packager::SRC);
+    generatePackageFileList(fileList, Packager::SRC);
     createManifestFiles(fileList, Packager::SRC, manifestFiles);
     if (fileList.size() > 0)
-        createZipFile(_destdir + getBaseName(Packager::SRC), dir, fileList, manifestFiles);
+        createZipFile(_destdir + getBaseName(Packager::SRC), fileList, manifestFiles);
 
     if(bComplete) {
         if (m_verbose)
             qDebug() << "creating complete package" << getBaseName(Packager::NONE); 
-        generatePackageFileList(fileList, dir, Packager::NONE);
+        generatePackageFileList(fileList, Packager::NONE);
         createManifestFiles(fileList, Packager::NONE, manifestFiles);
         if (fileList.size() > 0)
-            createZipFile(_destdir + getBaseName(Packager::NONE), dir, fileList, manifestFiles);
+            createZipFile(_destdir + getBaseName(Packager::NONE), fileList, manifestFiles);
     }
     return true;
 }
