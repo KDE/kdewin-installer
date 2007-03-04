@@ -103,7 +103,9 @@ target_link_libraries(test-startmenu ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRA
 set (test-proxy_SOURCES
 	test-proxy.cpp
 	../shared/misc.cpp
+	../shared/misc.h
 	../shared/settings.cpp
+	../shared/settings.h
 )
 
 qt4_automoc(${test-proxy_SOURCES})

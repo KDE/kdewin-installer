@@ -127,24 +127,25 @@ Settings &Settings::getInstance()
 
 bool Settings::getIEProxySettings(const QString &url, QString &host, int &port)
 {
-	host = "";
+	host = QString();
 	port = 0;
 
 	bool ok; 
-    QString enable = getWin32RegistryValue(hKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings","ProxyEnable",&ok);
+    quint32 enable = getWin32RegistryValue(hKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings","ProxyEnable",&ok).toUInt();
     if (!ok)
         return false; 
-	// FIXME: getWin32RegistryValue does not return propper dword values 
-	// the only way is using the size to detect 0 value from other values.
-    qDebug() << enable; 
-	if (enable.size() == 0)
+
+    if (enable == 0)
 		return false;
     
-    QString proxyServer = getWin32RegistryValue(hKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings","ProxyServer",&ok);
+    QString proxyServer = getWin32RegistryValue(hKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings","ProxyServer",&ok).toString();
     if (!ok)
         return false; 
     
-    QStringList parts = proxyServer.split(":");
+    QStringList parts = proxyServer.split(':');
+    if(parts.count() != 2)
+        return false;
+
     host = parts[0]; 
     port = parts[1].toInt(); 
 

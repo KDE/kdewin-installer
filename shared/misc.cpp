@@ -290,7 +290,7 @@ bool removeStartMenuEntries(const QString &dir, const QString &category)
  @param item is an item inside subKey or "" if default folder's value should be returned
  @param ok if not null, will be set to true on success and false on failure
 */
-QString getWin32RegistryValue(RegKey akey, const QString& subKey, const QString& item, bool *ok)
+QVariant getWin32RegistryValue(RegKey akey, const QString& subKey, const QString& item, bool *ok)
 {
 #define FAILURE \
 	{ if (ok) \
@@ -309,26 +309,43 @@ QString getWin32RegistryValue(RegKey akey, const QString& subKey, const QString&
 	}
 	
 	HKEY hKey;
-	TCHAR *lszValue;
-	DWORD dwType=REG_SZ;
+	DWORD dwType;
 	DWORD dwSize;
 
-	if (ERROR_SUCCESS!=RegOpenKeyEx(key, WIN32_CAST_CHAR subKey.utf16(), 0, KEY_READ, &hKey))
+	if (ERROR_SUCCESS!=RegOpenKeyExW(key, WIN32_CAST_CHAR subKey.utf16(), 0, KEY_READ, &hKey))
 		FAILURE;
 
-	if (ERROR_SUCCESS!=RegQueryValueEx(hKey, WIN32_CAST_CHAR item.utf16(), NULL, NULL, NULL, &dwSize))
+	if (ERROR_SUCCESS!=RegQueryValueExW(hKey, WIN32_CAST_CHAR item.utf16(), NULL, &dwType, NULL, &dwSize))
 		FAILURE;
 
-	lszValue = new TCHAR[dwSize];
+    QVariant res;
+    switch(dwType) {
+        case REG_SZ: {
+            QByteArray ba(dwSize * 2, 0);
+	        if (ERROR_SUCCESS!=RegQueryValueExW(hKey, WIN32_CAST_CHAR item.utf16(), NULL, &dwType, (LPBYTE)ba.data(), &dwSize))
+		        FAILURE;
+            res = QString::fromUtf16( (unsigned short*)ba.data() );
+            break;
+        }
+        case REG_DWORD: {
+            quint32 dwVal;
+	        if (ERROR_SUCCESS!=RegQueryValueExW(hKey, WIN32_CAST_CHAR item.utf16(), NULL, &dwType, (LPBYTE)&dwVal, &dwSize))
+		        FAILURE;
+            res = dwVal;
+            break;
+        }
+        case REG_BINARY: {
+            QByteArray ba(dwSize, 0);
+	        if (ERROR_SUCCESS!=RegQueryValueExW(hKey, WIN32_CAST_CHAR item.utf16(), NULL, &dwType, (LPBYTE)ba.data(), &dwSize))
+		        FAILURE;
+            res = ba;
+            break;
+        }
+        default:
+            FAILURE;
+    }
+    RegCloseKey(hKey);
 
-	if (ERROR_SUCCESS!=RegQueryValueEx(hKey, WIN32_CAST_CHAR item.utf16(), NULL, &dwType, (LPBYTE)lszValue, &dwSize)) {
-		delete [] lszValue;
-		FAILURE;
-	}
-	RegCloseKey(hKey);
-
-	QString res = QString::fromUtf16( (const ushort*)lszValue );
-	delete [] lszValue;
 	return res;
 }
 

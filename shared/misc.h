@@ -35,6 +35,6 @@ bool createStartMenuEntries(const QString &dir, const QString &category=QString(
 bool removeStartMenuEntries(const QString &dir, const QString &category=QString());
 
 typedef enum RegKey { hKEY_CURRENT_USER, hKEY_LOCAL_MACHINE, hKEY_CLASSES_ROOT };
-QString getWin32RegistryValue(RegKey key, const QString& subKey, const QString& item, bool *ok = 0);
+QVariant getWin32RegistryValue(RegKey key, const QString& subKey, const QString& item, bool *ok = false);
 
 #endif
