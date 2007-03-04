@@ -51,7 +51,7 @@ public:
     void dump(const QString &title=QString());
  
 signals:
-    void loadedConfig();
+    void configLoaded();
 
 private:
     QList<Package*> m_database;

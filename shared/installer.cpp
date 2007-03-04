@@ -54,7 +54,7 @@ Installer::Installer(PackageList *_packageList, InstallerProgress *_progress)
         packageList->m_installer = this;
         packageList->m_root = m_root;
     }
-    connect (packageList,SIGNAL(loadedConfig()),this,SLOT(updatePackageList()));
+    connect (packageList,SIGNAL(configLoaded()),this,SLOT(updatePackageList()));
 }
 
 Installer::~Installer()

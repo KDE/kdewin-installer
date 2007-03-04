@@ -99,7 +99,7 @@ public:
     void dump(const QString &title=QString());
 
 signals:
-    void loadedConfig();
+    void configLoaded();
 
 private:
     bool readHTMLInternal(QIODevice *ioDev, PackageList::Type type, bool append=false);

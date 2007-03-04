@@ -151,7 +151,7 @@ bool PackageList::readFromFile(const QString &_fileName)
                 addPackage(pkg);
         }
     }
-    emit loadedConfig();
+    emit configLoaded();
     return true;
 }
 
@@ -194,7 +194,7 @@ bool PackageList::syncWithFile(const QString &_fileName)
                 addPackage(pkg);
         }
     }
-    emit loadedConfig();
+    emit configLoaded();
     return true;
 }
 
@@ -407,7 +407,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
         }
         break;
     }
-    emit loadedConfig();
+    emit configLoaded();
     return true;
 }
 

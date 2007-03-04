@@ -42,6 +42,7 @@ Database::~Database()
 #ifdef DEBUG
     qDebug() << __FUNCTION__;
 #endif
+    qDeleteAll(m_database);
 }
 
 
@@ -61,12 +62,13 @@ Package *Database::getPackage(const QString &pkgName, const QByteArray &version)
 #endif
 
     QList<Package*>::iterator it = m_database.begin();
-    for ( ; it != m_database.end(); ++it)
+    for ( ; it != m_database.end(); ++it) {
         if ((*it)->name() == pkgName) {
             if(!version.isEmpty() && (*it)->version() != version)
                 continue;
             return (*it);
         }
+    }
     return NULL;
 }
 
@@ -99,14 +101,18 @@ bool Database::readFromDirectory(const QString &dir)
     // wget-1.10.1-bin.ver
     for (int i = 0; i < list.size(); i++) {
         QFileInfo fi = list[i];        
-        QString baseName = fi.fileName().replace(".ver","");
+        QString baseName = fi.fileName().remove(".ver");
         QStringList parts = baseName.split('-');
+        if(parts.size() < 3) {
+            qDebug() << "can't parse filename " << baseName;
+            continue;
+        }
         QString pkgName = parts[0];
 		QString pkgVersion;
 		QString pkgType;
 		if (parts.size() == 4)
 		{
-			pkgVersion = parts[1] + "-" + parts[2];
+			pkgVersion = parts[1] + '-' + parts[2];
 			pkgType = parts[3];
 		}
 		else 
@@ -134,7 +140,7 @@ bool Database::readFromDirectory(const QString &dir)
             m_database.append(pkg);
         }
     }        
-    emit loadedConfig();
+    emit configLoaded();
     return true;
 }
 
