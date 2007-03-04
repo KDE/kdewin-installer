@@ -30,22 +30,39 @@
 class Uninstall : public QObject
 {
     Q_OBJECT
-public:
-    Uninstall();
-    ~Uninstall();
-
-    bool uninstallPackage(const QString &rootDir, const QString &packName, bool bUseHashWhenPossible=true);
-Q_SIGNALS:
-    void removed(const QString &fileName);
-    void warning(const QString &wrnMsg);
-    void error(const QString &errMsg);
-private:
+protected:
     struct FileItem {
         QString fileName;
         QString hash;  
 
         FileItem(const QString &fn, const QString &h) { fileName = fn; hash = h; }
     };
+    QString m_rootDir;
+    QString m_packageName;
+
+public:
+    Uninstall(const QString &rootDir, const QString &packageName);
+    ~Uninstall();
+
+    /*
+      uninstalls all files from this package
+      makes a modified check with checksum if wanted
+    */
+    bool uninstallPackage(bool bUseHashWhenPossible=true);
+    /*
+      checks if all files of the installed package are still available
+      if no hash is provided in manifest, only check if exists is performed, 
+      otherwise also the checksum is compared
+    */
+    bool checkInstalledFiles();
+protected:
+    bool readManifestFile(QList<FileItem> &fileList);
+Q_SIGNALS:
+    void missing(const QString &fileName);  // a file which should be installed, is missing
+    void hashWrong(const QString &fileName);// a file which is installed has a wrong checksum -> locally modified
+    void removed(const QString &fileName);  // a file was successfully removed
+    void warning(const QString &wrnMsg);    // a warning message
+    void error(const QString &errMsg);      // an error message
 };
 
 #endif  // UNINSTALL_H

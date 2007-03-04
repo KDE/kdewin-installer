@@ -29,20 +29,97 @@
 #include "uninstall.h"
 #include "md5.h"
 
-Uninstall::Uninstall()
+Uninstall::Uninstall(const QString &rootDir, const QString &packageName)
+: m_rootDir(rootDir), m_packageName(packageName)
 {}
 
 Uninstall::~Uninstall()
 {}
 
 
-bool Uninstall::uninstallPackage(const QString &rootDir, const QString &packageName, bool bUseHashWhenPossible)
+bool Uninstall::uninstallPackage(bool bUseHashWhenPossible)
 {
     QList<FileItem> files;
-    QFile f(packageName);
+    QFileInfo fi;
+    QFile f;
+
+    if(!readManifestFile(files))
+        return false;
+
+    QList<FileItem>::ConstIterator it = files.constBegin();
+    for( ; it != files.constEnd(); it++ ) {
+        FileItem fileItem = *it;
+        fi.setFile(fileItem.fileName);
+
+        if(!fi.exists())
+            continue;
+
+        if(bUseHashWhenPossible && !fileItem.hash.isEmpty()) {
+            // read file & check hash
+            f.setFileName(fileItem.fileName);
+            if(!f.open(QIODevice::ReadOnly)) {
+                emit warning(QString("Can't open %1 - not removing this file!").arg(fileItem.fileName));
+                continue;
+            }
+            QByteArray ba = f.readAll();
+            f.close();
+
+            if(fileItem.hash != qtMD5(ba)) {
+                emit warning(QString("Not removing %1 because hash does not match (locally modified)!").arg(fileItem.fileName));
+                continue;
+            }
+        }
+
+        if(!QFile::remove(fileItem.fileName)) {
+            emit warning(QString("Can't remove %1").arg(fileItem.fileName));
+            continue;
+        }
+        emit removed(fileItem.fileName);
+    }
+
+    return true;
+}
+
+bool Uninstall::checkInstalledFiles()
+{
+    QList<FileItem> fileList;
+    QFileInfo fi;
+    QFile f;
+
+    if(!readManifestFile(fileList))
+        return false;
+
+    QList<FileItem>::ConstIterator it = fileList.constBegin();
+    for( ; it != fileList.constEnd(); it++ ) {
+        FileItem fileItem = *it;
+        fi.setFile(fileItem.fileName);
+
+        if(!fi.exists())
+            emit missing(fileItem.fileName);
+
+        if(!fileItem.hash.isEmpty()) {
+            // read file & check hash
+            f.setFileName(fileItem.fileName);
+            if(!f.open(QIODevice::ReadOnly)) {
+                emit warning(QString("Can't open %1 - can't check this file!").arg(fileItem.fileName));
+                continue;
+            }
+            QByteArray ba = f.readAll();
+            f.close();
+
+            if(fileItem.hash != qtMD5(ba))
+                emit hashWrong(fileItem.fileName);
+        }
+    }
+    return true;
+}
+
+bool Uninstall::readManifestFile(QList<FileItem> &fileList)
+{
+    QFile f(m_packageName);
 
     if(!f.open(QIODevice::ReadOnly|QIODevice::Text)) {
-        emit error(QString("Can't open %1 for reading!").arg(packageName));
+        emit error(QString("Can't open %1 for reading!").arg(m_packageName));
         return false;
     }
     QByteArray line(1024, 0);
@@ -64,46 +141,15 @@ bool Uninstall::uninstallPackage(const QString &rootDir, const QString &packageN
              hash = l.mid(idx+1);
              fileName = QString::fromUtf8(l.left(idx));
         }
-        fileName = rootDir + '/' + fileName.replace("\\ ", " ");
+        fileName = m_rootDir + '/' + fileName.replace("\\ ", " ");
         fi.setFile(fileName);
         if(!fi.exists()) {
             emit warning(QString("File %1 does not exist!").arg(fileName));
             continue;
         }
-        files += FileItem(QDir::convertSeparators(fi.absoluteFilePath()), hash);
+        fileList += FileItem(QDir::convertSeparators(fi.absoluteFilePath()), hash);
     }
     f.close();
-
-    QList<FileItem>::ConstIterator it = files.constBegin();
-    for( ; it != files.constEnd(); it++ ) {
-        FileItem fileItem = *it;
-        fi.setFile(fileItem.fileName);
-
-        if(!fi.exists())
-            continue;
-
-        if(bUseHashWhenPossible && !fileItem.hash.isEmpty()) {
-            // read file & check hash
-            f.setFileName(fileName);
-            if(!f.open(QIODevice::ReadOnly)) {
-                emit warning(QString("Can't open %1 - not removing this file!").arg(fileName));
-                continue;
-            }
-            QByteArray ba = f.readAll();
-            f.close();
-
-            if(fileItem.hash != qtMD5(ba)) {
-                emit warning(QString("Not removing %1 because hash does not match (locally modified)!").arg(fileName));
-                continue;
-            }
-        }
-
-        if(!QFile::remove(fileItem.fileName)) {
-            emit warning(QString("Can't remove %1").arg(fileName));
-            continue;
-        }
-        emit removed(fileItem.fileName);
-    }
 
     return true;
 }
