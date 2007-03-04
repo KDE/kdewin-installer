@@ -35,7 +35,6 @@ public:
     Database();
     virtual ~Database();
     bool readFromDirectory(const QString &_fileName=QString());
-    bool syncWithFile(const QString &_fileName=QString());
     void addPackage(const Package &package);
     void listPackages(const QString &title=QString());
     Package *getPackage(const QString &pkgName, const QByteArray &version=QByteArray());
