@@ -20,6 +20,8 @@ set(all_sources ${installer_CONSOLE_SOURCES}
                 ${quazip_SOURCES}
                 ${qua7zip_SOURCES}
                 ${qua7zip_HEADERS}
+		        ${md5_SOURCES}
+				${md5_HEADERS}
         )
 
 source_group(quazip FILES ${quazip_SOURCES} ${quazip_HEADERS})

@@ -20,8 +20,7 @@ set (packager_HEADERS
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}
 	${CMAKE_CURRENT_BINARY_DIR}
-	${md5_INCLUDE_DIR}
-	)
+)
 
 add_definitions(-DPACKAGER_VERSION=${VER_MAJ}.${VER_MIN}.${VER_PATCH})
 

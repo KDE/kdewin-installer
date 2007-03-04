@@ -1,6 +1,5 @@
 # our targets
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-include_directories(${md5_INCLUDE_DIR})
 
 source_group(quazip  FILES ${quazip_SOURCES}  ${quazip_HEADERS})
 source_group(qua7zip FILES ${qua7zip_SOURCES} ${qua7zip_HEADERS})
@@ -27,6 +26,8 @@ set (test-packagelist-apachemodindex_SOURCES
         ${quazip_SOURCES}
         ${qua7zip_SOURCES}
         ${qua7zip_HEADERS}
+        ${md5_SOURCES}
+		${md5_HEADERS}
 )
 
 qt4_automoc(${test-packagelist-apachemodindex_SOURCES})
@@ -41,6 +42,8 @@ set (test-packagelist-sourceforge_SOURCES
         ${quazip_SOURCES}
         ${qua7zip_SOURCES}
         ${qua7zip_HEADERS}
+        ${md5_SOURCES}
+		${md5_HEADERS}
 )
 
 qt4_automoc(${test-packagelist-sourceforge_SOURCES})
@@ -55,6 +58,8 @@ set (test-globalconfig_SOURCES
         ${quazip_SOURCES}
         ${qua7zip_SOURCES}
         ${qua7zip_HEADERS}
+        ${md5_SOURCES}
+		${md5_HEADERS}
 )
 
 qt4_automoc(${test-globalconfig_SOURCES})
@@ -120,6 +125,8 @@ set (${TEST_NAME}_SOURCES
     ${quazip_SOURCES}
     ${qua7zip_SOURCES}
     ${qua7zip_HEADERS}
+        ${md5_SOURCES}
+		${md5_HEADERS}
 )
 
 qt4_automoc(${${TEST_NAME}_SOURCES})

@@ -90,6 +90,7 @@ set(installer_shared_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/installerengine.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/misc.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/database.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/uninstall.cpp
 )
 
 set(installer_shared_HEADERS
@@ -105,12 +106,18 @@ set(installer_shared_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/misc.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/globalconfig.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/database.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/uninstall.h
 )
 set(installer_shared_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shared)
 
 # we need 'UNICODE'
 add_definitions(-DUNICODE)
-include_directories(${quazip_INCLUDE_DIR} ${qua7zip_INCLUDE_DIR} ${installer_shared_INCLUDE_DIR})
+include_directories(
+	${quazip_INCLUDE_DIR}
+	${qua7zip_INCLUDE_DIR}
+	${md5_INCLUDE_DIR}
+	${installer_shared_INCLUDE_DIR}
+)
 configure_file(${CMAKE_SOURCE_DIR}/config.txt ${CMAKE_BINARY_DIR}/config.txt)
 configure_file(${CMAKE_SOURCE_DIR}/config.h.cmake ${CMAKE_BINARY_DIR}/config.h)
 
