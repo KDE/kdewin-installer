@@ -86,7 +86,8 @@ public:
     QString getURL(Package::Type type);
     // returns the base Url of all packages (if possible, otherwise QString())
     QString getBaseURL();
-    // add a file to this package
+
+	// add a file to this package
 	bool add(const PackageItem &item);
 
 	// set Install state of a package type (e.g. from gnuwin32 manifests)
@@ -110,6 +111,7 @@ public:
     // download a package item
     bool downloadItem(Downloader *downloader, Package::Type type);
     bool installItem(Installer *installer, Package::Type type);
+    bool removeItem(Installer *installer, Package::Type type);
 
     // package category 
     const QString &category() const { return m_category; }
@@ -123,7 +125,7 @@ public:
     void addPathRelocation(const QString &key, const QString &value) { m_pathRelocs[key] = value; }
     StringHash &pathRelocations() { return m_pathRelocs; }
 
-    bool setFromVersionFile(const QString &str);
+	static QString typeToString(Package::Type type);
 
 private slots:
     void logOutput();

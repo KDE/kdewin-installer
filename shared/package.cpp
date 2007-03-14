@@ -31,6 +31,19 @@
 #include "downloader.h"
 #include "installer.h"
 
+
+QString Package::typeToString(Package::Type type)
+{
+	switch(type) {
+		case BIN:	return "bin";
+		case LIB:	return "lib";
+		case DOC:	return "doc";
+		case SRC:	return "src";
+		case ALL:	return "all";
+		default:	return "unknown";
+	}
+}
+
 bool Package::PackageItem::setContentType(const QString &type)
 {
     QString ct = type.toLower();
@@ -339,6 +352,19 @@ bool Package::installItem(Installer *installer, Package::Type type)
     return true;
 }
 
+bool Package::removeItem(Installer *installer, Package::Type type)
+{
+/*
+	// @TODO implement it 
+	if (!installer->remove(name(),version(),type)) 
+    {
+        qDebug() << __FUNCTION__ << " install failure for file " << fileName << " type " << type;
+        return false;
+    }
+*/
+	return true;
+
+}
 
 void Package::logOutput()
 {}
@@ -351,21 +377,6 @@ void Package::setCategory(const QString &cat)
 void Package::addDeps(const QStringList &deps)
 {
     m_deps << deps;
-}
-
-bool Package::setFromVersionFile(const QString &str)
-{
-    QString verString = str;
-    verString.remove(".ver");
-    int i = verString.indexOf('-');
-    int j = verString.lastIndexOf('-');
-    QString name = verString.left(i);
-    QString version = verString.mid(i+1,j-1-i);
-    QString type = verString.mid(j+1);
-    setName(name);
-    setVersion(version);
-//    setType(type);
-    return true;
 }
 
 bool Package::PackageItem::set(const QString &path, const QString &fn, const QByteArray &contentType, bool bInstalled)
