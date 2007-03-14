@@ -33,11 +33,13 @@
 #include "package.h"
 #include "packagelist.h"
 #include "globalconfig.h"
+#include "database.h"
 
 InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar)
 {
 	m_progressBar = progressBar;
 	m_instProgressBar = instProgressBar; 
+	m_database = &Database::getInstance();
 }
 
 void InstallerEngine::readGlobalConfig()
@@ -50,7 +52,7 @@ void InstallerEngine::readGlobalConfig()
 void InstallerEngine::createMainPackagelist()
 {
     // package list is build from packages defined in global configuration
-    PackageList *packageList = new PackageList(m_downloader);
+    PackageList *packageList = new PackageList();
     packageList->setConfigFileName("packages-other.txt");
     packageList->setName("main");
     m_packageListList.append(packageList);
@@ -58,17 +60,23 @@ void InstallerEngine::createMainPackagelist()
     Installer *installer = new Installer(packageList,m_instProgressBar );
     installer->setRoot(root());
     m_installerList.append(installer);
-
+	m_database->readFromDirectory(root()+"/manifest");
+	m_database->listPackages("Package");
     QList<Package*>::iterator p;
     for (p = m_globalConfig->packages()->begin(); p != m_globalConfig->packages()->end(); p++)
     {
         packageList->addPackage(*(*p));
     }
     
+    // @TODO: cleanup
+#if 1
+	packageList->syncWithDatabase(*m_database);
+#else
     if (packageList->hasConfig())
         packageList->syncWithFile();
 
     packageList->writeToFile();
+#endif
 }
 
 /// download all packagelists, which are available on the configured sites
@@ -78,7 +86,7 @@ bool InstallerEngine::downloadPackageLists()
     for (s = m_globalConfig->sites()->begin(); s != m_globalConfig->sites()->end(); s++)
     {
         qDebug() << "download package file list for site: " << (*s)->name();
-        PackageList *packageList = new PackageList(m_downloader);
+        PackageList *packageList = new PackageList();
         packageList->setConfigFileName("packages-" + (*s)->name() + ".txt");
         packageList->setName((*s)->name());
         m_packageList = packageList;
@@ -121,7 +129,9 @@ bool InstallerEngine::downloadPackageLists()
             qDebug() << "error reading package list from download html file";
             continue;
         }
-	
+#if 1
+		packageList->syncWithDatabase(*m_database);
+#else
 		if (packageList->hasConfig())
 			packageList->syncWithFile();
 
@@ -130,6 +140,7 @@ bool InstallerEngine::downloadPackageLists()
 			  qDebug() << "error writing package list to file";
 			continue;
 		}
+#endif
 	}
 	return true;
 }
@@ -240,11 +251,8 @@ static void setState(QTreeWidgetItem &item, const Package *pkg, int column, acti
                 case _Nothing:  
                     if (pkg->isInstalled(type))
                     {
-// FIXME: add remove support
-#if 0
                         setIcon(item,type,_remove);
                         item.setData(column,Qt::UserRole,_Remove);
-#endif
                     }
                     else
                     {
@@ -305,11 +313,8 @@ static void setState(QTreeWidgetItem &item, const Package *pkg, int column, acti
                         item.setData(column,Qt::UserRole,_Nothing);
                     }
                     break;
-// FIXME: add remove support
-#if 0
                 case _Remove:
                     break;
-#endif
             }                       
 	}        
 }
@@ -447,16 +452,54 @@ bool InstallerEngine::downloadPackages(QTreeWidget *tree, const QString &categor
             for (int j = 0; j < item->childCount(); j++)
             {
                 QTreeWidgetItem *child = static_cast<QTreeWidgetItem*>(item->child(j));
-//                qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
-                Package::Types types;
-                types |= isMarkedForInstall(*child,Package::BIN) ? Package::BIN : Package::NONE;
-                types |= isMarkedForInstall(*child,Package::LIB) ? Package::LIB : Package::NONE;
-                types |= isMarkedForInstall(*child,Package::DOC) ? Package::DOC : Package::NONE;
-                types |= isMarkedForInstall(*child,Package::SRC) ? Package::SRC : Package::NONE;
-//               	types |= isMarkedForInstall(child,Package::ALL) ? Package::ALL: Package::NONE;
-                if (!packageList->downloadPackage(child->text(0), types))
-                    qDebug() << "could not download package";
+//              qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
+				bool all = child->checkState(2) == Qt::Checked;
+				Package *pkg = packageList->getPackage(child->text(0));
+				if (!pkg)
+					continue;
+				if (all | isMarkedForInstall(*child,Package::BIN))
+			        pkg->downloadItem(m_downloader, Package::BIN);
+				if (all | isMarkedForInstall(*child,Package::LIB))
+			        pkg->downloadItem(m_downloader, Package::LIB);
+				if (all | isMarkedForInstall(*child,Package::DOC))
+			        pkg->downloadItem(m_downloader, Package::DOC);
+				if (all | isMarkedForInstall(*child,Package::SRC))
+			        pkg->downloadItem(m_downloader, Package::SRC);
             }
+        }
+    }
+    return true;
+}
+
+bool InstallerEngine::removePackages(QTreeWidget *tree, const QString &category)
+{
+    for (int i = 0; i < tree->topLevelItemCount(); i++)
+    {
+        QTreeWidgetItem *item = static_cast<QTreeWidgetItem*>(tree->topLevelItem(i));
+        if (category.isEmpty() || item->text(0) == category)
+        {
+            PackageList *packageList = getPackageListByName(item->text(0));
+            if (!packageList)
+            {
+                qDebug() << __FUNCTION__ << " packagelist for " << item->text(0) << " not found";
+                continue;
+            }
+            for (int j = 0; j < item->childCount(); j++)
+            {
+                QTreeWidgetItem *child = static_cast<QTreeWidgetItem*>(item->child(j));
+				bool all = false; //child->checkState(2) == Qt::Checked;
+				Package *pkg = packageList->getPackage(child->text(0));
+				if (!pkg)
+					continue;
+				if (all | isMarkedForRemoval(*child,Package::BIN))
+			        pkg->removeItem(m_installer, Package::BIN);
+				if (all | isMarkedForRemoval(*child,Package::LIB))
+			        pkg->removeItem(m_installer, Package::LIB);
+				if (all | isMarkedForRemoval(*child,Package::DOC))
+			        pkg->removeItem(m_installer, Package::DOC);
+				if (all | isMarkedForRemoval(*child,Package::SRC))
+			        pkg->removeItem(m_installer, Package::SRC);
+			}
         }
     }
     return true;
@@ -482,16 +525,22 @@ bool InstallerEngine::installPackages(QTreeWidget *tree,const QString &category)
             {
                 QTreeWidgetItem *child = static_cast<QTreeWidgetItem*>(item->child(j));
 //                qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
-                Package::Types types;
-                types |= isMarkedForInstall(*child,Package::BIN) ? Package::BIN : Package::NONE;
-                types |= isMarkedForInstall(*child,Package::LIB) ? Package::LIB : Package::NONE;
-                types |= isMarkedForInstall(*child,Package::DOC) ? Package::DOC : Package::NONE;
-                types |= isMarkedForInstall(*child,Package::SRC) ? Package::SRC : Package::NONE;
-//               	types |= child->checkState(2) == Qt::Checked ? Package::ALL: Package::NONE;
-                if (!packageList->installPackage(child->text(0),types))
-                    qDebug() << "could not install package";
+				bool all = child->checkState(2) == Qt::Checked;
+				Package *pkg = packageList->getPackage(child->text(0));
+				if (!pkg)
+					continue;
+				if (all | isMarkedForInstall(*child,Package::BIN))
+					pkg->installItem(m_installer, Package::BIN);
+				if (all | isMarkedForInstall(*child,Package::LIB))
+					pkg->installItem(m_installer, Package::LIB);
+				if (all | isMarkedForInstall(*child,Package::DOC))
+					pkg->installItem(m_installer, Package::DOC);
+				if (all | isMarkedForInstall(*child,Package::SRC))
+					pkg->installItem(m_installer, Package::SRC);
+
+				// if package does not have manifest files create one
             }
-            packageList->writeToFile();
+			packageList->writeToFile();
         }
     }
     return true;

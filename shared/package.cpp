@@ -30,6 +30,8 @@
 #include "package.h"
 #include "downloader.h"
 #include "installer.h"
+#include "database.h"
+#include "uninstall.h"
 
 
 QString Package::typeToString(Package::Type type)
@@ -354,16 +356,10 @@ bool Package::installItem(Installer *installer, Package::Type type)
 
 bool Package::removeItem(Installer *installer, Package::Type type)
 {
-/*
-	// @TODO implement it 
-	if (!installer->remove(name(),version(),type)) 
-    {
-        qDebug() << __FUNCTION__ << " install failure for file " << fileName << " type " << type;
-        return false;
-    }
-*/
+	QString manifestFile = installer->root()+"/manifest/"+ Database::getInstance().manifestFileName(name(),version(),type);
+	Uninstall ui(installer->root(),manifestFile);
+	ui.uninstallPackage(false);
 	return true;
-
 }
 
 void Package::logOutput()

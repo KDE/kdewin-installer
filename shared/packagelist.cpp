@@ -29,17 +29,15 @@
 #include <QTreeWidget>
 
 #include "packagelist.h"
+#include "database.h"
 #include "downloader.h"
-#include "installer.h"
 
-PackageList::PackageList(Downloader *_downloader)
+PackageList::PackageList()
         : QObject()
 {
 #ifdef DEBUG
     qDebug() << __FUNCTION__;
 #endif
-
-    m_downloader = _downloader ? _downloader : new Downloader(this);
     m_root = ".";
     m_configFile = "/packages.txt";
 	m_curSite = 0;
@@ -197,6 +195,30 @@ bool PackageList::syncWithFile(const QString &_fileName)
     return true;
 }
 
+bool PackageList::syncWithDatabase(Database &database)
+{
+#ifdef DEBUG
+    qDebug() << __FUNCTION__;
+#endif
+
+    QList<Package*>::iterator it;
+    for (it = m_packageList.begin(); it != m_packageList.end(); ++it)
+	{
+		Package *apkg = (*it);
+		Package *pkg = database.getPackage(apkg->name(), apkg->version().toAscii());
+		if (!pkg)
+			continue;
+        if (pkg->isInstalled(Package::BIN))
+            apkg->setInstalled(Package::BIN);
+        if (pkg->isInstalled(Package::LIB))
+            apkg->setInstalled(Package::LIB);
+        if (pkg->isInstalled(Package::DOC))
+            apkg->setInstalled(Package::DOC);
+        if (pkg->isInstalled(Package::SRC))
+            apkg->setInstalled(Package::SRC);
+	}
+    return true;
+}
 
 bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, bool append)
 {
@@ -449,49 +471,6 @@ bool PackageList::setInstalledPackage(const Package &apkg)
         return false;
     }
     pkg->setInstalled(apkg);
-    return true;
-}
-
-bool PackageList::downloadPackage(const QString &pkgName, Package::Types types)
-{
-#ifdef DEBUG
-    qDebug() << __FUNCTION__ << " " << pkgName; 
-#endif
-    Package *pkg = getPackage(pkgName);
-    if (!pkg) 
-    {
-    	  qDebug() << __FUNCTION__ << " package not found";
-        return false;
-    }
-    // FIXME: handle error code
-#ifdef DEBUG
-    qDebug() << types;
-#endif
-    if (types & Package::BIN)
-        pkg->downloadItem(m_downloader, Package::BIN);
-    if (types & Package::LIB)
-        pkg->downloadItem(m_downloader, Package::LIB);
-    if (types & Package::DOC)
-        pkg->downloadItem(m_downloader, Package::DOC);
-    if (types & Package::SRC)
-        pkg->downloadItem(m_downloader, Package::SRC);
-    return true;
-}
-
-bool PackageList::installPackage(const QString &pkgName, Package::Types types)
-{
-    Package *pkg = getPackage(pkgName);
-    if (!pkg)
-        return false;
-    // FIXME: handle error code
-    if (types & Package::BIN)
-        pkg->installItem(m_installer, Package::BIN);
-    if (types & Package::LIB)
-        pkg->installItem(m_installer, Package::LIB);
-    if (types & Package::DOC)
-        pkg->installItem(m_installer, Package::DOC);
-    if (types & Package::SRC)
-        pkg->installItem(m_installer, Package::SRC);
     return true;
 }
 

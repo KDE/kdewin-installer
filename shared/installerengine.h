@@ -39,6 +39,7 @@ class Package;
 class InstallWizard;
 class QTreeWidget;
 class QTreeWidgetItem;
+class Database;
 
 class InstallerEngine
 {
@@ -54,6 +55,7 @@ public:
     void itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column);
     bool downloadPackages(QTreeWidget *tree, const QString &category=QString());
     bool installPackages(QTreeWidget *tree, const QString &category=QString());
+	bool removePackages(QTreeWidget *tree, const QString &category=QString());
 #else
     void listPackages(const QString &title);
     bool downloadPackages(const QStringList &packages, const QString &category=QString());
@@ -86,6 +88,7 @@ private:
     GlobalConfig        *m_globalConfig;
     InstallerProgress   *m_instProgressBar;
 	DownloaderProgress  *m_progressBar;
+	Database            *m_database;
 };
 
 #endif

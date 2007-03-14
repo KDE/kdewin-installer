@@ -27,12 +27,11 @@
 #include "package.h"
 #include "site.h"
 
-class Downloader;
-class Installer;
 class QTreeWidget;
 class QTreeWidgetItem;
 class QIODevice;
 class Site;
+class Database;
 
 QStringList filterPackageFiles(const QStringList &list,const QString &mode);
 
@@ -43,13 +42,14 @@ class PackageList : public QObject
 public:
     enum Type {SourceForge, ApacheModIndex};
 
-    PackageList(Downloader *downloader=NULL);
+    PackageList();
     virtual ~PackageList();
     void addPackage(const Package &package);
     void listPackages(const QString &title=QString());
     bool readFromFile(const QString &_fileName=QString());
     bool syncWithFile(const QString &_fileName=QString());
-    bool readHTMLFromFile(const QString &fileName, PackageList::Type type=PackageList::SourceForge, bool append=false);
+	bool syncWithDatabase(Database &database);
+	bool readHTMLFromFile(const QString &fileName, PackageList::Type type=PackageList::SourceForge, bool append=false);
     bool readHTMLFromByteArray(const QByteArray &ba, PackageList::Type type=PackageList::SourceForge, bool append=false);
     bool writeToFile(QString const &fileName=QString::null);
     Package *getPackage(QString const &pkgName, const QByteArray &version = QByteArray());
@@ -92,9 +92,6 @@ public:
 
     // 0.5.3
     bool hasConfig();
-    bool downloadPackage(const QString &pkgName, Package::Types types=Package::ALL);
-    bool installPackage(const QString &pkgName, Package::Types types=Package::ALL);
-
     void dump(const QString &title=QString());
 
 signals:
@@ -106,8 +103,6 @@ private:
     QList<Package*> m_packageList;
     QString m_root;
     QString m_configFile;
-    Downloader *m_downloader;
-    Installer *m_installer;
     QString m_name;
     QString m_baseURL;
     Site *m_curSite;
