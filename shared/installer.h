@@ -19,7 +19,7 @@
 ** Boston, MA 02110-1301, USA.
 **
 ****************************************************************************/
-****************************************************************************/
+
 #ifndef INSTALLER_H
 #define INSTALLER_H
 
@@ -68,6 +68,7 @@ protected:
     QString configFile;
     InstallerProgress *m_progress;
     InstallerType m_type;
+    QStringList m_files;
 };
 
 #endif
