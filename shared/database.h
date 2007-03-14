@@ -16,7 +16,7 @@
 ** http://www.trolltech.com/products/qt/licensing.html or contact the
 ** sales department at sales@trolltech.com.
 **
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+** This file is proviwded AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
@@ -25,8 +25,13 @@
 #define DATABASE_H
 
 #include <QObject>
-class Package;
-
+#include "package.h"
+/** 
+ holds local package database
+ the local package database is build by package version files 
+ located in <installation-root>/manifest directory 
+ package version file names are build up by <package-name>-<version>-<packagetype>.ver
+*/
 class Database: public QObject
 {
     Q_OBJECT
@@ -38,6 +43,12 @@ public:
     void addPackage(const Package &package);
     void listPackages(const QString &title=QString());
     Package *getPackage(const QString &pkgName, const QByteArray &version=QByteArray());
+
+	// returns version file name of package item e.g. xyz-1.2.3-bin.ver
+    QString versionFileName(const QString &pkgName, const QString &version, Package::Type type);
+
+    // returns manifest file name of package item e.g. xyz-1.2.3-bin.mft
+    QString manifestFileName(const QString &pkgName, const QString &version, Package::Type type);
 
     int size() const
     {

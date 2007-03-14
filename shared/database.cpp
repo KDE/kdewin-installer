@@ -110,15 +110,34 @@ bool Database::readFromDirectory(const QString &dir)
         QString pkgName = parts[0];
 		QString pkgVersion;
 		QString pkgType;
-		if (parts.size() == 4)
+		if (parts.size() == 5)
 		{
-			pkgVersion = parts[1] + '-' + parts[2];
+				pkgName = parts[0] + "-" + parts[1];
+				pkgVersion = parts[2] + '-' + parts[3];
+				pkgType = parts[4];
+		}
+		else if (parts.size() == 4)
+		{
+			if (parts[1][0].isLetter())
+			{
+				pkgName += "-" + parts[1];
+				pkgVersion = parts[2];
+			}
+			else
+				pkgVersion = parts[1] + '-' + parts[2];
 			pkgType = parts[3];
 		}
 		else 
 		{
 			pkgVersion = parts[1];
-			pkgType = parts[2];
+			// aspell-0.50.3-3
+			if (parts[2][0].isNumber())
+			{
+				pkgVersion += "-" + parts[2];
+				pkgType = "bin";
+			}
+			else
+				pkgType = parts[2];
 		}
 		Package *pkg;
         if (pkg = getPackage(pkgName)) 
@@ -143,6 +162,29 @@ bool Database::readFromDirectory(const QString &dir)
     emit configLoaded();
     return true;
 }
+
+// returns version file name of package item e.g. xyz-1.2.3-bin.ver
+QString Database::versionFileName(const QString &name, const QString &version, Package::Type type)
+{
+    Package *pkg;
+	if (pkg = getPackage(name)) 
+		return pkg->name() + "-" + pkg->version() + "-" + Package::typeToString(type) +".ver"; 
+	else
+		return QString();
+}
+
+// returns manifest file name of package item e.g. xyz-1.2.3-bin.mft
+QString Database::manifestFileName(const QString &name, const QString &version, Package::Type type)
+{
+    Package *pkg;
+	if (pkg = getPackage(name)) 
+		return name + "-" + version + "-" + Package::typeToString(type) +".mft";
+	else
+		return QString();
+
+}
+
+
 
 void Database::dump(const QString &title)
 {
