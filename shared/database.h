@@ -59,6 +59,8 @@ public:
         return m_database;
     }
     void dump(const QString &title=QString());
+
+	static Database &getInstance();
  
 signals:
     void configLoaded();

@@ -183,7 +183,11 @@ QString Database::manifestFileName(const QString &name, const QString &version, 
 
 }
 
-
+Database &Database::getInstance()
+{
+	static Database database;
+	return database;
+}
 
 void Database::dump(const QString &title)
 {
