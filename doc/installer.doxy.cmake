@@ -3,8 +3,8 @@
 #---------------------------------------------------------------------------
 # Project related configuration options
 #---------------------------------------------------------------------------
-PROJECT_NAME           = kde-installer
-PROJECT_NUMBER         = 0.0.1
+PROJECT_NAME           = kdewin-installer
+PROJECT_NUMBER         = @VERSION@
 OUTPUT_DIRECTORY       = .
 CREATE_SUBDIRS         = YES
 OUTPUT_LANGUAGE        = English
@@ -14,7 +14,7 @@ REPEAT_BRIEF           = YES
 ABBREVIATE_BRIEF       = 
 ALWAYS_DETAILED_SEC    = NO
 INLINE_INHERITED_MEMB  = NO
-FULL_PATH_NAMES        = YES
+FULL_PATH_NAMES        = NO
 STRIP_FROM_PATH        = 
 STRIP_FROM_INC_PATH    = 
 SHORT_NAMES            = NO
@@ -72,7 +72,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = ..\shared ..\gui ..\console ..\tests
+INPUT                  = @INPUT@
 FILE_PATTERNS          = *.cpp; *.h
 RECURSIVE              = YES
 EXCLUDE                = 
