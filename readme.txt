@@ -46,6 +46,8 @@ TODO
 	   in end user mode only the bin packages are visible 
 	11 add package delete support 
 	12 if remote config is not available only display installed packages
+	13 delete obsolate package-....txt in install root
+	
 
 Happy hacking
 
