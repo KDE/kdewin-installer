@@ -278,7 +278,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
             QByteArray line = ioDev->readLine();
             if (line.contains(lineKey1) || line.contains(lineKey2))
             {
-                int a = line.indexOf(fileKeyStart) + strlen(fileKeyStart);
+                int a = line.lastIndexOf(fileKeyStart) + strlen(fileKeyStart);
                 int b = line.indexOf(fileKeyEnd,a);
                 QByteArray fileName = line.mid(a,b-a);
 
