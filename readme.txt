@@ -47,6 +47,7 @@ TODO
 	11 add package delete support 
 	12 if remote config is not available only display installed packages
 	13 delete obsolate package-....txt in install root
+	14 fix problem not displaying all checkboxes in first entry of a category
 	
 
 Happy hacking
