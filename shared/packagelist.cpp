@@ -280,126 +280,28 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
             {
                 int a = line.indexOf(fileKeyStart) + strlen(fileKeyStart);
                 int b = line.indexOf(fileKeyEnd,a);
-                QByteArray path = line.mid(a,b-a);
-                QByteArray ptype, name = path;
+                QByteArray fileName = line.mid(a,b-a);
 
                 // desktop-translations-10.1-41.3.noarch.rpm
                 // kde3-i18n-vi-3.5.5-67.9.noarch.rpm
                 // aspell-0.50.3-3.zip
                 // bzip2-1.0.4.notes
 
-                // first remove ending
-                int idx = name.lastIndexOf('.');
-                if(idx != -1)
-                {
-                    ptype = name.mid(idx + 1);
-                    name = name.left(idx);
-                }
-                else
-                {
-                    ptype = "unknown";
-                }
-
-                // now split a little bit :)
-                QList<QByteArray> parts;
-                QList<QByteArray> tempparts = name.split('-');
-                // and once more on '.'
-                for (int i = 0; i < tempparts.size(); ++i)
-                {
-                    parts << tempparts[i].split('.');
-                    parts << "-";
-                }
-                // not a correct named file
-                if(parts.size() <= 1)
-                    continue;
-
-                parts.removeLast();
-
-#ifdef _DEBUG
-
-                qDebug() << parts.size();
-                for (int i = 0; i < parts.size(); ++i)
-                    qDebug() << parts.at(i);
-#endif
-
-                int iVersionLow = 0, iVersionHigh = parts.size() - 1;
-                for(; iVersionHigh > 0; iVersionHigh --)
-                {
-                    if(parts[iVersionHigh][0] >= '0' && parts[iVersionHigh][0] <= '9')
-                        break;
-                }
-                if(iVersionHigh == 0)
-                    continue;
-                iVersionHigh++;
-                for(; iVersionLow < iVersionHigh; iVersionLow++)
-                {
-                    bool ok;
-                    parts[iVersionLow].toInt(&ok);
-                    if(ok)
-                        break;
-                }
-                if(iVersionLow == iVersionHigh)
-                    continue;
-                QByteArray version, patchlevel, type;
-                name = "";
-                for(int i = 0; i < iVersionLow - 1; i++)
-                {
-                    if(name.size())
-                        name += '.';
-                    name += parts[i];
-                }
-                if(m_curSite && m_curSite->isExclude(name))
-                    continue;
-                for(; iVersionLow < iVersionHigh; iVersionLow++)
-                {
-                    if(parts[iVersionLow] == "-")
-                        break;
-                    if(version.size())
-                        version += '.';
-                    version += parts[iVersionLow];
-                }
-                iVersionLow++;
-                for(; iVersionLow < iVersionHigh; iVersionLow++)
-                {
-                    if(parts[iVersionLow] == "-")
-                        break;
-                    if(patchlevel.size())
-                        patchlevel += '.';
-                    patchlevel += parts[iVersionLow];
-                }
-                // all after iVersionHigh is type
-                if(iVersionHigh < parts.size())
-                {
-                    // should ever be true - have to think over :)
-                    if(parts[iVersionHigh] == "-")
-                        iVersionHigh++;
-                    for(; iVersionHigh < parts.size(); iVersionHigh++)
-                    {
-                        if(parts[iVersionHigh] == "-")
-                            break;
-                        if(type.size())
-                            type += '.';
-                        type += parts[iVersionHigh];
-                    }
-                }
-				// set type to bin in case no package type is given
-				// this may result in ignoring the combined package 
-				// if separated package are found before
-				if (type.size() == 0) 
-					type = "bin";
-
-				if(!patchlevel.isEmpty())
-                    version += "-" + patchlevel;
-
-                Package *pkg = getPackage(name, version);
-                if(ptype == "notes") {
+				QString pkgName;
+				QString pkgVersion;
+				QString pkgType;
+				QString pkgFormat;
+				if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgFormat))
+					continue;
+				Package *pkg = getPackage(pkgName, pkgVersion.toAscii());
+                if(pkgFormat == "notes") {
                     // Download package
                     QByteArray ba;
-                    d.start(m_baseURL + '/' + path, ba);
+                    d.start(m_baseURL + '/' + fileName, ba);
                     if(!pkg) {
                         Package p;
-                        p.setVersion(version);
-                        p.setName(name);
+                        p.setVersion(pkgVersion);
+                        p.setName(pkgName);
                         p.setNotes(QString::fromUtf8(ba));
                         addPackage(p);
                     } else {
@@ -408,20 +310,20 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                 } else {
                     if(!pkg) {
                         Package p;
-                        p.setVersion(version);
-                        p.setName(name);
+                        p.setVersion(pkgVersion);
+                        p.setName(pkgName);
 						Package::PackageItem item;
-                        item.set(m_baseURL, path, type);
+                        item.set(m_baseURL, fileName, pkgType.toAscii());
 						p.add(item);
                         addPackage(p);
                         if (m_curSite)
-							p.addDeps(m_curSite->getDependencies(name));
+							p.addDeps(m_curSite->getDependencies(pkgName));
                     } else {
 						Package::PackageItem item;
-						item.set(m_baseURL, path, type);
+						item.set(m_baseURL, fileName, pkgType.toAscii());
 						pkg->add(item);
 						if (m_curSite)
-							pkg->addDeps(m_curSite->getDependencies(name));
+							pkg->addDeps(m_curSite->getDependencies(pkgName));
                     }
                 }
             }
