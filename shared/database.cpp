@@ -97,47 +97,14 @@ bool Database::readFromDirectory(const QString &dir)
     QFileInfoList list = d.entryInfoList();
     QFileInfo fi;
      
-    // wget-1.10.1-bin.ver
     for (int i = 0; i < list.size(); i++) {
         QFileInfo fi = list[i];        
-        QString baseName = fi.fileName().remove(".ver");
-        QStringList parts = baseName.split('-');
-        if(parts.size() < 3) {
-            qDebug() << "can't parse filename " << baseName;
-            continue;
-        }
-        QString pkgName = parts[0];
+        QString fileName = fi.fileName();
+        QString pkgName;
 		QString pkgVersion;
 		QString pkgType;
-		if (parts.size() == 5)
-		{
-				pkgName = parts[0] + "-" + parts[1];
-				pkgVersion = parts[2] + '-' + parts[3];
-				pkgType = parts[4];
-		}
-		else if (parts.size() == 4)
-		{
-			if (parts[1][0].isLetter())
-			{
-				pkgName += "-" + parts[1];
-				pkgVersion = parts[2];
-			}
-			else
-				pkgVersion = parts[1] + '-' + parts[2];
-			pkgType = parts[3];
-		}
-		else 
-		{
-			pkgVersion = parts[1];
-			// aspell-0.50.3-3
-			if (parts[2][0].isNumber())
-			{
-				pkgVersion += "-" + parts[2];
-				pkgType = "bin";
-			}
-			else
-				pkgType = parts[2];
-		}
+		if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType))
+			continue;
 		Package *pkg;
         if (pkg = getPackage(pkgName)) 
         {
@@ -163,6 +130,7 @@ bool Database::readFromDirectory(const QString &dir)
 }
 
 // returns version file name of package item e.g. xyz-1.2.3-bin.ver
+// move to PackageInfo class
 QString Database::versionFileName(const QString &name, const QString &version, Package::Type type)
 {
     Package *pkg;
