@@ -53,7 +53,6 @@ void InstallerEngine::createMainPackagelist()
 {
     // package list is build from packages defined in global configuration
     PackageList *packageList = new PackageList();
-    packageList->setConfigFileName("packages-other.txt");
     packageList->setName("main");
     m_packageListList.append(packageList);
 
@@ -68,15 +67,7 @@ void InstallerEngine::createMainPackagelist()
         packageList->addPackage(*(*p));
     }
     
-    // @TODO: cleanup
-#if 1
 	packageList->syncWithDatabase(*m_database);
-#else
-    if (packageList->hasConfig())
-        packageList->syncWithFile();
-
-    packageList->writeToFile();
-#endif
 }
 
 /// download all packagelists, which are available on the configured sites
@@ -87,7 +78,6 @@ bool InstallerEngine::downloadPackageLists()
     {
         qDebug() << "download package file list for site: " << (*s)->name();
         PackageList *packageList = new PackageList();
-        packageList->setConfigFileName("packages-" + (*s)->name() + ".txt");
         packageList->setName((*s)->name());
         m_packageList = packageList;
         m_packageListList.append(packageList);
@@ -129,18 +119,8 @@ bool InstallerEngine::downloadPackageLists()
             qDebug() << "error reading package list from download html file";
             continue;
         }
-#if 1
 		packageList->syncWithDatabase(*m_database);
-#else
-		if (packageList->hasConfig())
-			packageList->syncWithFile();
 
-		if (!packageList->writeToFile())
-		{
-			  qDebug() << "error writing package list to file";
-			continue;
-		}
-#endif
 	}
 	return true;
 }
@@ -537,10 +517,7 @@ bool InstallerEngine::installPackages(QTreeWidget *tree,const QString &category)
 					pkg->installItem(m_installer, Package::DOC);
 				if (all | isMarkedForInstall(*child,Package::SRC))
 					pkg->installItem(m_installer, Package::SRC);
-
-				// if package does not have manifest files create one
             }
-			packageList->writeToFile();
         }
     }
     return true;
@@ -596,7 +573,6 @@ bool InstallerEngine::installPackages(const QStringList &packages,const QString 
            if (!packageList->installPackage(package))
                qDebug() << "could not download package" << package;
        }
-       packageList->writeToFile();
    }
    return true;
 }
