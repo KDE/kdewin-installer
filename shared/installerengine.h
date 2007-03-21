@@ -79,6 +79,7 @@ public:
     }
 
 private:
+	enum Type { EndUser, Developer, Single };
     QList <PackageList*> m_packageListList;
     QList <Installer*>   m_installerList;
     PackageList         *m_packageList;  // currently used packagelist
@@ -89,6 +90,7 @@ private:
     InstallerProgress   *m_instProgressBar;
 	DownloaderProgress  *m_progressBar;
 	Database            *m_database;
+	Type                 m_installMode;
 };
 
 #endif

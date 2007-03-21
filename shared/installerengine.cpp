@@ -40,6 +40,7 @@ InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgre
 	m_progressBar = progressBar;
 	m_instProgressBar = instProgressBar; 
 	m_database = &Database::getInstance();
+	m_installMode = Single;
 }
 
 void InstallerEngine::readGlobalConfig()
@@ -85,7 +86,8 @@ bool InstallerEngine::downloadPackageLists()
         // packagelist needs to access Site::getDependencies() && Site::isExclude()
         packageList->setCurrentSite(*s);
 
-        // FIXME:: hardcoded name, better to use an option in the config file ?
+/*
+		// FIXME:: hardcoded name, better to use an option in the config file ?
         if ((*s)->name() == "gnuwin32")
         {
             installer->setType(Installer::GNUWIN32);
@@ -93,7 +95,8 @@ bool InstallerEngine::downloadPackageLists()
             packageList->setBaseURL("http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/");
         }
         else
-            packageList->setBaseURL((*s)->url());
+*/
+        packageList->setBaseURL((*s)->url());
         installer->setRoot(root());
         m_installerList.append(installer);
         m_installer = installer;
@@ -321,12 +324,35 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
 
     labels
     << "Package"
-    << "Version"
-    << "all"
-    << "bin"
-    << "lib"
-    << "doc"
-    << "src"
+    << "Version";
+	switch (m_installMode) 
+	{
+		case Developer: 
+			labels
+			<< ""
+			<< "bin/lib/doc"
+			<< ""
+			<< "";
+			break;
+
+		case EndUser: 
+			labels
+			<< ""
+			<< "bin/doc"
+			<< ""
+			<< "";
+			break;
+
+		case Single: 
+			labels
+			<< "all"
+			<< "bin"
+			<< "lib"
+			<< "doc";
+			break;
+	}
+	labels
+	<< "src"
     << "Notes";
 
 	tree->setColumnCount(8);
@@ -355,10 +381,15 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
                  << (*i)->version()
                  << QString();
             QTreeWidgetItem *item = new QTreeWidgetItem(category, data);
-            setState(*item,*i,2,_initial);
-            setState(*item,*i,3,_initial);
-            setState(*item,*i,4,_initial);
-            setState(*item,*i,5,_initial);
+			if (m_installMode == Single)
+	            setState(*item,*i,2,_initial);
+
+			setState(*item,*i,3,_initial);
+			if (m_installMode != Developer )
+			{
+				setState(*item,*i,4,_initial);
+				setState(*item,*i,5,_initial);
+			}
             setState(*item,*i,6,_initial);
             item->setText(7, (*i)->notes());
         }
@@ -375,8 +406,9 @@ void InstallerEngine::itemClickedPackageSelectorPage(QTreeWidgetItem *item, int 
         return;
 
     Package *pkg = getPackageByName(item->text(0));
-
-    if (column == 2 && pkg)
+	if (!pkg)
+		return;
+    if (m_installMode == Single && column == 2)
     {
        setState(*item,pkg,2,_next);
        setState(*item,pkg,3,_sync,2);
@@ -384,12 +416,24 @@ void InstallerEngine::itemClickedPackageSelectorPage(QTreeWidgetItem *item, int 
        setState(*item,pkg,5,_sync,2);
        setState(*item,pkg,6,_sync,2);
     }
-    else
-       setState(*item,pkg,column,_next);
+    else if (m_installMode == Developer && column == 3)
+	{
+		setState(*item,pkg,column,_next);
+		setState(*item,pkg,column+1,_next);
+		setState(*item,pkg,column+1,_next);
+	}
+    else if (m_installMode == EndUser && column == 3)
+	{
+		setState(*item,pkg,column,_next);
+		// lib excluded
+		setState(*item,pkg,column+2,_next);
+	}
+	else
+		setState(*item,pkg,column,_next);
 
     // select depending packages in case all or bin is selected
-    //pkg->dump();
-    if (column == 2 || column == 3 && pkg) 
+
+	if (column == 2 || column == 3) 
     {
         const QStringList &deps = pkg->deps();
 
@@ -406,7 +450,29 @@ void InstallerEngine::itemClickedPackageSelectorPage(QTreeWidgetItem *item, int 
                 /// the dependency is only for bin package and one way to switch on
                 Package *depPkg = getPackageByName(dep);
 
-                setState(*depItem,depPkg,3,_deps);
+			    if (m_installMode == Developer)
+				{
+					setState(*depItem,depPkg,3,_deps);
+					setState(*depItem,depPkg,4,_deps);
+					setState(*depItem,depPkg,5,_deps);
+				}
+			    else if (m_installMode == EndUser)
+				{
+					setState(*depItem,depPkg,3,_deps);
+					// lib is excluded
+					setState(*depItem,depPkg,5,_deps);
+				}
+			    else if (m_installMode == Single)
+				{	
+					if (column == 2)
+					{
+						setState(*depItem,depPkg,3,_deps);
+						setState(*depItem,depPkg,4,_deps);
+						setState(*depItem,depPkg,5,_deps);
+					}
+					else
+						setState(*depItem,depPkg,column,_deps);
+				}
             }
         }    
     }
