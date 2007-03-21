@@ -52,41 +52,39 @@ bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QStrin
 	}
 
 	QStringList parts = baseName.split('-');
-    if(parts.size() < 3) {
-        qDebug() << "can't parse filename " << baseName;
-        return false;
-    }
-    pkgName = parts[0];
-	pkgVersion;
-	pkgType;
+
 	if (parts.size() == 5)
 	{
-			// a-b-c-version-type
-			if (parts[2][0].isLetter())
-			{
-				pkgName = parts[0] + "-" + parts[1] + "-" + parts[2];
-				pkgVersion = parts[3];
-			}			
-			else
-			{
-				pkgName = parts[0] + "-" + parts[1];
-				pkgVersion = parts[2] + '-' + parts[3];
-			}
-			pkgType = parts[4];
+		// a-b-c-version-type
+		if (parts[2][0].isLetter())
+		{
+			pkgName = parts[0] + "-" + parts[1] + "-" + parts[2];
+			pkgVersion = parts[3];
+		}			
+		else
+		{
+			pkgName = parts[0] + "-" + parts[1];
+			pkgVersion = parts[2] + '-' + parts[3];
+		}
+		pkgType = parts[4];
 	}
 	else if (parts.size() == 4)
 	{
 		if (parts[1][0].isLetter())
 		{
-			pkgName += "-" + parts[1];
+			pkgName += parts[0] + "-" + parts[1];
 			pkgVersion = parts[2];
 		}
 		else
+		{
+			pkgName = parts[0];
 			pkgVersion = parts[1] + '-' + parts[2];
+		}
 		pkgType = parts[3];
 	}
-	else 
+	else if(parts.size() == 3) 
 	{
+		pkgName = parts[0];
 		pkgVersion = parts[1];
 		// aspell-0.50.3-3
 		if (parts[2][0].isNumber())
@@ -96,6 +94,22 @@ bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QStrin
 		}
 		else
 			pkgType = parts[2];
+	}
+	else if(parts.size() == 2) 
+	{
+		pkgName = parts[0];
+		pkgVersion = parts[1];
+		pkgType = "bin";
+	}
+	else if(parts.size() < 2) 
+	{
+        qDebug() << "can't parse filename " << baseName;
+        return false;
+    }
+	else 	
+	{
+        qDebug() << __FUNCTION__ << "unhandled case with" << baseName;
+        return false;
 	}
 	return true;
 }
