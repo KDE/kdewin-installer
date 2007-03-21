@@ -396,6 +396,8 @@ WizardPage *InstallPage::nextPage()
 bool InstallPage::isComplete()
 {
     QApplication::instance()->processEvents();
+    // FIXME: add remove progressbar 
+    engine->removePackages(tree);
     engine->installPackages(tree);
     return true;
 }
