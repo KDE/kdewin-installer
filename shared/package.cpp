@@ -61,8 +61,17 @@ bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QStrin
 	pkgType;
 	if (parts.size() == 5)
 	{
-			pkgName = parts[0] + "-" + parts[1];
-			pkgVersion = parts[2] + '-' + parts[3];
+			// a-b-c-version-type
+			if (parts[2][0].isLetter())
+			{
+				pkgName = parts[0] + "-" + parts[1] + "-" + parts[2];
+				pkgVersion = parts[3];
+			}			
+			else
+			{
+				pkgName = parts[0] + "-" + parts[1];
+				pkgVersion = parts[2] + '-' + parts[3];
+			}
 			pkgType = parts[4];
 	}
 	else if (parts.size() == 4)
