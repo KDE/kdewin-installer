@@ -33,13 +33,14 @@ GlobalConfig::GlobalConfig(const QString &url, Downloader &downloader)
     int ret; 
     // FIXME: place config files into package download path
     QFileInfo cfr("config-remote.txt");
-	qDebug() << "I would use " << cfr.absoluteFilePath() << "for parsing remote config file";
     if (cfr.exists())
     {
+		qDebug() << "found remote config copy at" << cfr.absoluteFilePath() << "for parsing";
         ret = parseFromFile("config-remote.txt");
     }
     else 
     {
+		qDebug() << "I would use " << cfr.absoluteFilePath() << "for parsing the remote config file";
         QFileInfo cfi("config.txt");
         qDebug() << "download global configuration file";
         // FIXME uses version related config file to have more room for format changes
