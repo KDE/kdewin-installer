@@ -53,22 +53,37 @@ void InstallerEngine::readGlobalConfig()
 void InstallerEngine::createMainPackagelist()
 {
     // package list is build from packages defined in global configuration
-    PackageList *packageList = new PackageList();
-    packageList->setName("main");
-    m_packageListList.append(packageList);
-
-    Installer *installer = new Installer(packageList,m_instProgressBar );
-    installer->setRoot(root());
-    m_installerList.append(installer);
 	m_database->readFromDirectory(root()+"/manifest");
+#ifdef DEBUG
 	m_database->listPackages("Package");
+#endif
     QList<Package*>::iterator p;
     for (p = m_globalConfig->packages()->begin(); p != m_globalConfig->packages()->end(); p++)
     {
-        packageList->addPackage(*(*p));
+		Package *pkg = (*p);
+		QString category = pkg->category();
+		if (category.isEmpty())
+			category = "main"; 
+		PackageList *packageList = getPackageListByName(category);
+		if (!packageList)
+		{
+		    packageList = new PackageList();
+			packageList->setName(category);
+			m_packageListList.append(packageList);
+			/**
+			  @TODO: m_installer is used for installing, there should be only one 
+			  instance for each installation root, which requires not to store a 
+			  package list pointer in the installer
+			*/ 
+		    Installer *installer = new Installer(packageList,m_instProgressBar );
+			installer->setRoot(root());
+		    m_installerList.append(installer);
+			m_installer = installer;
+		}
+		packageList->addPackage(*pkg);
     }
-    
-	packageList->syncWithDatabase(*m_database);
+	foreach(PackageList *pkgList, m_packageListList)
+		pkgList->syncWithDatabase(*m_database);
 }
 
 /// download all packagelists, which are available on the configured sites
@@ -77,13 +92,20 @@ bool InstallerEngine::downloadPackageLists()
     QList<Site*>::iterator s;
     for (s = m_globalConfig->sites()->begin(); s != m_globalConfig->sites()->end(); s++)
     {
-        qDebug() << "download package file list for site: " << (*s)->name();
-        PackageList *packageList = new PackageList();
-        packageList->setName((*s)->name());
-        m_packageList = packageList;
-        m_packageListList.append(packageList);
-        Installer *installer = new Installer(packageList,m_instProgressBar );
-        // packagelist needs to access Site::getDependencies() && Site::isExclude()
+		QString category = (*s)->name();
+        qDebug() << "download package file list for site: " << category;
+		PackageList *packageList = getPackageListByName(category);
+		if (!packageList)
+		{
+		    packageList = new PackageList();
+			packageList->setName(category);
+			m_packageListList.append(packageList);
+		    Installer *installer = new Installer(packageList,m_instProgressBar );
+			installer->setRoot(root());
+		    m_installerList.append(installer);
+		}
+
+		// packagelist needs to access Site::getDependencies() && Site::isExclude()
         packageList->setCurrentSite(*s);
 
 /*
@@ -97,14 +119,7 @@ bool InstallerEngine::downloadPackageLists()
         else
 */
         packageList->setBaseURL((*s)->url());
-        installer->setRoot(root());
-        m_installerList.append(installer);
-        m_installer = installer;
 
-		// FIXME: it is probably better to download package list every 
-		//        time and to sync with local copy 
-
-		// download package list
         qDebug() << (*s)->url();
 #ifdef DEBUG
         QFileInfo tmpFile(installer->Root() + "/packages-"+(*s)->Name()+".html");
@@ -116,7 +131,7 @@ bool InstallerEngine::downloadPackageLists()
 #else            
         QByteArray ba;
         m_downloader->start((*s)->url(), ba);
-        if (!packageList->readHTMLFromByteArray(ba,(*s)->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge ))
+        if (!packageList->readHTMLFromByteArray(ba,(*s)->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge, true ))
 #endif
         {
             qDebug() << "error reading package list from download html file";
@@ -551,20 +566,21 @@ bool InstallerEngine::removePackages(QTreeWidget *tree, const QString &category)
     return true;
 }
 
-bool InstallerEngine::installPackages(QTreeWidget *tree,const QString &category)
+bool InstallerEngine::installPackages(QTreeWidget *tree,const QString &_category)
 {
     for (int i = 0; i < tree->topLevelItemCount(); i++)
     {
         QTreeWidgetItem *item = static_cast<QTreeWidgetItem*>(tree->topLevelItem(i));
+		QString category = item->text(0); 
 #ifdef DEBUG
-        qDebug() << __FUNCTION__ << " " << item->text(0);
+        qDebug() << __FUNCTION__ << " " << category;
 #endif
-        if (category.isEmpty() || item->text(0) == category)
+        if (_category.isEmpty() || category == _category)
         {
-            PackageList *packageList = getPackageListByName(item->text(0));
+            PackageList *packageList = getPackageListByName(category);
             if (!packageList)
             {
-                qDebug() << __FUNCTION__ << " packagelist for " << item->text(0) << " not found";
+                qDebug() << __FUNCTION__ << " packagelist for " << category << " not found";
                 continue;
             }
             for (int j = 0; j < item->childCount(); j++)
@@ -572,7 +588,8 @@ bool InstallerEngine::installPackages(QTreeWidget *tree,const QString &category)
                 QTreeWidgetItem *child = static_cast<QTreeWidgetItem*>(item->child(j));
 //                qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
 				bool all = child->checkState(2) == Qt::Checked;
-				Package *pkg = packageList->getPackage(child->text(0));
+				QString pkgName = child->text(0);
+				Package *pkg = packageList->getPackage(pkgName);
 				if (!pkg)
 					continue;
 				if (all | isMarkedForInstall(*child,Package::BIN))
@@ -688,3 +705,4 @@ void InstallerEngine::stop()
 {
     m_downloader->cancel();
 }
+
