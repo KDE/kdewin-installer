@@ -3,22 +3,15 @@ the required libraries from the GNUWIN32 project mirrors
 
 State
 =====
-
-- The command line tool works currently well for gnuwin32 related packages. 
-
-- The gui installer is able to download and install gnuwin32 packages too. 
-
+- The gui installer is able to download and install/remove packages. 
+- The command line tool is broken and need to be fixed
 
 NOTES
 ===== 
-- The installer created package databases (flat textfile), which contains all packages 
-  available on the download mirror. 
- 
 - see doc/readme.txt for more informations about the idea and 
   backgrounds of the installer
 
 - sources are located on http://websvn.kde.org/trunk/kdesupport/kdewin32/installer/
-
 
 TODO
 ====
@@ -44,8 +37,8 @@ TODO
 	9 deal with package name clashes from different locations (dependency checking)
 	10 add a switch to select end user/developer operation (end user by default)
 	   in end user mode only the bin packages are visible 
-	11 add package delete support 
 	12 if remote config is not available only display installed packages
+	13 add update support
 	
 
 Happy hacking
@@ -57,6 +50,11 @@ Happy hacking
 
 History
 =======
+
+version 0.6.6
+-------------
+- dropped flat file installed package database, uses package information from <install_root>/manifest
+- added category support, sites and packages could be located in different categories
 
 version 0.6.5
 -------------

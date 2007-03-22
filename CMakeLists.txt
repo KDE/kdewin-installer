@@ -1,5 +1,5 @@
 project(kdewin-installer)
-set (VERSION 0.6.5)
+set (VERSION 0.6.6)
 
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
@@ -142,3 +142,7 @@ add_subdirectory(gui)
 add_subdirectory(tests)
 add_subdirectory(packager)
 add_subdirectory(doc)
+
+if (MSVC)
+    configure_file(${CMAKE_SOURCE_DIR}/kdewin-installer-sln.bat.cmake ${CMAKE_BINARY_DIR}/kdewin-installer-sln.bat)
+endif (MSVC)

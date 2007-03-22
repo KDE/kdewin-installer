@@ -1,89 +1,104 @@
 @format 1.1
-; this is a sample config file specification - please note 
-; that this format is *prelimary* and may be changed without prior notice
+; this format is *prelimary* and may be changed without prior notice
 
-; site definition
-@site gnuwin32
-@type sourceforge
-@url http://sourceforge.net/project/showfiles.php?group_id=23617
-@deps findutils libintl
-@deps grep pcre
-; the following packages are outdated or buggy and are provided by another site
-@exclude upx aspell bzip2 expat giflib iconv jasper jpeg libpng libxml2 libxslt openssl pcre tiff zlib
-@options
-; grep require pcre.dll but the pcre package provides pcre3.dll,
-; a copy of pcre3.dll to pcre.dll is required 
-; FIXME: implement such support maybe using new keyword copy ? 
-; @copy pcre bin\pcre3.dll:bin\pcre.dll 
-
-; chris mirror 
+;------------------------------------------------------
+; category win32libs
+;------------------------------------------------------
 @site win32libs
 @type apachemodindex
-@url http://82.149.170.66/kde-windows/win32libs/
-;@options
+@url http://82.149.170.66/kde-windows/win32libs/zip/single/
+@deps update-mime-database libintl libxml2 iconv
+@deps dbus libxml2
+
+;------------------------------------------------------
+; category kdesupport
+;------------------------------------------------------
+@site kdesupport
+@type apachemodindex
+@url http://82.149.170.66/kde-windows/kdesupport/single/
+@deps kdewin32-mingw qt-mingw
+@deps kdewin32-msvc qt-msvc
+@deps strigi bzip2 openssl zlib iconv libxml2
 
 ; a package definition 
 @package qt-mingw
-;@category KDE
-@version 20070119
-@url-bin http://82.149.170.66/kde-windows/qt/qt-mingw-4.2.2-20070119-bin.zip
-@url-lib http://82.149.170.66/kde-windows/qt/qt-mingw-4.2.2-20070119-lib.zip
-@url-doc http://82.149.170.66/kde-windows/qt/qt-mingw-4.2.2-20070119-doc.zip
-@url-src http://82.149.170.66/kde-windows/qt/qt-mingw-4.2.2-20070119-src.zip
+@category kdesupport
+@version 4.2.2-20070119
+@url-bin http://82.149.170.66/kde-windows/qt/single/qt-mingw-4.2.2-20070119-bin.zip
+@url-lib http://82.149.170.66/kde-windows/qt/single/qt-mingw-4.2.2-20070119-lib.zip
+@url-doc http://82.149.170.66/kde-windows/qt/single/qt-mingw-4.2.2-20070119-doc.zip
+@url-src http://82.149.170.66/kde-windows/qt/single/qt-mingw-4.2.2-20070119-src.zip
 
-; a package definition 
-@package kdelibs-mingw
-;@category KDE
-@version 20070110
-@url-bin http://82.149.170.66/kde-windows/KDE/kdelibs-mingw-20070110-bin.zip
-@url-lib http://82.149.170.66/kde-windows/KDE/kdelibs-mingw-20070110-lib.zip
-@url-src http://82.149.170.66/kde-windows/KDE/kdelibs-mingw-20070110-src.zip
-@require aspell bzip2 expat giflib iconv jpeg libpng libxml2 libxslt openssl pcre tiff zlib dbus kdewin32-mingw qt-mingw
 
-@package kdewin32-mingw
-@category KDE
-@version 20070118
-@url-bin http://82.149.170.66/kde-windows/KDE/kdewin32-mingw-20070118-bin.zip
-@url-lib http://82.149.170.66/kde-windows/KDE/kdewin32-mingw-20070118-lib.zip
-@require qt-mingw
+;------------------------------------------------------
+; tools
+;------------------------------------------------------
+@site tools
+@type apachemodindex
+@url http://82.149.170.66/kde-windows/gnuwin32/
+@deps findutils libintl
+@deps grep pcre
 
-@package dbus
-@category KDE
-@version 20070114
-@url-bin http://82.149.170.66/kde-windows/dbus/dbus-20070122-bin.zip
-@url-lib http://82.149.170.66/kde-windows/dbus/dbus-20070122-lib.zip
-@require libxml2
-
-@package upx 
-@version 2.0.3
-@url-bin http://upx.sourceforge.net/download/upx203w.zip
-; relocate directories in zip files 
-@relocate upx203w bin
-
-; another definition (installing not implemented yet)
-;@site kde-i18n
-;@sitetype apachemodindex
-;@siteurl http://software.opensuse.org/download/KDE:/KDE3/SUSE_Linux_10.1/noarch/
-;@siteoptions
-
-;@site perl (installing not implemented yet)
-;@sitetype apachemodindex
-;@siteurl http://downloads.activestate.com/ActivePerl/Windows/5.8/
-;@siteoptions
-
-; another package definition  (not implemented yet)
-@package cmake 
+@package cmake
+@category tools 
 @version 2.4.6
 @url-bin http://www.cmake.org/files/v2.4/cmake-2.4.6-win32-x86.zip
 @url-src http://www.cmake.org/files/v2.4/cmake-2.4.6.zip
 ;@options
 
-; a package definition  (not implemented yet)
-@package perl ; package name
-;@category perl 
-@version 5.8.8 ; package version
+@package perl 
+@category tools
+@version 5.8.8
 @url-bin http://downloads.activestate.com/ActivePerl/Windows/5.8/ActivePerl-5.8.8.819-MSWin32-x86-267479.msi 
 ;@packageoptions
+
+
+@package upx 
+@category tools
+@version 2.0.3
+@url-bin http://upx.sourceforge.net/download/upx203w.zip
+; relocate directories in zip files 
+@relocate upx203w bin
+
+@package psdk-msvc
+@category tools
+@version R2
+@url-bin http://download.microsoft.com/download/f/a/d/fad9efde-8627-4e7a-8812-c351ba099151/PSDK-x86.exe
+
+;------------------------------------------------------
+; catgory KDE
+;------------------------------------------------------
+@site kde
+@type apachemodindex
+@url http://82.149.170.66/kde-windows/kde/single/
+@deps kdelibs-dependencies-mingw aspell bzip2 expat giflib iconv jpeg libintl libpng libxml2 libxslt openssl pcre tiff zlib dbus kdewin32-mingw qt-mingw strigi update-mime-database
+@deps kdelibs-dependencies-msvc aspell bzip2 expat giflib iconv jpeg libintl libpng libxml2 libxslt openssl pcre tiff zlib dbus kdewin32-msvc qt-msvc strigi update-mime-database
+
+;------------------------------------------------------
+; catgory misc 
+;------------------------------------------------------
+@package pkg-config
+@category misc
+@version 0.20
+@url-bin http://www.gimp.org/~tml/gimp/win32/pkg-config-0.20.zip
+@url-src http://www.gimp.org/~tml/gimp/win32/pkg-config-0.20.0.tar.gz
+@require glib pkg-libintl
+
+@package glib
+@category misc
+@version 2.12.7
+@url-bin ftp://ftp.gtk.org/pub/glib/2.12/win32/glib-2.12.7.zip
+@url-lib ftp://ftp.gtk.org/pub/glib/2.12/win32/glib-dev-2.12.7.zip
+@url-src ftp://ftp.gtk.org/pub/glib/2.12/glib-2.12.7.tar.bz2
+
+@package pkg-libintl
+@category misc
+@version 0.14.5
+@url-bin http://www.gimp.org/~tml/gimp/win32/gettext-0.14.5.zip
+;@notes-bin Just the GNU libintl (internationalization library) DLL (intl.dll). GLib uses libintl, so you will need this.
+@url-lib http://www.gimp.org/~tml/gimp/win32/gettext-dev-0.14.5.zip
+;@notes-lib GNU gettext developer files and tools for Win32, containing the header libintl.h, msgfmt.exe, other programs, documentation, and various other files. libintl.h is needed if you build software that uses GNU gettext for internationalization. Msgfmt is needed if you want to recompile message catalogs. The other commands can be used to manipulate message catalogs in other ways.
+@url-src http://www.gimp.org/~tml/gimp/win32/gettext-0.14.5.tar.gz
 
 ;@package ruby
 ;@version 1.8.5-21
@@ -96,10 +111,14 @@
 ; that no application or script could be started 
 ;@url-bin http://rubyforge-files.ruby-forum.com/rubyinstaller/ruby185-21.exe
 
-@package psdk-msvc
-@version R2
-@url-bin http://download.microsoft.com/download/f/a/d/fad9efde-8627-4e7a-8812-c351ba099151/PSDK-x86.exe
 
-@package vcexpress
-@version 2005
-@url-bin http://go.microsoft.com/fwlink/?LinkId=51410&clcid=0x409
+; another definition (installing not implemented yet)
+;@site kde-i18n
+;@sitetype apachemodindex
+;@siteurl http://software.opensuse.org/download/KDE:/KDE3/SUSE_Linux_10.1/noarch/
+;@siteoptions
+
+;@site perl (installing not implemented yet)
+;@sitetype apachemodindex
+;@siteurl http://downloads.activestate.com/ActivePerl/Windows/5.8/
+;@siteoptions
