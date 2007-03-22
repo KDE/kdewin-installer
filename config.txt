@@ -41,6 +41,8 @@
 
 @package cmake
 @category tools 
+;does not work yet
+;@notes platform independent build tool 
 @version 2.4.6
 @url-bin http://www.cmake.org/files/v2.4/cmake-2.4.6-win32-x86.zip
 @url-src http://www.cmake.org/files/v2.4/cmake-2.4.6.zip
@@ -68,11 +70,24 @@
 ;------------------------------------------------------
 ; catgory KDE
 ;------------------------------------------------------
-@site kde
-@type apachemodindex
-@url http://82.149.170.66/kde-windows/kde/single/
-@deps kdelibs-dependencies-mingw aspell bzip2 expat giflib iconv jpeg libintl libpng libxml2 libxslt openssl pcre tiff zlib dbus kdewin32-mingw qt-mingw strigi update-mime-database
-@deps kdelibs-dependencies-msvc aspell bzip2 expat giflib iconv jpeg libintl libpng libxml2 libxslt openssl pcre tiff zlib dbus kdewin32-msvc qt-msvc strigi update-mime-database
+; does not work 
+;@site kde
+;@type apachemodindex
+;@url http://82.149.170.66/kde-windows/kde/single/
+;@deps kdelibs-dependencies-mingw aspell bzip2 expat giflib iconv jpeg libintl libpng libxml2 libxslt openssl pcre tiff zlib dbus kdewin32-mingw qt-mingw strigi update-mime-database
+;@deps kdelibs-dependencies-msvc aspell bzip2 expat giflib iconv jpeg libintl libpng libxml2 libxslt openssl pcre tiff zlib dbus kdewin32-msvc qt-msvc strigi update-mime-database
+
+@package kdelibs-dependencies-mingw 
+@category kde
+@version 3.80.3
+@url-bin http://82.149.170.66/kde-windows/kde/single/kdelibs-dependencies-mingw-3.80.3-bin.zip
+@require aspell bzip2 expat giflib iconv jpeg libintl libpng libxml2 libxslt openssl pcre tiff zlib dbus kdewin32-mingw qt-mingw strigi update-mime-database
+
+@package kdelibs-dependencies-msvc
+@category kde
+@version 3.80.3
+@url-bin http://82.149.170.66/kde-windows/kde/single/kdelibs-dependencies-msvc-3.80.3-bin.zip
+@require aspell bzip2 expat giflib iconv jpeg libintl libpng libxml2 libxslt openssl pcre tiff zlib dbus kdewin32-msvc qt-msvc strigi update-mime-database
 
 ;------------------------------------------------------
 ; catgory misc 
