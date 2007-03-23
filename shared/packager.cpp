@@ -183,16 +183,18 @@ bool Packager::generatePackageFileList(QStringList &fileList, Packager::Type typ
     else    
         switch (type) {
             case BIN:
-                generateFileList(fileList, dir, "bin",   "*.exe *.dll *.bat");
-                generateFileList(fileList, dir, "lib",   "*.dll");
+                generateFileList(fileList, dir, "bin",   "*.exe *.bat");
+                generateFileList(fileList, dir, "bin",   "*.dll", "*d.dll");
+                generateFileList(fileList, dir, "lib",   "*.dll", "*d.dll");
                 generateFileList(fileList, dir, "share", "*.*");
                 generateFileList(fileList, dir, "data",  "*.*");
                 generateFileList(fileList, dir, "etc",   "*.*");
                 return true;
             case LIB:
+                generateFileList(fileList, dir, "bin",     "*d.dll");
+                generateFileList(fileList, dir, "lib",     "*d.dll");
                 generateFileList(fileList, dir, "lib",     "*.lib");    // msvc libs (static & import libs)
                 generateFileList(fileList, dir, "lib",     "*.a");      // gcc (static) libs
-                generateFileList(fileList, dir, "lib",     "*.dll.a");  // gcc import libs
                 generateFileList(fileList, dir, "include", "*.*");
                 return true;
             case DOC:
@@ -200,7 +202,7 @@ bool Packager::generatePackageFileList(QStringList &fileList, Packager::Type typ
                 generateFileList(fileList, dir, "man", "*.*");
                 return true;
             case SRC:
-                generateFileList(fileList, dir, "src", "*.*");
+                generateFileList(fileList, dir, "src", "*.*" ".svn CVS");
                 return true;
             case NONE:
                 generateFileList(fileList, dir, "", "*.*", "manifest");
