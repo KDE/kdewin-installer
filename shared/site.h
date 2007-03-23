@@ -73,10 +73,17 @@ public:
     void addExcludes(const QStringList &excludes);
     bool isExclude(const QString &package);
 
+    const QString &notes() const { return m_notes; }
+    void setNotes(const QString &notes)
+    {
+        m_notes = notes;
+    }
+
     void dump(const QString &title=QString());
 private:
     QString     m_name;
     QString     m_url;
+    QString     m_notes;
     SiteType    m_type;
     QStringList m_mirrors;
     QStringList m_excludes;
