@@ -55,6 +55,7 @@ version 0.6.6
 -------------
 - dropped flat file installed package database, uses package information from <install_root>/manifest
 - added category support, sites and packages could be located in different categories
+- packages do not need manifest files (.mft,.ver), they will be created by default if not present
 
 version 0.6.5
 -------------
