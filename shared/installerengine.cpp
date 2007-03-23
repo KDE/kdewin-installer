@@ -391,22 +391,23 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
         QList<Package*>::ConstIterator i = (*k)->packageList().constBegin();
         for ( ; i != (*k)->packageList().constEnd(); ++i)
         {
-            QStringList data;
-            data << (*i)->name()
-                 << (*i)->version()
+            Package *pkg = *i;
+			QStringList data;
+            data << pkg->name()
+                 << pkg->version()
                  << QString();
             QTreeWidgetItem *item = new QTreeWidgetItem(category, data);
 			if (m_installMode == Single)
-	            setState(*item,*i,2,_initial);
+	            setState(*item,pkg,2,_initial);
 
-			setState(*item,*i,3,_initial);
+			setState(*item,pkg,3,_initial);
 			if (m_installMode != Developer )
 			{
-				setState(*item,*i,4,_initial);
-				setState(*item,*i,5,_initial);
+				setState(*item,pkg,4,_initial);
+				setState(*item,pkg,5,_initial);
 			}
-            setState(*item,*i,6,_initial);
-            item->setText(7, (*i)->notes());
+            setState(*item,pkg,6,_initial);
+            item->setText(7, pkg->notes());
         }
     }
     tree->insertTopLevelItems(0,categoryList);
