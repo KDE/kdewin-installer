@@ -60,7 +60,7 @@ InstallWizard::InstallWizard(QWidget *parent)
     engine = new InstallerEngine(progressBar,instProgressBar);
     settingsPage = new SettingsPage(this);
 
-    setWindowTitle(tr("KDE Installer"));
+	setWindowTitle(tr("KDE Installer - Version " VERSION));
     Settings &s = Settings::getInstance();
 
     if (s.isFirstRun() || s.showTitlePage())

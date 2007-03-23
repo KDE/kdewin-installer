@@ -24,6 +24,7 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QCloseEvent>
+#include <QMessageBox>
 
 #include "settings.h"
 #include "complexwizard.h"
@@ -34,6 +35,7 @@ ComplexWizard::ComplexWizard(QWidget *parent)
         : QDialog(parent)
 {
     setWindowFlags(Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);
+    aboutButton = new QPushButton(tr("About"));
     settingsButton = new QPushButton(tr("Settings"));
     cancelButton = new QPushButton(tr("Cancel"));
     backButton = new QPushButton(tr("< &Back"));
@@ -47,11 +49,14 @@ ComplexWizard::ComplexWizard(QWidget *parent)
     connect(nextButton, SIGNAL(clicked()), this, SLOT(nextButtonClicked()));
     connect(finishButton, SIGNAL(clicked()), this, SLOT(accept()));
     connect(settingsButton, SIGNAL(clicked()), this, SLOT(settingsButtonClicked()));
+    connect(aboutButton, SIGNAL(clicked()), this, SLOT(aboutButtonClicked()));
 
 
     buttonLayout = new QHBoxLayout;
+    buttonLayout->addWidget(aboutButton);
     buttonLayout->addStretch(1);
     buttonLayout->addWidget(settingsButton);
+    buttonLayout->addStretch(1);
     buttonLayout->addWidget(cancelButton);
     buttonLayout->addWidget(backButton);
     buttonLayout->addWidget(nextButton);
@@ -173,6 +178,19 @@ void ComplexWizard::settingsButtonClicked()
 {
     history.last()->reject();
     reject();
+}
+
+
+void ComplexWizard::aboutButtonClicked()
+{
+	QMessageBox::information(this, 
+		tr("KDE-Installer"),
+		tr("The KDEWIN Installer is an open source application, "
+		   "which makes it able to install KDE applications on windows.\n"
+		   "\nAuthors: \n\n\tRalf Habacker\n\tChristian Ehrlicher\n"
+		  ), 
+		  QMessageBox::Ok
+	); 
 }
 
 #include "complexwizard.moc"
