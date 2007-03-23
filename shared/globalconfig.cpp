@@ -159,6 +159,10 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     cmd.removeFirst();
                     pkg->addDeps(cmd);
                 }
+                else if(cmd[0] == "@notes") {
+                    cmd.removeFirst();
+                    pkg->setNotes(cmd.join(" "));
+                }
                 else if(cmd[0] == "@category")
                     pkg->setCategory(cmd[1]);
                 else if(cmd[0] == "@relocate")
@@ -185,6 +189,10 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 else if(cmd[0] == "@copy") {
                     cmd.removeFirst();
                     site->addCopy(cmd.join(" "));
+                }
+                else if(cmd[0] == "@notes") {
+                    cmd.removeFirst();
+                    site->setNotes(cmd.join(" "));
                 }
             }
             else if(cmd[0] == "@site")
