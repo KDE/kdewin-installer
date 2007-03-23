@@ -144,18 +144,25 @@ bool Packager::generatePackageFileList(QStringList &fileList, Packager::Type typ
     if (m_name.startsWith("qt") || m_name.startsWith("q++") || m_name.startsWith("q.."))
         switch (type) {
             case BIN:
-                generateFileList(fileList, dir, "bin", "*.dll qdbus.exe dbus-viewer.exe", "*d.dll *d4.dll");
-                generateFileList(fileList, dir, "plugins", "*.dll","*d.dll *d1.dll");
+                generateFileList(fileList, dir, "bin", "*.dll qdbus.exe qdbusviewer.exe", "*d.dll *d4.dll");
+                generateFileList(fileList, dir, "plugins", "*.dll","*d.dll *d4.dll *d1.dll");
                 generateFileList(fileList, dir, "translations",  "*.qm");
                 return true;
             case LIB:
                 generateFileList(fileList, dir, "bin",   "*.exe *.bat *d4.dll", "assistant.exe qtdemo.exe qdbus.exe dbus-viewer.exe");
+                generateFileList(fileList, dir, "plugins", "*d.dll *d4.dll *d1.dll");
                 generateFileList(fileList, dir, ".",     ".qmake.cache");
                 generateFileList(fileList, dir, "mkspecs",  "qconfig.pri");
-                if (m_name.endsWith("mingw"))
+                if (m_name.endsWith("mingw")) 
+				{
                     generateFileList(fileList, dir, "mkspecs/win32-g++", "*.*");
-                // FIXME: add other compiler support 
-                generateFileList(fileList, dir, "lib",     "*.a");
+	                generateFileList(fileList, dir, "lib",     "*.a");
+				}
+				else 
+				{
+                    generateFileList(fileList, dir, "mkspecs/win32-msvc.net", "*.*");
+	                generateFileList(fileList, dir, "lib",     "*.lib");
+				}
                 generateFileList(fileList, dir, "include", "*","*_p.h");
                 generateFileList(fileList, dir, "src/corelib", "*.h", "*_p.h");
                 generateFileList(fileList, dir, "src/gui", "*.h", "*_p.h");
