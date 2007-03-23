@@ -2,6 +2,7 @@
 #define CONFIG_H
 #cmakedefine VERSION "@VERSION@"
 #cmakedefine CMAKE_SOURCE_DIR "@CMAKE_SOURCE_DIR@"
+#cmakedefine SEVENZIP_UNPACK_SUPPORT 1
 
 #include <QString>
 #include <QtDebug>

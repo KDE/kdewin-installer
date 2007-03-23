@@ -27,16 +27,17 @@
 #include <windows.h>
 #endif
 
-
+#include "config.h"
 #include "installer.h"
 #include "packagelist.h"
 #include "installerprogress.h"
 
 #include "quazip.h"
 #include "quazipfile.h"
-#include "qua7zip.h"
-
-using namespace qua7zip;
+#ifdef SEVENZIP_UNPACK_SUPPORT
+ #include "qua7zip.h"
+ using namespace qua7zip;
+#endif
 
 //#define DEBUG
 #ifdef Q_CC_MSVC
@@ -250,6 +251,7 @@ bool Installer::unzipFile(const QString &destpath, const QString &zipFile, const
 
 bool Installer::un7zipFile(const QString &destpath, const QString &zipFile)
 {
+#ifdef SEVENZIP_UNPACK_SUPPORT
     QDir path(destpath);
     Qua7zip z(zipFile);
 
@@ -365,6 +367,9 @@ bool Installer::un7zipFile(const QString &destpath, const QString &zipFile)
         return false;
     }
     return true;
+#else
+    return false;
+#endif
 }
 
 
@@ -410,7 +415,6 @@ bool Installer::install(const QString &fileName, const StringHash &pathRelocatio
         ShellExecuteW(0, L"open", (WCHAR*)fileName.utf16(), NULL, NULL, SW_SHOWNORMAL);
         return true;
     }
-#else
 #endif
     return false;
 }

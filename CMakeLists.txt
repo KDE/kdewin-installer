@@ -6,6 +6,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 find_package(Qt4 REQUIRED)
 
+OPTION(SEVENZIP_UNPACK_SUPPORT "Enable 7-zip unpacking support" OFF)
 if (CMAKE_BUILD_TYPE EQUAL Release) 
   # disable qDebug output
 	add_definitions(-DQT_NO_DEBUG_OUTPUT)
@@ -34,7 +35,8 @@ set(quazip_HEADERS
 )
 set(quazip_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip/quazip)
 
-set(qua7zip_SOURCES
+if(SEVENZIP_UNPACK_SUPPORT)
+  set(qua7zip_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/qua7zip.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/utils.c
     ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Archive/7z_C/7zAlloc.c
@@ -49,7 +51,7 @@ set(qua7zip_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Compress/LZMA_C/LzmaDecode.c
     )
 
-set(qua7zip_HEADERS
+  set(qua7zip_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/qua7zip.h
     ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/utils.h
     ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Archive/7z_C/7zAlloc.h
@@ -64,7 +66,8 @@ set(qua7zip_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Compress/LZMA_C/LzmaDecode.h
     )
 
-set(qua7zip_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip)
+  set(qua7zip_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip)
+endif(SEVENZIP_UNPACK_SUPPORT)
 
 set(md5_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/md5/md5.cpp
