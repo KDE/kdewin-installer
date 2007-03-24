@@ -149,3 +149,5 @@ add_subdirectory(doc)
 if (MSVC)
     configure_file(${CMAKE_SOURCE_DIR}/kdewin-installer-sln.bat.cmake ${CMAKE_BINARY_DIR}/kdewin-installer-sln.bat)
 endif (MSVC)
+
+install( FILES cmake/modules/FINDKDEWIN_INSTALLER.cmake  DESTINATION  share/apps/cmake/modules )

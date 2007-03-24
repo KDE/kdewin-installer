@@ -37,6 +37,8 @@ class Packager {
       // mingw only: strip all debugging symbols from files to reduce size
       bool stripFiles(const QString &dir);
       bool createDebugFiles(const QString &dir);
+	  void setSourceRoot(const QString &dir) { m_srcRoot = dir; }
+	  void setSourceExcludes(const QString &excludes) { m_srcExcludes = excludes; }
 
       bool generatePackageFileList(QStringList &result, Packager::Type type, const QString &dir=QString());
 
@@ -47,8 +49,8 @@ class Packager {
             QString    filename;
             QByteArray data;
         };
-      bool createZipFile(const QString &baseName, const QStringList &files, const QList<MemFile> &memFiles=QList<MemFile>());
-      bool createManifestFiles(QStringList &fileList, Packager::Type type, QList<MemFile> &manifestFiles);
+      bool createZipFile(const QString &zipFile, const QString &filesRootDir, const QStringList &files, const QList<MemFile> &memFiles=QList<MemFile>(), const QString &destRootDir=QString() );
+      bool createManifestFiles(const QString &rootdir, QStringList &fileList, Packager::Type type, QList<MemFile> &manifestFiles);
 
       QString getBaseName(Packager::Type type);
       
@@ -57,6 +59,8 @@ class Packager {
       QString m_version;
       QString m_notes;
       QString m_rootDir;
+	  QString m_srcRoot;
+	  QString m_srcExcludes;
       bool m_verbose;
 }; 
 

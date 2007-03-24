@@ -41,15 +41,50 @@ TODO
 	13 add update support
 	
 
+cmake support
+-------------
+
+kdewin-installer allows to add binary packaging suppport to projects using cmake. 
+
+1. copy cmake/modules/FindKDEWIN_Installer.cmake into cmake/modules of the related proejct
+
+2. add the following lines to the top level cmake 
+
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
+find_package(KDEWIN_INSTALLER)
+
+if (KDEWIN_INSTALLER_FOUND)
+    add_custom_target( kdewinpackage
+        COMMAND ${KDEWIN_PACKAGER} 
+            -name <packagename>
+            -root ${CMAKE_INSTALL_PREFIX} 
+            -srcroot ${CMAKE_SOURCE_DIR} 
+            -srcexclude "<excluded dirs in source dir>"
+            -version "version"
+            -notes "description"
+    )
+endif (KDEWIN_INSTALLER_FOUND)
+
+3. after compiling, install the package and run kdewinpackage
+
+
+
+
+
 Happy hacking
-
-
-
 
 
 
 History
 =======
+
+recent
+-------------
+- extended packager to write source packages
+- renamed packager to kdewin-packager
+- uses qt's style option form (one '-') in packager
+- fixed build sytem to install applications
+- added cmake script to be able to use packages in cmake projects
 
 version 0.6.6
 -------------

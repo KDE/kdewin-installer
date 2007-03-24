@@ -37,14 +37,16 @@ static void printHelp(const QString &addInfo)
     if(!addInfo.isEmpty())
         ts << ": " << addInfo;
     ts << "\n";
-    ts << "Options: \t" << "--name <packageName>"
-       << "\n\t\t"      << "--root <path to package files>"
-       << "\n\t\t"      << "--version <package version>"
-       << "\n\t\t"      << "--strip <strip debug infos> (MinGW only)"
-       << "\n\t\t"      << "--notes <additional notes for manifest files>"
-	   << "\n\t\t"      << "--type type of package (mingw, msvc)"
-	   << "\n\t\t"      << "--destdir directory where to store the zip files to"
-	   << "\n\t\t"      << "--complete also create all-in-one package with all files"
+    ts << "Options: \t" << "-name <packageName>"
+       << "\n\t\t"      << "-root <path to package files>"
+       << "\n\t\t"      << "-srcroot <path to source files>"
+       << "\n\t\t"      << "-srcexclude <patterns> path pattern to exclude from src package"
+       << "\n\t\t"      << "-version <package version>"
+       << "\n\t\t"      << "-strip <strip debug infos> (MinGW only)"
+       << "\n\t\t"      << "-notes <additional notes for manifest files>"
+	   << "\n\t\t"      << "-type type of package (mingw, msvc)"
+	   << "\n\t\t"      << "-destdir directory where to store the zip files to"
+	   << "\n\t\t"      << "-complete also create all-in-one package with all files"
        << "\n";
 
     ts.flush();
@@ -56,26 +58,27 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
 
     QStringList args = app.arguments();
-    QString name, root, version, notes, type, destdir;
+    QString name, root, srcRoot, srcExclude, version, notes, type, destdir;
     bool bComplete = false;
     QFileInfo rootDir;
+    QFileInfo srcRootDir;
     bool strip = false;
-    
-    int idx = args.indexOf("--name");
+
+    int idx = args.indexOf("-name");
     if(idx != -1 && idx < args.count() -1) {
         name = args[idx + 1];
         args.removeAt(idx + 1);
         args.removeAt(idx);
     }
 
-    idx = args.indexOf("--type");
+    idx = args.indexOf("-type");
     if(idx != -1 && idx < args.count() -1) {
         type = args[idx + 1];
         args.removeAt(idx + 1);
         args.removeAt(idx);
     }
 
-    idx = args.indexOf("--root");
+    idx = args.indexOf("-root");
     if(idx != -1 && idx < args.count() -1) {
         root = args[idx + 1];
         rootDir = QFileInfo(root);
@@ -83,52 +86,76 @@ int main(int argc, char *argv[])
         args.removeAt(idx);
     }
 
-    idx = args.indexOf("--version");
+    idx = args.indexOf("-srcroot");
+    if(idx != -1 && idx < args.count() -1) {
+        srcRoot = args[idx + 1];
+        srcRootDir = QFileInfo(srcRoot);
+        args.removeAt(idx + 1);
+        args.removeAt(idx);
+    }
+
+    idx = args.indexOf("-srcexclude");
+    if(idx != -1 && idx < args.count() -1) {
+        srcExclude = args[idx + 1];
+        args.removeAt(idx + 1);
+        args.removeAt(idx);
+    }
+
+	idx = args.indexOf("-version");
     if(idx != -1 && idx < args.count() -1) {
         version = args[idx + 1];
         args.removeAt(idx + 1);
         args.removeAt(idx);
     }
 
-    idx = args.indexOf("--strip");
+    idx = args.indexOf("-strip");
     if(idx != -1) {
         strip = 1;
     }
 
-    idx = args.indexOf("--notes");
+    idx = args.indexOf("-notes");
     if(idx != -1 && idx < args.count() -1) {
         notes = args[idx + 1];
         args.removeAt(idx + 1);
         args.removeAt(idx);
     }
 
-    idx = args.indexOf("--destdir");
+    idx = args.indexOf("-destdir");
     if(idx != -1 && idx < args.count() -1) {
         destdir = args[idx + 1];
         args.removeAt(idx + 1);
         args.removeAt(idx);
     }
 
-    idx = args.indexOf("--complete");
+    idx = args.indexOf("-complete");
     if(idx != -1 && idx < args.count()) {
         bComplete = true;
         args.removeAt(idx);
     }
 
     if(name.isEmpty())
-       printHelp("--name not specified");
+       printHelp("-name not specified");
     if(root.isEmpty())
-       printHelp("--root not specified");
+       printHelp("-root not specified");
     if(version.isEmpty())
-       printHelp("--version not specified");
+       printHelp("-version not specified");
     
     if(!rootDir.isDir() || !rootDir.isReadable())
        printHelp(QString("Root path %1 is not accessible").arg(root));
     
-    if (!type.isEmpty())
+    if(!srcRoot.isEmpty() &&(!srcRootDir.isDir() || !srcRootDir.isReadable()))
+       printHelp(QString("Source Root path %1 is not accessible").arg(srcRoot));
+
+	if (!type.isEmpty())
         name += '-' + type;
 
     Packager packager(name, version, notes);
+	if (!srcRoot.isEmpty())
+		packager.setSourceRoot(srcRootDir.filePath());
+
+	if (!srcExclude.isEmpty())
+		packager.setSourceExcludes(srcExclude);
+
     if (strip)
        packager.stripFiles(rootDir.filePath());
     packager.makePackage(rootDir.filePath(), destdir, bComplete);
