@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
-    createStartMenuEntries(argv[1]);
+    createStartMenuEntries(argv[1],argv[2]);
 
     return 0;
 }

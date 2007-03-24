@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 	Site site;
 	site.setURL("http://82.149.170.66/kde-windows/win32libs/");
 	site.setName("test");
-    PackageList packageList(&download);
+    PackageList packageList;
     packageList.setCurrentSite(&site);
     packageList.setBaseURL(site.url());
 	
@@ -49,9 +49,9 @@ int main(int argc, char *argv[])
         qDebug() << "... failed ";
         return 1;
     }
-    packageList.listPackages("win32libs Package List");
+    packageList.dump("win32libs Package List");
 
-    PackageList packageList2(&download);
+    PackageList packageList2;
 
     download.start("http://software.opensuse.org/download/KDE:/KDE3/SUSE_Linux_10.1/noarch/","packages2.html");
     if (!packageList2.readHTMLFromFile("packages2.html",PackageList::ApacheModIndex))
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
         qDebug() << "... failed ";
         return 1;
     }
-    packageList2.listPackages("KDE i18n Package List");
+    packageList2.dump("KDE i18n Package List");
 
 
     return 0;

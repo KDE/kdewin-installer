@@ -34,7 +34,7 @@ int main(int argc, char ** argv)
     QCoreApplication app(argc,argv);
 
     Downloader downloader(/*blocking=*/ true);
-    PackageList packageList(&downloader);
+    PackageList packageList;
 
     qDebug() << "trying to download sourceforge related package list";
     downloader.start("http://sourceforge.net/project/showfiles.php?group_id=23617","packages.html");
