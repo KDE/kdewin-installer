@@ -631,10 +631,15 @@ bool InstallerEngine::downloadPackages(const QStringList &packages, const QStrin
            qDebug() << __FUNCTION__ << " packagelist for " << (*s)->name() << " not found";
            continue;
        }
-       foreach(QString package, packages)
+       foreach(QString pkgName, packages)
        {
-           if (!packageList->downloadPackage(package))
-               qDebug() << "could not download package" << package;
+			Package *pkg = packageList->getPackage(pkgName);
+			if (!pkg)
+				continue;
+	        pkg->downloadItem(m_downloader, Package::BIN);
+	        pkg->downloadItem(m_downloader, Package::LIB);
+	        pkg->downloadItem(m_downloader, Package::DOC);
+	        pkg->downloadItem(m_downloader, Package::SRC);
        }
    }
    return true;
@@ -652,10 +657,15 @@ bool InstallerEngine::installPackages(const QStringList &packages,const QString 
            qDebug() << __FUNCTION__ << " packagelist for " << (*s)->name() << " not found";
            continue;
        }
-       foreach(QString package, packages)
+       foreach(QString pkgName, packages)
        {
-           if (!packageList->installPackage(package))
-               qDebug() << "could not download package" << package;
+			Package *pkg = packageList->getPackage(pkgName);
+			if (!pkg)
+				continue;
+			pkg->installItem(m_installer, Package::BIN);
+			pkg->installItem(m_installer, Package::LIB);
+			pkg->installItem(m_installer, Package::DOC);
+			pkg->installItem(m_installer, Package::SRC);
        }
    }
    return true;
