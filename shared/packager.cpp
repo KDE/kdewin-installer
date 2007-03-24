@@ -171,7 +171,6 @@ bool Packager::generatePackageFileList(QStringList &fileList, Packager::Type typ
                 generateFileList(fileList, dir, "src/network", "*.h", "*_p.h");
                 generateFileList(fileList, dir, "src/svg", "*.h", "*_p.h");
                 generateFileList(fileList, dir, "src/opengl", "*.h", "*_p.h");
-                qDebug() << fileList;
                 return true;
             case DOC:
                 generateFileList(fileList, dir, "bin", "qtdemo.exe assistant.exe");
