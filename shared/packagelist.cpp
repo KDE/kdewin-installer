@@ -207,7 +207,14 @@ bool PackageList::syncWithDatabase(Database &database)
 		Package *apkg = (*it);
 		Package *pkg = database.getPackage(apkg->name(), apkg->version().toAscii());
 		if (!pkg)
+		{
+			pkg = database.getPackage(apkg->name());
+			if (!pkg)
+				continue;
+			m_packageList.append(pkg);
+			pkg->setHandled(true);
 			continue;
+		}
         if (pkg->isInstalled(Package::BIN))
             apkg->setInstalled(Package::BIN);
         if (pkg->isInstalled(Package::LIB))
@@ -216,6 +223,7 @@ bool PackageList::syncWithDatabase(Database &database)
             apkg->setInstalled(Package::DOC);
         if (pkg->isInstalled(Package::SRC))
             apkg->setInstalled(Package::SRC);
+		pkg->setHandled(true);
 	}
     return true;
 }

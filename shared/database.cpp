@@ -26,6 +26,7 @@
 
 #include "database.h"
 #include "package.h"
+#include "packagelist.h"
 
 Database::Database()
         : QObject()
@@ -71,6 +72,17 @@ Package *Database::getPackage(const QString &pkgName, const QByteArray &version)
     return NULL;
 }
 
+bool Database::addUnhandledPackages(PackageList *packageList)
+{
+    QList<Package*>::iterator it = m_database.begin();
+    for ( ; it != m_database.end(); ++it) 
+	{
+        if (!(*it)->handled())
+            packageList->addPackage(*(*it));
+    }
+    return true;
+}
+
 void Database::listPackages(const QString &title)
 {
 #ifdef DEBUG
@@ -106,7 +118,7 @@ bool Database::readFromDirectory(const QString &dir)
 		if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType))
 			continue;
 		Package *pkg;
-        if (pkg = getPackage(pkgName)) 
+        if (pkg = getPackage(pkgName,pkgVersion.toAscii())) 
         {
             Package::PackageItem pi;
             pi.bInstalled =true; 

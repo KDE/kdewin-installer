@@ -75,6 +75,14 @@ public:
     {
         m_name = name;
     }
+    const QString &notes() const
+    {
+        return m_notes;
+    }
+    void setNotes(const QString &notes)
+    {
+        m_notes = notes;
+    }
     const QString &BaseURL() const
     {
         return m_baseURL;
@@ -106,6 +114,7 @@ private:
     QString m_name;
     QString m_baseURL;
     Site *m_curSite;
+	QString m_notes;
 
     friend class Installer;
 };

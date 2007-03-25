@@ -39,6 +39,9 @@ TODO
 	   in end user mode only the bin packages are visible 
 	12 if remote config is not available only display installed packages
 	13 add update support
+	14 transform package database filenames to installer rule, if no manifest files are available
+	   for example cmake or upx 
+	
 	
 
 cmake support

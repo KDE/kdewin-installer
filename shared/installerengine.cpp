@@ -106,6 +106,7 @@ bool InstallerEngine::downloadPackageLists()
 			installer->setRoot(root());
 		    m_installerList.append(installer);
 		}
+		packageList->setNotes((*s)->notes());
 
 		// packagelist needs to access Site::getDependencies() && Site::isExclude()
         packageList->setCurrentSite(*s);
@@ -142,6 +143,19 @@ bool InstallerEngine::downloadPackageLists()
 		packageList->syncWithDatabase(*m_database);
 
 	}
+	PackageList *packageList = getPackageListByName("installed");
+	if (!packageList)
+	{
+	    packageList = new PackageList();
+		packageList->setName("installed");
+		packageList->setNotes("packages in this categories are installed, but are not listed in recent configuration because they are obsolate or outdated");
+		m_packageListList.append(packageList);
+	    Installer *installer = new Installer(packageList,m_instProgressBar );
+		installer->setRoot(root());
+	    m_installerList.append(installer);
+	}
+	m_database->addUnhandledPackages(packageList);
+
 	return true;
 }
 
@@ -393,7 +407,10 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
     QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
     for ( ; k != m_packageListList.constEnd(); ++k)
     {
-        QTreeWidgetItem *category = new QTreeWidgetItem((QTreeWidget*)0, QStringList((*k)->Name()));
+		if ((*k)->packageList().size() == 0)
+			continue;
+		QTreeWidgetItem *category = new QTreeWidgetItem((QTreeWidget*)0, QStringList((*k)->Name()));
+		category->setToolTip(0,(*k)->notes());
         categoryList.append(category);
 
         // adding sub items

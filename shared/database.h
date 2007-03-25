@@ -26,6 +26,7 @@
 
 #include <QObject>
 #include "package.h"
+class PackageList; 
 /** 
  holds local package database
  the local package database is build by package version files 
@@ -43,6 +44,7 @@ public:
     void addPackage(const Package &package);
     void listPackages(const QString &title=QString());
     Package *getPackage(const QString &pkgName, const QByteArray &version=QByteArray());
+	bool addUnhandledPackages(PackageList *packageList);
 
 	// returns version file name of package item e.g. xyz-1.2.3-bin.ver
     QString versionFileName(const QString &pkgName, const QString &version, Package::Type type);
