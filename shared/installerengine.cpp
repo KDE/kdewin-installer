@@ -93,7 +93,9 @@ bool InstallerEngine::downloadPackageLists()
     for (s = m_globalConfig->sites()->begin(); s != m_globalConfig->sites()->end(); s++)
     {
 		QString category = (*s)->name();
-        qDebug() << "download package file list for site: " << category;
+#ifdef DEBUG
+		qDebug() << "download package file list for site: " << category;
+#endif
 		PackageList *packageList = getPackageListByName(category);
 		if (!packageList)
 		{
@@ -336,6 +338,11 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
     QStringList labels;
     QList<QTreeWidgetItem *> items;
     // QTreeWidgetItem *item;
+	QString allToolTip("select this checkbox to install/remove/update binaries, headers, import libraries and docs of this package");
+	QString binToolTip("select this checkbox to install/remove/update the binaries of this package");
+	QString libToolTip("select this checkbox to install/remove/update header and import libraries of this package");
+	QString docToolTip("select this checkbox to install/remove/update the documentation of this package");
+	QString srcToolTip("select this checkbox to install/remove/update the source of this package");
 
     labels
     << "Package"
@@ -379,7 +386,9 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
     // adding top level items
     QList<QTreeWidgetItem *> categoryList;
 
-    qDebug() << "adding categories size:" << m_globalConfig->sites()->size();
+#ifdef DEBUG
+	qDebug() << "adding categories size:" << m_globalConfig->sites()->size();
+#endif
 
     QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
     for ( ; k != m_packageListList.constEnd(); ++k)
@@ -408,6 +417,11 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
 			}
             setState(*item,pkg,6,_initial);
             item->setText(7, pkg->notes());
+			item->setToolTip ( 2, allToolTip);
+			item->setToolTip ( 3, binToolTip);
+			item->setToolTip ( 4, libToolTip);
+			item->setToolTip ( 5, docToolTip);
+			item->setToolTip ( 6, srcToolTip);
         }
     }
     tree->insertTopLevelItems(0,categoryList);

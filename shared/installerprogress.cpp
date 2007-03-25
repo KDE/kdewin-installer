@@ -113,12 +113,16 @@ void InstallerProgress::hide()
 
 void InstallerProgress::setTitle(const QString &title)
 {
-    qDebug() << title;
+#ifdef DEBUG
+	qDebug() << title;
+#endif
 }
 
 void InstallerProgress::setStatus(const QString &status)
 {
-    qDebug() << status;
+#ifdef DEBUG
+	qDebug() << status;
+#endif
 }
 
 void InstallerProgress::setMaximum(int value)

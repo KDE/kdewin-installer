@@ -420,8 +420,10 @@ bool Package::installItem(Installer *installer, Package::Type type)
     QString fileName = getFileName(type);
     if (fileName.isEmpty())
     {
-        qDebug() << __FUNCTION__ << " empty fileName for type " << type;
-        return false;
+#ifdef DEBUG
+		qDebug() << __FUNCTION__ << " empty fileName for type " << type;
+#endif
+		return false;
     }
     fileName = makeFileName(type);
     if (!installer->install(fileName, pathRelocations())) 

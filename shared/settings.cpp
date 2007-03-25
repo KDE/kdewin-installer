@@ -29,7 +29,8 @@
 Settings::Settings()
  : m_settings(QSettings::IniFormat, QSettings::UserScope, "KDE", "Installer")
 {
-    qDebug() << "installDir:" << installDir();
+#ifdef DEBUG
+	qDebug() << "installDir:" << installDir();
     qDebug() << "downloadDir:" << downloadDir();
     qDebug() << "showTitlePage:" << showTitlePage();
     qDebug() << "createStartMenuEntries:" << createStartMenuEntries();
@@ -37,6 +38,7 @@ Settings::Settings()
 	qDebug() << "proxyMode" << proxyMode();
 	qDebug() << "proxyHost" << proxyHost();
 	qDebug() << "proxyPort" << proxyPort();
+#endif
 }
 
 QString Settings::installDir()

@@ -84,8 +84,6 @@ bool Downloader::start(const QString &_url, const QString &fileName)
 	s.getProxySettings(_url,host,port);
 	m_http->setProxy(host,port);
 
-	qDebug() << __FUNCTION__ << host << port;
-
     m_file = new QFile(fileName);
     if (!m_file->open(QIODevice::WriteOnly))
     {
