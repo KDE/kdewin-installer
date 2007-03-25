@@ -169,7 +169,9 @@ void Package::PackageItem::dump(const QString &title) const
 }
 
 Package::Package()
-{}
+{
+	m_handled = false;
+}
 
 Package::Package(const Package &other)
 {
@@ -179,6 +181,7 @@ Package::Package(const Package &other)
     m_category   = other.m_category;
     m_deps       = other.m_deps;
     m_pathRelocs = other.m_pathRelocs;
+	m_handled    = other.m_handled;
 }
 
 QString Package::getFileName(Package::Type contentType)
@@ -351,6 +354,7 @@ void Package::dump(const QString &title) const
     qDebug() << "m_version: " << m_version;
     qDebug() << "m_category: " << m_category;
     qDebug() << "m_deps: " << m_deps.join(" ");
+    qDebug() << "m_handled: " << m_handled;
 
     QString d;
     StringHash::ConstIterator its = m_pathRelocs.constBegin();

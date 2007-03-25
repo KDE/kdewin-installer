@@ -137,6 +137,9 @@ public:
 
 	static QString typeToString(Package::Type type);
 
+	bool handled() { return m_handled; }
+	void setHandled(bool state) { m_handled = state; }
+
 private slots:
     void logOutput();
 
@@ -152,6 +155,7 @@ protected:
     QString m_category;   
     QStringList m_deps;       
     StringHash m_pathRelocs;
+    bool       m_handled;      // marker for several operations
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Package::Types);
