@@ -1,10 +1,12 @@
 @format 1.1
 ; this format is *prelimary* and may be changed without prior notice
+; date 20070327
 
 ;------------------------------------------------------
 ; category win32libs
 ;------------------------------------------------------
 @site win32libs
+@notes basic non kde related libraries
 @type apachemodindex
 @url http://82.149.170.66/kde-windows/win32libs/zip/single/
 @deps update-mime-database libintl libxml2 iconv
@@ -14,26 +16,35 @@
 ; category kdesupport
 ;------------------------------------------------------
 @site kdesupport
+@notes kde support packages
 @type apachemodindex
 @url http://82.149.170.66/kde-windows/kdesupport/single/
-@deps kdewin32-mingw qt-mingw
-@deps kdewin32-msvc qt-msvc
+@deps kdewin qt-mingw
+@deps kdewin qt-msvc
 @deps strigi bzip2 openssl zlib iconv libxml2
 
-; a package definition 
 @package qt-mingw
-@category kdesupport
+@category qt
 @version 4.2.2-20070119
 @url-bin http://82.149.170.66/kde-windows/qt/single/qt-mingw-4.2.2-20070119-bin.zip
 @url-lib http://82.149.170.66/kde-windows/qt/single/qt-mingw-4.2.2-20070119-lib.zip
 @url-doc http://82.149.170.66/kde-windows/qt/single/qt-mingw-4.2.2-20070119-doc.zip
 @url-src http://82.149.170.66/kde-windows/qt/single/qt-mingw-4.2.2-20070119-src.zip
+@require dbus
 
-
+@package qt-msvc
+@category qt
+@version 4.3.0b
+@url-bin http://82.149.170.66/kde-windows/qt/single/qt-msvc-4.3.0b-bin.zip
+@url-lib http://82.149.170.66/kde-windows/qt/single/qt-msvc-4.3.0b-lib.zip
+@url-doc http://82.149.170.66/kde-windows/qt/single/qt-msvc-4.3.0b-doc.zip
+@url-src http://ftp.iasi.roedu.net/mirrors/ftp.trolltech.com/qt/source/qt-win-opensource-src-4.3.0beta.zip qt-msvc-4.3.0b-src.zip
+@require dbus
 ;------------------------------------------------------
 ; tools
 ;------------------------------------------------------
 @site tools
+@notes optional tools
 @type apachemodindex
 @url http://82.149.170.66/kde-windows/gnuwin32/
 @deps findutils libintl
@@ -44,8 +55,8 @@
 ;does not work yet
 ;@notes platform independent build tool 
 @version 2.4.6
-@url-bin http://www.cmake.org/files/v2.4/cmake-2.4.6-win32-x86.zip
-@url-src http://www.cmake.org/files/v2.4/cmake-2.4.6.zip
+@url-bin http://www.cmake.org/files/v2.4/cmake-2.4.6-win32-x86.zip cmake-2.4.6-bin.zip
+@url-src http://www.cmake.org/files/v2.4/cmake-2.4.6.zip cmake-2.4.6-src.zip
 ;@options
 
 @package perl 
@@ -62,10 +73,30 @@
 ; relocate directories in zip files 
 @relocate upx203w bin
 
+@package upx-unstable
+@category tools
+@version 2.9.3
+@url-bin http://upx.sourceforge.net/download/unstable/upx293w.zip
+; relocate directories in zip files 
+@relocate upx203w bin
+
+
 @package psdk-msvc
 @category tools
 @version R2
 @url-bin http://download.microsoft.com/download/f/a/d/fad9efde-8627-4e7a-8812-c351ba099151/PSDK-x86.exe
+
+; @TODO: this url could not create a local path
+;@package vcexpress
+;@category tools
+;@version 2005
+;@url-bin http://go.microsoft.com/fwlink/?LinkId=51410&clcid=0x409
+
+@package dbg_x86
+@category tools
+@notes Debugging Tools
+@url-bin http://msdl.microsoft.com/download/symbols/debuggers/dbg_x86_6.6.07.5.exe
+
 
 ;------------------------------------------------------
 ; catgory KDE
@@ -74,20 +105,38 @@
 ;@site kde
 ;@type apachemodindex
 ;@url http://82.149.170.66/kde-windows/kde/single/
-;@deps kdelibs-dependencies-mingw aspell bzip2 expat giflib iconv jpeg libintl libpng libxml2 libxslt openssl pcre tiff zlib dbus kdewin32-mingw qt-mingw strigi update-mime-database
-;@deps kdelibs-dependencies-msvc aspell bzip2 expat giflib iconv jpeg libintl libpng libxml2 libxslt openssl pcre tiff zlib dbus kdewin32-msvc qt-msvc strigi update-mime-database
+;@deps kdelibs-dependencies-mingw aspell bzip2 expat giflib iconv jpeg libintl libpng libxml2 libxslt openssl pcre tiff zlib dbus kdewin qt-mingw strigi update-mime-database
+;@deps kdelibs-dependencies-msvc aspell bzip2 expat giflib iconv jpeg libintl libpng libxml2 libxslt openssl pcre tiff zlib dbus kdewin qt-msvc strigi update-mime-database
 
 @package kdelibs-dependencies-mingw 
 @category kde
 @version 3.80.3
 @url-bin http://82.149.170.66/kde-windows/kde/single/kdelibs-dependencies-mingw-3.80.3-bin.zip
-@require aspell bzip2 expat giflib iconv jpeg libintl libpng libxml2 libxslt openssl pcre tiff zlib dbus kdewin32-mingw qt-mingw strigi update-mime-database
+@require aspell bzip2 expat giflib iconv jpeg libintl libpng libxml2 libxslt openssl pcre tiff zlib dbus kdewin-mingw qt-mingw strigi update-mime-database
+
+@package kdesupport-mingw
+@category kde
+@version 1.0
+@url-bin 
+@require kdewin-mingw qt-mingw strigi
+
+@package win32libs
+@category kde
+@version 1.0
+@url-bin 
+@require aspell bzip2 expat giflib iconv jpeg libintl libpng libxml2 libxslt openssl pcre tiff zlib dbus update-mime-database
 
 @package kdelibs-dependencies-msvc
 @category kde
 @version 3.80.3
 @url-bin http://82.149.170.66/kde-windows/kde/single/kdelibs-dependencies-msvc-3.80.3-bin.zip
-@require aspell bzip2 expat giflib iconv jpeg libintl libpng libxml2 libxslt openssl pcre tiff zlib dbus kdewin32-msvc qt-msvc strigi update-mime-database
+@require aspell bzip2 expat giflib iconv jpeg libintl libpng libxml2 libxslt openssl pcre tiff zlib dbus kdewin-msvc qt-msvc strigi update-mime-database
+
+@package kdesupport-msvc
+@category kde
+@version 1.0
+@url-bin 
+@require kdewin-msvc qt-msvc strigi
 
 ;------------------------------------------------------
 ; catgory misc 

@@ -160,7 +160,7 @@ bool Package::PackageItem::setContentType(const QString &type)
 void Package::PackageItem::dump(const QString &title) const
 {
     DUMP_HEADER(title,"PackageItem");
-    qDebug() << "path:        " << path;           
+    qDebug() << "url:         " << url;           
     qDebug() << "fileName:    " << fileName;       
     qDebug() << "packageType: " << packageType;    
     qDebug() << "contentType: " << contentType;    
@@ -194,23 +194,14 @@ QString Package::getFileName(Package::Type contentType)
 QString Package::getURL(Package::Type contentType)
 {
     if(m_packages.contains(contentType))
-        return m_packages[contentType].path + '/' + m_packages[contentType].fileName;
+        return m_packages[contentType].url;
     return QString();
 }
 
 QString Package::getBaseURL()
 {
-    QString baseUrl;
-    QHash<Type, PackageItem>::ConstIterator it = m_packages.constBegin();
-    for( ; it != m_packages.constEnd(); ++it) {
-        if(baseUrl.isEmpty()) {
-            baseUrl = (*it).path;
-        } else {
-            if((*it).path != baseUrl)
-                return QString();
-        }
-    }
-    return baseUrl;
+	// FIXME: obsolate remove it
+	return QString();
 }
 
 bool Package::add(const PackageItem &item)
@@ -462,56 +453,65 @@ void Package::addDeps(const QStringList &deps)
     m_deps << deps;
 }
 
-bool Package::PackageItem::set(const QString &path, const QString &fn, const QByteArray &contentType, bool bInstalled)
+/** 
+  initiate package item 
+  @param url url for downloading 
+  @param fn local package item filename 
+  @param contentType package item content type as string 
+  @param bInstalled flag if package item is installed
+ */ 
+bool Package::PackageItem::set(const QString &url, const QString &fn, const QByteArray &contentType, bool bInstalled)
 {
 #ifdef DEBUG
     qDebug() << __FUNCTION__ << " " << path << " " << contentType << " " << bInstalled;
 #endif
     QByteArray ct = contentType.toLower();
     if(ct == "bin")
-        return set(path, fn, BIN, bInstalled);
+        return set(url, fn, BIN, bInstalled);
     else
     if(ct == "lib")
-        return set(path, fn, LIB, bInstalled);
+        return set(url, fn, LIB, bInstalled);
     else
     if(ct == "doc")
-        return set(path, fn, DOC, bInstalled);
+        return set(url, fn, DOC, bInstalled);
     else
     if(ct == "src")
-        return set(path, fn, SRC, bInstalled);
+        return set(url, fn, SRC, bInstalled);
     // unknown type 
     return false;
 }
 
-bool Package::PackageItem::set(const QString &path, const QString &fn, Package::Type contentType, bool bInstalled)
+/** 
+  initiate package item 
+  @param url url for downloading 
+  @param fn local package item filename 
+  @param contentType package item content type 
+  @param bInstalled flag if package item is installed
+ */ 
+bool Package::PackageItem::set(const QString &url, const QString &fn, Package::Type contentType, bool bInstalled)
 {
     PackageItem desc;
     int idx;
 #ifdef DEBUG
     qDebug() << __FUNCTION__ << path << fn << contentType << bInstalled;
 #endif
-    // FIXME:  fn=="/" is an unwanted condition 
-    if(fn.isEmpty() || fn == "/" && path.isEmpty()) 
-        return false;
-
-    if(path.isEmpty()) {
-        // every package has different baseUrl
-        idx = fn.lastIndexOf('/');
-        if(idx == -1) {
-            qDebug() << __FUNCTION__ << "Parser error! - no '/' in path";    // FIXME
-            return false;
-        }
-        desc.path = fn.left(idx);
-        desc.fileName = fn.mid(idx + 1);
-    } else {
-        // every package has same baseUrl
-        desc.path = path;
-        desc.fileName = fn;
-    }
+    desc.url = url;
+    // generate fileName from from url 
+    if(fn.isEmpty()) 
+	{
+		idx = url.lastIndexOf('/');
+		if(idx == -1) {
+			qDebug() << __FUNCTION__ << "Invalid - no complete url found " << url;    // FIXME
+			return false;
+		}
+		desc.fileName = url.mid(idx + 1);
+	}
+	else
+		desc.fileName = fn;
 
     idx = desc.fileName.lastIndexOf('.');
     if(idx == -1) {
-        qDebug() << "Invalid - dot in filename expected" << desc.fileName;    // FIXME
+        qDebug() << __FUNCTION__ << "Invalid - dot in filename expected" << desc.fileName;    // FIXME
         return false;
     }
     desc.packageType = desc.fileName.mid(idx + 1);

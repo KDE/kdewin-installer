@@ -61,13 +61,13 @@ public:
 
     class PackageItem {
         public:
-		    bool set(const QString &path, const QString &fn, Package::Type contentType, bool bInstalled = false);
-			bool set(const QString &path, const QString &fn, const QByteArray &contentType, bool bInstalled = false);
+		    bool set(const QString &url, const QString &fn, Package::Type contentType, bool bInstalled = false);
+			bool set(const QString &url, const QString &fn, const QByteArray &contentType, bool bInstalled = false);
 			bool setContentType(const QString &type);
             // dump content
     	    void dump(const QString &title=QString()) const;
-            QString path;           // path without filename
-            QString fileName;       // filename only
+            QString url;            // complete download url 
+            QString fileName;  // filename only
             QString packageType;    // zip / msi / ...
             Type    contentType;    // BIN / LIB / DOC / SRC
             bool    bInstalled;     // true if already installed

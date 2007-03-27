@@ -321,14 +321,14 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                         p.setVersion(pkgVersion);
                         p.setName(pkgName);
 						Package::PackageItem item;
-                        item.set(m_baseURL, fileName, pkgType.toAscii());
+                        item.set(m_baseURL + '/' + fileName, "", pkgType.toAscii());
 						p.add(item);
                         addPackage(p);
                         if (m_curSite)
 							p.addDeps(m_curSite->getDependencies(pkgName));
                     } else {
 						Package::PackageItem item;
-						item.set(m_baseURL, fileName, pkgType.toAscii());
+						item.set(m_baseURL + '/' + fileName, "", pkgType.toAscii());
 						pkg->add(item);
 						if (m_curSite)
 							pkg->addDeps(m_curSite->getDependencies(pkgName));
