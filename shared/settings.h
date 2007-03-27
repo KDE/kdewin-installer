@@ -78,6 +78,8 @@ public:
 
     static Settings &getInstance();
 
+	bool installDetails() { return m_settings.value("installDetails", true).toBool(); }
+	void setInstallDetails(bool state) { m_settings.setValue("installDetails", state); sync(); }
 	
     // QSettings compatible interface
     void beginGroup(const QString &prefix) { m_settings.beginGroup(prefix); }

@@ -210,6 +210,11 @@ bool Installer::unzipFile(const QString &destpath, const QString &zipFile, const
         }
     }
     z.close();
+    if (m_progress)
+    {
+		m_progress->hide();
+	}
+
     if(z.getZipError() != UNZ_OK)
     {
         setError(tr("Error reading zip file %1").arg(zipFile));
