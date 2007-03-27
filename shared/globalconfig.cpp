@@ -124,6 +124,10 @@ bool GlobalConfig::parse(QIODevice *ioDev)
             // TODO: encoding of config file! Currently: ascii
             QString l = line;
             QStringList cmd = l.split(' ');
+			QString col2;
+			if (cmd.size() == 3)
+				col2 = cmd[2];
+
             if (cmd[0] == "@format")
                 ;
             else if(inPackage)
@@ -133,26 +137,26 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 else if(cmd[0] == "@url-bin")
 				{	
 					Package::PackageItem item;
-					item.set(QString(), cmd[1],Package::BIN);
-					pkg->add(item);
+					if (item.set(cmd[1],col2,Package::BIN))
+						pkg->add(item);
 				}
                 else if(cmd[0] == "@url-lib")
 				{	
 					Package::PackageItem item;
-					item.set(QString(), cmd[1],Package::LIB);
-					pkg->add(item);
+					if (item.set(cmd[1],col2,Package::LIB))
+						pkg->add(item);
 				}
                 else if(cmd[0] == "@url-doc")
 				{	
 					Package::PackageItem item;
-					item.set(QString(), cmd[1],Package::DOC);
-					pkg->add(item);
+					if (item.set(cmd[1],col2,Package::DOC))
+						pkg->add(item);
 				}
                 else if(cmd[0] == "@url-src")
 				{	
 					Package::PackageItem item;
-					item.set(QString(), cmd[1],Package::SRC);
-					pkg->add(item);
+					if (item.set(cmd[1],col2,Package::SRC))
+						pkg->add(item);
 				}
                 else if(cmd[0] == "@require")
                 {
@@ -166,7 +170,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 else if(cmd[0] == "@category")
                     pkg->setCategory(cmd[1]);
                 else if(cmd[0] == "@relocate")
-                    pkg->addPathRelocation(cmd[1],cmd[2]);
+                    pkg->addPathRelocation(cmd[1],col2);
             }
             else if (inSite)
             {
