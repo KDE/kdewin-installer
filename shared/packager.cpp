@@ -307,9 +307,6 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
     // create manifest files 
     // create zip file
     m_rootDir = root;
-	if (m_srcRoot.isEmpty())
-	    m_srcRoot = root;
-
     QStringList fileList; 
     QList<MemFile> manifestFiles;
 	QString _destdir = destdir;
@@ -341,9 +338,10 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
     if (m_verbose)
         qDebug() << "creating src package" << getBaseName(Packager::SRC); 
     generatePackageFileList(fileList, Packager::SRC);
-    createManifestFiles(m_srcRoot, fileList, Packager::SRC, manifestFiles);
+    QString s = m_srcRoot.isEmpty() ? m_rootDir : m_srcRoot;
+    createManifestFiles(s, fileList, Packager::SRC, manifestFiles);
     if (fileList.size() > 0)
-        createZipFile(_destdir + getBaseName(Packager::SRC), m_srcRoot, fileList, manifestFiles, "src/" + m_name + "-" + m_version + "/");
+        createZipFile(_destdir + getBaseName(Packager::SRC), s, fileList, manifestFiles, "src/" + m_name + "-" + m_version + "/");
 
     if(bComplete) {
         if (m_verbose)
