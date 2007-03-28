@@ -1,5 +1,15 @@
+#
+# find KDEWIN installer. 
 # 
-# Copyright (c) 2007, Ralf Habacker
+# This scripts supports the following options 
+# 
+#  -  install KDEWIN installer in <default application dir>/kdewin-installer
+#  -  set the environment variable KDEWIN_INSTALLER_DIR=<path>
+#  -  add -DKDEWIN_INSTALLER_DIR=<path> to the cmake command line 
+#
+# Copyright (c) 2006, Ralf Habacker
+#
+# Redistribution and use is allowed according to the terms of the BSD license.
 #
 
 if (WIN32)
@@ -24,7 +34,6 @@ if (WIN32)
                 ${KDEWIN_INSTALLER_DIR}/bin
         )
         
-        MESSAGE(${KDEWIN_PACKAGER})
        set(KDEWIN_INSTALLER_FOUND TRUE)
     else (KDEWIN_INSTALLER_DIR)
        set(KDEWIN_INSTALLER_FOUND)
@@ -32,11 +41,11 @@ if (WIN32)
     
     if (KDEWIN_INSTALLER_FOUND)
       if (NOT KDEWIN_INSTALLER_FIND_QUIETLY)
-        message(STATUS "Found KDEWIN_INSTALLER: ${KDEWIN_INSTALLER_DIR}")
+        message(STATUS "Found KDEWIN Installer: ${KDEWIN_INSTALLER_DIR}")
       endif (NOT KDEWIN_INSTALLER_FIND_QUIETLY)
     else (KDEWIN_INSTALLER_FOUND)
       if (KDEWIN_INSTALLER_FIND_REQUIRED)
-        message(FATAL_ERROR "Could NOT find KDEWIN_INSTALLER")
+        message(FATAL_ERROR "Could NOT find KDEWIN Installer")
       endif (KDEWIN_INSTALLER_FIND_REQUIRED)
     endif (KDEWIN_INSTALLER_FOUND)
 
