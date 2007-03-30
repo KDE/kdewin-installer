@@ -13,6 +13,13 @@ NOTES
 
 - sources are located on http://websvn.kde.org/trunk/kdesupport/kdewin32/installer/
 
+
+Known Bugs
+==========
+-  On large package install like qt doc package, the QListView Widget performs 
+   huge memory realloctions, which slow done install detail display very much. 
+   This seems to be a qt 4.x internal problem. 
+   
 TODO
 ====
 1 main 
@@ -34,20 +41,18 @@ TODO
 	5 reduce column width of package types in package selector page
 	7 fix perl package list import or reduce to one package
 	8 add reinstall package support 
-	9 deal with package name clashes from different locations (dependency checking)
 	10 add a switch to select end user/developer operation (end user by default)
 	   in end user mode only the bin packages are visible 
 	12 if remote config is not available only display installed packages
 	13 add update support
-	14 transform package database filenames to installer rule, if no manifest files are available
-	   for example cmake or upx 
-	
-	
+	14 transform package database filenames to installer friendly one if no manifest files 
+	   are available, see for example cmake or upx 
+
 
 cmake support
--------------
+=============
 
-kdewin-installer allows to add binary packaging suppport to projects using cmake. 
+kdewin-installer allows to add binary packaging suppport to cmake based projects. 
 
 1. copy cmake/modules/FindKDEWIN_Installer.cmake into cmake/modules of the related proejct
 
@@ -72,8 +77,9 @@ endif (KDEWIN_INSTALLER_FOUND)
 
 
 
-static compile 
---------------
+static compile hints
+====================
+
 - msvc: To have a size optimised static msvc version all occurrence 
   of /MD should be replaced by /MT in the related qt's qmake.conf. 
 
@@ -83,13 +89,16 @@ static compile
 
   and compile qt. 
 
-  Then you can configure and compile kdewin-installer using default settings
+  After qt is compiled, then you should configure and compile kdewin-installer 
+  using default settings
   
 	cmake -G "NMake Makefiles" ..\kdewin-installer    -> Release Build 
+	<make-tool> 
 
   or 
 
 	cmake -G "NMake Makefiles" ..\kdewin-installer  -DCMAKE_BUILD_TYPE=MinSizeRel  -> size optimized
+	<make-tool> 
 
 
 
@@ -102,13 +111,14 @@ Happy hacking
 History
 =======
 
-recent
+version 0.6.7
 -------------
 - extended packager to write source packages
 - renamed packager to kdewin-packager
 - uses qt's style option form (one '-') in packager
 - fixed build sytem to install applications
 - added cmake script to be able to use packages in cmake projects
+- added display install details option, which is not set by default. 
 
 version 0.6.6
 -------------
