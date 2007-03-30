@@ -218,10 +218,8 @@ bool Packager::generatePackageFileList(QStringList &fileList, Packager::Type typ
                 return true;
             case SRC:
 				exclude = m_srcExcludes + " .svn CVS";
-				if (m_srcRoot.isEmpty())
-					generateFileList(fileList, dir, "src", "*.*",exclude);
-				else
-					generateFileList(fileList, m_srcRoot, "", "*.*",exclude);
+                // * and not *.* because *.* does not find "foo" (filename without extension) - Qt-bug?
+                generateFileList(fileList, m_srcRoot.isEmpty() ? dir : m_srcRoot, "src", "*",exclude);
                 return true;
             case NONE:
                 generateFileList(fileList, dir, "", "*.*", "manifest");
