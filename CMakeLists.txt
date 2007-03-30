@@ -1,16 +1,43 @@
 project(kdewin-installer)
-set (VERSION 0.6.6)
+set (VERSION 0.6.7)
 
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 find_package(Qt4 REQUIRED)
 
+
+
 OPTION(SEVENZIP_UNPACK_SUPPORT "Enable 7-zip unpacking support" OFF)
-if (CMAKE_BUILD_TYPE EQUAL Release) 
-  # disable qDebug output
+
+# -------------------------------------------------------
+# build type settings 
+# -------------------------------------------------------
+# Set a default build type for single-configuration
+# CMake generators if no build type is set.
+if (NOT CMAKE_BUILD_TYPE)
+   set(CMAKE_BUILD_TYPE Release)
+endif (NOT CMAKE_BUILD_TYPE)
+
+MESSAGE(STATUS "Build Type:" ${CMAKE_BUILD_TYPE})
+
+if (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel) 
+	# disable qDebug output
 	add_definitions(-DQT_NO_DEBUG_OUTPUT)
-endif (CMAKE_BUILD_TYPE EQUAL Release)
+endif (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel) 
+
+if (MSVC)
+	if (CMAKE_BUILD_TYPE STREQUAL Release)
+		set (CMAKE_C_FLAGS_RELEASE "/MT /O2 /Ob2 /D NDEBUG")
+		set (CMAKE_CXX_FLAGS_RELEASE "/MT /O2 /Ob2 /D NDEBUG")
+		set (CMAKE_EXE_LINKER_FLAGS_RELEASE "/INCREMENTAL:NO /NODEFAULTLIB:msvcrt")
+	endif (CMAKE_BUILD_TYPE STREQUAL Release)
+	if (CMAKE_BUILD_TYPE STREQUAL MinSizeRel)
+		set (CMAKE_C_FLAGS_MINSIZEREL "/MT /O1 /Ob1 /D NDEBUG")
+		set (CMAKE_CXX_FLAGS_MINSIZEREL "/MT /O1 /Ob1 /D NDEBUG")
+		set (CMAKE_EXE_LINKER_FLAGS_MINSIZEREL "/INCREMENTAL:NO /NODEFAULTLIB:msvcrt")
+	endif (CMAKE_BUILD_TYPE STREQUAL MinSizeRel)
+endif (MSVC)
 
 # we just need zlib include dir, linking to zlib is not needed
 include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${QT_INCLUDES} ${CMAKE_SOURCE_DIR}/3rdparty/zlib)

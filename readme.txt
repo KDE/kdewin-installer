@@ -72,6 +72,27 @@ endif (KDEWIN_INSTALLER_FOUND)
 
 
 
+static compile 
+--------------
+- msvc: To have a size optimised static msvc version all occurrence 
+  of /MD should be replaced by /MT in the related qt's qmake.conf. 
+
+  Then you should configure qt using the command line options 
+	
+	-platform ... -release -static -no-qt3support -no-rtti -no-exceptions -no-stl 
+
+  and compile qt. 
+
+  Then you can configure and compile kdewin-installer using default settings
+  
+	cmake -G "NMake Makefiles" ..\kdewin-installer    -> Release Build 
+
+  or 
+
+	cmake -G "NMake Makefiles" ..\kdewin-installer  -DCMAKE_BUILD_TYPE=MinSizeRel  -> size optimized
+
+
+
 
 
 Happy hacking
