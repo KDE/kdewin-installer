@@ -153,7 +153,8 @@ bool Packager::generatePackageFileList(QStringList &fileList, Packager::Type typ
     if (m_name.startsWith("qt") || m_name.startsWith("q++") || m_name.startsWith("q.."))
         switch (type) {
             case BIN:
-                generateFileList(fileList, dir, "bin", "*.dll qdbus.exe qdbusviewer.exe", "*d.dll *d4.dll");
+                generateFileList(fileList, dir, "bin", "*.dll *.manifest qdbus.exe qdbusviewer.exe", "*d.dll *d4.dll");
+                generateFileList(fileList, dir, "lib", " *d.manifest");
                 generateFileList(fileList, dir, "plugins", "*.dll","*d.dll *d4.dll *d1.dll");
                 generateFileList(fileList, dir, "translations",  "*.qm");
                 return true;
