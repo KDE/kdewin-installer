@@ -258,6 +258,10 @@ bool Packager::createManifestFiles(const QString &rootDir, QStringList &fileList
         default:
             break;
     } 
+	// qt needs a specific config file 
+	if ((m_name.startsWith("qt") || m_name.startsWith("q++") || m_name.startsWith("q.."))
+			&& type == BIN)
+		createQtConfig(fileList,manifestFiles);
 
     QBuffer b(&mf.data);
     b.open(QIODevice::WriteOnly);
@@ -424,4 +428,30 @@ bool Packager::createDebugFiles(const QString &dir)
         QProcess::execute("objcopy --add-gnu-debuglink=" + fi.absoluteFilePath() + ".dbg " + fi.absoluteFilePath());
     }
     return true;
+}
+
+bool Packager::createQtConfig(QStringList &fileList, QList<MemFile> &manifestFiles)
+{
+    MemFile mf;
+    QBuffer b(&mf.data);
+    b.open(QIODevice::WriteOnly);
+    QTextStream out(&b);
+	out << "[Paths]\n";
+	out << "Prefix=\n";
+	out << "Documentation=../doc\n";
+	out << "Headers=../include\n";
+	out << "Libraries=../lib\n";
+	out << "Binaries=\n";
+	out << "Plugins=../plugins\n";
+	out << "Data=../data\n";
+	out << "Translations=../translations\n";
+	out << "Settings=../etc\n";
+	out << "Examples=../examples\n";
+	out << "Demos=../demos\n";
+
+    b.close();
+    mf.filename = "bin/qt.conf";
+    manifestFiles += mf;
+	fileList.append(mf.filename);
+	return true;
 }

@@ -51,6 +51,7 @@ class Packager {
         };
       bool createZipFile(const QString &zipFile, const QString &filesRootDir, const QStringList &files, const QList<MemFile> &memFiles=QList<MemFile>(), const QString &destRootDir=QString() );
       bool createManifestFiles(const QString &rootdir, QStringList &fileList, Packager::Type type, QList<MemFile> &manifestFiles);
+      bool createQtConfig(QStringList &fileList, QList<MemFile> &manifestFiles);
 
       QString getBaseName(Packager::Type type);
       
