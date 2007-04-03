@@ -5,7 +5,7 @@ set (VERSION 0.6.7)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 find_package(Qt4 REQUIRED)
-
+find_package(UPX)
 
 
 OPTION(SEVENZIP_UNPACK_SUPPORT "Enable 7-zip unpacking support" OFF)
@@ -21,7 +21,10 @@ endif (NOT CMAKE_BUILD_TYPE)
 
 MESSAGE(STATUS "Build Type:" ${CMAKE_BUILD_TYPE})
 
+set (CMAKE_PRODUCTION_BUILD 0)
+
 if (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel) 
+    set (CMAKE_PRODUCTION_BUILD 1)
 	# disable qDebug output
 	add_definitions(-DQT_NO_DEBUG_OUTPUT)
 endif (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel) 
@@ -178,3 +181,4 @@ if (MSVC)
 endif (MSVC)
 
 install( FILES cmake/modules/FINDKDEWIN_INSTALLER.cmake  DESTINATION  share/apps/cmake/modules )
+

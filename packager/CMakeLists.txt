@@ -32,7 +32,10 @@ target_link_libraries(kdewin-packager ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBR
 
 install_targets(/bin kdewin-packager )
 
-if (UPX_EXECUTABLE)
-    add_custom_target(packit ${UPX_EXECUTABLE} --lzma -9 "${CMAKE_BINARY_DIR}/packager/kdewin-packager.exe" )
-    # TODO: how to call this target by default before installing 
-endif (UPX_EXECUTABLE)
+if (UPX_EXECUTABLE AND CMAKE_PRODUCTION_BUILD)
+    add_custom_command(
+        TARGET kdewin-packager 
+        POST_BUILD 
+        COMMAND ${UPX_EXECUTABLE} --lzma -9 "${CMAKE_BINARY_DIR}/packager/kdewin-packager.exe" 
+    )
+endif (UPX_EXECUTABLE AND CMAKE_PRODUCTION_BUILD)

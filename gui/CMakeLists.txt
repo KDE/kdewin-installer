@@ -83,3 +83,11 @@ add_executable(kdewin-installer-gui ${all_sources})
 target_link_libraries(kdewin-installer-gui ${QT_QTMAIN_LIBRARIES} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${GUI_LIBS})
 
 install_targets(/bin kdewin-installer-gui )
+
+if (UPX_EXECUTABLE AND CMAKE_PRODUCTION_BUILD)
+    add_custom_command(
+        TARGET kdewin-installer-gui 
+        POST_BUILD 
+        COMMAND ${UPX_EXECUTABLE} --lzma -9 "${CMAKE_BINARY_DIR}/gui/kdewin-installer-gui.exe"
+    )
+endif (UPX_EXECUTABLE AND CMAKE_PRODUCTION_BUILD)
