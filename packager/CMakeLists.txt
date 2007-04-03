@@ -30,7 +30,9 @@ qt4_automoc(${packager_SOURCES})
 add_executable(kdewin-packager ${packager_SOURCES} ${packager_HEADERS})
 target_link_libraries(kdewin-packager ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
 
-install_targets(/bin kdewin-packager )
+if (CMAKE_PRODUCTION_BUILD)
+    install_targets(/bin kdewin-packager )
+endif (CMAKE_PRODUCTION_BUILD)
 
 if (UPX_EXECUTABLE AND CMAKE_PRODUCTION_BUILD)
     add_custom_command(

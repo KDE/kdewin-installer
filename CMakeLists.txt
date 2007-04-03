@@ -7,7 +7,6 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 find_package(Qt4 REQUIRED)
 find_package(UPX)
 
-
 OPTION(SEVENZIP_UNPACK_SUPPORT "Enable 7-zip unpacking support" OFF)
 
 # -------------------------------------------------------
@@ -30,6 +29,7 @@ if (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel)
 endif (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel) 
 
 if (MSVC)
+    MESSAGE(STATUS "Note: Please make sure that Qt is build with /MT flags")
 	if (CMAKE_BUILD_TYPE STREQUAL Release)
 		set (CMAKE_C_FLAGS_RELEASE "/MT /O2 /Ob2 /D NDEBUG")
 		set (CMAKE_CXX_FLAGS_RELEASE "/MT /O2 /Ob2 /D NDEBUG")
@@ -40,6 +40,11 @@ if (MSVC)
 		set (CMAKE_CXX_FLAGS_MINSIZEREL "/MT /O1 /Ob1 /D NDEBUG")
 		set (CMAKE_EXE_LINKER_FLAGS_MINSIZEREL "/INCREMENTAL:NO /NODEFAULTLIB:msvcrt")
 	endif (CMAKE_BUILD_TYPE STREQUAL MinSizeRel)
+	if (CMAKE_BUILD_TYPE STREQUAL Debug)
+		set (CMAKE_C_FLAGS_DEBUG "/D_DEBUG /MTd /Zi  /Ob0 /Od /RTC1")
+		set (CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /MTd /Zi /Ob0 /Od /RTC1")
+		set (CMAKE_EXE_LINKER_FLAGS_DEBUG "/debug /INCREMENTAL:YES /NODEFAULTLIB:msvcrtd /NODEFAULTLIB:cmt")
+	endif (CMAKE_BUILD_TYPE STREQUAL Debug)
 endif (MSVC)
 
 # we just need zlib include dir, linking to zlib is not needed
@@ -180,5 +185,6 @@ if (MSVC)
     configure_file(${CMAKE_SOURCE_DIR}/kdewin-installer-sln.bat.cmake ${CMAKE_BINARY_DIR}/kdewin-installer-sln.bat)
 endif (MSVC)
 
-install( FILES cmake/modules/FINDKDEWIN_INSTALLER.cmake  DESTINATION  share/apps/cmake/modules )
-
+if (CMAKE_PRODUCTION_BUILD)
+    install( FILES cmake/modules/FINDKDEWIN_INSTALLER.cmake  DESTINATION  share/apps/cmake/modules )
+endif (CMAKE_PRODUCTION_BUILD)
