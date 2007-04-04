@@ -62,7 +62,7 @@ public:
     bool installPackages(const QStringList &packages, const QString &category=QString());
 #endif
     PackageList *getPackageListByName(const QString &name);
-    Package *getPackageByName(const QString &name);
+    Package *getPackageByName(const QString &name,const QString &version=QString());
     
     void setRoot(QString root);
     const QString root();
@@ -91,6 +91,7 @@ private:
 	DownloaderProgress  *m_progressBar;
 	Database            *m_database;
 	Type                 m_installMode;
+    PackageList         *m_availablePackages; 
 };
 
 #endif

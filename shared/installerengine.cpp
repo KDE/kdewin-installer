@@ -41,6 +41,13 @@ InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgre
 	m_instProgressBar = instProgressBar; 
 	m_database = &Database::getInstance();
 	m_installMode = Single;
+#ifdef PRINT_AVAILABLE_PACKAGES	
+	m_availablePackages = new PackageList();
+	m_availablePackages->setName("all packages");
+	Installer *installer = new Installer(m_availablePackages,m_instProgressBar );
+	installer->setRoot(root());
+	m_installerList.append(installer);
+#endif
 }
 
 void InstallerEngine::readGlobalConfig()
@@ -81,6 +88,9 @@ void InstallerEngine::createMainPackagelist()
 			m_installer = installer;
 		}
 		packageList->addPackage(*pkg);
+#ifdef PRINT_AVAILABLE_PACKAGES			
+		m_availablePackages->addPackage(*pkg);
+#endif
     }
 	foreach(PackageList *pkgList, m_packageListList)
 		pkgList->syncWithDatabase(*m_database);
@@ -140,8 +150,10 @@ bool InstallerEngine::downloadPackageLists()
             qDebug() << "error reading package list from download html file";
             continue;
         }
+#ifdef PRINT_AVAILABLE_PACKAGES			
+		m_availablePackages->append(*packageList);
+#endif
 		packageList->syncWithDatabase(*m_database);
-
 	}
 	PackageList *packageList = getPackageListByName("installed");
 	if (!packageList)
@@ -156,6 +168,12 @@ bool InstallerEngine::downloadPackageLists()
 	}
 	m_database->addUnhandledPackages(packageList);
 
+#ifdef PRINT_AVAILABLE_PACKAGES			
+	m_database->resetHandledState();
+	m_availablePackages->syncWithDatabase(*m_database);
+	m_database->addUnhandledPackages(m_availablePackages);
+	m_packageListList.append(m_availablePackages);
+#endif
 	return true;
 }
 
@@ -263,8 +281,12 @@ static void setState(QTreeWidgetItem &item, const Package *pkg, int column, acti
             switch(state)
             {
                 case _Nothing:  
-                    if (pkg->isInstalled(type))
-                    {
+                    if (pkg->isInstalled(type) || 
+                        (type == Package::ALL 
+                         && (!pkg->hasType(Package::BIN) || pkg->hasType(Package::BIN) && pkg->isInstalled(Package::BIN)) 
+                         && (!pkg->hasType(Package::LIB) || pkg->hasType(Package::LIB) && pkg->isInstalled(Package::LIB)) 
+                         && (!pkg->hasType(Package::DOC) || pkg->hasType(Package::DOC) && pkg->isInstalled(Package::DOC))))
+                    { 
                         setIcon(item,type,_remove);
                         item.setData(column,Qt::UserRole,_Remove);
                     }
@@ -289,8 +311,16 @@ static void setState(QTreeWidgetItem &item, const Package *pkg, int column, acti
                     break;
 
                 case _Install:  
-                    item.setData(column,Qt::UserRole,_Nothing);
-                    setIcon(item,type,_nothing);  
+                    if (pkg->isInstalled(type))
+                    {
+                        setIcon(item,type,_install);
+                        item.setData(column,Qt::UserRole,_Install);
+                    }
+                    else
+                    {
+                        setIcon(item,type,_nothing);  
+                        item.setData(column,Qt::UserRole,_Nothing);
+                    }
                     break;
             }
             break;
@@ -328,6 +358,16 @@ static void setState(QTreeWidgetItem &item, const Package *pkg, int column, acti
                     }
                     break;
                 case _Remove:
+                    if (pkg->isInstalled(type))
+                    {
+                        setIcon(item,type,_remove);
+                        item.setData(column,Qt::UserRole,_Remove);
+                    }
+                    else 
+                    {
+                        setIcon(item,type,_nothing);
+                        item.setData(column,Qt::UserRole,_Nothing);
+                    }
                     break;
             }                       
 	}        
@@ -453,9 +493,9 @@ void InstallerEngine::itemClickedPackageSelectorPage(QTreeWidgetItem *item, int 
     if (column < 2)
         return;
 
-    Package *pkg = getPackageByName(item->text(0));
-	if (!pkg)
-		return;
+    Package *pkg = getPackageByName(item->text(0),item->text(1));
+    if (!pkg)
+        return;
     if (m_installMode == Single && column == 2)
     {
        setState(*item,pkg,2,_next);
@@ -548,7 +588,7 @@ bool InstallerEngine::downloadPackages(QTreeWidget *tree, const QString &categor
                 QTreeWidgetItem *child = static_cast<QTreeWidgetItem*>(item->child(j));
 //              qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
 				bool all = child->checkState(2) == Qt::Checked;
-				Package *pkg = packageList->getPackage(child->text(0));
+				Package *pkg = packageList->getPackage(child->text(0),child->text(1).toAscii());
 				if (!pkg)
 					continue;
 				if (all | isMarkedForInstall(*child,Package::BIN))
@@ -582,7 +622,7 @@ bool InstallerEngine::removePackages(QTreeWidget *tree, const QString &category)
             {
                 QTreeWidgetItem *child = static_cast<QTreeWidgetItem*>(item->child(j));
 				bool all = false; //child->checkState(2) == Qt::Checked;
-				Package *pkg = packageList->getPackage(child->text(0));
+				Package *pkg = packageList->getPackage(child->text(0),child->text(1).toAscii());
 				if (!pkg)
 					continue;
 				if (all | isMarkedForRemoval(*child,Package::BIN))
@@ -622,7 +662,7 @@ bool InstallerEngine::installPackages(QTreeWidget *tree,const QString &_category
 //                qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
 				bool all = child->checkState(2) == Qt::Checked;
 				QString pkgName = child->text(0);
-				Package *pkg = packageList->getPackage(pkgName);
+				Package *pkg = packageList->getPackage(pkgName,child->text(1).toAscii());
 				if (!pkg)
 					continue;
 				if (all | isMarkedForInstall(*child,Package::BIN))
@@ -715,13 +755,13 @@ PackageList *InstallerEngine::getPackageListByName(const QString &name)
     return 0;
 }
 
-Package *InstallerEngine::getPackageByName(const QString &name)
+Package *InstallerEngine::getPackageByName(const QString &name,const QString &version)
 {
 	  Package *pkg;
     QList <PackageList *>::iterator k;
     for (k = m_packageListList.begin(); k != m_packageListList.end(); ++k)
     {
-       pkg = (*k)->getPackage(name);
+       pkg = (*k)->getPackage(name,version.toAscii());
        if (pkg)
            return pkg;
     }
