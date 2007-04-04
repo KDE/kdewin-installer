@@ -37,6 +37,7 @@ class PathSettingsPage;
 class ProxySettingsPage;
 class PackageSelectorPage;
 class InstallPage;
+class UninstallPage;
 class DownloadPage;
 class FinishPage;
 class SettingsPage;
@@ -53,10 +54,11 @@ private slots:
 private:
     TitlePage *titlePage;
     PathSettingsPage *pathSettingsPage;
-	ProxySettingsPage *proxySettingsPage;
+    ProxySettingsPage *proxySettingsPage;
     PackageSelectorPage *packageSelectorPage;
     DownloadPage *downloadPage;
     InstallPage *installPage;
+    UninstallPage *uninstallPage;
     FinishPage *finishPage;
     SettingsPage *settingsPage;
 
@@ -67,6 +69,7 @@ private:
     friend class PackageSelectorPage;
     friend class DownloadPage;
     friend class InstallPage;
+    friend class UninstallPage;
     friend class FinishPage;
 };
 
@@ -175,6 +178,20 @@ public:
 
 private:
     QLabel *topLabel;
+};
+
+class UninstallPage : public InstallWizardPage
+{
+public:
+    UninstallPage(InstallWizard *wizard);
+
+    void resetPage();
+    WizardPage *nextPage();
+    bool isComplete();
+
+private:
+    QLabel *topLabel;
+    InstallerProgress *fileList;
 };
 
 class InstallPage : public InstallWizardPage

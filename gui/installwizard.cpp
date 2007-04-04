@@ -348,12 +348,8 @@ void DownloadPage::resetPage()
 
 WizardPage *DownloadPage::nextPage()
 {
-    wizard->installPage = new InstallPage(wizard);
-    return wizard->installPage;
-/*
-    wizard->finishPage = new FinishPage(wizard);
-    return wizard->finishPage;
-*/
+    wizard->uninstallPage = new UninstallPage(wizard);
+    return wizard->uninstallPage;
 }
 
 bool DownloadPage::isComplete()
@@ -369,6 +365,36 @@ bool DownloadPage::isComplete()
 void DownloadPage::reject()
 {
     engine->stop();
+}
+
+UninstallPage::UninstallPage(InstallWizard *wizard)
+        : InstallWizardPage(wizard)
+{
+    topLabel = new QLabel(tr("<center><b>Removing packages</b></center>"));
+
+    fileList = wizard->instProgressBar;
+   
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(topLabel);
+    layout->addWidget(fileList);
+    setLayout(layout);
+}
+
+void UninstallPage::resetPage()
+{}
+
+WizardPage *UninstallPage::nextPage()
+{
+    wizard->installPage = new InstallPage(wizard);
+    return wizard->installPage;
+}
+
+bool UninstallPage::isComplete()
+{
+    QApplication::instance()->processEvents();
+    // FIXME: add remove progressbar 
+    engine->removePackages(tree);
+    return true;
 }
 
 InstallPage::InstallPage(InstallWizard *wizard)
@@ -396,8 +422,6 @@ WizardPage *InstallPage::nextPage()
 bool InstallPage::isComplete()
 {
     QApplication::instance()->processEvents();
-    // FIXME: add remove progressbar 
-    engine->removePackages(tree);
     engine->installPackages(tree);
     return true;
 }
