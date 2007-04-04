@@ -45,6 +45,7 @@ public:
     void listPackages(const QString &title=QString());
     Package *getPackage(const QString &pkgName, const QByteArray &version=QByteArray());
 	bool addUnhandledPackages(PackageList *packageList);
+	void resetHandledState(); 
 
 	// returns version file name of package item e.g. xyz-1.2.3-bin.ver
     QString versionFileName(const QString &pkgName, const QString &version, Package::Type type);

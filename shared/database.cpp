@@ -83,6 +83,15 @@ bool Database::addUnhandledPackages(PackageList *packageList)
     return true;
 }
 
+void Database::resetHandledState()
+{
+    QList<Package*>::iterator it = m_database.begin();
+    for ( ; it != m_database.end(); ++it) 
+	{
+        (*it)->setHandled(false);
+    }
+}
+
 void Database::listPackages(const QString &title)
 {
 #ifdef DEBUG
