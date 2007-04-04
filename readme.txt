@@ -13,12 +13,25 @@ NOTES
 
 - sources are located on http://websvn.kde.org/trunk/kdesupport/kdewin32/installer/
 
+- the released version is build using a static qt release with specific configure 
+  parameters to reduce the application size: 
+
+  1. replace all occurrence of /MD with /MT in mkspecs/win32-msvc2005/qmake.conf 
+  2. qconfigure msvc2005 -static -debug-and-release -no-stl -no-exceptions -no-qt3support -no-rtti
+  3. nmake sub-src
+
+  4. check out kdewin-installer source 
+
+=======
 
 Known Bugs
 ==========
 -  On large package install like qt doc package, the QListView Widget performs 
    huge memory realloctions, which slow done install detail display very much. 
    This seems to be a qt 4.x internal problem. 
+-  manifest files for source packages does not contain the full path, there must 
+   be prefixed src/<package>-<version>
+   
    
 TODO
 ====
@@ -35,8 +48,6 @@ TODO
 
 3 gui 
     1 add check for partial downloads
-	2 goto finish page directly when installing is ready 
-    3 display message when downloading and installing is ready 
 	4 center checkboxes in package selector page -> not possible yet, see comment in source
 	5 reduce column width of package types in package selector page
 	7 fix perl package list import or reduce to one package
@@ -47,6 +58,8 @@ TODO
 	13 add update support
 	14 transform package database filenames to installer friendly one if no manifest files 
 	   are available, see for example cmake or upx 
+	15 changing install root does not affect current installation, restart of installer is required 
+	16 add msvc/ming mode, with different installation roots and package filtering 
 
 
 cmake support
@@ -118,6 +131,8 @@ version 0.6.7
 - uses qt's style option form (one '-') in packager
 - fixed build sytem to install applications
 - added cmake script to be able to use packages in cmake projects
+- added local file name parameter to @url-<bin|lib|doc|src> config file attribute, which is used as local 
+  package file name regardless of what url has. 
 - added display install details option, which is not set by default. 
 
 version 0.6.6

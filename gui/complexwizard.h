@@ -56,7 +56,7 @@ protected:
     InstallerProgress *instProgressBar;
     QPushButton *nextButton;
 
-private slots:
+protected slots:
     void backButtonClicked();
     void nextButtonClicked();
     void completeStateChanged();

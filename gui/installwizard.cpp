@@ -358,7 +358,7 @@ bool DownloadPage::isComplete()
     engine->downloadPackages(tree);
     QApplication::instance()->processEvents();
     wizard->nextButton->setEnabled(true);
-    // here the download page should be called directly
+    emit wizard->nextButtonClicked();
     return true;
 }
 
@@ -394,6 +394,7 @@ bool UninstallPage::isComplete()
     QApplication::instance()->processEvents();
     // FIXME: add remove progressbar 
     engine->removePackages(tree);
+    emit wizard->nextButtonClicked();
     return true;
 }
 
@@ -423,6 +424,7 @@ bool InstallPage::isComplete()
 {
     QApplication::instance()->processEvents();
     engine->installPackages(tree);
+    emit wizard->nextButtonClicked();
     return true;
 }
 
@@ -431,8 +433,7 @@ FinishPage::FinishPage(InstallWizard *wizard)
 {
     topLabel = new QLabel(tr("<center><b>Installation finished</b></center>"
                              "<p></p>"
-                             "<p>Now you are able to run the installed kde application by .... </p>"
-                             "<p>If you have questions or problems using this installer or KDE applications, "
+                             "<p>If you have questions or problems using this installer "
                              "please ask on the <a href=\"http://mail.kde.org/mailman/listinfo/kde-windows\">"
                              "kde-windows@kde.org</a> mailing list. </p>"
                              "<p>If you would like to join this famous project, please contact also the "
@@ -441,7 +442,7 @@ FinishPage::FinishPage(InstallWizard *wizard)
                              "<p>Have fun using KDE on windows.</p>" 
                              "<p></p>"
                              "<p></p>"
-                             "<p>The KDE on windows team</p>"
+                             "<p>The KDE on Windows team</p>"
                              ));
 
     QVBoxLayout *layout = new QVBoxLayout;
