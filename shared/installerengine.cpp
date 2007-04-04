@@ -433,7 +433,8 @@ void InstallerEngine::setPageSelectorWidgetData(QTreeWidget *tree)
 				setState(*item,pkg,5,_initial);
 			}
             setState(*item,pkg,6,_initial);
-            item->setText(7, pkg->notes());
+            item->setText(7, m_globalConfig->news()->value(pkg->name()+"-"+pkg->version()));
+            //item->setText(7, pkg->notes());
 			item->setToolTip ( 2, allToolTip);
 			item->setToolTip ( 3, binToolTip);
 			item->setToolTip ( 4, libToolTip);

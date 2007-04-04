@@ -111,7 +111,7 @@ bool Database::readFromDirectory(const QString &dir)
      
     for (int i = 0; i < list.size(); i++) {
         QFileInfo fi = list[i];        
-        QString fileName = fi.fileName();
+		QString fileName = fi.fileName();
         QString pkgName;
 		QString pkgVersion;
 		QString pkgType;

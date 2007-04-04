@@ -33,6 +33,8 @@ class GlobalConfig {
         ~GlobalConfig();
         QList<Site*> *sites()  { return &m_sites;   } 
         QList<Package*> *packages() { return &m_packages; }
+        QHash<QString, QString> *news() { return &m_news; }
+
         void dump(const QString &title=QString());
     protected:
         bool parseFromFile(const QString &fileName);
@@ -42,6 +44,8 @@ class GlobalConfig {
     private:
         QList <Site*> m_sites; 
         QList <Package *> m_packages;
+		// package news <key,value> where key = <name>-<version>
+        QHash <QString,QString> m_news;
 };
 
 #endif

@@ -130,6 +130,15 @@ bool GlobalConfig::parse(QIODevice *ioDev)
 
             if (cmd[0] == "@format")
                 ;
+            else if (cmd[0] == "@news")
+			{
+				QString name = cmd[1]; 
+				QString version = cmd[2]; 
+				cmd.removeFirst();
+				cmd.removeFirst();
+				cmd.removeFirst();
+				m_news[name+"-"+version] = cmd.join(" ");		
+			}
             else if(inPackage)
             {
                 if(cmd[0] == "@version")
