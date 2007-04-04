@@ -258,11 +258,6 @@ bool Packager::createManifestFiles(const QString &rootDir, QStringList &fileList
         default:
             break;
     } 
-	// qt needs a specific config file 
-	if ((m_name.startsWith("qt") || m_name.startsWith("q++") || m_name.startsWith("q.."))
-			&& type == BIN)
-		createQtConfig(fileList,manifestFiles);
-
     QBuffer b(&mf.data);
     b.open(QIODevice::WriteOnly);
     QTextStream out(&b);
@@ -283,12 +278,22 @@ bool Packager::createManifestFiles(const QString &rootDir, QStringList &fileList
         fnUtf8.replace(' ', "\\ "); // escape ' '
         out << fnUtf8 << ' ' << md5Hash << '\n';
     }
-    out << '\n'
-        << "manifest/" + fileNameBase + ".mft" << '\n'
+	// qt needs a specific config file 
+	if ((m_name.startsWith("qt") || m_name.startsWith("q++") || m_name.startsWith("q.."))
+			&& type == Packager::BIN)
+	{
+		createQtConfig(fileList,manifestFiles);
+		out << "bin/qt.conf << '\n'";
+	}
+
+    out << "manifest/" + fileNameBase + ".mft" << '\n'
         << "manifest/" + fileNameBase + ".ver" << '\n';
+
     b.close();
     mf.filename = "manifest/" + fileNameBase + ".mft";
     manifestFiles += mf;
+
+
 
     mf.data.clear();
 
@@ -452,6 +457,5 @@ bool Packager::createQtConfig(QStringList &fileList, QList<MemFile> &manifestFil
     b.close();
     mf.filename = "bin/qt.conf";
     manifestFiles += mf;
-	fileList.append(mf.filename);
 	return true;
 }
