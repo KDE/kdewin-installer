@@ -45,6 +45,7 @@ public:
     PackageList();
     virtual ~PackageList();
     void addPackage(const Package &package);
+    bool append(PackageList &packageList);
     void listPackages(const QString &title=QString());
     bool readFromFile(const QString &_fileName=QString());
     bool syncWithFile(const QString &_fileName=QString());

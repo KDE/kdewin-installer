@@ -152,6 +152,18 @@ bool PackageList::readFromFile(const QString &_fileName)
     return true;
 }
 
+bool PackageList::append(PackageList &src)
+{
+    QList<Package*>::iterator it;
+	for (it = src.m_packageList.begin(); it != src.m_packageList.end(); ++it)
+	{
+		Package *pkg = (*it);
+		addPackage(*pkg);
+	}
+	return true;
+}
+
+
 bool PackageList::syncWithFile(const QString &_fileName)
 {
 #ifdef DEBUG
