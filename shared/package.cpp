@@ -43,12 +43,12 @@ bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QStrin
     if(idx != -1)
     {
 		pkgFormat = fileName.mid(idx + 1);
-        baseName = fileName.left(idx);
+        baseName = fileName.left(idx).toLower();
 	}
     else
 	{
         pkgFormat = "unknown";
-        baseName = fileName;
+        baseName = fileName.toLower();
 	}
 
 	QStringList parts = baseName.split('-');
