@@ -29,9 +29,9 @@
 #include "uninstall.h"
 #include "md5.h"
 
+#include "installerprogress.h"
 // FIXME: This should be solved better 
 #ifdef USE_GUI
-#include "installerprogress.h"
 #include "installwizard.h"
 extern InstallWizard *wizard;
 #endif

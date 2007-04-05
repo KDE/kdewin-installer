@@ -31,7 +31,7 @@
 #include "packagelist.h"
 #include "downloader.h"
 #include "installer.h"
-#include "installerengine.h"
+#include "installerengineconsole.h"
 
 static struct Options
 {
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
     }
 
 #if 1
-    InstallerEngine engine(0,0);
+    InstallerEngineConsole engine(0,0);
     if (!options.rootdir.isEmpty())
     	engine.setRoot(options.rootdir);
     	
