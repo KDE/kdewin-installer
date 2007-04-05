@@ -262,14 +262,14 @@ void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree)
 	QString srcToolTip("select this checkbox to install/remove/update the source of this package");
 
     labels
-    << "Package"
-    << "Version";
+    << tr("Package")
+    << tr("Version");
 	switch (m_installMode) 
 	{
 		case Developer: 
 			labels
 			<< ""
-			<< "bin/lib/doc"
+			<< tr("bin/lib/doc")
 			<< ""
 			<< "";
 			break;
@@ -277,24 +277,25 @@ void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree)
 		case EndUser: 
 			labels
 			<< ""
-			<< "bin/doc"
+			<< tr("bin/doc")
 			<< ""
 			<< "";
 			break;
 
 		case Single: 
 			labels
-			<< "all"
-			<< "bin"
-			<< "lib"
-			<< "doc";
+			<< tr("all")
+			<< tr("bin")
+			<< tr("lib")
+			<< tr("doc");
 			break;
 	}
 	labels
-	<< "src"
-    << "Notes";
+	<< tr("src")
+    << tr("package notes")
+    << tr("news");
 
-	tree->setColumnCount(8);
+	tree->setColumnCount(9);
     tree->setHeaderLabels(labels);
     // see http://lists.trolltech.com/qt-interest/2006-06/thread00441-0.html
     // and Task Tracker Entry 106731
@@ -312,7 +313,16 @@ void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree)
     {
 		if ((*k)->packageList().size() == 0)
 			continue;
-		QTreeWidgetItem *category = new QTreeWidgetItem((QTreeWidget*)0, QStringList((*k)->Name()));
+		QStringList names;
+		names << (*k)->Name();
+		names << "";
+		names << "";
+		names << "";
+		names << "";
+		names << "";
+		names << "";
+		names << (*k)->notes();
+		QTreeWidgetItem *category = new QTreeWidgetItem((QTreeWidget*)0, names);
 		category->setToolTip(0,(*k)->notes());
         categoryList.append(category);
 
@@ -336,8 +346,9 @@ void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree)
 				setState(*item,pkg,5,_initial);
 			}
             setState(*item,pkg,6,_initial);
-            item->setText(7, m_globalConfig->news()->value(pkg->name()+"-"+pkg->version()));
-            //item->setText(7, pkg->notes());
+            item->setText(7, pkg->notes());
+            // FIXME 
+            //item->setText(8, m_globalConfig->news()->value(pkg->name()+"-"+pkg->version()));
 			item->setToolTip ( 2, allToolTip);
 			item->setToolTip ( 3, binToolTip);
 			item->setToolTip ( 4, libToolTip);
