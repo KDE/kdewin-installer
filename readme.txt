@@ -124,6 +124,12 @@ Happy hacking
 History
 =======
 
+recent
+------
+- only lower case package names are allowed 
+- added uninstall progress
+
+
 version 0.6.7
 -------------
 - extended packager to write source packages
