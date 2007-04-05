@@ -49,6 +49,7 @@ public:
     {
         return history;
     }
+	InstallerProgress &installProgressBar() { return *instProgressBar; }
 
 protected:
     void setFirstPage(WizardPage *page);

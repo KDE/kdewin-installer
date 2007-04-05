@@ -8,6 +8,9 @@
 
 #include "installwizard.h"
 
+// FIXME: required by uninstaller progress
+InstallWizard *wizard;
+
 QFile *log; 
 
 void myMessageOutput(QtMsgType type, const char *msg)
@@ -45,6 +48,6 @@ int main(int argc, char *argv[])
     qInstallMsgHandler(myMessageOutput);
     QApplication app(argc, argv);
 
-    InstallWizard *wizard = new InstallWizard();
+    wizard = new InstallWizard();
     return wizard->exec();
 }

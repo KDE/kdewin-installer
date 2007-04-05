@@ -29,6 +29,13 @@
 #include "uninstall.h"
 #include "md5.h"
 
+// FIXME: This should be solved better 
+#ifdef USE_GUI
+#include "installerprogress.h"
+#include "installwizard.h"
+extern InstallWizard *wizard;
+#endif
+
 Uninstall::Uninstall(const QString &rootDir, const QString &packageName)
 : m_rootDir(rootDir), m_packageName(packageName)
 {}
@@ -42,10 +49,20 @@ bool Uninstall::uninstallPackage(bool bUseHashWhenPossible)
     QList<FileItem> files;
     QFileInfo fi;
     QFile f;
+#ifdef USE_GUI
+	InstallerProgress *m_progress = &wizard->installProgressBar();
+#else
+	InstallerProgress *m_progress = 0;
+#endif
 
-    if(!readManifestFile(files))
+	if(!readManifestFile(files))
         return false;
 
+	if (m_progress)
+	{
+		m_progress->setMaximum(files.size());
+		m_progress->show();
+	}
     QList<FileItem>::ConstIterator it = files.constBegin();
     for( ; it != files.constEnd(); it++ ) {
         FileItem fileItem = *it;
@@ -70,12 +87,21 @@ bool Uninstall::uninstallPackage(bool bUseHashWhenPossible)
             }
         }
 
-        if(!QFile::remove(fileItem.fileName)) {
+        if (m_progress)
+        {
+            m_progress->setTitle(tr("Removing %1").arg(fileItem.fileName));
+        }
+
+		if(!QFile::remove(fileItem.fileName)) {
             emit warning(QString("Can't remove %1").arg(fileItem.fileName));
             continue;
         }
         emit removed(fileItem.fileName);
     }
+    if (m_progress)
+    {
+		m_progress->hide();
+	}
 
     return true;
 }
