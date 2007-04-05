@@ -14,10 +14,6 @@ OPTION(SEVENZIP_UNPACK_SUPPORT "Enable 7-zip unpacking support" OFF)
 # -------------------------------------------------------
 # Set a default build type for single-configuration
 # CMake generators if no build type is set.
-if (NOT CMAKE_BUILD_TYPE)
-   set(CMAKE_BUILD_TYPE Release)
-endif (NOT CMAKE_BUILD_TYPE)
-
 MESSAGE(STATUS "Build Type:" ${CMAKE_BUILD_TYPE})
 
 set (CMAKE_PRODUCTION_BUILD 0)

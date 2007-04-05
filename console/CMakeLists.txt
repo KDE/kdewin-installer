@@ -1,8 +1,11 @@
 set(installer_CONSOLE_SOURCES
    main.cpp
+   installerengineconsole.cpp
+
 )
 
 set(installer_CONSOLE_HEADERS
+   installerengineconsole.cpp
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})

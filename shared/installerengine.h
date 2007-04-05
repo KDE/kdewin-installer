@@ -50,21 +50,10 @@ public:
     bool downloadPackageLists();
     void stop();
 
-#ifdef USE_GUI
-    void setPageSelectorWidgetData(QTreeWidget *tree);
-    void itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column);
-    bool downloadPackages(QTreeWidget *tree, const QString &category=QString());
-    bool installPackages(QTreeWidget *tree, const QString &category=QString());
-	bool removePackages(QTreeWidget *tree, const QString &category=QString());
-#else
-    void listPackages(const QString &title);
-    bool downloadPackages(const QStringList &packages, const QString &category=QString());
-    bool installPackages(const QStringList &packages, const QString &category=QString());
-#endif
     PackageList *getPackageListByName(const QString &name);
     Package *getPackageByName(const QString &name,const QString &version=QString());
-    
-    void setRoot(QString root);
+
+	void setRoot(QString root);
     const QString root();
 
 
@@ -78,8 +67,7 @@ public:
         return m_installer;
     }
 
-private:
-	enum Type { EndUser, Developer, Single };
+protected:
     QList <PackageList*> m_packageListList;
     QList <Installer*>   m_installerList;
     PackageList         *m_packageList;  // currently used packagelist
@@ -90,7 +78,6 @@ private:
     InstallerProgress   *m_instProgressBar;
 	DownloaderProgress  *m_progressBar;
 	Database            *m_database;
-	Type                 m_installMode;
     PackageList         *m_availablePackages; 
 };
 

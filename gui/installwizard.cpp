@@ -43,7 +43,7 @@
 #include "package.h"
 #include "packagelist.h"
 #include "settings.h"
-#include "installerengine.h"
+#include "installerenginegui.h"
 #include "settings.h"
 #include "settingspage.h"
 
@@ -52,12 +52,12 @@ extern InstallWizard *wizard;
 // must be global
 QTreeWidget *tree;
 
-InstallerEngine *engine;
+InstallerEngineGui *engine;
 
 InstallWizard::InstallWizard(QWidget *parent)
         : ComplexWizard(parent)
 {
-    engine = new InstallerEngine(progressBar,instProgressBar);
+    engine = new InstallerEngineGui(progressBar,instProgressBar);
     settingsPage = new SettingsPage(this);
 
 	setWindowTitle(tr("KDE Installer - Version " VERSION));

@@ -34,6 +34,7 @@ set(installer_GUI_SOURCES
    complexwizard.cpp
    installwizard.cpp
    settingspage.cpp
+   installerenginegui.cpp
    main.cpp
 )
 
@@ -41,6 +42,7 @@ set(installer_GUI_HEADERS
    complexwizard.h
    installwizard.h
    settingspage.h
+   installerenginegui.h
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
