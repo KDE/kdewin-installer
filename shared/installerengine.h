@@ -41,7 +41,7 @@ class QTreeWidget;
 class QTreeWidgetItem;
 class Database;
 
-class InstallerEngine
+class InstallerEngine : public QObject
 {
 public:
     InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
