@@ -126,7 +126,9 @@ recent
 ------
 - only lower case package names are allowed 
 - added uninstall progress
-
+- added support for package descriptions files on the server. The notes file must have a filename 
+  in the following form <package>-<version>.notes
+- packager does not create manifest files for source packages, installer will create it 
 
 version 0.6.7
 -------------
