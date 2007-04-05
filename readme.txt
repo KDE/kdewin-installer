@@ -31,6 +31,8 @@ Known Bugs
    This seems to be a qt 4.x internal problem. 
 -  manifest files for source packages does not contain the full path, there must 
    be prefixed src/<package>-<version>
+
+-  changing install root does not affect current installation, restart of installer is required 
    
    
 TODO
@@ -50,15 +52,11 @@ TODO
     1 add check for partial downloads
 	4 center checkboxes in package selector page -> not possible yet, see comment in source
 	5 reduce column width of package types in package selector page
-	7 fix perl package list import or reduce to one package
 	8 add reinstall package support 
 	10 add a switch to select end user/developer operation (end user by default)
 	   in end user mode only the bin packages are visible 
 	12 if remote config is not available only display installed packages
 	13 add update support
-	14 transform package database filenames to installer friendly one if no manifest files 
-	   are available, see for example cmake or upx 
-	15 changing install root does not affect current installation, restart of installer is required 
 	16 add msvc/ming mode, with different installation roots and package filtering 
 
 
