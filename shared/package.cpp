@@ -85,11 +85,18 @@ bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QStrin
 	else if(parts.size() == 3) 
 	{
 		pkgName = parts[0];
-		pkgVersion = parts[1];
+		if (parts[1][0].isNumber())
+			pkgVersion = parts[1];
+		else
+			pkgName += "-" + parts[1];
+
 		// aspell-0.50.3-3
 		if (parts[2][0].isNumber())
 		{
-			pkgVersion += "-" + parts[2];
+			if (pkgVersion.isEmpty())
+				pkgVersion = parts[2];
+			else
+				pkgVersion += "-" + parts[2];
 			pkgType = "bin";
 		}
 		else
@@ -182,6 +189,7 @@ Package::Package(const Package &other)
     m_deps       = other.m_deps;
     m_pathRelocs = other.m_pathRelocs;
 	m_handled    = other.m_handled;
+	m_notes      = other.m_notes;
 }
 
 QString Package::getFileName(Package::Type contentType)
