@@ -154,7 +154,7 @@ bool InstallerEngine::downloadPackageLists()
 #endif
 		packageList->syncWithDatabase(*m_database);
 	}
-	PackageList *packageList = getPackageListByName("installed");
+	PackageList *packageList = getPackageListByName("outdated packages");
 	if (!packageList)
 	{
 	    packageList = new PackageList();
