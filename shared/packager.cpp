@@ -354,6 +354,8 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
 	// currently they do not have to special root set
 	if (m_srcRoot.isEmpty())
 	    createManifestFiles(s, fileList, Packager::SRC, manifestFiles);
+	else
+	    manifestFiles.clear();
     if (fileList.size() > 0)
         createZipFile(_destdir + getBaseName(Packager::SRC), s, fileList, manifestFiles, "src/" + m_name + "-" + m_version + "/");
 
