@@ -350,7 +350,10 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
         qDebug() << "creating src package" << getBaseName(Packager::SRC); 
     generatePackageFileList(fileList, Packager::SRC);
     QString s = m_srcRoot.isEmpty() ? m_rootDir : m_srcRoot;
-    createManifestFiles(s, fileList, Packager::SRC, manifestFiles);
+	// FIXME fix manifest file creating if src root is given 
+	// currently they do not have to special root set
+	if (m_srcRoot.isEmpty())
+	    createManifestFiles(s, fileList, Packager::SRC, manifestFiles);
     if (fileList.size() > 0)
         createZipFile(_destdir + getBaseName(Packager::SRC), s, fileList, manifestFiles, "src/" + m_name + "-" + m_version + "/");
 
