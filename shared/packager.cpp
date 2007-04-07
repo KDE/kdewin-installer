@@ -183,7 +183,7 @@ bool Packager::generatePackageFileList(QStringList &fileList, Packager::Type typ
                 generateFileList(fileList, dir, "src/opengl", "*.h", "*_p.h");
                 generateFileList(fileList, dir, "tools/assistant/lib", "*.h","*_p.h");
                 generateFileList(fileList, dir, "tools/qdbus/src", "*.h","*_p.h");
-                generateFileList(fileList, dir, "tools/designer/uitools", "*.h","*_p.h");
+                generateFileList(fileList, dir, "tools/designer/src/uitools", "*.h","*_p.h");
                 return true;
             case DOC:
                 generateFileList(fileList, dir, "bin", "qtdemo.exe assistant.exe");
