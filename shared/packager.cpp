@@ -289,7 +289,7 @@ bool Packager::createManifestFiles(const QString &rootDir, QStringList &fileList
 			&& type == Packager::BIN)
 	{
 		createQtConfig(fileList,manifestFiles);
-		out << "bin/qt.conf << '\n'";
+		out << "bin/qt.conf\n";
 	}
 
     out << "manifest/" + fileNameBase + ".mft" << '\n'
