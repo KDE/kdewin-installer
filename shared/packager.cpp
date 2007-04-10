@@ -10,11 +10,11 @@
 **
 ** This library is distributed in the hope that it will be useful,
 ** but WITHOUT ANY WARRANTY; without even the implied warranty of
-** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 ** Library General Public License for more details.
 **
 ** You should have received a copy of the GNU Library General Public License
-** along with this library; see the file COPYING.LIB.  If not, write to
+** along with this library; see the file COPYING.LIB.   If not, write to
 ** the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ** Boston, MA 02110-1301, USA.
 **
@@ -42,88 +42,88 @@
 Packager::Packager(const QString &packageName, const QString &packageVersion, const QString &packageNotes)
 : m_name(packageName), m_version(packageVersion), m_notes(packageNotes)
 {
-       qDebug() << m_name;
-       qDebug() << m_version;
-       qDebug() << m_notes;
-       m_verbose = true;
+    qDebug() << m_name;
+    qDebug() << m_version;
+    qDebug() << m_notes;
+    m_verbose = true;
 }
 
 /**
-  create a zip file from a list of files
-  @param zipFile archive file name 
-  @param filesRootDir root dir of file list 
-  @param files list of files based on filesRootDir 
-  @param destRootDir root dir prefixed to any file of the files list in the archive (must have a trailing '/')
-  @param memFiles list of in memory files 
+    create a zip file from a list of files
+    @param zipFile archive file name 
+    @param filesRootDir root dir of file list 
+    @param files list of files based on filesRootDir 
+    @param destRootDir root dir prefixed to any file of the files list in the archive (must have a trailing '/')
+    @param memFiles list of in memory files 
 */
 bool Packager::createZipFile(const QString &zipFile, const QString &filesRootDir, const QStringList &files, const QList<MemFile> &memFiles, const QString &destRootDir )
 {
     QuaZip zip(zipFile + ".zip");
     if(!zip.open(QuaZip::mdCreate)) {
-       qWarning("createZipFile(): zip.open(): %d", zip.getZipError());
-       return false;
+        qWarning("createZipFile(): zip.open(): %d", zip.getZipError());
+        return false;
     }
-       
+        
     QFile inFile;
     QuaZipFile outFile(&zip);
 
     for (int l = 0; l < files.size(); l++)
     {
-       inFile.setFileName(filesRootDir + '/' + files[l]);
-   
-       if(!inFile.open(QIODevice::ReadOnly)) 
-       {
-           qWarning("createZipFile(): inFile.open(): %s", inFile.errorString().toLocal8Bit().constData());
-           return false;
-       }
-       QuaZipNewInfo a(destRootDir + files.at(l), inFile.fileName());
-	   if(!outFile.open(QIODevice::WriteOnly, a)) 
-       {
-           qWarning("createZipFile(): outFile.open(): %d", outFile.getZipError());
-           return false;
-       }
-       // copy data
-       // FIXME: check for not that huge filesize ?
-       qint64 iBytesRead;
-       QByteArray ba;
-       ba.resize(QZIP_BUFFER);
+        inFile.setFileName(filesRootDir + '/' + files[l]);
+    
+        if(!inFile.open(QIODevice::ReadOnly)) 
+        {
+            qWarning("createZipFile(): inFile.open(): %s", inFile.errorString().toLocal8Bit().constData());
+            return false;
+        }
+        QuaZipNewInfo a(destRootDir + files.at(l), inFile.fileName());
+        if(!outFile.open(QIODevice::WriteOnly, a)) 
+        {
+            qWarning("createZipFile(): outFile.open(): %d", outFile.getZipError());
+            return false;
+        }
+        // copy data
+        // FIXME: check for not that huge filesize ?
+        qint64 iBytesRead;
+        QByteArray ba;
+        ba.resize(QZIP_BUFFER);
 
-       while((iBytesRead = inFile.read(ba.data(), QZIP_BUFFER)) > 0)
-          outFile.write(ba.data(), iBytesRead);
+        while((iBytesRead = inFile.read(ba.data(), QZIP_BUFFER)) > 0)
+            outFile.write(ba.data(), iBytesRead);
 
-       if(outFile.getZipError()!=UNZ_OK) 
-       {
-          qWarning("createZipFile(): outFile.putChar(): %d", outFile.getZipError());
-          return false;
-       }
-       outFile.close();
-       if(outFile.getZipError()!=UNZ_OK) 
-       {
-          qWarning("createZipFile(): outFile.close(): %d", outFile.getZipError());
-          return false;
-       }
-       inFile.close();
+        if(outFile.getZipError()!=UNZ_OK) 
+        {
+            qWarning("createZipFile(): outFile.putChar(): %d", outFile.getZipError());
+            return false;
+        }
+        outFile.close();
+        if(outFile.getZipError()!=UNZ_OK) 
+        {
+            qWarning("createZipFile(): outFile.close(): %d", outFile.getZipError());
+            return false;
+        }
+        inFile.close();
     }
 
     QList<MemFile>::ConstIterator it = memFiles.constBegin();
     for( ; it != memFiles.constEnd(); ++it) {
-       if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo((*it).filename))) 
-       {
-           qWarning("createZipFile(): outFile.open(): %d", outFile.getZipError());
-           return false;
-       }
-       outFile.write((*it).data, (*it).data.size());
-       if(outFile.getZipError()!=UNZ_OK) 
-       {
-          qWarning("createZipFile(): outFile.putChar(): %d", outFile.getZipError());
-          return false;
-       }
-       outFile.close();
-       if(outFile.getZipError()!=UNZ_OK) 
-       {
-          qWarning("createZipFile(): outFile.close(): %d", outFile.getZipError());
-          return false;
-       }
+        if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo((*it).filename))) 
+        {
+            qWarning("createZipFile(): outFile.open(): %d", outFile.getZipError());
+            return false;
+        }
+        outFile.write((*it).data, (*it).data.size());
+        if(outFile.getZipError()!=UNZ_OK) 
+        {
+            qWarning("createZipFile(): outFile.putChar(): %d", outFile.getZipError());
+            return false;
+        }
+        outFile.close();
+        if(outFile.getZipError()!=UNZ_OK) 
+        {
+            qWarning("createZipFile(): outFile.close(): %d", outFile.getZipError());
+            return false;
+        }
     }
     
     zip.close();
@@ -148,7 +148,7 @@ bool Packager::createZipFile(const QString &zipFile, const QString &filesRootDir
 bool Packager::generatePackageFileList(QStringList &fileList, Packager::Type type, const QString &root)
 {
     QString dir = root.isEmpty() ? m_rootDir : root;
-	QString exclude;
+    QString exclude;
     fileList.clear();
     if (m_name.startsWith("qt") || m_name.startsWith("q++") || m_name.startsWith("q.."))
         switch (type) {
@@ -156,23 +156,23 @@ bool Packager::generatePackageFileList(QStringList &fileList, Packager::Type typ
                 generateFileList(fileList, dir, "bin", "*.dll *.manifest qdbus.exe qdbusviewer.exe", "*d.dll *d4.dll");
                 generateFileList(fileList, dir, "lib", " *d.manifest");
                 generateFileList(fileList, dir, "plugins", "*.dll","*d.dll *d4.dll *d1.dll");
-                generateFileList(fileList, dir, "translations",  "*.qm");
+                generateFileList(fileList, dir, "translations", "*.qm");
                 return true;
             case LIB:
-                generateFileList(fileList, dir, "bin",   "*.exe *.bat *d4.dll", "assistant.exe qtdemo.exe qdbus.exe dbus-viewer.exe");
+                generateFileList(fileList, dir, "bin",  "*.exe *.bat *d4.dll", "assistant.exe qtdemo.exe qdbus.exe dbus-viewer.exe");
                 generateFileList(fileList, dir, "plugins", "*d.dll *d4.dll *d1.dll");
-                generateFileList(fileList, dir, ".",     ".qmake.cache");
+                generateFileList(fileList, dir, ".",            ".qmake.cache");
                 generateFileList(fileList, dir, "mkspecs",  "qconfig.pri");
                 if (m_name.endsWith("mingw")) 
-				{
+                {
                     generateFileList(fileList, dir, "mkspecs/win32-g++", "*.*");
-	                generateFileList(fileList, dir, "lib",     "*.a");
-				}
-				else 
-				{
+                    generateFileList(fileList, dir, "lib",      "*.a");
+                }
+                else 
+                {
                     generateFileList(fileList, dir, "mkspecs/win32-msvc.net", "*.*");
-	                generateFileList(fileList, dir, "lib",     "*.lib");
-				}
+                    generateFileList(fileList, dir, "lib",      "*.lib");
+                }
                 generateFileList(fileList, dir, "include", "*","*_p.h");
                 generateFileList(fileList, dir, "src/corelib", "*.h", "*_p.h");
                 generateFileList(fileList, dir, "src/gui", "*.h", "*_p.h");
@@ -199,21 +199,21 @@ bool Packager::generatePackageFileList(QStringList &fileList, Packager::Type typ
             default:
                 break;
         }
-    else    
+    else         
         switch (type) {
             case BIN:
-                generateFileList(fileList, dir, "bin",   "*.exe *.bat");
-                generateFileList(fileList, dir, "bin",   "*.dll", "*d.dll");
-                generateFileList(fileList, dir, "lib",   "*.dll", "*d.dll");
+                generateFileList(fileList, dir, "bin",  "*.exe *.bat");
+                generateFileList(fileList, dir, "bin",  "*.dll", "*d.dll");
+                generateFileList(fileList, dir, "lib",  "*.dll", "*d.dll");
                 generateFileList(fileList, dir, "share", "*.*");
-                generateFileList(fileList, dir, "data",  "*.*");
-                generateFileList(fileList, dir, "etc",   "*.*");
+                generateFileList(fileList, dir, "data", "*.*");
+                generateFileList(fileList, dir, "etc",  "*.*");
                 return true;
             case LIB:
-                generateFileList(fileList, dir, "bin",     "*d.dll");
-                generateFileList(fileList, dir, "lib",     "*d.dll");
-                generateFileList(fileList, dir, "lib",     "*.lib");    // msvc libs (static & import libs)
-                generateFileList(fileList, dir, "lib",     "*.a");      // gcc (static) libs
+                generateFileList(fileList, dir, "bin",      "*d.dll");
+                generateFileList(fileList, dir, "lib",      "*d.dll");
+                generateFileList(fileList, dir, "lib",      "*.lib");   // msvc libs (static & import libs)
+                generateFileList(fileList, dir, "lib",      "*.a");          // gcc (static) libs
                 generateFileList(fileList, dir, "include", "*.*");
                 return true;
             case DOC:
@@ -221,20 +221,20 @@ bool Packager::generatePackageFileList(QStringList &fileList, Packager::Type typ
                 generateFileList(fileList, dir, "man", "*.*");
                 return true;
             case SRC:
-				exclude = m_srcExcludes + " .svn CVS";
+                exclude = m_srcExcludes + " .svn CVS";
                 // * and not *.* because *.* does not find "foo" (filename without extension) - Qt-bug?
-				if (m_srcRoot.isEmpty())
-					generateFileList(fileList, dir, "src", "*",exclude);
-				else
-					generateFileList(fileList, m_srcRoot, "", "*",exclude);
+                if (m_srcRoot.isEmpty())
+                    generateFileList(fileList, dir, "src", "*",exclude);
+                else
+                    generateFileList(fileList, m_srcRoot, "", "*",exclude);
                 return true;
             case NONE:
                 generateFileList(fileList, dir, "", "*.*", "manifest");
                 return true;
             default:
                 break;
-       }
-   return false;
+        }
+    return false;
 }
 
 bool Packager::createManifestFiles(const QString &rootDir, QStringList &fileList, Packager::Type type, QList<MemFile> &manifestFiles)
@@ -278,19 +278,19 @@ bool Packager::createManifestFiles(const QString &rootDir, QStringList &fileList
             toRemove += fn;
             continue;
         }
-        QByteArray ba = f.readAll();    // mmmmh
+        QByteArray ba = f.readAll();         // mmmmh
         QString md5Hash = qtMD5(ba);
         QByteArray fnUtf8 = (*it).toUtf8();
         fnUtf8.replace(' ', "\\ "); // escape ' '
         out << fnUtf8 << ' ' << md5Hash << '\n';
     }
-	// qt needs a specific config file 
-	if ((m_name.startsWith("qt") || m_name.startsWith("q++") || m_name.startsWith("q.."))
-			&& type == Packager::BIN)
-	{
-		createQtConfig(fileList,manifestFiles);
-		out << "bin/qt.conf\n";
-	}
+    // qt needs a specific config file 
+    if ((m_name.startsWith("qt") || m_name.startsWith("q++") || m_name.startsWith("q.."))
+            && type == Packager::BIN)
+    {
+        createQtConfig(fileList,manifestFiles);
+        out << "bin/qt.conf\n";
+    }
 
     out << "manifest/" + fileNameBase + ".mft" << '\n'
         << "manifest/" + fileNameBase + ".ver" << '\n';
@@ -312,7 +312,7 @@ bool Packager::createManifestFiles(const QString &rootDir, QStringList &fileList
     mf.filename = "manifest/" + fileNameBase + ".ver";
     manifestFiles += mf;
     
-    return true;    
+    return true;         
 }
 
 bool Packager::makePackage(const QString &root, const QString &destdir, bool bComplete)
@@ -323,13 +323,13 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
     m_rootDir = root;
     QStringList fileList; 
     QList<MemFile> manifestFiles;
-	QString _destdir = destdir;
-	if (!destdir.isEmpty() && !destdir.endsWith("/") && !destdir.endsWith("\\"))
-		_destdir += "/"; 
+    QString _destdir = destdir;
+    if (!destdir.isEmpty() && !destdir.endsWith("/") && !destdir.endsWith("\\"))
+        _destdir += "/"; 
     if (m_verbose)
         qDebug() << "creating bin package" << destdir + getBaseName(Packager::BIN); 
     generatePackageFileList(fileList, Packager::BIN);
-    createManifestFiles(m_rootDir, fileList, Packager::BIN, manifestFiles);    
+    createManifestFiles(m_rootDir, fileList, Packager::BIN, manifestFiles); 
     if (fileList.size() > 0)
         createZipFile(_destdir + getBaseName(Packager::BIN), m_rootDir, fileList, manifestFiles);
     else
@@ -353,12 +353,12 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
         qDebug() << "creating src package" << getBaseName(Packager::SRC); 
     generatePackageFileList(fileList, Packager::SRC);
     QString s = m_srcRoot.isEmpty() ? m_rootDir : m_srcRoot;
-	// FIXME fix manifest file creating if src root is given 
-	// currently they do not have to special root set
-	if (m_srcRoot.isEmpty())
-	    createManifestFiles(s, fileList, Packager::SRC, manifestFiles);
-	else
-	    manifestFiles.clear();
+    // FIXME fix manifest file creating if src root is given 
+    // currently they do not have to special root set
+    if (m_srcRoot.isEmpty())
+        createManifestFiles(s, fileList, Packager::SRC, manifestFiles);
+    else
+        manifestFiles.clear();
     if (fileList.size() > 0)
         createZipFile(_destdir + getBaseName(Packager::SRC), s, fileList, manifestFiles, "src/" + m_name + "-" + m_version + "/");
 
@@ -452,21 +452,21 @@ bool Packager::createQtConfig(QStringList &fileList, QList<MemFile> &manifestFil
     QBuffer b(&mf.data);
     b.open(QIODevice::WriteOnly);
     QTextStream out(&b);
-	out << "[Paths]\n";
-	out << "Prefix=\n";
-	out << "Documentation=../doc\n";
-	out << "Headers=../include\n";
-	out << "Libraries=../lib\n";
-	out << "Binaries=\n";
-	out << "Plugins=../plugins\n";
-	out << "Data=../data\n";
-	out << "Translations=../translations\n";
-	out << "Settings=../etc\n";
-	out << "Examples=../examples\n";
-	out << "Demos=../demos\n";
+    out << "[Paths]\n";
+    out << "Prefix=\n";
+    out << "Documentation=../doc\n";
+    out << "Headers=../include\n";
+    out << "Libraries=../lib\n";
+    out << "Binaries=\n";
+    out << "Plugins=../plugins\n";
+    out << "Data=../data\n";
+    out << "Translations=../translations\n";
+    out << "Settings=../etc\n";
+    out << "Examples=../examples\n";
+    out << "Demos=../demos\n";
 
     b.close();
     mf.filename = "bin/qt.conf";
     manifestFiles += mf;
-	return true;
+    return true;
 }
