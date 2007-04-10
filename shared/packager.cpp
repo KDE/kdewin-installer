@@ -163,6 +163,8 @@ bool Packager::generatePackageFileList(QStringList &fileList, Packager::Type typ
                 generateFileList(fileList, dir, "plugins", "*d.dll *d4.dll *d1.dll");
                 generateFileList(fileList, dir, ".",            ".qmake.cache");
                 generateFileList(fileList, dir, "mkspecs",  "qconfig.pri");
+                generateFileList(fileList, dir, "mkspecs/features", "qt_*.prf");
+                generateFileList(fileList, dir, "mkspecs/default", "*.*");
                 if (m_name.endsWith("mingw")) 
                 {
                     generateFileList(fileList, dir, "mkspecs/win32-g++", "*.*");
@@ -174,16 +176,16 @@ bool Packager::generatePackageFileList(QStringList &fileList, Packager::Type typ
                     generateFileList(fileList, dir, "lib",      "*.lib");
                 }
                 generateFileList(fileList, dir, "include", "*","*_p.h");
-                generateFileList(fileList, dir, "src/corelib", "*.h", "*_p.h");
-                generateFileList(fileList, dir, "src/gui", "*.h", "*_p.h");
-                generateFileList(fileList, dir, "src/qt3support", "*.h", "*_p.h");
-                generateFileList(fileList, dir, "src/xml", "*.h", "*_p.h");
-                generateFileList(fileList, dir, "src/network", "*.h", "*_p.h");
-                generateFileList(fileList, dir, "src/svg", "*.h", "*_p.h");
-                generateFileList(fileList, dir, "src/opengl", "*.h", "*_p.h");
-                generateFileList(fileList, dir, "tools/assistant/lib", "*.h","*_p.h");
-                generateFileList(fileList, dir, "tools/qdbus/src", "*.h","*_p.h");
-                generateFileList(fileList, dir, "tools/designer/src/uitools", "*.h","*_p.h");
+                generateFileList(fileList, dir, "src/corelib", "*.h", "*_p.h *_pch.h");
+                generateFileList(fileList, dir, "src/gui", "*.h", "*_p.h *_pch.h");
+                generateFileList(fileList, dir, "src/qt3support", "*.h", "*_p.h *_pch.h");
+                generateFileList(fileList, dir, "src/xml", "*.h", "*_p.h *_pch.h");
+                generateFileList(fileList, dir, "src/network", "*.h", "*_p.h *_pch.h");
+                generateFileList(fileList, dir, "src/svg", "*.h", "*_p.h *_pch.h");
+                generateFileList(fileList, dir, "src/opengl", "*.h", "*_p.h *_pch.h");
+                generateFileList(fileList, dir, "tools/assistant/lib", "*.h","*_p.h *_pch.h");
+                generateFileList(fileList, dir, "tools/qdbus/src", "*.h","*_p.h *_pch.h");
+                generateFileList(fileList, dir, "tools/designer/src/uitools", "*.h","*_p.h *_pch.h");
                 return true;
             case DOC:
                 generateFileList(fileList, dir, "bin", "qtdemo.exe assistant.exe");
@@ -453,13 +455,13 @@ bool Packager::createQtConfig(QStringList &fileList, QList<MemFile> &manifestFil
     b.open(QIODevice::WriteOnly);
     QTextStream out(&b);
     out << "[Paths]\n";
-    out << "Prefix=\n";
+    out << "Prefix=..\n";
     out << "Documentation=../doc\n";
     out << "Headers=../include\n";
     out << "Libraries=../lib\n";
     out << "Binaries=\n";
     out << "Plugins=../plugins\n";
-    out << "Data=../data\n";
+    out << "Data=..\n";
     out << "Translations=../translations\n";
     out << "Settings=../etc\n";
     out << "Examples=../examples\n";
