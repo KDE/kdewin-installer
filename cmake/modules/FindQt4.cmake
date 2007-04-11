@@ -725,10 +725,11 @@ IF (QT4_QMAKE_FOUND)
     IF (QT_${basename}_LIBRARY OR QT_${basename}_LIBRARY_DEBUG)
 
       IF(MSVC)
-
+        
         # Both set
         IF (QT_${basename}_LIBRARY AND QT_${basename}_LIBRARY_DEBUG)
-          SET(QT_${basename}_LIBRARY optimized ${QT_${basename}_LIBRARY} debug ${QT_${basename}_LIBRARY_DEBUG})
+          #SET(QT_${basename}_LIBRARY optimized ${QT_${basename}_LIBRARY} debug ${QT_${basename}_LIBRARY_DEBUG})
+          SET(QT_${basename}_LIBRARY ${QT_${basename}_LIBRARY} )
         ENDIF (QT_${basename}_LIBRARY AND QT_${basename}_LIBRARY_DEBUG)
 
         # Only debug was found
@@ -737,7 +738,9 @@ IF (QT4_QMAKE_FOUND)
         ENDIF (NOT QT_${basename}_LIBRARY AND QT_${basename}_LIBRARY_DEBUG)
 
         # Hmm, is this used anywhere ? Yes, in UseQt4.cmake. We are currently incompatible :-(
-        SET(QT_${basename}_LIBRARIES optimized ${QT_${basename}_LIBRARY} debug ${QT_${basename}_LIBRARY_DEBUG})
+        # this makes FindQt4.cmake unusable for other projects 
+        #SET(QT_${basename}_LIBRARIES optimized ${QT_${basename}_LIBRARY} debug ${QT_${basename}_LIBRARY_DEBUG})
+        SET(QT_${basename}_LIBRARIES ${QT_${basename}_LIBRARY})
 
       ENDIF(MSVC)
 
