@@ -49,6 +49,7 @@ PackageList::~PackageList()
 #ifdef DEBUG
     qDebug() << __FUNCTION__;
 #endif
+    qDeleteAll(m_packageList);
 }
 
 bool PackageList::hasConfig()

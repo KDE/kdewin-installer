@@ -31,8 +31,6 @@ Known Bugs
    This seems to be a qt 4.x internal problem. 
 -  manifest files for source packages does not contain the full path, there must 
    be prefixed src/<package>-<version>
-
--  changing install root does not affect current installation, restart of installer is required 
    
    
 TODO
@@ -129,6 +127,9 @@ recent
 - added support for package descriptions files on the server. The notes file must have a filename 
   in the following form <package>-<version>.notes
 - packager does not create manifest files for source packages, installer will create it 
+- fixed bug display correct proxy setting in wizard mode 
+- changing install root reloads the installer with recent installation settings
+
 
 version 0.6.7
 -------------

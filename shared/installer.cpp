@@ -44,16 +44,16 @@
 # define __PRETTY_FUNCTION__ __FUNCTION__
 #endif
 
-Installer::Installer(PackageList *_packageList, InstallerProgress *_progress)
+Installer::Installer(InstallerProgress *_progress)
         : QObject(), m_progress(_progress), m_type(Installer::Standard)
 {
     m_root = ".";
-    packageList = _packageList;
-    if(packageList)
-    {
-        packageList->m_root = m_root;
-    }
-    connect (packageList,SIGNAL(configLoaded()),this,SLOT(updatePackageList()));
+//  packageList = _packageList;
+//  if(packageList)
+//  {
+//      packageList->m_root = m_root;
+//  }
+//  connect (packageList,SIGNAL(configLoaded()),this,SLOT(updatePackageList()));
 }
 
 Installer::~Installer()
@@ -61,8 +61,9 @@ Installer::~Installer()
 
 void Installer::setRoot(const QString &root)
 {
-    packageList->m_root = m_root = root;
-    QDir().mkdir(m_root);
+    m_root = root;
+//    packageList->m_root = m_root = root;
+//    QDir().mkdir(m_root);
 }
 
 bool Installer::isEnabled()

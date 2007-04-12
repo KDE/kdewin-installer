@@ -234,10 +234,10 @@ ProxySettingsPage::ProxySettingsPage(InstallWizard *wizard)
 
     Settings &s = Settings::getInstance();
 	switch (s.proxyMode()) {
-		case 1: proxyIE->setChecked(true); break;
-		case 2: proxyManual->setChecked(true); break;
-		case 3: proxyFireFox->setChecked(true); break;
-		case 0: 
+		case Settings::InternetExplorer: proxyIE->setChecked(true); break;
+		case Settings::Manual: proxyManual->setChecked(true); break;
+		case Settings::FireFox: proxyFireFox->setChecked(true); break;
+		case Settings::None: 
 		default: proxyOff->setChecked(true); break;
 	}
 	switchProxyFields(true);
@@ -282,7 +282,6 @@ WizardPage *ProxySettingsPage::nextPage()
 	if (proxyManual->isChecked())
 		s.setProxy(proxyHost->text(),proxyPort->text());
 
-	engine->setRoot(s.installDir());
     engine->readGlobalConfig();
 	engine->downloadPackageLists();
     wizard->packageSelectorPage = new PackageSelectorPage(wizard);
@@ -307,6 +306,7 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
         tree->resizeColumnToContents(i);
 
     connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
+	connect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(topLabel);
@@ -317,6 +317,17 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
 void PackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
 {
     engine->itemClickedPackageSelectorPage(item,column);
+}
+
+void PackageSelectorPage::installDirChanged(const QString &dir)
+{
+	delete engine;
+    engine = new InstallerEngineGui(wizard->progressBar,wizard->instProgressBar);
+    engine->readGlobalConfig();
+    engine->downloadPackageLists();
+    engine->setPageSelectorWidgetData(tree);
+    for (int i = 0; i < tree->columnCount(); i++)
+        tree->resizeColumnToContents(i);
 }
 
 void PackageSelectorPage::resetPage()

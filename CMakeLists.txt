@@ -1,5 +1,5 @@
 project(kdewin-installer)
-set (VERSION 0.6.8)
+set (VERSION 0.6.9)
 
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
@@ -21,7 +21,7 @@ set (CMAKE_PRODUCTION_BUILD 0)
 if (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel) 
     set (CMAKE_PRODUCTION_BUILD 1)
 	# disable qDebug output
-	add_definitions(-DQT_NO_DEBUG_OUTPUT)
+	#add_definitions(-DQT_NO_DEBUG_OUTPUT)
 endif (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel) 
 
 if (MSVC)

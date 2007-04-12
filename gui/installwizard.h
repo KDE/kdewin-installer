@@ -161,6 +161,7 @@ public:
 
 public slots:
     void itemClicked(QTreeWidgetItem *item, int column);
+	void installDirChanged(const QString &dir);
 
 private:
     QLabel *topLabel;

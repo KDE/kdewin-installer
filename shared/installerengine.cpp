@@ -36,22 +36,32 @@
 #include "database.h"
 
 InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar)
+    : QObject(), m_instProgressBar(instProgressBar)
 {
-	m_progressBar = progressBar;
-	m_instProgressBar = instProgressBar; 
-	m_database = &Database::getInstance();
+	m_database = new Database();
+	m_downloader = new Downloader(/*blocking=*/ true,progressBar);
 #ifdef PRINT_AVAILABLE_PACKAGES	
 	m_availablePackages = new PackageList();
 	m_availablePackages->setName("all packages");
-	Installer *installer = new Installer(m_availablePackages,m_instProgressBar );
-	installer->setRoot(root());
-	m_installerList.append(installer);
 #endif
+    Settings &s = Settings::getInstance();
+	m_installer = new Installer(m_instProgressBar );
+	m_installer->setRoot(s.installDir());
+}
+
+InstallerEngine::~InstallerEngine()
+{
+	m_packageListList.clear();
+	// FIXME: application crashes when calling qDeleteAll()
+	//qDeleteAll(m_packageListList);
+	delete m_database;
+	delete m_installer;
+	delete m_downloader;
+	delete m_globalConfig;
 }
 
 void InstallerEngine::readGlobalConfig()
 {
-	m_downloader = new Downloader(/*blocking=*/ true,m_progressBar);
     m_globalConfig = new GlobalConfig(QString("http://82.149.170.66/kde-windows/installer/config.txt"),*m_downloader);
     createMainPackagelist();
 }
@@ -59,7 +69,7 @@ void InstallerEngine::readGlobalConfig()
 void InstallerEngine::createMainPackagelist()
 {
     // package list is build from packages defined in global configuration
-	m_database->readFromDirectory(root()+"/manifest");
+	m_database->readFromDirectory(Settings::getInstance().installDir()+"/manifest");
 #ifdef DEBUG
 	m_database->listPackages("Package");
 #endif
@@ -76,15 +86,6 @@ void InstallerEngine::createMainPackagelist()
 		    packageList = new PackageList();
 			packageList->setName(category);
 			m_packageListList.append(packageList);
-			/**
-			  @TODO: m_installer is used for installing, there should be only one 
-			  instance for each installation root, which requires not to store a 
-			  package list pointer in the installer
-			*/ 
-		    Installer *installer = new Installer(packageList,m_instProgressBar );
-			installer->setRoot(root());
-		    m_installerList.append(installer);
-			m_installer = installer;
 		}
 		packageList->addPackage(*pkg);
 #ifdef PRINT_AVAILABLE_PACKAGES			
@@ -111,25 +112,12 @@ bool InstallerEngine::downloadPackageLists()
 		    packageList = new PackageList();
 			packageList->setName(category);
 			m_packageListList.append(packageList);
-		    Installer *installer = new Installer(packageList,m_instProgressBar );
-			installer->setRoot(root());
-		    m_installerList.append(installer);
 		}
 		packageList->setNotes((*s)->notes());
 
 		// packagelist needs to access Site::getDependencies() && Site::isExclude()
         packageList->setCurrentSite(*s);
 
-/*
-		// FIXME:: hardcoded name, better to use an option in the config file ?
-        if ((*s)->name() == "gnuwin32")
-        {
-            installer->setType(Installer::GNUWIN32);
-            // FIXME: add additional option in config.txt for mirrors
-            packageList->setBaseURL("http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/");
-        }
-        else
-*/
         packageList->setBaseURL((*s)->url());
 
         qDebug() << (*s)->url();
@@ -161,9 +149,6 @@ bool InstallerEngine::downloadPackageLists()
 		packageList->setName("installed");
 		packageList->setNotes("packages in this categories are installed, but are not listed in recent configuration because they are obsolate or outdated");
 		m_packageListList.append(packageList);
-	    Installer *installer = new Installer(packageList,m_instProgressBar );
-		installer->setRoot(root());
-	    m_installerList.append(installer);
 	}
 	m_database->addUnhandledPackages(packageList);
 
@@ -200,24 +185,9 @@ Package *InstallerEngine::getPackageByName(const QString &name,const QString &ve
     return 0;
 }
 
-void InstallerEngine::setRoot(QString root)
-{
-    Settings::getInstance().setInstallDir(root);
-}
-
-const QString InstallerEngine::root()
-{
-    QString root = Settings::getInstance().installDir();
-    if (root.isEmpty())
-    {
-        root = QDir::currentPath();
-        Settings::getInstance().setInstallDir(root);
-    }
-    return QDir::convertSeparators(root);
-}
-
 void InstallerEngine::stop()
 {
     m_downloader->cancel();
 }
 
+#include "installerengine.moc"

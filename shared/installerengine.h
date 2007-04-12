@@ -43,8 +43,10 @@ class Database;
 
 class InstallerEngine : public QObject
 {
+    Q_OBJECT
 public:
     InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
+	~InstallerEngine();
 	void readGlobalConfig();
     void createMainPackagelist();
     bool downloadPackageLists();
@@ -53,15 +55,6 @@ public:
     PackageList *getPackageListByName(const QString &name);
     Package *getPackageByName(const QString &name,const QString &version=QString());
 
-	void setRoot(QString root);
-    const QString root();
-
-
-    PackageList *packageList()
-    {
-        return m_packageList;
-    }
-
     Installer *installer()
     {
         return m_installer;
@@ -69,16 +62,13 @@ public:
 
 protected:
     QList <PackageList*> m_packageListList;
-    QList <Installer*>   m_installerList;
-    PackageList         *m_packageList;  // currently used packagelist
     Installer           *m_installer;    // currently used installer
     Downloader          *m_downloader;
     InstallerProgress   *m_instProgress;
     GlobalConfig        *m_globalConfig;
     InstallerProgress   *m_instProgressBar;
-	DownloaderProgress  *m_progressBar;
 	Database            *m_database;
-    PackageList         *m_availablePackages; 
+//    PackageList         *m_availablePackages; 
 };
 
 #endif

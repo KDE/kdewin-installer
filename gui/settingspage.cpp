@@ -31,10 +31,10 @@ void SettingsPage::init()
     ui.rootPathEdit->setText(QDir::convertSeparators(settings.installDir()));
     ui.tempPathEdit->setText(QDir::convertSeparators(settings.downloadDir()));
     switch (settings.proxyMode()) {
-        case 1: ui.proxyIE->setChecked(true); break;
-        case 2: ui.proxyManual->setChecked(true); break;
-        case 3: ui.proxyFireFox->setChecked(true); break;
-        case 0: 
+        case Settings::InternetExplorer: ui.proxyIE->setChecked(true); break;
+        case Settings::Manual: ui.proxyManual->setChecked(true); break;
+        case Settings::FireFox: ui.proxyFireFox->setChecked(true); break;
+        case Settings::None: 
         default: ui.proxyOff->setChecked(true); break;
     }
 

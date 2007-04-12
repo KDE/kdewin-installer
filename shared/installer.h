@@ -33,7 +33,7 @@ class Installer : public QObject
 
 public:
     enum InstallerType { Standard, GNUWIN32 };
-    Installer(PackageList *packageList, InstallerProgress *progress=0);
+    Installer(InstallerProgress *progress=0);
     ~Installer();
     InstallerType Type() const
     {
@@ -63,7 +63,6 @@ protected:
     void setError(const QString &str);
     bool createQtConfigFile();
 
-    PackageList *packageList;
     QString m_root;
     QString configFile;
     InstallerProgress *m_progress;
