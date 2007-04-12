@@ -252,6 +252,7 @@ bool isMarkedForRemoval(QTreeWidgetItem &item,Package::Type type)
 
 void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree)
 {
+    tree->clear();
     QStringList labels;
     QList<QTreeWidgetItem *> items;
     // QTreeWidgetItem *item;
