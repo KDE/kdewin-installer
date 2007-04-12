@@ -163,7 +163,7 @@ bool Packager::generatePackageFileList(QStringList &fileList, Packager::Type typ
                 generateFileList(fileList, dir, "plugins", "*d.dll *d4.dll *d1.dll");
                 generateFileList(fileList, dir, ".",            ".qmake.cache");
                 generateFileList(fileList, dir, "mkspecs",  "qconfig.pri");
-                generateFileList(fileList, dir, "mkspecs/features", "qt_*.prf");
+                generateFileList(fileList, dir, "mkspecs/features", "*.prf", "unix mac");
                 generateFileList(fileList, dir, "mkspecs/default", "*.*");
                 if (m_name.endsWith("mingw")) 
                 {
