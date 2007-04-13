@@ -124,7 +124,8 @@ bool Database::readFromDirectory(const QString &dir)
         QString pkgName;
 		QString pkgVersion;
 		QString pkgType;
-		if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType))
+		QString pkgFormat;
+		if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgFormat))
 			continue;
 		Package *pkg;
         if (pkg = getPackage(pkgName,pkgVersion.toAscii())) 

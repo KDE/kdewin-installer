@@ -47,6 +47,7 @@ InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgre
     Settings &s = Settings::getInstance();
 	m_installer = new Installer(m_instProgressBar );
 	m_installer->setRoot(s.installDir());
+	m_installer->setDatabase(m_database);
 }
 
 InstallerEngine::~InstallerEngine()

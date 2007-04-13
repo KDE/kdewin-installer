@@ -24,6 +24,8 @@
 #define INSTALLER_H
 
 #include "package.h"
+
+class Database;
 class PackageList;
 class InstallerProgress;
 
@@ -43,6 +45,9 @@ public:
     {
         m_type = type;
     }
+
+    Database *database() { return m_database; }
+    void setDatabase(Database *database) { m_database = database; }
     bool install(const QString &fileName, const StringHash &pathRelocations=StringHash());
     // installPackage(Package *pkg)
     //  bool readFromFile(QString const &fileName);
@@ -68,6 +73,7 @@ protected:
     InstallerProgress *m_progress;
     InstallerType m_type;
     QStringList m_files;
+    Database *m_database;
 };
 
 #endif

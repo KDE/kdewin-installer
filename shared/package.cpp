@@ -442,7 +442,7 @@ bool Package::installItem(Installer *installer, Package::Type type)
 
 bool Package::removeItem(Installer *installer, Package::Type type)
 {
-	QString manifestFile = installer->root()+"/manifest/"+ Database::getInstance().manifestFileName(name(),version(),type);
+	QString manifestFile = installer->root()+"/manifest/"+ installer->database()->manifestFileName(name(),version(),type);
 	Uninstall ui(installer->root(),manifestFile);
 	ui.uninstallPackage(false);
 	return true;
