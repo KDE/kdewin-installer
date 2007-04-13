@@ -35,12 +35,12 @@ GlobalConfig::GlobalConfig(const QString &url, Downloader &downloader)
     QFileInfo cfr("config-remote.txt");
     if (cfr.exists())
     {
-		qDebug() << "found remote config copy at" << cfr.absoluteFilePath() << "for parsing";
+        qDebug() << "found remote config copy at" << cfr.absoluteFilePath() << "for parsing";
         ret = parseFromFile("config-remote.txt");
     }
     else 
     {
-		qDebug() << "I would use " << cfr.absoluteFilePath() << "for parsing the remote config file";
+        qDebug() << "I would use " << cfr.absoluteFilePath() << "for parsing the remote config file";
         QFileInfo cfi("config.txt");
         qDebug() << "download global configuration file";
         // FIXME uses version related config file to have more room for format changes
@@ -124,49 +124,49 @@ bool GlobalConfig::parse(QIODevice *ioDev)
             // TODO: encoding of config file! Currently: ascii
             QString l = line;
             QStringList cmd = l.split(' ');
-			QString col2;
-			if (cmd.size() == 3)
-				col2 = cmd[2];
+            QString col2;
+            if (cmd.size() == 3)
+                col2 = cmd[2];
 
             if (cmd[0] == "@format")
                 ;
             else if (cmd[0] == "@news")
-			{
-				QString name = cmd[1]; 
-				QString version = cmd[2]; 
-				cmd.removeFirst();
-				cmd.removeFirst();
-				cmd.removeFirst();
-				m_news[name+"-"+version] = cmd.join(" ");		
-			}
+            {
+                QString name = cmd[1]; 
+                QString version = cmd[2]; 
+                cmd.removeFirst();
+                cmd.removeFirst();
+                cmd.removeFirst();
+                m_news[name+"-"+version] = cmd.join(" ");        
+            }
             else if(inPackage)
             {
                 if(cmd[0] == "@version")
                     pkg->setVersion(cmd[1]);
                 else if(cmd[0] == "@url-bin")
-				{	
-					Package::PackageItem item;
-					if (item.set(cmd[1],col2,Package::BIN))
-						pkg->add(item);
-				}
+                {    
+                    Package::PackageItem item;
+                    if (item.set(cmd[1],col2,Package::BIN))
+                        pkg->add(item);
+                }
                 else if(cmd[0] == "@url-lib")
-				{	
-					Package::PackageItem item;
-					if (item.set(cmd[1],col2,Package::LIB))
-						pkg->add(item);
-				}
+                {    
+                    Package::PackageItem item;
+                    if (item.set(cmd[1],col2,Package::LIB))
+                        pkg->add(item);
+                }
                 else if(cmd[0] == "@url-doc")
-				{	
-					Package::PackageItem item;
-					if (item.set(cmd[1],col2,Package::DOC))
-						pkg->add(item);
-				}
+                {    
+                    Package::PackageItem item;
+                    if (item.set(cmd[1],col2,Package::DOC))
+                        pkg->add(item);
+                }
                 else if(cmd[0] == "@url-src")
-				{	
-					Package::PackageItem item;
-					if (item.set(cmd[1],col2,Package::SRC))
-						pkg->add(item);
-				}
+                {    
+                    Package::PackageItem item;
+                    if (item.set(cmd[1],col2,Package::SRC))
+                        pkg->add(item);
+                }
                 else if(cmd[0] == "@require")
                 {
                     cmd.removeFirst();

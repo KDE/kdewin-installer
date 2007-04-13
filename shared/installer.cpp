@@ -76,7 +76,7 @@ bool Installer::loadConfig()
 #ifdef DEBUG
     qDebug() << __PRETTY_FUNCTION__;
 #endif
-	return true;
+    return true;
 }
 
 void Installer::updatePackageList()
@@ -112,7 +112,7 @@ bool Installer::unzipFile(const QString &destpath, const QString &zipFile, const
 
     QuaZipFile file(&z);
     QuaZipFileInfo info;
-	m_files.clear();
+    m_files.clear();
     if (m_progress)
     {
         m_progress->setMaximum(z.getEntriesCount());
@@ -128,14 +128,14 @@ bool Installer::unzipFile(const QString &destpath, const QString &zipFile, const
             return false;
         }
         // relocate path names
-		QString name = info.name;
+        QString name = info.name;
         for(StringHash::const_iterator i = pathRelocations.constBegin(); i != pathRelocations.constEnd(); i++)
         {
             name = name.replace(i.key(),i.value());
-        }		
-		m_files << name;
-		QString outPath = path.filePath(name);
-		QFileInfo fi(outPath);
+        }        
+        m_files << name;
+        QString outPath = path.filePath(name);
+        QFileInfo fi(outPath);
 
         // is it's a subdir ?
         if(info.compressedSize == 0 && info.uncompressedSize == 0)
@@ -213,46 +213,46 @@ bool Installer::unzipFile(const QString &destpath, const QString &zipFile, const
     z.close();
     if (m_progress)
     {
-		m_progress->hide();
-	}
+        m_progress->hide();
+    }
 
     if(z.getZipError() != UNZ_OK)
     {
         setError(tr("Error reading zip file %1").arg(zipFile));
         return false;
     }
-	// write manifest file if not exist or is corrupted
-	QFileInfo f(zipFile);
-	QFileInfo a(destpath +"/manifest/"+ f.fileName().replace(".zip",".mft"));
-	if (a.exists() && a.isFile() && a.size() > 0)
-		return true;
-	// in some gnuwin32 packages the manifest file is a directory 
-	if (a.isDir())
-	{	
-		QDir dd;
-		dd.rmdir(a.absoluteFilePath());
-	}
-	m_files << "manifest/"+ f.fileName().replace(".zip",".mft");
-	m_files << "manifest/"+ f.fileName().replace(".zip",".ver");
-	QFile fo(a.absoluteFilePath());
+    // write manifest file if not exist or is corrupted
+    QFileInfo f(zipFile);
+    QFileInfo a(destpath +"/manifest/"+ f.fileName().replace(".zip",".mft"));
+    if (a.exists() && a.isFile() && a.size() > 0)
+        return true;
+    // in some gnuwin32 packages the manifest file is a directory 
+    if (a.isDir())
+    {    
+        QDir dd;
+        dd.rmdir(a.absoluteFilePath());
+    }
+    m_files << "manifest/"+ f.fileName().replace(".zip",".mft");
+    m_files << "manifest/"+ f.fileName().replace(".zip",".ver");
+    QFile fo(a.absoluteFilePath());
     if (!fo.open(QIODevice::WriteOnly | QIODevice::Text))
-		return false;
+        return false;
     QTextStream so(&fo);
-	so << m_files.join("\n");
+    so << m_files.join("\n");
 
-	// write .ver file if not exist
-	QFileInfo b(destpath +"/manifest/"+ f.fileName().replace(".zip",".ver"));
-	if (b.exists() && b.isFile() && b.size() > 0)
-		return true;
-	QFile verFile(b.absoluteFilePath());
+    // write .ver file if not exist
+    QFileInfo b(destpath +"/manifest/"+ f.fileName().replace(".zip",".ver"));
+    if (b.exists() && b.isFile() && b.size() > 0)
+        return true;
+    QFile verFile(b.absoluteFilePath());
     if (!verFile.open(QIODevice::WriteOnly | QIODevice::Text))
-		return false;
+        return false;
     QTextStream vFo(&verFile);
-	//  @TODO fill ver file with usefull values
-	vFo << "dummy x.y.z Content description\n";
-	vFo << "dummy:";
+    //  @TODO fill ver file with usefull values
+    vFo << "dummy x.y.z Content description\n";
+    vFo << "dummy:";
 
-	return true;
+    return true;
 }
 
 bool Installer::un7zipFile(const QString &destpath, const QString &zipFile)

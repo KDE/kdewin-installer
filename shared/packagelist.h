@@ -49,8 +49,8 @@ public:
     void listPackages(const QString &title=QString());
     bool readFromFile(const QString &_fileName=QString());
     bool syncWithFile(const QString &_fileName=QString());
-	bool syncWithDatabase(Database &database);
-	bool readHTMLFromFile(const QString &fileName, PackageList::Type type=PackageList::SourceForge, bool append=false);
+    bool syncWithDatabase(Database &database);
+    bool readHTMLFromFile(const QString &fileName, PackageList::Type type=PackageList::SourceForge, bool append=false);
     bool readHTMLFromByteArray(const QByteArray &ba, PackageList::Type type=PackageList::SourceForge, bool append=false);
     bool writeToFile(QString const &fileName=QString::null);
     Package *getPackage(QString const &pkgName, const QByteArray &version = QByteArray());
@@ -115,7 +115,7 @@ private:
     QString m_name;
     QString m_baseURL;
     Site *m_curSite;
-	QString m_notes;
+    QString m_notes;
 
     friend class Installer;
 };

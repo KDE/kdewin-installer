@@ -29,19 +29,19 @@
 class InstallerEngineGui : public InstallerEngine
 {
 public:
-	enum Type { EndUser, Developer, Single };
+    enum Type { EndUser, Developer, Single };
 
     InstallerEngineGui(DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
 
     void setPageSelectorWidgetData(QTreeWidget *tree);
-	void modeSwitchClicked(int mode);
+    void modeSwitchClicked(int mode);
     void itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column);
     bool downloadPackages(QTreeWidget *tree, const QString &category=QString());
     bool installPackages(QTreeWidget *tree, const QString &category=QString());
-	bool removePackages(QTreeWidget *tree, const QString &category=QString());
+    bool removePackages(QTreeWidget *tree, const QString &category=QString());
 
 private:
-	Type                 m_installMode;
+    Type                 m_installMode;
 
 };
 

@@ -24,7 +24,7 @@ if (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel)
 	#add_definitions(-DQT_NO_DEBUG_OUTPUT)
 endif (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel) 
 
-if (MSVC)
+if (_MSVC)
     MESSAGE(STATUS "Note: Please make sure that Qt is build with /MT flags")
 	if (CMAKE_BUILD_TYPE STREQUAL Release)
 		set (CMAKE_C_FLAGS_RELEASE "/MT /O2 /Ob2 /D NDEBUG")
@@ -41,7 +41,7 @@ if (MSVC)
 		set (CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /MTd /Zi /Ob0 /Od /RTC1")
 		set (CMAKE_EXE_LINKER_FLAGS_DEBUG "/debug /INCREMENTAL:YES /NODEFAULTLIB:msvcrtd /NODEFAULTLIB:cmt")
 	endif (CMAKE_BUILD_TYPE STREQUAL Debug)
-endif (MSVC)
+endif (_MSVC)
 
 # we just need zlib include dir, linking to zlib is not needed
 include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${QT_INCLUDES} ${CMAKE_SOURCE_DIR}/3rdparty/zlib)

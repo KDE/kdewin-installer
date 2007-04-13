@@ -46,8 +46,8 @@ class InstallerEngine : public QObject
     Q_OBJECT
 public:
     InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
-	~InstallerEngine();
-	void readGlobalConfig();
+    ~InstallerEngine();
+    void readGlobalConfig();
     void createMainPackagelist();
     bool downloadPackageLists();
     void stop();
@@ -67,7 +67,7 @@ protected:
     InstallerProgress   *m_instProgress;
     GlobalConfig        *m_globalConfig;
     InstallerProgress   *m_instProgressBar;
-	Database            *m_database;
+    Database            *m_database;
 //    PackageList         *m_availablePackages; 
 };
 

@@ -183,14 +183,14 @@ void ComplexWizard::settingsButtonClicked()
 
 void ComplexWizard::aboutButtonClicked()
 {
-	QMessageBox::information(this, 
-		tr("KDE-Installer"),
-		tr("The KDEWIN Installer is an open source application, "
-		   "which makes it able to install KDE applications on windows.\n"
-		   "\nAuthors: \n\n\tRalf Habacker\n\tChristian Ehrlicher\n"
-		  ), 
-		  QMessageBox::Ok
-	); 
+    QMessageBox::information(this, 
+        tr("KDE-Installer"),
+        tr("The KDEWIN Installer is an open source application, "
+           "which makes it able to install KDE applications on windows.\n"
+           "\nAuthors: \n\n\tRalf Habacker\n\tChristian Ehrlicher\n"
+          ), 
+          QMessageBox::Ok
+    ); 
 }
 
 #include "complexwizard.moc"

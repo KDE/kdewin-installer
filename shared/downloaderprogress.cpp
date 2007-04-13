@@ -59,7 +59,7 @@ DownloaderProgress::~DownloaderProgress()
 
 void DownloaderProgress::hide()
 {
-	titleLabel->hide();
+    titleLabel->hide();
     statusLabel->hide();
     progress->hide();
 }

@@ -60,7 +60,7 @@ InstallWizard::InstallWizard(QWidget *parent)
     engine = new InstallerEngineGui(progressBar,instProgressBar);
     settingsPage = new SettingsPage(this);
 
-	setWindowTitle(tr("KDE Installer - Version " VERSION));
+    setWindowTitle(tr("KDE Installer - Version " VERSION));
     Settings &s = Settings::getInstance();
 
     if (s.isFirstRun() || s.showTitlePage())
@@ -152,9 +152,9 @@ PathSettingsPage::PathSettingsPage(InstallWizard *wizard)
     tempPathLabel = new QLabel(tr("&Temporay download path:"));
     tempPathEdit = new QLineEdit;
     tempPathLabel->setBuddy(tempPathEdit);
-	tempPathEdit->setText(s.downloadDir());
+    tempPathEdit->setText(s.downloadDir());
 
-	tempPathSelect = new QPushButton("...", this);
+    tempPathSelect = new QPushButton("...", this);
     connect(tempPathSelect, SIGNAL(pressed()),this, SLOT(selectTempPath()));
 
 
@@ -196,9 +196,9 @@ void PathSettingsPage::resetPage()
 WizardPage *PathSettingsPage::nextPage()
 {
     Settings &s = Settings::getInstance();
-	s.setInstallDir(rootPathEdit->text());
-	s.setDownloadDir(tempPathEdit->text());
-	wizard->proxySettingsPage = new ProxySettingsPage(wizard);
+    s.setInstallDir(rootPathEdit->text());
+    s.setDownloadDir(tempPathEdit->text());
+    wizard->proxySettingsPage = new ProxySettingsPage(wizard);
     return wizard->proxySettingsPage;
 }
 
@@ -230,21 +230,21 @@ ProxySettingsPage::ProxySettingsPage(InstallWizard *wizard)
     connect( proxyOff,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
     connect( proxyIE,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
     connect( proxyFireFox,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
-	connect( proxyManual,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
+    connect( proxyManual,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
 
     Settings &s = Settings::getInstance();
-	switch (s.proxyMode()) {
-		case Settings::InternetExplorer: proxyIE->setChecked(true); break;
-		case Settings::Manual: proxyManual->setChecked(true); break;
-		case Settings::FireFox: proxyFireFox->setChecked(true); break;
-		case Settings::None: 
-		default: proxyOff->setChecked(true); break;
-	}
-	switchProxyFields(true);
-	proxyHost->setText(s.proxyHost());
-	proxyPort->setText(QString("%1").arg(s.proxyPort()));
+    switch (s.proxyMode()) {
+        case Settings::InternetExplorer: proxyIE->setChecked(true); break;
+        case Settings::Manual: proxyManual->setChecked(true); break;
+        case Settings::FireFox: proxyFireFox->setChecked(true); break;
+        case Settings::None: 
+        default: proxyOff->setChecked(true); break;
+    }
+    switchProxyFields(true);
+    proxyHost->setText(s.proxyHost());
+    proxyPort->setText(QString("%1").arg(s.proxyPort()));
 
-	QGridLayout *layout = new QGridLayout;
+    QGridLayout *layout = new QGridLayout;
     layout->setRowMinimumHeight(1, 10);
     layout->addWidget(topLabel, 0, 0, 1, 2);
     layout->addWidget(proxyOff, 2, 0);
@@ -260,8 +260,8 @@ ProxySettingsPage::ProxySettingsPage(InstallWizard *wizard)
 
 void ProxySettingsPage::switchProxyFields(bool checked)
 {
-	proxyHost->setEnabled(proxyManual->isChecked());
-	proxyPort->setEnabled(proxyManual->isChecked());
+    proxyHost->setEnabled(proxyManual->isChecked());
+    proxyPort->setEnabled(proxyManual->isChecked());
 }
 
 void ProxySettingsPage::resetPage()
@@ -279,11 +279,11 @@ WizardPage *ProxySettingsPage::nextPage()
     if(proxyManual->isChecked())
         m = Settings::Manual;
     s.setProxyMode(m);
-	if (proxyManual->isChecked())
-		s.setProxy(proxyHost->text(),proxyPort->text());
+    if (proxyManual->isChecked())
+        s.setProxy(proxyHost->text(),proxyPort->text());
 
     engine->readGlobalConfig();
-	engine->downloadPackageLists();
+    engine->downloadPackageLists();
     wizard->packageSelectorPage = new PackageSelectorPage(wizard);
     wizard->settingsButton->show();
     Settings::getInstance().setFirstRun(false);
@@ -306,7 +306,7 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
         tree->resizeColumnToContents(i);
 
     connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
-	connect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
+    connect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(topLabel);
@@ -321,7 +321,7 @@ void PackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
 
 void PackageSelectorPage::installDirChanged(const QString &dir)
 {
-	delete engine;
+    delete engine;
     engine = new InstallerEngineGui(wizard->progressBar,wizard->instProgressBar);
     engine->readGlobalConfig();
     engine->downloadPackageLists();
@@ -335,6 +335,8 @@ void PackageSelectorPage::resetPage()
 
 WizardPage *PackageSelectorPage::nextPage()
 {
+    wizard->nextButton->setVisible(false);
+    wizard->backButton->setVisible(false);
     wizard->downloadPage = new DownloadPage(wizard);
     return wizard->downloadPage;
 }
@@ -365,10 +367,10 @@ WizardPage *DownloadPage::nextPage()
 
 bool DownloadPage::isComplete()
 {
-    wizard->nextButton->setEnabled(false);
+//    wizard->nextButton->setEnabled(false);
     engine->downloadPackages(tree);
     QApplication::instance()->processEvents();
-    wizard->nextButton->setEnabled(true);
+//   wizard->nextButton->setEnabled(true);
     emit wizard->nextButtonClicked();
     return true;
 }

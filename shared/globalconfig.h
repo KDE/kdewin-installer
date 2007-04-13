@@ -44,7 +44,7 @@ class GlobalConfig {
     private:
         QList <Site*> m_sites; 
         QList <Package *> m_packages;
-		// package news <key,value> where key = <name>-<version>
+        // package news <key,value> where key = <name>-<version>
         QHash <QString,QString> m_news;
 };
 

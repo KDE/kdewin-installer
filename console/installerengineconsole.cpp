@@ -64,13 +64,13 @@ bool InstallerEngineConsole::downloadPackages(const QStringList &packages, const
        }
        foreach(QString pkgName, packages)
        {
-			Package *pkg = packageList->getPackage(pkgName);
-			if (!pkg)
-				continue;
-	        pkg->downloadItem(m_downloader, Package::BIN);
-	        pkg->downloadItem(m_downloader, Package::LIB);
-	        pkg->downloadItem(m_downloader, Package::DOC);
-	        pkg->downloadItem(m_downloader, Package::SRC);
+            Package *pkg = packageList->getPackage(pkgName);
+            if (!pkg)
+                continue;
+            pkg->downloadItem(m_downloader, Package::BIN);
+            pkg->downloadItem(m_downloader, Package::LIB);
+            pkg->downloadItem(m_downloader, Package::DOC);
+            pkg->downloadItem(m_downloader, Package::SRC);
        }
    }
    return true;
@@ -90,13 +90,13 @@ bool InstallerEngineConsole::installPackages(const QStringList &packages,const Q
        }
        foreach(QString pkgName, packages)
        {
-			Package *pkg = packageList->getPackage(pkgName);
-			if (!pkg)
-				continue;
-			pkg->installItem(m_installer, Package::BIN);
-			pkg->installItem(m_installer, Package::LIB);
-			pkg->installItem(m_installer, Package::DOC);
-			pkg->installItem(m_installer, Package::SRC);
+            Package *pkg = packageList->getPackage(pkgName);
+            if (!pkg)
+                continue;
+            pkg->installItem(m_installer, Package::BIN);
+            pkg->installItem(m_installer, Package::LIB);
+            pkg->installItem(m_installer, Package::DOC);
+            pkg->installItem(m_installer, Package::SRC);
        }
    }
    return true;

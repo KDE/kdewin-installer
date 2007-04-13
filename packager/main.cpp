@@ -44,9 +44,9 @@ static void printHelp(const QString &addInfo)
        << "\n\t\t"      << "-version <package version>"
        << "\n\t\t"      << "-strip <strip debug infos> (MinGW only)"
        << "\n\t\t"      << "-notes <additional notes for manifest files>"
-	   << "\n\t\t"      << "-type type of package (mingw, msvc)"
-	   << "\n\t\t"      << "-destdir directory where to store the zip files to"
-	   << "\n\t\t"      << "-complete also create all-in-one package with all files"
+       << "\n\t\t"      << "-type type of package (mingw, msvc)"
+       << "\n\t\t"      << "-destdir directory where to store the zip files to"
+       << "\n\t\t"      << "-complete also create all-in-one package with all files"
        << "\n";
 
     ts.flush();
@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
         args.removeAt(idx);
     }
 
-	idx = args.indexOf("-version");
+    idx = args.indexOf("-version");
     if(idx != -1 && idx < args.count() -1) {
         version = args[idx + 1];
         args.removeAt(idx + 1);
@@ -146,15 +146,15 @@ int main(int argc, char *argv[])
     if(!srcRoot.isEmpty() &&(!srcRootDir.isDir() || !srcRootDir.isReadable()))
        printHelp(QString("Source Root path %1 is not accessible").arg(srcRoot));
 
-	if (!type.isEmpty())
+    if (!type.isEmpty())
         name += '-' + type;
 
     Packager packager(name, version, notes);
-	if (!srcRoot.isEmpty())
-		packager.setSourceRoot(srcRootDir.filePath());
+    if (!srcRoot.isEmpty())
+        packager.setSourceRoot(srcRootDir.filePath());
 
-	if (!srcExclude.isEmpty())
-		packager.setSourceExcludes(srcExclude);
+    if (!srcExclude.isEmpty())
+        packager.setSourceExcludes(srcExclude);
 
     if (strip)
        packager.stripFiles(rootDir.filePath());

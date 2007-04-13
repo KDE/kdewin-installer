@@ -30,14 +30,14 @@ Settings::Settings()
  : m_settings(QSettings::IniFormat, QSettings::UserScope, "KDE", "Installer")
 {
 #ifdef DEBUG
-	qDebug() << "installDir:" << installDir();
+    qDebug() << "installDir:" << installDir();
     qDebug() << "downloadDir:" << downloadDir();
     qDebug() << "showTitlePage:" << showTitlePage();
     qDebug() << "createStartMenuEntries:" << createStartMenuEntries();
     qDebug() << "isFirstRun" << isFirstRun();
-	qDebug() << "proxyMode" << proxyMode();
-	qDebug() << "proxyHost" << proxyHost();
-	qDebug() << "proxyPort" << proxyPort();
+    qDebug() << "proxyMode" << proxyMode();
+    qDebug() << "proxyHost" << proxyHost();
+    qDebug() << "proxyPort" << proxyPort();
 #endif
 }
 
@@ -46,26 +46,26 @@ QString Settings::installDir()
     QString dir = m_settings.value("rootdir", QDir::currentPath () ).toString();
     QFileInfo fi(dir);
     if(!fi.exists()) 
-	{
+    {
         if(!QDir().mkpath(dir))
-		{
-			qWarning() << "could not create directory" << dir;
+        {
+            qWarning() << "could not create directory" << dir;
             return QDir::currentPath();
-		}
-	    return dir;
+        }
+        return dir;
     }
-	if(!fi.isDir()) 
-	{
-		qWarning() << "rootdir is no directory " << dir;
+    if(!fi.isDir()) 
+    {
+        qWarning() << "rootdir is no directory " << dir;
         return QDir::currentPath();
-	}
+    }
     return dir;
 }
 
 void Settings::setInstallDir(const QString &dir)
 {
     m_settings.setValue("rootdir", dir);
-	m_settings.sync();
+    m_settings.sync();
     emit installDirChanged(dir);
 }
 
@@ -75,24 +75,24 @@ QString Settings::downloadDir()
     QFileInfo fi(dir);
     if(!fi.exists()) {
         if(!QDir().mkdir(dir))
-		{
-			qWarning() << "could not create directory" << dir;
+        {
+            qWarning() << "could not create directory" << dir;
             return QDir::currentPath();
-		}
-		return dir;
+        }
+        return dir;
     }
     if(!fi.isDir())
-	{
-		qWarning() << "tempdir is no directory " << dir;
+    {
+        qWarning() << "tempdir is no directory " << dir;
         return QDir::currentPath();
-	}
+    }
     return dir;
 }
 
 void Settings::setDownloadDir(const QString &dir)
 {
     m_settings.setValue("tempdir", dir);
-	m_settings.sync();
+    m_settings.sync();
     emit downloadDirChanged(dir);
 }
 
@@ -104,7 +104,7 @@ bool Settings::showTitlePage()
 void Settings::setShowTitlePage(bool bShow)
 {
     m_settings.setValue("displayTitlePage", bShow);
-	m_settings.sync();
+    m_settings.sync();
 }
 
 bool Settings::createStartMenuEntries()
@@ -115,7 +115,7 @@ bool Settings::createStartMenuEntries()
 void Settings::setCreateStartMenuEntries(bool bCreate)
 {
     m_settings.setValue("createStartMenuEntries", bCreate);
-	m_settings.sync();
+    m_settings.sync();
 }
 
 Settings &Settings::getInstance()
@@ -128,16 +128,16 @@ Settings &Settings::getInstance()
 
 bool Settings::getIEProxySettings(const QString &url, QString &host, int &port)
 {
-	host = QString();
-	port = 0;
+    host = QString();
+    port = 0;
 
-	bool ok; 
+    bool ok; 
     quint32 enable = getWin32RegistryValue(hKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings","ProxyEnable",&ok).toUInt();
     if (!ok)
         return false; 
 
     if (enable == 0)
-		return false;
+        return false;
     
     QString proxyServer = getWin32RegistryValue(hKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings","ProxyServer",&ok).toString();
     if (!ok)
@@ -156,80 +156,80 @@ bool Settings::getIEProxySettings(const QString &url, QString &host, int &port)
 
 bool Settings::getFireFoxProxySettings(const QString &url, QString &host, int &port)
 {
-	static QHash<QString,QString> prefs;
-	static bool prefsRead = false;
+    static QHash<QString,QString> prefs;
+    static bool prefsRead = false;
 
-	if (!prefsRead) 
-	{
-		QString mozillaProfileDir = qgetenv("APPDATA");///lb4kyocy.default";
-		QDir d(mozillaProfileDir + "/Mozilla/Firefox/Profiles");
+    if (!prefsRead) 
+    {
+        QString mozillaProfileDir = qgetenv("APPDATA");///lb4kyocy.default";
+        QDir d(mozillaProfileDir + "/Mozilla/Firefox/Profiles");
 
-		d.setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
-		d.setNameFilters(QStringList("*.default"));
-		d.setSorting(QDir::Name);
+        d.setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
+        d.setNameFilters(QStringList("*.default"));
+        d.setSorting(QDir::Name);
 
-		QFileInfoList list = d.entryInfoList();
+        QFileInfoList list = d.entryInfoList();
         if(!list.count())
             return false;
-		const QFileInfo &fi = list[0];
-		QString prefsFile = d.absolutePath()+"/"+fi.fileName() + "/prefs.js";
-		QFile f(prefsFile);
-		f.open(QIODevice::ReadOnly | QIODevice::Text);
-		QTextStream in(&f);
-		while (!in.atEnd()) 
-		{
-			QString line = in.readLine();
-			if (line.startsWith("user_pref("))
-			{
-				QString data = line.mid(10,line.length()-11-1);
-				QStringList attr = data.split(',');
-				QString key = attr[0].mid(1,attr[0].length()-2);
-				QString value = attr[1].mid(1,attr[1].length()-1).remove('\"');
-				prefs[key] = value;
-			}
-		}
-		prefsRead = true;
-	}
-	
-	if (prefs.contains("network.proxy.type"))
-	{
-		int mode = prefs["network.proxy.type"].toInt();
-		// 1 manual proxy
-		// 2 use autoconfig url -> network.proxy.autoconfig_url
-		// 4 automatic detection, how to do ? 
-		if (mode == 1) 
-		{
-			if (url.startsWith("http") || 
-					   prefs.contains("network.proxy.share_proxy_settings")
-					&& prefs["network.proxy.share_proxy_settings"] == "true")
-			{
-				host = prefs["network.proxy.http"];
-				port = prefs["network.proxy.http_port"].toInt();
-				return true;
-			}
-			host = prefs["network.proxy.ftp"];
-			port = prefs["network.proxy.ftp_port"].toInt();
-			return true;
-		}
-	}
-	host = QString();
-	port = 0;
-	return false;
+        const QFileInfo &fi = list[0];
+        QString prefsFile = d.absolutePath()+"/"+fi.fileName() + "/prefs.js";
+        QFile f(prefsFile);
+        f.open(QIODevice::ReadOnly | QIODevice::Text);
+        QTextStream in(&f);
+        while (!in.atEnd()) 
+        {
+            QString line = in.readLine();
+            if (line.startsWith("user_pref("))
+            {
+                QString data = line.mid(10,line.length()-11-1);
+                QStringList attr = data.split(',');
+                QString key = attr[0].mid(1,attr[0].length()-2);
+                QString value = attr[1].mid(1,attr[1].length()-1).remove('\"');
+                prefs[key] = value;
+            }
+        }
+        prefsRead = true;
+    }
+    
+    if (prefs.contains("network.proxy.type"))
+    {
+        int mode = prefs["network.proxy.type"].toInt();
+        // 1 manual proxy
+        // 2 use autoconfig url -> network.proxy.autoconfig_url
+        // 4 automatic detection, how to do ? 
+        if (mode == 1) 
+        {
+            if (url.startsWith("http") || 
+                       prefs.contains("network.proxy.share_proxy_settings")
+                    && prefs["network.proxy.share_proxy_settings"] == "true")
+            {
+                host = prefs["network.proxy.http"];
+                port = prefs["network.proxy.http_port"].toInt();
+                return true;
+            }
+            host = prefs["network.proxy.ftp"];
+            port = prefs["network.proxy.ftp_port"].toInt();
+            return true;
+        }
+    }
+    host = QString();
+    port = 0;
+    return false;
 }
 
 
 bool Settings::getProxySettings(const QString &url, QString &host, int &port)
 {
-	// FIXME: add support for different ftp proxy settings
+    // FIXME: add support for different ftp proxy settings
     switch(proxyMode()) {
         case InternetExplorer:
             return getIEProxySettings(url, host, port);
         case FireFox:
             return getFireFoxProxySettings(url, host, port);
         case Manual:
-		    host = proxyHost();
-		    port = proxyPort();
-		    return true; 
+            host = proxyHost();
+            port = proxyPort();
+            return true; 
         case None:
         default:
             host = QString();

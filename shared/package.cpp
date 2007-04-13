@@ -36,132 +36,132 @@
 
 bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat)
 {
-	QString baseName; 
+    QString baseName; 
 
-	// first remove ending
+    // first remove ending
     int idx = fileName.lastIndexOf('.');
     if(idx != -1)
     {
-		pkgFormat = fileName.mid(idx + 1);
+        pkgFormat = fileName.mid(idx + 1);
         baseName = fileName.left(idx).toLower();
-	}
+    }
     else
-	{
+    {
         pkgFormat = "unknown";
         baseName = fileName.toLower();
-	}
+    }
 
-	QStringList parts = baseName.split('-');
+    QStringList parts = baseName.split('-');
 
-	if (parts.size() == 5)
-	{
-		// a-b-c-version-type
-		if (parts[2][0].isLetter())
-		{
-			pkgName = parts[0] + "-" + parts[1] + "-" + parts[2];
-			pkgVersion = parts[3];
-		}			
-		else
-		{
-			pkgName = parts[0] + "-" + parts[1];
-			pkgVersion = parts[2] + '-' + parts[3];
-		}
-		pkgType = parts[4];
-	}
-	else if (parts.size() == 4)
-	{
-		if (parts[1][0].isLetter())
-		{
-			pkgName += parts[0] + "-" + parts[1];
-			pkgVersion = parts[2];
-		}
-		else
-		{
-			pkgName = parts[0];
-			pkgVersion = parts[1] + '-' + parts[2];
-		}
-		pkgType = parts[3];
-	}
-	else if(parts.size() == 3) 
-	{
-		pkgName = parts[0];
-		if (parts[1][0].isNumber())
-			pkgVersion = parts[1];
-		else
-			pkgName += "-" + parts[1];
+    if (parts.size() == 5)
+    {
+        // a-b-c-version-type
+        if (parts[2][0].isLetter())
+        {
+            pkgName = parts[0] + "-" + parts[1] + "-" + parts[2];
+            pkgVersion = parts[3];
+        }            
+        else
+        {
+            pkgName = parts[0] + "-" + parts[1];
+            pkgVersion = parts[2] + '-' + parts[3];
+        }
+        pkgType = parts[4];
+    }
+    else if (parts.size() == 4)
+    {
+        if (parts[1][0].isLetter())
+        {
+            pkgName += parts[0] + "-" + parts[1];
+            pkgVersion = parts[2];
+        }
+        else
+        {
+            pkgName = parts[0];
+            pkgVersion = parts[1] + '-' + parts[2];
+        }
+        pkgType = parts[3];
+    }
+    else if(parts.size() == 3) 
+    {
+        pkgName = parts[0];
+        if (parts[1][0].isNumber())
+            pkgVersion = parts[1];
+        else
+            pkgName += "-" + parts[1];
 
-		// aspell-0.50.3-3
-		if (parts[2][0].isNumber())
-		{
-			if (pkgVersion.isEmpty())
-				pkgVersion = parts[2];
-			else
-				pkgVersion += "-" + parts[2];
-			pkgType = "bin";
-		}
-		else
-			pkgType = parts[2];
-	}
-	else if(parts.size() == 2) 
-	{
-		pkgName = parts[0];
-		pkgVersion = parts[1];
-		pkgType = "bin";
-	}
-	else if(parts.size() < 2) 
-	{
+        // aspell-0.50.3-3
+        if (parts[2][0].isNumber())
+        {
+            if (pkgVersion.isEmpty())
+                pkgVersion = parts[2];
+            else
+                pkgVersion += "-" + parts[2];
+            pkgType = "bin";
+        }
+        else
+            pkgType = parts[2];
+    }
+    else if(parts.size() == 2) 
+    {
+        pkgName = parts[0];
+        pkgVersion = parts[1];
+        pkgType = "bin";
+    }
+    else if(parts.size() < 2) 
+    {
         qDebug() << "can't parse filename " << baseName;
         return false;
     }
-	else 	
-	{
+    else     
+    {
         qDebug() << __FUNCTION__ << "unhandled case with" << baseName;
         return false;
-	}
-	return true;
+    }
+    return true;
 }
 
 
 QString Package::typeToString(Package::Type type)
 {
-	switch(type) {
-		case BIN:	return "bin";
-		case LIB:	return "lib";
-		case DOC:	return "doc";
-		case SRC:	return "src";
-		case ALL:	return "all";
-		default:	return "unknown";
-	}
+    switch(type) {
+        case BIN:    return "bin";
+        case LIB:    return "lib";
+        case DOC:    return "doc";
+        case SRC:    return "src";
+        case ALL:    return "all";
+        default:    return "unknown";
+    }
 }
 
 bool Package::PackageItem::setContentType(const QString &type)
 {
     QString ct = type.toLower();
     if(ct == "bin")
-	{
+    {
         contentType = BIN;
-		return true;
-	}
+        return true;
+    }
     else if(ct == "lib")
-	{
+    {
         contentType = LIB;
-		return true;
-	}
+        return true;
+    }
     else if(ct == "doc")
-	{
+    {
         contentType = DOC;
-		return true;
-	}
+        return true;
+    }
     else if(ct == "src")
-	{
+    {
         contentType = SRC;
-		return true;
-	}
-	else 
-	{
-		contentType = NONE;
-		return false;
-	}
+        return true;
+    }
+    else 
+    {
+        contentType = NONE;
+        return false;
+    }
 }
 
 void Package::PackageItem::dump(const QString &title) const
@@ -177,7 +177,7 @@ void Package::PackageItem::dump(const QString &title) const
 
 Package::Package()
 {
-	m_handled = false;
+    m_handled = false;
 }
 
 Package::Package(const Package &other)
@@ -188,8 +188,8 @@ Package::Package(const Package &other)
     m_category   = other.m_category;
     m_deps       = other.m_deps;
     m_pathRelocs = other.m_pathRelocs;
-	m_handled    = other.m_handled;
-	m_notes      = other.m_notes;
+    m_handled    = other.m_handled;
+    m_notes      = other.m_notes;
 }
 
 QString Package::getFileName(Package::Type contentType)
@@ -208,8 +208,8 @@ QString Package::getURL(Package::Type contentType)
 
 QString Package::getBaseURL()
 {
-	// FIXME: obsolate remove it
-	return QString();
+    // FIXME: obsolate remove it
+    return QString();
 }
 
 bool Package::add(const PackageItem &item)
@@ -320,29 +320,29 @@ bool Package::read(QTextStream &in)
     QStringList state = options.at(0).split(':');
     QString baseURL = options.at(1);
     if(!options.at(2).isEmpty())
-	{	
-		Package::PackageItem item;
+    {    
+        Package::PackageItem item;
         item.set(baseURL, options.at(2), BIN, state.size() > 0 && state.at(0) == "bin");
-		add(item);
-	}
+        add(item);
+    }
     if(!options.at(3).isEmpty())
-	{	
-		Package::PackageItem item;
+    {    
+        Package::PackageItem item;
         item.set(baseURL, options.at(3), LIB, state.size() > 1 && state.at(1) == "lib");
-		add(item);
-	}
+        add(item);
+    }
     if(!options.at(4).isEmpty())
-	{	
-		Package::PackageItem item;
+    {    
+        Package::PackageItem item;
         item.set(baseURL, options.at(4), DOC, state.size() > 2 && state.at(2) == "doc");
-		add(item);
-	}
+        add(item);
+    }
     if(!options.at(5).isEmpty())
-	{	
-		Package::PackageItem item;
+    {    
+        Package::PackageItem item;
         item.set(baseURL, options.at(5), SRC, state.size() > 3 && state.at(3) == "src");
-		add(item);
-	}
+        add(item);
+    }
     return true;
 }
 
@@ -359,13 +359,13 @@ void Package::dump(const QString &title) const
     StringHash::ConstIterator its = m_pathRelocs.constBegin();
     for( ; its != m_pathRelocs.constEnd(); its++) 
     {
-    	d += its.key() + " = " + its.value() + ' ';
+        d += its.key() + " = " + its.value() + ' ';
     }
     qDebug() << "m_pathRelocs: " << d;
 
     QHash<Type, PackageItem>::ConstIterator it = m_packages.constBegin();
     for( ; it != m_packages.constEnd(); ++it) {
-    	it->dump();
+        it->dump();
     }
     DUMP_FOOTER(title,"Package");
 }
@@ -387,9 +387,9 @@ static bool makeDir(const QDir &dir)
 
 QString Package::makeFileName(Package::Type type, bool bCreateDir)
 {
-	QString dir = Settings::getInstance().downloadDir();
-	if (Settings::getInstance().nestedDownloadTree())
-	    dir += '/' + m_name + '/' + m_name + '-' + m_version + '/';
+    QString dir = Settings::getInstance().downloadDir();
+    if (Settings::getInstance().nestedDownloadTree())
+        dir += '/' + m_name + '/' + m_name + '-' + m_version + '/';
     QDir d(dir);
 
     if(bCreateDir) {
@@ -424,9 +424,9 @@ bool Package::installItem(Installer *installer, Package::Type type)
     if (fileName.isEmpty())
     {
 #ifdef DEBUG
-		qDebug() << __FUNCTION__ << " empty fileName for type " << type;
+        qDebug() << __FUNCTION__ << " empty fileName for type " << type;
 #endif
-		return false;
+        return false;
     }
     fileName = makeFileName(type);
     if (!installer->install(fileName, pathRelocations())) 
@@ -442,10 +442,10 @@ bool Package::installItem(Installer *installer, Package::Type type)
 
 bool Package::removeItem(Installer *installer, Package::Type type)
 {
-	QString manifestFile = installer->root()+"/manifest/"+ installer->database()->manifestFileName(name(),version(),type);
-	Uninstall ui(installer->root(),manifestFile);
-	ui.uninstallPackage(false);
-	return true;
+    QString manifestFile = installer->root()+"/manifest/"+ installer->database()->manifestFileName(name(),version(),type);
+    Uninstall ui(installer->root(),manifestFile);
+    ui.uninstallPackage(false);
+    return true;
 }
 
 void Package::logOutput()
@@ -506,16 +506,16 @@ bool Package::PackageItem::set(const QString &url, const QString &fn, Package::T
     desc.url = url;
     // generate fileName from from url 
     if(fn.isEmpty()) 
-	{
-		idx = url.lastIndexOf('/');
-		if(idx == -1) {
-			qDebug() << __FUNCTION__ << "Invalid - no complete url found " << url;    // FIXME
-			return false;
-		}
-		desc.fileName = url.mid(idx + 1);
-	}
-	else
-		desc.fileName = fn;
+    {
+        idx = url.lastIndexOf('/');
+        if(idx == -1) {
+            qDebug() << __FUNCTION__ << "Invalid - no complete url found " << url;    // FIXME
+            return false;
+        }
+        desc.fileName = url.mid(idx + 1);
+    }
+    else
+        desc.fileName = fn;
 
     idx = desc.fileName.lastIndexOf('.');
     if(idx == -1) {
@@ -529,6 +529,6 @@ bool Package::PackageItem::set(const QString &url, const QString &fn, Package::T
 #ifdef DEBUG
     qDebug() << __FUNCTION__ << desc.contentType << desc.bInstalled;
 #endif    
-	*this = desc;
-	return true;
+    *this = desc;
+    return true;
 }

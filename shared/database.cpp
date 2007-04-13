@@ -76,7 +76,7 @@ bool Database::addUnhandledPackages(PackageList *packageList)
 {
     QList<Package*>::iterator it = m_database.begin();
     for ( ; it != m_database.end(); ++it) 
-	{
+    {
         if (!(*it)->handled())
             packageList->addPackage(*(*it));
     }
@@ -87,7 +87,7 @@ void Database::resetHandledState()
 {
     QList<Package*>::iterator it = m_database.begin();
     for ( ; it != m_database.end(); ++it) 
-	{
+    {
         (*it)->setHandled(false);
     }
 }
@@ -120,30 +120,30 @@ bool Database::readFromDirectory(const QString &dir)
      
     for (int i = 0; i < list.size(); i++) {
         QFileInfo fi = list[i];        
-		QString fileName = fi.fileName();
+        QString fileName = fi.fileName();
         QString pkgName;
-		QString pkgVersion;
-		QString pkgType;
-		QString pkgFormat;
-		if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgFormat))
-			continue;
-		Package *pkg;
+        QString pkgVersion;
+        QString pkgType;
+        QString pkgFormat;
+        if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgFormat))
+            continue;
+        Package *pkg;
         if (pkg = getPackage(pkgName,pkgVersion.toAscii())) 
         {
             Package::PackageItem pi;
             pi.bInstalled =true; 
-			pi.setContentType(pkgType);
+            pi.setContentType(pkgType);
             pkg->add(pi);
         }
         else 
         {
             Package *pkg =  new Package;
             pkg->setName(pkgName);
-			pkg->setVersion(pkgVersion);
+            pkg->setVersion(pkgVersion);
             Package::PackageItem pi;
             pi.bInstalled = true;
-			pi.setContentType(pkgType);
-			pkg->add(pi);
+            pi.setContentType(pkgType);
+            pkg->add(pi);
             m_database.append(pkg);
         }
     }        
@@ -156,27 +156,27 @@ bool Database::readFromDirectory(const QString &dir)
 QString Database::versionFileName(const QString &name, const QString &version, Package::Type type)
 {
     Package *pkg;
-	if (pkg = getPackage(name)) 
-		return pkg->name() + "-" + pkg->version() + "-" + Package::typeToString(type) +".ver"; 
-	else
-		return QString();
+    if (pkg = getPackage(name)) 
+        return pkg->name() + "-" + pkg->version() + "-" + Package::typeToString(type) +".ver"; 
+    else
+        return QString();
 }
 
 // returns manifest file name of package item e.g. xyz-1.2.3-bin.mft
 QString Database::manifestFileName(const QString &name, const QString &version, Package::Type type)
 {
     Package *pkg;
-	if (pkg = getPackage(name)) 
-		return name + "-" + version + "-" + Package::typeToString(type) +".mft";
-	else
-		return QString();
+    if (pkg = getPackage(name)) 
+        return name + "-" + version + "-" + Package::typeToString(type) +".mft";
+    else
+        return QString();
 
 }
 
 Database &Database::getInstance()
 {
-	static Database database;
-	return database;
+    static Database database;
+    return database;
 }
 
 void Database::dump(const QString &title)

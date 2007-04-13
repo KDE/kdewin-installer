@@ -104,13 +104,13 @@ int main(int argc, char *argv[])
 #if 1
     InstallerEngineConsole engine(0,0);
     if (!options.rootdir.isEmpty())
-    	engine.setRoot(options.rootdir);
-    	
+        engine.setRoot(options.rootdir);
+        
     engine.downloadPackageLists();
     if (options.list)
         engine.listPackages("Package List");
     if((options.download || options.install) && packages.size() > 0)
-		    engine.downloadPackages(packages);
+            engine.downloadPackages(packages);
     if(options.install && packages.size() > 0)
         engine.installPackages(packages);
     return 0;

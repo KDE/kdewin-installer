@@ -50,19 +50,19 @@ bool Uninstall::uninstallPackage(bool bUseHashWhenPossible)
     QFileInfo fi;
     QFile f;
 #ifdef USE_GUI
-	InstallerProgress *m_progress = &wizard->installProgressBar();
+    InstallerProgress *m_progress = &wizard->installProgressBar();
 #else
-	InstallerProgress *m_progress = 0;
+    InstallerProgress *m_progress = 0;
 #endif
 
-	if(!readManifestFile(files))
+    if(!readManifestFile(files))
         return false;
 
-	if (m_progress)
-	{
-		m_progress->setMaximum(files.size());
-		m_progress->show();
-	}
+    if (m_progress)
+    {
+        m_progress->setMaximum(files.size());
+        m_progress->show();
+    }
     QList<FileItem>::ConstIterator it = files.constBegin();
     for( ; it != files.constEnd(); it++ ) {
         FileItem fileItem = *it;
@@ -92,7 +92,7 @@ bool Uninstall::uninstallPackage(bool bUseHashWhenPossible)
             m_progress->setTitle(tr("Removing %1").arg(fileItem.fileName));
         }
 
-		if(!QFile::remove(fileItem.fileName)) {
+        if(!QFile::remove(fileItem.fileName)) {
             emit warning(QString("Can't remove %1").arg(fileItem.fileName));
             continue;
         }
@@ -100,8 +100,8 @@ bool Uninstall::uninstallPackage(bool bUseHashWhenPossible)
     }
     if (m_progress)
     {
-		m_progress->hide();
-	}
+        m_progress->hide();
+    }
 
     return true;
 }

@@ -292,51 +292,51 @@ bool removeStartMenuEntries(const QString &dir, const QString &category)
 QVariant getWin32RegistryValue(RegKey akey, const QString& subKey, const QString& item, bool *ok)
 {
 #define FAILURE \
-	{ if (ok) \
-		*ok = false; \
-	return QString(); }
+    { if (ok) \
+        *ok = false; \
+    return QString(); }
 
-	if (subKey.isEmpty())
-		FAILURE;
-		
-	HKEY key;
+    if (subKey.isEmpty())
+        FAILURE;
+        
+    HKEY key;
     switch(akey) {
         case hKEY_CURRENT_USER: key = HKEY_CURRENT_USER; break; 
         case hKEY_LOCAL_MACHINE: key = HKEY_LOCAL_MACHINE; break; 
         case hKEY_CLASSES_ROOT: key = HKEY_CLASSES_ROOT; break;
-		default: FAILURE;
-	}
-	
-	HKEY hKey;
-	DWORD dwType;
-	DWORD dwSize;
+        default: FAILURE;
+    }
+    
+    HKEY hKey;
+    DWORD dwType;
+    DWORD dwSize;
 
-	if (ERROR_SUCCESS!=RegOpenKeyExW(key, WIN32_CAST_CHAR subKey.utf16(), 0, KEY_READ, &hKey))
-		FAILURE;
+    if (ERROR_SUCCESS!=RegOpenKeyExW(key, WIN32_CAST_CHAR subKey.utf16(), 0, KEY_READ, &hKey))
+        FAILURE;
 
-	if (ERROR_SUCCESS!=RegQueryValueExW(hKey, WIN32_CAST_CHAR item.utf16(), NULL, &dwType, NULL, &dwSize))
-		FAILURE;
+    if (ERROR_SUCCESS!=RegQueryValueExW(hKey, WIN32_CAST_CHAR item.utf16(), NULL, &dwType, NULL, &dwSize))
+        FAILURE;
 
     QVariant res;
     switch(dwType) {
         case REG_SZ: {
             QByteArray ba(dwSize * 2, 0);
-	        if (ERROR_SUCCESS!=RegQueryValueExW(hKey, WIN32_CAST_CHAR item.utf16(), NULL, &dwType, (LPBYTE)ba.data(), &dwSize))
-		        FAILURE;
+            if (ERROR_SUCCESS!=RegQueryValueExW(hKey, WIN32_CAST_CHAR item.utf16(), NULL, &dwType, (LPBYTE)ba.data(), &dwSize))
+                FAILURE;
             res = QString::fromUtf16( (unsigned short*)ba.data() );
             break;
         }
         case REG_DWORD: {
             quint32 dwVal;
-	        if (ERROR_SUCCESS!=RegQueryValueExW(hKey, WIN32_CAST_CHAR item.utf16(), NULL, &dwType, (LPBYTE)&dwVal, &dwSize))
-		        FAILURE;
+            if (ERROR_SUCCESS!=RegQueryValueExW(hKey, WIN32_CAST_CHAR item.utf16(), NULL, &dwType, (LPBYTE)&dwVal, &dwSize))
+                FAILURE;
             res = dwVal;
             break;
         }
         case REG_BINARY: {
             QByteArray ba(dwSize, 0);
-	        if (ERROR_SUCCESS!=RegQueryValueExW(hKey, WIN32_CAST_CHAR item.utf16(), NULL, &dwType, (LPBYTE)ba.data(), &dwSize))
-		        FAILURE;
+            if (ERROR_SUCCESS!=RegQueryValueExW(hKey, WIN32_CAST_CHAR item.utf16(), NULL, &dwType, (LPBYTE)ba.data(), &dwSize))
+                FAILURE;
             res = ba;
             break;
         }
@@ -345,6 +345,6 @@ QVariant getWin32RegistryValue(RegKey akey, const QString& subKey, const QString
     }
     RegCloseKey(hKey);
 
-	return res;
+    return res;
 }
 

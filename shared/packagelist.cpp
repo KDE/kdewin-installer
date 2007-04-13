@@ -40,7 +40,7 @@ PackageList::PackageList()
 #endif
     m_root = ".";
     m_configFile = "/packages.txt";
-	m_curSite = 0;
+    m_curSite = 0;
 
 }
 
@@ -139,7 +139,7 @@ bool PackageList::readFromFile(const QString &_fileName)
 
     QString comment = in.readLine();
     QString format = in.readLine();
-		
+        
     while (!in.atEnd())
     {
         Package pkg;
@@ -156,12 +156,12 @@ bool PackageList::readFromFile(const QString &_fileName)
 bool PackageList::append(PackageList &src)
 {
     QList<Package*>::iterator it;
-	for (it = src.m_packageList.begin(); it != src.m_packageList.end(); ++it)
-	{
-		Package *pkg = (*it);
-		addPackage(*pkg);
-	}
-	return true;
+    for (it = src.m_packageList.begin(); it != src.m_packageList.end(); ++it)
+    {
+        Package *pkg = (*it);
+        addPackage(*pkg);
+    }
+    return true;
 }
 
 
@@ -181,7 +181,7 @@ bool PackageList::syncWithFile(const QString &_fileName)
 
     QString comment = in.readLine();
     QString format = in.readLine();
-		
+        
     Package *apkg;
     while (!in.atEnd())
     {
@@ -216,18 +216,18 @@ bool PackageList::syncWithDatabase(Database &database)
 
     QList<Package*>::iterator it;
     for (it = m_packageList.begin(); it != m_packageList.end(); ++it)
-	{
-		Package *apkg = (*it);
-		Package *pkg = database.getPackage(apkg->name(), apkg->version().toAscii());
-		if (!pkg)
-		{
-			pkg = database.getPackage(apkg->name());
-			if (!pkg)
-				continue;
-			m_packageList.append(pkg);
-			pkg->setHandled(true);
-			continue;
-		}
+    {
+        Package *apkg = (*it);
+        Package *pkg = database.getPackage(apkg->name(), apkg->version().toAscii());
+        if (!pkg)
+        {
+            pkg = database.getPackage(apkg->name());
+            if (!pkg)
+                continue;
+            m_packageList.append(pkg);
+            pkg->setHandled(true);
+            continue;
+        }
         if (pkg->isInstalled(Package::BIN))
             apkg->setInstalled(Package::BIN);
         if (pkg->isInstalled(Package::LIB))
@@ -236,8 +236,8 @@ bool PackageList::syncWithDatabase(Database &database)
             apkg->setInstalled(Package::DOC);
         if (pkg->isInstalled(Package::SRC))
             apkg->setInstalled(Package::SRC);
-		pkg->setHandled(true);
-	}
+        pkg->setHandled(true);
+    }
     return true;
 }
 
@@ -264,7 +264,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                     continue;
                 }
                 if (m_curSite)
-					pkg.addDeps(m_curSite->getDependencies(name));
+                    pkg.addDeps(m_curSite->getDependencies(name));
                 pkg.setName(name);
                 line = ioDev->readLine();
                 a = line.indexOf("\">") + 2;
@@ -273,15 +273,15 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                 pkg.setVersion(version);
                 // available types could not be determined on this web page
                 // so assume all types are available
-				Package::PackageItem item;
+                Package::PackageItem item;
                 item.set(m_baseURL,name+"-"+version+"-bin.zip",Package::BIN,false);
-				pkg.add(item);
+                pkg.add(item);
                 item.set(m_baseURL,name+"-"+version+"-lib.zip",Package::LIB,false);
-				pkg.add(item);
+                pkg.add(item);
                 item.set(m_baseURL,name+"-"+version+"-src.zip",Package::SRC,false);
-				pkg.add(item);
+                pkg.add(item);
                 item.set(m_baseURL,name+"-"+version+"-doc.zip",Package::DOC,false);
-				pkg.add(item);
+                pkg.add(item);
                 addPackage(pkg);
             }
         }
@@ -308,13 +308,13 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                 // aspell-0.50.3-3.zip
                 // bzip2-1.0.4.notes
 
-				QString pkgName;
-				QString pkgVersion;
-				QString pkgType;
-				QString pkgFormat;
-				if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgFormat))
-					continue;
-				Package *pkg = getPackage(pkgName, pkgVersion.toAscii());
+                QString pkgName;
+                QString pkgVersion;
+                QString pkgType;
+                QString pkgFormat;
+                if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgFormat))
+                    continue;
+                Package *pkg = getPackage(pkgName, pkgVersion.toAscii());
                 if(pkgFormat == "notes") {
                     // Download package
                     QByteArray ba;
@@ -333,18 +333,18 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                         Package p;
                         p.setVersion(pkgVersion);
                         p.setName(pkgName);
-						Package::PackageItem item;
+                        Package::PackageItem item;
                         item.set(m_baseURL + '/' + fileName, "", pkgType.toAscii());
-						p.add(item);
+                        p.add(item);
                         addPackage(p);
                         if (m_curSite)
-							p.addDeps(m_curSite->getDependencies(pkgName));
+                            p.addDeps(m_curSite->getDependencies(pkgName));
                     } else {
-						Package::PackageItem item;
-						item.set(m_baseURL + '/' + fileName, "", pkgType.toAscii());
-						pkg->add(item);
-						if (m_curSite)
-							pkg->addDeps(m_curSite->getDependencies(pkgName));
+                        Package::PackageItem item;
+                        item.set(m_baseURL + '/' + fileName, "", pkgType.toAscii());
+                        pkg->add(item);
+                        if (m_curSite)
+                            pkg->addDeps(m_curSite->getDependencies(pkgName));
                     }
                 }
             }

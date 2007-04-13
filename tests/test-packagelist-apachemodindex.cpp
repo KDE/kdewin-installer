@@ -35,15 +35,15 @@ int main(int argc, char *argv[])
 
     DownloaderProgress progress(0);
     Downloader download(true,&progress);
-	Site site;
-	site.setURL("http://82.149.170.66/kde-windows/win32libs/");
-	site.setName("test");
+    Site site;
+    site.setURL("http://82.149.170.66/kde-windows/win32libs/");
+    site.setName("test");
     PackageList packageList;
     packageList.setCurrentSite(&site);
     packageList.setBaseURL(site.url());
-	
+    
     qDebug() << "trying to download win32 related package list";
-	download.start(site.url(),"packages1.html");
+    download.start(site.url(),"packages1.html");
     if (!packageList.readHTMLFromFile("packages1.html",PackageList::ApacheModIndex))
     {
         qDebug() << "... failed ";

@@ -49,13 +49,14 @@ public:
     {
         return history;
     }
-	InstallerProgress &installProgressBar() { return *instProgressBar; }
+    InstallerProgress &installProgressBar() { return *instProgressBar; }
 
 protected:
     void setFirstPage(WizardPage *page);
     DownloaderProgress *progressBar;
     InstallerProgress *instProgressBar;
     QPushButton *nextButton;
+    QPushButton *backButton;
 
 protected slots:
     void backButtonClicked();
@@ -70,7 +71,6 @@ private:
     QList<WizardPage *> history;
     QPushButton *AboutButton;
     QPushButton *cancelButton;
-    QPushButton *backButton;
     QPushButton *finishButton;
     QHBoxLayout *buttonLayout;
     QVBoxLayout *mainLayout;

@@ -48,7 +48,7 @@ private:
     QLabel *titleLabel;
     QLabel *statusLabel;
 //    QProgressBar *progress;
-		QListWidget *progress;
+        QListWidget *progress;
 };
 
 #else

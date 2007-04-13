@@ -119,7 +119,7 @@ private:
     QLabel    *rootPathLabel;
     QLineEdit *rootPathEdit;
     QPushButton *rootPathSelect;
-	QLabel    *tempPathLabel;
+    QLabel    *tempPathLabel;
     QLineEdit *tempPathEdit;
     QPushButton *tempPathSelect;
 };
@@ -140,9 +140,9 @@ private slots:
 
 private:
     QLabel    *topLabel;
-	QLabel    *proxyHostLabel,*proxyPortLabel;
-	QLineEdit *proxyPort,*proxyHost;
-	QRadioButton *proxyOff,*proxyManual,*proxyIE,*proxyFireFox;
+    QLabel    *proxyHostLabel,*proxyPortLabel;
+    QLineEdit *proxyPort,*proxyHost;
+    QRadioButton *proxyOff,*proxyManual,*proxyIE,*proxyFireFox;
 };
 
 class QTreeWidget;
@@ -161,7 +161,7 @@ public:
 
 public slots:
     void itemClicked(QTreeWidgetItem *item, int column);
-	void installDirChanged(const QString &dir);
+    void installDirChanged(const QString &dir);
 
 private:
     QLabel *topLabel;

@@ -37,12 +37,12 @@ InstallerProgress::InstallerProgress(QWidget *parent)
     titleLabel = new QLabel();
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(titleLabel);
-	progress = new QListWidget(parent);
-	QHBoxLayout *statusLayout = new QHBoxLayout;
+    progress = new QListWidget(parent);
+    QHBoxLayout *statusLayout = new QHBoxLayout;
     statusLabel = new QLabel();
-	statusLayout->addWidget(statusLabel);
-	statusLayout->addWidget(progress);
-	mainLayout->addLayout(statusLayout);
+    statusLayout->addWidget(statusLabel);
+    statusLayout->addWidget(progress);
+    mainLayout->addLayout(statusLayout);
     setLayout(mainLayout);
     hide();
 }
@@ -50,49 +50,49 @@ InstallerProgress::InstallerProgress(QWidget *parent)
 InstallerProgress::~InstallerProgress()
 {
     delete titleLabel;
-	delete statusLabel;
-	delete progress;
+    delete statusLabel;
+    delete progress;
 }
 
 void InstallerProgress::hide()
 {
     titleLabel->hide();
-	statusLabel->hide();
-	progress->hide();
+    statusLabel->hide();
+    progress->hide();
 }
 
 void InstallerProgress::setTitle(const QString &label)
 {
-	static int i = 0;
-	if (!Settings::getInstance().installDetails())
-	{
-		titleLabel->setText(label);
-		QApplication::instance()->processEvents();
-	}
-	else 
-	{
-		progress->addItem(label);
-		if (i++ % 10 == 0) {
-			progress->scrollToBottom();
-			QApplication::instance()->processEvents();
-		}
-	}
+    static int i = 0;
+    if (!Settings::getInstance().installDetails())
+    {
+        titleLabel->setText(label);
+        QApplication::instance()->processEvents();
+    }
+    else 
+    {
+        progress->addItem(label);
+        if (i++ % 10 == 0) {
+            progress->scrollToBottom();
+            QApplication::instance()->processEvents();
+        }
+    }
 }
 
 void InstallerProgress::setStatus(const QString &label)
 {
-	if (statusLabel)
-		statusLabel->setText(label);
+    if (statusLabel)
+        statusLabel->setText(label);
 }
 
 void InstallerProgress::show()
 {
     titleLabel->show();
-	if (Settings::getInstance().installDetails())
-	{
-		statusLabel->show();
-		progress->show();
-	}
+    if (Settings::getInstance().installDetails())
+    {
+        statusLabel->show();
+        progress->show();
+    }
 }
 
 void InstallerProgress::setMaximum(int value)
@@ -120,14 +120,14 @@ void InstallerProgress::hide()
 void InstallerProgress::setTitle(const QString &title)
 {
 #ifdef DEBUG
-	qDebug() << title;
+    qDebug() << title;
 #endif
 }
 
 void InstallerProgress::setStatus(const QString &status)
 {
 #ifdef DEBUG
-	qDebug() << status;
+    qDebug() << status;
 #endif
 }
 

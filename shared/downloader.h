@@ -39,11 +39,11 @@ public:
     Downloader(bool blocking=false, DownloaderProgress *progress=0);
 
     virtual ~Downloader();
-	// set http proxy
-	void setProxy(const QString &host, int port);
+    // set http proxy
+    void setProxy(const QString &host, int port);
 
-	// start download 
-	bool start(const QString &url, const QString &fileName = QString::null);
+    // start download 
+    bool start(const QString &url, const QString &fileName = QString::null);
     bool start(const QString &url, QByteArray &ba);
     void cancel();
 

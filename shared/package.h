@@ -41,7 +41,7 @@ typedef QHash<QString, QString> StringHash;
 class PackageInfo 
 {
 public:
-	static bool fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat=QString());
+    static bool fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat=QString());
 };
 
 
@@ -61,11 +61,11 @@ public:
 
     class PackageItem {
         public:
-		    bool set(const QString &url, const QString &fn, Package::Type contentType, bool bInstalled = false);
-			bool set(const QString &url, const QString &fn, const QByteArray &contentType, bool bInstalled = false);
-			bool setContentType(const QString &type);
+            bool set(const QString &url, const QString &fn, Package::Type contentType, bool bInstalled = false);
+            bool set(const QString &url, const QString &fn, const QByteArray &contentType, bool bInstalled = false);
+            bool setContentType(const QString &type);
             // dump content
-    	    void dump(const QString &title=QString()) const;
+            void dump(const QString &title=QString()) const;
             QString url;            // complete download url 
             QString fileName;  // filename only
             QString packageType;    // zip / msi / ...
@@ -97,10 +97,10 @@ public:
     // returns the base Url of all packages (if possible, otherwise QString())
     QString getBaseURL();
 
-	// add a file to this package
-	bool add(const PackageItem &item);
+    // add a file to this package
+    bool add(const PackageItem &item);
 
-	// set Install state of a package type (e.g. from gnuwin32 manifests)
+    // set Install state of a package type (e.g. from gnuwin32 manifests)
     void setInstalled(const Package &other);
     // return state of a specific item type is available
     bool hasType(Package::Type contentType) const;
@@ -135,10 +135,10 @@ public:
     void addPathRelocation(const QString &key, const QString &value) { m_pathRelocs[key] = value; }
     StringHash &pathRelocations() { return m_pathRelocs; }
 
-	static QString typeToString(Package::Type type);
+    static QString typeToString(Package::Type type);
 
-	bool handled() { return m_handled; }
-	void setHandled(bool state) { m_handled = state; }
+    bool handled() { return m_handled; }
+    void setHandled(bool state) { m_handled = state; }
 
 private slots:
     void logOutput();
@@ -147,7 +147,7 @@ protected:
     // Creates the full path + filename for a package type, creates path when wanted
     QString makeFileName(Package::Type type, bool bCreateDir = false);
 
-	QHash<Type, PackageItem> m_packages;
+    QHash<Type, PackageItem> m_packages;
 
     QString m_name;     // base name (a2ps)
     QString m_version;  // base version (4.13b-1)

@@ -37,8 +37,8 @@ class Packager {
       // mingw only: strip all debugging symbols from files to reduce size
       bool stripFiles(const QString &dir);
       bool createDebugFiles(const QString &dir);
-	  void setSourceRoot(const QString &dir) { m_srcRoot = dir; }
-	  void setSourceExcludes(const QString &excludes) { m_srcExcludes = excludes; }
+      void setSourceRoot(const QString &dir) { m_srcRoot = dir; }
+      void setSourceExcludes(const QString &excludes) { m_srcExcludes = excludes; }
 
       bool generatePackageFileList(QStringList &result, Packager::Type type, const QString &dir=QString());
 
@@ -60,8 +60,8 @@ class Packager {
       QString m_version;
       QString m_notes;
       QString m_rootDir;
-	  QString m_srcRoot;
-	  QString m_srcExcludes;
+      QString m_srcRoot;
+      QString m_srcExcludes;
       bool m_verbose;
 }; 
 
