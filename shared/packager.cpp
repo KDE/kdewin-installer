@@ -186,6 +186,7 @@ bool Packager::generatePackageFileList(QStringList &fileList, Packager::Type typ
                 generateFileList(fileList, dir, "tools/assistant/lib", "*.h","*_p.h *_pch.h");
                 generateFileList(fileList, dir, "tools/qdbus/src", "*.h","*_p.h *_pch.h");
                 generateFileList(fileList, dir, "tools/designer/src/uitools", "*.h","*_p.h *_pch.h");
+                generateFileList(fileList, dir, "tools/designer/src/lib", "*.h","*_p.h *_pch.h");
                 generateFileList(fileList, dir, "tools/qtestlib/src/", "*.h","*_p.h *_pch.h");
                 return true;
             case DOC:
@@ -456,7 +457,7 @@ bool Packager::createQtConfig(QStringList &fileList, QList<MemFile> &manifestFil
     b.open(QIODevice::WriteOnly);
     QTextStream out(&b);
     out << "[Paths]\n";
-    out << "Prefix=..\n";
+    out << "Prefix=\n";
     out << "Documentation=../doc\n";
     out << "Headers=../include\n";
     out << "Libraries=../lib\n";
