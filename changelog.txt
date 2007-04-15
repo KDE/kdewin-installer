@@ -1,0 +1,99 @@
+ChangeLog
+=========
+
+
+0.6.9-2
+-----
+- fixed bug not be able to uninstall packages
+
+0.6.9-1
+-----
+- install root related bug fix 
+
+0.6.9
+-----
+- fixed bug display correct proxy setting in wizard mode 
+- changing install root reloads the installer with recent installation settings
+
+0.6.8
+-----
+- only lower case package names are allowed 
+- added uninstall progress
+- added support for package descriptions files on the server. The notes file must have a filename 
+  in the following form <package>-<version>.notes
+- packager does not create manifest files for source packages, installer will create it 
+
+
+version 0.6.7
+-------------
+- extended packager to write source packages
+- renamed packager to kdewin-packager
+- uses qt's style option form (one '-') in packager
+- fixed build sytem to install applications
+- added cmake script to be able to use packages in cmake projects
+- added local file name parameter to @url-<bin|lib|doc|src> config file attribute, which is used as local 
+  package file name regardless of what url has. 
+- added display install details option, which is not set by default. 
+
+version 0.6.6
+-------------
+- dropped flat file installed package database, uses package information from <install_root>/manifest
+- added category support, sites and packages could be located in different categories
+- packages do not need manifest files (.mft,.ver), they will be created by default if not present
+
+version 0.6.5
+-------------
+- fixed package identifying problem with apache provided sites 
+- added proxy support 
+- added ftp download support 
+
+version 0.6.4
+-------------
+- bug fixed not display installed packages located in the "other" category 
+- added selecting 'all' feature 
+
+version 0.6.3
+-------------
+
+- added new config file keyword @relocate for relocating package file path into real path
+- better icon selection in gui mode 
+- added 7zip package format to installer
+- initial version of settings page, this is a try.
+
+version 0.6.2
+-------------
+- some bugs fix 
+
+version 0.6.0
+-------------
+- first public version 
+- got it compiled as static 
+
+
+version 0.5.1
+-------------
+- added initial gui client
+
+version 0.5
+-----------
+- added support for downloading packages
+- added blocking mode to downloader 
+- added prelimary installation support using external unzip tool
+
+
+version  0.4
+------------
+- separated code into shared, console and gui
+- created Downloader class
+
+version 0.3
+-----------
+- added support for downloading package list
+
+version 0.2
+-----------
+- separated code into classes Package, PackageList 
+
+version 0.1
+-----------
+- initial created from qt http example 
