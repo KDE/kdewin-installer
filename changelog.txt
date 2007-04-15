@@ -1,6 +1,9 @@
 ChangeLog
 =========
 
+recent
+-----
+- added auto download-remove-install option
 
 0.6.9-2
 -----

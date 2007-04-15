@@ -335,8 +335,11 @@ void PackageSelectorPage::resetPage()
 
 WizardPage *PackageSelectorPage::nextPage()
 {
-    wizard->nextButton->setVisible(false);
-    wizard->backButton->setVisible(false);
+    if (Settings::getInstance().autoNextStep())
+    {
+        wizard->nextButton->setVisible(false);
+        wizard->backButton->setVisible(false);
+    }
     wizard->downloadPage = new DownloadPage(wizard);
     return wizard->downloadPage;
 }
@@ -367,11 +370,14 @@ WizardPage *DownloadPage::nextPage()
 
 bool DownloadPage::isComplete()
 {
-//    wizard->nextButton->setEnabled(false);
-    engine->downloadPackages(tree);
+    if (!Settings::getInstance().autoNextStep())
+        wizard->nextButton->setEnabled(false);
     QApplication::instance()->processEvents();
-//   wizard->nextButton->setEnabled(true);
-    emit wizard->nextButtonClicked();
+    engine->downloadPackages(tree);
+    if (!Settings::getInstance().autoNextStep())
+        wizard->nextButton->setEnabled(true);
+    else
+        emit wizard->nextButtonClicked();
     return true;
 }
 
@@ -404,10 +410,15 @@ WizardPage *UninstallPage::nextPage()
 
 bool UninstallPage::isComplete()
 {
+    if (!Settings::getInstance().autoNextStep())
+        wizard->nextButton->setEnabled(false);
     QApplication::instance()->processEvents();
     // FIXME: add remove progressbar 
     engine->removePackages(tree);
-    emit wizard->nextButtonClicked();
+    if (!Settings::getInstance().autoNextStep())
+        wizard->nextButton->setEnabled(true);
+    else
+        emit wizard->nextButtonClicked();
     return true;
 }
 
@@ -435,9 +446,14 @@ WizardPage *InstallPage::nextPage()
 
 bool InstallPage::isComplete()
 {
+    if (!Settings::getInstance().autoNextStep())
+        wizard->nextButton->setEnabled(false);
     QApplication::instance()->processEvents();
     engine->installPackages(tree);
-    emit wizard->nextButtonClicked();
+    if (!Settings::getInstance().autoNextStep())
+        wizard->nextButton->setEnabled(true);
+    else
+        emit wizard->nextButtonClicked();
     return true;
 }
 

@@ -27,6 +27,7 @@ void SettingsPage::init()
     ui.displayTitlePage->setCheckState(settings.createStartMenuEntries() ? Qt::Checked : Qt::Unchecked);
     ui.nestedDownloadTree->setCheckState(settings.nestedDownloadTree() ? Qt::Checked : Qt::Unchecked);
     ui.installDetails->setCheckState(settings.installDetails() ? Qt::Checked : Qt::Unchecked);
+    ui.autoNextStep->setCheckState(settings.autoNextStep() ? Qt::Checked : Qt::Unchecked);
 
     ui.rootPathEdit->setText(QDir::convertSeparators(settings.installDir()));
     ui.tempPathEdit->setText(QDir::convertSeparators(settings.downloadDir()));
@@ -52,6 +53,7 @@ void SettingsPage::accept()
     settings.setShowTitlePage(ui.displayTitlePage->checkState() == Qt::Checked ? true : false);
     settings.setNestedDownloadTree(ui.nestedDownloadTree->checkState() == Qt::Checked ? true : false);
     settings.setInstallDetails(ui.installDetails->checkState() == Qt::Checked ? true : false);
+    settings.setAutoNextStep(ui.autoNextStep->checkState() == Qt::Checked ? true : false);
 
     settings.setInstallDir(ui.rootPathEdit->text());
     settings.setDownloadDir(ui.tempPathEdit->text());

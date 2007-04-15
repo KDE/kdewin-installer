@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>559</width>
-    <height>371</height>
+    <height>384</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -145,13 +145,92 @@ p, li { white-space: pre-wrap; }
     </item>
    </layout>
   </widget>
+  <widget class="QGroupBox" name="groupBox_2" >
+   <property name="geometry" >
+    <rect>
+     <x>350</x>
+     <y>220</y>
+     <width>197</width>
+     <height>124</height>
+    </rect>
+   </property>
+   <property name="title" >
+    <string>Options</string>
+   </property>
+   <layout class="QVBoxLayout" >
+    <property name="margin" >
+     <number>9</number>
+    </property>
+    <property name="spacing" >
+     <number>6</number>
+    </property>
+    <item>
+     <widget class="QCheckBox" name="displayTitlePage" >
+      <property name="text" >
+       <string>display title page on every start</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="checkBox" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
+      <property name="toolTip" >
+       <string comment="Uncheck to disable developer related package display" >&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">The installer could be used in an &lt;span style=" font-weight:600;">End User mode&lt;/span> and a &lt;span style=" font-weight:600;">developer mode&lt;/span>. &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">- In End User mode only binary packages are visible and installable. &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">- In Developer mode additional library and doc packages are visible and installable &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">and are selected by the installer too if the related binary package was selected as dependency. &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Library package contains development libraries and header. &lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>&lt;/body>&lt;/html></string>
+      </property>
+      <property name="text" >
+       <string>Developer Mode</string>
+      </property>
+      <property name="checked" >
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="installDetails" >
+      <property name="toolTip" >
+       <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">activating this option may slow down installation &lt;/p>&lt;/body>&lt;/html></string>
+      </property>
+      <property name="text" >
+       <string>show install details</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="autoNextStep" >
+      <property name="toolTip" >
+       <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">select this checkbox to download, then remove, then install without any required user interaction&lt;/p>&lt;/body>&lt;/html></string>
+      </property>
+      <property name="text" >
+       <string>auto download-remove-install </string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
   <widget class="QGroupBox" name="groupBox_4" >
    <property name="geometry" >
     <rect>
      <x>10</x>
      <y>220</y>
      <width>331</width>
-     <height>111</height>
+     <height>121</height>
     </rect>
    </property>
    <property name="title" >
@@ -259,87 +338,11 @@ p, li { white-space: pre-wrap; }
     </property>
    </widget>
   </widget>
-  <widget class="QGroupBox" name="groupBox_2" >
-   <property name="geometry" >
-    <rect>
-     <x>350</x>
-     <y>220</y>
-     <width>201</width>
-     <height>111</height>
-    </rect>
-   </property>
-   <property name="title" >
-    <string>Options</string>
-   </property>
-   <widget class="QCheckBox" name="displayTitlePage" >
-    <property name="geometry" >
-     <rect>
-      <x>10</x>
-      <y>29</y>
-      <width>193</width>
-      <height>18</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>display title page on every start</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="checkBox" >
-    <property name="enabled" >
-     <bool>false</bool>
-    </property>
-    <property name="geometry" >
-     <rect>
-      <x>10</x>
-      <y>50</y>
-      <width>193</width>
-      <height>18</height>
-     </rect>
-    </property>
-    <property name="toolTip" >
-     <string comment="Uncheck to disable developer related package display" >&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">The installer could be used in an &lt;span style=" font-weight:600;">End User mode&lt;/span> and a &lt;span style=" font-weight:600;">developer mode&lt;/span>. &lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">- In End User mode only binary packages are visible and installable. &lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">- In Developer mode additional library and doc packages are visible and installable &lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">and are selected by the installer too if the related binary package was selected as dependency. &lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Library package contains development libraries and header. &lt;/p>
-&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>
-&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>&lt;/body>&lt;/html></string>
-    </property>
-    <property name="text" >
-     <string>Developer Mode</string>
-    </property>
-    <property name="checked" >
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="installDetails" >
-    <property name="geometry" >
-     <rect>
-      <x>10</x>
-      <y>72</y>
-      <width>131</width>
-      <height>18</height>
-     </rect>
-    </property>
-    <property name="toolTip" >
-     <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">activating this option may slow down installation &lt;/p>&lt;/body>&lt;/html></string>
-    </property>
-    <property name="text" >
-     <string>show install details</string>
-    </property>
-   </widget>
-  </widget>
   <widget class="QDialogButtonBox" name="buttonBox" >
    <property name="geometry" >
     <rect>
      <x>360</x>
-     <y>340</y>
+     <y>350</y>
      <width>191</width>
      <height>25</height>
     </rect>

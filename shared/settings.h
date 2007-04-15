@@ -81,6 +81,9 @@ public:
     bool installDetails() { return m_settings.value("installDetails", true).toBool(); }
     void setInstallDetails(bool state) { m_settings.setValue("installDetails", state); sync(); }
     
+    bool autoNextStep() { return m_settings.value("autoNextStep", true).toBool(); }
+    void setAutoNextStep(bool state) { m_settings.setValue("autoNextStep", state); sync(); }
+
     // QSettings compatible interface
     void beginGroup(const QString &prefix) { m_settings.beginGroup(prefix); }
     void endGroup() { m_settings.endGroup(); }

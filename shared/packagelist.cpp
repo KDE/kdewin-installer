@@ -218,6 +218,9 @@ bool PackageList::syncWithDatabase(Database &database)
     for (it = m_packageList.begin(); it != m_packageList.end(); ++it)
     {
         Package *apkg = (*it);
+        // FIXME: the qt4.3.0beta seems to have a internal problem sometimes
+        if (apkg == (Package *)0xfeeefeee)
+            break;
         Package *pkg = database.getPackage(apkg->name(), apkg->version().toAscii());
         if (!pkg)
         {
