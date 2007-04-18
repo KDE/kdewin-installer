@@ -30,30 +30,31 @@
 
 GlobalConfig::GlobalConfig(const QString &url, Downloader &downloader)
 {
-    int ret; 
+    bool ret; 
     // FIXME: place config files into package download path
     QFileInfo cfr("config-remote.txt");
+    qDebug() << "Check if a copy of the remote config file is available at" << cfr.absoluteFilePath() << (cfr.exists() ? "... found" : "... not found");
     if (cfr.exists())
     {
-        qDebug() << "found remote config copy at" << cfr.absoluteFilePath() << "for parsing";
+        qDebug() << "skip downloading and parse the copy of the remote config file for parsing";
         ret = parseFromFile("config-remote.txt");
     }
     else 
     {
-        qDebug() << "I would use " << cfr.absoluteFilePath() << "for parsing the remote config file";
         QFileInfo cfi("config.txt");
-        qDebug() << "download global configuration file";
+        qDebug() << "download remote config file to" << cfi.absoluteFilePath();
         // FIXME uses version related config file to have more room for format changes
         downloader.start(url,cfi.fileName());
     
-        qDebug() << "parsing remote configuration file";
         ret = parseFromFile("config.txt");
+        qDebug() << "parsing remote config file ... " << (ret == true ? "okay" : "failure") ;
     }
     QFileInfo fi("config-local.txt");
+    qDebug() << "Check if a local config file is available at" << fi.absoluteFilePath() << (fi.exists() ? "... found" : "... not found");
     if (fi.exists()) 
     {
         ret = parseFromFile(fi.absoluteFilePath());
-        qDebug() << "parsing local configuration file";
+        qDebug() << "parse local config file ... " << (ret == true ? "okay" : "failure") ;
     }
 }
 

@@ -62,27 +62,13 @@ Downloader::~Downloader()
 
 void Downloader::setError(const QString &str)
 {
-    // FIXME: merge with Installer::setError
-    qDebug(str.toLocal8Bit().data());
-    QFile f("kdewin-installer.log");
-    if(f.open(QIODevice::WriteOnly)) {
-        f.write(QDateTime::currentDateTime().toString("yymmdd,hh:mm: ").toLocal8Bit().data());
-        f.write(str.toLocal8Bit().data());
-        f.write("\n");
-        f.close();
-    }
+    qWarning(str.toLocal8Bit().data());
 }
 
 bool Downloader::start(const QString &_url, const QString &fileName)
 {
     if(fileName.isEmpty())
         return false;
-
-    QString host;
-    int port;
-    Settings &s = Settings::getInstance();
-    s.getProxySettings(_url,host,port);
-    m_http->setProxy(host,port);
 
     m_file = new QFile(fileName);
     if (!m_file->open(QIODevice::WriteOnly))
@@ -94,6 +80,8 @@ bool Downloader::start(const QString &_url, const QString &fileName)
     }
     if (m_progress)
         m_progress->setTitle(tr("Downloading %1 to %2").arg(_url).arg(m_file->fileName()));
+
+	qDebug() << "Downloading" << _url << " to " << m_file->fileName();
     return startInternal(_url, m_file);
 }
 
@@ -108,11 +96,19 @@ bool Downloader::start(const QString &_url, QByteArray &ba)
         setError(tr("Internal error!"));
         return false;
     }
+	qDebug() << "Downloading" << _url << " to memory";
     return startInternal(_url, buf);
 }
 
 bool Downloader::startInternal(const QString &_url, QIODevice *ioDev)
 {
+    QString host;
+    int port;
+    Settings &s = Settings::getInstance();
+    s.getProxySettings(_url,host,port);
+    m_http->setProxy(host,port);
+    qDebug() << "Downloader proxy settings - host:" << host << "port:" << port;
+
     QUrl url(_url);
     m_ioDevice = ioDev;
 
@@ -141,6 +137,7 @@ void Downloader::cancel()
     if (m_progress)
         m_progress->setStatus(tr("Download canceled."));
     m_httpRequestAborted = true;
+    qDebug() << "Download canceled.";
     m_http->abort();
 }
 
@@ -187,6 +184,7 @@ void Downloader::httpRequestFinished(int requestId, bool error)
     {
         if (m_progress)
             m_progress->setStatus(tr("download ready"));
+        qDebug() << "Download finished.";
     }
     delete m_ioDevice;
     m_ioDevice = 0;
@@ -255,6 +253,7 @@ void Downloader::stateChanged(int state)
     }
     if (m_progress)
         m_progress->setStatus(stateLabel);
+    qDebug() << "Downloader state changed:" << stateLabel;
 }
 
 #include "downloader.moc"

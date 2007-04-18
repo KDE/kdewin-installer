@@ -104,9 +104,7 @@ bool InstallerEngine::downloadPackageLists()
     for (s = m_globalConfig->sites()->begin(); s != m_globalConfig->sites()->end(); s++)
     {
         QString category = (*s)->name();
-#ifdef DEBUG
-        qDebug() << "download package file list for site: " << category;
-#endif
+        qDebug() << "download package file list for site: " << category << "from" << (*s)->url();
         PackageList *packageList = getPackageListByName(category);
         if (!packageList)
         {
@@ -121,7 +119,6 @@ bool InstallerEngine::downloadPackageLists()
 
         packageList->setBaseURL((*s)->url());
 
-        qDebug() << (*s)->url();
 #ifdef DEBUG
         QFileInfo tmpFile(installer->Root() + "/packages-"+(*s)->Name()+".html");
         if (!tmpFile.exists())

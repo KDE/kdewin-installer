@@ -381,15 +381,7 @@ bool Installer::un7zipFile(const QString &destpath, const QString &zipFile)
 
 void Installer::setError(const QString &str)
 {
-    // FIXME: merge with Downloader::setError
-    qDebug(str.toLocal8Bit().data());
-    QFile f("kdewin-installer.log");
-    if(f.open(QIODevice::WriteOnly)) {
-        f.write(QDateTime::currentDateTime().toString("yymmdd,hh:mm: ").toLocal8Bit().data());
-        f.write(str.toLocal8Bit().data());
-        f.write("\n");
-        f.close();
-    }
+    qWarning(str.toLocal8Bit().data());
 }
 
 bool Installer::createQtConfigFile()

@@ -176,6 +176,8 @@ bool Packager::generatePackageFileList(QStringList &fileList, Packager::Type typ
                     generateFileList(fileList, dir, "lib",      "*.lib");
                 }
                 generateFileList(fileList, dir, "include", "*","*_p.h");
+                // FIXME: the following files are referenced by headers located into include dir
+                //        they may be better collected by parsing every file in the include dir 
                 generateFileList(fileList, dir, "src/corelib", "*.h", "*_p.h *_pch.h");
                 generateFileList(fileList, dir, "src/gui", "*.h", "*_p.h *_pch.h");
                 generateFileList(fileList, dir, "src/qt3support", "*.h", "*_p.h *_pch.h");
