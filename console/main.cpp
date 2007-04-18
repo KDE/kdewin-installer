@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
 #if 1
     InstallerEngineConsole engine(0,0);
     if (!options.rootdir.isEmpty())
-        engine.setRoot(options.rootdir);
+        Settings::getInstance().setInstallDir(options.rootdir);
         
     engine.downloadPackageLists();
     if (options.list)
