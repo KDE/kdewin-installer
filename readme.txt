@@ -39,6 +39,10 @@ TODO
     4 add mode for installing from local package directory 
       Q: how to restore the categories ? 
       Q: May be by storing packages into category dirs 
+    5 add support for relocatinng files in the root zip path 
+       example: the depends package installs all files in the install root
+                but all files should be located in bin dir
+    
    
   2 command line installer 
       1 add long command line options like operation mode --install, --erase, --list --query, ... 
