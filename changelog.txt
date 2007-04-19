@@ -2,8 +2,15 @@ ChangeLog
 =========
 
 recent
------
+------
+
+
+0.6.10
+------
 - added auto download-remove-install option
+- debug messages are printed into kdewin-installer.log 
+- made debug messages more clear
+- fixed some minor issues 
 
 0.6.9-2
 -----
