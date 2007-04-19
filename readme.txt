@@ -58,6 +58,7 @@ TODO
   	  -> different install roots are implemented by switching the install root in the settings 
   	     which reloads the config
   	17 add support for tar + gz/bzip2 package by using external win32 tools 
+  	17 only display firefox proxy option is firefox is installed 
   
 
 2 packager
