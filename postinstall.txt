@@ -1,0 +1,7 @@
+<p>
+Postinstall notes 
+<ul>
+<li>package update-mime-database - please add the installation path to the enviromment variable KDEDIRS to be able to use the mime database with kde
+</li>
+</ul>
+</p>
