@@ -208,7 +208,7 @@ bool Packager::generatePackageFileList(QStringList &fileList, Packager::Type typ
     else         
         switch (type) {
             case BIN:
-                generateFileList(fileList, dir, "bin",  "*.exe *.bat");
+                generateFileList(fileList, dir, "bin",  "*.exe *.bat", "*d.exe");
                 generateFileList(fileList, dir, "bin",  "*.dll", "*d.dll");
                 generateFileList(fileList, dir, "lib",  "*.dll", "*d.dll");
                 generateFileList(fileList, dir, "share", "*.*");
@@ -216,7 +216,7 @@ bool Packager::generatePackageFileList(QStringList &fileList, Packager::Type typ
                 generateFileList(fileList, dir, "etc",  "*.*");
                 return true;
             case LIB:
-                generateFileList(fileList, dir, "bin",      "*d.dll");
+                generateFileList(fileList, dir, "bin",      "*d.dll *d.exe");
                 generateFileList(fileList, dir, "lib",      "*d.dll");
                 generateFileList(fileList, dir, "lib",      "*.lib");   // msvc libs (static & import libs)
                 generateFileList(fileList, dir, "lib",      "*.a");          // gcc (static) libs
@@ -227,7 +227,7 @@ bool Packager::generatePackageFileList(QStringList &fileList, Packager::Type typ
                 generateFileList(fileList, dir, "man", "*.*");
                 return true;
             case SRC:
-                exclude = m_srcExcludes + " .svn CVS";
+                exclude = m_srcExcludes + " .svn CVS .#* *.rej *.orig *.bak";
                 // * and not *.* because *.* does not find "foo" (filename without extension) - Qt-bug?
                 if (m_srcRoot.isEmpty())
                     generateFileList(fileList, dir, "src", "*",exclude);
@@ -405,7 +405,7 @@ QString Packager::getBaseName(Packager::Type type)
 bool Packager::stripFiles(const QString &dir)
 {
     QStringList fileList; 
-    generateFileList(fileList,dir,"bin","*.exe *.dll","*d.dll *d4.dll");
+    generateFileList(fileList,dir,"bin","*.exe *.dll","*d.exe *d.dll *d4.dll");
     for (int i = 0; i < fileList.size(); i++) 
     {
         QFileInfo fi(dir + "/" + fileList.at(i));

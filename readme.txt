@@ -67,6 +67,10 @@ TODO
 
 2 packager
     1 add 7zip-suppport (at first by using external 7zip tool, because there is no usable 7zip compress library)
+    2 exlude *d.exe in strip 
+    3 exclude .#* *.rej *.orig files in src package
+    4 add *d.exe files to lib package 
+    5 don't exclude exe's ending with d from bin package when a debug version using dd is present, only the debug version should go into lib 
 
 
 
