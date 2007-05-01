@@ -107,7 +107,7 @@ void setIcon(QTreeWidgetItem &item, Package::Type type, iconType action)
 }
 
 enum actionType { _initial, _next, _deps, _sync}; 
-enum stateType { _Install, _Update, _Remove, _Nothing}; 
+enum stateType { _Nothing, _Install, _Update, _Remove}; // make sure _Install != 0 !!
 
 static void setState(QTreeWidgetItem &item, const Package *pkg, int column, actionType action, int syncColumn=0)
 {
@@ -466,13 +466,13 @@ bool InstallerEngineGui::downloadPackages(QTreeWidget *tree, const QString &cate
                 Package *pkg = packageList->getPackage(child->text(0),child->text(1).toAscii());
                 if (!pkg)
                     continue;
-                if (all | isMarkedForInstall(*child,Package::BIN))
+                if (all || isMarkedForInstall(*child,Package::BIN))
                     pkg->downloadItem(m_downloader, Package::BIN);
-                if (all | isMarkedForInstall(*child,Package::LIB))
+                if (all || isMarkedForInstall(*child,Package::LIB))
                     pkg->downloadItem(m_downloader, Package::LIB);
-                if (all | isMarkedForInstall(*child,Package::DOC))
+                if (all || isMarkedForInstall(*child,Package::DOC))
                     pkg->downloadItem(m_downloader, Package::DOC);
-                if (all | isMarkedForInstall(*child,Package::SRC))
+                if (all || isMarkedForInstall(*child,Package::SRC))
                     pkg->downloadItem(m_downloader, Package::SRC);
             }
         }
@@ -540,13 +540,13 @@ bool InstallerEngineGui::installPackages(QTreeWidget *tree,const QString &_categ
                 Package *pkg = packageList->getPackage(pkgName,child->text(1).toAscii());
                 if (!pkg)
                     continue;
-                if (all | isMarkedForInstall(*child,Package::BIN))
+                if (all || isMarkedForInstall(*child,Package::BIN))
                     pkg->installItem(m_installer, Package::BIN);
-                if (all | isMarkedForInstall(*child,Package::LIB))
+                if (all || isMarkedForInstall(*child,Package::LIB))
                     pkg->installItem(m_installer, Package::LIB);
-                if (all | isMarkedForInstall(*child,Package::DOC))
+                if (all || isMarkedForInstall(*child,Package::DOC))
                     pkg->installItem(m_installer, Package::DOC);
-                if (all | isMarkedForInstall(*child,Package::SRC))
+                if (all || isMarkedForInstall(*child,Package::SRC))
                     pkg->installItem(m_installer, Package::SRC);
             }
         }
