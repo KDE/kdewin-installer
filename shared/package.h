@@ -137,7 +137,7 @@ public:
 
     static QString typeToString(Package::Type type);
 
-    bool handled() { return m_handled; }
+    bool handled() const { return m_handled; }
     void setHandled(bool state) { m_handled = state; }
 
 private slots:

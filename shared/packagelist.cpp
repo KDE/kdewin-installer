@@ -214,20 +214,18 @@ bool PackageList::syncWithDatabase(Database &database)
     qDebug() << __FUNCTION__;
 #endif
 
-    QList<Package*>::iterator it;
-    for (it = m_packageList.begin(); it != m_packageList.end(); ++it)
+    QList<Package*> newPackages;
+    QList<Package*>::ConstIterator it = m_packageList.constBegin();
+    for ( ; it != m_packageList.constEnd(); ++it)
     {
         Package *apkg = (*it);
-        // FIXME: the qt4.3.0beta seems to have a internal problem sometimes
-        if (apkg == (Package *)0xfeeefeee)
-            break;
         Package *pkg = database.getPackage(apkg->name(), apkg->version().toAscii());
         if (!pkg)
         {
             pkg = database.getPackage(apkg->name());
-            if (!pkg)
+            if (!pkg || pkg->handled())
                 continue;
-            m_packageList.append(pkg);
+            newPackages += pkg;
             pkg->setHandled(true);
             continue;
         }
@@ -241,6 +239,10 @@ bool PackageList::syncWithDatabase(Database &database)
             apkg->setInstalled(Package::SRC);
         pkg->setHandled(true);
     }
+    it = newPackages.constBegin();
+    for ( ; it != newPackages.constEnd(); ++it)
+        m_packageList += *it;
+
     return true;
 }
 
