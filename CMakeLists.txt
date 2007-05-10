@@ -1,13 +1,19 @@
 project(kdewin-installer)
-set (VERSION 0.6.10)
+set (VERSION_MAJOR 0)
+set (VERSION_MINOR 6)
+set (VERSION_PATCH 10)
+set (VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 find_package(Qt4 REQUIRED)
 find_package(UPX)
+find_package(KDEWIN_INSTALLER)
 
 OPTION(SEVENZIP_UNPACK_SUPPORT "Enable 7-zip unpacking support" OFF)
+OPTION(STATIC_BUILD "enable static build support" OFF)
+OPTION(INSTALL_SYSTEM_LIBS "install required system libraries too (only in shared mode)" OFF)
 
 # -------------------------------------------------------
 # build type settings 
@@ -24,7 +30,7 @@ if (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel)
 	#add_definitions(-DQT_NO_DEBUG_OUTPUT)
 endif (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel) 
 
-if (MSVC)
+if (STATIC_BUILD AND MSVC)
     MESSAGE(STATUS "Note: Please make sure that Qt is build with /MT flags")
 	if (CMAKE_BUILD_TYPE STREQUAL Release)
 		set (CMAKE_C_FLAGS_RELEASE "/MT /O2 /Ob2 /D NDEBUG")
@@ -41,7 +47,7 @@ if (MSVC)
 		set (CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /MTd /Zi /Ob0 /Od /RTC1")
 		set (CMAKE_EXE_LINKER_FLAGS_DEBUG "/debug /INCREMENTAL:YES ")
 	endif (CMAKE_BUILD_TYPE STREQUAL Debug)
-endif (MSVC)
+endif (STATIC_BUILD AND MSVC)
 
 # we just need zlib include dir, linking to zlib is not needed
 include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${QT_INCLUDES} ${CMAKE_SOURCE_DIR}/3rdparty/zlib)
@@ -184,3 +190,80 @@ endif (MSVC)
 if (CMAKE_PRODUCTION_BUILD)
     install( FILES cmake/modules/FINDKDEWIN_INSTALLER.cmake  DESTINATION  share/apps/cmake/modules )
 endif (CMAKE_PRODUCTION_BUILD)
+
+# install required shared libraries 
+if (CMAKE_PRODUCTION_BUILD AND INSTALL_SYSTEM_LIBS)
+    set (QT_QTCORE_LIBRARY ${QT_LIBRARY_DIR}/../bin/QtCore4.dll)
+    set (QT_QTGUI_LIBRARY ${QT_LIBRARY_DIR}/../bin/QtGui4.dll)
+    set (QT_QTNETWORK_LIBRARY ${QT_LIBRARY_DIR}/../bin/QtNetwork4.dll)
+
+    install_files (/bin FILES ${QT_QTCORE_LIBRARY})
+    install_files (/bin FILES  ${QT_QTGUI_LIBRARY})
+    install_files (/bin FILES  ${QT_QTNETWORK_LIBRARY})
+    
+    if (MINGW)
+        find_file(MINGW_DLL mingwm10.dll)
+        install_files (/bin FILES  ${MINGW_DLL})
+	else (MINGW)
+		INCLUDE(InstallRequiredSystemLibraries)
+	endif (MINGW)
+endif (CMAKE_PRODUCTION_BUILD AND INSTALL_SYSTEM_LIBS)
+
+
+if (KDEWIN_INSTALLER_FOUND)
+    if (MSVC)
+        add_custom_target(kdewinpackage
+            COMMAND ${KDEWIN_PACKAGER} 
+                -name kdewin-installer
+                -root ${CMAKE_INSTALL_PREFIX} 
+                -srcroot ${CMAKE_SOURCE_DIR}
+                -version ${VERSION} 
+                -notes "KDEWIN installer"
+                -type msvc
+                -strip
+                -complete
+        )
+    else (MSVC)
+        add_custom_target(kdewinpackage
+            COMMAND ${KDEWIN_PACKAGER} 
+                -name kdewin-installer
+                -root ${CMAKE_INSTALL_PREFIX} 
+                -srcroot ${CMAKE_SOURCE_DIR}
+                -version ${VERSION} 
+                -notes "KDEWIN installer"
+                -strip
+                -type mingw
+                -complete
+        )
+    endif (MSVC)
+endif (KDEWIN_INSTALLER_FOUND)
+
+
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "KDEWIN Installer")
+SET(CPACK_PACKAGE_VENDOR "KDE Windows Team")
+#SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/README")
+#SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/../COPYING")
+# duplicated from VERSION
+SET(CPACK_PACKAGE_VERSION_MAJOR ${VERSION_MAJOR})
+SET(CPACK_PACKAGE_VERSION_MINOR ${VERSION_MINOR})
+SET(CPACK_PACKAGE_VERSION_PATCH ${VERSION_PATCH})
+SET(CPACK_PACKAGE_INSTALL_DIRECTORY "kdewin-installer-${VERSION_MAJOR}.${VERSION_MINOR}")
+IF(WIN32 AND NOT UNIX)
+  SET(CPACK_GENERATOR NSIS)     # can be NSIS, STGZ, TBZ2, TGZ, TZ and ZIP
+  SET(CPACK_NSIS_COMPRESSOR "/SOLID lzma")
+  # There is a bug in NSI that does not handle full unix paths properly. Make
+  # sure there is at least one set of four (4) backlasshes.
+# SET(CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\\\InstallIcon.bmp")
+  SET(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\kdewin-installer-gui.exe")
+  SET(CPACK_NSIS_DISPLAY_NAME "KDEWIN Installer")
+  SET(CPACK_NSIS_HELP_LINK "http:\\\\\\\\www.kdelibs.com")
+  SET(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\www.kdelibs.com")
+  SET(CPACK_NSIS_CONTACT "kde-windows@kde.org")
+  SET(CPACK_NSIS_MODIFY_PATH ON)
+ELSE(WIN32 AND NOT UNIX)
+  SET(CPACK_STRIP_FILES "bin/MyExecutable")
+  SET(CPACK_SOURCE_STRIP_FILES "")
+ENDIF(WIN32 AND NOT UNIX)
+SET(CPACK_PACKAGE_EXECUTABLES "kdewin-installer-gui" "KDEWIN Installer")
+INCLUDE(CPack)
+

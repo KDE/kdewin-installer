@@ -88,10 +88,10 @@ if (CMAKE_PRODUCTION_BUILD)
     install_targets(/bin kdewin-installer-gui )
 endif (CMAKE_PRODUCTION_BUILD)
    
-if (UPX_EXECUTABLE AND CMAKE_PRODUCTION_BUILD)
+if (CMAKE_PRODUCTION_BUILD AND STATIC_BUILD AND UPX_EXECUTABLE)
     add_custom_command(
         TARGET kdewin-installer-gui 
         POST_BUILD 
         COMMAND ${UPX_EXECUTABLE} --lzma -9 "${CMAKE_BINARY_DIR}/gui/kdewin-installer-gui.exe"
     )
-endif (UPX_EXECUTABLE AND CMAKE_PRODUCTION_BUILD)
+endif (CMAKE_PRODUCTION_BUILD AND STATIC_BUILD AND UPX_EXECUTABLE)
