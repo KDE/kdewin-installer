@@ -183,10 +183,25 @@ add_subdirectory(tests)
 add_subdirectory(packager)
 add_subdirectory(doc)
 
-if (MSVC)
-    configure_file(${CMAKE_SOURCE_DIR}/kdewin-installer-sln.bat.cmake ${CMAKE_BINARY_DIR}/kdewin-installer-sln.bat)
-endif (MSVC)
 
+# write explorer wrappers
+get_filename_component(QT_BIN_PATH ${QT_QMAKE_EXECUTABLE} PATH)
+get_filename_component(CMAKE_BIN_PATH ${CMAKE_COMMAND} PATH)
+if (MINGW)
+    get_filename_component(MINGW_BIN_PATH ${CMAKE_CXX_COMPILER} PATH)
+    write_file (${CMAKE_BINARY_DIR}/kdewin-installer-shell.bat "set PATH=${MINGW_BIN_PATH};${QT_BIN_PATH};${CMAKE_BIN_PATH};%PATH%\ncmd.exe")
+else (MINGW)
+    if (CMAKE_BUILD_TOOL STREQUAL  "nmake")
+        get_filename_component(VC_BIN_PATH ${CMAKE_CXX_COMPILER} PATH)
+        write_file (${CMAKE_BINARY_DIR}/kdewin-installer-shell.bat "set PATH=${QT_BIN_PATH};${CMAKE_BIN_PATH};%PATH%\ncall \"${VC_BIN_PATH}\\vcvars32.bat\"\ncmd.exe")
+    else (CMAKE_BUILD_TOOL STREQUAL  "nmake")
+        write_file (${CMAKE_BINARY_DIR}/kdewin-installer-sln.bat "set ${QT_BIN_PATH};${CMAKE_BIN_PATH};%PATH%\nstart kdewin-installer.sln")
+    endif (CMAKE_BUILD_TOOL STREQUAL  "nmake")
+endif (MINGW)
+
+#
+# install section
+# 
 if (CMAKE_PRODUCTION_BUILD)
     install( FILES cmake/modules/FINDKDEWIN_INSTALLER.cmake  DESTINATION  share/apps/cmake/modules )
 endif (CMAKE_PRODUCTION_BUILD)
