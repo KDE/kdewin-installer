@@ -164,23 +164,16 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 generateFileList(fileList, dir, "bin",  "*.exe *.bat *d4.dll", "assistant.exe qtdemo.exe qdbus.exe dbus-viewer.exe");
                 generateFileList(fileList, dir, "plugins", "*d.dll *d4.dll *d1.dll");
                 generateFileList(fileList, dir, "", ".qmake.cache");
-                /* trolltech installs whole mkspecs folder
-                generateFileList(fileList, dir, "mkspecs",  "qconfig.pri");
-                generateFileList(fileList, dir, "mkspecs/features", "*.*", "unix mac");
-                generateFileList(fileList, dir, "mkspecs/default", "*.*");
+                // trolltech installs whole mkspecs folder too
+                generateFileList(fileList, dir, "mkspecs", "*.*");
                 if (m_name.endsWith("mingw")) 
                 {
-                    generateFileList(fileList, dir, "mkspecs/win32-g++", "*.*");
                     generateFileList(fileList, dir, "lib",      "*.a");
                 }
                 else 
                 {
-                    generateFileList(fileList, dir, "mkspecs/win32-msvc.net", "*.*");
-                    generateFileList(fileList, dir, "mkspecs/win32-msvc2005", "*.*");
                     generateFileList(fileList, dir, "lib",      "*.lib");
                 }
-                */
-                generateFileList(fileList, dir, "mkspecs", "*.*");
                 parseQtIncludeFiles(fileList, dir, "include", "*.*", "private *_p.h *.pr*");
                 return true;
             case DOC:
@@ -278,7 +271,7 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
         }
         QByteArray ba = f.readAll();         // mmmmh
         QString md5Hash = qtMD5(ba);
-        QByteArray fnUtf8 = it->inputFile.toUtf8();
+        QByteArray fnUtf8 = it->outputFile.isEmpty() ? it->inputFile.toUtf8() : it->outputFile.toUtf8();
         fnUtf8.replace(' ', "\\ "); // escape ' '
         out << fnUtf8 << ' ' << md5Hash << '\n';
     }
