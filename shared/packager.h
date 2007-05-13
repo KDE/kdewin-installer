@@ -26,6 +26,7 @@
 #include <QList>
 #include <QRegExp>
 #include "package.h"
+#include "misc.h"
 
 class Packager {
     public: 
@@ -40,7 +41,7 @@ class Packager {
       void setSourceRoot(const QString &dir) { m_srcRoot = dir; }
       void setSourceExcludes(const QString &excludes) { m_srcExcludes = excludes; }
 
-      bool generatePackageFileList(QStringList &result, Packager::Type type, const QString &dir=QString());
+      bool generatePackageFileList(QList<InstallFile> &result, Packager::Type type, const QString &dir=QString());
 
       bool makePackage(const QString &dir, const QString &destdir=QString(), bool bComplete=false);
       
@@ -49,9 +50,9 @@ class Packager {
             QString    filename;
             QByteArray data;
         };
-      bool createZipFile(const QString &zipFile, const QString &filesRootDir, const QStringList &files, const QList<MemFile> &memFiles=QList<MemFile>(), const QString &destRootDir=QString() );
-      bool createManifestFiles(const QString &rootdir, QStringList &fileList, Packager::Type type, QList<MemFile> &manifestFiles);
-      bool createQtConfig(QStringList &fileList, QList<MemFile> &manifestFiles);
+      bool createZipFile(const QString &zipFile, const QString &filesRootDir, const QList<InstallFile> &files, const QList<MemFile> &memFiles=QList<MemFile>(), const QString &destRootDir=QString() );
+      bool createManifestFiles(const QString &rootdir, QList<InstallFile> &fileList, Packager::Type type, QList<MemFile> &manifestFiles);
+      bool createQtConfig(QList<InstallFile> &fileList, QList<MemFile> &manifestFiles);
 
       QString getBaseName(Packager::Type type);
       

@@ -27,8 +27,24 @@
 #include <QString>
 #include <QStringList>
 
-bool generateFileList(QStringList &result, const QString &root, const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList);
-bool generateFileList(QStringList &result, const QString &root, const QString &subdir, const QString &filter, const QString &exclude = QString());
+struct InstallFile
+{
+  QString inputFile;
+  QString outputFile;
+  bool bAbsInputPath;
+
+  InstallFile(const QString &in, const QString &out = QString(), bool absPath = false)
+    : inputFile(in), outputFile(out), bAbsInputPath(absPath)
+  {}
+  bool operator==(const InstallFile &o)
+  {
+    return (inputFile == o.inputFile && outputFile == o.outputFile);
+  }
+};
+
+bool parseQtIncludeFiles(QList<InstallFile> &fileList, const QString &root, const QString &subdir, const QString &filter, const QString &exclude);
+bool generateFileList(QList<InstallFile> &result, const QString &root, const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList);
+bool generateFileList(QList<InstallFile> &result, const QString &root, const QString &subdir, const QString &filter, const QString &exclude = QString());
 
 bool createStartMenuEntries(const QString &dir, const QString &category=QString());
 bool removeStartMenuEntries(const QString &dir, const QString &category=QString());

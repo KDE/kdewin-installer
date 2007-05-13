@@ -1,6 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2006-2007 Ralf Habacker. All rights reserved.
+** Copyright (C) 2006-2007 Christian Ehrlicher <ch.ehrlicher@gmx.de>
 **
 ** This file is part of the KDE installer for windows
 **
@@ -48,7 +49,46 @@ static QString longFileName(const QString &path)
     return prefix + absPath;
 }
 
-bool generateFileList(QStringList &fileList, const QString &root, const QString &subdir, const QString &filter, const QString &exclude)
+bool parseQtIncludeFiles(QList<InstallFile> &fileList, const QString &root, const QString &subdir, const QString &filter, const QString &exclude)
+{
+  QList<InstallFile> files;
+  if(!generateFileList(files, root, subdir, filter, exclude))
+    return false;
+  // read every header and include the referenced one
+  QFile file;
+  QFileInfo fi;
+  QString r = root + '/';
+  QList<InstallFile>::ConstIterator it = files.constBegin();
+  QList<InstallFile>::ConstIterator end = files.constEnd();
+  for( ; it != end; ++it) {
+    QString f = it->inputFile;
+    // camel case incudes are fine
+    if(f.startsWith('Q')) {
+      fileList += InstallFile(f, f);
+      continue;
+    }
+    file.setFileName(r + f);
+    if(!file.open(QIODevice::ReadOnly))
+      continue;
+    QByteArray content = file.readAll();
+    file.close();
+    QString dir = QFileInfo(file).absolutePath();
+    if(!content.startsWith("#include"))
+      continue;
+    int start = content.indexOf('\"');
+    int end = content.lastIndexOf('\"');
+    if(start == -1 || end == -1)
+      continue;
+    content = content.mid(start + 1, end - start - 1);
+    fi.setFile(dir + '/' + QFile::decodeName(content));
+    if(!fi.exists() || !fi.isFile())
+      continue;
+    fileList += InstallFile(fi.canonicalFilePath(), f, true);
+  }
+  return true;
+}
+
+bool generateFileList(QList<InstallFile> &fileList, const QString &root, const QString &subdir, const QString &filter, const QString &exclude)
 {
    // create a QListQRegExp
    QStringList sl = exclude.split(' ');
@@ -68,26 +108,33 @@ bool generateFileList(QStringList &fileList, const QString &root, const QString 
    return ::generateFileList(fileList, root, subdir, filter, rxList);
 }
 
-bool generateFileList(QStringList &fileList, const QString &root, const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList)
+bool generateFileList(QList<InstallFile> &fileList, const QString &root, const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList)
 {
    QDir d;
-   if(subdir.isEmpty())
+   bool subdirs = true;
+   if(subdir.isEmpty()) {
        d = QDir(root);
-   else
+       subdirs = false;
+   } else
        d = QDir(root + '/' + subdir);
    if (!d.exists()) {
        qDebug() << "Can't read directory" << QDir::convertSeparators(d.absolutePath());
        return false;
    }
    d.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries | QDir::AllDirs);
-   d.setNameFilters(filter.split(' '));
+   d.setNameFilters((filter + QLatin1String(" *.manifest")).split(' '));
    d.setSorting(QDir::Name);
 
    QFileInfoList list = d.entryInfoList();
    QFileInfo fi;
+
+   QStringList manifestList;
+   QStringList executableList;
      
-   for (int i = 0; i < list.size(); i++) {
-       const QFileInfo &fi = list[i];
+   QFileInfoList::ConstIterator it = list.constBegin();
+   QFileInfoList::ConstIterator end = list.constEnd();
+   for ( ; it != end; ++it) {
+       const QFileInfo &fi = *it;
        QString fn = fi.fileName();
 
        bool bFound = false;
@@ -97,19 +144,36 @@ bool generateFileList(QStringList &fileList, const QString &root, const QString 
                bFound = true;
                break;
            }
-           if (bFound)
-               break;
        }
        if (bFound)
            continue;
 
        if (fi.isDir()) {
-           if(!subdir.isEmpty())
-               fn = subdir + '/' + fn;
-           generateFileList(fileList, root, fn, filter, excludeList);
+          if(!subdirs)
+            continue;
+          if(!subdir.isEmpty())
+            fn = subdir + '/' + fn;
+          generateFileList(fileList, root, fn, filter, excludeList);
        }
-       else 
-           fileList.append(subdir + '/' + fn);
+       else {
+         QString toAdd = subdir + '/' + fn;
+
+         if(toAdd.endsWith(QLatin1String(".manifest"))) {
+           manifestList += toAdd;
+           continue;
+         }
+         if(toAdd.endsWith(QLatin1String(".exe")) ||
+            toAdd.endsWith(QLatin1String(".dll2"))) {
+           executableList += toAdd;
+         }
+         if(!fileList.contains(toAdd))
+          fileList += toAdd;
+       }
+   }
+   for(int i = 0; i < executableList.count(); i++) {
+     QString manifest = executableList[i] + QLatin1String(".manifest");
+     if(manifestList.contains(manifest))
+       fileList += manifest;
    }
    return true;
 }
@@ -202,16 +266,19 @@ QString getStartMenuPath(bool bAllUsers)
  */
 bool createStartMenuEntries(const QString &dir, const QString &category)
 {
-    QStringList fileList;
+    QList<InstallFile> fileList;
     generateFileList(fileList,dir,"","*.desktop");
     
-    for(int i = 0; i < fileList.size(); i++) 
+    QList<InstallFile>::ConstIterator it = fileList.constBegin();
+    QList<InstallFile>::ConstIterator end = fileList.constEnd();
+    for( ; it != end; ++it)
     {
+        QString file = it->inputFile;
         QSettings registry("kdewin-installer");
         registry.beginGroup("StartMenuEntries");
         registry.beginGroup(category);
 
-        QSettings settings(dir + '/' + fileList[i], QSettings::IniFormat);
+        QSettings settings(dir + '/' + file, QSettings::IniFormat);
 
         QString name = settings.value("Desktop Entry/Name").toString();
         QString mimeType = settings.value("Desktop Entry/Mime Type").toString();
@@ -237,7 +304,7 @@ bool createStartMenuEntries(const QString &dir, const QString &category)
                     continue;
                 }
             }
-            QString pathLink = dir + fileList[i].replace(".desktop",".lnk").replace('/','_');
+            QString pathLink = dir + file.replace(".desktop",".lnk").replace('/','_');
             QFile f(pathLink);
             if(f.exists()) {
                 if(!f.remove()) {
