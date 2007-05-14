@@ -119,12 +119,12 @@ static compile hints
   After qt is compiled, then you should checkout kdewin-installer source, the configure and compile 
   kdewin-installer using default settings
   
-	cmake -G "NMake Makefiles" ..\kdewin-installer    -> Release Build 
+	cmake -G "NMake Makefiles" ..\kdewin-installer   -DSTATIC_BUILD=1 -> Release Build 
 	<make-tool> 
 
   or 
 
-	cmake -G "NMake Makefiles" ..\kdewin-installer  -DCMAKE_BUILD_TYPE=MinSizeRel  -> size optimized
+	cmake -G "NMake Makefiles" ..\kdewin-installer  -DSTATIC_BUILD=1 -DCMAKE_BUILD_TYPE=MinSizeRel  -> size optimized
 	<make-tool> 
 
 
