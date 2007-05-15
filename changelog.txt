@@ -1,9 +1,11 @@
 ChangeLog
 =========
 
-recent
+0.6.11
 ------
-
+packager 
+- use the correct qt include files (copy them from src to include) 
+- add .manifest files for executables/shared objects
 
 0.6.10
 ------
