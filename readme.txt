@@ -17,6 +17,10 @@ NOTES
 - the released version is build using a static qt release with specific configure 
   parameters, see section "static compile hints" for more informations
 
+- to be able to use the update-mime-database package with kde please add the installation path to the 
+  enviromment variable KDEDIRS
+
+
  
 Known Bugs
 ==========
