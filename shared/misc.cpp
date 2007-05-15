@@ -163,7 +163,7 @@ bool generateFileList(QList<InstallFile> &fileList, const QString &root, const Q
            continue;
          }
          if(toAdd.endsWith(QLatin1String(".exe")) ||
-            toAdd.endsWith(QLatin1String(".dll2"))) {
+            toAdd.endsWith(QLatin1String(".dll"))) {
            executableList += toAdd;
          }
          if(!fileList.contains(toAdd))
