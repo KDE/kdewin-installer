@@ -155,7 +155,8 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
     if (m_name.startsWith("qt") || m_name.startsWith("q++") || m_name.startsWith("q.."))
         switch (type) {
             case BIN:
-                generateFileList(fileList, dir, "bin", "*.dll qdbus.exe qdbusviewer.exe", "*d.dll *d4.dll");
+                // assistant.exe can be used separatly from qt doc - better in bin than doc package
+                generateFileList(fileList, dir, "bin", "*.dll assistant.exe qdbus.exe qdbusviewer.exe", "*d.dll *d4.dll");
                 generateFileList(fileList, dir, "lib", " *d.manifest", "*.manifest");
                 generateFileList(fileList, dir, "plugins", "*.dll","*d.dll *d4.dll *d1.dll");
                 generateFileList(fileList, dir, "translations", "*.qm");
@@ -177,7 +178,7 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 parseQtIncludeFiles(fileList, dir, "include", "*.*", "private *_p.h *.pr*");
                 return true;
             case DOC:
-                generateFileList(fileList, dir, "bin", "qtdemo.exe assistant.exe");
+                generateFileList(fileList, dir, "bin", "qtdemo.exe");
                 generateFileList(fileList, dir, "doc", "*.*");
                 return true;
             case SRC:
