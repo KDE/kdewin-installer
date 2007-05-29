@@ -29,6 +29,7 @@ Known Bugs
    This seems to be a qt 4.x internal problem.
 -  manifest files for source packages does not contain the full path, there must 
    be prefixed src/<package>-<version>
+-  stripping of dll's which are in use over a file share results in deleting the related dll's
    
    
 TODO
