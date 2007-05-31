@@ -157,7 +157,6 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
             case BIN:
                 // assistant.exe can be used separatly from qt doc - better in bin than doc package
                 generateFileList(fileList, dir, "bin", "*.dll assistant.exe qdbus.exe qdbusviewer.exe", "*d.dll *d4.dll");
-                generateFileList(fileList, dir, "lib", " *d.manifest", "*.manifest");
                 generateFileList(fileList, dir, "plugins", "*.dll","*d.dll *d4.dll *d1.dll");
                 generateFileList(fileList, dir, "translations", "*.qm");
                 return true;
@@ -194,16 +193,26 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
     else         
         switch (type) {
             case BIN:
+                generateFileList(fileList, dir, "bin",  "*.exe *.bat");
+#if DEBUG_LIB_SUPPORT
                 generateFileList(fileList, dir, "bin",  "*.exe *.bat", "*d.exe");
                 generateFileList(fileList, dir, "bin",  "*.dll", "*d.dll");
                 generateFileList(fileList, dir, "lib",  "*.dll", "*d.dll");
+#else
+                generateFileList(fileList, dir, "bin",  "*.dll");
+                generateFileList(fileList, dir, "lib",  "*.dll");
+                generateFileList(fileList, dir, "lib",  "*.exe *.bat");
+#endif
                 generateFileList(fileList, dir, "share", "*.*");
                 generateFileList(fileList, dir, "data", "*.*");
                 generateFileList(fileList, dir, "etc",  "*.*");
                 return true;
             case LIB:
+#if DEBUG_LIB_SUPPORT
                 generateFileList(fileList, dir, "bin",      "*d.dll *d.exe");
                 generateFileList(fileList, dir, "lib",      "*d.dll");
+#else
+#endif
                 generateFileList(fileList, dir, "lib",      "*.lib");   // msvc libs (static & import libs)
                 generateFileList(fileList, dir, "lib",      "*.a");          // gcc (static) libs
                 generateFileList(fileList, dir, "include", "*.*");
@@ -218,7 +227,7 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 if (m_srcRoot.isEmpty())
                     generateFileList(fileList, dir, "src", "*",exclude);
                 else
-                    generateFileList(fileList, m_srcRoot, "", "*",exclude);
+                    generateFileList(fileList, m_srcRoot, ".", "*.*",exclude);
                 return true;
             case NONE:
                 generateFileList(fileList, dir, ".", "*.*", "manifest");
@@ -391,7 +400,13 @@ QString Packager::getBaseName(Packager::Type type)
 bool Packager::stripFiles(const QString &dir)
 {
     QList<InstallFile> fileList; 
+#if DEBUG_LIB_SUPPORT
     generateFileList(fileList,dir,"bin","*.exe *.dll","*d.exe *d.dll *d4.dll");
+    generateFileList(fileList,dir,"lib","*.exe *.dll","*d.exe *d.dll *d4.dll");
+#else
+    generateFileList(fileList,dir,"bin","*.exe *.dll","");
+    generateFileList(fileList,dir,"lib","*.exe *.dll","");
+#endif
     for (int i = 0; i < fileList.size(); i++) 
     {
         QFileInfo fi(dir + "/" + fileList.at(i).inputFile);
