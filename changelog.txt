@@ -1,11 +1,16 @@
 ChangeLog
 =========
 
+0.6.11-1
+------
+- packager: fixed problem not adding all source files in case of using -srcroot option
+- installer-gui: recompiled with qt 4.3-snapshot to avoid segfaults we had in qt4.3 beta 
+
 0.6.11
 ------
 packager 
-- use the correct qt include files (copy them from src to include) 
-- add .manifest files for executables/shared objects
+- packager: use the correct qt include files (copy them from src to include) 
+- packager: add .manifest files for executables/shared objects
 
 0.6.10
 ------
