@@ -161,8 +161,12 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 generateFileList(fileList, dir, "translations", "*.qm");
                 return true;
             case LIB:
+#if DEBUG_LIB_SUPPORT
                 generateFileList(fileList, dir, "bin",  "*.exe *.bat *d4.dll", "assistant.exe qtdemo.exe qdbus.exe dbus-viewer.exe");
                 generateFileList(fileList, dir, "plugins", "*d.dll *d4.dll *d1.dll");
+#else
+                generateFileList(fileList, dir, "bin",  "*.exe *.bat", "assistant.exe qtdemo.exe qdbus.exe dbus-viewer.exe");
+#endif
                 generateFileList(fileList, dir, "", ".qmake.cache");
                 // trolltech installs whole mkspecs folder too
                 generateFileList(fileList, dir, "mkspecs", "*.*");
@@ -227,7 +231,7 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 if (m_srcRoot.isEmpty())
                     generateFileList(fileList, dir, "src", "*",exclude);
                 else
-                    generateFileList(fileList, m_srcRoot, ".", "*.*",exclude);
+                    generateFileList(fileList, m_srcRoot, "", "*",exclude);
                 return true;
             case NONE:
                 generateFileList(fileList, dir, ".", "*.*", "manifest");
