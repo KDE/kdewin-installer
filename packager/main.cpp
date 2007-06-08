@@ -47,6 +47,7 @@ static void printHelp(const QString &addInfo)
        << "\n\t\t"      << "-type type of package (mingw, msvc)"
        << "\n\t\t"      << "-destdir directory where to store the zip files to"
        << "\n\t\t"      << "-complete also create all-in-one package with all files"
+       << "\n\t\t"      << "-verbose display verbose processing informations"
        << "\n";
 
     ts.flush();
@@ -63,6 +64,7 @@ int main(int argc, char *argv[])
     QFileInfo rootDir;
     QFileInfo srcRootDir;
     bool strip = false;
+    bool verbose = false;
 
     int idx = args.indexOf("-name");
     if(idx != -1 && idx < args.count() -1) {
@@ -113,6 +115,11 @@ int main(int argc, char *argv[])
         strip = 1;
     }
 
+    idx = args.indexOf("-verbose");
+    if(idx != -1) {
+        verbose = 1;
+    }
+
     idx = args.indexOf("-notes");
     if(idx != -1 && idx < args.count() -1) {
         notes = args[idx + 1];
@@ -155,6 +162,8 @@ int main(int argc, char *argv[])
 
     if (!srcExclude.isEmpty())
         packager.setSourceExcludes(srcExclude);
+
+    packager.setVerbose(verbose);
 
     if (strip)
        packager.stripFiles(rootDir.filePath());
