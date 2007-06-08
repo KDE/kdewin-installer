@@ -152,7 +152,8 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
     QString dir = root.isEmpty() ? m_rootDir : root;
     QString exclude;
     fileList.clear();
-    if (m_name.startsWith("qt") || m_name.startsWith("q++") || m_name.startsWith("q.."))
+    QString lName = m_name.toLower();
+    if (lName.startsWith("qt") || lName.startsWith("q++") || lName.startsWith("q.."))
         switch (type) {
             case BIN:
                 // assistant.exe can be used separatly from qt doc - better in bin than doc package
@@ -178,10 +179,7 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 {   
                     generateFileList(fileList, dir, "lib",      "*.lib",  "*d4.lib *d.lib");
                 }
-                generateFileList(fileList, dir, "include", "*", "private *_p.h *.pr*");
-                generateFileList(fileList, dir, "src", "q*.h", "*_p.h *_pch.h 3rdparty");
-                // FIXME: CamelCase-Header are pointing still into src tree
-                //parseQtIncludeFiles(fileList, dir, "include", "*", "private *_p.h *.pr*");
+                parseQtIncludeFiles(fileList, dir, "include", "*", "private *_p.h *.pr*");
                 return true;
             case DOC:
                 generateFileList(fileList, dir, "bin", "qtdemo.exe");

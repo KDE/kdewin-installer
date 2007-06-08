@@ -57,17 +57,19 @@ bool parseQtIncludeFiles(QList<InstallFile> &fileList, const QString &root, cons
   // read every header and include the referenced one
   QFile file;
   QFileInfo fi;
+  QChar Q('Q');
   QString r = root + '/';
   QList<InstallFile>::ConstIterator it = files.constBegin();
   QList<InstallFile>::ConstIterator end = files.constEnd();
   for( ; it != end; ++it) {
     QString f = it->inputFile;
+    file.setFileName(r + f);
+    fi.setFile(file);
     // camel case incudes are fine
-    if(f.startsWith('Q')) {
+    if(fi.fileName().startsWith(Q)) {
       fileList += InstallFile(f, f);
       continue;
     }
-    file.setFileName(r + f);
     if(!file.open(QIODevice::ReadOnly))
       continue;
     QByteArray content = file.readAll();
