@@ -44,7 +44,8 @@ class Packager {
       bool generatePackageFileList(QList<InstallFile> &result, Packager::Type type, const QString &dir=QString());
 
       bool makePackage(const QString &dir, const QString &destdir=QString(), bool bComplete=false);
-      
+      void setVerbose(bool state) { m_verbose = state; }
+
     protected: 
         struct MemFile {
             QString    filename;

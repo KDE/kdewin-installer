@@ -172,11 +172,11 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 generateFileList(fileList, dir, "mkspecs", "*.*");
                 if (m_name.endsWith("mingw")) 
                 {
-                    generateFileList(fileList, dir, "lib",      "*.a");
+                    generateFileList(fileList, dir, "lib",      "*.a", "*d4.a *d.a");
                 }
                 else 
-                {
-                    generateFileList(fileList, dir, "lib",      "*.lib");
+                {   
+                    generateFileList(fileList, dir, "lib",      "*.lib",  "*d4.lib *d.lib");
                 }
                 generateFileList(fileList, dir, "include", "*", "private *_p.h *.pr*");
                 generateFileList(fileList, dir, "src", "q*.h", "*_p.h *_pch.h 3rdparty");
