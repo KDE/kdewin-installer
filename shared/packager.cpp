@@ -178,7 +178,10 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 {
                     generateFileList(fileList, dir, "lib",      "*.lib");
                 }
-                parseQtIncludeFiles(fileList, dir, "include", "*.*", "private *_p.h *.pr*");
+                generateFileList(fileList, dir, "include", "*", "private *_p.h *.pr*");
+                generateFileList(fileList, dir, "src", "q*.h", "*_p.h *_pch.h 3rdparty");
+                // FIXME: CamelCase-Header are pointing still into src tree
+                //parseQtIncludeFiles(fileList, dir, "include", "*", "private *_p.h *.pr*");
                 return true;
             case DOC:
                 generateFileList(fileList, dir, "bin", "qtdemo.exe");
