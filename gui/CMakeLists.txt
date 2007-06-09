@@ -82,7 +82,7 @@ qt4_automoc(${all_sources})
 
 add_executable(kdewin-installer-gui WIN32 ${all_sources})
 
-target_link_libraries(kdewin-installer-gui ${QT_QTMAIN_LIBRARIES} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${GUI_LIBS})
+target_link_libraries(kdewin-installer-gui ${QT_QTMAIN_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${GUI_LIBS})
 
 if (CMAKE_PRODUCTION_BUILD)
     install_targets(/bin kdewin-installer-gui )

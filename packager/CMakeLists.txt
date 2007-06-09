@@ -28,7 +28,7 @@ source_group(quazip FILES ${quazip_SOURCES} ${quazip_HEADERS})
 
 qt4_automoc(${packager_SOURCES})
 add_executable(kdewin-packager ${packager_SOURCES} ${packager_HEADERS})
-target_link_libraries(kdewin-packager ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
+target_link_libraries(kdewin-packager ${QT_QTMAIN_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
 
 if (CMAKE_PRODUCTION_BUILD)
     install_targets(/bin kdewin-packager )
