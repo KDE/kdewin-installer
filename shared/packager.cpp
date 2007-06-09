@@ -232,7 +232,7 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 if (m_srcRoot.isEmpty())
                     generateFileList(fileList, dir, "src", "*",exclude);
                 else
-                    generateFileList(fileList, m_srcRoot, "", "*",exclude);
+                    generateFileList(fileList, m_srcRoot, ".", "*",exclude);
                 return true;
             case NONE:
                 generateFileList(fileList, dir, ".", "*.*", "manifest");
