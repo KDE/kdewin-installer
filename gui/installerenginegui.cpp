@@ -134,17 +134,45 @@ static void setState(QTreeWidgetItem &item, const Package *pkg, int column, acti
     switch (action)
     {
         case _initial: 
-            if (pkg->isInstalled(type))
+        {
+           stateType state = (stateType)item.data(column,Qt::UserRole).toInt();
+
+           switch(state) 
             {
-                setIcon(item,type,_keepinstalled );
-                item.setData(column,Qt::UserRole,_Nothing);
-            }
-            else
-            {
-                setIcon(item,type,_nothing);
-                item.setData(column,Qt::UserRole,_Nothing);
-            }
+                case _Install: 
+                    if (!pkg->isInstalled(type))
+                    {
+                        setIcon(item,type,_install);
+                        item.setData(column,Qt::UserRole,_Install);
+                    }
+                    break;
+                case _Nothing: 
+                    if (pkg->isInstalled(type))
+                    {
+                        setIcon(item,type,_keepinstalled );
+                        item.setData(column,Qt::UserRole,_Nothing);
+                    }
+                    else 
+                    {
+                        setIcon(item,type,_nothing);
+                        item.setData(column,Qt::UserRole,_Install);
+                    }
+                    break;
+                case _Remove:
+                    if (pkg->isInstalled(type))
+                    {
+                        setIcon(item,type,_remove);
+                        item.setData(column,Qt::UserRole,_Remove);
+                    }
+                    else 
+                    {
+                        setIcon(item,type,_nothing);
+                        item.setData(column,Qt::UserRole,_Nothing);
+                    }
+                    break;
+            }                       
             break;
+        }
         
         // enter next state depending on current state 
         case _next: 
