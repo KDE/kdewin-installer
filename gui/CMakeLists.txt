@@ -35,6 +35,7 @@ set(installer_GUI_SOURCES
    installwizard.cpp
    settingspage.cpp
    installerenginegui.cpp
+   packagestates.cpp
    main.cpp
 )
 
@@ -43,6 +44,7 @@ set(installer_GUI_HEADERS
    installwizard.h
    settingspage.h
    installerenginegui.h
+   packagestates.h
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
