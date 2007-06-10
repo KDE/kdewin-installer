@@ -360,7 +360,7 @@ void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree)
             item->setText(NotesColumn, pkg->notes());
             // FIXME 
             //item->setText(8, m_globalConfig->news()->value(pkg->name()+"-"+pkg->version()));
-            item->setToolTip ( ALLcolumn, allToolTip);
+            item->setToolTip ( ALLColumn, allToolTip);
             item->setToolTip ( BINColumn, binToolTip);
             item->setToolTip ( LIBColumn, libToolTip);
             item->setToolTip ( DOCColumn, docToolTip);
@@ -372,6 +372,58 @@ void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree)
     tree->sortItems(0,Qt::AscendingOrder);
 }
 extern QTreeWidget *tree;
+
+
+/** 
+  select depending packages of package pkg
+  @param pkg package of which the depending packages should be selected
+  @param type Type of selection: ALL or BIN
+  @todo add support for indirect dependencies 
+*/
+void InstallerEngineGui::setDependencies(Package *pkg, Package::Type type)
+{
+    const QStringList &deps = pkg->deps();
+    
+    qDebug() << deps.join(" ");    
+    for (int i = 0; i < deps.size(); ++i)
+    {  
+        QString dep = deps.at(i);
+        QList<QTreeWidgetItem *> items = tree->findItems(deps.at(i),Qt::MatchFixedString | Qt::MatchRecursive);
+        qDebug() << items.size();
+        for (int j = 0; j < items.size(); ++j) 
+        {
+               qDebug() << items.at(j);
+            QTreeWidgetItem * depItem = static_cast<QTreeWidgetItem*>(items[j]);
+            /// the dependency is only for bin package and one way to switch on
+            Package *depPkg = getPackageByName(dep);
+    
+            if (m_installMode == Developer)
+            {
+                setState(*depItem,depPkg,BINColumn,_deps);
+                setState(*depItem,depPkg,LIBColumn,_deps);
+                setState(*depItem,depPkg,DOCColumn,_deps);
+            }
+            else if (m_installMode == EndUser)
+            {
+                setState(*depItem,depPkg,BINColumn,_deps);
+                // lib is excluded
+                setState(*depItem,depPkg,DOCColumn,_deps);
+            }
+            else if (m_installMode == Single)
+            {    
+                if (type == Package::ALL)
+                {
+                    setState(*depItem,depPkg,BINColumn,_deps);
+                    setState(*depItem,depPkg,LIBColumn,_deps);
+                    setState(*depItem,depPkg,DOCColumn,_deps);
+                }
+                else
+                    setState(*depItem,depPkg,BINColumn,_deps);
+            }
+        }
+    }    
+ }
+
 
 void InstallerEngineGui::itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column)
 {
@@ -405,51 +457,10 @@ void InstallerEngineGui::itemClickedPackageSelectorPage(QTreeWidgetItem *item, i
         setState(*item,pkg,column,_next);
 
     // select depending packages in case all or bin is selected
-
-    if (column == ALLColumn || column == BINColumn) 
-    {
-        const QStringList &deps = pkg->deps();
-
-        qDebug() << deps.join(" ");    
-        for (int i = 0; i < deps.size(); ++i)
-        {  
-            QString dep = deps.at(i);
-            QList<QTreeWidgetItem *> items = tree->findItems(deps.at(i),Qt::MatchFixedString | Qt::MatchRecursive);
-            qDebug() << items.size();
-            for (int j = 0; j < items.size(); ++j) 
-            {
-                   qDebug() << items.at(j);
-                QTreeWidgetItem * depItem = static_cast<QTreeWidgetItem*>(items[j]);
-                /// the dependency is only for bin package and one way to switch on
-                Package *depPkg = getPackageByName(dep);
-
-                if (m_installMode == Developer)
-                {
-                    setState(*depItem,depPkg,BINColumn,_deps);
-                    setState(*depItem,depPkg,LIBColumn,_deps);
-                    setState(*depItem,depPkg,DOCColumn,_deps);
-                }
-                else if (m_installMode == EndUser)
-                {
-                    setState(*depItem,depPkg,BINColumn,_deps);
-                    // lib is excluded
-                    setState(*depItem,depPkg,DOCColumn,_deps);
-                }
-                else if (m_installMode == Single)
-                {    
-                    if (column == ALLColumn)
-                    {
-                        setState(*depItem,depPkg,BINColumn,_deps);
-                        setState(*depItem,depPkg,LIBColumn,_deps);
-                        setState(*depItem,depPkg,DOCColumn,_deps);
-                    }
-                    else
-                        setState(*depItem,depPkg,BINColumn,_deps);
-                }
-            }
-        }    
-    }
-
+    if (column == ALLColumn) 
+        setDependencies(pkg,Package::ALL);
+    else if (column == BINColumn) 
+        setDependencies(pkg,Package::BIN);
 }
 
 bool InstallerEngineGui::downloadPackages(QTreeWidget *tree, const QString &category)

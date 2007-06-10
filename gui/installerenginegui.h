@@ -25,6 +25,7 @@
 
 #include "installerengine.h"
 #include "downloaderprogress.h"
+#include "package.h"
 
 class InstallerEngineGui : public InstallerEngine
 {
@@ -34,6 +35,7 @@ public:
     InstallerEngineGui(DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
 
     void setPageSelectorWidgetData(QTreeWidget *tree);
+    void setDependencies(Package *pkg, Package::Type type);
     void modeSwitchClicked(int mode);
     void itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column);
     bool downloadPackages(QTreeWidget *tree, const QString &category=QString());
