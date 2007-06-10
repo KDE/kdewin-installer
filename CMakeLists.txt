@@ -195,7 +195,7 @@ else (MINGW)
         get_filename_component(VC_BIN_PATH ${CMAKE_CXX_COMPILER} PATH)
         write_file (${CMAKE_BINARY_DIR}/kdewin-installer-shell.bat "set PATH=${QT_BIN_PATH};${CMAKE_BIN_PATH};%PATH%\ncall \"${VC_BIN_PATH}\\vcvars32.bat\"\ncmd.exe")
     else (CMAKE_BUILD_TOOL STREQUAL  "nmake")
-        write_file (${CMAKE_BINARY_DIR}/kdewin-installer-sln.bat "set ${QT_BIN_PATH};${CMAKE_BIN_PATH};%PATH%\nstart kdewin-installer.sln")
+        write_file (${CMAKE_BINARY_DIR}/kdewin-installer-sln.bat "set PATH=${QT_BIN_PATH};${CMAKE_BIN_PATH};%PATH%\nstart kdewin-installer.sln")
     endif (CMAKE_BUILD_TOOL STREQUAL  "nmake")
 endif (MINGW)
 
