@@ -36,6 +36,16 @@
 #include "globalconfig.h"
 //#include "database.h"
 
+// Column definitions in package list tree widget
+const int NameColumn = 0;
+const int VersionColumn = 1;
+const int ALLColumn = 2;
+const int BINColumn = 3;
+const int LIBColumn = 4;
+const int DOCColumn = 5;
+const int SRCColumn = 6;
+const int NotesColumn = 7;
+const int ColumnCount = 9;
 
 InstallerEngineGui::InstallerEngineGui(DownloaderProgress *progressBar,InstallerProgress *instProgressBar)
 : InstallerEngine(progressBar,instProgressBar)
@@ -47,11 +57,11 @@ int typeToColumn(Package::Type type)
 {
     switch (type)
     {
-        case Package::BIN : return 3;
-        case Package::LIB : return 4;
-        case Package::DOC : return 5;
-        case Package::SRC : return 6;
-        default: return 2;
+        case Package::BIN : return BINColumn;
+        case Package::LIB : return LIBColumn;
+        case Package::DOC : return DOCColumn;
+        case Package::SRC : return SRCColumn;
+        default: return ALLColumn;
     }    
 }
 
@@ -59,11 +69,11 @@ Package::Type columnToType(int column)
 {
     switch (column)
     {
-        case 3: return Package::BIN;
-        case 4: return Package::LIB; 
-        case 5: return Package::DOC; 
-        case 6: return Package::SRC; 
-        case 2: return Package::ALL;
+        case BINColumn: return Package::BIN;
+        case LIBColumn: return Package::LIB; 
+        case DOCColumn: return Package::DOC; 
+        case SRCColumn: return Package::SRC; 
+        case ALLColumn: return Package::ALL;
         default : return Package::NONE;
     }    
 }
@@ -296,7 +306,7 @@ void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree)
     << tr("package notes")
     << tr("news");
 
-    tree->setColumnCount(9);
+    tree->setColumnCount(ColumnCount);
     tree->setHeaderLabels(labels);
     // see http://lists.trolltech.com/qt-interest/2006-06/thread00441-0.html
     // and Task Tracker Entry 106731
@@ -338,23 +348,23 @@ void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree)
                  << QString();
             QTreeWidgetItem *item = new QTreeWidgetItem(category, data);
             if (m_installMode == Single)
-                setState(*item,pkg,2,_initial);
+                setState(*item,pkg,ALLColumn,_initial);
 
-            setState(*item,pkg,3,_initial);
+            setState(*item,pkg,BINColumn,_initial);
             if (m_installMode != Developer )
             {
-                setState(*item,pkg,4,_initial);
-                setState(*item,pkg,5,_initial);
+                setState(*item,pkg,LIBColumn,_initial);
+                setState(*item,pkg,DOCColumn,_initial);
             }
-            setState(*item,pkg,6,_initial);
-            item->setText(7, pkg->notes());
+            setState(*item,pkg,SRCColumn,_initial);
+            item->setText(NotesColumn, pkg->notes());
             // FIXME 
             //item->setText(8, m_globalConfig->news()->value(pkg->name()+"-"+pkg->version()));
-            item->setToolTip ( 2, allToolTip);
-            item->setToolTip ( 3, binToolTip);
-            item->setToolTip ( 4, libToolTip);
-            item->setToolTip ( 5, docToolTip);
-            item->setToolTip ( 6, srcToolTip);
+            item->setToolTip ( ALLcolumn, allToolTip);
+            item->setToolTip ( BINColumn, binToolTip);
+            item->setToolTip ( LIBColumn, libToolTip);
+            item->setToolTip ( DOCColumn, docToolTip);
+            item->setToolTip ( SRCColumn, srcToolTip);
         }
     }
     tree->insertTopLevelItems(0,categoryList);
@@ -365,38 +375,38 @@ extern QTreeWidget *tree;
 
 void InstallerEngineGui::itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column)
 {
-    if (column < 2)
+    if (column < ALLColumn)
         return;
 
-    Package *pkg = getPackageByName(item->text(0),item->text(1));
+    Package *pkg = getPackageByName(item->text(NameColumn),item->text(VersionColumn));
     if (!pkg)
         return;
-    if (m_installMode == Single && column == 2)
+    if (m_installMode == Single && column == ALLColumn)
     {
-       setState(*item,pkg,2,_next);
-       setState(*item,pkg,3,_sync,2);
-       setState(*item,pkg,4,_sync,2);
-       setState(*item,pkg,5,_sync,2);
-       setState(*item,pkg,6,_sync,2);
+       setState(*item,pkg,ALLColumn,_next);
+       setState(*item,pkg,BINColumn,_sync,ALLColumn);
+       setState(*item,pkg,LIBColumn,_sync,ALLColumn);
+       setState(*item,pkg,DOCColumn,_sync,ALLColumn);
+       setState(*item,pkg,SRCColumn,_sync,ALLColumn);
     }
-    else if (m_installMode == Developer && column == 3)
+    else if (m_installMode == Developer && column == BINColumn)
     {
-        setState(*item,pkg,column,_next);
-        setState(*item,pkg,column+1,_next);
-        setState(*item,pkg,column+1,_next);
+        setState(*item,pkg,BINColumn,_next);
+        setState(*item,pkg,LIBColumn,_next);
+        setState(*item,pkg,DOCColumn,_next);
     }
-    else if (m_installMode == EndUser && column == 3)
+    else if (m_installMode == EndUser && column == BINColumn)
     {
-        setState(*item,pkg,column,_next);
+        setState(*item,pkg,BINColumn,_next);
         // lib excluded
-        setState(*item,pkg,column+2,_next);
+        setState(*item,pkg,DOCColumn,_next);
     }
     else
         setState(*item,pkg,column,_next);
 
     // select depending packages in case all or bin is selected
 
-    if (column == 2 || column == 3) 
+    if (column == ALLColumn || column == BINColumn) 
     {
         const QStringList &deps = pkg->deps();
 
@@ -415,26 +425,26 @@ void InstallerEngineGui::itemClickedPackageSelectorPage(QTreeWidgetItem *item, i
 
                 if (m_installMode == Developer)
                 {
-                    setState(*depItem,depPkg,3,_deps);
-                    setState(*depItem,depPkg,4,_deps);
-                    setState(*depItem,depPkg,5,_deps);
+                    setState(*depItem,depPkg,BINColumn,_deps);
+                    setState(*depItem,depPkg,LIBColumn,_deps);
+                    setState(*depItem,depPkg,DOCColumn,_deps);
                 }
                 else if (m_installMode == EndUser)
                 {
-                    setState(*depItem,depPkg,3,_deps);
+                    setState(*depItem,depPkg,BINColumn,_deps);
                     // lib is excluded
-                    setState(*depItem,depPkg,5,_deps);
+                    setState(*depItem,depPkg,DOCColumn,_deps);
                 }
                 else if (m_installMode == Single)
                 {    
-                    if (column == 2)
+                    if (column == ALLColumn)
                     {
-                        setState(*depItem,depPkg,3,_deps);
-                        setState(*depItem,depPkg,4,_deps);
-                        setState(*depItem,depPkg,5,_deps);
+                        setState(*depItem,depPkg,BINColumn,_deps);
+                        setState(*depItem,depPkg,LIBColumn,_deps);
+                        setState(*depItem,depPkg,DOCColumn,_deps);
                     }
                     else
-                        setState(*depItem,depPkg,column,_deps);
+                        setState(*depItem,depPkg,BINColumn,_deps);
                 }
             }
         }    
@@ -462,8 +472,8 @@ bool InstallerEngineGui::downloadPackages(QTreeWidget *tree, const QString &cate
             {
                 QTreeWidgetItem *child = static_cast<QTreeWidgetItem*>(item->child(j));
 //              qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
-                bool all = child->checkState(2) == Qt::Checked;
-                Package *pkg = packageList->getPackage(child->text(0),child->text(1).toAscii());
+                bool all = child->checkState(ALLColumn) == Qt::Checked;
+                Package *pkg = packageList->getPackage(child->text(NameColumn),child->text(VersionColumn).toAscii());
                 if (!pkg)
                     continue;
                 if (all || isMarkedForInstall(*child,Package::BIN))
@@ -497,7 +507,7 @@ bool InstallerEngineGui::removePackages(QTreeWidget *tree, const QString &catego
             {
                 QTreeWidgetItem *child = static_cast<QTreeWidgetItem*>(item->child(j));
                 bool all = false; //child->checkState(2) == Qt::Checked;
-                Package *pkg = packageList->getPackage(child->text(0),child->text(1).toAscii());
+                Package *pkg = packageList->getPackage(child->text(NameColumn),child->text(VersionColumn).toAscii());
                 if (!pkg)
                     continue;
                 if (all | isMarkedForRemoval(*child,Package::BIN))
@@ -535,9 +545,9 @@ bool InstallerEngineGui::installPackages(QTreeWidget *tree,const QString &_categ
             {
                 QTreeWidgetItem *child = static_cast<QTreeWidgetItem*>(item->child(j));
 //                qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
-                bool all = child->checkState(2) == Qt::Checked;
+                bool all = child->checkState(ALLColumn) == Qt::Checked;
                 QString pkgName = child->text(0);
-                Package *pkg = packageList->getPackage(pkgName,child->text(1).toAscii());
+                Package *pkg = packageList->getPackage(pkgName,child->text(VersionColumn).toAscii());
                 if (!pkg)
                     continue;
                 if (all || isMarkedForInstall(*child,Package::BIN))
