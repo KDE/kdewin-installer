@@ -47,12 +47,6 @@ const int SRCColumn = 6;
 const int NotesColumn = 7;
 const int ColumnCount = 9;
 
-InstallerEngineGui::InstallerEngineGui(DownloaderProgress *progressBar,InstallerProgress *instProgressBar)
-: InstallerEngine(progressBar,instProgressBar)
-{
-    m_installMode = Single;
-}
-
 int typeToColumn(Package::Type type)
 {
     switch (type)
@@ -286,6 +280,12 @@ bool isMarkedForRemoval(QTreeWidgetItem &item,Package::Type type)
     int column = typeToColumn(type);
     stateType state = (stateType)item.data(column,Qt::UserRole).toInt();
     return state == _Remove;
+}
+
+InstallerEngineGui::InstallerEngineGui(DownloaderProgress *progressBar,InstallerProgress *instProgressBar)
+: InstallerEngine(progressBar,instProgressBar)
+{
+    m_installMode = Single;
 }
 
 void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree)
