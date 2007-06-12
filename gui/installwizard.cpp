@@ -31,6 +31,7 @@
 #include <QTreeWidgetItem>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QSplitter>
 #include <QGridLayout>
 #include <QFileDialog>
 #include <QApplication>
@@ -51,6 +52,7 @@ extern InstallWizard *wizard;
 
 // must be global
 QTreeWidget *tree;
+QTreeWidget *leftTree;
 
 InstallerEngineGui *engine;
 
@@ -300,18 +302,42 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
 {
     topLabel = new QLabel(tr("<center><b>Please select the required packages</b></center>"));
 
-    tree = new QTreeWidget();
+    QSplitter *splitter = new QSplitter(wizard);
+    splitter->setOrientation(Qt::Horizontal);
+
+    leftTree  = new QTreeWidget(splitter);
+    engine->setLeftTreeData(leftTree);
+
+    tree = new QTreeWidget(splitter);
     engine->setPageSelectorWidgetData(tree);
-    for (int i = 0; i < tree->columnCount(); i++)
-        tree->resizeColumnToContents(i);
+
+    splitter->addWidget(leftTree);
+    splitter->addWidget(tree);
+    
+    QWidget *widget = splitter->widget(0);
+    QSizePolicy policy = widget->sizePolicy();
+    policy.setHorizontalStretch(1);
+    widget->setSizePolicy(policy);
+
+    widget = splitter->widget(1);
+    policy = widget->sizePolicy();
+    policy.setHorizontalStretch(5);
+    widget->setSizePolicy(policy);
+ 
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(topLabel, 0, 0);
+    layout->addWidget(splitter,2,0);
+    layout->setRowStretch(2,10);
+    setLayout(layout);
 
     connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
+    connect(leftTree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(on_leftTree_itemClicked(QTreeWidgetItem *, int)));
     connect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
+}
 
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(topLabel);
-    layout->addWidget(tree);
-    setLayout(layout);
+void PackageSelectorPage::on_leftTree_itemClicked(QTreeWidgetItem *item, int column)
+{
+    engine->on_leftTree_itemClicked(item,column);
 }
 
 void PackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
@@ -325,9 +351,8 @@ void PackageSelectorPage::installDirChanged(const QString &dir)
     engine = new InstallerEngineGui(wizard->progressBar,wizard->instProgressBar);
     engine->readGlobalConfig();
     engine->downloadPackageLists();
+    engine->setLeftTreeData(leftTree);
     engine->setPageSelectorWidgetData(tree);
-    for (int i = 0; i < tree->columnCount(); i++)
-        tree->resizeColumnToContents(i);
 }
 
 void PackageSelectorPage::resetPage()

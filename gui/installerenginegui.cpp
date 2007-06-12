@@ -117,6 +117,9 @@ void setIcon(QTreeWidgetItem &item, Package::Type type, iconType action)
 
 enum actionType { _initial, _next, _deps, _sync}; 
 
+/** 
+ @deprecated  use set...State
+*/ 
 static void setState(QTreeWidgetItem &item, const Package *pkg, int column, actionType action, int syncColumn=0)
 {
     Package::Type type = columnToType(column);
@@ -276,6 +279,22 @@ static void setState(QTreeWidgetItem &item, const Package *pkg, int column, acti
     }        
 }
 
+static void setInitialState(QTreeWidgetItem &item, const Package *pkg, int column)
+{
+    setState(item,pkg,column,_initial);
+}
+
+static void setNextState(QTreeWidgetItem &item, const Package *pkg, int column)
+{
+    setState(item,pkg,column,_next);
+}
+
+static void setDependencyState(QTreeWidgetItem &item, const Package *pkg, int column)
+{
+    setState(item,pkg,column,_deps);
+}
+
+
 bool isMarkedForInstall(Package *pkg,Package::Type type)
 {
     stateType state = packageStates.getState(pkg->name(),pkg->version(),type);
@@ -294,7 +313,53 @@ InstallerEngineGui::InstallerEngineGui(DownloaderProgress *progressBar,Installer
     m_installMode = Single;
 }
 
-void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree)
+void InstallerEngineGui::setLeftTreeData(QTreeWidget *tree)
+{
+    tree->clear();
+    QStringList labels;
+    QList<QTreeWidgetItem *> items;
+    labels
+    << tr("paketgroups");
+    tree->setColumnCount(1);
+    tree->setHeaderLabels(labels);
+
+    // adding top level items
+    QStringList names;
+    names << tr("all");
+
+    QList<QTreeWidgetItem *> categoryList;
+    QTreeWidgetItem *category = new QTreeWidgetItem((QTreeWidget*)0, names);
+    QTreeWidgetItem *firstItem = category;
+    categoryList.append(category);
+
+    QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
+    for ( ; k != m_packageListList.constEnd(); ++k)
+    {
+        if ((*k)->packageList().size() == 0)
+            continue;
+        QStringList names;
+        names << (*k)->Name();
+        QTreeWidgetItem *category = new QTreeWidgetItem((QTreeWidget*)0, names);
+        category->setToolTip(0,(*k)->notes());
+        categoryList.append(category);
+    }
+    tree->insertTopLevelItems(0,categoryList);
+    tree->expandAll();
+    tree->sortItems(0,Qt::AscendingOrder);
+    // FIXME: don't know how to select an item as done with mouse 
+    tree->setCurrentItem(firstItem);
+    firstItem->setSelected(true);
+    for (int i = 0; i < tree->columnCount(); i++)
+        tree->resizeColumnToContents(i);
+}
+extern QTreeWidget *tree;
+
+void InstallerEngineGui::on_leftTree_itemClicked(QTreeWidgetItem *item, int column)
+{
+    setPageSelectorWidgetData(tree,item->text(0));
+}
+
+void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree, QString categoryName)
 {
     tree->clear();
     QStringList labels;
@@ -356,7 +421,7 @@ void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree)
     QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
     for ( ; k != m_packageListList.constEnd(); ++k)
     {
-        if ((*k)->packageList().size() == 0)
+        if ((*k)->packageList().size() == 0 || (!categoryName.isEmpty() && categoryName != "all" && categoryName != (*k)->Name()))
             continue;
         QStringList names;
         names << (*k)->Name();
@@ -382,15 +447,15 @@ void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree)
                  << QString();
             QTreeWidgetItem *item = new QTreeWidgetItem(category, data);
             if (m_installMode == Single)
-                setState(*item,pkg,ALLColumn,_initial);
+                setInitialState(*item,pkg,ALLColumn);
 
-            setState(*item,pkg,BINColumn,_initial);
+            setInitialState(*item,pkg,BINColumn);
             if (m_installMode != Developer )
             {
-                setState(*item,pkg,LIBColumn,_initial);
-                setState(*item,pkg,DOCColumn,_initial);
+                setInitialState(*item,pkg,LIBColumn);
+                setInitialState(*item,pkg,DOCColumn);
             }
-            setState(*item,pkg,SRCColumn,_initial);
+            setInitialState(*item,pkg,SRCColumn);
             item->setText(NotesColumn, pkg->notes());
             // FIXME 
             //item->setText(8, m_globalConfig->news()->value(pkg->name()+"-"+pkg->version()));
@@ -404,8 +469,9 @@ void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree)
     tree->insertTopLevelItems(0,categoryList);
     tree->expandAll();
     tree->sortItems(0,Qt::AscendingOrder);
+    for (int i = 0; i < tree->columnCount(); i++)
+        tree->resizeColumnToContents(i);
 }
-extern QTreeWidget *tree;
 
 
 /** 
@@ -414,6 +480,55 @@ extern QTreeWidget *tree;
   @param type Type of selection: ALL or BIN
   @todo add support for indirect dependencies 
 */
+void InstallerEngineGui::setDependencies(Package *pkg, Package::Type type)
+{
+    const QStringList &deps = pkg->deps();
+
+    qDebug() << deps.join(" ");    
+    for (int i = 0; i < deps.size(); ++i)
+    {  
+        QString dep = deps.at(i);
+        Package *depPkg = getPackageByName(dep);
+        if (!depPkg)
+            continue;
+        //setDependencies(depPkg,type);
+
+        // find item in display list
+        QList<QTreeWidgetItem *> items = tree->findItems(deps.at(i),Qt::MatchFixedString | Qt::MatchRecursive);
+        qDebug() << __FUNCTION__ << "found " << items.size() << "displayed items";
+        for (int j = 0; j < items.size(); ++j) 
+        {
+            qDebug() << items.at(j);
+            QTreeWidgetItem * depItem = static_cast<QTreeWidgetItem*>(items[j]);
+            /// the dependency is only for bin package and one way to switch on
+            if (m_installMode == Developer)
+            {
+                setState(*depItem,depPkg,BINColumn,_deps);
+                setState(*depItem,depPkg,LIBColumn,_deps);
+                setState(*depItem,depPkg,DOCColumn,_deps);
+            }
+            else if (m_installMode == EndUser)
+            {
+                setState(*depItem,depPkg,BINColumn,_deps);
+                // lib is excluded
+                setState(*depItem,depPkg,DOCColumn,_deps);
+            }
+            else if (m_installMode == Single)
+            {    
+                if (type == Package::ALL)
+                {
+                    setState(*depItem,depPkg,BINColumn,_deps);
+                    setState(*depItem,depPkg,LIBColumn,_deps);
+                    setState(*depItem,depPkg,DOCColumn,_deps);
+                }
+                else
+                    setState(*depItem,depPkg,BINColumn,_deps);
+            }
+        }
+    }
+}
+// old version deprecated6
+#if 0
 void InstallerEngineGui::setDependencies(Package *pkg, Package::Type type)
 {
     const QStringList &deps = pkg->deps();
@@ -457,7 +572,7 @@ void InstallerEngineGui::setDependencies(Package *pkg, Package::Type type)
         }
     }    
  }
-
+#endif
 
 void InstallerEngineGui::itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column)
 {
@@ -610,9 +725,5 @@ bool InstallerEngineGui::installPackages(QTreeWidget *tree,const QString &_categ
         }
     }
     return true;
-}
-
-void InstallerEngineGui::modeSwitchClicked(int mode)
-{
 }
 

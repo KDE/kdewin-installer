@@ -161,6 +161,8 @@ public:
 
 public slots:
     void itemClicked(QTreeWidgetItem *item, int column);
+    void on_leftTree_itemClicked(QTreeWidgetItem *item, int column);
+
     void installDirChanged(const QString &dir);
 
 private:

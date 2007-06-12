@@ -34,10 +34,12 @@ public:
 
     InstallerEngineGui(DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
 
-    void setPageSelectorWidgetData(QTreeWidget *tree);
-    void setDependencies(Package *pkg, Package::Type type);
-    void modeSwitchClicked(int mode);
+    void setPageSelectorWidgetData(QTreeWidget *tree, QString categoryName=QString());
     void itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column);
+    void setLeftTreeData(QTreeWidget *tree);
+    void on_leftTree_itemClicked(QTreeWidgetItem *item, int column);
+    void setDependencies(Package *pkg, Package::Type type);
+
     bool downloadPackages(QTreeWidget *tree, const QString &category=QString());
     bool installPackages(QTreeWidget *tree, const QString &category=QString());
     bool removePackages(QTreeWidget *tree, const QString &category=QString());
