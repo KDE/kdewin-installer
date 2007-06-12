@@ -318,18 +318,26 @@ void InstallerEngineGui::setLeftTreeData(QTreeWidget *tree)
     tree->clear();
     QStringList labels;
     QList<QTreeWidgetItem *> items;
-    labels
-    << tr("paketgroups");
-    tree->setColumnCount(1);
+    labels << tr("pakgetgroups") << tr("description");
+    tree->setColumnCount(2);
     tree->setHeaderLabels(labels);
+    QList<QTreeWidgetItem *> categoryList;
 
     // adding top level items
     QStringList names;
-    names << tr("all");
-
-    QList<QTreeWidgetItem *> categoryList;
+    names << tr("all") << tr("all packages");
     QTreeWidgetItem *category = new QTreeWidgetItem((QTreeWidget*)0, names);
     QTreeWidgetItem *firstItem = category;
+    categoryList.append(category);
+
+    names.clear();
+    names << tr("mingw") << tr("packages usable by win32 gcc");
+    category = new QTreeWidgetItem((QTreeWidget*)0, names);
+    categoryList.append(category);
+
+    names.clear();
+    names << tr("msvc") << tr("packages usable by MS VC");
+    category = new QTreeWidgetItem((QTreeWidget*)0, names);
     categoryList.append(category);
 
     QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
@@ -339,6 +347,7 @@ void InstallerEngineGui::setLeftTreeData(QTreeWidget *tree)
             continue;
         QStringList names;
         names << (*k)->Name();
+        names << (*k)->notes();
         QTreeWidgetItem *category = new QTreeWidgetItem((QTreeWidget*)0, names);
         category->setToolTip(0,(*k)->notes());
         categoryList.append(category);
@@ -421,7 +430,10 @@ void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree, QString ca
     QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
     for ( ; k != m_packageListList.constEnd(); ++k)
     {
-        if ((*k)->packageList().size() == 0 || (!categoryName.isEmpty() && categoryName != "all" && categoryName != (*k)->Name()))
+        if ((*k)->packageList().size() == 0)
+            continue;
+        if (!categoryName.isEmpty() && categoryName != "mingw" && categoryName != "msvc" 
+            && categoryName != "all" && categoryName != (*k)->Name())
             continue;
         QStringList names;
         names << (*k)->Name();
@@ -431,7 +443,8 @@ void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree, QString ca
         names << "";
         names << "";
         names << "";
-        names << (*k)->notes();
+        names << "";
+//        names << (*k)->notes();
         QTreeWidgetItem *category = new QTreeWidgetItem((QTreeWidget*)0, names);
         category->setToolTip(0,(*k)->notes());
         categoryList.append(category);
@@ -441,6 +454,12 @@ void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree, QString ca
         for ( ; i != (*k)->packageList().constEnd(); ++i)
         {
             Package *pkg = *i;
+            if (categoryName == "mingw" 
+                && (pkg->name().toLower().contains("msvc") || pkg->notes().toLower().contains("msvc")))
+                continue;
+            else if (categoryName == "msvc" 
+                && (pkg->name().toLower().contains("mingw") || pkg->notes().toLower().contains("mingw")))
+                continue;
             QStringList data;
             data << pkg->name()
                  << pkg->version()

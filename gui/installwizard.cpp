@@ -316,7 +316,7 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
     
     QWidget *widget = splitter->widget(0);
     QSizePolicy policy = widget->sizePolicy();
-    policy.setHorizontalStretch(1);
+    policy.setHorizontalStretch(2);
     widget->setSizePolicy(policy);
 
     widget = splitter->widget(1);
