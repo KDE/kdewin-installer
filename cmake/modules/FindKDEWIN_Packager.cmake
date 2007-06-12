@@ -1,11 +1,35 @@
 #
-# find KDEWIN packager. 
+# KDEWIN packager support http://download.cegit.de/kde-windows/installer
 # 
-# This scripts tries to find the kdewin packager in the following pathes and order 
+# The kdewin packager is searched in the following pathes and order 
 # 
 #    path specified by the environment dir KDEWIN_PACKAGER_DIR
 #    <ProgramFiles>/kdewin-packager 
 #    <ProgramFiles>/kdewin-installer
+#
+# The macro KDEWIN_PACKAGER provides package building support and should be 
+# added to the top level CMakeLists.txt as shown below
+# 
+# if (KDEWIN_PACKAGER_FOUND)
+#    KDEWIN_PACKAGER(
+#       "projectname"
+#       "version"
+#       "description" 
+#       "additional options"
+#   )
+# endif (KDEWIN_PACKAGER_FOUND)
+
+# The macro KDEWIN_PACKAGER adds three additional makefile targets, which could be 
+# called using the regular make tool 
+#   
+#    kdewin_package 
+#           - build kdewin package with currently used compiler and build type 
+#    kdewin_package_debug_and_release 
+#           - build kdewin debug and release package with currently used compiler
+#    kdewin_package_debug_and_release_mingw_and_msvc
+#           - build kdewin debug and release package with mingw and msvc compiler
+#
+#
 #
 # Copyright (c) 2006-2007, Ralf Habacker
 #
@@ -61,7 +85,7 @@ MACRO (KDEWIN_PACKAGER _name _version _notes _options)
     
         add_custom_target(kdewin_package
             COMMAND ${CMAKE_COMMAND} 
-                -P ${CMAKE_BINARY_DIR}/cmake_install.cmake -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/temp
+                -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/temp -P ${CMAKE_BINARY_DIR}/cmake_install.cmake 
             COMMAND ${KDEWIN_PACKAGER_EXECUTABLE} 
                 -name ${_name}
                 -root ${CMAKE_BINARY_DIR}/temp
@@ -100,6 +124,32 @@ MACRO (KDEWIN_PACKAGER _name _version _notes _options)
                 ${_options}               
             # FIXME: cleanup does not work 
             #COMMAND rmdir /Q /S ${CMAKE_BINARY_DIR}\temp
+        )
+set (CONTENT "
+if \"%1\" == \"package_only\" goto package_only
+
+del CMakeCache.txt
+rmdir /Q /S ${CMAKE_BINARY_DIR}/temp 
+${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} -G \"MinGW Makefiles\" -DCMAKE_BUILD_TYPE=Release
+mingw32-make
+${CMAKE_COMMAND} -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/temp -P cmake_install.cmake
+${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} -G \"MinGW Makefiles\" -DCMAKE_BUILD_TYPE=Debug
+mingw32-make
+${CMAKE_COMMAND} -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/temp -P cmake_install.cmake
+del CMakeCache.txt
+${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} -G \"NMake Makefiles\" -DCMAKE_BUILD_TYPE=Release
+nmake
+${CMAKE_COMMAND} -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/temp -P cmake_install.cmake
+${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} -G \"NMake Makefiles\" -DCMAKE_BUILD_TYPE=Debug
+nmake
+${CMAKE_COMMAND} -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/temp -P cmake_install.cmake
+:package_only
+${KDEWIN_PACKAGER_EXECUTABLE} -name ${_name} -root ${CMAKE_BINARY_DIR}/temp -srcroot ${CMAKE_SOURCE_DIR} -version ${_version}  -notes \"${_notes}\" ${_options} 
+"
+)
+        write_file(${CMAKE_BINARY_DIR}/kdewin_package_debug_and_release_mingw_and_msvc.bat "${CONTENT}")
+        add_custom_target(kdewin_package_debug_and_release_mingw_and_msvc
+            COMMAND ${CMAKE_BINARY_DIR}/kdewin_package_debug_and_release_mingw_and_msvc.bat
         )
     endif (KDEWIN_PACKAGER_FOUND)
 ENDMACRO (KDEWIN_PACKAGER)
