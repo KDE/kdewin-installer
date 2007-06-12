@@ -183,25 +183,8 @@ add_subdirectory(tests)
 add_subdirectory(packager)
 add_subdirectory(doc)
 
-
-# write explorer wrappers
-#get_filename_component(QT_BIN_PATH ${QT_QMAKE_EXECUTABLE} PATH)
-#get_filename_component(CMAKE_BIN_PATH ${CMAKE_COMMAND} PATH)
-#if (MINGW)
-#    get_filename_component(MINGW_BIN_PATH ${CMAKE_CXX_COMPILER} PATH)
-#    write_file (${CMAKE_BINARY_DIR}/kdewin-installer-shell.bat "set PATH=${MINGW_BIN_PATH};${QT_BIN_PATH};${CMAKE_BIN_PATH};%PATH%\ncmd.exe")
-#else (MINGW)
-#    if (CMAKE_BUILD_TOOL STREQUAL  "nmake")
-#        get_filename_component(VC_BIN_PATH ${CMAKE_CXX_COMPILER} PATH)
-#        write_file (${CMAKE_BINARY_DIR}/kdewin-installer-shell.bat "set PATH=${QT_BIN_PATH};${CMAKE_BIN_PATH};%PATH%\ncall \"${VC_BIN_PATH}\\vcvars32.bat\"\ncmd.exe")
-#    else (CMAKE_BUILD_TOOL STREQUAL  "nmake")
-#        write_file (${CMAKE_BINARY_DIR}/kdewin-installer-sln.bat "set PATH=${QT_BIN_PATH};${CMAKE_BIN_PATH};%PATH%\nstart kdewin-installer.sln")
-#    endif (CMAKE_BUILD_TOOL STREQUAL  "nmake")
-#endif (MINGW)
-                   
 include(Win32Macros)
-                   
-addExplorerWrappers("kdewin-installer")
+addExplorerWrapper("kdewin-installer")
 
 #
 # install section
