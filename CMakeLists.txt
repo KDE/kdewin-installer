@@ -9,7 +9,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 find_package(Qt4 REQUIRED)
 find_package(UPX)
-find_package(KDEWIN_INSTALLER)
+find_package(KDEWIN_Packager)
 
 OPTION(SEVENZIP_UNPACK_SUPPORT "Enable 7-zip unpacking support" OFF)
 OPTION(STATIC_BUILD "enable static build support" OFF)
@@ -185,25 +185,29 @@ add_subdirectory(doc)
 
 
 # write explorer wrappers
-get_filename_component(QT_BIN_PATH ${QT_QMAKE_EXECUTABLE} PATH)
-get_filename_component(CMAKE_BIN_PATH ${CMAKE_COMMAND} PATH)
-if (MINGW)
-    get_filename_component(MINGW_BIN_PATH ${CMAKE_CXX_COMPILER} PATH)
-    write_file (${CMAKE_BINARY_DIR}/kdewin-installer-shell.bat "set PATH=${MINGW_BIN_PATH};${QT_BIN_PATH};${CMAKE_BIN_PATH};%PATH%\ncmd.exe")
-else (MINGW)
-    if (CMAKE_BUILD_TOOL STREQUAL  "nmake")
-        get_filename_component(VC_BIN_PATH ${CMAKE_CXX_COMPILER} PATH)
-        write_file (${CMAKE_BINARY_DIR}/kdewin-installer-shell.bat "set PATH=${QT_BIN_PATH};${CMAKE_BIN_PATH};%PATH%\ncall \"${VC_BIN_PATH}\\vcvars32.bat\"\ncmd.exe")
-    else (CMAKE_BUILD_TOOL STREQUAL  "nmake")
-        write_file (${CMAKE_BINARY_DIR}/kdewin-installer-sln.bat "set PATH=${QT_BIN_PATH};${CMAKE_BIN_PATH};%PATH%\nstart kdewin-installer.sln")
-    endif (CMAKE_BUILD_TOOL STREQUAL  "nmake")
-endif (MINGW)
+#get_filename_component(QT_BIN_PATH ${QT_QMAKE_EXECUTABLE} PATH)
+#get_filename_component(CMAKE_BIN_PATH ${CMAKE_COMMAND} PATH)
+#if (MINGW)
+#    get_filename_component(MINGW_BIN_PATH ${CMAKE_CXX_COMPILER} PATH)
+#    write_file (${CMAKE_BINARY_DIR}/kdewin-installer-shell.bat "set PATH=${MINGW_BIN_PATH};${QT_BIN_PATH};${CMAKE_BIN_PATH};%PATH%\ncmd.exe")
+#else (MINGW)
+#    if (CMAKE_BUILD_TOOL STREQUAL  "nmake")
+#        get_filename_component(VC_BIN_PATH ${CMAKE_CXX_COMPILER} PATH)
+#        write_file (${CMAKE_BINARY_DIR}/kdewin-installer-shell.bat "set PATH=${QT_BIN_PATH};${CMAKE_BIN_PATH};%PATH%\ncall \"${VC_BIN_PATH}\\vcvars32.bat\"\ncmd.exe")
+#    else (CMAKE_BUILD_TOOL STREQUAL  "nmake")
+#        write_file (${CMAKE_BINARY_DIR}/kdewin-installer-sln.bat "set PATH=${QT_BIN_PATH};${CMAKE_BIN_PATH};%PATH%\nstart kdewin-installer.sln")
+#    endif (CMAKE_BUILD_TOOL STREQUAL  "nmake")
+#endif (MINGW)
+                   
+include(Win32Macros)
+                   
+addExplorerWrappers("kdewin-installer")
 
 #
 # install section
 # 
 if (CMAKE_PRODUCTION_BUILD)
-    install( FILES cmake/modules/FINDKDEWIN_INSTALLER.cmake  DESTINATION  share/apps/cmake/modules )
+    install( FILES cmake/modules/FINDKDEWIN_Packager.cmake  DESTINATION  share/apps/cmake/modules )
 endif (CMAKE_PRODUCTION_BUILD)
 
 # install required shared libraries 
@@ -224,35 +228,9 @@ if (CMAKE_PRODUCTION_BUILD AND INSTALL_SYSTEM_LIBS)
 	endif (MINGW)
 endif (CMAKE_PRODUCTION_BUILD AND INSTALL_SYSTEM_LIBS)
 
-
-if (KDEWIN_INSTALLER_FOUND)
-    if (MSVC)
-        add_custom_target(kdewinpackage
-            COMMAND ${KDEWIN_PACKAGER} 
-                -name kdewin-installer
-                -root ${CMAKE_INSTALL_PREFIX} 
-                -srcroot ${CMAKE_SOURCE_DIR}
-                -version ${VERSION} 
-                -notes "KDEWIN installer"
-                -type msvc
-                -strip
-                -complete
-        )
-    else (MSVC)
-        add_custom_target(kdewinpackage
-            COMMAND ${KDEWIN_PACKAGER} 
-                -name kdewin-installer
-                -root ${CMAKE_INSTALL_PREFIX} 
-                -srcroot ${CMAKE_SOURCE_DIR}
-                -version ${VERSION} 
-                -notes "KDEWIN installer"
-                -strip
-                -type mingw
-                -complete
-        )
-    endif (MSVC)
-endif (KDEWIN_INSTALLER_FOUND)
-
+if (KDEWIN_PACKAGER_FOUND)
+    KDEWIN_PACKAGER(kdewin-installer ${VERSION} "KDEWIN installer" "")
+endif (KDEWIN_PACKAGER_FOUND)
 
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "KDEWIN Installer")
 SET(CPACK_PACKAGE_VENDOR "KDE Windows Team")
