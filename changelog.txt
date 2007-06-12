@@ -1,6 +1,10 @@
 ChangeLog
 =========
 
+0.6.11-2
+------
+- installer-gui: splitted package selector page view
+
 0.6.11-1
 ------
 - packager: fixed problem not adding all source files in case of using -srcroot option
