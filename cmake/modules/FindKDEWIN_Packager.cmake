@@ -97,6 +97,20 @@ MACRO (KDEWIN_PACKAGER _name _version _notes _options)
             # FIXME: cleanup does not work 
             #COMMAND rmdir /Q /S ${CMAKE_BINARY_DIR}\temp
         )
+        # prelimary target
+        add_custom_target(kdewin_package_without_compiler
+            COMMAND ${CMAKE_COMMAND} 
+                -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/temp -P ${CMAKE_BINARY_DIR}/cmake_install.cmake 
+            COMMAND ${KDEWIN_PACKAGER_EXECUTABLE} 
+                -name ${_name}
+                -root ${CMAKE_BINARY_DIR}/temp
+                -srcroot ${CMAKE_SOURCE_DIR}
+                -version ${_version} 
+                -notes "${_notes}"
+                ${_options}               
+            # FIXME: cleanup does not work 
+            #COMMAND rmdir /Q /S ${CMAKE_BINARY_DIR}\temp
+        )
         add_custom_target(kdewin_package_debug_and_release
             COMMAND ${CMAKE_COMMAND} 
                 -H$(CMAKE_SOURCE_DIR) 
