@@ -101,7 +101,7 @@ MACRO (KDEWIN_PACKAGER _name _version _notes _options)
             COMMAND ${CMAKE_COMMAND} 
                 -H$(CMAKE_SOURCE_DIR) 
                 -B$(CMAKE_BINARY_DIR)
-                -DCMAKE_BUILD_TYPE=Release
+                -DCMAKE_BUILD_TYPE=Debug
             COMMAND ${CMAKE_MAKE_PROGRAM} 
                 clean
             COMMAND ${CMAKE_MAKE_PROGRAM} 
@@ -109,7 +109,7 @@ MACRO (KDEWIN_PACKAGER _name _version _notes _options)
             COMMAND ${CMAKE_COMMAND} 
                 -H$(CMAKE_SOURCE_DIR) 
                 -B$(CMAKE_BINARY_DIR)
-                -DCMAKE_BUILD_TYPE=Debug
+                -DCMAKE_BUILD_TYPE=Release
             COMMAND ${CMAKE_MAKE_PROGRAM} 
                 clean
             COMMAND ${CMAKE_MAKE_PROGRAM} 
@@ -130,17 +130,17 @@ if \"%1\" == \"package_only\" goto package_only
 
 del CMakeCache.txt
 rmdir /Q /S ${CMAKE_BINARY_DIR}/temp 
-${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} -G \"MinGW Makefiles\" -DCMAKE_BUILD_TYPE=Release
-mingw32-make
-${CMAKE_COMMAND} -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/temp -P cmake_install.cmake
 ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} -G \"MinGW Makefiles\" -DCMAKE_BUILD_TYPE=Debug
 mingw32-make
 ${CMAKE_COMMAND} -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/temp -P cmake_install.cmake
+${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} -G \"MinGW Makefiles\" -DCMAKE_BUILD_TYPE=Release
+mingw32-make
+${CMAKE_COMMAND} -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/temp -P cmake_install.cmake
 del CMakeCache.txt
-${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} -G \"NMake Makefiles\" -DCMAKE_BUILD_TYPE=Release
+${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} -G \"NMake Makefiles\" -DCMAKE_BUILD_TYPE=Debug
 nmake
 ${CMAKE_COMMAND} -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/temp -P cmake_install.cmake
-${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} -G \"NMake Makefiles\" -DCMAKE_BUILD_TYPE=Debug
+${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} -G \"NMake Makefiles\" -DCMAKE_BUILD_TYPE=Release
 nmake
 ${CMAKE_COMMAND} -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/temp -P cmake_install.cmake
 :package_only
