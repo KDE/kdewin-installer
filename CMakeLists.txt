@@ -1,4 +1,5 @@
-project(kdewin-installer)
+set (NAME kdewin-installer)
+project(${NAME})
 set (VERSION_MAJOR 0)
 set (VERSION_MINOR 7)
 set (VERSION_PATCH 0)
@@ -185,11 +186,15 @@ add_subdirectory(packager)
 add_subdirectory(doc)
 
 include(Win32Macros)
-addExplorerWrapper("kdewin-installer")
+addExplorerWrapper(${NAME})
 
 #
 # install section
 # 
+install_files(/doc/${NAME}-${VERSION} FILES readme.txt )
+install_files(/doc/${NAME}-${VERSION} FILES changelog.txt )
+
+
 if (CMAKE_PRODUCTION_BUILD)
     install( FILES cmake/modules/FINDKDEWIN_Packager.cmake  DESTINATION  share/apps/cmake/modules )
 endif (CMAKE_PRODUCTION_BUILD)
@@ -213,7 +218,7 @@ if (CMAKE_PRODUCTION_BUILD AND INSTALL_SYSTEM_LIBS)
 endif (CMAKE_PRODUCTION_BUILD AND INSTALL_SYSTEM_LIBS)
 
 if (KDEWIN_PACKAGER_FOUND)
-    KDEWIN_PACKAGER(kdewin-installer ${VERSION} "KDEWIN installer" "")
+    KDEWIN_PACKAGER(${NAME} ${VERSION} "KDEWIN installer" "")
 endif (KDEWIN_PACKAGER_FOUND)
 
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "KDEWIN Installer")

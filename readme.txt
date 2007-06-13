@@ -29,7 +29,8 @@ Known Bugs
    This seems to be a qt 4.x internal problem.
 -  manifest files for source packages does not contain the full path, there must 
    be prefixed src/<package>-<version>
--  stripping of dll's which are in use over a file share results in deleting the related dll's
+-  packager: stripping of dll's which are in use results in deleting the related dll. 
+   Please make sure no one uses a dll when using the -strip option
    
    
 TODO
@@ -38,7 +39,7 @@ TODO
 1 installer 
 
   1 common 
-    2 complete methods for writing windows start menues entries 
+    2 complete methods for writing windows start menues entries -> ready, but not tested 
     3 write environment settings scripts (KDELIBS,PATH ??), this may also affect 
       windows start menu entries writing 
     4 add mode for installing from local package directory 
@@ -51,11 +52,11 @@ TODO
    
   2 command line installer 
       1 add long command line options like operation mode --install, --erase, --list --query, ... 
+      2 test
   
   3 gui 
       1 add check for partial downloads
   	4 center checkboxes in package selector page -> not possible yet, see comment in source
-  	5 reduce column width of package types in package selector page
   	8 add reinstall package support 
   	  -> currently by using a remove and install by hand 
   	10 add a switch to select end user/developer operation (end user by default)
@@ -63,11 +64,8 @@ TODO
   	12 if remote config is not available only display installed packages
   	13 add update support
   	  -> currently implemented by removing old package, installing new package by hand
-  	16 add msvc/ming mode, with different installation roots and package filtering 
-  	  -> different install roots are implemented by switching the install root in the settings 
-  	     which reloads the config
   	17 add support for tar + gz/bzip2 package by using external win32 tools 
-  	17 only display firefox proxy option is firefox is installed 
+  	18 only display firefox proxy option is firefox is installed 
   
 
 2 packager
@@ -82,29 +80,25 @@ TODO
 cmake support
 =============
 
-kdewin-installer allows to add binary packaging suppport to cmake based projects. 
+kdewin-installer allows to add binary packaging suppport to cmake based projects by providing a cmake module named KDEWIN_Packager. 
 
-1. copy cmake/modules/FindKDEWIN_Installer.cmake into cmake/modules of the related proejct
+1. copy share/apps/cmake/modules/FindKDEWIN_Packager.cmake into cmake/modules of your proejct
 
 2. add the following lines to the top level cmake 
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
-find_package(KDEWIN_INSTALLER)
+find_package(KDEWIN_Packager)
 
-if (KDEWIN_INSTALLER_FOUND)
-    add_custom_target( kdewinpackage
-        COMMAND ${KDEWIN_PACKAGER} 
-            -name <packagename>
-            -root ${CMAKE_INSTALL_PREFIX} 
-            -srcroot ${CMAKE_SOURCE_DIR} 
-            -srcexclude "<excluded dirs in source dir>"
-            -version "version"
-            -notes "description"
-    )
-endif (KDEWIN_INSTALLER_FOUND)
+if (KDEWIN_PACKAGER_FOUND)
+KDEWIN_PACKAGER(
+   "projectname"
+   "version"
+   "description" 
+   "additional options"
+)
+endif (KDEWIN_PACKAGER_FOUND)
 
-3. after compiling, install the package and run kdewinpackage
-
+3. after compiling, run <make-tool> kdewin_package. For more information see FindKDEWIN_Packager.cmake. 
 
 
 static compile hints
