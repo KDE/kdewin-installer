@@ -1,6 +1,13 @@
 ChangeLog
 =========
 
+0.7.0
+------
+- added KDEWIN_Packager cmake module, which could be used in other projects to have kdewin packager support
+- cleaned up win32 explorer wrappers 
+- only build tests when using BUILD_TESTS on configuring
+- first working version with splitted package selector view
+
 0.6.11-2
 ------
 - installer-gui: splitted package selector page view
