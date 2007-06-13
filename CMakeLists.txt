@@ -1,7 +1,7 @@
 project(kdewin-installer)
 set (VERSION_MAJOR 0)
-set (VERSION_MINOR 6)
-set (VERSION_PATCH 11)
+set (VERSION_MINOR 7)
+set (VERSION_PATCH 0)
 set (VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
@@ -14,6 +14,7 @@ find_package(KDEWIN_Packager)
 OPTION(SEVENZIP_UNPACK_SUPPORT "Enable 7-zip unpacking support" OFF)
 OPTION(STATIC_BUILD "enable static build support" OFF)
 OPTION(INSTALL_SYSTEM_LIBS "install required system libraries too (only in shared mode)" OFF)
+OPTION(BUILD_TESTS "build test applications " OFF)
 
 # -------------------------------------------------------
 # build type settings 
@@ -31,7 +32,7 @@ if (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel)
 endif (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel) 
 
 if (STATIC_BUILD AND MSVC)
-    MESSAGE(STATUS "Note: Please make sure that Qt is build with /MT flags")
+    MESSAGE(STATUS "Note: Static build choosed. Please make sure that Qt is build with /MT flags")
 	if (CMAKE_BUILD_TYPE STREQUAL Release)
 		set (CMAKE_C_FLAGS_RELEASE "/MT /O2 /Ob2 /D NDEBUG")
 		set (CMAKE_CXX_FLAGS_RELEASE "/MT /O2 /Ob2 /D NDEBUG")

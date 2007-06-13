@@ -1,3 +1,4 @@
+if (BUILD_TESTS)
 # our targets
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
@@ -132,3 +133,4 @@ set (${TEST_NAME}_SOURCES
 qt4_automoc(${${TEST_NAME}_SOURCES})
 add_executable(${TEST_NAME} ${${TEST_NAME}_SOURCES})
 target_link_libraries(${TEST_NAME} ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
+endif (BUILD_TESTS)
