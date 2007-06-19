@@ -44,10 +44,11 @@ InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgre
     m_availablePackages = new PackageList();
     m_availablePackages->setName("all packages");
 #endif
-    Settings &s = Settings::getInstance();
+    m_database->setRoot(Settings::getInstance().installDir());
     m_installer = new Installer(m_instProgressBar );
-    m_installer->setRoot(s.installDir());
+    m_installer->setRoot(Settings::getInstance().installDir());
     m_installer->setDatabase(m_database);
+    connect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString&)),this,SLOT(installDirChanged(const QString&)));
 }
 
 InstallerEngine::~InstallerEngine()
@@ -69,8 +70,6 @@ void InstallerEngine::readGlobalConfig()
 
 void InstallerEngine::createMainPackagelist()
 {
-    // package list is build from packages defined in global configuration
-    m_database->readFromDirectory(Settings::getInstance().installDir()+"/manifest");
 #ifdef DEBUG
     m_database->listPackages("Package");
 #endif
@@ -187,5 +186,14 @@ void InstallerEngine::stop()
 {
     m_downloader->cancel();
 }
+
+void InstallerEngine::installDirChanged(const QString &newdir)
+{
+    m_installer->setRoot(newdir);
+    m_database->setRoot(newdir);
+}
+
+
+
 
 #include "installerengine.moc"

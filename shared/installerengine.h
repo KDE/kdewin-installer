@@ -60,6 +60,9 @@ public:
         return m_installer;
     }
 
+protected slots:
+    void installDirChanged(const QString &newdir);
+
 protected:
     QList <PackageList*> m_packageListList;
     Installer           *m_installer;    // currently used installer
