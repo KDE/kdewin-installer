@@ -40,18 +40,13 @@ class Database: public QObject
 public:
     Database();
     virtual ~Database();
-    bool readFromDirectory(const QString &_fileName=QString());
+    bool readFromDirectory(const QString &dirPath=QString());
     void addPackage(const Package &package);
+    void queryPackage(const QString &pkgName=QString(), bool listFiles=false);
     void listPackages(const QString &title=QString());
     Package *getPackage(const QString &pkgName, const QByteArray &version=QByteArray());
     bool addUnhandledPackages(PackageList *packageList);
     void resetHandledState(); 
-
-    // returns version file name of package item e.g. xyz-1.2.3-bin.ver
-    QString versionFileName(const QString &pkgName, const QString &version, Package::Type type);
-
-    // returns manifest file name of package item e.g. xyz-1.2.3-bin.mft
-    QString manifestFileName(const QString &pkgName, const QString &version, Package::Type type);
 
     int size() const
     {
@@ -64,12 +59,24 @@ public:
     void dump(const QString &title=QString());
 
     static Database &getInstance();
+
+    void setRoot(const QString &root)
+    {
+        m_root = root;
+        readFromDirectory();
+    }
+
+    QString root() const
+    {
+        return m_root;
+    }
  
 signals:
     void configLoaded();
 
 private:
     QList<Package*> m_database;
+    QString m_root;
 };
 
 #endif

@@ -34,7 +34,6 @@ Database::Database()
 #ifdef DEBUG
     qDebug() << __FUNCTION__;
 #endif
-
 }
 
 Database::~Database()
@@ -104,12 +103,38 @@ void Database::listPackages(const QString &title)
         qDebug() << (*it)->toString(true," - ");
 }
 
-bool Database::readFromDirectory(const QString &dir)
+void Database::queryPackage(const QString &pkgName, bool listFiles)
+{
+    if (pkgName.isEmpty()) {
+        listPackages();
+        return;
+    }
+    Package *pkg = getPackage(pkgName);
+    if (!pkg)
+        return; 
+    QString manifestFile = m_root+"/manifest/"+PackageInfo::manifestFileName(pkg->name(),pkg->version(),Package::BIN);
+    QFile file(manifestFile);
+    if (!file.open(QIODevice::ReadOnly| QIODevice::Text))
+        return;
+
+    QTextStream in(&file);
+    while (!in.atEnd()) {
+        QByteArray line = in.readLine().toAscii();
+        printf("%s\n",line.data());
+    }
+}
+
+bool Database::readFromDirectory(const QString &_dir)
 {
 #ifdef DEBUG
     qDebug() << __FUNCTION__;
 #endif
 
+    QString dir;
+    if (_dir.isEmpty())
+        dir = m_root + "/manifest"; 
+    else
+        dir = _dir;
     QDir d(dir);
     d.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries);
     d.setNameFilters(QStringList("*.ver"));
@@ -149,28 +174,6 @@ bool Database::readFromDirectory(const QString &dir)
     }        
     emit configLoaded();
     return true;
-}
-
-// returns version file name of package item e.g. xyz-1.2.3-bin.ver
-// move to PackageInfo class
-QString Database::versionFileName(const QString &name, const QString &version, Package::Type type)
-{
-    Package *pkg;
-    if (pkg = getPackage(name)) 
-        return pkg->name() + "-" + pkg->version() + "-" + Package::typeToString(type) +".ver"; 
-    else
-        return QString();
-}
-
-// returns manifest file name of package item e.g. xyz-1.2.3-bin.mft
-QString Database::manifestFileName(const QString &name, const QString &version, Package::Type type)
-{
-    Package *pkg;
-    if (pkg = getPackage(name)) 
-        return name + "-" + version + "-" + Package::typeToString(type) +".mft";
-    else
-        return QString();
-
 }
 
 Database &Database::getInstance()

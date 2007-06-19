@@ -33,101 +33,6 @@
 #include "database.h"
 #include "uninstall.h"
 
-
-bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat)
-{
-    QString baseName; 
-
-    // first remove ending
-    int idx = fileName.lastIndexOf('.');
-    if(idx != -1)
-    {
-        pkgFormat = fileName.mid(idx + 1);
-        baseName = fileName.left(idx).toLower();
-    }
-    else
-    {
-        pkgFormat = "unknown";
-        baseName = fileName.toLower();
-    }
-
-    QStringList parts = baseName.split('-');
-
-    if (parts.size() == 6)
-    {
-        // a-b-c-version-patchlevel-type
-        pkgName = parts[0] + "-" + parts[1] + "-" + parts[2];
-        pkgVersion = parts[3] + "-" + parts[4];
-        pkgType = parts[5];
-    }
-    else if (parts.size() == 5)
-    {
-        // a-b-c-version-type
-        if (parts[2][0].isLetter())
-        {
-            pkgName = parts[0] + "-" + parts[1] + "-" + parts[2];
-            pkgVersion = parts[3];
-        }            
-        else
-        {
-            pkgName = parts[0] + "-" + parts[1];
-            pkgVersion = parts[2] + '-' + parts[3];
-        }
-        pkgType = parts[4];
-    }
-    else if (parts.size() == 4)
-    {
-        if (parts[1][0].isLetter())
-        {
-            pkgName += parts[0] + "-" + parts[1];
-            pkgVersion = parts[2];
-        }
-        else
-        {
-            pkgName = parts[0];
-            pkgVersion = parts[1] + '-' + parts[2];
-        }
-        pkgType = parts[3];
-    }
-    else if(parts.size() == 3) 
-    {
-        pkgName = parts[0];
-        if (parts[1][0].isNumber())
-            pkgVersion = parts[1];
-        else
-            pkgName += "-" + parts[1];
-
-        // aspell-0.50.3-3
-        if (parts[2][0].isNumber())
-        {
-            if (pkgVersion.isEmpty())
-                pkgVersion = parts[2];
-            else
-                pkgVersion += "-" + parts[2];
-            pkgType = "bin";
-        }
-        else
-            pkgType = parts[2];
-    }
-    else if(parts.size() == 2) 
-    {
-        pkgName = parts[0];
-        pkgVersion = parts[1];
-        pkgType = "bin";
-    }
-    else if(parts.size() < 2) 
-    {
-        qDebug() << "can't parse filename " << baseName;
-        return false;
-    }
-    else     
-    {
-        qDebug() << __FUNCTION__ << "unhandled case with" << baseName;
-        return false;
-    }
-    return true;
-}
-
 /** 
   initiate package item 
   @param url url for downloading 
@@ -529,7 +434,7 @@ bool Package::installItem(Installer *installer, Package::Type type)
 
 bool Package::removeItem(Installer *installer, Package::Type type)
 {
-    QString manifestFile = installer->root()+"/manifest/"+ installer->database()->manifestFileName(name(),version(),type);
+    QString manifestFile = installer->root()+"/manifest/"+PackageInfo::manifestFileName(name(),version(),type);
     Uninstall ui(installer->root(),manifestFile);
     ui.uninstallPackage(false);
     return true;
@@ -546,4 +451,111 @@ void Package::setCategory(const QString &cat)
 void Package::addDeps(const QStringList &deps)
 {
     m_deps << deps;
+}
+
+
+bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat)
+{
+    QString baseName; 
+
+    // first remove ending
+    int idx = fileName.lastIndexOf('.');
+    if(idx != -1)
+    {
+        pkgFormat = fileName.mid(idx + 1);
+        baseName = fileName.left(idx).toLower();
+    }
+    else
+    {
+        pkgFormat = "unknown";
+        baseName = fileName.toLower();
+    }
+
+    QStringList parts = baseName.split('-');
+
+    if (parts.size() == 6)
+    {
+        // a-b-c-version-patchlevel-type
+        pkgName = parts[0] + "-" + parts[1] + "-" + parts[2];
+        pkgVersion = parts[3] + "-" + parts[4];
+        pkgType = parts[5];
+    }
+    else if (parts.size() == 5)
+    {
+        // a-b-c-version-type
+        if (parts[2][0].isLetter())
+        {
+            pkgName = parts[0] + "-" + parts[1] + "-" + parts[2];
+            pkgVersion = parts[3];
+        }            
+        else
+        {
+            pkgName = parts[0] + "-" + parts[1];
+            pkgVersion = parts[2] + '-' + parts[3];
+        }
+        pkgType = parts[4];
+    }
+    else if (parts.size() == 4)
+    {
+        if (parts[1][0].isLetter())
+        {
+            pkgName += parts[0] + "-" + parts[1];
+            pkgVersion = parts[2];
+        }
+        else
+        {
+            pkgName = parts[0];
+            pkgVersion = parts[1] + '-' + parts[2];
+        }
+        pkgType = parts[3];
+    }
+    else if(parts.size() == 3) 
+    {
+        pkgName = parts[0];
+        if (parts[1][0].isNumber())
+            pkgVersion = parts[1];
+        else
+            pkgName += "-" + parts[1];
+
+        // aspell-0.50.3-3
+        if (parts[2][0].isNumber())
+        {
+            if (pkgVersion.isEmpty())
+                pkgVersion = parts[2];
+            else
+                pkgVersion += "-" + parts[2];
+            pkgType = "bin";
+        }
+        else
+            pkgType = parts[2];
+    }
+    else if(parts.size() == 2) 
+    {
+        pkgName = parts[0];
+        pkgVersion = parts[1];
+        pkgType = "bin";
+    }
+    else if(parts.size() < 2) 
+    {
+        qDebug() << "can't parse filename " << baseName;
+        return false;
+    }
+    else     
+    {
+        qDebug() << __FUNCTION__ << "unhandled case with" << baseName;
+        return false;
+    }
+    return true;
+}
+
+// returns version file name of package item e.g. xyz-1.2.3-bin.ver
+QString PackageInfo::versionFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type)
+{
+    return pkgName + "-" + pkgVersion + "-" + Package::typeToString(type) +".ver"; 
+}
+
+// returns manifest file name of package item e.g. xyz-1.2.3-bin.mft
+QString PackageInfo::manifestFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type)
+{
+    return pkgName + "-" + pkgVersion + "-" + Package::typeToString(type) +".mft"; 
 }

@@ -35,16 +35,6 @@ class Installer;
 
 typedef QHash<QString, QString> StringHash;
 
-/** 
- PackageInfo covers package information related tasks
-*/
-class PackageInfo 
-{
-public:
-    static bool fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat=QString());
-};
-
-
 /* This class holds a package with all it's single files
     a2ps-4.13b-1-bin.zip
     a2ps-4.13b-1-dep.zip
@@ -159,5 +149,16 @@ protected:
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Package::Types);
+
+/** 
+ PackageInfo covers package information related tasks
+*/
+class PackageInfo 
+{
+public:
+    static bool fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat=QString());
+    static QString manifestFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type);
+    static QString versionFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type);
+};
 
 #endif
