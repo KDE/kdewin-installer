@@ -1,6 +1,10 @@
 ChangeLog
 =========
 
+0.7.1
+------
+- added -q option to kdewin-installer-console
+
 0.7.0
 ------
 - added KDEWIN_Packager cmake module, which could be used in other projects to have kdewin packager support
