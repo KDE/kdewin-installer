@@ -100,15 +100,11 @@ void Database::listPackages(const QString &title)
     qDebug() << title;
     QList<Package*>::iterator it;
     for (it = m_database.begin(); it != m_database.end(); ++it)
-        qDebug() << (*it)->toString(true," - ");
+        printf("%s\n",(*it)->toString(true," - ").toAscii().data());
 }
 
-void Database::queryPackage(const QString &pkgName, bool listFiles)
+void Database::listPackageFiles(const QString &pkgName)
 {
-    if (pkgName.isEmpty()) {
-        listPackages();
-        return;
-    }
     Package *pkg = getPackage(pkgName);
     if (!pkg)
         return; 

@@ -40,6 +40,27 @@ InstallerEngineConsole::InstallerEngineConsole(DownloaderProgress *progressBar,I
 {
 }
 
+/**
+ query package from installed package database 
+ @param pkgName 
+*/ 
+void InstallerEngineConsole::queryPackages(const QString &pkgName, bool listFiles)
+{
+    if (pkgName.isEmpty()) {
+        m_database->listPackages();
+        return;
+    }
+    if (listFiles)
+        m_database->listPackageFiles(pkgName);
+    else {
+        Package *pkg = m_database->getPackage(pkgName);
+        if (!pkg)
+            return; 
+
+        printf("%s\n", pkg->toString(true).toAscii().data());
+    }
+}
+
 void InstallerEngineConsole::listPackages(const QString &title)
 {
     QList <PackageList *>::iterator k;

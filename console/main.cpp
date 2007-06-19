@@ -32,6 +32,7 @@
 #include "downloader.h"
 #include "installer.h"
 #include "installerengineconsole.h"
+#include "misc.h"
 
 static struct Options
 {
@@ -41,6 +42,7 @@ static struct Options
     bool install;
     bool list;
     bool dump;
+    bool all;
     QString rootdir;
 }
 options;
@@ -52,6 +54,7 @@ static void usage()
     << "\nOptions: "
     << "\n -l list packages"
     << "\n -q <packagename> query packages"
+    << "\n -q <packagename> -l list package files"
     << "\n -i <packagename> download and install package"
     << "\n -d <packagename> download package"
     << "\n -D dump internal data"
@@ -61,6 +64,7 @@ static void usage()
 
 int main(int argc, char *argv[])
 {
+    setMessageHandler();
     QCoreApplication app(argc, argv);
 
     QStringList packages;
@@ -77,6 +81,8 @@ int main(int argc, char *argv[])
             }
             if (option == "-l")
                 options.list = true;
+            if (option == "-a")
+                options.all = true;
             else if (option == "-v")
                 options.verbose = true;
             else if (option == "-q")
@@ -103,12 +109,28 @@ int main(int argc, char *argv[])
 
 #if 1
     InstallerEngineConsole engine(0,0);
+    engine.readGlobalConfig();
     if (!options.rootdir.isEmpty())
         Settings::getInstance().setInstallDir(options.rootdir);
-        
-    engine.downloadPackageLists();
+
+    if (options.query && packages.size() > 0) {
+        for(int i = 0; i < packages.size(); i++)
+            engine.queryPackages(packages[i],options.list);
+        return 0;
+    }   
+    else if (options.query && options.all) {
+        engine.queryPackages();
+        return 0;
+    }
+
+/*
     if (options.list)
         engine.listPackages("Package List");
+*/
+
+    if(options.download || options.install)
+        engine.downloadPackageLists();
+
     if((options.download || options.install) && packages.size() > 0)
             engine.downloadPackages(packages);
     if(options.install && packages.size() > 0)
