@@ -48,6 +48,7 @@ TODO
     5 add support for relocatinng files in the root zip path 
        example: the depends package installs all files in the install root
                 but all files should be located in bin dir
+    6 remove empty directories when removing packages
     
    
   2 command line installer 
