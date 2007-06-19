@@ -31,6 +31,8 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QSettings>
+#include <QFile>
+#include <QDateTime>
 
 #include "misc.h"
 
@@ -70,6 +72,46 @@ bool parseQtIncludeFiles(QList<InstallFile> &fileList, const QString &root, cons
       fileList += InstallFile(f, f);
       continue;
     }
+    if(!file.open(QIODevice::ReadOnly))
+      continue;
+    QByteArray content = file.readAll();
+    file.close();
+    QString dir = QFileInfo(file).absolutePath();
+    if(!content.startsWith("#include"))
+      continue;
+    int start = content.indexOf('\"');
+    int end = content.lastIndexOf('\"');
+    if(start == -1 || end == -1)
+      continue;
+    content = content.mid(start + 1, end - start - 1);
+    fi.setFile(dir + '/' + QFile::decodeName(content));
+    if(!fi.exists() || !fi.isFile())
+      continue;
+    fileList += InstallFile(fi.canonicalFilePath(), f, true);
+  }
+  return true;
+}
+
+
+bool findExecutables(QList<InstallFile> &fileList, const QString &root, const QString &subdir, const QString &filter, const QString &exclude, bool debugExe)
+{
+  QList<InstallFile> files;
+  if(!generateFileList(files, root, subdir, filter, exclude))
+    return false;
+  // read every header and include the referenced one
+  QFile file;
+  QFileInfo fi;
+  QString r = root + '/';
+  QList<InstallFile>::ConstIterator it = files.constBegin();
+  QList<InstallFile>::ConstIterator end = files.constEnd();
+  for( ; it != end; ++it) {
+    QString f = it->inputFile;
+    // camel case incudes are fine
+    if(f.startsWith('Q')) {
+      fileList += InstallFile(f, f);
+      continue;
+    }
+    file.setFileName(r + f);
     if(!file.open(QIODevice::ReadOnly))
       continue;
     QByteArray content = file.readAll();
@@ -417,3 +459,47 @@ QVariant getWin32RegistryValue(RegKey akey, const QString& subKey, const QString
     return res;
 }
 
+QFile *log; 
+
+void myMessageOutput(QtMsgType type, const char *msg)
+ {
+    log->write(QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ").toLocal8Bit().data());
+    switch (type) {
+     case QtDebugMsg:
+         log->write("Debug:");
+         log->write(msg);
+         log->write("\n");
+         log->flush();
+         break;
+     case QtWarningMsg:
+         log->write("Warning:");
+         log->write(msg);
+         log->write("\n");
+         log->flush();
+         break;
+     case QtCriticalMsg:
+         log->write("Critical:");
+         log->write(msg);
+         log->write("\n");
+         log->flush();
+         break;
+     case QtFatalMsg:
+         log->write("Fatal:");
+         log->write(msg);
+         log->write("\n");
+         log->flush();
+         abort();
+     }
+ }
+
+
+/**
+ redirect all Qt debug, warning and error messages to a file
+*/ 
+void setMessageHandler()
+{
+    static QFile f("kdewin-installer.log");
+    log = &f;
+    f.open(QIODevice::WriteOnly);
+    qInstallMsgHandler(myMessageOutput);
+}

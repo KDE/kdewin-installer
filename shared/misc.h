@@ -43,6 +43,8 @@ struct InstallFile
 };
 
 bool parseQtIncludeFiles(QList<InstallFile> &fileList, const QString &root, const QString &subdir, const QString &filter, const QString &exclude);
+bool findExecutables(QList<InstallFile> &fileList, const QString &root, const QString &subdir, const QString &filter, const QString &exclude, bool debugExe=false);
+
 bool generateFileList(QList<InstallFile> &result, const QString &root, const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList);
 bool generateFileList(QList<InstallFile> &result, const QString &root, const QString &subdir, const QString &filter, const QString &exclude = QString());
 
@@ -51,5 +53,7 @@ bool removeStartMenuEntries(const QString &dir, const QString &category=QString(
 
 typedef enum RegKey { hKEY_CURRENT_USER, hKEY_LOCAL_MACHINE, hKEY_CLASSES_ROOT };
 QVariant getWin32RegistryValue(RegKey key, const QString& subKey, const QString& item, bool *ok = false);
+
+void setMessageHandler();
 
 #endif
