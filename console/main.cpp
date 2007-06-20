@@ -64,7 +64,6 @@ static void usage()
 
 int main(int argc, char *argv[])
 {
-    setMessageHandler();
     QCoreApplication app(argc, argv);
 
     QStringList packages;
@@ -107,6 +106,9 @@ int main(int argc, char *argv[])
             packages << app.arguments().at(i);
     }
 
+    if (!options.verbose)
+        setMessageHandler();
+
 #if 1
     InstallerEngineConsole engine(0,0);
     engine.readGlobalConfig();
@@ -123,11 +125,10 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-/*
-    if (options.list)
+    if (options.list) {
         engine.listPackages("Package List");
-*/
-
+        return 0;
+    }
     if(options.download || options.install)
         engine.downloadPackageLists();
 
