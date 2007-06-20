@@ -49,7 +49,7 @@ TODO
        example: the depends package installs all files in the install root
                 but all files should be located in bin dir
     6 remove empty directories when removing packages
-    
+    7 check for file in use
    
   2 command line installer 
       1 add long command line options like operation mode --install, --erase, --list --query, ... 
