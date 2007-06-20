@@ -12,7 +12,7 @@ NOTES
 ===== 
 - see doc/readme.txt for more informations about the idea and backgrounds of the installer
 
-- sources are located on http://websvn.kde.org/trunk/kdesupport/kdewin32/installer/
+- sources are located on http://websvn.kde.org/trunk/kdesupport/kdewin-installer/
 
 - the released version is build using a static qt release with specific configure 
   parameters, see section "static compile hints" for more informations
