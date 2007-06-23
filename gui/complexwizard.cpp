@@ -82,8 +82,8 @@ void ComplexWizard::writeSettings()
     Settings &settings = Settings::getInstance();
 
     settings.beginGroup("Geometry");
-    settings.setValue("size", size());
-    settings.setValue("pos", pos());
+    settings.setValue("normalGeometry", normalGeometry());
+    settings.setValue("maximized", isMaximized());
     settings.endGroup();
 }
 
@@ -92,8 +92,11 @@ void ComplexWizard::readSettings()
     Settings &settings = Settings::getInstance();
 
     settings.beginGroup("Geometry");
-    resize(settings.value("size", QSize(400, 400)).toSize());
-    move(settings.value("pos", QPoint(200, 200)).toPoint());
+    setGeometry(settings.value("normalGeometry", QRect(200,200, 400, 400)).toRect());
+    if (settings.value("maximized", false).toBool()) {
+      setWindowState(Qt::WindowMaximized);
+    }
+
     settings.endGroup();
 }
 
