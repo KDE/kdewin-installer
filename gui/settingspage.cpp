@@ -72,6 +72,7 @@ void SettingsPage::accept()
 void SettingsPage::reject()
 {
     hide();
+    init(); // reinit page to restore old settings
 }
 
 void SettingsPage::switchProxyFields(bool checked)
@@ -86,7 +87,8 @@ void SettingsPage::rootPathSelectClicked()
                        tr("Select Root Installation Directory"),
                        "",
                        QFileDialog::ShowDirsOnly| QFileDialog::DontResolveSymlinks);
-    ui.rootPathEdit->setText(fileName);
+    if(!fileName.isEmpty())
+        ui.rootPathEdit->setText(QDir::toNativeSeparators(fileName));
 }
  
 void SettingsPage::tempPathSelectClicked()
@@ -95,7 +97,8 @@ void SettingsPage::tempPathSelectClicked()
                        tr("Select Package Download Directory"),
                        "",
                        QFileDialog::ShowDirsOnly| QFileDialog::DontResolveSymlinks);
-    ui.tempPathEdit->setText(fileName);
+    if(!fileName.isEmpty())
+        ui.tempPathEdit->setText(QDir::toNativeSeparators(fileName));
 }
 
 
