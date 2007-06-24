@@ -637,9 +637,8 @@ bool InstallerEngineGui::downloadPackages(QTreeWidget *tree, const QString &cate
     for (int i = 0; i < tree->topLevelItemCount(); i++)
     {
         QTreeWidgetItem *item = static_cast<QTreeWidgetItem*>(tree->topLevelItem(i));
-#ifdef DEBUG
-        qDebug() << __FUNCTION__ << " " << item->text(0);
-#endif
+		if (Settings::hasDebug("InstallerEngineGui::downloadPackages"))
+			qDebug() << __FUNCTION__ << " " << item->text(0);
         if (category.isEmpty() || item->text(0) == category)
         {
             PackageList *packageList = getPackageListByName(item->text(0));
@@ -655,7 +654,10 @@ bool InstallerEngineGui::downloadPackages(QTreeWidget *tree, const QString &cate
                 Package *pkg = packageList->getPackage(child->text(NameColumn),child->text(VersionColumn).toAscii());
                 if (!pkg)
                     continue;
-                bool all = isMarkedForInstall(pkg,Package::ALL);
+				if (Settings::hasDebug("InstallerEngineGui"))
+					pkg->dump("downloadPackages");
+
+				bool all = isMarkedForInstall(pkg,Package::ALL);
                 if (all || isMarkedForInstall(pkg,Package::BIN))
                     pkg->downloadItem(m_downloader, Package::BIN);
                 if (all || isMarkedForInstall(pkg,Package::LIB))
@@ -690,6 +692,8 @@ bool InstallerEngineGui::removePackages(QTreeWidget *tree, const QString &catego
                 Package *pkg = packageList->getPackage(child->text(NameColumn),child->text(VersionColumn).toAscii());
                 if (!pkg)
                     continue;
+				if (Settings::hasDebug("InstallerEngineGui"))
+					pkg->dump("removePackages");
                 bool all = false; //isMarkedForRemoval(pkg,Package::ALL);
                 if (all | isMarkedForRemoval(pkg,Package::BIN))
                     pkg->removeItem(m_installer, Package::BIN);
@@ -726,11 +730,12 @@ bool InstallerEngineGui::installPackages(QTreeWidget *tree,const QString &_categ
             for (int j = 0; j < item->childCount(); j++)
             {
                 QTreeWidgetItem *child = static_cast<QTreeWidgetItem*>(item->child(j));
-//                qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
                 QString pkgName = child->text(NameColumn);
                 Package *pkg = packageList->getPackage(pkgName,child->text(VersionColumn).toAscii());
                 if (!pkg)
                     continue;
+				if (Settings::hasDebug("InstallerEngineGui"))
+					pkg->dump("installPackages");
                 bool all = isMarkedForInstall(pkg,Package::ALL);
                 if (all || isMarkedForInstall(pkg,Package::BIN))
                     pkg->installItem(m_installer, Package::BIN);
