@@ -70,10 +70,10 @@ void InstallerEngine::readGlobalConfig()
 
 void InstallerEngine::createMainPackagelist()
 {
-#ifdef DEBUG
-    m_database->listPackages("Package");
-#endif
-    QList<Package*>::iterator p;
+	if (Settings::hasDebug("InstallerEngine"))
+		m_database->listPackages("createMainPackageList - installed packages");
+
+	QList<Package*>::iterator p;
     for (p = m_globalConfig->packages()->begin(); p != m_globalConfig->packages()->end(); p++)
     {
         Package *pkg = (*p);
@@ -94,6 +94,9 @@ void InstallerEngine::createMainPackagelist()
     }
     foreach(PackageList *pkgList, m_packageListList)
         pkgList->syncWithDatabase(*m_database);
+
+	if (Settings::hasDebug("InstallerEngine"))
+		dump("createMainPackageList");
 }
 
 /// download all packagelists, which are available on the configured sites
@@ -148,6 +151,8 @@ bool InstallerEngine::downloadPackageLists()
         m_packageListList.append(packageList);
     }
     m_database->addUnhandledPackages(packageList);
+	if (Settings::hasDebug("InstallerEngine"))
+		dump("downloadPackageLists");
 
 #ifdef PRINT_AVAILABLE_PACKAGES            
     m_database->resetHandledState();
@@ -193,7 +198,23 @@ void InstallerEngine::installDirChanged(const QString &newdir)
     m_database->setRoot(newdir);
 }
 
+void InstallerEngine::dump(const QString &title)
+{
+    QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
+    for ( ; k != m_packageListList.constEnd(); ++k)
+    {
+        if ((*k)->packageList().size() == 0)
+            continue;
 
-
+		// adding sub items
+        QList<Package*>::ConstIterator i = (*k)->packageList().constBegin();
+        for ( ; i != (*k)->packageList().constEnd(); ++i)
+        {
+            Package *pkg = *i;
+			qDebug() << pkg;
+ 			pkg->dump(__FUNCTION__);
+		}
+	}
+}
 
 #include "installerengine.moc"
