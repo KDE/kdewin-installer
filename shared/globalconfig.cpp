@@ -111,9 +111,8 @@ bool GlobalConfig::parse(QIODevice *ioDev)
         { 
            if (inPackage)
            {
-#ifdef DEBUG
-               pkg->dump(__FUNCTION__);
-#endif
+			   if (Settings::hasDebug("globalconfig"))
+			        pkg->dump(__FUNCTION__);
                inPackage=false;
            }
            else if (inSite)
