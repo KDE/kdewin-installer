@@ -66,6 +66,8 @@ int main(int argc, char *argv[])
     bool strip = false;
     bool verbose = false;
 
+    args.removeAt(0);   // name of executable
+
     int idx = args.indexOf("-name");
     if(idx != -1 && idx < args.count() -1) {
         name = args[idx + 1];
@@ -140,6 +142,8 @@ int main(int argc, char *argv[])
         args.removeAt(idx);
     }
 
+    if(args.count() > 0)
+        printHelp(QString("unknown command line parameter(s): %1").arg(args.join(" ")));
     if(name.isEmpty())
        printHelp("-name not specified");
     if(root.isEmpty())
