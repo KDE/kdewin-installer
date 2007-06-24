@@ -76,21 +76,23 @@ public:
     }
     bool getProxySettings(const QString &url, QString &host, int &port);
 
-    static Settings &getInstance();
-
     bool installDetails() { return m_settings.value("installDetails", true).toBool(); }
     void setInstallDetails(bool state) { m_settings.setValue("installDetails", state); sync(); }
     
     bool autoNextStep() { return m_settings.value("autoNextStep", true).toBool(); }
     void setAutoNextStep(bool state) { m_settings.setValue("autoNextStep", state); sync(); }
 
-    // QSettings compatible interface
+	// QSettings compatible interface
     void beginGroup(const QString &prefix) { m_settings.beginGroup(prefix); }
     void endGroup() { m_settings.endGroup(); }
     QVariant value(const QString &key, const QVariant &defaultValue = QVariant()) const { return m_settings.value(key,defaultValue); }
     void setValue(const QString &key, const QVariant &value) { m_settings.setValue(key,value); }
     // sync database 
     void sync() { m_settings.sync(); }
+
+	// static methods
+    static Settings &getInstance();
+	static bool hasDebug(const QString area="");
 
 Q_SIGNALS:
     void installDirChanged(const QString &newDir);
@@ -100,6 +102,7 @@ private:
     QSettings m_settings;
     bool getIEProxySettings(const QString &url, QString &host, int &port);
     bool getFireFoxProxySettings(const QString &url, QString &host, int &port);
+	QString debug(void) { return m_settings.value("debug", "").toString(); }
 };
 
 

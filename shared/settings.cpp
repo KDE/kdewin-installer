@@ -239,5 +239,26 @@ bool Settings::getProxySettings(const QString &url, QString &host, int &port)
     return false;
 }
 
+/**
+  check if a specific debug group 'area' is available
+  The debug group is retrieved from the installer configuration
+  file (normally installer.ini) using the entry debug in the 
+  [General] group. Possible values are 'all' which returns all
+  groups are to debug or any string provided in the source. 
+  See hasDebug() calls in the source. 
+  @param area
+  @return flag if debug area was found
+*/
+bool Settings::hasDebug(const QString area)
+{
+	Settings &s = Settings::getInstance();
+	return area.isEmpty() && !s.debug().isEmpty()
+		|| !area.isEmpty() && 
+			(s.debug().toLower() == "all" 
+			|| s.debug().toLower().contains(area.toLower()));
+}
+
+
+
 
 #include "settings.moc"
