@@ -108,16 +108,16 @@ bool GlobalConfig::parse(QIODevice *ioDev)
         if (line.startsWith(';'))
             continue;
         else if (line.size() < 2)
-        { 
-           if (inPackage)
-           {
-			   if (Settings::hasDebug("globalconfig"))
-			        pkg->dump(__FUNCTION__);
-               inPackage=false;
-           }
-           else if (inSite)
-             inSite=false;
-           continue;
+        {
+            if (inPackage)
+            {
+                if (Settings::hasDebug("globalconfig"))
+                    pkg->dump(__FUNCTION__);
+                inPackage=false;
+            }
+            else if (inSite)
+                inSite=false;
+            continue;
         }           
         else if (line.startsWith('@'))
         {
