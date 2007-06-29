@@ -207,6 +207,12 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     cmd.removeFirst();
                     site->setNotes(cmd.join(" "));
                 }
+                else if(cmd[0] == "@pkgnotes") {
+                    QString pkg = cmd[1];
+                    cmd.removeFirst();
+                    cmd.removeFirst();
+                    site->setPackageNote(pkg,cmd.join(" "));
+                }
             }
             else if(cmd[0] == "@site")
             {

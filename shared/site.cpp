@@ -49,6 +49,16 @@ QStringList Site::getDependencies(const QString &_package)
     return QStringList();
 }
 
+void Site::setPackageNote(const QString &package, const QString &note)
+{
+    m_packageNotes[package] = note;
+}
+
+QString Site::packageNote(const QString &package)
+{
+    return m_packageNotes[package];
+}
+
 void Site::addExcludes(const QStringList &excludes)
 {
     QStringList::ConstIterator it = excludes.constBegin();
