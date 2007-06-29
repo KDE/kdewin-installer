@@ -24,6 +24,10 @@
 #ifndef InstallWizard_H
 #define InstallWizard_H
 
+// define to enable different style
+//#define ENABLE_STYLE
+
+
 #include <QObject>
 #include "complexwizard.h"
 #include "settingspage.h"

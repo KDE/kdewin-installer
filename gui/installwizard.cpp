@@ -59,12 +59,17 @@ InstallerEngineGui *engine;
 static
 QLabel* createTopLabel(const QString& str)
 {
-	QLabel* label =  new QLabel(str);
-	label->setObjectName("topLabel");
-	label->setMinimumHeight(40);
-	label->setFrameStyle(QFrame::StyledPanel);
-	label->setStyleSheet("QLabel#topLabel {font-size: 14px;}");
-	return label;
+    QLabel* label =  new QLabel(str);
+    label->setObjectName("topLabel");
+#ifdef ENABLE_STYLE
+    label->setFrameStyle(QFrame::StyledPanel);
+    label->setStyleSheet("QLabel#topLabel {font-size: 14px;}");
+#else
+    label->setFrameStyle(QFrame::StyledPanel);
+#endif
+    label->setMinimumHeight(40);
+    label->setMaximumHeight(40);
+    return label;
 }
 
 InstallWizard::InstallWizard(QWidget *parent)
@@ -313,6 +318,48 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
 {
     topLabel = createTopLabel(tr("<center><b>Please select the required packages</b></center>"));
 
+#ifdef ENABLE_STYLE
+    QSplitter *splitter = new QSplitter(wizard);
+    splitter->setOrientation(Qt::Vertical);
+
+    leftTree  = new QTreeWidget;
+    engine->setLeftTreeData(leftTree);
+
+    QHBoxLayout* hl = new QHBoxLayout;
+    hl->addWidget(leftTree);
+    hl->addStretch(2);
+    hl->setMargin(0);
+    leftTree->setMinimumWidth(300);
+    leftTree->setMinimumHeight(100);
+    leftTree->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+
+    QWidget* top = new QWidget;
+    top->setLayout(hl);
+
+    tree = new QTreeWidget;
+    engine->setPageSelectorWidgetData(tree);
+
+    splitter->addWidget(top);
+    splitter->addWidget(tree);
+
+    QWidget *widget = splitter->widget(0);
+    QSizePolicy policy = widget->sizePolicy();
+    policy.setVerticalStretch(2);
+    widget->setSizePolicy(policy);
+
+    widget = splitter->widget(1);
+    policy = widget->sizePolicy();
+    policy.setVerticalStretch(5);
+    widget->setSizePolicy(policy);
+
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(topLabel);
+    layout->addWidget(splitter);
+    setLayout(layout);
+
+#else
+
     QSplitter *splitter = new QSplitter(wizard);
     splitter->setOrientation(Qt::Horizontal);
 
@@ -341,6 +388,7 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
     layout->addWidget(splitter,2,0);
     layout->setRowStretch(2,10);
     setLayout(layout);
+#endif
 
     connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
     connect(leftTree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(on_leftTree_itemClicked(QTreeWidgetItem *, int)));

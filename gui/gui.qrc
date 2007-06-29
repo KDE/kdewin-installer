@@ -6,5 +6,8 @@
      <file>images/keepinstalled.xpm</file>
      <file>images/noinst.xpm</file>
      <file>images/update.xpm</file>
+     <file>images/gray.png</file>
+     <file>images/brown.png</file>
  </qresource>
  </RCC>
+

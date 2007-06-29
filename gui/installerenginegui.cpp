@@ -30,6 +30,10 @@
 #include <QFlags>
 
 #include "installerenginegui.h"
+#include "installwizard.h"
+#ifdef ENABLE_STYLE
+#define DISABLE_ICONS
+#endif
 
 //#include "downloader.h"
 //#include "installer.h"
