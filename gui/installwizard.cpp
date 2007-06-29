@@ -56,6 +56,17 @@ QTreeWidget *leftTree;
 
 InstallerEngineGui *engine;
 
+static
+QLabel* createTopLabel(const QString& str)
+{
+	QLabel* label =  new QLabel(str);
+	label->setObjectName("topLabel");
+	label->setMinimumHeight(40);
+	label->setFrameStyle(QFrame::StyledPanel);
+	label->setStyleSheet("QLabel#topLabel {font-size: 14px;}");
+	return label;
+}
+
 InstallWizard::InstallWizard(QWidget *parent)
         : ComplexWizard(parent)
 {
@@ -300,7 +311,7 @@ bool ProxySettingsPage::isComplete()
 PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
         : InstallWizardPage(wizard)
 {
-    topLabel = new QLabel(tr("<center><b>Please select the required packages</b></center>"));
+    topLabel = createTopLabel(tr("<center><b>Please select the required packages</b></center>"));
 
     QSplitter *splitter = new QSplitter(wizard);
     splitter->setOrientation(Qt::Horizontal);
@@ -309,6 +320,7 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
     engine->setLeftTreeData(leftTree);
 
     tree = new QTreeWidget(splitter);
+
     engine->setPageSelectorWidgetData(tree);
 
     splitter->addWidget(leftTree);
@@ -374,10 +386,11 @@ bool PackageSelectorPage::isComplete()
     return true;
 }
 
+
 DownloadPage::DownloadPage(InstallWizard *wizard)
         : InstallWizardPage(wizard)
 {
-    topLabel = new QLabel(tr("<center><b>Downloading packages</b></center>"));
+    topLabel = createTopLabel(tr("<center><b>Downloading packages</b></center>"));
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(topLabel);
@@ -414,7 +427,7 @@ void DownloadPage::reject()
 UninstallPage::UninstallPage(InstallWizard *wizard)
         : InstallWizardPage(wizard)
 {
-    topLabel = new QLabel(tr("<center><b>Removing packages</b></center>"));
+    topLabel = createTopLabel(tr("<center><b>Removing packages</b></center>"));
 
     fileList = wizard->instProgressBar;
    
@@ -450,7 +463,7 @@ bool UninstallPage::isComplete()
 InstallPage::InstallPage(InstallWizard *wizard)
         : InstallWizardPage(wizard)
 {
-    topLabel = new QLabel(tr("<center><b>Installing packages</b></center>"));
+    topLabel = createTopLabel(tr("<center><b>Installing packages</b></center>"));
 
     fileList = wizard->instProgressBar;
    
@@ -485,8 +498,8 @@ bool InstallPage::isComplete()
 FinishPage::FinishPage(InstallWizard *wizard)
         : InstallWizardPage(wizard)
 {
-    topLabel = new QLabel(tr("<center><b>Installation finished</b></center>"
-                             "<p></p>"
+    topLabel = createTopLabel(tr("<center><b>Installation finished</b></center>"));
+    QLabel* label = new QLabel(tr(
                              "<p>If you have questions or problems using this installer "
                              "please ask on the <a href=\"http://mail.kde.org/mailman/listinfo/kde-windows\">"
                              "kde-windows@kde.org</a> mailing list. </p>"
@@ -501,6 +514,7 @@ FinishPage::FinishPage(InstallWizard *wizard)
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(topLabel);
+    layout->addWidget(label);
     layout->addStretch(1);
     setLayout(layout);
 }
