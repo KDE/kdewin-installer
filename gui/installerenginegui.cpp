@@ -20,6 +20,10 @@
 **
 ****************************************************************************/
 
+// uncomment to display text instead of icons
+//#define DISABLE_ICONS
+
+
 #include <QtDebug>
 #include <QDir>
 #include <QTreeWidget>
@@ -81,6 +85,7 @@ enum iconType {_install, _autoinstall,_keepinstalled, _update, _remove, _nothing
 
 void setIcon(QTreeWidgetItem &item, Package::Type type, iconType action)
 {
+#ifndef DISABLE_ICONS
     static QIcon *ai;
     static QIcon *ii;
     static QIcon *ki;
@@ -88,7 +93,7 @@ void setIcon(QTreeWidgetItem &item, Package::Type type, iconType action)
     static QIcon *id;
     static QIcon *dl;
     static QIcon *up;
- 
+
     if (!ii) 
     {
         ai = new QIcon(":/images/autoinstall.xpm");
@@ -99,8 +104,10 @@ void setIcon(QTreeWidgetItem &item, Package::Type type, iconType action)
         dl = new QIcon(":/images/del.xpm");
         up = new QIcon(":/images/update.xpm");
     }
-
+#endif
     int column = typeToColumn(type);
+
+#ifndef DISABLE_ICONS
     switch(action)
     {
         case _autoinstall: item.setIcon(column,*ai); return;
@@ -111,6 +118,18 @@ void setIcon(QTreeWidgetItem &item, Package::Type type, iconType action)
         case _nothing: item.setIcon(column,*ni); return;
         case _disable: item.setIcon(column,*id); return;
     }
+#else
+    switch(action)
+    {
+        case _autoinstall: item.setText(column,"-I-"); return;
+        case _install: item.setText(column,"-I-"); return;
+        case _keepinstalled: item.setText(column,"-i-"); return;
+        case _remove:  item.setText(column,"-R-"); return;
+        case _update:  item.setText(column,"-U-"); return;
+        case _nothing: item.setText(column,"---"); return;
+        case _disable: item.setText(column,""); return;
+    }
+#endif
     // FIXME: does not work, don't know how to set the icon size 
     // item.icon(column).setIconSize(QSize(22,22));
 }
