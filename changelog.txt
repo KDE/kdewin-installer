@@ -1,6 +1,12 @@
 ChangeLog
 =========
 
+0.7.2
+------
+- installer-gui: fixed bug displaying some packages twice
+- installer-gui: added package notes suppport in site configuration 
+  using the @pkgnotes <package> <notes> statement
+
 0.7.1
 ------
 - added -q option to kdewin-installer-console
