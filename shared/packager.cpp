@@ -171,6 +171,9 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 generateFileList(fileList, dir, "", ".qmake.cache");
                 // trolltech installs whole mkspecs folder too
                 generateFileList(fileList, dir, "mkspecs", "*.*");
+                // add phrase books
+                generateFileList(fileList, dir, "tools/linguist/phrasebooks", "*.qph");
+                
                 if (m_name.endsWith("mingw")) 
                 {
                     generateFileList(fileList, dir, "lib",      "*.a", "*d4.a *d.a");
