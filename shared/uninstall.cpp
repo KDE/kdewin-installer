@@ -106,6 +106,11 @@ bool Uninstall::uninstallPackage(bool bUseHashWhenPossible)
     return true;
 }
 
+bool Uninstall::cleanDirectories()
+{
+    // iterate through all directories and delete from lowest level if no files are there
+}
+
 bool Uninstall::checkInstalledFiles()
 {
     QList<FileItem> fileList;

@@ -55,6 +55,12 @@ public:
       otherwise also the checksum is compared
     */
     bool checkInstalledFiles();
+
+    /** 
+      delete directories containing no files
+    */ 
+    bool cleanDirectories();
+    
 protected:
     bool readManifestFile(QList<FileItem> &fileList);
 Q_SIGNALS:
