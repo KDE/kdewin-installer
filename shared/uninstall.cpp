@@ -109,6 +109,7 @@ bool Uninstall::uninstallPackage(bool bUseHashWhenPossible)
 bool Uninstall::cleanDirectories()
 {
     // iterate through all directories and delete from lowest level if no files are there
+    return false;
 }
 
 bool Uninstall::checkInstalledFiles()
