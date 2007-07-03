@@ -11,6 +11,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 find_package(Qt4 REQUIRED)
 find_package(UPX)
 find_package(KDEWIN_Packager)
+find_package(WinSCP)
 
 OPTION(SEVENZIP_UNPACK_SUPPORT "Enable 7-zip unpacking support" OFF)
 OPTION(STATIC_BUILD "enable static build support" OFF)
@@ -179,7 +180,7 @@ endif (UNIX)
 
 
 # our targets
-add_subdirectory(console)
+#add_subdirectory(console)
 add_subdirectory(gui)
 add_subdirectory(tests)
 add_subdirectory(packager)
@@ -248,4 +249,9 @@ ELSE(WIN32 AND NOT UNIX)
 ENDIF(WIN32 AND NOT UNIX)
 SET(CPACK_PACKAGE_EXECUTABLES "kdewin-installer-gui" "KDEWIN Installer")
 INCLUDE(CPack)
+
+
+if (WINSCP_FOUND)
+    UPLOAD()
+endif (WINSCP_FOUND)
 
