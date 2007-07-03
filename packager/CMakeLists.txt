@@ -38,6 +38,6 @@ if (UPX_EXECUTABLE AND CMAKE_PRODUCTION_BUILD)
     add_custom_command(
         TARGET kdewin-packager 
         POST_BUILD 
-        COMMAND ${UPX_EXECUTABLE} --lzma -9 "${CMAKE_BINARY_DIR}/packager/kdewin-packager.exe" 
+        COMMAND ${UPX_EXECUTABLE} --lzma -9 "${EXECUTABLE_OUTPUT_PATH}/kdewin-packager.exe" 
     )
 endif (UPX_EXECUTABLE AND CMAKE_PRODUCTION_BUILD)

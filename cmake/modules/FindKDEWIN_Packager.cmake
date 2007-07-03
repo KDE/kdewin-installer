@@ -96,7 +96,7 @@ MACRO (KDEWIN_PACKAGER _name _version _notes _options)
                 ${_options}               
             # FIXME: cleanup does not work 
             #COMMAND rmdir /Q /S ${CMAKE_BINARY_DIR}\temp
-            DEPENDS kdewin-installer-gui kdewin-packager #kdewin-installer-console
+            DEPENDS kdewin-installer-gui-${VERSION} kdewin-packager #kdewin-installer-console
         )
         # prelimary target
         add_custom_target(kdewin_package_without_compiler
@@ -111,7 +111,7 @@ MACRO (KDEWIN_PACKAGER _name _version _notes _options)
                 ${_options}               
             # FIXME: cleanup does not work 
             #COMMAND rmdir /Q /S ${CMAKE_BINARY_DIR}\temp
-            DEPENDS kdewin-installer-gui kdewin-packager #kdewin-installer-console
+            DEPENDS kdewin-installer-gui-${VERSION} kdewin-packager #kdewin-installer-console
         )
         add_custom_target(kdewin_package_debug_and_release
             COMMAND ${CMAKE_COMMAND} 
@@ -140,7 +140,7 @@ MACRO (KDEWIN_PACKAGER _name _version _notes _options)
                 ${_options}               
             # FIXME: cleanup does not work 
             #COMMAND rmdir /Q /S ${CMAKE_BINARY_DIR}\temp
-            DEPENDS kdewin-installer-gui kdewin-packager #kdewin-installer-console
+            DEPENDS kdewin-installer-gui-${VERSION} kdewin-packager #kdewin-installer-console
         )
 set (CONTENT "
 if \"%1\" == \"package_only\" goto package_only
@@ -167,7 +167,7 @@ ${KDEWIN_PACKAGER_EXECUTABLE} -name ${_name} -root ${CMAKE_BINARY_DIR}/temp -src
         write_file(${CMAKE_BINARY_DIR}/kdewin_package_debug_and_release_mingw_and_msvc.bat "${CONTENT}")
         add_custom_target(kdewin_package_debug_and_release_mingw_and_msvc
             COMMAND ${CMAKE_BINARY_DIR}/kdewin_package_debug_and_release_mingw_and_msvc.bat
-            DEPENDS kdewin-installer-gui kdewin-packager #kdewin-installer-console
+            DEPENDS kdewin-installer-gui-${VERSION} kdewin-packager #kdewin-installer-console
         )
     endif (KDEWIN_PACKAGER_FOUND)
 ENDMACRO (KDEWIN_PACKAGER)

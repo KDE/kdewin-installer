@@ -82,18 +82,20 @@ source_group(qua7zip FILES ${qua7zip_SOURCES} ${qua7zip_HEADERS})
 
 qt4_automoc(${all_sources})
 
-add_executable(kdewin-installer-gui WIN32 ${all_sources})
-
-target_link_libraries(kdewin-installer-gui ${QT_QTMAIN_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${GUI_LIBS})
+add_executable(kdewin-installer-gui-${VERSION} WIN32 ${all_sources})
+target_link_libraries(kdewin-installer-gui-${VERSION} ${QT_QTMAIN_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${GUI_LIBS})
+write_file(${EXECUTABLE_OUTPUT_PATH}/kdewin-installer-gui.bat "start kdewin-installer-gui-${VERSION}.exe")
 
 if (CMAKE_PRODUCTION_BUILD)
-    install_targets(/bin kdewin-installer-gui )
+    install_targets(/bin kdewin-installer-gui-${VERSION} )
+    install(FILES ${EXECUTABLE_OUTPUT_PATH}/kdewin-installer-gui.bat DESTINATION bin)
 endif (CMAKE_PRODUCTION_BUILD)
    
 if (CMAKE_PRODUCTION_BUILD AND STATIC_BUILD AND UPX_EXECUTABLE)
     add_custom_command(
-        TARGET kdewin-installer-gui 
+        TARGET kdewin-installer-gui-${VERSION}
         POST_BUILD 
-        COMMAND ${UPX_EXECUTABLE} --lzma -9 "${CMAKE_BINARY_DIR}/gui/kdewin-installer-gui.exe"
+        COMMAND ${UPX_EXECUTABLE} --lzma -9 "${EXECUTABLE_OUTPUT_PATH}/kdewin-installer-gui-${VERSION}.exe"
+
     )
 endif (CMAKE_PRODUCTION_BUILD AND STATIC_BUILD AND UPX_EXECUTABLE)

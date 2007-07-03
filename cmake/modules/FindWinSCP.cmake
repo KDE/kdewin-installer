@@ -67,6 +67,7 @@ cd /home/kde-windows/kde-windows/installer
 # Force binary mode transfer
 option transfer binary
 # upload files 
+lcd bin
 put kdewin-installer-gui-*.exe
 # Disconnect
 close
@@ -74,7 +75,6 @@ close
 exit
 ") 
         write_file("winscp-config.txt" ${CONFIG_FILE_TEXT})
-        configure_file(${CMAKE_BINARY_DIR}/gui/kdewin-installer-gui.exe kdewin-installer-gui-${VERSION}.exe COPYONLY)
         add_custom_target(upload
             # using DEPENDS does not work it results in an nmake error:
             #   NMAKE : fatal error U1073: don't know how to make 'kdewin_package_without_compiler'
