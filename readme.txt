@@ -67,6 +67,7 @@ TODO
   	  -> currently implemented by removing old package, installing new package by hand
   	17 add support for tar + gz/bzip2 package by using external win32 tools 
   	18 only display firefox proxy option is firefox is installed 
+    19 in case a file could not be downloaded  display a message box printing the reason 
   
 
 2 packager
