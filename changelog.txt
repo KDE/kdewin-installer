@@ -1,6 +1,11 @@
 ChangeLog
 =========
 
+0.7.3
+------
+- installer-gui: fixed package selection for download/remove and install 
+- installer-gui: added compiler type option in install root and combined settings page 
+
 0.7.2
 ------
 - installer-gui: fixed bug displaying some packages twice

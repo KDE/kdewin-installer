@@ -422,7 +422,7 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
     connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
     connect(leftTree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(on_leftTree_itemClicked(QTreeWidgetItem *, int)));
     connect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
-    connect(&Settings::getInstance(),SIGNAL(settingsChanged),this,SLOT(slotSettingsChanged));
+    connect(&Settings::getInstance(),SIGNAL(compilerTypeChanged()),this,SLOT(slotCompilerTypeChanged()));
 }
 
 void PackageSelectorPage::on_leftTree_itemClicked(QTreeWidgetItem *item, int column)
@@ -445,7 +445,7 @@ void PackageSelectorPage::installDirChanged(const QString &dir)
     engine->setPageSelectorWidgetData(tree);
 }
 
-void PackageSelectorPage::slotSettingsChanged()
+void PackageSelectorPage::slotCompilerTypeChanged()
 {
     engine->setLeftTreeData(leftTree);
     engine->setPageSelectorWidgetData(tree);

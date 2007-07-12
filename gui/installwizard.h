@@ -173,7 +173,7 @@ public slots:
     void on_leftTree_itemClicked(QTreeWidgetItem *item, int column);
 
     void installDirChanged(const QString &dir);
-	void slotSettingsChanged(void);
+    void slotCompilerTypeChanged(void);
 
 private:
     QLabel *topLabel;
