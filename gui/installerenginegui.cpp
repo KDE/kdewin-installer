@@ -341,7 +341,7 @@ void InstallerEngineGui::setLeftTreeData(QTreeWidget *tree)
     tree->clear();
     QStringList labels;
     QList<QTreeWidgetItem *> items;
-    labels << tr("pakgetgroups") << tr("description");
+    labels << tr("paketgroups") << tr("description");
     tree->setColumnCount(2);
     tree->setHeaderLabels(labels);
     QList<QTreeWidgetItem *> categoryList;
@@ -521,6 +521,8 @@ void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree, QString ca
   @param pkg package of which the depending packages should be selected
   @param type Type of selection: ALL or BIN
   @todo add support for indirect dependencies 
+  @todo check intalled versions of a depending package first to avoid selecting another version
+  @todo don't select dependend items when deselecting icon 
 */
 void InstallerEngineGui::setDependencies(Package *pkg, Package::Type type)
 {
@@ -656,40 +658,30 @@ void InstallerEngineGui::itemClickedPackageSelectorPage(QTreeWidgetItem *item, i
 
 bool InstallerEngineGui::downloadPackages(QTreeWidget *tree, const QString &category)
 {
-    // FIXME: uses packageLists instead of widget selection 
-    for (int i = 0; i < tree->topLevelItemCount(); i++)
+    QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
+    for ( ; k != m_packageListList.constEnd(); ++k)
     {
-        QTreeWidgetItem *item = static_cast<QTreeWidgetItem*>(tree->topLevelItem(i));
-		if (Settings::hasDebug("InstallerEngineGui::downloadPackages"))
-			qDebug() << __FUNCTION__ << " " << item->text(0);
-        if (category.isEmpty() || item->text(0) == category)
-        {
-            PackageList *packageList = getPackageListByName(item->text(0));
-            if (!packageList)
-            {
-                qDebug() << __FUNCTION__ << " packagelist for " << item->text(0) << " not found";
-                continue;
-            }
-            for (int j = 0; j < item->childCount(); j++)
-            {
-                QTreeWidgetItem *child = static_cast<QTreeWidgetItem*>(item->child(j));
-//              qDebug("%s %s %d",child->text(0).toAscii().data(),child->text(1).toAscii().data(),child->checkState(2));
-                Package *pkg = packageList->getPackage(child->text(NameColumn),child->text(VersionColumn).toAscii());
-                if (!pkg)
-                    continue;
-				if (Settings::hasDebug("InstallerEngineGui"))
-					pkg->dump("downloadPackages");
+		if ((*k)->packageList().size() == 0)
+            continue;
 
-				bool all = isMarkedForInstall(pkg,Package::ALL);
-                if (all || isMarkedForInstall(pkg,Package::BIN))
-                    pkg->downloadItem(m_downloader, Package::BIN);
-                if (all || isMarkedForInstall(pkg,Package::LIB))
-                    pkg->downloadItem(m_downloader, Package::LIB);
-                if (all || isMarkedForInstall(pkg,Package::DOC))
-                    pkg->downloadItem(m_downloader, Package::DOC);
-                if (all || isMarkedForInstall(pkg,Package::SRC))
-                    pkg->downloadItem(m_downloader, Package::SRC);
-            }
+        QList<Package*>::ConstIterator i = (*k)->packageList().constBegin();
+        for ( ; i != (*k)->packageList().constEnd(); ++i)
+        {
+            Package *pkg = *i;
+            if (!pkg)
+                continue;
+			if (Settings::hasDebug("InstallerEngineGui"))
+				pkg->dump("downloadPackages");
+
+			bool all = false; //isMarkedForInstall(pkg,Package::ALL);
+            if (all || isMarkedForInstall(pkg,Package::BIN))
+                pkg->downloadItem(m_downloader, Package::BIN);
+            if (all || isMarkedForInstall(pkg,Package::LIB))
+                pkg->downloadItem(m_downloader, Package::LIB);
+            if (all || isMarkedForInstall(pkg,Package::DOC))
+                pkg->downloadItem(m_downloader, Package::DOC);
+            if (all || isMarkedForInstall(pkg,Package::SRC))
+                pkg->downloadItem(m_downloader, Package::SRC);
         }
     }
     return true;
@@ -697,36 +689,29 @@ bool InstallerEngineGui::downloadPackages(QTreeWidget *tree, const QString &cate
 
 bool InstallerEngineGui::removePackages(QTreeWidget *tree, const QString &category)
 {
-    // FIXME: uses packageLists instead of widget selection 
-    for (int i = 0; i < tree->topLevelItemCount(); i++)
+    QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
+    for ( ; k != m_packageListList.constEnd(); ++k)
     {
-        QTreeWidgetItem *item = static_cast<QTreeWidgetItem*>(tree->topLevelItem(i));
-        if (category.isEmpty() || item->text(0) == category)
+		if ((*k)->packageList().size() == 0)
+            continue;
+
+        QList<Package*>::ConstIterator i = (*k)->packageList().constBegin();
+        for ( ; i != (*k)->packageList().constEnd(); ++i)
         {
-            PackageList *packageList = getPackageListByName(item->text(0));
-            if (!packageList)
-            {
-                qDebug() << __FUNCTION__ << " packagelist for " << item->text(0) << " not found";
+            Package *pkg = *i;
+            if (!pkg)
                 continue;
-            }
-            for (int j = 0; j < item->childCount(); j++)
-            {
-                QTreeWidgetItem *child = static_cast<QTreeWidgetItem*>(item->child(j));
-                Package *pkg = packageList->getPackage(child->text(NameColumn),child->text(VersionColumn).toAscii());
-                if (!pkg)
-                    continue;
-				if (Settings::hasDebug("InstallerEngineGui"))
-					pkg->dump("removePackages");
-                bool all = false; //isMarkedForRemoval(pkg,Package::ALL);
-                if (all | isMarkedForRemoval(pkg,Package::BIN))
-                    pkg->removeItem(m_installer, Package::BIN);
-                if (all | isMarkedForRemoval(pkg,Package::LIB))
-                    pkg->removeItem(m_installer, Package::LIB);
-                if (all | isMarkedForRemoval(pkg,Package::DOC))
-                    pkg->removeItem(m_installer, Package::DOC);
-                if (all | isMarkedForRemoval(pkg,Package::SRC))
-                    pkg->removeItem(m_installer, Package::SRC);
-            }
+			if (Settings::hasDebug("InstallerEngineGui"))
+				pkg->dump("removePackages");
+            bool all = false; //isMarkedForRemoval(pkg,Package::ALL);
+            if (all | isMarkedForRemoval(pkg,Package::BIN))
+                pkg->removeItem(m_installer, Package::BIN);
+            if (all | isMarkedForRemoval(pkg,Package::LIB))
+                pkg->removeItem(m_installer, Package::LIB);
+            if (all | isMarkedForRemoval(pkg,Package::DOC))
+                pkg->removeItem(m_installer, Package::DOC);
+            if (all | isMarkedForRemoval(pkg,Package::SRC))
+                pkg->removeItem(m_installer, Package::SRC);
         }
     }
     return true;
@@ -734,43 +719,30 @@ bool InstallerEngineGui::removePackages(QTreeWidget *tree, const QString &catego
 
 bool InstallerEngineGui::installPackages(QTreeWidget *tree,const QString &_category)
 {
-    // FIXME: uses packageLists instead of widget selection 
-    for (int i = 0; i < tree->topLevelItemCount(); i++)
+    QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
+    for ( ; k != m_packageListList.constEnd(); ++k)
     {
-        QTreeWidgetItem *item = static_cast<QTreeWidgetItem*>(tree->topLevelItem(i));
-        QString category = item->text(0); 
-#ifdef DEBUG
-        qDebug() << __FUNCTION__ << " " << category;
-#endif
-        if (_category.isEmpty() || category == _category)
+		if ((*k)->packageList().size() == 0)
+            continue;
+
+        QList<Package*>::ConstIterator i = (*k)->packageList().constBegin();
+        for ( ; i != (*k)->packageList().constEnd(); ++i)
         {
-            PackageList *packageList = getPackageListByName(category);
-            if (!packageList)
-            {
-                qDebug() << __FUNCTION__ << " packagelist for " << category << " not found";
+            Package *pkg = *i;
+            if (!pkg)
                 continue;
-            }
-            for (int j = 0; j < item->childCount(); j++)
-            {
-                QTreeWidgetItem *child = static_cast<QTreeWidgetItem*>(item->child(j));
-                QString pkgName = child->text(NameColumn);
-                Package *pkg = packageList->getPackage(pkgName,child->text(VersionColumn).toAscii());
-                if (!pkg)
-                    continue;
-				if (Settings::hasDebug("InstallerEngineGui"))
-					pkg->dump("installPackages");
-                bool all = isMarkedForInstall(pkg,Package::ALL);
-                if (all || isMarkedForInstall(pkg,Package::BIN))
-                    pkg->installItem(m_installer, Package::BIN);
-                if (all || isMarkedForInstall(pkg,Package::LIB))
-                    pkg->installItem(m_installer, Package::LIB);
-                if (all || isMarkedForInstall(pkg,Package::DOC))
-                    pkg->installItem(m_installer, Package::DOC);
-                if (all || isMarkedForInstall(pkg,Package::SRC))
-                    pkg->installItem(m_installer, Package::SRC);
-            }
+			if (Settings::hasDebug("InstallerEngineGui"))
+				pkg->dump("installPackages");
+            bool all = false;//isMarkedForInstall(pkg,Package::ALL);
+            if (all || isMarkedForInstall(pkg,Package::BIN))
+                pkg->installItem(m_installer, Package::BIN);
+            if (all || isMarkedForInstall(pkg,Package::LIB))
+                pkg->installItem(m_installer, Package::LIB);
+            if (all || isMarkedForInstall(pkg,Package::DOC))
+                pkg->installItem(m_installer, Package::DOC);
+            if (all || isMarkedForInstall(pkg,Package::SRC))
+                pkg->installItem(m_installer, Package::SRC);
         }
     }
     return true;
 }
-
