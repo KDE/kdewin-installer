@@ -36,7 +36,7 @@ public:
 
     void setPageSelectorWidgetData(QTreeWidget *tree, QString categoryName=QString());
     void itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column);
-    void setLeftTreeData(QTreeWidget *tree);
+    void setLeftTreeData(QTreeWidget *tree=0);
     void on_leftTree_itemClicked(QTreeWidgetItem *item, int column);
     void setDependencies(Package *pkg, Package::Type type);
 

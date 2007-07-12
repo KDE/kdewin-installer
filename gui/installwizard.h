@@ -126,6 +126,11 @@ private:
     QLabel    *tempPathLabel;
     QLineEdit *tempPathEdit;
     QPushButton *tempPathSelect;
+	QLabel *compilerLabel;
+	QRadioButton *compilerMinGW;
+    QRadioButton *compilerMSVC;
+    QRadioButton *compilerUnspecified;
+
 };
 
 class ProxySettingsPage : public InstallWizardPage
@@ -168,6 +173,7 @@ public slots:
     void on_leftTree_itemClicked(QTreeWidgetItem *item, int column);
 
     void installDirChanged(const QString &dir);
+	void slotSettingsChanged(void);
 
 private:
     QLabel *topLabel;

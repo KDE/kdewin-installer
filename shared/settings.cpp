@@ -64,9 +64,12 @@ QString Settings::installDir()
 
 void Settings::setInstallDir(const QString &dir)
 {
-    m_settings.setValue("rootdir", dir);
-    m_settings.sync();
-    emit installDirChanged(dir);
+	if (dir != installDir())
+	{
+		m_settings.setValue("rootdir", dir);
+		m_settings.sync();
+		emit installDirChanged(dir);
+	}
 }
 
 QString Settings::downloadDir()
@@ -91,9 +94,12 @@ QString Settings::downloadDir()
 
 void Settings::setDownloadDir(const QString &dir)
 {
-    m_settings.setValue("tempdir", dir);
-    m_settings.sync();
-    emit downloadDirChanged(dir);
+	if (dir != downloadDir())
+	{
+		m_settings.setValue("tempdir", dir);
+		m_settings.sync();
+		emit downloadDirChanged(dir);
+	}
 }
 
 bool Settings::showTitlePage()
@@ -117,6 +123,13 @@ void Settings::setCreateStartMenuEntries(bool bCreate)
     m_settings.setValue("createStartMenuEntries", bCreate);
     m_settings.sync();
 }
+
+void Settings::sync() 
+{ 
+	m_settings.sync(); 
+	emit settingsChanged(); 
+}
+
 
 Settings &Settings::getInstance()
 {

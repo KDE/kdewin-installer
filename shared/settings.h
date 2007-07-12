@@ -82,13 +82,17 @@ public:
     bool autoNextStep() { return m_settings.value("autoNextStep", true).toBool(); }
     void setAutoNextStep(bool state) { m_settings.setValue("autoNextStep", state); sync(); }
 
+	typedef enum { unspecified=0, MinGW=1, MSVC=2 } CompilerType;
+	CompilerType compilerType() { return (CompilerType) (m_settings.value("compilerType",0).toInt()); }
+    void setCompilerType(CompilerType ctype) { m_settings.setValue("compilerType", (int)ctype); sync(); }
+
 	// QSettings compatible interface
     void beginGroup(const QString &prefix) { m_settings.beginGroup(prefix); }
     void endGroup() { m_settings.endGroup(); }
     QVariant value(const QString &key, const QVariant &defaultValue = QVariant()) const { return m_settings.value(key,defaultValue); }
     void setValue(const QString &key, const QVariant &value) { m_settings.setValue(key,value); }
     // sync database 
-    void sync() { m_settings.sync(); }
+    void sync();
 
 	// static methods
     static Settings &getInstance();
@@ -97,6 +101,7 @@ public:
 Q_SIGNALS:
     void installDirChanged(const QString &newDir);
     void downloadDirChanged(const QString &newDir);
+    void settingsChanged();
 protected:
 private:
     QSettings m_settings;

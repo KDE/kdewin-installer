@@ -338,7 +338,7 @@ InstallerEngineGui::InstallerEngineGui(DownloaderProgress *progressBar,Installer
 
 void InstallerEngineGui::setLeftTreeData(QTreeWidget *tree)
 {
-    tree->clear();
+	tree->clear();
     QStringList labels;
     QList<QTreeWidgetItem *> items;
     labels << tr("paketgroups") << tr("description");
@@ -353,15 +353,19 @@ void InstallerEngineGui::setLeftTreeData(QTreeWidget *tree)
     QTreeWidgetItem *firstItem = category;
     categoryList.append(category);
 
-    names.clear();
-    names << tr("mingw") << tr("packages usable by win32 gcc");
-    category = new QTreeWidgetItem((QTreeWidget*)0, names);
-    categoryList.append(category);
+	Settings &s = Settings::getInstance();
+	if (s.compilerType() == Settings::unspecified) 
+	{
+		names.clear();
+		names << tr("mingw") << tr("packages usable by win32 gcc");
+		category = new QTreeWidgetItem((QTreeWidget*)0, names);
+		categoryList.append(category);
 
-    names.clear();
-    names << tr("msvc") << tr("packages usable by MS VC");
-    category = new QTreeWidgetItem((QTreeWidget*)0, names);
-    categoryList.append(category);
+		names.clear();
+	    names << tr("msvc") << tr("packages usable by MS VC");
+	    category = new QTreeWidgetItem((QTreeWidget*)0, names);
+	    categoryList.append(category);
+	}
 
     QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
     for ( ; k != m_packageListList.constEnd(); ++k)
@@ -449,6 +453,7 @@ void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree, QString ca
 #ifdef DEBUG
     qDebug() << "adding categories size:" << m_globalConfig->sites()->size();
 #endif
+	Settings &s = Settings::getInstance();
 
     QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
     for ( ; k != m_packageListList.constEnd(); ++k)
@@ -477,10 +482,10 @@ void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree, QString ca
         for ( ; i != (*k)->packageList().constEnd(); ++i)
         {
             Package *pkg = *i;
-            if (categoryName == "mingw" 
+			if ((categoryName == "mingw"  || s.compilerType() == Settings::MinGW)
                 && (pkg->name().toLower().contains("msvc") || pkg->notes().toLower().contains("msvc")))
                 continue;
-            else if (categoryName == "msvc" 
+            else if ((categoryName == "msvc"  || s.compilerType() == Settings::MSVC)
                 && (pkg->name().toLower().contains("mingw") || pkg->notes().toLower().contains("mingw")))
                 continue;
             QStringList data;

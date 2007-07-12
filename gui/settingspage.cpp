@@ -31,13 +31,21 @@ void SettingsPage::init()
 
     ui.rootPathEdit->setText(QDir::convertSeparators(settings.installDir()));
     ui.tempPathEdit->setText(QDir::convertSeparators(settings.downloadDir()));
-    switch (settings.proxyMode()) {
+
+	switch (settings.proxyMode()) {
         case Settings::InternetExplorer: ui.proxyIE->setChecked(true); break;
         case Settings::Manual: ui.proxyManual->setChecked(true); break;
         case Settings::FireFox: ui.proxyFireFox->setChecked(true); break;
         case Settings::None: 
         default: ui.proxyOff->setChecked(true); break;
     }
+
+	switch (settings.compilerType()) {
+		case Settings::unspecified: ui.compilerUnspecified->setChecked(true); break;
+		case Settings::MinGW: ui.compilerMinGW->setChecked(true); break;
+		case Settings::MSVC: ui.compilerMSVC->setChecked(true); break;
+        default: ui.compilerUnspecified->setChecked(true); break;
+	}
 
     ui.proxyHost->setText(settings.proxyHost());
     ui.proxyPort->setText(QString("%1").arg(settings.proxyPort()));
@@ -67,6 +75,13 @@ void SettingsPage::accept()
     settings.setProxyMode(m);
     if (ui.proxyManual->isChecked())
         settings.setProxy(ui.proxyHost->text(),ui.proxyPort->text());
+
+	if (ui.compilerUnspecified->isChecked())
+		settings.setCompilerType(Settings::unspecified);
+	if (ui.compilerMinGW->isChecked())
+		settings.setCompilerType(Settings::MinGW);
+	if (ui.compilerMSVC->isChecked())
+		settings.setCompilerType(Settings::MSVC);
 }
 
 void SettingsPage::reject()

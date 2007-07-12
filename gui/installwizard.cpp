@@ -175,6 +175,17 @@ PathSettingsPage::PathSettingsPage(InstallWizard *wizard)
     tempPathSelect = new QPushButton("...", this);
     connect(tempPathSelect, SIGNAL(pressed()),this, SLOT(selectTempPath()));
 
+    compilerLabel = new QLabel(tr("Compiler type:"));
+    compilerMinGW = new QRadioButton(tr("MinGW"));
+    compilerMSVC = new QRadioButton(tr("MSVC"));
+    compilerUnspecified = new QRadioButton(tr("&unspecified"));
+
+	switch (s.compilerType()) {
+		case Settings::unspecified: compilerUnspecified->setChecked(true); break;
+		case Settings::MinGW: compilerMinGW->setChecked(true); break;
+		case Settings::MSVC: compilerMSVC->setChecked(true); break;
+        default: compilerUnspecified->setChecked(true); break;
+	}
 
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(topLabel, 0, 0, 1, 2);
@@ -185,6 +196,16 @@ PathSettingsPage::PathSettingsPage(InstallWizard *wizard)
     layout->addWidget(tempPathLabel, 3, 0);
     layout->addWidget(tempPathEdit, 3, 1);
     layout->addWidget(tempPathSelect, 3, 2);
+	layout->addWidget(compilerLabel, 4, 0);
+
+	QHBoxLayout *layout2 = new QHBoxLayout;
+    layout2->addWidget(compilerMinGW, 0);
+    layout2->addWidget(compilerMSVC, 1);
+    layout2->addWidget(compilerUnspecified, 2);
+    layout2->addWidget(compilerUnspecified, 2);
+    layout2->addStretch(10);
+    layout->addLayout(layout2, 4,1,1,3);
+
     layout->setRowMinimumHeight(4, 10);
     layout->setRowStretch(6, 1);
     setLayout(layout);
@@ -216,6 +237,14 @@ WizardPage *PathSettingsPage::nextPage()
     Settings &s = Settings::getInstance();
     s.setInstallDir(rootPathEdit->text());
     s.setDownloadDir(tempPathEdit->text());
+
+	if (compilerUnspecified->isChecked())
+		s.setCompilerType(Settings::unspecified);
+	if (compilerMinGW->isChecked())
+		s.setCompilerType(Settings::MinGW);
+	if (compilerMSVC->isChecked())
+		s.setCompilerType(Settings::MSVC);
+
     wizard->proxySettingsPage = new ProxySettingsPage(wizard);
     return wizard->proxySettingsPage;
 }
@@ -393,6 +422,7 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
     connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
     connect(leftTree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(on_leftTree_itemClicked(QTreeWidgetItem *, int)));
     connect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
+    connect(&Settings::getInstance(),SIGNAL(settingsChanged),this,SLOT(slotSettingsChanged));
 }
 
 void PackageSelectorPage::on_leftTree_itemClicked(QTreeWidgetItem *item, int column)
@@ -411,6 +441,12 @@ void PackageSelectorPage::installDirChanged(const QString &dir)
     engine = new InstallerEngineGui(wizard->progressBar,wizard->instProgressBar);
     engine->readGlobalConfig();
     engine->downloadPackageLists();
+    engine->setLeftTreeData(leftTree);
+    engine->setPageSelectorWidgetData(tree);
+}
+
+void PackageSelectorPage::slotSettingsChanged()
+{
     engine->setLeftTreeData(leftTree);
     engine->setPageSelectorWidgetData(tree);
 }
