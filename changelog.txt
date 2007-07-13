@@ -1,16 +1,27 @@
 ChangeLog
 =========
 
+0.7.4
+------
+- installer-gui: - fixed package selection for download/remove and install 
+                 - added compiler type option in install root and combined settings page 
+
 0.7.3
 ------
-- installer-gui: fixed package selection for download/remove and install 
-- installer-gui: added compiler type option in install root and combined settings page 
+- installer-gui: - fixed in use replacement of kdewin-installer-gui   
+                   by installing a versioned installer gui executable 
+                   and a wrapper named kdewin-installer-gui   
+                 - unified top label design, add option to enable QPlastiqueStyle by Peter Kümmel
+                 - added debug printing switchable at runtime
 
 0.7.2
 ------
-- installer-gui: fixed bug displaying some packages twice
-- installer-gui: added package notes suppport in site configuration 
-  using the @pkgnotes <package> <notes> statement
+- installer-gui: - fixed bug displaying some packages twice
+                 - added package notes suppport in site configuration 
+                   using the @pkgnotes <package> <notes> statement
+                 - added paketgroups description taken from package list config notes
+                 - added mingw and msvc group filters
+                 - used shared qt message handler setter
 
 0.7.1
 ------
