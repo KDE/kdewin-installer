@@ -395,16 +395,15 @@ bool Installer::createQtConfigFile()
 
 bool Installer::install(const QString &fileName, const StringHash &pathRelocations)
 {
+    bool ret = false;
     if (fileName.endsWith(".zip"))
     {
-        int ret = unzipFile(m_root, fileName,pathRelocations);
-        if (ret && fileName.startsWith("qt"))
-            createQtConfigFile();
+        ret = unzipFile(m_root, fileName,pathRelocations);
         return ret; 
-    }
+    } else
     if (fileName.endsWith(".7z"))
     {
-        return un7zipFile(m_root, fileName);
+        ret = un7zipFile(m_root, fileName);
     }
 #ifdef Q_WS_WIN
     else // for all other formats use windows assignments
@@ -414,7 +413,12 @@ bool Installer::install(const QString &fileName, const StringHash &pathRelocatio
         return true;
     }
 #endif
-    return false;
+    if (ret) {
+        QFileInfo fi(fileName);
+        if(fi.fileName().startsWith("qt"))
+            createQtConfigFile();
+    }
+    return ret;
 }
 
 #include "installer.moc"
