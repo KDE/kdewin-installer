@@ -142,6 +142,13 @@ int main(int argc, char *argv[])
         args.removeAt(idx);
     }
 
+    // Qt-package needs '-type foo'
+    if(type.isEmpty()) {
+      QString lName = name.toLower();
+      if (lName.startsWith("qt") || lName.startsWith("q++") || lName.startsWith("q.."))
+        printHelp("Please provide \'-type' for qt package");
+    }
+
     if(args.count() > 0)
         printHelp(QString("unknown command line parameter(s): %1").arg(args.join(" ")));
     if(name.isEmpty())

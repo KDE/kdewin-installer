@@ -77,8 +77,10 @@ bool parseQtIncludeFiles(QList<InstallFile> &fileList, const QString &root, cons
     QByteArray content = file.readAll();
     file.close();
     QString dir = QFileInfo(file).absolutePath();
-    if(!content.startsWith("#include"))
+    if(!content.startsWith("#include")) {
+      fileList += InstallFile(f, f);
       continue;
+    }
     int start = content.indexOf('\"');
     int end = content.lastIndexOf('\"');
     if(start == -1 || end == -1)
@@ -200,11 +202,14 @@ bool generateFileList(QList<InstallFile> &fileList, const QString &root, const Q
           generateFileList(fileList, root, fn, filter, excludeList);
        }
        else {
-         QString toAdd = '/' + fn;
-         if(!subdir.startsWith(QLatin1String("./")))
-             toAdd = subdir + toAdd;
+         QString toAdd;
+         if(subdir.isEmpty())
+             toAdd = fn;
          else
-             toAdd = subdir.mid(2) + toAdd;
+         if(subdir.startsWith(QLatin1String("./")))
+             toAdd = subdir.mid(2) + '/' + fn;
+         else
+             toAdd = subdir + '/' + fn;
 
          if(toAdd.endsWith(QLatin1String(".manifest"))) {
            manifestList += toAdd;
