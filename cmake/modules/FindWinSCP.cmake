@@ -41,7 +41,7 @@ if (WIN32)
       endif (NOT WINSCP_FIND_QUIETLY)
     else (WINSCP_FOUND)
       if (WINSCP_FIND_REQUIRED)
-        message(FATAL_ERROR "Could NOT find KDEWIN PAckager")
+        message(FATAL_ERROR "Could NOT find WINSCP")
       endif (WINSCP_FIND_REQUIRED)
     endif (WINSCP_FOUND)
 

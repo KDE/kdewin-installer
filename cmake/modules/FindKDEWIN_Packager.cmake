@@ -69,7 +69,7 @@ if (WIN32)
       endif (NOT KDEWIN_PACKAGER_FIND_QUIETLY)
     else (KDEWIN_PACKAGER_FOUND)
       if (KDEWIN_PACKAGER_FIND_REQUIRED)
-        message(FATAL_ERROR "Could NOT find KDEWIN PAckager")
+        message(FATAL_ERROR "Could NOT find KDEWIN Packager")
       endif (KDEWIN_PACKAGER_FIND_REQUIRED)
     endif (KDEWIN_PACKAGER_FOUND)
 
