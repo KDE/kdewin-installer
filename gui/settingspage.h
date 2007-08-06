@@ -4,6 +4,7 @@
 #include <QDialog>
 
 #include "ui_settingspage.h"
+#include "globalconfig.h"
 
 class SettingsPage : public QDialog
 {
@@ -12,6 +13,7 @@ class SettingsPage : public QDialog
  public:
      SettingsPage(QWidget *parent = 0);
      void init();
+     void setGlobalConfig(GlobalConfig *globalConfig) { m_globalConfig = globalConfig; }
 
  private slots: 
      void accept();
@@ -22,6 +24,8 @@ class SettingsPage : public QDialog
      
  private:
      Ui::SettingsDialog ui;
+     GlobalConfig *m_globalConfig;
+
 };
  
 

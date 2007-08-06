@@ -39,6 +39,7 @@ class QRadioButton;
 class TitlePage;
 class PathSettingsPage;
 class ProxySettingsPage;
+class MirrorSettingsPage;
 class PackageSelectorPage;
 class InstallPage;
 class UninstallPage;
@@ -59,6 +60,7 @@ private:
     TitlePage *titlePage;
     PathSettingsPage *pathSettingsPage;
     ProxySettingsPage *proxySettingsPage;
+    MirrorSettingsPage *mirrorSettingsPage;
     PackageSelectorPage *packageSelectorPage;
     DownloadPage *downloadPage;
     InstallPage *installPage;
@@ -70,6 +72,7 @@ private:
     friend class TitlePage;
     friend class PathSettingsPage;
     friend class ProxySettingsPage;
+    friend class MirrorSettingsPage;
     friend class PackageSelectorPage;
     friend class DownloadPage;
     friend class InstallPage;
@@ -152,6 +155,23 @@ private:
     QLabel    *proxyHostLabel,*proxyPortLabel;
     QLineEdit *proxyPort,*proxyHost;
     QRadioButton *proxyOff,*proxyManual,*proxyIE,*proxyFireFox;
+};
+
+class MirrorSettingsPage : public InstallWizardPage
+{
+    Q_OBJECT
+
+public:
+    MirrorSettingsPage(InstallWizard *wizard);
+
+    void resetPage();
+    WizardPage *nextPage();
+    bool isComplete();
+
+private:
+    QLabel    *topLabel;
+    QLabel    *mirrorLabel;
+    QComboBox *mirrorEdit;
 };
 
 class QTreeWidget;

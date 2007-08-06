@@ -98,6 +98,8 @@ InstallWizard::InstallWizard(QWidget *parent)
 
 void InstallWizard::settingsButtonClicked()
 {
+    settingsPage->setGlobalConfig(engine->globalConfig());
+    settingsPage->init();
     settingsPage->exec();
 }
 
@@ -330,16 +332,57 @@ WizardPage *ProxySettingsPage::nextPage()
         s.setProxy(proxyHost->text(),proxyPort->text());
 
     engine->readGlobalConfig();
-    engine->downloadPackageLists();
-    wizard->packageSelectorPage = new PackageSelectorPage(wizard);
-    wizard->settingsButton->show();
-    Settings::getInstance().setFirstRun(false);
-    return wizard->packageSelectorPage;
+    wizard->mirrorSettingsPage = new MirrorSettingsPage(wizard);
+    return wizard->mirrorSettingsPage;
 }
 
 bool ProxySettingsPage::isComplete()
 {
     return true;
+}
+
+MirrorSettingsPage::MirrorSettingsPage(InstallWizard *wizard)
+        : InstallWizardPage(wizard)
+{
+    Settings &s = Settings::getInstance();
+    topLabel = new QLabel(tr(
+                              "<h1>Select Mirror</h1>"
+                              "<p>Select the download mirror from where you want to download KDE packages.</p>"
+                          ));
+
+    mirrorLabel = new QLabel(tr("&Download Mirror:"));
+    mirrorEdit = new QComboBox;
+    for (QList<GlobalConfig::Mirror*>::iterator p = engine->globalConfig()->mirrors()->begin(); p != engine->globalConfig()->mirrors()->end(); p++)
+        mirrorEdit->addItem((*p)->url);
+
+    if (!s.mirror().isEmpty())
+        mirrorEdit->setEditText(s.mirror());
+
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(topLabel, 0, 0, 1, 2);
+    layout->setRowMinimumHeight(1, 10);
+    layout->addWidget(mirrorLabel, 2, 0);
+    layout->addWidget(mirrorEdit, 2, 1);
+    setLayout(layout);
+}
+void MirrorSettingsPage::resetPage()
+{}
+
+WizardPage *MirrorSettingsPage::nextPage()
+{
+    Settings &s = Settings::getInstance();
+    s.setMirror(mirrorEdit->currentText());
+
+    engine->downloadPackageLists();
+    wizard->packageSelectorPage = new PackageSelectorPage(wizard);
+    wizard->settingsButton->show();
+    s.setFirstRun(false);
+    return wizard->packageSelectorPage;
+}
+
+bool MirrorSettingsPage::isComplete()
+{
+    return (!mirrorEdit->currentText().isEmpty());
 }
 
 PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)

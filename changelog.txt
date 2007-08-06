@@ -1,6 +1,10 @@
 ChangeLog
 =========
 
+0.7.5
+------
+- installer-gui: - added mirror selecting support
+
 0.7.4
 ------
 - installer-gui: - fixed package selection for download/remove and install 

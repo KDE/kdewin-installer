@@ -27,6 +27,7 @@
 #include <QList>
 
 #include "settings.h"
+#include "globalconfig.h"
 
 class PackageList;
 class Downloader;
@@ -47,7 +48,7 @@ class InstallerEngine : public QObject
 public:
     InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
     ~InstallerEngine();
-    void readGlobalConfig();
+    bool readGlobalConfig();
     void createMainPackagelist();
     bool downloadPackageLists();
     void stop();
@@ -60,8 +61,11 @@ public:
         return m_installer;
     }
 
+    GlobalConfig *globalConfig() { return m_globalConfig; }
+
 protected slots:
     void installDirChanged(const QString &newdir);
+    void mirrorChanged(const QString &mirror);
 
 protected:
     QList <PackageList*> m_packageListList;

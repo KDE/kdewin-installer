@@ -1,6 +1,8 @@
 @format 1.1
 ; this format is *prelimary* and may be changed without prior notice
 ; date 20070327
+@mirror http://webdev.cegit.de/snapshots/kde-windows Europe,Germany,Essen
+@mirror http://download.cegit.de/kde-windows Europe,Germany,Osnabrueck
 
 ;------------------------------------------------------
 ; category win32libs
@@ -8,7 +10,7 @@
 @site win32libs
 @notes basic non kde related libraries
 @type apachemodindex
-@url http://82.149.170.66/kde-windows/win32libs/zip/single/
+@url win32libs/zip/single/
 @deps update-mime-database libintl libxml2 iconv
 @deps dbus libxml2
 
@@ -18,7 +20,7 @@
 @site kdesupport
 @notes kde support packages
 @type apachemodindex
-@url http://82.149.170.66/kde-windows/kdesupport/single/
+@url kdesupport/single/
 @deps kdewin qt-mingw
 @deps kdewin qt-msvc
 @deps strigi bzip2 openssl zlib iconv libxml2
@@ -26,18 +28,18 @@
 @package qt-mingw
 @category qt
 @version 4.2.2-20070119
-@url-bin http://82.149.170.66/kde-windows/qt/single/qt-mingw-4.2.2-20070119-bin.zip
-@url-lib http://82.149.170.66/kde-windows/qt/single/qt-mingw-4.2.2-20070119-lib.zip
-@url-doc http://82.149.170.66/kde-windows/qt/single/qt-mingw-4.2.2-20070119-doc.zip
-@url-src http://82.149.170.66/kde-windows/qt/single/qt-mingw-4.2.2-20070119-src.zip
+@url-bin qt/single/qt-mingw-4.2.2-20070119-bin.zip
+@url-lib qt/single/qt-mingw-4.2.2-20070119-lib.zip
+@url-doc qt/single/qt-mingw-4.2.2-20070119-doc.zip
+@url-src qt/single/qt-mingw-4.2.2-20070119-src.zip
 @require dbus
 
 @package qt-msvc
 @category qt
 @version 4.3.0b
-@url-bin http://82.149.170.66/kde-windows/qt/single/qt-msvc-4.3.0b-bin.zip
-@url-lib http://82.149.170.66/kde-windows/qt/single/qt-msvc-4.3.0b-lib.zip
-@url-doc http://82.149.170.66/kde-windows/qt/single/qt-msvc-4.3.0b-doc.zip
+@url-bin qt/single/qt-msvc-4.3.0b-bin.zip
+@url-lib qt/single/qt-msvc-4.3.0b-lib.zip
+@url-doc qt/single/qt-msvc-4.3.0b-doc.zip
 @url-src http://ftp.iasi.roedu.net/mirrors/ftp.trolltech.com/qt/source/qt-win-opensource-src-4.3.0beta.zip qt-msvc-4.3.0b-src.zip
 @require dbus
 ;------------------------------------------------------
@@ -46,7 +48,7 @@
 @site tools
 @notes optional tools
 @type apachemodindex
-@url http://82.149.170.66/kde-windows/gnuwin32/
+@url gnuwin32/
 @deps findutils libintl
 @deps grep pcre
 
@@ -104,14 +106,14 @@
 ; does not work 
 ;@site kde
 ;@type apachemodindex
-;@url http://82.149.170.66/kde-windows/kde/single/
+;@url kde/single/
 ;@deps kdelibs-dependencies-mingw aspell bzip2 expat giflib iconv jpeg libintl libpng libxml2 libxslt openssl pcre tiff zlib dbus kdewin qt-mingw strigi update-mime-database
 ;@deps kdelibs-dependencies-msvc aspell bzip2 expat giflib iconv jpeg libintl libpng libxml2 libxslt openssl pcre tiff zlib dbus kdewin qt-msvc strigi update-mime-database
 
 @package kdelibs-dependencies-mingw 
 @category kde
 @version 3.80.3
-@url-bin http://82.149.170.66/kde-windows/kde/single/kdelibs-dependencies-mingw-3.80.3-bin.zip
+@url-bin kde/single/kdelibs-dependencies-mingw-3.80.3-bin.zip
 @require aspell bzip2 expat giflib iconv jpeg libintl libpng libxml2 libxslt openssl pcre tiff zlib dbus kdewin-mingw qt-mingw strigi update-mime-database
 
 @package kdesupport-mingw
@@ -129,7 +131,7 @@
 @package kdelibs-dependencies-msvc
 @category kde
 @version 3.80.3
-@url-bin http://82.149.170.66/kde-windows/kde/single/kdelibs-dependencies-msvc-3.80.3-bin.zip
+@url-bin kde/single/kdelibs-dependencies-msvc-3.80.3-bin.zip
 @require aspell bzip2 expat giflib iconv jpeg libintl libpng libxml2 libxslt openssl pcre tiff zlib dbus kdewin-msvc qt-msvc strigi update-mime-database
 
 @package kdesupport-msvc

@@ -111,6 +111,18 @@ void Settings::setCompilerType(CompilerType ctype)
     }
 }
 
+QString Settings::mirror() 
+{ 
+    return m_settings.value("mirror", "").toString(); 
+}
+
+void Settings::setMirror(QString &mirror) 
+{ 
+    m_settings.setValue("mirror",mirror); 
+    m_settings.sync(); 
+    emit mirrorChanged(mirror);
+}
+
 bool Settings::showTitlePage()
 {
     return m_settings.value("displayTitlePage").toBool();

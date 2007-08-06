@@ -6,7 +6,7 @@
 
  
 SettingsPage::SettingsPage(QWidget *parent)
-     : QDialog(parent)
+     : QDialog(parent), m_globalConfig(0)
 {
     ui.setupUi(this);
     connect( ui.rootPathSelect,SIGNAL(clicked()),this,SLOT(rootPathSelectClicked()) );
@@ -16,7 +16,7 @@ SettingsPage::SettingsPage(QWidget *parent)
     connect( ui.proxyFireFox,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
     connect( ui.proxyIE,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
     connect( ui.proxyOff,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
-    init();
+//    init();
 }
 
 void SettingsPage::init()
@@ -50,6 +50,30 @@ void SettingsPage::init()
     ui.proxyHost->setText(settings.proxyHost());
     ui.proxyPort->setText(QString("%1").arg(settings.proxyPort()));
     switchProxyFields(true);
+
+    ui.downloadMirror->setEditText(QString("%1").arg(settings.mirror()));
+    if (m_globalConfig && ui.downloadMirror->count() == 0) 
+    {
+        int currentIndex = 0;
+        if (m_globalConfig->mirrors()->size() > 0) 
+        {
+            QList<GlobalConfig::Mirror*>::iterator p = m_globalConfig->mirrors()->begin();
+            for (int i = 0; p != m_globalConfig->mirrors()->end(); p++, i++)
+            {
+                ui.downloadMirror->addItem((*p)->url);
+                if (settings.mirror() == (*p)->url)
+                    currentIndex = i;
+            }
+        }
+        else if (!settings.mirror().isEmpty())
+            ui.downloadMirror->addItem(settings.mirror());
+              
+        ui.downloadMirror->setCurrentIndex(currentIndex);
+    }
+    if (ui.downloadMirror->count() < 2)
+    {
+        ui.downloadMirror->setEnabled(false);
+    }
 }
 
 void SettingsPage::accept()
@@ -82,6 +106,10 @@ void SettingsPage::accept()
 		settings.setCompilerType(Settings::MinGW);
 	if (ui.compilerMSVC->isChecked())
 		settings.setCompilerType(Settings::MSVC);
+
+    if (!ui.downloadMirror->currentText().isEmpty() 
+            && settings.mirror() != ui.downloadMirror->currentText())
+        settings.setMirror(ui.downloadMirror->currentText());
 }
 
 void SettingsPage::reject()
