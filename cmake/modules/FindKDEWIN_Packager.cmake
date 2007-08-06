@@ -56,6 +56,7 @@ if (WIN32)
         find_program(KDEWIN_PACKAGER_EXECUTABLE kdewin-packager
             PATHS
                 ${KDEWIN_PACKAGER_DIR}/bin
+                ${KDEWIN_PACKAGER_DIR}
         )
         
        set(KDEWIN_PACKAGER_FOUND TRUE)
