@@ -66,16 +66,28 @@ void PackageList::addPackage(const Package &package)
     m_packageList.append(new Package(package));
 }
 
-Package *PackageList::getPackage(const QString &pkgName, const QByteArray &version)
+Package *PackageList::getPackage(const QString &name, const QByteArray &version)
 {
 #ifdef DEBUG
     qDebug() << __FUNCTION__;
 #endif
-
+    QString pkgName = name;
+    QString pkgVersion = version;
+    // name may have version info included, split it 
+    if (version.isEmpty()) 
+    {
+        QString _pkgName;
+        QString _pkgVersion;
+        if (PackageInfo::fromString(name, _pkgName, _pkgVersion) && !_pkgVersion.isEmpty())
+        {
+            pkgName = _pkgName;
+            pkgVersion = _pkgVersion; 
+        }
+    }
     QList<Package*>::iterator it = m_packageList.begin();
     for ( ; it != m_packageList.end(); ++it)
         if ((*it)->name() == pkgName) {
-            if(!version.isEmpty() && (*it)->version() != version)
+            if(!pkgVersion.isEmpty() && (*it)->version() != pkgVersion)
                 continue;
             return (*it);
         }

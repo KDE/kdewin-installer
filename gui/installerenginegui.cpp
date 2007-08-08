@@ -543,12 +543,20 @@ void InstallerEngineGui::setDependencies(Package *pkg, Package::Type type)
         //setDependencies(depPkg,type);
 
         // find item in display list
-        QList<QTreeWidgetItem *> items = tree->findItems(deps.at(i),Qt::MatchFixedString | Qt::MatchRecursive);
-        qDebug() << __FUNCTION__ << "found " << items.size() << "displayed items";
+        QList<QTreeWidgetItem *> items = tree->findItems(depPkg->name(),Qt::MatchFixedString | Qt::MatchRecursive);
+        if (Settings::hasDebug("InstallerEngineGui"))
+            qDebug() << __FUNCTION__ << "found " << items.size() << "displayed items";
         for (int j = 0; j < items.size(); ++j) 
         {
-            qDebug() << items.at(j);
             QTreeWidgetItem * depItem = static_cast<QTreeWidgetItem*>(items[j]);
+            if (depItem->text(VersionColumn) != depPkg->version())
+            {
+                if (Settings::hasDebug("InstallerEngineGui"))
+                    qDebug() << __FUNCTION__  << depItem->text(NameColumn) << depItem->text(VersionColumn) << "ignored because of version mismatch, requested" << dep;
+                continue;
+            }
+            if (Settings::hasDebug("InstallerEngineGui"))
+                qDebug() << __FUNCTION__ << depItem->text(NameColumn) << depItem->text(VersionColumn) << "selected as dependency";
             /// the dependency is only for bin package and one way to switch on
             if (m_installMode == Developer)
             {
