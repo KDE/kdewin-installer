@@ -350,7 +350,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                     } else {
                         pkg->setNotes(QString::fromUtf8(ba));
                     }
-                } else {
+                } else if (pkgFormat == "zip") {
                     if(!pkg) {
                         Package p;
                         p.setVersion(pkgVersion);
@@ -370,6 +370,9 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                         if (m_curSite)
                             pkg->addDeps(m_curSite->getDependencies(pkgName));
                     }
+                }
+                else {
+                    qDebug() << __FUNCTION__ << "unsupported package format" << fileName; 
                 }
             }
         }
