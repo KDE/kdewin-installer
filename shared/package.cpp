@@ -548,6 +548,34 @@ bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QStrin
     return true;
 }
 
+bool PackageInfo::fromString(const QString &name, QString &pkgName, QString &pkgVersion)
+{
+    QStringList parts = name.split('-');
+    // <name>-<version>
+    if (parts.size() == 2 && parts[1][0].isNumber())
+    {
+        pkgName = parts[0];
+        pkgVersion = parts[1];
+        return true;
+    }
+    // <name>-<version>-<patchlevel>
+    else if (parts.size() == 3 && parts[1][0].isNumber())
+    {
+        pkgName = parts[0];
+        pkgVersion = parts[1] + '-' + parts[2];
+        return true;
+    }
+    // <name1>-<name2>-<version>
+    else if (parts.size() == 3 && parts[2][0].isNumber())
+    {
+        pkgName = parts[0] + '-' + parts[1];
+        pkgVersion = parts[2];
+        return true;
+    }
+    else
+        return false;
+}
+
 // returns version file name of package item e.g. xyz-1.2.3-bin.ver
 QString PackageInfo::versionFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type)
 {

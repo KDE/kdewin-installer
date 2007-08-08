@@ -156,8 +156,13 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(Package::Types);
 class PackageInfo 
 {
 public:
+    /// separate package name, version, type and file format from a filename
     static bool fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat=QString());
+    /// separate package name and version from a string 
+    static bool fromString(const QString &astring, QString &pkgName, QString &pkgVersion);
+    /// generate manifest file name 
     static QString manifestFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type);
+    /// generate version file name 
     static QString versionFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type);
 };
 
