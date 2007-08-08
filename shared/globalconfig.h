@@ -29,10 +29,18 @@ class Downloader;
 
 class GlobalConfig {
     public:
-        GlobalConfig(const QString &url, Downloader &downloader);
+        typedef struct {
+            QString url;
+            QString location;
+        } Mirror;
+
+        GlobalConfig();
         ~GlobalConfig();
+        bool download(const QString &baseURL, Downloader &downloader);
+
         QList<Site*> *sites()  { return &m_sites;   } 
         QList<Package*> *packages() { return &m_packages; }
+        QList<Mirror*> *mirrors() { return &m_mirrors; }
         QHash<QString, QString> *news() { return &m_news; }
 
         void dump(const QString &title=QString());
@@ -43,9 +51,11 @@ class GlobalConfig {
 
     private:
         QList <Site*> m_sites; 
-        QList <Package *> m_packages;
+        QList <Package*> m_packages;
         // package news <key,value> where key = <name>-<version>
         QHash <QString,QString> m_news;
+        QList <Mirror*> m_mirrors;
+        QString m_baseURL;
 };
 
 #endif

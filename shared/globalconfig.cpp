@@ -28,9 +28,15 @@
 #include <QBuffer>
 #include <QMessageBox>
 
-GlobalConfig::GlobalConfig(const QString &url, Downloader &downloader)
+GlobalConfig::GlobalConfig()
+{
+}
+
+bool GlobalConfig::download(const QString &baseURL,Downloader &downloader)
 {
     bool ret; 
+    m_baseURL = baseURL;
+
     // FIXME: place config files into package download path
     QFileInfo cfr("config-remote.txt");
     qDebug() << "Check if a copy of the remote config file is available at" << cfr.absoluteFilePath() << (cfr.exists() ? "... found" : "... not found");
@@ -38,16 +44,22 @@ GlobalConfig::GlobalConfig(const QString &url, Downloader &downloader)
     {
         qDebug() << "skip downloading and parse the copy of the remote config file for parsing";
         ret = parseFromFile("config-remote.txt");
+        qDebug() << "parsing remote config file ... " << (ret == true ? "okay" : "failure") ;
+        if (!ret)
+            return ret;
     }
     else 
     {
         QFileInfo cfi("config.txt");
-        qDebug() << "download remote config file to" << cfi.absoluteFilePath();
-        // FIXME uses version related config file to have more room for format changes
-        downloader.start(url,cfi.fileName());
+        ret = downloader.start(baseURL + "/installer/config.txt",cfi.fileName());
+        qDebug() << "download remote config file to" << cfi.absoluteFilePath() << "..." << (ret == true ? "okay" : "failure") ;
+        if (!ret)
+            return false;
     
         ret = parseFromFile("config.txt");
         qDebug() << "parsing remote config file ... " << (ret == true ? "okay" : "failure") ;
+        if (!ret)
+            return ret;
     }
     QFileInfo fi("config-local.txt");
     qDebug() << "Check if a local config file is available at" << fi.absoluteFilePath() << (fi.exists() ? "... found" : "... not found");
@@ -56,6 +68,7 @@ GlobalConfig::GlobalConfig(const QString &url, Downloader &downloader)
         ret = parseFromFile(fi.absoluteFilePath());
         qDebug() << "parse local config file ... " << (ret == true ? "okay" : "failure") ;
     }
+    return ret; 
 }
 
 GlobalConfig::~GlobalConfig()
@@ -101,6 +114,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
     bool inPackage = false;
     Site *site;
     Package *pkg;
+    Mirror *mirror;
 
     while (!ioDev->atEnd())
     {
@@ -130,6 +144,13 @@ bool GlobalConfig::parse(QIODevice *ioDev)
 
             if (cmd[0] == "@format")
                 ;
+            else if (cmd[0] == "@mirror")
+            {
+                mirror = new Mirror;
+                mirror->url = cmd[1]; 
+                mirror->location = cmd[2]; 
+                m_mirrors.append(mirror);
+            }
             else if (cmd[0] == "@news")
             {
                 QString name = cmd[1]; 
@@ -145,26 +166,38 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     pkg->setVersion(cmd[1]);
                 else if(cmd[0] == "@url-bin")
                 {    
+                    QString url = cmd[1];
+                    if (!url.startsWith("http") && !url.startsWith("ftp"))
+                        url.prepend(m_baseURL + "/");
                     Package::PackageItem item;
-                    if (item.set(cmd[1],col2,Package::BIN))
+                    if (item.set(url,col2,Package::BIN))
                         pkg->add(item);
                 }
                 else if(cmd[0] == "@url-lib")
                 {    
+                    QString url = cmd[1];
+                    if (!url.startsWith("http") && !url.startsWith("ftp"))
+                        url.prepend(m_baseURL + "/");
                     Package::PackageItem item;
-                    if (item.set(cmd[1],col2,Package::LIB))
+                    if (item.set(url,col2,Package::LIB))
                         pkg->add(item);
                 }
                 else if(cmd[0] == "@url-doc")
                 {    
+                    QString url = cmd[1];
+                    if (!url.startsWith("http") && !url.startsWith("ftp"))
+                        url.prepend(m_baseURL + "/");
                     Package::PackageItem item;
-                    if (item.set(cmd[1],col2,Package::DOC))
+                    if (item.set(url,col2,Package::DOC))
                         pkg->add(item);
                 }
                 else if(cmd[0] == "@url-src")
                 {    
+                    QString url = cmd[1];
+                    if (!url.startsWith("http") && !url.startsWith("ftp"))
+                        url.prepend(m_baseURL + "/");
                     Package::PackageItem item;
-                    if (item.set(cmd[1],col2,Package::SRC))
+                    if (item.set(url,col2,Package::SRC))
                         pkg->add(item);
                 }
                 else if(cmd[0] == "@require")
@@ -184,7 +217,12 @@ bool GlobalConfig::parse(QIODevice *ioDev)
             else if (inSite)
             {
                 if(cmd[0] == "@siteurl" || cmd[0] == "@url")
-                    site->setURL(cmd[1]);
+                {
+                    QString url = cmd[1];
+                    if (!url.startsWith("http") && !url.startsWith("ftp"))
+                        url.prepend(m_baseURL + "/");
+                    site->setURL(url);
+                }
                 else if(cmd[0] == "@sitetype" || cmd[0] == "@type")
                     site->setType(cmd[1] == "apachemodindex" ? Site::ApacheModIndex : Site::SourceForge );
                 else if(cmd[0] == "@mirrorurl")
