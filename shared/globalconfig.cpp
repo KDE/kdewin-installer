@@ -38,14 +38,14 @@ bool GlobalConfig::download(const QString &baseURL,Downloader &downloader)
     m_baseURL = baseURL;
 
     // FIXME: place config files into package download path
-    QFileInfo cfr("config-remote.txt");
+    QFileInfo cfr(Settings::getInstance().downloadDir()+"/config-remote.txt");
     if (Settings::hasDebug("GlobalConfig"))
         qDebug() << "Check if a copy of the remote config file is available at" << cfr.absoluteFilePath() << (cfr.exists() ? "... found" : "... not found");
     if (cfr.exists())
     {
         if (Settings::hasDebug("GlobalConfig"))
             qDebug() << "skip downloading";
-        ret = parseFromFile("config-remote.txt");
+        ret = parseFromFile(Settings::getInstance().downloadDir()+"/config-remote.txt");
         if (Settings::hasDebug("GlobalConfig"))
             qDebug() << "parsing remote config file ... " << (ret == true ? "okay" : "failure") ;
         if (!ret)
@@ -53,20 +53,20 @@ bool GlobalConfig::download(const QString &baseURL,Downloader &downloader)
     }
     else 
     {
-        QFileInfo cfi("config.txt");
-        ret = downloader.start(baseURL + "/installer/config.txt",cfi.fileName());
+        QFileInfo cfi(Settings::getInstance().downloadDir()+"/config.txt");
+        ret = downloader.start(baseURL + "/installer/config.txt",cfi.absoluteFilePath());
         if (Settings::hasDebug("GlobalConfig"))
             qDebug() << "download remote config file to" << cfi.absoluteFilePath() << "..." << (ret == true ? "okay" : "failure") ;
         if (!ret)
             return false;
     
-        ret = parseFromFile("config.txt");
+        ret = parseFromFile(Settings::getInstance().downloadDir()+"/config.txt");
         if (Settings::hasDebug("GlobalConfig"))
             qDebug() << "parsing remote config file ... " << (ret == true ? "okay" : "failure") ;
         if (!ret)
             return ret;
     }
-    QFileInfo fi("config-local.txt");
+    QFileInfo fi(Settings::getInstance().downloadDir()+"/config-local.txt");
     if (Settings::hasDebug("GlobalConfig"))
         qDebug() << "Check if a local config file is available at" << fi.absoluteFilePath() << (fi.exists() ? "... found" : "... not found");
     if (fi.exists()) 
