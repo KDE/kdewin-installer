@@ -285,11 +285,11 @@ bool Settings::getProxySettings(const QString &url, QString &host, int &port)
 */
 bool Settings::hasDebug(const QString area)
 {
-	Settings &s = Settings::getInstance();
-	return area.isEmpty() && !s.debug().isEmpty()
-		|| !area.isEmpty() && 
-			(s.debug().toLower() == "all" 
-			|| s.debug().toLower().contains(area.toLower()));
+    Settings &s = Settings::getInstance();
+    return area.isEmpty() && !s.debug().isEmpty()
+        || !area.isEmpty() && 
+            (s.debug().toLower() == "all" 
+            || s.debug().toLower().contains(area.toLower()));
 }
 
 

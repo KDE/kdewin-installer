@@ -533,9 +533,10 @@ void InstallerEngineGui::setDependencies(Package *pkg, Package::Type type)
 {
     const QStringList &deps = pkg->deps();
 
-    qDebug() << deps.join(" ");    
+    if (Settings::hasDebug("InstallerEngineGui"))
+        qDebug() << __FUNCTION__ << "found dependencies" << deps;
     for (int i = 0; i < deps.size(); ++i)
-    {  
+    {
         QString dep = deps.at(i);
         Package *depPkg = getPackageByName(dep);
         if (!depPkg)

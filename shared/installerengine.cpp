@@ -193,7 +193,7 @@ PackageList *InstallerEngine::getPackageListByName(const QString &name)
 
 Package *InstallerEngine::getPackageByName(const QString &name,const QString &version)
 {
-      Package *pkg;
+    Package *pkg;
     QList <PackageList *>::iterator k;
     for (k = m_packageListList.begin(); k != m_packageListList.end(); ++k)
     {

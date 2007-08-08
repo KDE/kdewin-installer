@@ -98,9 +98,9 @@ public:
     // sync database 
     void sync();
 
-	// static methods
+    // static methods
     static Settings &getInstance();
-	static bool hasDebug(const QString area="");
+    static bool hasDebug(const QString area="");
 
 Q_SIGNALS:
     void installDirChanged(const QString &newDir);
@@ -114,7 +114,7 @@ private:
     QSettings m_settings;
     bool getIEProxySettings(const QString &url, QString &host, int &port);
     bool getFireFoxProxySettings(const QString &url, QString &host, int &port);
-	QString debug(void) { return m_settings.value("debug", "").toString(); }
+    QString debug(void) { return m_settings.value("debug", "").toString(); }
 };
 
 

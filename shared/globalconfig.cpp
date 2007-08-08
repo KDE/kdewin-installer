@@ -39,12 +39,15 @@ bool GlobalConfig::download(const QString &baseURL,Downloader &downloader)
 
     // FIXME: place config files into package download path
     QFileInfo cfr("config-remote.txt");
-    qDebug() << "Check if a copy of the remote config file is available at" << cfr.absoluteFilePath() << (cfr.exists() ? "... found" : "... not found");
+    if (Settings::hasDebug("GlobalConfig"))
+        qDebug() << "Check if a copy of the remote config file is available at" << cfr.absoluteFilePath() << (cfr.exists() ? "... found" : "... not found");
     if (cfr.exists())
     {
-        qDebug() << "skip downloading and parse the copy of the remote config file for parsing";
+        if (Settings::hasDebug("GlobalConfig"))
+            qDebug() << "skip downloading";
         ret = parseFromFile("config-remote.txt");
-        qDebug() << "parsing remote config file ... " << (ret == true ? "okay" : "failure") ;
+        if (Settings::hasDebug("GlobalConfig"))
+            qDebug() << "parsing remote config file ... " << (ret == true ? "okay" : "failure") ;
         if (!ret)
             return ret;
     }
@@ -52,21 +55,25 @@ bool GlobalConfig::download(const QString &baseURL,Downloader &downloader)
     {
         QFileInfo cfi("config.txt");
         ret = downloader.start(baseURL + "/installer/config.txt",cfi.fileName());
-        qDebug() << "download remote config file to" << cfi.absoluteFilePath() << "..." << (ret == true ? "okay" : "failure") ;
+        if (Settings::hasDebug("GlobalConfig"))
+            qDebug() << "download remote config file to" << cfi.absoluteFilePath() << "..." << (ret == true ? "okay" : "failure") ;
         if (!ret)
             return false;
     
         ret = parseFromFile("config.txt");
-        qDebug() << "parsing remote config file ... " << (ret == true ? "okay" : "failure") ;
+        if (Settings::hasDebug("GlobalConfig"))
+            qDebug() << "parsing remote config file ... " << (ret == true ? "okay" : "failure") ;
         if (!ret)
             return ret;
     }
     QFileInfo fi("config-local.txt");
-    qDebug() << "Check if a local config file is available at" << fi.absoluteFilePath() << (fi.exists() ? "... found" : "... not found");
+    if (Settings::hasDebug("GlobalConfig"))
+        qDebug() << "Check if a local config file is available at" << fi.absoluteFilePath() << (fi.exists() ? "... found" : "... not found");
     if (fi.exists()) 
     {
         ret = parseFromFile(fi.absoluteFilePath());
-        qDebug() << "parse local config file ... " << (ret == true ? "okay" : "failure") ;
+        if (Settings::hasDebug("GlobalConfig"))
+            qDebug() << "parse local config file ... " << (ret == true ? "okay" : "failure") ;
     }
     return ret; 
 }
@@ -88,6 +95,9 @@ bool GlobalConfig::parseFromFile(const QString &_fileName)
     {
 #ifdef USE_GUI
         QMessageBox::warning(NULL, QString("File not found"), QString("Can't find %1").arg(fileName));
+#else
+        if (Settings::hasDebug("GlobalConfig"))
+            qDebug() << __FUNCTION__ << "file not found " << fileName;
 #endif
 
         return false;
@@ -125,7 +135,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
         {
             if (inPackage)
             {
-                if (Settings::hasDebug("globalconfig"))
+                if (Settings::hasDebug("GlobalConfig"))
                     pkg->dump(__FUNCTION__);
                 inPackage=false;
             }
