@@ -745,8 +745,8 @@ bool InstallerEngineGui::installPackages(QTreeWidget *tree,const QString &_categ
             Package *pkg = *i;
             if (!pkg)
                 continue;
-			if (Settings::hasDebug("InstallerEngineGui"))
-				pkg->dump("installPackages");
+            if (Settings::hasDebug("InstallerEngineGui"))
+                pkg->dump("installPackages");
             bool all = false;//isMarkedForInstall(pkg,Package::ALL);
             if (all || isMarkedForInstall(pkg,Package::BIN))
                 pkg->installItem(m_installer, Package::BIN);
@@ -756,6 +756,7 @@ bool InstallerEngineGui::installPackages(QTreeWidget *tree,const QString &_categ
                 pkg->installItem(m_installer, Package::DOC);
             if (all || isMarkedForInstall(pkg,Package::SRC))
                 pkg->installItem(m_installer, Package::SRC);
+            // @TODO: where to handle desktop icons creating
         }
     }
     return true;

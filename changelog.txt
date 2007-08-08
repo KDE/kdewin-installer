@@ -1,6 +1,13 @@
 ChangeLog
 =========
 
+recent
+------
+- installer-gui: - added simple versioned dependency support
+                 - added more debug output in GlobalConfig 
+                 - download to and read config files from the package download directory 
+                 - only support zip archive format for apachemodindex web site scanner
+                
 0.7.5
 ------
 - installer-gui: - added mirror selecting support
