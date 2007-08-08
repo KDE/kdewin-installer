@@ -52,7 +52,10 @@ bool createStartMenuEntries(const QString &dir, const QString &category=QString(
 bool removeStartMenuEntries(const QString &dir, const QString &category=QString());
 
 typedef enum RegKey { hKEY_CURRENT_USER, hKEY_LOCAL_MACHINE, hKEY_CLASSES_ROOT };
-QVariant getWin32RegistryValue(RegKey key, const QString& subKey, const QString& item, bool *ok = false);
+typedef enum RegType { qt_unknown = -1, qt_String, qt_ExpandedString, qt_DWORD, qt_BINARY, qt_MultiString };
+QVariant getWin32RegistryValue(RegKey akey, const QString& subKey, const QString& item, bool *ok = false);
+bool setWin32RegistryValue(const RegKey& akey, const QString& subKey, const QString& item, const QVariant& value, RegType pqvType = qt_unknown);
+bool delWin32RegistryValue(const RegKey& akey, const QString& subKey);
 
 void setMessageHandler();
 
