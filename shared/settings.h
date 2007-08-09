@@ -46,7 +46,7 @@ public:
 
     // download mirror settings  
     QString mirror();
-    void setMirror(QString &mirror);
+    void setMirror(const QString &mirror);
  
     // show title page
     bool showTitlePage();

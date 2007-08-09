@@ -116,9 +116,9 @@ QString Settings::mirror()
     return m_settings.value("mirror", "").toString(); 
 }
 
-void Settings::setMirror(QString &mirror) 
+void Settings::setMirror(const QString &mirror) 
 { 
-    m_settings.setValue("mirror",mirror); 
+    m_settings.setValue("mirror", mirror); 
     m_settings.sync(); 
     emit mirrorChanged(mirror);
 }
