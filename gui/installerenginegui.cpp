@@ -207,10 +207,11 @@ static void setState(QTreeWidgetItem &item, const Package *pkg, int column, acti
             {
                 case _Nothing:  
                     if (pkg->isInstalled(type) || 
-                        (type == Package::ALL 
-                         && (!pkg->hasType(Package::BIN) || pkg->hasType(Package::BIN) && pkg->isInstalled(Package::BIN)) 
-                         && (!pkg->hasType(Package::LIB) || pkg->hasType(Package::LIB) && pkg->isInstalled(Package::LIB)) 
-                         && (!pkg->hasType(Package::DOC) || pkg->hasType(Package::DOC) && pkg->isInstalled(Package::DOC))))
+                       (type == Package::ALL &&
+                       (!pkg->hasType(Package::BIN) || pkg->isInstalled(Package::BIN)) &&
+                       (!pkg->hasType(Package::LIB) || pkg->isInstalled(Package::LIB)) &&
+                       (!pkg->hasType(Package::DOC) || pkg->isInstalled(Package::DOC)) &&
+                       (pkg->hasType(Package::BIN) || pkg->hasType(Package::LIB) || pkg->hasType(Package::DOC))))
                     { 
                         setIcon(item,type,_remove);
                         packageStates.setState(pkg->name(),pkg->version(),type,_Remove);
