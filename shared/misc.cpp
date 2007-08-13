@@ -25,6 +25,7 @@
 #include <windowsx.h>
 #include <objbase.h>
 #include <shlobj.h>
+#include <shlwapi.h>
 #include <initguid.h>
 
 #include <QDebug>
@@ -568,6 +569,7 @@ bool setWin32RegistryValue(const RegKey& akey, const QString& subKey, const QStr
         ('\' delimiter must be used)
  --SE
 */
+
 bool delWin32RegistryValue(const RegKey& akey, const QString& subKey)
 {
     HKEY key;
@@ -619,7 +621,7 @@ bool delWin32RegistryValue(const RegKey& akey, const QString& subKey)
                     return false;
                 }
                 keyName.resize(keyLength);
-                if(ERROR_SUCCESS != RegDeleteKeyW(hKey, WIN32_CAST_CHAR keyName.utf16())) {
+                if(ERROR_SUCCESS != SHDeleteKeyW(hKey, WIN32_CAST_CHAR keyName.utf16())) {
                     qDebug() << "Could not delete Key";
                     return false;
                 };

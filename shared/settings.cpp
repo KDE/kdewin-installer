@@ -29,6 +29,7 @@
 Settings::Settings()
  : m_settings(QSettings::IniFormat, QSettings::UserScope, "KDE", "Installer")
 {
+    setWin32RegistryValue(hKEY_LOCAL_MACHINE, "SOFTWARE\\KDE\\KDETESTING\\Installer", QString("InstallerTest"), QString("This is an Installer Test"));
 #ifdef DEBUG
     qDebug() << "installDir:" << installDir();
     qDebug() << "downloadDir:" << downloadDir();
@@ -121,6 +122,24 @@ void Settings::setMirror(const QString &mirror)
     m_settings.setValue("mirror", mirror); 
     m_settings.sync(); 
     emit mirrorChanged(mirror);
+}
+
+QStringList Settings::localMirrors()
+{
+    return m_settings.value("localMirrors").toStringList(); 
+}
+
+void Settings::addLocalMirror(const QString &locMirror)
+{
+    m_settings.setValue("localMirrors", m_settings.value("localMirrors").toStringList() << locMirror);
+    m_settings.sync();
+}
+
+void Settings::setLocalMirrors(const QStringList &locMirrors) 
+{
+    m_settings.setValue("localMirrors", locMirrors);
+    m_settings.sync(); 
+//    emit mirrorChanged(mirror);
 }
 
 bool Settings::showTitlePage()

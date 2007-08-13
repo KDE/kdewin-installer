@@ -1,5 +1,6 @@
 #include <QtDebug>
 #include <QFileDialog>
+#include <QInputDialog>
 
 #include "settings.h"
 #include "settingspage.h"
@@ -16,6 +17,7 @@ SettingsPage::SettingsPage(QWidget *parent)
     connect( ui.proxyFireFox,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
     connect( ui.proxyIE,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
     connect( ui.proxyOff,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
+    mirrorList = new QStringList;
 //    init();
 }
 
@@ -52,6 +54,7 @@ void SettingsPage::init()
     switchProxyFields(true);
 
     ui.downloadMirror->setEditText(QString("%1").arg(settings.mirror()));
+
     if (m_globalConfig && ui.downloadMirror->count() == 0) 
     {
         int currentIndex = 0;
@@ -60,19 +63,17 @@ void SettingsPage::init()
             QList<GlobalConfig::Mirror*>::iterator p = m_globalConfig->mirrors()->begin();
             for (int i = 0; p != m_globalConfig->mirrors()->end(); p++, i++)
             {
-                ui.downloadMirror->addItem((*p)->url);
+                *mirrorList << ((*p)->url);
                 if (settings.mirror() == (*p)->url)
                     currentIndex = i;
             }
         }
         else if (!settings.mirror().isEmpty())
-            ui.downloadMirror->addItem(settings.mirror());
-              
-        ui.downloadMirror->setCurrentIndex(currentIndex);
-    }
-    if (ui.downloadMirror->count() < 2)
-    {
-        ui.downloadMirror->setEnabled(false);
+            *mirrorList << settings.mirror();
+
+        *mirrorList << settings.localMirrors();
+
+        rebuildMirrorList(0);
     }
 }
 
@@ -116,6 +117,33 @@ void SettingsPage::reject()
 {
     hide();
     init(); // reinit page to restore old settings
+}
+
+void SettingsPage::addNewMirror(int index)
+{
+	if(index == ui.downloadMirror->count() - 1)
+	{
+		bool ok;
+	    QString text = QInputDialog::getText(this, tr("Add a new Mirror"),
+	                                         tr("Mirror address:"), QLineEdit::Normal,
+	                                         QString("http://"), &ok);
+        Settings &settings = Settings::getInstance();
+        if (ok && !text.isEmpty()) {
+            *mirrorList << text;
+            settings.addLocalMirror(text);
+        }
+		rebuildMirrorList(ui.downloadMirror->count() - 1);
+	}
+}
+
+void SettingsPage::rebuildMirrorList(int index)
+{
+	disconnect(ui.downloadMirror, SIGNAL(currentIndexChanged(int)), 0, 0);
+	ui.downloadMirror->clear();
+	ui.downloadMirror->addItems(*mirrorList);
+	ui.downloadMirror->addItem("...Add Mirror...", 0);
+	ui.downloadMirror->setCurrentIndex(index);
+	connect(ui.downloadMirror, SIGNAL(currentIndexChanged(int)), this, SLOT(addNewMirror(int)));
 }
 
 void SettingsPage::switchProxyFields(bool checked)

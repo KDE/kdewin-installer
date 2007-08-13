@@ -172,6 +172,10 @@ private:
     QLabel    *topLabel;
     QLabel    *mirrorLabel;
     QComboBox *mirrorEdit;
+    QStringList *mirrorList;
+    void rebuildMirrorList(int index);
+private slots:
+    void addNewMirror(int index);
 };
 
 class QTreeWidget;

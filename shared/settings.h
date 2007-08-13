@@ -47,7 +47,12 @@ public:
     // download mirror settings  
     QString mirror();
     void setMirror(const QString &mirror);
- 
+
+    // additional download mirrors
+    QStringList localMirrors();
+    void addLocalMirror(const QString &locMirror);
+    void setLocalMirrors(const QStringList& locMirrors);
+
     // show title page
     bool showTitlePage();
     void setShowTitlePage(bool bShow);

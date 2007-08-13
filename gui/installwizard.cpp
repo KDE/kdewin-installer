@@ -34,6 +34,7 @@
 #include <QSplitter>
 #include <QGridLayout>
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QApplication>
 #include <QTextEdit>
 
@@ -352,8 +353,12 @@ MirrorSettingsPage::MirrorSettingsPage(InstallWizard *wizard)
 
     mirrorLabel = new QLabel(tr("&Download Mirror:"));
     mirrorEdit = new QComboBox;
-    for (QList<GlobalConfig::Mirror*>::iterator p = engine->globalConfig()->mirrors()->begin(); p != engine->globalConfig()->mirrors()->end(); p++)
-        mirrorEdit->addItem((*p)->url);
+    mirrorList = new QStringList;
+    for (QList<GlobalConfig::Mirror*>::iterator p = engine->globalConfig()->mirrors()->begin(); p != engine->globalConfig()->mirrors()->end(); p++) {
+//        mirrorEdit->addItem((*p)->url);
+        *mirrorList << QString((*p)->url);
+    }
+    rebuildMirrorList(0);
 
     if (!s.mirror().isEmpty())
         mirrorEdit->setEditText(s.mirror());
@@ -365,6 +370,7 @@ MirrorSettingsPage::MirrorSettingsPage(InstallWizard *wizard)
     layout->addWidget(mirrorEdit, 2, 1);
     setLayout(layout);
 }
+
 void MirrorSettingsPage::resetPage()
 {}
 
@@ -383,6 +389,29 @@ WizardPage *MirrorSettingsPage::nextPage()
 bool MirrorSettingsPage::isComplete()
 {
     return (!mirrorEdit->currentText().isEmpty());
+}
+
+void MirrorSettingsPage::addNewMirror(int index)
+{
+	if(index == mirrorEdit->count() - 1)
+	{
+		bool ok;
+	    QString text = QInputDialog::getText(this, tr("Add a new Mirror"),
+	                                         tr("Mirror address:"), QLineEdit::Normal,
+	                                         QString("http://"), &ok);
+	    if (ok && !text.isEmpty()) *mirrorList << text;
+		rebuildMirrorList(mirrorEdit->count() - 1);
+	}
+}
+
+void MirrorSettingsPage::rebuildMirrorList(int index)
+{
+	disconnect(mirrorEdit, SIGNAL(currentIndexChanged(int)), 0, 0);
+	mirrorEdit->clear();
+	mirrorEdit->addItems(*mirrorList);
+	mirrorEdit->addItem("...Add Mirror...", 0);
+	mirrorEdit->setCurrentIndex(index);
+	connect(mirrorEdit, SIGNAL(currentIndexChanged(int)), this, SLOT(addNewMirror(int)));
 }
 
 PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)

@@ -8,23 +8,26 @@
 
 class SettingsPage : public QDialog
 {
-     Q_OBJECT
+    Q_OBJECT
 
- public:
-     SettingsPage(QWidget *parent = 0);
-     void init();
-     void setGlobalConfig(GlobalConfig *globalConfig) { m_globalConfig = globalConfig; }
+public:
+    SettingsPage(QWidget *parent = 0);
+    void init();
+    void setGlobalConfig(GlobalConfig *globalConfig) { m_globalConfig = globalConfig; }
 
- private slots: 
-     void accept();
-     void reject();
-     void rootPathSelectClicked();
-     void tempPathSelectClicked();
-     void switchProxyFields(bool checked);
+private slots: 
+    void accept();
+    void reject();
+    void rootPathSelectClicked();
+    void tempPathSelectClicked();
+    void switchProxyFields(bool checked);
+    void addNewMirror(int index);
      
- private:
-     Ui::SettingsDialog ui;
-     GlobalConfig *m_globalConfig;
+private:
+    Ui::SettingsDialog ui;
+    GlobalConfig *m_globalConfig;
+    QStringList *mirrorList;
+    void rebuildMirrorList(int index);
 
 };
  
