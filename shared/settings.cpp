@@ -29,7 +29,6 @@
 Settings::Settings()
  : m_settings(QSettings::IniFormat, QSettings::UserScope, "KDE", "Installer")
 {
-    setWin32RegistryValue(hKEY_LOCAL_MACHINE, "SOFTWARE\\KDE\\KDETESTING\\Installer", QString("InstallerTest"), QString("This is an Installer Test"));
 #ifdef DEBUG
     qDebug() << "installDir:" << installDir();
     qDebug() << "downloadDir:" << downloadDir();
