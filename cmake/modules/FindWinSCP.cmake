@@ -1,4 +1,3 @@
-#
 # WINSCP tool support
 # 
 # Note: This package is in prelimary state and not usable generic
