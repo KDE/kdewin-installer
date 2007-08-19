@@ -318,7 +318,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
 
         while (!ioDev->atEnd())
         {
-            QByteArray line = ioDev->readLine();
+            QByteArray line = ioDev->readLine().toLower();
             if (line.contains(lineKey1) || line.contains(lineKey2))
             {
                 int a = line.lastIndexOf(fileKeyStart) + strlen(fileKeyStart);
