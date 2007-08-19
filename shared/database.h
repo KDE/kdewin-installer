@@ -42,8 +42,9 @@ public:
     virtual ~Database();
     bool readFromDirectory(const QString &dirPath=QString());
     void addPackage(const Package &package);
-    void listPackageFiles(const QString &pkgName);
+    void listPackageFiles(const QString &pkgName, Package::Type pkgType=Package::BIN);
     void listPackages(const QString &title=QString());
+    QStringList getPackageFiles(const QString &pkgName, Package::Type pkgType=Package::BIN);
     Package *getPackage(const QString &pkgName, const QByteArray &version=QByteArray());
     bool addUnhandledPackages(PackageList *packageList);
     void resetHandledState(); 

@@ -103,21 +103,31 @@ void Database::listPackages(const QString &title)
         printf("%s\n",(*it)->toString(true," - ").toAscii().data());
 }
 
-void Database::listPackageFiles(const QString &pkgName)
+void Database::listPackageFiles(const QString &pkgName, Package::Type pkgType)
 {
+    QStringList files = getPackageFiles(pkgName,pkgType);
+    qDebug() << files;
+}
+
+QStringList Database::getPackageFiles(const QString &pkgName, Package::Type pkgType)
+{
+    QStringList files;
     Package *pkg = getPackage(pkgName);
     if (!pkg)
-        return; 
-    QString manifestFile = m_root+"/manifest/"+PackageInfo::manifestFileName(pkg->name(),pkg->version(),Package::BIN);
+        return files;
+    QString manifestFile = m_root+"/manifest/"
+        +PackageInfo::manifestFileName(pkg->name(),pkg->version(),pkgType);
     QFile file(manifestFile);
     if (!file.open(QIODevice::ReadOnly| QIODevice::Text))
-        return;
+        return files;
 
     QTextStream in(&file);
     while (!in.atEnd()) {
-        QByteArray line = in.readLine().toAscii();
-        printf("%s\n",line.data());
+        QString line = in.readLine().toAscii();
+        QStringList parts = line.split(' ');
+        files << parts[0];
     }
+    return files;
 }
 
 bool Database::readFromDirectory(const QString &_dir)
