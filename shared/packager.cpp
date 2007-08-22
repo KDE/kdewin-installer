@@ -170,7 +170,7 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 generateFileList(fileList, dir, "bin",  "*.exe *.bat", "assistant.exe qtdemo.exe qdbus.exe qdbusviewer.exe");
                 generateFileList(fileList, dir, "", ".qmake.cache");
                 // trolltech installs whole mkspecs folder too
-                generateFileList(fileList, dir, "mkspecs", "*.*");
+                generateFileList(fileList, dir, "mkspecs", "*.*", ".svn CVS");
                 // add phrase books
                 generateFileList(fileList, dir, "tools/linguist/phrasebooks", "*.qph");
                 
@@ -186,18 +186,18 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                     if (m_debugLibs) 
                         generateFileList(fileList, dir, "lib",      "*d4.lib *d.lib");
                 }
-                parseQtIncludeFiles(fileList, dir, "include", "*", "private *_p.h *.pr*");
+                parseQtIncludeFiles(fileList, dir, "include", "*", "private *_p.h *.pr* .svn CVS");
                 return true;
             case DOC:
                 generateFileList(fileList, dir, "bin", "qtdemo.exe");
-                generateFileList(fileList, dir, "doc", "*.*");
+                generateFileList(fileList, dir, "doc", "*.*", ".svn CVS");
                 return true;
             case SRC:
                 // TODO: not implemented, exclude temporay files and svn/cvs dirs 
                 //generateFileList(fileList, dir, "src", "*.*");
                 return true;
             case NONE:
-                generateFileList(fileList, dir, ".", "*.*", "manifest");
+                generateFileList(fileList, dir, ".", "*.*", "manifest .svn CVS");
                 return true;
             default:
                 break;
