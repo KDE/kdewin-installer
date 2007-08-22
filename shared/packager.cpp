@@ -167,7 +167,7 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                     generateFileList(fileList, dir, "bin",  "*d4.dll", "");
                     generateFileList(fileList, dir, "plugins", "*d.dll *d4.dll *d1.dll");
                 }
-                generateFileList(fileList, dir, "bin",  "*.exe *.bat", "assistant.exe qtdemo.exe qdbus.exe dbus-viewer.exe");
+                generateFileList(fileList, dir, "bin",  "*.exe *.bat", "assistant.exe qtdemo.exe qdbus.exe qdbusviewer.exe");
                 generateFileList(fileList, dir, "", ".qmake.cache");
                 // trolltech installs whole mkspecs folder too
                 generateFileList(fileList, dir, "mkspecs", "*.*");
