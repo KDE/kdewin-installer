@@ -30,16 +30,17 @@
 
 class Packager {
     public: 
-      // don't know how to make usable package::Type
       enum Type { NONE = 0, BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8, ALL = 15};
 
       Packager(const QString &packageName, const QString &packageVersion,const QString &notes=QString());
 
-      // mingw only: strip all debugging symbols from files to reduce size
+      /// mingw only: strip all debugging symbols from files to reduce size
       bool stripFiles(const QString &dir);
+      /// mingw only: extract debuginformations from dll's 
       bool createDebugFiles(const QString &dir);
       void setSourceRoot(const QString &dir) { m_srcRoot = dir; }
       void setSourceExcludes(const QString &excludes) { m_srcExcludes = excludes; }
+      void setWithDebugLibs(bool mode) { m_debugLibs = mode; }
 
       bool generatePackageFileList(QList<InstallFile> &result, Packager::Type type, const QString &dir=QString());
 
@@ -65,6 +66,7 @@ class Packager {
       QString m_srcRoot;
       QString m_srcExcludes;
       bool m_verbose;
+      bool m_debugLibs;
 }; 
 
 #endif

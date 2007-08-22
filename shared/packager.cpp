@@ -162,12 +162,12 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 generateFileList(fileList, dir, "translations", "*.qm");
                 return true;
             case LIB:
-#if DEBUG_LIB_SUPPORT
-                generateFileList(fileList, dir, "bin",  "*.exe *.bat *d4.dll", "assistant.exe qtdemo.exe qdbus.exe dbus-viewer.exe");
-                generateFileList(fileList, dir, "plugins", "*d.dll *d4.dll *d1.dll");
-#else
+                if (m_debugLibs) 
+                {
+                    generateFileList(fileList, dir, "bin",  "*d4.dll", "");
+                    generateFileList(fileList, dir, "plugins", "*d.dll *d4.dll *d1.dll");
+                }
                 generateFileList(fileList, dir, "bin",  "*.exe *.bat", "assistant.exe qtdemo.exe qdbus.exe dbus-viewer.exe");
-#endif
                 generateFileList(fileList, dir, "", ".qmake.cache");
                 // trolltech installs whole mkspecs folder too
                 generateFileList(fileList, dir, "mkspecs", "*.*");
@@ -177,10 +177,14 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 if (m_name.endsWith("mingw")) 
                 {
                     generateFileList(fileList, dir, "lib",      "*.a", "*d4.a *d.a");
-                }
+                    if (m_debugLibs) 
+                        generateFileList(fileList, dir, "lib",      "*d4.a *d.a");
+                }                        
                 else 
                 {   
                     generateFileList(fileList, dir, "lib",      "*.lib",  "*d4.lib *d.lib");
+                    if (m_debugLibs) 
+                        generateFileList(fileList, dir, "lib",      "*d4.lib *d.lib");
                 }
                 parseQtIncludeFiles(fileList, dir, "include", "*", "private *_p.h *.pr*");
                 return true;
@@ -189,7 +193,7 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 generateFileList(fileList, dir, "doc", "*.*");
                 return true;
             case SRC:
-                // not supported yet
+                // TODO: not implemented, exclude temporay files and svn/cvs dirs 
                 //generateFileList(fileList, dir, "src", "*.*");
                 return true;
             case NONE:
@@ -198,7 +202,11 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
             default:
                 break;
         }
-    else         
+    else  
+    {       
+        if (m_debugLibs)    
+            qWarning() << "adding debug library not supported for this package";
+
         switch (type) {
             case BIN:
                 generateFileList(fileList, dir, "bin",  "*.exe *.bat");
@@ -243,6 +251,7 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
             default:
                 break;
         }
+    }
     return false;
 }
 

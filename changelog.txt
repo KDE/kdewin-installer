@@ -7,6 +7,9 @@ recent
                  - added more debug output in GlobalConfig 
                  - download to and read config files from the package download directory 
                  - only support zip archive format for apachemodindex web site scanner
+                 - manual mirror adding support
+                 - bug fix related to package list parsing (some sites uses uppercase html tags) 
+- packager:      - new debuglibs option added, which adds debug libraries to lib binary package 
                 
 0.7.5
 ------

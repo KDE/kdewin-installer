@@ -45,6 +45,7 @@ static void printHelp(const QString &addInfo)
        << "\n\t\t"      << "-strip <strip debug infos> (MinGW only)"
        << "\n\t\t"      << "-notes <additional notes for manifest files>"
        << "\n\t\t"      << "-type type of package (mingw, msvc)"
+       << "\n\t\t"      << "-debuglibs add debug libs to binary packages (currently only for qt)"
        << "\n\t\t"      << "-destdir directory where to store the zip files to"
        << "\n\t\t"      << "-complete also create all-in-one package with all files"
        << "\n\t\t"      << "-verbose display verbose processing informations"
@@ -65,6 +66,7 @@ int main(int argc, char *argv[])
     QFileInfo srcRootDir;
     bool strip = false;
     bool verbose = false;
+    bool debugLibs = false;
 
     args.removeAt(0);   // name of executable
 
@@ -115,11 +117,19 @@ int main(int argc, char *argv[])
     idx = args.indexOf("-strip");
     if(idx != -1) {
         strip = 1;
+        args.removeAt(idx);
     }
 
     idx = args.indexOf("-verbose");
     if(idx != -1) {
         verbose = 1;
+        args.removeAt(idx);
+    }
+
+    idx = args.indexOf("-debuglibs");
+    if(idx != -1) {
+        debugLibs = 1;
+        args.removeAt(idx);
     }
 
     idx = args.indexOf("-notes");
@@ -175,9 +185,11 @@ int main(int argc, char *argv[])
         packager.setSourceExcludes(srcExclude);
 
     packager.setVerbose(verbose);
+    packager.setWithDebugLibs(debugLibs);
 
     if (strip)
        packager.stripFiles(rootDir.filePath());
+
     packager.makePackage(rootDir.filePath(), destdir, bComplete);
 
     return 0;
