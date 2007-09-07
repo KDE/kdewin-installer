@@ -210,6 +210,9 @@ bool generateFileList(QList<InstallFile> &fileList, const QString &root, const Q
          if(subdir.startsWith(QLatin1String("./")))
              toAdd = subdir.mid(2) + '/' + fn;
          else
+         if(subdir == QLatin1String("."))
+             toAdd = fn;
+         else
              toAdd = subdir + '/' + fn;
 
          if(toAdd.endsWith(QLatin1String(".manifest"))) {
