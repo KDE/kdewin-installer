@@ -204,6 +204,9 @@ addExplorerWrapper(${NAME})
 # 
 install_files(/doc/${NAME}-${VERSION} FILES readme.txt )
 install_files(/doc/${NAME}-${VERSION} FILES changelog.txt )
+install_files(/bin FILES bin/kdewin-installer-gui-${VERSION}.exe )
+install_files(/bin FILES bin/kdewin-installer-gui.bat )
+install_files(/bin FILES bin/kdewin-packager.exe )
 
 
 if (CMAKE_PRODUCTION_BUILD)
