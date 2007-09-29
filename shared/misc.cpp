@@ -36,6 +36,7 @@
 #include <QDateTime>
 
 #include "misc.h"
+#include "settings.h"
 
 /*
     add correct prefix for win32 filesystem functions
@@ -611,7 +612,7 @@ bool delWin32RegistryValue(const RegKey& akey, const QString& subKey)
             }
             RegCloseKey(hKey);
         }
-	} else {
+    } else {
         if( ERROR_SUCCESS != RegQueryInfoKeyW(hKey, NULL, NULL, NULL, &dwSubKeys, NULL, NULL, &dwValues, NULL, NULL, NULL, NULL) ){
             qDebug() << "Could not query key" << subKey;
             return false;
@@ -660,10 +661,12 @@ bool delWin32RegistryValue(const RegKey& akey, const QString& subKey)
     return true;
 }
 
-QFile *log; 
-
 void myMessageOutput(QtMsgType type, const char *msg)
- {
+{
+    QFile f(Settings::getInstance().downloadDir()+"/kdewin-installer.log");
+    QFile *log = &f;
+    f.open(QIODevice::Append);
+
     log->write(QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ").toLocal8Bit().data());
     switch (type) {
      case QtDebugMsg:
@@ -690,8 +693,9 @@ void myMessageOutput(QtMsgType type, const char *msg)
          log->write("\n");
          log->flush();
          abort();
-     }
- }
+    }
+    f.close();
+}
 
 
 /**
@@ -699,8 +703,5 @@ void myMessageOutput(QtMsgType type, const char *msg)
 */ 
 void setMessageHandler()
 {
-    static QFile f("kdewin-installer.log");
-    log = &f;
-    f.open(QIODevice::WriteOnly);
     qInstallMsgHandler(myMessageOutput);
 }
