@@ -339,7 +339,7 @@ InstallerEngineGui::InstallerEngineGui(DownloaderProgress *progressBar,Installer
 
 void InstallerEngineGui::setLeftTreeData(QTreeWidget *tree)
 {
-	tree->clear();
+    tree->clear();
     QStringList labels;
     QList<QTreeWidgetItem *> items;
     labels << tr("paketgroups") << tr("description");
@@ -354,19 +354,19 @@ void InstallerEngineGui::setLeftTreeData(QTreeWidget *tree)
     QTreeWidgetItem *firstItem = category;
     categoryList.append(category);
 
-	Settings &s = Settings::getInstance();
-	if (s.compilerType() == Settings::unspecified) 
-	{
-		names.clear();
-		names << tr("mingw") << tr("packages usable by win32 gcc");
-		category = new QTreeWidgetItem((QTreeWidget*)0, names);
-		categoryList.append(category);
+    Settings &s = Settings::getInstance();
+    if (s.compilerType() == Settings::unspecified) 
+    {
+        names.clear();
+        names << tr("mingw") << tr("packages usable by win32 gcc");
+        category = new QTreeWidgetItem((QTreeWidget*)0, names);
+        categoryList.append(category);
 
-		names.clear();
-	    names << tr("msvc") << tr("packages usable by MS VC");
-	    category = new QTreeWidgetItem((QTreeWidget*)0, names);
-	    categoryList.append(category);
-	}
+        names.clear();
+        names << tr("msvc") << tr("packages usable by MS VC");
+        category = new QTreeWidgetItem((QTreeWidget*)0, names);
+        categoryList.append(category);
+    }
 
     QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
     for ( ; k != m_packageListList.constEnd(); ++k)
@@ -454,7 +454,7 @@ void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree, QString ca
 #ifdef DEBUG
     qDebug() << "adding categories size:" << m_globalConfig->sites()->size();
 #endif
-	Settings &s = Settings::getInstance();
+    Settings &s = Settings::getInstance();
 
     QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
     for ( ; k != m_packageListList.constEnd(); ++k)
@@ -483,7 +483,7 @@ void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree, QString ca
         for ( ; i != (*k)->packageList().constEnd(); ++i)
         {
             Package *pkg = *i;
-			if ((categoryName == "mingw"  || s.compilerType() == Settings::MinGW)
+            if ((categoryName == "mingw"  || s.compilerType() == Settings::MinGW)
                 && (pkg->name().toLower().contains("msvc") || pkg->notes().toLower().contains("msvc")))
                 continue;
             else if ((categoryName == "msvc"  || s.compilerType() == Settings::MSVC)
@@ -676,7 +676,7 @@ bool InstallerEngineGui::downloadPackages(QTreeWidget *tree, const QString &cate
     QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
     for ( ; k != m_packageListList.constEnd(); ++k)
     {
-		if ((*k)->packageList().size() == 0)
+        if ((*k)->packageList().size() == 0)
             continue;
 
         QList<Package*>::ConstIterator i = (*k)->packageList().constBegin();
@@ -685,10 +685,10 @@ bool InstallerEngineGui::downloadPackages(QTreeWidget *tree, const QString &cate
             Package *pkg = *i;
             if (!pkg)
                 continue;
-			if (Settings::hasDebug("InstallerEngineGui"))
-				pkg->dump("downloadPackages");
+            if (Settings::hasDebug("InstallerEngineGui"))
+                pkg->dump("downloadPackages");
 
-			bool all = false; //isMarkedForInstall(pkg,Package::ALL);
+            bool all = false; //isMarkedForInstall(pkg,Package::ALL);
             if (all || isMarkedForInstall(pkg,Package::BIN))
                 pkg->downloadItem(m_downloader, Package::BIN);
             if (all || isMarkedForInstall(pkg,Package::LIB))
@@ -707,7 +707,7 @@ bool InstallerEngineGui::removePackages(QTreeWidget *tree, const QString &catego
     QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
     for ( ; k != m_packageListList.constEnd(); ++k)
     {
-		if ((*k)->packageList().size() == 0)
+        if ((*k)->packageList().size() == 0)
             continue;
 
         QList<Package*>::ConstIterator i = (*k)->packageList().constBegin();
@@ -716,8 +716,8 @@ bool InstallerEngineGui::removePackages(QTreeWidget *tree, const QString &catego
             Package *pkg = *i;
             if (!pkg)
                 continue;
-			if (Settings::hasDebug("InstallerEngineGui"))
-				pkg->dump("removePackages");
+            if (Settings::hasDebug("InstallerEngineGui"))
+                pkg->dump("removePackages");
             bool all = false; //isMarkedForRemoval(pkg,Package::ALL);
             if (all | isMarkedForRemoval(pkg,Package::BIN))
                 pkg->removeItem(m_installer, Package::BIN);
@@ -737,7 +737,7 @@ bool InstallerEngineGui::installPackages(QTreeWidget *tree,const QString &_categ
     QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
     for ( ; k != m_packageListList.constEnd(); ++k)
     {
-		if ((*k)->packageList().size() == 0)
+        if ((*k)->packageList().size() == 0)
             continue;
 
         QList<Package*>::ConstIterator i = (*k)->packageList().constBegin();
