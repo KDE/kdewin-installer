@@ -28,52 +28,55 @@
 #include <QBuffer>
 #include <QMessageBox>
 
-GlobalConfig::GlobalConfig()
+GlobalConfig::GlobalConfig(Downloader *downloader)
 {
+    m_downloader = downloader;
 }
 
-bool GlobalConfig::download(const QString &baseURL,Downloader &downloader)
+QStringList GlobalConfig::fetch(const QString &baseURL)
 {
     bool ret; 
     m_baseURL = baseURL;
 
-    // FIXME: place config files into package download path
-    QFileInfo cfr(Settings::getInstance().downloadDir()+"/config-remote.txt");
-    if (Settings::hasDebug("GlobalConfig"))
-        qDebug() << "Check if a copy of the remote config file is available at" << cfr.absoluteFilePath() << (cfr.exists() ? "... found" : "... not found");
-    if (cfr.exists())
+    QStringList configFiles;
+    // remote config file
+    if (baseURL.startsWith("http") || baseURL.startsWith("ftp")) 
     {
+        QFileInfo cfr(Settings::getInstance().downloadDir()+"/config-remote.txt");
         if (Settings::hasDebug("GlobalConfig"))
-            qDebug() << "skip downloading";
-        ret = parseFromFile(Settings::getInstance().downloadDir()+"/config-remote.txt");
+            qDebug() << "Check if a copy of the remote config file is available at" << cfr.absoluteFilePath() << (cfr.exists() ? "... found" : "... not found");
+        if (cfr.exists())
+        {
+            configFiles << cfr.absoluteFilePath();
+        }
+        else 
+        {
+            QFileInfo cfi(Settings::getInstance().downloadDir()+"/config.txt");
+            ret = m_downloader->start(baseURL + "/installer/config.txt",cfi.absoluteFilePath());
+            if (Settings::hasDebug("GlobalConfig"))
+                qDebug() << "download remote config file to" << cfi.absoluteFilePath() << "..." << (ret == true ? "okay" : "failure") ;
+            if (ret)
+                configFiles << cfi.absoluteFilePath();
+
+        }
+
+        QFileInfo fi(Settings::getInstance().downloadDir()+"/config-local.txt");
         if (Settings::hasDebug("GlobalConfig"))
-            qDebug() << "parsing remote config file ... " << (ret == true ? "okay" : "failure") ;
-        if (!ret)
-            return ret;
+            qDebug() << "Check if a local config file is available at" << fi.absoluteFilePath() << (fi.exists() ? "... found" : "... not found");
+        if (fi.exists()) 
+            configFiles << fi.absoluteFilePath();
+
     }
-    else 
-    {
-        QFileInfo cfi(Settings::getInstance().downloadDir()+"/config.txt");
-        ret = downloader.start(baseURL + "/installer/config.txt",cfi.absoluteFilePath());
+    return configFiles;
+}
+
+bool GlobalConfig::parse(const QStringList &configFiles)
+{
+    bool ret;
+    foreach(QString configFile, configFiles) {
+        ret = parseFromFile(configFile);
         if (Settings::hasDebug("GlobalConfig"))
-            qDebug() << "download remote config file to" << cfi.absoluteFilePath() << "..." << (ret == true ? "okay" : "failure") ;
-        if (!ret)
-            return false;
-    
-        ret = parseFromFile(Settings::getInstance().downloadDir()+"/config.txt");
-        if (Settings::hasDebug("GlobalConfig"))
-            qDebug() << "parsing remote config file ... " << (ret == true ? "okay" : "failure") ;
-        if (!ret)
-            return ret;
-    }
-    QFileInfo fi(Settings::getInstance().downloadDir()+"/config-local.txt");
-    if (Settings::hasDebug("GlobalConfig"))
-        qDebug() << "Check if a local config file is available at" << fi.absoluteFilePath() << (fi.exists() ? "... found" : "... not found");
-    if (fi.exists()) 
-    {
-        ret = parseFromFile(fi.absoluteFilePath());
-        if (Settings::hasDebug("GlobalConfig"))
-            qDebug() << "parse local config file ... " << (ret == true ? "okay" : "failure") ;
+            qDebug() << "parse config file " << configFile << (ret == true ? "okay" : "failure") ;
     }
     return ret; 
 }

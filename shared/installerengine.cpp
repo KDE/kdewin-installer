@@ -48,7 +48,7 @@ InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgre
     m_installer = new Installer(m_instProgressBar );
     m_installer->setRoot(Settings::getInstance().installDir());
     m_installer->setDatabase(m_database);
-    m_globalConfig = new GlobalConfig();
+    m_globalConfig = new GlobalConfig(m_downloader);
     connect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString&)),this,SLOT(installDirChanged(const QString&)));
     connect(&Settings::getInstance(),SIGNAL(mirrorChanged(const QString&)),this,SLOT(mirrorChanged(const QString&)));
 }
@@ -68,18 +68,31 @@ bool InstallerEngine::readGlobalConfig()
 {
     QString fallBackHostURL = "http://82.149.170.66/kde-windows";
     QString hostURL = Settings::getInstance().mirror();
-    if (!hostURL.isEmpty())    
+	QStringList configFiles;
+	if (!hostURL.isEmpty())    
     {
-        if (!m_globalConfig->download(hostURL,*m_downloader))
+        configFiles = m_globalConfig->fetch(hostURL);
+		if (configFiles.isEmpty())
         {
             if (hostURL == fallBackHostURL) // no other host available
                 return false;
-            else if (!m_globalConfig->download(fallBackHostURL,*m_downloader))
-               return false;
-        }
-    }   
-    else if (!m_globalConfig->download(fallBackHostURL,*m_downloader))
-        return false;
+			else 
+			{	
+				configFiles = m_globalConfig->fetch(fallBackHostURL);
+				if (configFiles.isEmpty())
+					return false;
+			}
+		}
+	}   
+    else
+	{
+		configFiles = m_globalConfig->fetch(fallBackHostURL);
+
+		if (configFiles.isEmpty())
+			return false;
+	}
+	if (!m_globalConfig->parse(configFiles))
+		return false;
 
     createMainPackagelist();
     return true;
@@ -218,7 +231,7 @@ void InstallerEngine::installDirChanged(const QString &newdir)
 void InstallerEngine::mirrorChanged(const QString &mirror)
 {
     delete m_globalConfig;
-    m_globalConfig = new GlobalConfig();
+    m_globalConfig = new GlobalConfig(m_downloader);
     readGlobalConfig();
     downloadPackageLists();
 }

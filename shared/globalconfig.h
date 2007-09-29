@@ -34,15 +34,23 @@ class GlobalConfig {
             QString location;
         } Mirror;
 
-        GlobalConfig();
+        GlobalConfig(Downloader *downloader);
         ~GlobalConfig();
-        bool download(const QString &baseURL, Downloader &downloader);
+        /// fetch local or remote config files 
+        QStringList fetch(const QString &baseURL);
+        /// parse list of config files
+        bool parse(const QStringList &configFiles);
 
+        /// return list of site definitions
         QList<Site*> *sites()  { return &m_sites;   } 
+        /// return list of package definitions 
         QList<Package*> *packages() { return &m_packages; }
+        /// return list of mirrors
         QList<Mirror*> *mirrors() { return &m_mirrors; }
+        /// return package orientated news
         QHash<QString, QString> *news() { return &m_news; }
 
+        /// dump internal objects
         void dump(const QString &title=QString());
     protected:
         bool parseFromFile(const QString &fileName);
@@ -56,6 +64,7 @@ class GlobalConfig {
         QHash <QString,QString> m_news;
         QList <Mirror*> m_mirrors;
         QString m_baseURL;
+        Downloader *m_downloader;
 };
 
 #endif
