@@ -81,7 +81,7 @@ bool Downloader::start(const QString &_url, const QString &fileName)
     if (m_progress)
         m_progress->setTitle(tr("Downloading %1 to %2").arg(_url).arg(m_file->fileName()));
 
-	qDebug() << "Downloading" << _url << " to " << m_file->fileName();
+    qDebug() << "Downloading" << _url << " to " << m_file->fileName();
     return startInternal(_url, m_file);
 }
 
@@ -96,7 +96,7 @@ bool Downloader::start(const QString &_url, QByteArray &ba)
         setError(tr("Internal error!"));
         return false;
     }
-	qDebug() << "Downloading" << _url << " to memory";
+    qDebug() << "Downloading" << _url << " to memory";
     return startInternal(_url, buf);
 }
 
