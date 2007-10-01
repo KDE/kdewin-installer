@@ -68,31 +68,31 @@ bool InstallerEngine::readGlobalConfig()
 {
     QString fallBackHostURL = "http://82.149.170.66/kde-windows";
     QString hostURL = Settings::getInstance().mirror();
-	QStringList configFiles;
-	if (!hostURL.isEmpty())    
+    QStringList configFiles;
+    if (!hostURL.isEmpty())    
     {
         configFiles = m_globalConfig->fetch(hostURL);
-		if (configFiles.isEmpty())
+        if (configFiles.isEmpty())
         {
             if (hostURL == fallBackHostURL) // no other host available
                 return false;
-			else 
-			{	
-				configFiles = m_globalConfig->fetch(fallBackHostURL);
-				if (configFiles.isEmpty())
-					return false;
-			}
-		}
-	}   
+            else 
+            {	
+                configFiles = m_globalConfig->fetch(fallBackHostURL);
+                if (configFiles.isEmpty())
+                    return false;
+            }
+        }
+    }   
     else
-	{
-		configFiles = m_globalConfig->fetch(fallBackHostURL);
+    {
+        configFiles = m_globalConfig->fetch(fallBackHostURL);
 
-		if (configFiles.isEmpty())
-			return false;
-	}
-	if (!m_globalConfig->parse(configFiles))
-		return false;
+        if (configFiles.isEmpty())
+            return false;
+    }
+    if (!m_globalConfig->parse(configFiles))
+        return false;
 
     createMainPackagelist();
     return true;
@@ -100,10 +100,10 @@ bool InstallerEngine::readGlobalConfig()
 
 void InstallerEngine::createMainPackagelist()
 {
-	if (Settings::hasDebug("InstallerEngine"))
-		m_database->listPackages("createMainPackageList - installed packages");
+    if (Settings::hasDebug("InstallerEngine"))
+        m_database->listPackages("createMainPackageList - installed packages");
 
-	QList<Package*>::iterator p;
+    QList<Package*>::iterator p;
     for (p = m_globalConfig->packages()->begin(); p != m_globalConfig->packages()->end(); p++)
     {
         Package *pkg = (*p);
@@ -125,8 +125,8 @@ void InstallerEngine::createMainPackagelist()
     foreach(PackageList *pkgList, m_packageListList)
         pkgList->syncWithDatabase(*m_database);
 
-	if (Settings::hasDebug("InstallerEngine"))
-		dump("createMainPackageList");
+    if (Settings::hasDebug("InstallerEngine"))
+        dump("createMainPackageList");
 }
 
 /// download all packagelists, which are available on the configured sites
@@ -181,8 +181,8 @@ bool InstallerEngine::downloadPackageLists()
         m_packageListList.append(packageList);
     }
     m_database->addUnhandledPackages(packageList);
-	if (Settings::hasDebug("InstallerEngine"))
-		dump("downloadPackageLists");
+    if (Settings::hasDebug("InstallerEngine"))
+        dump("downloadPackageLists");
 
 #ifdef PRINT_AVAILABLE_PACKAGES            
     m_database->resetHandledState();
@@ -245,15 +245,15 @@ void InstallerEngine::dump(const QString &title)
         if ((*k)->packageList().size() == 0)
             continue;
 
-		// adding sub items
+        // adding sub items
         QList<Package*>::ConstIterator i = (*k)->packageList().constBegin();
         for ( ; i != (*k)->packageList().constEnd(); ++i)
         {
             Package *pkg = *i;
-			qDebug() << pkg;
- 			pkg->dump(__FUNCTION__);
-		}
-	}
+            qDebug() << pkg;
+            pkg->dump(__FUNCTION__);
+        }
+    }
 }
 
 #include "installerengine.moc"
