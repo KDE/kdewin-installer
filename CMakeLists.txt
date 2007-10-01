@@ -2,7 +2,7 @@ set (NAME kdewin-installer)
 project(${NAME})
 set (VERSION_MAJOR 0)
 set (VERSION_MINOR 7)
-set (VERSION_PATCH 5)
+set (VERSION_PATCH 6)
 set (VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
@@ -195,6 +195,7 @@ add_subdirectory(gui)
 add_subdirectory(tests)
 add_subdirectory(packager)
 add_subdirectory(doc)
+#add_subdirectory(tools)
 
 include(Win32Macros)
 addExplorerWrapper(${NAME})
