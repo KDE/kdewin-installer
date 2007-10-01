@@ -183,12 +183,12 @@ PathSettingsPage::PathSettingsPage(InstallWizard *wizard)
     compilerMSVC = new QRadioButton(tr("MSVC"));
     compilerUnspecified = new QRadioButton(tr("&unspecified"));
 
-	switch (s.compilerType()) {
-		case Settings::unspecified: compilerUnspecified->setChecked(true); break;
-		case Settings::MinGW: compilerMinGW->setChecked(true); break;
-		case Settings::MSVC: compilerMSVC->setChecked(true); break;
+    switch (s.compilerType()) {
+        case Settings::unspecified: compilerUnspecified->setChecked(true); break;
+        case Settings::MinGW: compilerMinGW->setChecked(true); break;
+        case Settings::MSVC: compilerMSVC->setChecked(true); break;
         default: compilerUnspecified->setChecked(true); break;
-	}
+    }
 
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(topLabel, 0, 0, 1, 2);
@@ -199,9 +199,9 @@ PathSettingsPage::PathSettingsPage(InstallWizard *wizard)
     layout->addWidget(tempPathLabel, 3, 0);
     layout->addWidget(tempPathEdit, 3, 1);
     layout->addWidget(tempPathSelect, 3, 2);
-	layout->addWidget(compilerLabel, 4, 0);
+    layout->addWidget(compilerLabel, 4, 0);
 
-	QHBoxLayout *layout2 = new QHBoxLayout;
+    QHBoxLayout *layout2 = new QHBoxLayout;
     layout2->addWidget(compilerMinGW, 0);
     layout2->addWidget(compilerMSVC, 1);
     layout2->addWidget(compilerUnspecified, 2);
@@ -241,12 +241,12 @@ WizardPage *PathSettingsPage::nextPage()
     s.setInstallDir(rootPathEdit->text());
     s.setDownloadDir(tempPathEdit->text());
 
-	if (compilerUnspecified->isChecked())
-		s.setCompilerType(Settings::unspecified);
-	if (compilerMinGW->isChecked())
-		s.setCompilerType(Settings::MinGW);
-	if (compilerMSVC->isChecked())
-		s.setCompilerType(Settings::MSVC);
+    if (compilerUnspecified->isChecked())
+        s.setCompilerType(Settings::unspecified);
+    if (compilerMinGW->isChecked())
+        s.setCompilerType(Settings::MinGW);
+    if (compilerMSVC->isChecked())
+        s.setCompilerType(Settings::MSVC);
 
     wizard->proxySettingsPage = new ProxySettingsPage(wizard);
     return wizard->proxySettingsPage;
@@ -393,25 +393,25 @@ bool MirrorSettingsPage::isComplete()
 
 void MirrorSettingsPage::addNewMirror(int index)
 {
-	if(index == mirrorEdit->count() - 1)
-	{
-		bool ok;
-	    QString text = QInputDialog::getText(this, tr("Add a new Mirror"),
-	                                         tr("Mirror address:"), QLineEdit::Normal,
-	                                         QString("http://"), &ok);
-	    if (ok && !text.isEmpty()) *mirrorList << text;
-		rebuildMirrorList(mirrorEdit->count() - 1);
-	}
+    if(index == mirrorEdit->count() - 1) {
+        bool ok;
+        QString text = QInputDialog::getText(this, tr("Add a new Mirror"),
+                                             tr("Mirror address:"), QLineEdit::Normal,
+                                             QString("http://"), &ok);
+        if (ok && !text.isEmpty() && text != "http://") 
+            *mirrorList << text;
+        rebuildMirrorList(mirrorEdit->count() - 1);
+    }
 }
 
 void MirrorSettingsPage::rebuildMirrorList(int index)
 {
-	disconnect(mirrorEdit, SIGNAL(currentIndexChanged(int)), 0, 0);
-	mirrorEdit->clear();
-	mirrorEdit->addItems(*mirrorList);
-	mirrorEdit->addItem("...Add Mirror...", 0);
-	mirrorEdit->setCurrentIndex(index);
-	connect(mirrorEdit, SIGNAL(currentIndexChanged(int)), this, SLOT(addNewMirror(int)));
+    disconnect(mirrorEdit, SIGNAL(currentIndexChanged(int)), 0, 0);
+    mirrorEdit->clear();
+    mirrorEdit->addItems(*mirrorList);
+    mirrorEdit->addItem(tr("...Add Mirror..."), 0);
+    mirrorEdit->setCurrentIndex(index);
+    connect(mirrorEdit, SIGNAL(currentIndexChanged(int)), this, SLOT(addNewMirror(int)));
 }
 
 PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
