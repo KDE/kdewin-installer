@@ -6,6 +6,7 @@ set (packager_SOURCES
 	main.cpp
 	../shared/packager.cpp
 	../shared/misc.cpp
+	../shared/settings.cpp
 	${quazip_SOURCES}
 	${md5_SOURCES}
 )
@@ -13,6 +14,7 @@ set (packager_SOURCES
 set (packager_HEADERS
     ../shared/packager.h
 	../shared/misc.h
+	../shared/settings.h
 	${quazip_HEADERS}
 	${md5_HEADERS}
 )

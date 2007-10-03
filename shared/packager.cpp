@@ -36,7 +36,7 @@
 #include "md5.h"
 
 #ifndef QZIP_BUFFER
-# define QZIP_BUFFER (256 * 1024)
+# define QZIP_BUFFER (1 * 1024 * 1024)
 #endif
 
 Packager::Packager(const QString &packageName, const QString &packageVersion, const QString &packageNotes)
@@ -173,7 +173,8 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 generateFileList(fileList, dir, "mkspecs", "*.*", ".svn CVS");
                 // add phrase books
                 generateFileList(fileList, dir, "tools/linguist/phrasebooks", "*.qph");
-                
+                generateFileList(fileList, dir, "phrasebooks", "*.qph");
+
                 if (m_name.endsWith("mingw")) 
                 {
                     generateFileList(fileList, dir, "lib",      "*.a", "*d4.a *d.a");
@@ -354,21 +355,21 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
         qDebug() << "no binary files found!";
 
     if (m_verbose)
-        qDebug() << "creating lib package" << getBaseName(Packager::LIB); 
+        qDebug() << "creating lib package" << destdir + getBaseName(Packager::LIB); 
     generatePackageFileList(fileList, Packager::LIB);
     createManifestFiles(m_rootDir, fileList, Packager::LIB, manifestFiles);
     if (fileList.size() > 0)
         createZipFile(_destdir + getBaseName(Packager::LIB), m_rootDir, fileList, manifestFiles);
 
     if (m_verbose)
-        qDebug() << "creating doc package" << getBaseName(Packager::DOC); 
+        qDebug() << "creating doc package" << destdir + getBaseName(Packager::DOC); 
     generatePackageFileList(fileList, Packager::DOC);
     createManifestFiles(m_rootDir, fileList, Packager::DOC, manifestFiles);
     if (fileList.size() > 0)
         createZipFile(_destdir + getBaseName(Packager::DOC), m_rootDir, fileList, manifestFiles);
 
     if (m_verbose)
-        qDebug() << "creating src package" << getBaseName(Packager::SRC); 
+        qDebug() << "creating src package" << destdir + getBaseName(Packager::SRC); 
     generatePackageFileList(fileList, Packager::SRC);
     QString s = m_srcRoot.isEmpty() ? m_rootDir : m_srcRoot;
     // FIXME fix manifest file creating if src root is given 

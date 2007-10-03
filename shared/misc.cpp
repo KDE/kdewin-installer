@@ -169,8 +169,12 @@ bool generateFileList(QList<InstallFile> &fileList, const QString &root, const Q
        qDebug() << "Can't read directory" << QDir::convertSeparators(d.absolutePath());
        return false;
    }
+   QStringList filt = (filter + QLatin1String(" *.manifest")).split(' ');
+   // work around a qt bug (could not convince qt-bugs that it's a bug...)
+   if(filt.contains(QLatin1String("*.*")))
+     filt.append(QLatin1String("*"));
    d.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries | QDir::AllDirs);
-   d.setNameFilters((filter + QLatin1String(" *.manifest")).split(' '));
+   d.setNameFilters(filt);
    d.setSorting(QDir::Name);
 
    QFileInfoList list = d.entryInfoList();
