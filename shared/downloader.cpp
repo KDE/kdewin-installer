@@ -69,6 +69,11 @@ bool Downloader::start(const QString &_url, const QString &fileName)
 {
     if(fileName.isEmpty())
         return false;
+	if (!_url.startsWith("http") && !_url.startsWith("ftp"))
+	{
+		QFile::copy(_url,fileName);
+		return true;
+	}
 
     m_file = new QFile(fileName);
     if (!m_file->open(QIODevice::WriteOnly))
