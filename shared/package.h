@@ -77,6 +77,9 @@ public:
     const QString &notes() const { return m_notes; }
     void setNotes(const QString &notes) { m_notes = notes; }
 
+    const QString &longNotes() const { return m_longNotes; }
+    void setLongNotes(const QString &notes) { m_longNotes = notes; }
+
     QString toString(bool installed=false, const QString &delim = "-");
     QString getTypeAsString(bool requiredIsInstalled=false, const QString &delim = " ");
 
@@ -130,6 +133,15 @@ public:
     bool handled() const { return m_handled; }
     void setHandled(bool state) { m_handled = state; }
 
+    /// separate package name, version, type and file format from a filename
+    static bool fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat=QString());
+    /// separate package name and version from a string 
+    static bool fromString(const QString &astring, QString &pkgName, QString &pkgVersion);
+    /// generate manifest file name 
+    static QString manifestFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type);
+    /// generate version file name 
+    static QString versionFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type);
+
 private slots:
     void logOutput();
 
@@ -142,6 +154,7 @@ protected:
     QString m_name;     // base name (a2ps)
     QString m_version;  // base version (4.13b-1)
     QString m_notes;    // notes from package.notes
+    QString m_longNotes;// notes from package.notes
     QString m_category;   
     QStringList m_deps;       
     StringHash m_pathRelocs;
@@ -150,20 +163,5 @@ protected:
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Package::Types);
 
-/** 
- PackageInfo covers package information related tasks
-*/
-class PackageInfo 
-{
-public:
-    /// separate package name, version, type and file format from a filename
-    static bool fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat=QString());
-    /// separate package name and version from a string 
-    static bool fromString(const QString &astring, QString &pkgName, QString &pkgVersion);
-    /// generate manifest file name 
-    static QString manifestFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type);
-    /// generate version file name 
-    static QString versionFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type);
-};
-
+#define PackageInfo Package
 #endif

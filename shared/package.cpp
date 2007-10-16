@@ -382,6 +382,10 @@ QString Package::makeFileName(Package::Type type, bool bCreateDir)
     QString dir = Settings::getInstance().downloadDir();
     if (Settings::getInstance().nestedDownloadTree())
         dir += '/' + m_name + '/' + m_name + '-' + m_version + '/';
+	/* uncomment if downloads should be stored in category sub dirs
+	else 
+		dir +='/' + m_category + '/';
+	*/		
     QDir d(dir);
 
     if(bCreateDir) {
@@ -434,7 +438,7 @@ bool Package::installItem(Installer *installer, Package::Type type)
 
 bool Package::removeItem(Installer *installer, Package::Type type)
 {
-    QString manifestFile = installer->root()+"/manifest/"+PackageInfo::manifestFileName(name(),version(),type);
+    QString manifestFile = installer->root()+"/manifest/"+Package::manifestFileName(name(),version(),type);
     Uninstall ui(installer->root(),manifestFile);
     ui.uninstallPackage(false);
     return true;
@@ -454,7 +458,7 @@ void Package::addDeps(const QStringList &deps)
 }
 
 
-bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat)
+bool Package::fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat)
 {
     QString baseName; 
 
@@ -548,7 +552,7 @@ bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QStrin
     return true;
 }
 
-bool PackageInfo::fromString(const QString &name, QString &pkgName, QString &pkgVersion)
+bool Package::fromString(const QString &name, QString &pkgName, QString &pkgVersion)
 {
     QStringList parts = name.split('-');
     // <name>-<version>
@@ -577,13 +581,13 @@ bool PackageInfo::fromString(const QString &name, QString &pkgName, QString &pkg
 }
 
 // returns version file name of package item e.g. xyz-1.2.3-bin.ver
-QString PackageInfo::versionFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type)
+QString Package::versionFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type)
 {
     return pkgName + "-" + pkgVersion + "-" + Package::typeToString(type) +".ver"; 
 }
 
 // returns manifest file name of package item e.g. xyz-1.2.3-bin.mft
-QString PackageInfo::manifestFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type)
+QString Package::manifestFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type)
 {
     return pkgName + "-" + pkgVersion + "-" + Package::typeToString(type) +".mft"; 
 }
