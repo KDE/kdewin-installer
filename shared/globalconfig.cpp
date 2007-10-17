@@ -222,7 +222,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     cmd.removeFirst();
                     pkg->setNotes(cmd.join(" "));
                 }
-                else if(cmd[0] == "@longnotes") {
+                else if(cmd[0] == "@details") {
                     cmd.removeFirst();
                     pkg->setLongNotes(cmd.join(" "));
                 }
