@@ -33,6 +33,7 @@
 #include "database.h"
 #include "uninstall.h"
 
+#ifndef PACKAGE_SMALL_VERSION
 /** 
   initiate package item 
   @param url url for downloading 
@@ -138,11 +139,11 @@ bool Package::PackageItem::setContentType(const QString &type)
 void Package::PackageItem::dump(const QString &title) const
 {
     DUMP_HEADER(title,"PackageItem");
-    qDebug() << "url:         " << url;           
-    qDebug() << "fileName:    " << fileName;       
-    qDebug() << "packageType: " << packageType;    
-    qDebug() << "contentType: " << contentType;    
-    qDebug() << "bInstalled:  " << bInstalled;     
+    qDebug() << DUMP_INDENT() << "url:         " << url;           
+    qDebug() << DUMP_INDENT() << "fileName:    " << fileName;       
+    qDebug() << DUMP_INDENT() << "packageType: " << packageType;    
+    qDebug() << DUMP_INDENT() << "contentType: " << contentType;    
+    qDebug() << DUMP_INDENT() << "bInstalled:  " << bInstalled;     
     DUMP_FOOTER(title,"PackageItem");
 }
 
@@ -161,20 +162,9 @@ Package::Package(const Package &other)
     m_pathRelocs = other.m_pathRelocs;
     m_handled    = other.m_handled;
     m_notes      = other.m_notes;
+    m_longNotes  = other.m_longNotes;
 }
 
-
-QString Package::typeToString(Package::Type type)
-{
-    switch(type) {
-        case BIN:    return "bin";
-        case LIB:    return "lib";
-        case DOC:    return "doc";
-        case SRC:    return "src";
-        case ALL:    return "all";
-        default:    return "unknown";
-    }
-}
 
 QString Package::getFileName(Package::Type contentType)
 {
@@ -341,11 +331,13 @@ bool Package::read(QTextStream &in)
 void Package::dump(const QString &title) const
 {
     DUMP_HEADER(title,"Package");
-    qDebug() << "m_name:    " << m_name;
-    qDebug() << "m_version: " << m_version;
-    qDebug() << "m_category: " << m_category;
-    qDebug() << "m_deps: " << m_deps.join(" ");
-    qDebug() << "m_handled: " << m_handled;
+    qDebug() << DUMP_INDENT() << "m_name:    " << m_name;
+    qDebug() << DUMP_INDENT() << "m_version: " << m_version;
+    qDebug() << DUMP_INDENT() << "m_category: " << m_category;
+    qDebug() << DUMP_INDENT() << "m_deps: " << m_deps.join(" ");
+    qDebug() << DUMP_INDENT() << "m_handled: " << m_handled;
+    qDebug() << DUMP_INDENT() << "m_notes: " << m_notes;
+    qDebug() << DUMP_INDENT() << "m_longNotes: " << m_longNotes;
 
     QString d;
     StringHash::ConstIterator its = m_pathRelocs.constBegin();
@@ -353,7 +345,7 @@ void Package::dump(const QString &title) const
     {
         d += its.key() + " = " + its.value() + ' ';
     }
-    qDebug() << "m_pathRelocs: " << d;
+    qDebug() << DUMP_INDENT() << " m_pathRelocs: " << d;
 
     QHash<Type, PackageItem>::ConstIterator it = m_packages.constBegin();
     for( ; it != m_packages.constEnd(); ++it) {
@@ -456,7 +448,19 @@ void Package::addDeps(const QStringList &deps)
 {
     m_deps << deps;
 }
+#endif
 
+QString Package::typeToString(Package::Type type)
+{
+    switch(type) {
+        case BIN:    return "bin";
+        case LIB:    return "lib";
+        case DOC:    return "doc";
+        case SRC:    return "src";
+        case ALL:    return "all";
+        default:    return "unknown";
+    }
+}
 
 bool Package::fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat)
 {
