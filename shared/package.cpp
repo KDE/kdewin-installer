@@ -247,6 +247,15 @@ QString Package::getTypeAsString(bool requiredIsInstalled, const QString &delim)
 
 bool Package::isInstalled(Package::Type contentType) const
 {
+    if (contentType == ANY) 
+    {
+        foreach (PackageItem item, m_packages) 
+        {
+            if (item.bInstalled)
+                return true;
+        }
+        return false;
+    }                
     if(m_packages.contains(contentType))
         return m_packages[contentType].bInstalled;
     return false;
