@@ -244,7 +244,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     site->setType(cmd[1] == "apachemodindex" ? Site::ApacheModIndex : Site::SourceForge );
                 else if(cmd[0] == "@mirrorurl")
                     site->addMirror(cmd[1]);
-                else if(cmd[0] == "@deps") {
+                else if(cmd[0] == "@deps" || cmd[0] == "@require") {
                     QString dep = cmd[1];
                     cmd.removeFirst();
                     cmd.removeFirst();
