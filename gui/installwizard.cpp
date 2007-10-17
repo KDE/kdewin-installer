@@ -461,34 +461,66 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
 
 #else
 
-    QSplitter *splitter = new QSplitter(wizard);
+	QSplitter *splitter = new QSplitter(wizard);
     splitter->setOrientation(Qt::Horizontal);
 
+	// left side of splitter 
     leftTree  = new QTreeWidget(splitter);
     engine->setLeftTreeData(leftTree);
 
-    tree = new QTreeWidget(splitter);
+	categoryInfo = new QTextEdit();
+    categoryInfo->setReadOnly(true);
 
+    QWidget *gridLayoutLeft = new QWidget(splitter);
+	gridLayoutLeft->setContentsMargins(0, 0, 0, 0);
+	QVBoxLayout *vboxLayoutLeft = new QVBoxLayout(gridLayoutLeft);
+    vboxLayoutLeft->addWidget(leftTree,4);
+    vboxLayoutLeft->addWidget(categoryInfo,1);
+	vboxLayoutLeft->setContentsMargins(0, 0, 0, 0);
+
+	// right side of splitter 
+	tree = new QTreeWidget(splitter);
     engine->setPageSelectorWidgetData(tree);
 
-    splitter->addWidget(leftTree);
-    splitter->addWidget(tree);
+	QTextEdit *tab1 = new QTextEdit();
+    tab1->setReadOnly(true);
+	QTextEdit *tab2 = new QTextEdit();
+    tab2->setReadOnly(true);
+	QTextEdit *tab3 = new QTextEdit();
+    tab3->setReadOnly(true);
+
+	packageInfo = new QTabWidget();
+	packageInfo->addTab(tab1,tr("Description"));
+	packageInfo->addTab(tab2,tr("Dependencies"));
+	packageInfo->addTab(tab3,tr("Files"));
+
+    QWidget *gridLayout = new QWidget(splitter);
+	gridLayout->setContentsMargins(0, 0, 0, 0);
+	QVBoxLayout *vboxLayout = new QVBoxLayout(gridLayout);
+    vboxLayout->addWidget(tree,3);
+    vboxLayout->addWidget(packageInfo,1);
+	vboxLayout->setContentsMargins(0, 0, 0, 0);
+
+	splitter->addWidget(gridLayoutLeft);
+    splitter->addWidget(gridLayout);
     
-    QWidget *widget = splitter->widget(0);
+	// setup widget initial width 
+	QWidget *widget = splitter->widget(0);
     QSizePolicy policy = widget->sizePolicy();
     policy.setHorizontalStretch(2);
     widget->setSizePolicy(policy);
 
     widget = splitter->widget(1);
     policy = widget->sizePolicy();
-    policy.setHorizontalStretch(5);
+    policy.setHorizontalStretch(7);
     widget->setSizePolicy(policy);
  
     QGridLayout *layout = new QGridLayout;
-    layout->addWidget(topLabel, 0, 0);
-    layout->addWidget(splitter,2,0);
-    layout->setRowStretch(2,10);
+    layout->addWidget(topLabel, 0,0,1,2);
+    layout->addWidget(splitter,1,0,1,2);
+    layout->setRowStretch(1,10);
     setLayout(layout);
+	packageInfo->hide();
 #endif
 
     connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
@@ -499,12 +531,14 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
 
 void PackageSelectorPage::on_leftTree_itemClicked(QTreeWidgetItem *item, int column)
 {
-    engine->on_leftTree_itemClicked(item,column);
+    engine->on_leftTree_itemClicked(item,column,categoryInfo);
+	packageInfo->hide();
 }
 
 void PackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
 {
-    engine->itemClickedPackageSelectorPage(item,column);
+	packageInfo->show();
+    engine->itemClickedPackageSelectorPage(item,column,packageInfo);
 }
 
 void PackageSelectorPage::installDirChanged(const QString &dir)
@@ -673,6 +707,8 @@ FinishPage::FinishPage(InstallWizard *wizard)
     layout->addWidget(label);
     layout->addStretch(1);
     setLayout(layout);
+	wizard->backButton->setEnabled(true);
+ 
 }
 
 void FinishPage::resetPage()

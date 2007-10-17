@@ -23,10 +23,10 @@
 // uncomment to display text instead of icons
 //#define DISABLE_ICONS
 
-
 #include <QtDebug>
 #include <QDir>
 #include <QTreeWidget>
+#include <QTextEdit>
 #include <QFlags>
 
 #include "installerenginegui.h"
@@ -42,7 +42,7 @@
 #include "package.h"
 #include "packagelist.h"
 #include "globalconfig.h"
-//#include "database.h"
+#include "database.h"
 
 #include "packagestates.h"
 
@@ -58,7 +58,7 @@ const int LIBColumn = 4;
 const int DOCColumn = 5;
 const int SRCColumn = 6;
 const int NotesColumn = 7;
-const int ColumnCount = 9;
+const int ColumnCount = 8;
 
 int typeToColumn(Package::Type type)
 {
@@ -339,11 +339,11 @@ InstallerEngineGui::InstallerEngineGui(DownloaderProgress *progressBar,Installer
 
 void InstallerEngineGui::setLeftTreeData(QTreeWidget *tree)
 {
-    tree->clear();
+	tree->clear();
     QStringList labels;
     QList<QTreeWidgetItem *> items;
-    labels << tr("paketgroups") << tr("description");
-    tree->setColumnCount(2);
+	labels << tr("Paket Groups");
+    tree->setColumnCount(1);
     tree->setHeaderLabels(labels);
     QList<QTreeWidgetItem *> categoryList;
 
@@ -389,11 +389,13 @@ void InstallerEngineGui::setLeftTreeData(QTreeWidget *tree)
     for (int i = 0; i < tree->columnCount(); i++)
         tree->resizeColumnToContents(i);
 }
+// @TODO 
 extern QTreeWidget *tree;
 
-void InstallerEngineGui::on_leftTree_itemClicked(QTreeWidgetItem *item, int column)
+void InstallerEngineGui::on_leftTree_itemClicked(QTreeWidgetItem *item, int column, QTextEdit *info)
 {
-    setPageSelectorWidgetData(tree,item->text(0));
+	info->setText(item->text(1));
+	setPageSelectorWidgetData(tree,item->text(0));
 }
 
 void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree, QString categoryName)
@@ -440,7 +442,7 @@ void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree, QString ca
     labels
     << tr("src")
     << tr("package notes")
-    << tr("news");
+	;
 
     tree->setColumnCount(ColumnCount);
     tree->setHeaderLabels(labels);
@@ -464,7 +466,8 @@ void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree, QString ca
         if (!categoryName.isEmpty() && categoryName != "mingw" && categoryName != "msvc" 
             && categoryName != "all" && categoryName != (*k)->Name())
             continue;
-        QStringList names;
+#ifdef USE_CATEGORY_COLUMN
+		QStringList names;
         names << (*k)->Name();
         names << "";
         names << "";
@@ -477,7 +480,7 @@ void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree, QString ca
         QTreeWidgetItem *category = new QTreeWidgetItem((QTreeWidget*)0, names);
         category->setToolTip(0,(*k)->notes());
         categoryList.append(category);
-
+#endif
         // adding sub items
         QList<Package*>::ConstIterator i = (*k)->packageList().constBegin();
         for ( ; i != (*k)->packageList().constEnd(); ++i)
@@ -493,8 +496,12 @@ void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree, QString ca
             data << pkg->name()
                  << pkg->version()
                  << QString();
+#ifdef USE_CATEGORY_COLUMN
             QTreeWidgetItem *item = new QTreeWidgetItem(category, data);
-            if (m_installMode == Single)
+#else
+            QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidgetItem*)0, data);
+#endif
+			if (m_installMode == Single)
                 setInitialState(*item,pkg,ALLColumn);
 
             setInitialState(*item,pkg,BINColumn);
@@ -512,10 +519,13 @@ void InstallerEngineGui::setPageSelectorWidgetData(QTreeWidget *tree, QString ca
             item->setToolTip ( LIBColumn, libToolTip);
             item->setToolTip ( DOCColumn, docToolTip);
             item->setToolTip ( SRCColumn, srcToolTip);
+#ifndef USE_CATEGORY_COLUMN
+	        categoryList.append(item);
+#endif
         }
-    }
-    tree->insertTopLevelItems(0,categoryList);
-    tree->expandAll();
+	}
+    tree->addTopLevelItems(categoryList);
+	tree->expandAll();
     tree->sortItems(0,Qt::AscendingOrder);
     for (int i = 0; i < tree->columnCount(); i++)
         tree->resizeColumnToContents(i);
@@ -633,15 +643,68 @@ void InstallerEngineGui::setDependencies(Package *pkg, Package::Type type)
  }
 #endif
 
-void InstallerEngineGui::itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column)
+void InstallerEngineGui::itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column, QTabWidget *packageInfo)
 {
-    if (column < ALLColumn)
-        return;
-
     Package *pkg = getPackageByName(item->text(NameColumn),item->text(VersionColumn));
     if (!pkg)
+    {
+		packageInfo->setEnabled(false);
         return;
-    if (m_installMode == Single && column == ALLColumn)
+    }
+
+	// Package Info display
+	packageInfo->setEnabled(true);
+	QTextEdit *e = (QTextEdit*)packageInfo->widget(0);
+	if (!pkg->longNotes().isEmpty()) 
+	{
+		packageInfo->setTabEnabled(0,true);
+		e->setText(pkg->longNotes());
+	}
+	else 
+	{
+		packageInfo->setTabEnabled(0,false);
+        e->setText("");
+	}
+	e = (QTextEdit*)packageInfo->widget(1);
+	QString deps = pkg->deps().join("\n");
+	if (!deps.isEmpty()) 
+	{
+		packageInfo->setTabEnabled(1,true);
+		e->setText(pkg->deps().join("\n"));
+	}
+	else 
+	{
+		packageInfo->setTabEnabled(1,false);
+		e->setText("");
+	}
+
+	e = (QTextEdit*)packageInfo->widget(2);
+	if (e) 
+	{
+		QString list;
+		if (pkg->isInstalled(Package::BIN))
+			list += tr("---- BIN package ----") + "\n" + m_database->getPackageFiles(pkg->name(),Package::BIN).join("\n") + "\n";
+		if (pkg->isInstalled(Package::LIB))
+			list += tr("---- LIB package ----") + "\n" + m_database->getPackageFiles(pkg->name(),Package::LIB).join("\n") + "\n";
+		if (pkg->isInstalled(Package::DOC))
+			list += tr("---- DOC package ----") + "\n" + m_database->getPackageFiles(pkg->name(),Package::DOC).join("\n") + "\n";
+		if (pkg->isInstalled(Package::SRC))
+			list += tr("---- SRC package ----") + "\n" + m_database->getPackageFiles(pkg->name(),Package::SRC).join("\n") + "\n";
+		if (list.isEmpty())
+			packageInfo->setTabEnabled(2,false);
+		else {
+			e->setText(list);
+			packageInfo->setTabEnabled(2,true);
+		}
+	}
+	else
+		packageInfo->setTabEnabled(2,false);
+
+	// end Package Info display
+	if (column < ALLColumn)
+        return;
+
+	if (m_installMode == Single && column == ALLColumn)
     {
        setState(*item,pkg,ALLColumn,_next);
        setState(*item,pkg,BINColumn,_sync,ALLColumn);

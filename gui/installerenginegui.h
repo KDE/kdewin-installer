@@ -27,6 +27,9 @@
 #include "downloaderprogress.h"
 #include "package.h"
 
+class QTabWidget;
+class QTextEdit;
+
 class InstallerEngineGui : public InstallerEngine
 {
 public:
@@ -35,9 +38,9 @@ public:
     InstallerEngineGui(DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
 
     void setPageSelectorWidgetData(QTreeWidget *tree, QString categoryName=QString());
-    void itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column);
+    void itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column, QTabWidget *info);
     void setLeftTreeData(QTreeWidget *tree=0);
-    void on_leftTree_itemClicked(QTreeWidgetItem *item, int column);
+    void on_leftTree_itemClicked(QTreeWidgetItem *item, int column, QTextEdit *info);
     void setDependencies(Package *pkg, Package::Type type);
 
     bool downloadPackages(QTreeWidget *tree, const QString &category=QString());

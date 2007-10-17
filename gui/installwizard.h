@@ -36,6 +36,7 @@ class QCheckBox;
 class QLabel;
 class QLineEdit;
 class QRadioButton;
+class QTextEdit;
 class TitlePage;
 class PathSettingsPage;
 class ProxySettingsPage;
@@ -201,6 +202,8 @@ public slots:
 
 private:
     QLabel *topLabel;
+	QTabWidget *packageInfo;
+	QTextEdit *categoryInfo;
 };
 
 class DownloadPage : public InstallWizardPage
@@ -250,7 +253,7 @@ class FinishPage : public InstallWizardPage
 public:
     FinishPage(InstallWizard *wizard);
 
-    virtual WizardPage *nextPage() { return NULL; }
+	virtual WizardPage *nextPage() { return NULL; }
     virtual void resetPage();
     virtual bool isLastPage() { return true; }
     virtual bool isComplete();
