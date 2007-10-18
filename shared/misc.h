@@ -43,6 +43,17 @@ struct InstallFile
 };
 
 bool parseQtIncludeFiles(QList<InstallFile> &fileList, const QString &root, const QString &subdir, const QString &filter, const QString &exclude);
+
+typedef struct {
+    QString shortDesc;
+    QString longDesc;
+    QString categories;
+    QString requires;
+} HintFileDescriptor;
+
+bool parseHintFile(const QString &hintFile,HintFileDescriptor &pkg);
+bool parseHintFile(const QByteArray &ba, HintFileDescriptor &pkg);
+
 bool findExecutables(QList<InstallFile> &fileList, const QString &root, const QString &subdir, const QString &filter, const QString &exclude, bool debugExe=false);
 
 bool generateFileList(QList<InstallFile> &result, const QString &root, const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList);

@@ -31,6 +31,7 @@
 #include "packagelist.h"
 #include "database.h"
 #include "downloader.h"
+#include "misc.h"
 
 PackageList::PackageList()
         : QObject()
@@ -328,29 +329,41 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                 // desktop-translations-10.1-41.3.noarch.rpm
                 // kde3-i18n-vi-3.5.5-67.9.noarch.rpm
                 // aspell-0.50.3-3.zip
-                // bzip2-1.0.4.notes
+                // bzip2.hint
 
-                QString pkgName;
-                QString pkgVersion;
-                QString pkgType;
-                QString pkgFormat;
-                if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgFormat))
-                    continue;
-                Package *pkg = getPackage(pkgName, pkgVersion.toAscii());
-                if(pkgFormat == "notes") {
-                    // Download package
+				if (fileName.endsWith(".hint")) 
+				{
+					QStringList hintFile = QString(fileName).split(".");
+					QString pkgName = hintFile[0];
+                    // download hint file
                     QByteArray ba;
                     d.start(m_baseURL + '/' + fileName, ba);
-                    if(!pkg) {
+					// check for download errors 
+					HintFileDescriptor hd;
+					parseHintFile(ba,hd);
+					Package *pkg = getPackage(pkgName);
+					if(!pkg) {
                         Package p;
-                        p.setVersion(pkgVersion);
                         p.setName(pkgName);
-                        p.setNotes(QString::fromUtf8(ba));
+                        p.setNotes(hd.shortDesc);
+                        p.setLongNotes(hd.longDesc);
+                        p.setCategory(hd.categories);
+                        p.addDeps(hd.requires.split(" "));
                         addPackage(p);
                     } else {
-                        pkg->setNotes(QString::fromUtf8(ba));
+                        pkg->setNotes(hd.shortDesc);
+                        pkg->setLongNotes(hd.longDesc);
+                        pkg->setCategory(hd.categories);
+                        pkg->addDeps(hd.requires.split(" "));
                     }
-                } else if (pkgFormat == "zip") {
+				} else if (fileName.endsWith("zip")) {
+					QString pkgName;
+					QString pkgVersion;
+					QString pkgType;
+					QString pkgFormat;
+					if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgFormat))
+						continue;
+					Package *pkg = getPackage(pkgName, pkgVersion.toAscii());
                     if(!pkg) {
                         Package p;
                         p.setVersion(pkgVersion);
@@ -360,6 +373,8 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                         p.add(item);
                         if(m_curSite)
                             p.setNotes(m_curSite->packageNote(pkgName));
+                        if(m_curSite)
+                            p.setLongNotes(m_curSite->packageLongNotes(pkgName));
                         if (m_curSite)
                             p.addDeps(m_curSite->getDependencies(pkgName));
                         addPackage(p);

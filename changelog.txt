@@ -4,8 +4,11 @@ ChangeLog
 0.8.0
 -------
 - installer-gui: - added category and package info display 
--                - added package related detailed notes 
-- configer:      - new tool added for config file creating based on 'hint'-files 
+                 - added package related detailed notes 
+                 - added hint files containing package description, categories and dependencies
+                 - added hint file parsing for modindex site parser to get full package information 
+                 - dropped support for *.notes files, they are replaced by the *.hint files
+- configer:      - new tool added for config file creating based on 'hint'-files
 
 0.7.6-1
 -------

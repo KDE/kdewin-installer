@@ -59,6 +59,16 @@ QString Site::packageNote(const QString &package)
     return m_packageNotes[package];
 }
 
+void Site::setPackageLongNotes(const QString &package, const QString &note)
+{
+    m_packageLongNotes[package] = note;
+}
+
+QString Site::packageLongNotes(const QString &package)
+{
+    return m_packageLongNotes[package];
+}
+
 void Site::addExcludes(const QStringList &excludes)
 {
     QStringList::ConstIterator it = excludes.constBegin();

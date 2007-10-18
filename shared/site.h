@@ -73,6 +73,9 @@ public:
     void setPackageNote(const QString &package, const QString &notes);
     QString packageNote(const QString &package);
 
+	void setPackageLongNotes(const QString &package, const QString &note);
+	QString packageLongNotes(const QString &package);
+
     void addExcludes(const QStringList &excludes);
     bool isExclude(const QString &package);
 
@@ -93,6 +96,7 @@ private:
     QStringList m_copies;
     QHash<QString, QStringList> m_dependencies;
     QHash<QString, QString> m_packageNotes;
+    QHash<QString, QString> m_packageLongNotes;
 };
 
 #endif
