@@ -526,6 +526,7 @@ bool Package::fromFileName(const QString &fileName, QString &pkgName, QString &p
     }
     else if (parts.size() == 4)
     {
+        // a-b-version-x
         if (parts[1][0].isLetter())
         {
             pkgName += parts[0] + "-" + parts[1];
@@ -536,7 +537,14 @@ bool Package::fromFileName(const QString &fileName, QString &pkgName, QString &p
             pkgName = parts[0];
             pkgVersion = parts[1] + '-' + parts[2];
         }
-        pkgType = parts[3];
+        // a-b-version-patch
+        if (parts[3][0].isNumber())
+        {
+            pkgType = "all";
+            pkgVersion += "-" + parts[3];
+        }
+        else
+            pkgType = parts[3];
     }
     else if(parts.size() == 3) 
     {
