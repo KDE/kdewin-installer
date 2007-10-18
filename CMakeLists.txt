@@ -8,7 +8,7 @@ set (VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
-set (CMAKE_SUPPRESS_REGENERATION 1)
+#set (CMAKE_SUPPRESS_REGENERATION 1)
 find_package(Qt4 REQUIRED)
 find_package(UPX)
 find_package(KDEWIN_Packager)
