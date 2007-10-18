@@ -21,12 +21,16 @@
 **
 ****************************************************************************/
 
+#include "config.h"
+
+#ifdef Q_WS_WIN
 #include <windows.h>
 #include <windowsx.h>
 #include <objbase.h>
 #include <shlobj.h>
 #include <shlwapi.h>
 #include <initguid.h>
+#endif
 
 #include <QDebug>
 #include <QDir>
@@ -293,6 +297,7 @@ bool generateFileList(QList<InstallFile> &fileList, const QString &root, const Q
    return true;
 }
 
+#ifdef Q_WS_WIN
 // from http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/platform/shell/programmersguide/shell_int/shell_int_programming/shortcuts/shortcut.asp
 // CreateLink - uses the Shell's IShellLink and IPersistFile interfaces 
 //              to create and store a shortcut to the specified object. 
@@ -717,6 +722,7 @@ bool delWin32RegistryValue(const RegKey& akey, const QString& subKey)
 
     return true;
 }
+#endif
 
 void myMessageOutput(QtMsgType type, const char *msg)
 {
