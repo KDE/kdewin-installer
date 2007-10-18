@@ -7,16 +7,21 @@
 #include <QPlastiqueStyle>
 
 #include "installwizard.h"
+#include "installerengine.h"
 #include "misc.h"
 
 // FIXME: required by uninstaller progress
 InstallWizard *wizard;
 
-
 int main(int argc, char *argv[])
 {
     setMessageHandler();
     QApplication app(argc, argv);
+
+	// check if download url is given on command line
+	QString param = QApplication::arguments().at(0);
+	if (param.startsWith("file:") || param.startsWith("http:") || param.startsWith("ftp:"))
+		InstallerEngine::defaultConfigURL = param;
 
 #ifdef ENABLE_STYLE
     QApplication::setStyle(new QPlastiqueStyle);

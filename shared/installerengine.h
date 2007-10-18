@@ -48,7 +48,11 @@ class InstallerEngine : public QObject
 public:
     InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
     ~InstallerEngine();
-    bool readGlobalConfig();
+	/**
+		fetch configuration from local (file procotol), http or ftp mirrors 
+		The precedence is 
+	*/
+	bool readGlobalConfig();
     void createMainPackagelist();
     bool downloadPackageLists();
     void stop();
@@ -62,6 +66,9 @@ public:
     }
 
     GlobalConfig *globalConfig() { return m_globalConfig; }
+	/// download url 
+	static QString defaultConfigURL;
+	static QString fallBackURL;
 
 protected slots:
     void installDirChanged(const QString &newdir);

@@ -35,6 +35,9 @@
 #include "globalconfig.h"
 #include "database.h"
 
+QString InstallerEngine::defaultConfigURL;
+QString InstallerEngine::fallBackURL = "http://82.149.170.66/kde-windows";
+
 InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar)
     : QObject(), m_instProgressBar(instProgressBar)
 {
@@ -66,32 +69,28 @@ InstallerEngine::~InstallerEngine()
 
 bool InstallerEngine::readGlobalConfig()
 {
-    QString fallBackHostURL = "http://82.149.170.66/kde-windows";
-    QString hostURL = Settings::getInstance().mirror();
+	QString hostURL;
     QStringList configFiles;
-    if (!hostURL.isEmpty())    
-    {
-        configFiles = m_globalConfig->fetch(hostURL);
-        if (configFiles.isEmpty())
-        {
-            if (hostURL == fallBackHostURL) // no other host available
-                return false;
-            else 
-            {	
-                configFiles = m_globalConfig->fetch(fallBackHostURL);
-                if (configFiles.isEmpty())
-                    return false;
-            }
-        }
-    }   
-    else
-    {
-        configFiles = m_globalConfig->fetch(fallBackHostURL);
 
-        if (configFiles.isEmpty())
-            return false;
-    }
-    if (!m_globalConfig->parse(configFiles))
+	if (!defaultConfigURL.isEmpty()) // command line overrides
+	{
+        configFiles = m_globalConfig->fetch(defaultConfigURL);
+	}
+    if (configFiles.isEmpty()) 
+	{
+		hostURL = Settings::getInstance().mirror();
+		if (!hostURL.isEmpty())    
+	        configFiles = m_globalConfig->fetch(hostURL);
+	}
+	if (configFiles.isEmpty())
+    {
+        if (hostURL != fallBackURL) // fallBack URL is other url
+            configFiles = m_globalConfig->fetch(fallBackURL);
+    }   
+	if (configFiles.isEmpty())
+		return false;
+
+	if (!m_globalConfig->parse(configFiles))
         return false;
 
     createMainPackagelist();
