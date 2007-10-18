@@ -192,8 +192,10 @@ add_subdirectory(doc)
 add_subdirectory(configer)
 #add_subdirectory(tools)
 
-include(Win32Macros)
-addExplorerWrapper(${NAME})
+if (WIN32)
+    include(Win32Macros)
+    addExplorerWrapper(${NAME})
+endif(WIN32)
 
 #
 # install section
