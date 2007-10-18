@@ -30,6 +30,7 @@
 #include <QDir>
 #include <QCryptographicHash>
 #include "package.h"
+#include "misc.h"
 
 bool findHintFiles(const QString &dir, QStringList &files)
 {
@@ -63,51 +64,6 @@ QByteArray createMD5Hash(const QString &fileName)
          return QByteArray();
     QByteArray content = file.readAll();
     return QCryptographicHash::hash(content, QCryptographicHash::Md5).toHex();
-}
-
-typedef struct {
-    QString shortDesc;
-    QString longDesc;
-    QString categories;
-    QString requires;
-} PackageDescriptor;
-
-bool parseHintFile(const QString &hintFile,PackageDescriptor &pkg)
-{
-    bool ldesc = false;
-    QFile file(hintFile);
-
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-         return false;
-
-    while (!file.atEnd()) {
-        QByteArray line = file.readLine().replace("\n"," ");
-        if (line.startsWith("sdesc: ")) {
-             pkg.shortDesc = line.mid(8,line.length()-8-1);
-             continue;
-        }
-        if (line.startsWith("ldesc: ")) {
-             ldesc = true;
-             pkg.longDesc = line.mid(8);
-        }
-        else if (line.startsWith("category: ")) {
-            ldesc = false;
-            pkg.categories = line.replace("category: ","");
-        }    
-        else if (line.startsWith("requires: ")) {
-            ldesc = false;
-            pkg.requires = line.replace("requires: ","");
-        }
-        else if (ldesc) {
-             pkg.longDesc += line.replace("\"","");
-        }
-    }
-    file.close();
-    qDebug() << "shortDesc" << pkg.shortDesc;
-    qDebug() << "longDesc" << pkg.longDesc;
-    qDebug() << "categories" << pkg.categories;
-    qDebug() << "requires" << pkg.requires;
-    return true;
 }
 
 bool createMD5Sums(const QStringList &hintFiles )
@@ -228,7 +184,7 @@ bool createConfigTxt(QTextStream &out, const QString &root, const QStringList &h
 
     foreach(QFileInfo hintFile, hintFiles) {
 
-        PackageDescriptor hint;
+        HintFileDescriptor hint;
         if (!parseHintFile(hintFile.absoluteFilePath(),hint))
             continue;
 
