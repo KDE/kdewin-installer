@@ -134,7 +134,7 @@ public:
     void setHandled(bool state) { m_handled = state; }
 
     /// separate package name, version, type and file format from a filename
-    static bool fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat=QString());
+    static bool fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat);
     /// separate package name and version from a string 
     static bool fromString(const QString &astring, QString &pkgName, QString &pkgVersion);
     /// generate manifest file name 
