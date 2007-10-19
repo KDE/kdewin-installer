@@ -69,7 +69,7 @@ public:
     bool nestedDownloadTree() { return m_settings.value("nestedDownloadTree", false).toBool(); }
     void setNestedDownloadTree(bool value) { m_settings.setValue("nestedDownloadTree", value); sync(); }
 
-    enum ProxyMode { None = 0, InternetExplorer, FireFox, Manual };
+    enum ProxyMode { None = 0, InternetExplorer, FireFox, Environment, Manual };
     ProxyMode proxyMode() { return (ProxyMode)m_settings.value("proxyMode",0).toInt(); }
     void setProxyMode(ProxyMode mode) 
     {
@@ -117,8 +117,11 @@ Q_SIGNALS:
 protected:
 private:
     QSettings m_settings;
+#ifdef Q_WS_WIN
     bool getIEProxySettings(const QString &url, QString &host, int &port);
+#endif
     bool getFireFoxProxySettings(const QString &url, QString &host, int &port);
+    bool getEnvironmentProxySettings(const QString &url, QString &host, int &port);
     QString debug(void) { return m_settings.value("debug", "").toString(); }
 };
 

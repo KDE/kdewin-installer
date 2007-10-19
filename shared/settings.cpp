@@ -178,12 +178,12 @@ Settings &Settings::getInstance()
 
 
 
+#ifdef Q_OS_WIN
 bool Settings::getIEProxySettings(const QString &url, QString &host, int &port)
 {
     host = QString();
     port = 0;
-
-    bool ok; 
+    bool ok;
     quint32 enable = getWin32RegistryValue(hKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings","ProxyEnable",&ok).toUInt();
     if (!ok)
         return false; 
@@ -204,6 +204,27 @@ bool Settings::getIEProxySettings(const QString &url, QString &host, int &port)
 
     qDebug() << enable << host << port;
     return true;
+}
+#endif
+
+bool Settings::getEnvironmentProxySettings(const QString &url, QString &host, int &port)
+{
+    QString proxyServer = qgetenv("http_proxy");
+    if(!proxyServer.isEmpty()) {
+	QStringList parts = proxyServer.split(':');
+        if(parts.count() == 2) {
+	    host = parts[0]; 
+	    port = parts[1].toInt(); 
+	} else
+        if(parts.count() == 3) {
+	    host = parts[1]; 
+	    port = parts[2].toInt(); 
+        } else
+	    return false;
+
+        return true;
+    }
+    return false;
 }
 
 bool Settings::getFireFoxProxySettings(const QString &url, QString &host, int &port)
@@ -274,14 +295,18 @@ bool Settings::getProxySettings(const QString &url, QString &host, int &port)
 {
     // FIXME: add support for different ftp proxy settings
     switch(proxyMode()) {
+#ifdef Q_WS_WIN
         case InternetExplorer:
             return getIEProxySettings(url, host, port);
+#endif
         case FireFox:
             return getFireFoxProxySettings(url, host, port);
         case Manual:
             host = proxyHost();
             port = proxyPort();
             return true; 
+        case Environment:
+            return getEnvironmentProxySettings(url, host, port);
         case None:
         default:
             host = QString();

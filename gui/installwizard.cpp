@@ -273,7 +273,11 @@ ProxySettingsPage::ProxySettingsPage(InstallWizard *wizard)
     proxyOff = new QRadioButton();
     proxyFireFox = new QRadioButton();
     proxyOff->setText(QApplication::translate("SettingsDialog", "direct connection", 0, QApplication::UnicodeUTF8));
+#ifdef Q_WS_WIN
     proxyIE->setText(QApplication::translate("SettingsDialog", "IE settings", 0, QApplication::UnicodeUTF8));
+#else
+    proxyIE->setText(QApplication::translate("SettingsDialog", "Environment settings", 0, QApplication::UnicodeUTF8));
+#endif
     proxyFireFox->setText(QApplication::translate("SettingsDialog", "FireFox settings", 0, QApplication::UnicodeUTF8));
     proxyManual->setText(QApplication::translate("SettingsDialog", "manual settings", 0, QApplication::UnicodeUTF8));
 
@@ -284,7 +288,11 @@ ProxySettingsPage::ProxySettingsPage(InstallWizard *wizard)
 
     Settings &s = Settings::getInstance();
     switch (s.proxyMode()) {
+#ifdef Q_WS_WIN
         case Settings::InternetExplorer: proxyIE->setChecked(true); break;
+#else
+        case Settings::Environment: proxyIE->setChecked(true); break;
+#endif
         case Settings::Manual: proxyManual->setChecked(true); break;
         case Settings::FireFox: proxyFireFox->setChecked(true); break;
         case Settings::None: 
