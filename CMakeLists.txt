@@ -170,7 +170,7 @@ configure_file(${CMAKE_SOURCE_DIR}/config.h.cmake ${CMAKE_BINARY_DIR}/config.h)
 
 if (UNIX)
   find_package(X11)
-  find_package(Freetype)
+  #find_package(Freetype)
   set (LIBS pthread dl z)
   set (GUI_LIBS pthread dl z)
 else(UNIX)
