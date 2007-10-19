@@ -131,7 +131,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
 
     while (!ioDev->atEnd())
     {
-        QByteArray line = ioDev->readLine().replace("\x0a",""); // support unix format file
+        QByteArray line = ioDev->readLine().replace('\x0a', ""); // support unix format file
         if (line.startsWith(';'))
             continue;
         else if (line.size() < 2)
@@ -181,7 +181,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 {    
                     QString url = cmd[1];
                     if (!url.startsWith("http") && !url.startsWith("ftp"))
-                        url.prepend(m_baseURL + "/");
+                        url.prepend(m_baseURL + '/');
                     Package::PackageItem item;
                     if (item.set(url,col2,Package::BIN))
                         pkg->add(item);
@@ -190,7 +190,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 {    
                     QString url = cmd[1];
                     if (!url.startsWith("http") && !url.startsWith("ftp"))
-                        url.prepend(m_baseURL + "/");
+                        url.prepend(m_baseURL + '/');
                     Package::PackageItem item;
                     if (item.set(url,col2,Package::LIB))
                         pkg->add(item);
@@ -199,7 +199,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 {    
                     QString url = cmd[1];
                     if (!url.startsWith("http") && !url.startsWith("ftp"))
-                        url.prepend(m_baseURL + "/");
+                        url.prepend(m_baseURL + '/');
                     Package::PackageItem item;
                     if (item.set(url,col2,Package::DOC))
                         pkg->add(item);
@@ -208,7 +208,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 {    
                     QString url = cmd[1];
                     if (!url.startsWith("http") && !url.startsWith("ftp"))
-                        url.prepend(m_baseURL + "/");
+                        url.prepend(m_baseURL + '/');
                     Package::PackageItem item;
                     if (item.set(url,col2,Package::SRC))
                         pkg->add(item);
@@ -235,9 +235,10 @@ bool GlobalConfig::parse(QIODevice *ioDev)
             {
                 if(cmd[0] == "@siteurl" || cmd[0] == "@url")
                 {
-                    QString url = cmd[1];
+                    cmd.removeFirst();
+                    QString url = cmd.join(" ");
                     if (!url.startsWith("http") && !url.startsWith("ftp"))
-                        url.prepend(m_baseURL + "/");
+                        url.prepend(m_baseURL + '/');
                     site->setURL(url);
                 }
                 else if(cmd[0] == "@sitetype" || cmd[0] == "@type")
@@ -279,7 +280,8 @@ bool GlobalConfig::parse(QIODevice *ioDev)
             {
                 site = new Site;
                 m_sites.append(site);
-                site->setName(cmd[1]);
+                cmd.removeFirst();
+                site->setName(cmd.join(" "));
                 inSite = true;
             }
             else if(cmd[0] == "@package") 
