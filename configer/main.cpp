@@ -31,6 +31,8 @@
 #include <QCryptographicHash>
 #include "package.h"
 #include "misc.h"
+#include <iostream>
+using namespace std; 
 
 bool findHintFiles(const QString &dir, QStringList &files)
 {
@@ -237,6 +239,56 @@ bool createConfigTxt(QTextStream &out, const QString &root, const QStringList &h
     return true;
 }
 
+QStringList &addDeps(QStringList &deps, const QStringList &add)
+{
+	foreach(QString dep, add) 
+	{
+		if (dep.contains(" "))
+		{
+			foreach(QString adep, dep.split(" ")) 
+			{
+				if (!deps.contains(adep))
+					deps << adep;
+			}
+		}
+		else if (!deps.contains(dep))
+			deps << deps;
+	}
+    return deps;
+}
+
+
+bool printDependencies(const QString &root)
+{
+    QStringList hintFiles;
+    findHintFiles(root,hintFiles);
+    QHash<QString,QStringList> deps; 
+
+    foreach(QFileInfo hintFile, hintFiles) 
+    {
+        QString pkgName = hintFile.baseName();
+        qDebug() << "parsing" << pkgName;
+        HintFileDescriptor hint;
+        if (!parseHintFile(hintFile.absoluteFilePath(),hint))
+            continue;
+        if (hint.requires.isEmpty())
+        {
+            deps[pkgName] = QStringList();
+            continue;
+        }
+        if (deps.contains(pkgName))
+            addDeps(deps[pkgName],hint.requires.split(" "));
+        else
+            deps[pkgName] = hint.requires.split(" ");
+    }
+     QHashIterator<QString, QStringList> i(deps);
+     while (i.hasNext()) {
+        i.next();
+        QString x = QString("%1 : %2").arg(i.key()).arg(i.value().join(" "));
+        cout << x.toAscii().data() << endl;
+    }
+    return true;
+}
 
 static void printHelp(const QString &addInfo)
 {
@@ -248,6 +300,7 @@ static void printHelp(const QString &addInfo)
     ts << "Options: "
        << "\n\t\t"      << "-root <path to package files>"
        << "\n\t\t"      << "-md5 create md5 hashes"
+       << "\n\t\t"      << "-printdeps list dependencies of all packages"
        << "\n\t\t"      << "-o <filename> save output into <filename> instead printing on stdout"
        << "\n\t\t"      << "-verbose display verbose processing informations"
        << "\n";
@@ -266,12 +319,13 @@ int main(int argc, char *argv[])
     QFileInfo rootDir;
     bool createMD5 = false;
     bool verbose = false;
+    bool printDeps = false;
 
     for (int i = 1; i < args.size(); i++)
     {
         bool hasValue = i < args.count()-1;
 
-        if (args[i] == "-md5" && hasValue)
+        if (args[i] == "-md5")
             createMD5 = true;
         else if (args[i] == "-root" && hasValue)
         {
@@ -281,6 +335,8 @@ int main(int argc, char *argv[])
         else if (args[i] == "-o" && hasValue) {
             outFile = args[++i];
         }            
+        else if (args[i] == "-printdeps")
+            printDeps = true;
         else if (args[i] == "-verbose")
             verbose = 1;
         else 
@@ -292,7 +348,13 @@ int main(int argc, char *argv[])
 
     if(!rootDir.isDir() || !rootDir.isReadable())
        printHelp(QString("Root path %1 is not accessible").arg(root));
-    
+
+    if (printDeps)
+    {
+        printDependencies(root);
+        return 0;
+    }
+
     QTextStream *out = 0;
     QFile *f = 0;
 
