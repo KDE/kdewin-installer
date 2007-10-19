@@ -1,3 +1,4 @@
+
 set (configer_SOURCES
 	main.cpp
 	../shared/package.cpp
