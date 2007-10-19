@@ -21,7 +21,7 @@
 **
 ****************************************************************************/
 
-#include "config.h"
+#include <qglobal.h>
 
 #ifdef Q_WS_WIN
 #include <windows.h>
