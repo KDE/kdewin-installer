@@ -170,7 +170,7 @@ PathSettingsPage::PathSettingsPage(InstallWizard *wizard)
     rootPathSelect = new QPushButton("...", this);
     connect(rootPathSelect, SIGNAL(pressed()),this, SLOT(selectRootPath()));
 
-    tempPathLabel = new QLabel(tr("&Temporay download path:"));
+    tempPathLabel = new QLabel(tr("&Temporary download path:"));
     tempPathEdit = new QLineEdit;
     tempPathLabel->setBuddy(tempPathEdit);
     tempPathEdit->setText(s.downloadDir());
