@@ -150,10 +150,12 @@ bool InstallerEngine::downloadPackageLists()
 
         packageList->setBaseURL((*s)->url());
 
-#ifdef DEBUG
+
+#if defined(Q_WS_WIN) && defined(DEBUG)
+	// isn't compilable on unix 
         QFileInfo tmpFile(installer->Root() + "/packages-"+(*s)->Name()+".html");
         if (!tmpFile.exists())
-            m_downloader->start((*s)->URL(), ba));
+            m_downloader->start((*s)->URL(), tmpFile.absoluteFilePath()));
 
         // load and parse
         if (!packageList->readHTMLFromFile(tmpFile.absoluteFilePath(),(*s)->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge ))
