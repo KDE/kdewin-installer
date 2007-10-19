@@ -134,8 +134,9 @@ bool InstallerEngine::downloadPackageLists()
     QList<Site*>::iterator s;
     for (s = m_globalConfig->sites()->begin(); s != m_globalConfig->sites()->end(); s++)
     {
-        QString category = (*s)->name();
-        qDebug() << "download package file list for site: " << category << "from" << (*s)->url();
+		Site *site = (*s);
+		QString category = site->name();
+        qDebug() << "download package file list for site: " << category << "from" << site->url();
         PackageList *packageList = getPackageListByName(category);
         if (!packageList)
         {
@@ -143,26 +144,24 @@ bool InstallerEngine::downloadPackageLists()
             packageList->setName(category);
             m_packageListList.append(packageList);
         }
-        packageList->setNotes((*s)->notes());
+        packageList->setNotes(site->notes());
 
         // packagelist needs to access Site::getDependencies() && Site::isExclude()
-        packageList->setCurrentSite(*s);
+        packageList->setCurrentSite(site);
 
-        packageList->setBaseURL((*s)->url());
+        packageList->setBaseURL(site->url());
 
-
-#if defined(Q_WS_WIN) && defined(DEBUG)
-	// isn't compilable on unix 
-        QFileInfo tmpFile(installer->Root() + "/packages-"+(*s)->Name()+".html");
+#ifdef DEBUG
+        QFileInfo tmpFile(m_installer->root() + "/packages-"+site->name()+".html");
         if (!tmpFile.exists())
-            m_downloader->start((*s)->URL(), tmpFile.absoluteFilePath()));
+            m_downloader->start(site->url(), tmpFile.absoluteFilePath());
 
         // load and parse
-        if (!packageList->readHTMLFromFile(tmpFile.absoluteFilePath(),(*s)->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge ))
+        if (!packageList->readHTMLFromFile(tmpFile.absoluteFilePath(),site->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge ))
 #else            
         QByteArray ba;
-        m_downloader->start((*s)->url(), ba);
-        if (!packageList->readHTMLFromByteArray(ba,(*s)->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge, true ))
+        m_downloader->start(site->url(), ba);
+        if (!packageList->readHTMLFromByteArray(ba,site->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge, true ))
 #endif
         {
             qDebug() << "error reading package list from download html file";
