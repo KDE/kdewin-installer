@@ -555,7 +555,28 @@ void InstallerEngineGui::setDependencies(Package *pkg, Package::Type type)
         //setDependencies(depPkg,type);
 
         // find item in display list
-        QList<QTreeWidgetItem *> items = tree->findItems(depPkg->name(),Qt::MatchFixedString | Qt::MatchRecursive);
+        QList<QTreeWidgetItem *> items = tree->findItems(depPkg->name(),Qt::MatchContains | Qt::MatchRecursive);
+        if(!items.size()) {
+            if (m_installMode == Developer) {
+                packageStates.setState(depPkg->name(),depPkg->version(), Package::BIN, _Install);
+                packageStates.setState(depPkg->name(),depPkg->version(), Package::LIB, _Install);
+                packageStates.setState(depPkg->name(),depPkg->version(), Package::DOC, _Install);
+            } else
+            if (m_installMode == EndUser) {
+                packageStates.setState(depPkg->name(),depPkg->version(), Package::BIN, _Install);
+                // lib is excluded
+                packageStates.setState(depPkg->name(),depPkg->version(), Package::DOC, _Install);
+            } else
+            if (m_installMode == Single) {    
+                if (type == Package::ALL) {
+                    packageStates.setState(depPkg->name(),depPkg->version(), Package::BIN, _Install);
+                    packageStates.setState(depPkg->name(),depPkg->version(), Package::LIB, _Install);
+                    packageStates.setState(depPkg->name(),depPkg->version(), Package::DOC, _Install);
+                } else {
+                    packageStates.setState(depPkg->name(),depPkg->version(), Package::BIN, _Install);
+                }
+            }
+        }
         if (Settings::hasDebug("InstallerEngineGui"))
             qDebug() << __FUNCTION__ << "found " << items.size() << "displayed items";
         for (int j = 0; j < items.size(); ++j) 

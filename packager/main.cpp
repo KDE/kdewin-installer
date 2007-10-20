@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
     }
 
     if(args.count() > 0)
-        printHelp(QString("unknown command line parameter(s): %1").arg(args.join(" ")));
+        printHelp(QString("unknown command line parameter(s): '%1'").arg(args.join(" ")));
     if(name.isEmpty())
        printHelp("-name not specified");
     if(root.isEmpty())
