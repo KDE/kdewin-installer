@@ -29,36 +29,40 @@
 #include "misc.h"
 
 class Packager {
-    public: 
+    public:
       enum Type { NONE = 0, BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8, ALL = 15};
 
       Packager(const QString &packageName, const QString &packageVersion,const QString &notes=QString());
 
       /// mingw only: strip all debugging symbols from files to reduce size
       bool stripFiles(const QString &dir);
-      /// mingw only: extract debuginformations from dll's 
+      /// mingw only: extract debuginformations from dll's
       bool createDebugFiles(const QString &dir);
       void setSourceRoot(const QString &dir) { m_srcRoot = dir; }
       void setSourceExcludes(const QString &excludes) { m_srcExcludes = excludes; }
       void setWithDebugLibs(bool mode) { m_debugLibs = mode; }
+      void setCompressionMode(unsigned int mode) { m_compMode = (mode < 1 || mode > 3) ? 1 : mode; }
 
       bool generatePackageFileList(QList<InstallFile> &result, Packager::Type type, const QString &dir=QString());
 
       bool makePackage(const QString &dir, const QString &destdir=QString(), bool bComplete=false);
       void setVerbose(bool state) { m_verbose = state; }
 
-    protected: 
+    protected:
         struct MemFile {
             QString    filename;
             QByteArray data;
         };
-      bool createZipFile(const QString &zipFile, const QString &filesRootDir, const QList<InstallFile> &files, const QList<MemFile> &memFiles=QList<MemFile>(), const QString &destRootDir=QString() );
-      bool createManifestFiles(const QString &rootdir, QList<InstallFile> &fileList, Packager::Type type, QList<MemFile> &manifestFiles);
+        bool createZipFile(const QString &zipFile, const QString &filesRootDir, const QList<InstallFile> &files, const QList<MemFile> &memFiles=QList<MemFile>(), const QString &destRootDir=QString() );
+        bool createTgzFile(const QString &zipFile, const QString &filesRootDir, const QList<InstallFile> &files, const QList<MemFile> &memFiles=QList<MemFile>(), const QString &destRootDir=QString() );
+        bool createTbzFile(const QString &zipFile, const QString &filesRootDir,const QList<InstallFile> &files, const QList<MemFile> &memFiles=QList<MemFile>(), const QString &destRootDir=QString() );
+        bool compressFiles(const QString &zipFile, const QString &filesRootDir, const QList<InstallFile> &files, const QList<MemFile> &memFiles=QList<MemFile>(), const QString &destRootDir=QString() );
+        bool createManifestFiles(const QString &rootdir, QList<InstallFile> &fileList, Packager::Type type, QList<MemFile> &manifestFiles);
       bool createQtConfig(QList<InstallFile> &fileList, QList<MemFile> &manifestFiles);
 
       QString getBaseName(Packager::Type type);
-      
-    private: 
+
+    private:
       QString m_name;
       QString m_version;
       QString m_notes;
@@ -67,6 +71,7 @@ class Packager {
       QString m_srcExcludes;
       bool m_verbose;
       bool m_debugLibs;
-}; 
+      unsigned int m_compMode;
+};
 
 #endif

@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2007  Christian Ehrlicher <ch.ehrlicher@gmx.de>.
-** Copyright (C) 2007  Ralf Habacker 
+** Copyright (C) 2007  Ralf Habacker
 ** All rights reserved.
 **
 ** This file is part of the KDE installer for windows
@@ -45,10 +45,14 @@ static void printHelp(const QString &addInfo)
        << "\n\t\t"      << "-strip <strip debug infos> (MinGW only)"
        << "\n\t\t"      << "-notes <additional notes for manifest files>"
        << "\n\t\t"      << "-type type of package (mingw, msvc)"
-       << "\n\t\t"      << "-debuglibs add debug libs to binary packages (currently only for qt)"
+       << "\n\t\t"      << "-debuglibs add debug libs to binary packages (currently only for Qt)"
        << "\n\t\t"      << "-destdir directory where to store the zip files to"
        << "\n\t\t"      << "-complete also create all-in-one package with all files"
        << "\n\t\t"      << "-verbose display verbose processing informations"
+       << "\n\t\t"      << "-compression <1|2|3> - set compression mode to"
+       << "\n\t\t\t"    << "1 - zip, default"
+       << "\n\t\t\t"    << "2 - tar.gz"
+       << "\n\t\t\t"    << "3 - tar.bz2"
        << "\n";
 
     ts.flush();
@@ -67,6 +71,7 @@ int main(int argc, char *argv[])
     bool strip = false;
     bool verbose = false;
     bool debugLibs = false;
+    unsigned int compressionMode = 1; // zip
 
     args.removeAt(0);   // name of executable
 
@@ -152,6 +157,15 @@ int main(int argc, char *argv[])
         args.removeAt(idx);
     }
 
+    idx = args.indexOf("-compression");
+    if(idx != -1 && idx < args.count() -1) {
+      compressionMode = args[idx + 1].toUInt();
+      args.removeAt(idx + 1);
+      args.removeAt(idx);
+      if(compressionMode < 1 || compressionMode > 3)
+        printHelp(QString("Unknown compression mode %1").arg(compressionMode));
+    }
+
     // Qt-package needs '-type foo'
     if(type.isEmpty()) {
       QString lName = name.toLower();
@@ -167,10 +181,10 @@ int main(int argc, char *argv[])
        printHelp("-root not specified");
     if(version.isEmpty())
        printHelp("-version not specified");
-    
+
     if(!rootDir.isDir() || !rootDir.isReadable())
        printHelp(QString("Root path %1 is not accessible").arg(root));
-    
+
     if(!srcRoot.isEmpty() &&(!srcRootDir.isDir() || !srcRootDir.isReadable()))
        printHelp(QString("Source Root path %1 is not accessible").arg(srcRoot));
 
@@ -186,6 +200,7 @@ int main(int argc, char *argv[])
 
     packager.setVerbose(verbose);
     packager.setWithDebugLibs(debugLibs);
+    packager.setCompressionMode(compressionMode);
 
     if (strip)
        packager.stripFiles(rootDir.filePath());
@@ -194,4 +209,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-
