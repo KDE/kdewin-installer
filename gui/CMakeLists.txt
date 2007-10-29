@@ -75,8 +75,11 @@ set(all_sources ${installer_GUI_SOURCES}
                 ${qua7zip_HEADERS}
                 ${md5_SOURCES}
                 ${md5_HEADERS}
+                ${filters_SOURCES}
+                ${filters_HEADERS}
         )
 
+source_group(filters FILES ${filters_SOURCES} ${filters_HEADERS})
 source_group(quazip FILES  ${quazip_SOURCES}  ${quazip_HEADERS})
 source_group(qua7zip FILES ${qua7zip_SOURCES} ${qua7zip_HEADERS})
 
@@ -90,11 +93,11 @@ if (CMAKE_PRODUCTION_BUILD)
     install_targets(/bin kdewin-installer-gui-${VERSION} )
     install(FILES ${EXECUTABLE_OUTPUT_PATH}/kdewin-installer-gui.bat DESTINATION bin)
 endif (CMAKE_PRODUCTION_BUILD)
-   
+
 if (CMAKE_PRODUCTION_BUILD AND STATIC_BUILD AND UPX_EXECUTABLE)
     add_custom_command(
         TARGET kdewin-installer-gui-${VERSION}
-        POST_BUILD 
+        POST_BUILD
         COMMAND ${UPX_EXECUTABLE} --lzma -9 "${EXECUTABLE_OUTPUT_PATH}/kdewin-installer-gui-${VERSION}.exe"
 
     )

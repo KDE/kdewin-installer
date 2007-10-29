@@ -3,30 +3,34 @@ set (VER_MIN 1)
 set (VER_PATCH 0)
 
 set (packager_SOURCES
-	main.cpp
-	packager.cpp
-	../shared/misc.cpp
-	../shared/settings.cpp
-	${quazip_SOURCES}
-	${md5_SOURCES}
+  main.cpp
+  packager.cpp
+  ../shared/misc.cpp
+  ../shared/settings.cpp
+  ${quazip_SOURCES}
+  ${md5_SOURCES}
+  ${filters_SOURCES}
 )
 
 set (packager_HEADERS
-    packager.h
-	../shared/misc.h
-	../shared/settings.h
-	${quazip_HEADERS}
-	${md5_HEADERS}
+  packager.h
+  ../shared/misc.h
+  ../shared/settings.h
+  ${quazip_HEADERS}
+  ${md5_HEADERS}
+  ${filters_HEADERS}
 )
 
 include_directories(
-	${CMAKE_CURRENT_SOURCE_DIR}
-	${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 add_definitions(-DPACKAGER_VERSION=${VER_MAJ}.${VER_MIN}.${VER_PATCH})
 
-source_group(quazip FILES ${quazip_SOURCES} ${quazip_HEADERS})
+source_group(filters FILES ${filters_SOURCES} ${filters_HEADERS})
+source_group(quazip FILES  ${quazip_SOURCES}  ${quazip_HEADERS})
+source_group(qua7zip FILES ${qua7zip_SOURCES} ${qua7zip_HEADERS})
 
 qt4_automoc(${packager_SOURCES})
 add_executable(kdewin-packager ${packager_SOURCES} ${packager_HEADERS})
@@ -38,8 +42,8 @@ endif (CMAKE_PRODUCTION_BUILD)
 
 if (UPX_EXECUTABLE AND CMAKE_PRODUCTION_BUILD)
     add_custom_command(
-        TARGET kdewin-packager 
-        POST_BUILD 
-        COMMAND ${UPX_EXECUTABLE} --lzma -9 "${EXECUTABLE_OUTPUT_PATH}/kdewin-packager.exe" 
+        TARGET kdewin-packager
+        POST_BUILD
+        COMMAND ${UPX_EXECUTABLE} --lzma -9 "${EXECUTABLE_OUTPUT_PATH}/kdewin-packager.exe"
     )
 endif (UPX_EXECUTABLE AND CMAKE_PRODUCTION_BUILD)

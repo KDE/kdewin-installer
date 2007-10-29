@@ -43,7 +43,7 @@ InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgre
 {
     m_database = new Database();
     m_downloader = new Downloader(/*blocking=*/ true,progressBar);
-#ifdef PRINT_AVAILABLE_PACKAGES    
+#ifdef PRINT_AVAILABLE_PACKAGES
     m_availablePackages = new PackageList();
     m_availablePackages->setName("all packages");
 #endif
@@ -76,17 +76,17 @@ bool InstallerEngine::readGlobalConfig()
     {
         configFiles = m_globalConfig->fetch(defaultConfigURL);
     }
-    if (configFiles.isEmpty()) 
+    if (configFiles.isEmpty())
     {
         hostURL = Settings::getInstance().mirror();
-        if (!hostURL.isEmpty())    
+        if (!hostURL.isEmpty())
             configFiles = m_globalConfig->fetch(hostURL);
     }
     if (configFiles.isEmpty())
     {
         if (hostURL != fallBackURL) // fallBack URL is other url
             configFiles = m_globalConfig->fetch(fallBackURL);
-    }   
+    }
     if (configFiles.isEmpty())
         return false;
 
@@ -108,7 +108,7 @@ void InstallerEngine::createMainPackagelist()
         Package *pkg = (*p);
         QString category = pkg->category();
         if (category.isEmpty())
-            category = "main"; 
+            category = "main";
         PackageList *packageList = getPackageListByName(category);
         if (!packageList)
         {
@@ -117,7 +117,7 @@ void InstallerEngine::createMainPackagelist()
             m_packageListList.append(packageList);
         }
         packageList->addPackage(*pkg);
-#ifdef PRINT_AVAILABLE_PACKAGES            
+#ifdef PRINT_AVAILABLE_PACKAGES
         m_availablePackages->addPackage(*pkg);
 #endif
     }
@@ -134,8 +134,8 @@ bool InstallerEngine::downloadPackageLists()
     QList<Site*>::iterator s;
     for (s = m_globalConfig->sites()->begin(); s != m_globalConfig->sites()->end(); s++)
     {
-		Site *site = (*s);
-		QString category = site->name();
+        Site *site = (*s);
+        QString category = site->name();
         qDebug() << "download package file list for site: " << category << "from" << site->url();
         PackageList *packageList = getPackageListByName(category);
         if (!packageList)
@@ -158,7 +158,7 @@ bool InstallerEngine::downloadPackageLists()
 
         // load and parse
         if (!packageList->readHTMLFromFile(tmpFile.absoluteFilePath(),site->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge ))
-#else            
+#else
         QByteArray ba;
         m_downloader->start(site->url(), ba);
         if (!packageList->readHTMLFromByteArray(ba,site->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge, true ))
@@ -167,7 +167,7 @@ bool InstallerEngine::downloadPackageLists()
             qDebug() << "error reading package list from download html file";
             continue;
         }
-#ifdef PRINT_AVAILABLE_PACKAGES            
+#ifdef PRINT_AVAILABLE_PACKAGES
         m_availablePackages->append(*packageList);
 #endif
         packageList->syncWithDatabase(*m_database);
@@ -184,7 +184,7 @@ bool InstallerEngine::downloadPackageLists()
     if (Settings::hasDebug("InstallerEngine"))
         dump("downloadPackageLists");
 
-#ifdef PRINT_AVAILABLE_PACKAGES            
+#ifdef PRINT_AVAILABLE_PACKAGES
     m_database->resetHandledState();
     m_availablePackages->syncWithDatabase(*m_database);
     m_database->addUnhandledPackages(m_availablePackages);
@@ -195,8 +195,8 @@ bool InstallerEngine::downloadPackageLists()
 
 PackageList *InstallerEngine::getPackageListByName(const QString &name)
 {
-    QList <PackageList *>::iterator k;
-    for (k = m_packageListList.begin(); k != m_packageListList.end(); ++k)
+    QList <PackageList *>::ConstIterator k;
+    for (k = m_packageListList.constBegin(); k != m_packageListList.constEnd(); ++k)
     {
         if ((*k)->Name() == name)
             return (*k);

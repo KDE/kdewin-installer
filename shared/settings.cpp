@@ -39,13 +39,16 @@ Settings::Settings()
     qDebug() << "proxyHost" << proxyHost();
     qDebug() << "proxyPort" << proxyPort();
 #endif
+#ifndef Q_OS_WIN
+    setProxyMode(Environment);
+#endif
 }
 
 QString Settings::installDir()
 {
     QString dir = m_settings.value("rootdir", QDir::currentPath () ).toString();
     QFileInfo fi(dir);
-    if(!fi.exists()) 
+    if(!fi.exists())
     {
         if(!QDir().mkpath(dir))
         {
@@ -54,7 +57,7 @@ QString Settings::installDir()
         }
         return dir;
     }
-    if(!fi.isDir()) 
+    if(!fi.isDir())
     {
         qWarning() << "rootdir is no directory " << dir;
         return QDir::currentPath();
@@ -102,30 +105,30 @@ void Settings::setDownloadDir(const QString &dir)
     }
 }
 
-void Settings::setCompilerType(CompilerType ctype) 
-{ 
+void Settings::setCompilerType(CompilerType ctype)
+{
     if (compilerType() != ctype) {
-        m_settings.setValue("compilerType", (int)ctype); 
-        m_settings.sync(); 
+        m_settings.setValue("compilerType", (int)ctype);
+        m_settings.sync();
         emit compilerTypeChanged();
     }
 }
 
-QString Settings::mirror() 
-{ 
-    return m_settings.value("mirror", "").toString(); 
+QString Settings::mirror()
+{
+    return m_settings.value("mirror", "").toString();
 }
 
-void Settings::setMirror(const QString &mirror) 
-{ 
-    m_settings.setValue("mirror", mirror); 
-    m_settings.sync(); 
+void Settings::setMirror(const QString &mirror)
+{
+    m_settings.setValue("mirror", mirror);
+    m_settings.sync();
     emit mirrorChanged(mirror);
 }
 
 QStringList Settings::localMirrors()
 {
-    return m_settings.value("localMirrors").toStringList(); 
+    return m_settings.value("localMirrors").toStringList();
 }
 
 void Settings::addLocalMirror(const QString &locMirror)
@@ -134,10 +137,10 @@ void Settings::addLocalMirror(const QString &locMirror)
     m_settings.sync();
 }
 
-void Settings::setLocalMirrors(const QStringList &locMirrors) 
+void Settings::setLocalMirrors(const QStringList &locMirrors)
 {
     m_settings.setValue("localMirrors", locMirrors);
-    m_settings.sync(); 
+    m_settings.sync();
 //    emit mirrorChanged(mirror);
 }
 
@@ -163,10 +166,10 @@ void Settings::setCreateStartMenuEntries(bool bCreate)
     m_settings.sync();
 }
 
-void Settings::sync() 
-{ 
-    m_settings.sync(); 
-    emit settingsChanged(); 
+void Settings::sync()
+{
+    m_settings.sync();
+    emit settingsChanged();
 }
 
 
@@ -186,21 +189,21 @@ bool Settings::getIEProxySettings(const QString &url, QString &host, int &port)
     bool ok;
     quint32 enable = getWin32RegistryValue(hKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings","ProxyEnable",&ok).toUInt();
     if (!ok)
-        return false; 
+        return false;
 
     if (enable == 0)
         return false;
-    
+
     QString proxyServer = getWin32RegistryValue(hKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings","ProxyServer",&ok).toString();
     if (!ok)
-        return false; 
-    
+        return false;
+
     QStringList parts = proxyServer.split(':');
     if(parts.count() != 2)
         return false;
 
-    host = parts[0]; 
-    port = parts[1].toInt(); 
+    host = parts[0];
+    port = parts[1].toInt();
 
     qDebug() << enable << host << port;
     return true;
@@ -209,22 +212,24 @@ bool Settings::getIEProxySettings(const QString &url, QString &host, int &port)
 
 bool Settings::getEnvironmentProxySettings(const QString &url, QString &host, int &port)
 {
-    QString proxyServer = qgetenv("http_proxy");
-    if(!proxyServer.isEmpty()) {
-	QStringList parts = proxyServer.split(':');
-        if(parts.count() == 2) {
-	    host = parts[0]; 
-	    port = parts[1].toInt(); 
-	} else
-        if(parts.count() == 3) {
-	    host = parts[1]; 
-	    port = parts[2].toInt(); 
-        } else
-	    return false;
+  QString proxyServer = qgetenv("http_proxy");
+  if(!proxyServer.isEmpty()) {
+    QStringList parts = proxyServer.split(':');
+    if(parts.count() == 2) {
+      host = parts[0];
+      port = parts[1].toInt();
+    } else
+    if(parts.count() == 3) {
+      host = parts[1];
+      port = parts[2].toInt();
+    } else
+      return false;
 
-        return true;
-    }
-    return false;
+    while (host[0] == '/')
+      host = host.mid(1);
+    return true;
+  }
+  return false;
 }
 
 bool Settings::getFireFoxProxySettings(const QString &url, QString &host, int &port)
@@ -232,7 +237,7 @@ bool Settings::getFireFoxProxySettings(const QString &url, QString &host, int &p
     static QHash<QString,QString> prefs;
     static bool prefsRead = false;
 
-    if (!prefsRead) 
+    if (!prefsRead)
     {
         QString mozillaProfileDir = qgetenv("APPDATA");///lb4kyocy.default";
         QDir d(mozillaProfileDir + "/Mozilla/Firefox/Profiles");
@@ -249,7 +254,7 @@ bool Settings::getFireFoxProxySettings(const QString &url, QString &host, int &p
         QFile f(prefsFile);
         f.open(QIODevice::ReadOnly | QIODevice::Text);
         QTextStream in(&f);
-        while (!in.atEnd()) 
+        while (!in.atEnd())
         {
             QString line = in.readLine();
             if (line.startsWith("user_pref("))
@@ -263,16 +268,16 @@ bool Settings::getFireFoxProxySettings(const QString &url, QString &host, int &p
         }
         prefsRead = true;
     }
-    
+
     if (prefs.contains("network.proxy.type"))
     {
         int mode = prefs["network.proxy.type"].toInt();
         // 1 manual proxy
         // 2 use autoconfig url -> network.proxy.autoconfig_url
-        // 4 automatic detection, how to do ? 
-        if (mode == 1) 
+        // 4 automatic detection, how to do ?
+        if (mode == 1)
         {
-            if (url.startsWith("http") || 
+            if (url.startsWith("http") ||
                        prefs.contains("network.proxy.share_proxy_settings")
                     && prefs["network.proxy.share_proxy_settings"] == "true")
             {
@@ -304,7 +309,7 @@ bool Settings::getProxySettings(const QString &url, QString &host, int &port)
         case Manual:
             host = proxyHost();
             port = proxyPort();
-            return true; 
+            return true;
         case Environment:
             return getEnvironmentProxySettings(url, host, port);
         case None:
@@ -319,10 +324,10 @@ bool Settings::getProxySettings(const QString &url, QString &host, int &port)
 /**
   check if a specific debug group 'area' is available
   The debug group is retrieved from the installer configuration
-  file (normally installer.ini) using the entry debug in the 
+  file (normally installer.ini) using the entry debug in the
   [General] group. Possible values are 'all' which returns all
-  groups are to debug or any string provided in the source. 
-  See hasDebug() calls in the source. 
+  groups are to debug or any string provided in the source.
+  See hasDebug() calls in the source.
   @param area
   @return flag if debug area was found
 */
@@ -330,8 +335,8 @@ bool Settings::hasDebug(const QString area)
 {
     Settings &s = Settings::getInstance();
     return area.isEmpty() && !s.debug().isEmpty()
-        || !area.isEmpty() && 
-            (s.debug().toLower() == "all" 
+        || !area.isEmpty() &&
+            (s.debug().toLower() == "all"
             || s.debug().toLower().contains(area.toLower()));
 }
 
