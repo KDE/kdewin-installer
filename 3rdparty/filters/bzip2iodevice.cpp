@@ -23,7 +23,7 @@
 **
 ****************************************************************************/
 
-#include "bzip2filter.h"
+#include "bzip2iodevice.h"
 
 #include <QIODevice>
 #include <QString>
@@ -137,7 +137,7 @@ bool BZip2IODevice::Private::finishCompress()
     if(device->write(outBuf.constData(), iBytesToWrite) != iBytesToWrite) {
       finishCompress();
       parent->setErrorString(QLatin1String("Error writing to QIODevice"));
-      return -1;
+      return false;
     }
   } while( ret != BZ_STREAM_END );
   BZ2_bzCompressEnd(&stream);

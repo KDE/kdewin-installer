@@ -97,7 +97,7 @@ bool TarFilter::Private::fi2tph(const FileInformations &infos)
 {
   QByteArray fn = codec->fromUnicode(infos.fileName);
 #ifdef Q_OS_WIN
-  if(fn.size() > 3 && fn[1] == ':' && (fn[2] == '\\' || fn[2] == '/')
+  if(fn.size() > 3 && fn[1] == ':' && (fn[2] == '\\' || fn[2] == '/'))
      fn = fn.mid(3);
 #endif
   if(fn.startsWith('/'))
@@ -146,7 +146,7 @@ bool TarFilter::Private::addHeader(const FileInformations &infos)
 
   QByteArray fn = codec->fromUnicode(infos.fileName);
 #ifdef Q_OS_WIN
-  if(fn.size() > 3 && fn[1] == ':' && (fn[2] == '\\' || fn[2] == '/')
+  if(fn.size() > 3 && fn[1] == ':' && (fn[2] == '\\' || fn[2] == '/'))
      fn = fn.mid(3);
 #endif
   if(fn.startsWith('/'))
@@ -239,7 +239,7 @@ bool TarFilter::Private::getHeader(FileInformations &infos)
   }
   if(infos.fileType == gnu_longname) {
     QByteArray fn = device->read(512);
-    if(!fn.size() == 512) {
+    if(fn.size() != 512) {
       lastError = QLatin1String("Unexpected end of inputstream");
       return false;
     }
@@ -336,7 +336,6 @@ bool TarFilter::addFile(const QString &filename, const QString &filenameInArchiv
     return false;
   }
 
-  Private::tar_posix_header hdr;
   FileInformations fInfos;
   fInfos.fileName = (filenameInArchive.isEmpty() ? filename : filenameInArchive);
   fInfos.fileSize = fi.isDir() ? 0 : fi.size();
@@ -392,7 +391,6 @@ bool TarFilter::addData(const FileInformations &fi, QIODevice *in)
   if(!d->checkDevice(in, d->device))
     return false;
 
-  Private::tar_posix_header hdr;
   if(!d->addHeader(fi))
     return false;
 

@@ -20,7 +20,7 @@ OPTION(INSTALL_SYSTEM_LIBS "install required system libraries too (only in share
 OPTION(BUILD_TESTS "build test applications " OFF)
 
 # -------------------------------------------------------
-# build type settings 
+# build type settings
 # -------------------------------------------------------
 # Set a default build type for single-configuration
 # CMake generators if no build type is set.
@@ -28,11 +28,11 @@ MESSAGE(STATUS "Build Type:" ${CMAKE_BUILD_TYPE})
 
 set (CMAKE_PRODUCTION_BUILD 0)
 
-if (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel) 
+if (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel)
     set (CMAKE_PRODUCTION_BUILD 1)
 	# disable qDebug output
 	#add_definitions(-DQT_NO_DEBUG_OUTPUT)
-endif (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel) 
+endif (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel)
 
 if (STATIC_BUILD AND MSVC)
     MESSAGE(STATUS "Note: Static build choosed. Please make sure that Qt is build with /MT flags")
@@ -60,6 +60,31 @@ endif (WIN32 OR CYGWIN)
 set (EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
 # get quazip_SOURCES/quazip_HEADERS/quazip_INCLUDE_DIR
+set(filters_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/tarfilter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/bzip2iodevice.cpp
+)
+set(filters_HEADERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/tarfilter.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/bzip2iodevice.h
+)
+set(filters_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters)
+
+set(bzip2_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/blocksort.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/bzlib.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/compress.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/crctable.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/decompress.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/huffman.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/randtable.c
+)
+set(bzip2_HEADERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/bzlib.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/bzlib_private.h
+)
+set(bzip2_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4)
+
 set(quazip_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip/quazip/ioapi.c
     ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip/quazip/unzip.c
@@ -160,18 +185,21 @@ set(installer_shared_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shared)
 # we need 'UNICODE'
 add_definitions(-DUNICODE)
 include_directories(
-	${quazip_INCLUDE_DIR}
-	${qua7zip_INCLUDE_DIR}
-	${md5_INCLUDE_DIR}
-	${installer_shared_INCLUDE_DIR}
+  ${filters_INCLUDE_DIR}
+  ${quazip_INCLUDE_DIR}
+  ${qua7zip_INCLUDE_DIR}
+  ${md5_INCLUDE_DIR}
+  ${installer_shared_INCLUDE_DIR}
+  ${bzip2_INCLUDE_DIR}
 )
 configure_file(${CMAKE_SOURCE_DIR}/config.txt ${CMAKE_BINARY_DIR}/config.txt)
 configure_file(${CMAKE_SOURCE_DIR}/config.h.cmake ${CMAKE_BINARY_DIR}/config.h)
 
+#FIXME: ${BZIP2_LIBRARIES} -> 3rdparty
 if (UNIX)
-  set (LIBS pthread dl z rt)
-  set (GUI_LIBS pthread dl z rt)
-  if (STATIC_BUILD)	
+  set (LIBS pthread dl z rt ${BZIP2_LIBRARIES})
+  set (GUI_LIBS pthread dl z rt ${BZIP2_LIBRARIES})
+  if (STATIC_BUILD)
     find_package(X11)
     find_package(Freetype)
 # does not work with cmake provided find_packages
@@ -179,13 +207,13 @@ if (UNIX)
 #    find_package(png)
      set (GUI_LIBS ${GUI_LIBS} ${X11_LIBRARIES} ${FREETYPE_LIBRARIES} crypto ssl fontconfig png Xrandr Xfixes)
   endif(STATIC_BUILD)
-  
+
 else(UNIX)
   if (MINGW)
     set (FIRST_LIBS mingw32)
   endif(MINGW)
   # required for static linking
-  set (LIBS kernel32 user32 shell32 uuid ole32 advapi32 ws2_32 shlwapi)
+  set (LIBS kernel32 user32 shell32 uuid ole32 advapi32 ws2_32 shlwapi ${BZIP2_LIBRARIES})
   set (GUI_LIBS gdi32 comdlg32 oleaut32 imm32 winmm winspool ws2_32 ole32 uuid user32 advapi32 shlwapi)
 endif (UNIX)
 
@@ -206,7 +234,7 @@ endif(WIN32)
 
 #
 # install section
-# 
+#
 install_files(/doc/${NAME}-${VERSION} FILES readme.txt )
 install_files(/doc/${NAME}-${VERSION} FILES changelog.txt )
 install_files(/bin FILES bin/kdewin-installer-gui-${VERSION}.exe )
@@ -218,7 +246,7 @@ if (CMAKE_PRODUCTION_BUILD)
     install( FILES cmake/modules/FINDKDEWIN_Packager.cmake  DESTINATION  share/apps/cmake/modules )
 endif (CMAKE_PRODUCTION_BUILD)
 
-# install required shared libraries 
+# install required shared libraries
 if (CMAKE_PRODUCTION_BUILD AND INSTALL_SYSTEM_LIBS)
     set (QT_QTCORE_LIBRARY ${QT_LIBRARY_DIR}/../bin/QtCore4.dll)
     set (QT_QTGUI_LIBRARY ${QT_LIBRARY_DIR}/../bin/QtGui4.dll)
@@ -227,7 +255,7 @@ if (CMAKE_PRODUCTION_BUILD AND INSTALL_SYSTEM_LIBS)
     install_files (/bin FILES ${QT_QTCORE_LIBRARY})
     install_files (/bin FILES  ${QT_QTGUI_LIBRARY})
     install_files (/bin FILES  ${QT_QTNETWORK_LIBRARY})
-    
+
     if (MINGW)
         find_file(MINGW_DLL mingwm10.dll)
         install_files (/bin FILES  ${MINGW_DLL})

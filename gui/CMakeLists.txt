@@ -77,10 +77,13 @@ set(all_sources ${installer_GUI_SOURCES}
                 ${md5_HEADERS}
                 ${filters_SOURCES}
                 ${filters_HEADERS}
+                ${bzip2_SOURCES}
+                ${bzip2_HEADERS}
         )
 
+source_group(bzip2   FILES ${bzip2_SOURCES}   ${bzip2_HEADERS})
 source_group(filters FILES ${filters_SOURCES} ${filters_HEADERS})
-source_group(quazip FILES  ${quazip_SOURCES}  ${quazip_HEADERS})
+source_group(quazip  FILES ${quazip_SOURCES}  ${quazip_HEADERS})
 source_group(qua7zip FILES ${qua7zip_SOURCES} ${qua7zip_HEADERS})
 
 qt4_automoc(${all_sources})

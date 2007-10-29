@@ -10,6 +10,7 @@ set (packager_SOURCES
   ${quazip_SOURCES}
   ${md5_SOURCES}
   ${filters_SOURCES}
+  ${bzip2_SOURCES}
 )
 
 set (packager_HEADERS
@@ -19,6 +20,7 @@ set (packager_HEADERS
   ${quazip_HEADERS}
   ${md5_HEADERS}
   ${filters_HEADERS}
+  ${bzip2_HEADERS}
 )
 
 include_directories(
@@ -28,8 +30,9 @@ include_directories(
 
 add_definitions(-DPACKAGER_VERSION=${VER_MAJ}.${VER_MIN}.${VER_PATCH})
 
+source_group(bzip2   FILES ${bzip2_SOURCES}   ${bzip2_HEADERS})
 source_group(filters FILES ${filters_SOURCES} ${filters_HEADERS})
-source_group(quazip FILES  ${quazip_SOURCES}  ${quazip_HEADERS})
+source_group(quazip  FILES ${quazip_SOURCES}  ${quazip_HEADERS})
 source_group(qua7zip FILES ${qua7zip_SOURCES} ${qua7zip_HEADERS})
 
 qt4_automoc(${packager_SOURCES})
