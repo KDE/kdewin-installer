@@ -63,7 +63,10 @@ public slots:
     void updatePackageList();
 
 protected:
-    bool unzipFile(const QString &destpath, const QString &zipFile, const StringHash &pathRelocations=StringHash());
+    bool createManifestFile(const QString &destpath, const QString &zipFile);
+    bool unbz2File(const QString &destpath, const QString &zipFile, const StringHash &pathRelocations);
+    bool untgzFile(const QString &destpath, const QString &zipFile, const StringHash &pathRelocations);
+    bool unzipFile(const QString &destpath, const QString &zipFile, const StringHash &pathRelocations);
     bool un7zipFile(const QString &destpath, const QString &zipFile);
     void setError(const QString &str);
     bool createQtConfigFile();
