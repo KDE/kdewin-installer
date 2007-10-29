@@ -35,7 +35,7 @@
 #include "quazip.h"
 #include "quazipfile.h"
 #include "tarfilter.h"
-#include "bzip2filter.h"
+#include "bzip2iodevice.h"
 
 #ifdef SEVENZIP_UNPACK_SUPPORT
  #include "qua7zip.h"
