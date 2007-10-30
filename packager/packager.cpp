@@ -69,53 +69,12 @@ bool Packager::compressFiles(const QString &zipFile, const QString &filesRootDir
     case 1:
       return createZipFile(zipFile, filesRootDir, files, memFiles, destRootDir);
     case 2:
-      return createTgzFile(zipFile, filesRootDir, files, memFiles, destRootDir);
-    case 3:
       return createTbzFile(zipFile, filesRootDir, files, memFiles, destRootDir);
   }
 }
 
 #define ON_ERROR(i)   { qWarning("Error in %s():%d - %d", __PRETTY_FUNCTION__, __LINE__, i); return false; }
 #define ON_ERROR_S(s) { qWarning("Error in %s():%d - %s", __PRETTY_FUNCTION__, __LINE__, s); return false; }
-bool Packager::createTgzFile(const QString &zipFile, const QString &filesRootDir,
-                             const QList<InstallFile> &files, const QList<MemFile> &memFiles,
-                             const QString &destRootDir )
-{
-  QuaZip zip(zipFile + ".tar.gz");
-  if(!zip.open(QuaZip::mdCreate))
-    ON_ERROR(zip.getZipError());
-
-  QFile inFile;
-  QuaZipFile outFile(&zip);
-  QuaZipNewInfo a(zipFile + ".tar");
-  if(!outFile.open(QIODevice::WriteOnly, a))
-    ON_ERROR(outFile.getZipError());
-
-  TarFilter tf(&outFile);
-
-  Q_FOREACH(const InstallFile &file, files)
-  {
-    QString in  = file.bAbsInputPath ? file.inputFile : filesRootDir + '/' + file.inputFile;
-    QString out = destRootDir + (file.outputFile.isEmpty() ? file.inputFile : file.outputFile);
-    if(!tf.addFile(in, out))
-      ON_ERROR_S(qPrintable(tf.lastError()));
-  }
-
-  Q_FOREACH(const MemFile &file, memFiles)
-  {
-    if(!tf.addData(file.filename, file.data))
-      ON_ERROR_S(qPrintable(tf.lastError()));
-  }
-
-  outFile.close();
-  if(outFile.getZipError()!=UNZ_OK)
-    ON_ERROR(outFile.getZipError());
-  zip.close();
-  if(zip.getZipError()!=UNZ_OK)
-    ON_ERROR(zip.getZipError());
-  return true;
-}
-
 bool Packager::createTbzFile(const QString &zipFile, const QString &filesRootDir,
                               const QList<InstallFile> &files, const QList<MemFile> &memFiles,
                               const QString &destRootDir )
@@ -335,7 +294,7 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
 
     switch(type) {
         case Packager::BIN:
-            descr = "Binaries";
+            descr = "binaries";
             break;
         case Packager::LIB:
             descr = "developer files";
@@ -355,22 +314,18 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
     QBuffer b(&mf.data);
     b.open(QIODevice::WriteOnly);
     QTextStream out(&b);
-    QList<InstallFile>::ConstIterator it = fileList.begin();
-    QList<InstallFile>::ConstIterator end = fileList.end();
-    QStringList toRemove;
-    for( ; it != end; ++it ) {
-        QString fn = it->inputFile;
-        QFile f(it->bAbsInputPath ? fn : rootDir + '/' + fn);
+    Q_FOREACH(const InstallFile &file, fileList) {
+        const QString &fn = file.inputFile;
+        QFile f(file.bAbsInputPath ? fn : rootDir + '/' + fn);
         if(!f.open(QIODevice::ReadOnly)) {
-            qWarning("Can't open %s - removing from filelist!", qPrintable(fn));
-            toRemove += fn;
+            qWarning("Can't open %s!", qPrintable(fn));
             continue;
         }
         QByteArray ba = f.readAll();         // mmmmh
         QString md5Hash = qtMD5(ba);
-        QByteArray fnUtf8 = it->outputFile.isEmpty() ? it->inputFile.toUtf8() : it->outputFile.toUtf8();
+        QByteArray fnUtf8 = file.outputFile.isEmpty() ? file.inputFile.toUtf8() : file.outputFile.toUtf8();
         fnUtf8.replace(' ', "\\ "); // escape ' '
-        out << fnUtf8 << ' ' << md5Hash << '\n';
+        out << md5Hash << ' ' << fnUtf8 << '\n';
     }
     // qt needs a specific config file
     if ((m_name.startsWith("qt") || m_name.startsWith("q++") || m_name.startsWith("q.."))
@@ -386,8 +341,6 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
     b.close();
     mf.filename = "manifest/" + fileNameBase + ".mft";
     manifestFiles += mf;
-
-
 
     mf.data.clear();
 

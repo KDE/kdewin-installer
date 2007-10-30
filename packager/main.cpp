@@ -49,10 +49,9 @@ static void printHelp(const QString &addInfo)
        << "\n\t\t"      << "-destdir directory where to store the zip files to"
        << "\n\t\t"      << "-complete also create all-in-one package with all files"
        << "\n\t\t"      << "-verbose display verbose processing informations"
-       << "\n\t\t"      << "-compression <1|2|3> - set compression mode to"
+       << "\n\t\t"      << "-compression <1|2> - set compression mode to"
        << "\n\t\t\t"    << "1 - zip, default"
-       << "\n\t\t\t"    << "2 - tar.gz"
-       << "\n\t\t\t"    << "3 - tar.bz2"
+       << "\n\t\t\t"    << "2 - tar.bz2"
        << "\n";
 
     ts.flush();
@@ -162,7 +161,7 @@ int main(int argc, char *argv[])
       compressionMode = args[idx + 1].toUInt();
       args.removeAt(idx + 1);
       args.removeAt(idx);
-      if(compressionMode < 1 || compressionMode > 3)
+      if(compressionMode < 1 || compressionMode > 2)
         printHelp(QString("Unknown compression mode %1").arg(compressionMode));
     }
 

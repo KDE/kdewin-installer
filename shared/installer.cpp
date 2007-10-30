@@ -154,221 +154,78 @@ bool Installer::unbz2File(const QString &destpath, const QString &zipFile, const
   }
   m_files.clear();
 
-  // FIXME: progress not possible
-  //       -> use file.size() and bzip2.pos() ??
-  forever
+  if (m_progress)
   {
-    TarFilter tf(&bzip2);
-    TarFilter::FileInformations tarFileInfo;
-    while(tf.getData(tarFileInfo)) {
-      // relocate path names
-      QString name = tarFileInfo.fileName;
-      for(StringHash::const_iterator i = pathRelocations.constBegin(); i != pathRelocations.constEnd(); i++)
-      {
-        name = name.replace(i.key(),i.value());
-      }
-      m_files << name;
-      QString outPath = path.filePath(name);
-      QFileInfo fi(outPath);
+    m_progress->setMaximum(file.size());
+    m_progress->show();
+  }
+  TarFilter tf(&bzip2);
+  TarFilter::FileInformations tarFileInfo;
+  while(tf.getData(tarFileInfo)) {
+    // relocate path names
+    QString name = tarFileInfo.fileName;
+    for(StringHash::const_iterator i = pathRelocations.constBegin(); i != pathRelocations.constEnd(); i++)
+    {
+      name = name.replace(i.key(),i.value());
+    }
+    m_files << name;
+    QString outPath = path.filePath(name);
+    QFileInfo fi(outPath);
 
-          // is it's a subdir ?
-      if(tarFileInfo.fileType == TarFilter::directory)
+        // is it's a subdir ?
+    if(tarFileInfo.fileType == TarFilter::directory)
+    {
+      if(fi.exists())
       {
-        if(fi.exists())
+        if(!fi.isDir())
         {
-          if(!fi.isDir())
-          {
-            setError(tr("Can not create directory %1").arg(fi.absoluteFilePath()));
-            return false;
-          }
-          continue;
-        }
-        if(!path.mkpath(fi.absoluteFilePath()))
-        {
-          setError(tr("Can not create directory %1").arg(fi.absolutePath()));
+          setError(tr("Can not create directory %1").arg(fi.absoluteFilePath()));
           return false;
         }
         continue;
       }
-      // some archives does not have directory entries
-      else
+      if(!path.mkpath(fi.absoluteFilePath()))
       {
-        if(!path.exists(fi.absolutePath()))
-        {
-          if (!path.mkpath(fi.absolutePath()))
-          {
-            setError(tr("Can not create directory %1").arg(fi.absolutePath()));
-            return false;
-          }
-        }
-        continue;
-      }
-
-      if(tarFileInfo.fileType != TarFilter::regular2 && tarFileInfo.fileType != TarFilter::regular2) {
-        setError(tr("Can not unpack %1 - unsupported filetype %1").arg(tarFileInfo.fileName).arg(tarFileInfo.fileType));
-        continue;
-      }
-
-          // create new file
-      QFile newFile(fi.absoluteFilePath());
-      if(!newFile.open(QIODevice::WriteOnly))
-      {
-        setError(tr("Can not creating file %1").arg(fi.absoluteFilePath()));
+        setError(tr("Can not create directory %1").arg(fi.absolutePath()));
         return false;
       }
-
-      if (m_progress)
-        m_progress->setTitle(tr("Installing %1").arg(newFile.fileName()));
-
-      if(!tf.getData(&newFile)) {
-        setError(tr("Can't write to file %1 (%2)").arg(fi.absoluteFilePath()).arg(newFile.errorString()));
-        return false;
-      }
-      newFile.close();
+      continue;
     }
+    // some archives does not have directory entries
+    if(!path.exists(fi.absolutePath()))
+    {
+      if (!path.mkpath(fi.absolutePath()))
+      {
+        setError(tr("Can not create directory %1").arg(fi.absolutePath()));
+        return false;
+      }
+    }
+
+    if(tarFileInfo.fileType != TarFilter::regular && tarFileInfo.fileType != TarFilter::regular2) {
+      setError(tr("Can not unpack %1 - unsupported filetype %1").arg(tarFileInfo.fileName).arg(tarFileInfo.fileType));
+      continue;
+    }
+
+    // create new file
+    QFile newFile(fi.absoluteFilePath());
+    if(!newFile.open(QIODevice::WriteOnly))
+    {
+      setError(tr("Can not creating file %1").arg(fi.absoluteFilePath()));
+      return false;
+    }
+
+    fprintf(stdout, "filename: %s\n", qPrintable(newFile.fileName()));
+    if (m_progress)
+      m_progress->setTitle(tr("Installing %1").arg(newFile.fileName()));
+
+    if(!tf.getData(&newFile)) {
+      setError(tr("Can't write to file %1 (%2)").arg(fi.absoluteFilePath()).arg(newFile.errorString()));
+      return false;
+    }
+    newFile.close();
   }
 
   bzip2.close();
-  return true;
-}
-
-bool Installer::untgzFile(const QString &destpath, const QString &zipFile, const StringHash &pathRelocations)
-{
-  QDir path(destpath);
-  QuaZip z(zipFile);
-
-  if(!z.open(QuaZip::mdUnzip))
-  {
-    setError(tr("Can not open %1").arg(zipFile));
-    return false;
-  }
-
-  if(!path.exists())
-  {
-    setError(tr("Internal Error - Path %1 does not exist").arg(path.absolutePath()));
-    return false;
-  }
-
-    // z.setFileNameCodec("Windows-1252"); // important!
-
-  QuaZipFile file(&z);
-  QuaZipFileInfo info;
-  m_files.clear();
-  if (m_progress)
-  {
-    m_progress->setMaximum(z.getEntriesCount());
-    m_progress->show();
-  }
-
-  for(bool bOk = z.goToFirstFile(); bOk; bOk = z.goToNextFile())
-  {
-    // get zipfile information
-    if(!z.getCurrentFileInfo(&info))
-    {
-      setError(tr("Can not get file information from tgz file %1").arg(zipFile));
-      return false;
-    }
-    if(!file.open(QIODevice::ReadOnly))
-    {
-      setError(tr("Can not open file %1 from zip file %2").arg(info.name).arg(zipFile));
-      return false;
-    }
-    if(file.getZipError() != UNZ_OK)
-    {
-      setError(tr("Error reading zip file %1").arg(zipFile));
-      return false;
-    }
-    TarFilter tf(&file);
-    TarFilter::FileInformations tarFileInfo;
-    QByteArray ba;
-    while(tf.getData(tarFileInfo, ba)) {
-      // relocate path names
-      QString name = tarFileInfo.fileName;
-      for(StringHash::const_iterator i = pathRelocations.constBegin(); i != pathRelocations.constEnd(); i++)
-      {
-        name = name.replace(i.key(),i.value());
-      }
-      m_files << name;
-      QString outPath = path.filePath(name);
-      QFileInfo fi(outPath);
-
-          // is it's a subdir ?
-      if(tarFileInfo.fileType == TarFilter::directory)
-      {
-        if(fi.exists())
-        {
-          if(!fi.isDir())
-          {
-            setError(tr("Can not create directory %1").arg(fi.absoluteFilePath()));
-            return false;
-          }
-          continue;
-        }
-        if(!path.mkpath(fi.absoluteFilePath()))
-        {
-          setError(tr("Can not create directory %1").arg(fi.absolutePath()));
-          return false;
-        }
-        continue;
-      }
-      // some archives does not have directory entries
-      else
-      {
-        if(!path.exists(fi.absolutePath()))
-        {
-          if (!path.mkpath(fi.absolutePath()))
-          {
-            setError(tr("Can not create directory %1").arg(fi.absolutePath()));
-            return false;
-          }
-        }
-        continue;
-      }
-
-      if(tarFileInfo.fileType != TarFilter::regular2 && tarFileInfo.fileType != TarFilter::regular2) {
-        setError(tr("Can not unpack %1 - unsupported filetype %1").arg(tarFileInfo.fileName).arg(tarFileInfo.fileType));
-        continue;
-      }
-
-          // create new file
-      QFile newFile(fi.absoluteFilePath());
-      if(!newFile.open(QIODevice::WriteOnly))
-      {
-        setError(tr("Can not creating file %1").arg(fi.absoluteFilePath()));
-        return false;
-      }
-
-      if (m_progress)
-        m_progress->setTitle(tr("Installing %1").arg(newFile.fileName()));
-
-      qint64 iBytesRead;
-      QByteArray ba;
-      ba.resize(QUNZIP_BUFFER);
-
-      while((iBytesRead = file.read(ba.data(), QUNZIP_BUFFER)) > 0)
-        newFile.write(ba.data(), iBytesRead);
-
-      newFile.close();
-    }
-
-    file.close();
-    if(file.getZipError() != UNZ_OK)
-    {
-      setError(tr("Error reading zip file %1").arg(zipFile));
-      return false;
-    }
-  }
-  z.close();
-  if (m_progress)
-  {
-    m_progress->hide();
-  }
-
-  if(z.getZipError() != UNZ_OK)
-  {
-    setError(tr("Error reading zip file %1").arg(zipFile));
-    return false;
-  }
   return true;
 }
 
@@ -681,9 +538,9 @@ bool Installer::install(const QString &fileName, const StringHash &pathRelocatio
       if(!unzipFile(m_root, fileName, pathRelocations))
         return false;
     } else
-    if (fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz"))
+    if (fileName.endsWith(".tar.bz2") || fileName.endsWith(".tbz"))
     {
-      if(!untgzFile(m_root, fileName, pathRelocations))
+      if(!unbz2File(m_root, fileName, pathRelocations))
         return false;
     } else
     if (fileName.endsWith(".7z"))
