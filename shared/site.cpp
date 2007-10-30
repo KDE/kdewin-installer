@@ -88,12 +88,13 @@ bool Site::isExclude(const QString &_package)
 void Site::dump(const QString &title)
 {
     DUMP_HEADER(title,"Site");
-    qDebug() << "m_name  " << m_name;  
-    qDebug() << "m_url   " << m_url;   
-    qDebug() << "m_type  " << m_type;  
-    qDebug() << "m_mirror" << m_mirrors.join(" ");
+    qDebug() << "m_name  " << m_name;
+    qDebug() << "m_url   " << m_url;
+    qDebug() << "m_type  " << m_type;
+    Q_FOREACH(const QUrl &url, m_mirrors)
+        qDebug() << "m_mirror" << url.toString();
     qDebug() << "m_excludes" << m_excludes.join(" ");
-    // FIXME: dump dependencies 
+    // FIXME: dump dependencies
     DUMP_FOOTER(title,"Site");
 
 }

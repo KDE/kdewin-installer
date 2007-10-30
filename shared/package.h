@@ -24,6 +24,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QUrl>
 #include <QStringList>
 #include <QHash>
 
@@ -51,13 +52,13 @@ public:
 
     class PackageItem {
         public:
-            bool set(const QString &url, const QString &fn, Package::Type contentType, bool bInstalled = false);
-            bool set(const QString &url, const QString &fn, const QByteArray &contentType, bool bInstalled = false);
+            bool set(const QUrl &url, const QString &fn, Package::Type contentType, bool bInstalled = false);
+            bool set(const QUrl &url, const QString &fn, const QByteArray &contentType, bool bInstalled = false);
             bool setContentType(const QString &type);
             // dump content
             void dump(const QString &title=QString()) const;
-            QString url;            // complete download url 
-            QString fileName;  // filename only
+            QUrl    url;            // complete download url
+            QString fileName;       // filename only
             QString packageType;    // zip / msi / ...
             Type    contentType;    // BIN / LIB / DOC / SRC
             bool    bInstalled;     // true if already installed
@@ -86,9 +87,7 @@ public:
     // returns fileName of package item e.g. xyz-1.2.3-bin.zip
     QString getFileName(Package::Type contentType);
     // returns complete url of package item e.g. http://host/path.../fileName
-    QString getURL(Package::Type type);
-    // returns the base Url of all packages (if possible, otherwise QString())
-    QString getBaseURL();
+    QUrl getUrl(Package::Type type);
 
     // add a file to this package
     bool add(const PackageItem &item);
@@ -107,16 +106,16 @@ public:
     bool write(QTextStream &out);
     // load package from stream
     bool read(QTextStream &in);
-    
+
     // dump package content
     void dump(const QString &title=QString()) const;
-    
+
     // download a package item
     bool downloadItem(Downloader *downloader, Package::Type type);
     bool installItem(Installer *installer, Package::Type type);
     bool removeItem(Installer *installer, Package::Type type);
 
-    // package category 
+    // package category
     const QString &category() const { return m_category; }
     void setCategory(const QString &cat);
 
@@ -124,7 +123,7 @@ public:
     void addDeps(const QStringList &addDeps);
     const QStringList &deps() const { return m_deps; }
 
-    // filepath relocations for installing 
+    // filepath relocations for installing
     void addPathRelocation(const QString &key, const QString &value) { m_pathRelocs[key] = value; }
     StringHash &pathRelocations() { return m_pathRelocs; }
 
@@ -135,11 +134,11 @@ public:
 
     /// separate package name, version, type and file format from a filename
     static bool fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat);
-    /// separate package name and version from a string 
+    /// separate package name and version from a string
     static bool fromString(const QString &astring, QString &pkgName, QString &pkgVersion);
-    /// generate manifest file name 
+    /// generate manifest file name
     static QString manifestFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type);
-    /// generate version file name 
+    /// generate version file name
     static QString versionFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type);
 
 private slots:
@@ -155,8 +154,8 @@ protected:
     QString m_version;  // base version (4.13b-1)
     QString m_notes;    // notes from package.notes
     QString m_longNotes;// notes from package.notes
-    QString m_category;   
-    QStringList m_deps;       
+    QString m_category;
+    QStringList m_deps;
     StringHash m_pathRelocs;
     bool       m_handled;      // marker for several operations
 };

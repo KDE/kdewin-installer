@@ -38,8 +38,8 @@
 #include "misc.h"
 
 Downloader::Downloader(bool _blocking, DownloaderProgress *_progress)
-        : m_progress(_progress), m_ioDevice(0), m_file(0), m_httpGetId(~0U),
-        m_httpRequestAborted(false), m_blocking(_blocking), m_eventLoop(0)
+  : m_progress(_progress), m_http(0), m_ioDevice(0), m_file(0), m_httpGetId(~0U),
+    m_httpRequestAborted(false), m_blocking(_blocking), m_eventLoop(0)
 {
     init();
 }
@@ -56,67 +56,86 @@ void Downloader::init()
 
 Downloader::~Downloader()
 {
+    if(m_http)
+      m_http->abort();
     delete m_http;
     delete m_file;
 }
 
 void Downloader::setError(const QString &str)
 {
-    qWarning(str.toLocal8Bit().data());
+    qWarning(qPrintable(str));
 }
 
-bool Downloader::start(const QString &_url, const QString &fileName)
+bool Downloader::start(const QUrl &url, const QString &fileName)
 {
-    if(fileName.isEmpty())
-        return false;
-	if (!_url.startsWith("http") && !_url.startsWith("ftp"))
-	{
-		QFile::copy(_url,fileName);
-		return true;
-	}
+    if(url.isEmpty())
+        return true;
+    if (m_progress)
+        m_progress->setTitle(tr("Downloading %1 to %2").arg(url.toString()).arg(fileName));
+
+    QString scheme = url.scheme();
+    if (scheme.isEmpty() || scheme == QLatin1String("file"))
+    {
+        QFile::remove(fileName);
+        QFile::copy(url.toLocalFile(),fileName);
+        return true;
+    }
 
     m_file = new QFile(fileName);
     if (!m_file->open(QIODevice::WriteOnly))
     {
-        setError(tr("Unable to open file %1: %2.").arg(fileName).arg(m_file->errorString()));
-        delete m_file;
-        m_file = 0;
-        return false;
+      setError(tr("Unable to open file %1: %2.").arg(fileName).arg(m_file->errorString()));
+      delete m_file;
+      m_file = 0;
+      return false;
     }
-    if (m_progress)
-        m_progress->setTitle(tr("Downloading %1 to %2").arg(_url).arg(m_file->fileName()));
 
-    qDebug() << "Downloading" << _url << " to " << m_file->fileName();
-    return startInternal(_url, m_file);
+    qDebug() << "Downloading" << url.toString() << " to " << m_file->fileName();
+    return startInternal(url, m_file);
 }
 
-bool Downloader::start(const QString &_url, QByteArray &ba)
+bool Downloader::start(const QUrl &url, QByteArray &ba)
 {
+    if(url.isEmpty())
+        return true;
     if (m_progress)
-        m_progress->setTitle(tr("Downloading %1").arg(_url));
-    QBuffer *buf = new QBuffer(&ba);
+        m_progress->setTitle(tr("Downloading %1").arg(url.toString()));
 
+    QBuffer *buf = new QBuffer(&ba);
     if(!buf->open(QIODevice::WriteOnly))
     {
         setError(tr("Internal error!"));
         return false;
     }
-    qDebug() << "Downloading" << _url << " to memory";
-    return startInternal(_url, buf);
+
+    QString scheme = url.scheme();
+    if (scheme.isEmpty() || scheme == QLatin1String("file"))
+    {
+      QFile f(url.toLocalFile());
+      if(!f.open(QIODevice::ReadOnly)) {
+        setError(tr("Unable to open file %1: %2.").arg(f.fileName()).arg(f.errorString()));
+        return false;
+      }
+      ba = f.readAll();
+      return true;
+    }
+
+    qDebug() << "Downloading" << url.toString() << " to memory";
+    return startInternal(url, buf);
 }
 
-bool Downloader::startInternal(const QString &_url, QIODevice *ioDev)
+bool Downloader::startInternal(const QUrl &url, QIODevice *ioDev)
 {
     QString host;
     int port;
     Settings &s = Settings::getInstance();
-    s.getProxySettings(_url,host,port);
-    if (!host.isEmpty()) 
+    s.getProxySettings(url.scheme(),host,port);
+    if (!host.isEmpty())
     {
         m_http->setProxy(host,port);
         qDebug() << "Downloader proxy settings - host:" << host << "port:" << port;
     }
-    QUrl url(_url);
     m_ioDevice = ioDev;
 
     m_http->setHost(url.host(), url.port() != -1 ? url.port() : 80);
@@ -155,8 +174,7 @@ void Downloader::httpRequestFinished(int requestId, bool error)
         if (m_file)
         {
             m_file->close();
-            m_file->remove
-            ();
+            m_file->remove();
             delete m_file;
             m_file = 0;
             m_ioDevice = 0;

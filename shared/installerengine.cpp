@@ -149,7 +149,7 @@ bool InstallerEngine::downloadPackageLists()
         // packagelist needs to access Site::getDependencies() && Site::isExclude()
         packageList->setCurrentSite(site);
 
-        packageList->setBaseURL(site->url());
+        packageList->setBaseURL(site->url().toString());    // why not use QUrl here?
 
 #ifdef DEBUG
         QFileInfo tmpFile(m_installer->root() + "/packages-"+site->name()+".html");

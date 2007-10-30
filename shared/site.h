@@ -24,11 +24,13 @@
 #define SITE_H
 
 #include <QString>
+#include <QUrl>
 #include <QStringList>
 #include <QHash>
 
+typedef QList<QUrl> QUrlList;
 /**
- holds a site definition 
+ holds a site definition
 */
 class Site
 {
@@ -36,26 +38,26 @@ class Site
 public:
     enum SiteType {SourceForge, ApacheModIndex};
 
-    const QString &name() const { return m_name; }
+    QString name() const { return m_name; }
     void setName(const QString &name)
     {
         m_name = name;
     }
 
-    const QString &url() const { return m_url; }
-    void setURL(const QString &url)
+    QUrl url() const { return m_url; }
+    void setURL(const QUrl &url)
     {
         m_url = url;
     }
 
-    const QStringList &mirrors() const { return m_mirrors; }
-    void addMirror(const QString &mirror)
+    const QUrlList &mirrors() const { return m_mirrors; }
+    void addMirror(const QUrl &mirror)
     {
         if(!m_mirrors.contains(mirror))
             m_mirrors += mirror;
     }
 
-    const QStringList &copies() const { return m_copies; }
+    QStringList copies() const { return m_copies; }
     void addCopy(const QString &copy)
     {
         m_copies += copy;
@@ -79,7 +81,7 @@ public:
     void addExcludes(const QStringList &excludes);
     bool isExclude(const QString &package);
 
-    const QString &notes() const { return m_notes; }
+    QString notes() const { return m_notes; }
     void setNotes(const QString &notes)
     {
         m_notes = notes;
@@ -88,10 +90,10 @@ public:
     void dump(const QString &title=QString());
 private:
     QString     m_name;
-    QString     m_url;
+    QUrl        m_url;
     QString     m_notes;
     SiteType    m_type;
-    QStringList m_mirrors;
+    QUrlList    m_mirrors;
     QStringList m_excludes;
     QStringList m_copies;
     QHash<QString, QStringList> m_dependencies;

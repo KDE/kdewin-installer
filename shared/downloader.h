@@ -24,12 +24,16 @@
 #ifndef DOWNLOADER_H
 #define DOWNLOADER_H
 
+#include <QObject>
+
 class DownloaderProgress;
 class QEventLoop;
 class QFile;
 class QHttp;
 class QHttpResponseHeader;
 class QIODevice;
+class QString;
+class QUrl;
 
 class Downloader: public QObject
 {
@@ -42,9 +46,9 @@ public:
     // set http proxy
     void setProxy(const QString &host, int port);
 
-    // start download 
-    bool start(const QString &url, const QString &fileName = QString::null);
-    bool start(const QString &url, QByteArray &ba);
+    // start download
+    bool start(const QUrl &url, const QString &fileName = QString());
+    bool start(const QUrl &url, QByteArray &ba);
     void cancel();
 
 signals:
@@ -60,7 +64,7 @@ private slots:
 private:
     void init();
     void setError(const QString&);
-    bool startInternal(const QString &_url, QIODevice *ioDev);
+    bool startInternal(const QUrl &url, QIODevice *ioDev);
 private:
     DownloaderProgress *m_progress;
     QHttp      *m_http;

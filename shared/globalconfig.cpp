@@ -27,6 +27,7 @@
 #include <QFileInfo>
 #include <QBuffer>
 #include <QMessageBox>
+#include <QUrl>
 
 GlobalConfig::GlobalConfig(Downloader *downloader)
 {
@@ -35,12 +36,12 @@ GlobalConfig::GlobalConfig(Downloader *downloader)
 
 QStringList GlobalConfig::fetch(const QString &baseURL)
 {
-    bool ret; 
+    bool ret;
     m_baseURL = baseURL;
 
     QStringList configFiles;
     // remote config file
-    if (baseURL.startsWith("http") || baseURL.startsWith("ftp")) 
+    if (baseURL.startsWith("http") || baseURL.startsWith("ftp"))
     {
         QFileInfo cfr(Settings::getInstance().downloadDir()+"/config-remote.txt");
         if (Settings::hasDebug("GlobalConfig"))
@@ -49,7 +50,7 @@ QStringList GlobalConfig::fetch(const QString &baseURL)
         {
             configFiles << cfr.absoluteFilePath();
         }
-        else 
+        else
         {
             QFileInfo cfi(Settings::getInstance().downloadDir()+"/config.txt");
             ret = m_downloader->start(baseURL + "/installer/config.txt",cfi.absoluteFilePath());
@@ -63,7 +64,7 @@ QStringList GlobalConfig::fetch(const QString &baseURL)
         QFileInfo fi(Settings::getInstance().downloadDir()+"/config-local.txt");
         if (Settings::hasDebug("GlobalConfig"))
             qDebug() << "Check if a local config file is available at" << fi.absoluteFilePath() << (fi.exists() ? "... found" : "... not found");
-        if (fi.exists()) 
+        if (fi.exists())
             configFiles << fi.absoluteFilePath();
 
     }
@@ -78,7 +79,7 @@ bool GlobalConfig::parse(const QStringList &configFiles)
         if (Settings::hasDebug("GlobalConfig"))
             qDebug() << "parse config file " << configFile << (ret == true ? "okay" : "failure") ;
     }
-    return ret; 
+    return ret;
 }
 
 GlobalConfig::~GlobalConfig()
@@ -145,7 +146,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
             else if (inSite)
                 inSite=false;
             continue;
-        }           
+        }
         else if (line.startsWith('@'))
         {
             // TODO: encoding of config file! Currently: ascii
@@ -160,58 +161,58 @@ bool GlobalConfig::parse(QIODevice *ioDev)
             else if (cmd[0] == "@mirror")
             {
                 mirror = new Mirror;
-                mirror->url = cmd[1]; 
-                mirror->location = cmd[2]; 
+                mirror->url = cmd[1];
+                mirror->location = cmd[2];
                 m_mirrors.append(mirror);
             }
             else if (cmd[0] == "@news")
             {
-                QString name = cmd[1]; 
-                QString version = cmd[2]; 
+                QString name = cmd[1];
+                QString version = cmd[2];
                 cmd.removeFirst();
                 cmd.removeFirst();
                 cmd.removeFirst();
-                m_news[name+"-"+version] = cmd.join(" ");        
+                m_news[name+"-"+version] = cmd.join(" ");
             }
             else if(inPackage)
             {
                 if(cmd[0] == "@version")
                     pkg->setVersion(cmd[1]);
                 else if(cmd[0] == "@url-bin")
-                {    
-                    QString url = cmd[1];
-                    if (!url.startsWith("http") && !url.startsWith("ftp"))
-                        url.prepend(m_baseURL + '/');
-                    Package::PackageItem item;
-                    if (item.set(url,col2,Package::BIN))
-                        pkg->add(item);
+                {
+                  QUrl url(cmd[1]);
+                  if (url.scheme().isEmpty())
+                    url = QUrl(m_baseURL + '/' + cmd[1]);
+                  Package::PackageItem item;
+                  if (item.set(url,col2,Package::BIN))
+                    pkg->add(item);
                 }
                 else if(cmd[0] == "@url-lib")
-                {    
-                    QString url = cmd[1];
-                    if (!url.startsWith("http") && !url.startsWith("ftp"))
-                        url.prepend(m_baseURL + '/');
-                    Package::PackageItem item;
-                    if (item.set(url,col2,Package::LIB))
-                        pkg->add(item);
+                {
+                  QUrl url(cmd[1]);
+                  if (url.scheme().isEmpty())
+                    url = QUrl(m_baseURL + '/' + cmd[1]);
+                  Package::PackageItem item;
+                  if (item.set(url,col2,Package::LIB))
+                    pkg->add(item);
                 }
                 else if(cmd[0] == "@url-doc")
-                {    
-                    QString url = cmd[1];
-                    if (!url.startsWith("http") && !url.startsWith("ftp"))
-                        url.prepend(m_baseURL + '/');
-                    Package::PackageItem item;
-                    if (item.set(url,col2,Package::DOC))
-                        pkg->add(item);
+                {
+                  QUrl url(cmd[1]);
+                  if (url.scheme().isEmpty())
+                    url = QUrl(m_baseURL + '/' + cmd[1]);
+                  Package::PackageItem item;
+                  if (item.set(url,col2,Package::DOC))
+                    pkg->add(item);
                 }
                 else if(cmd[0] == "@url-src")
-                {    
-                    QString url = cmd[1];
-                    if (!url.startsWith("http") && !url.startsWith("ftp"))
-                        url.prepend(m_baseURL + '/');
-                    Package::PackageItem item;
-                    if (item.set(url,col2,Package::SRC))
-                        pkg->add(item);
+                {
+                  QUrl url(cmd[1]);
+                  if (url.scheme().isEmpty())
+                    url = QUrl(m_baseURL + '/' + cmd[1]);
+                  Package::PackageItem item;
+                  if (item.set(url,col2,Package::SRC))
+                    pkg->add(item);
                 }
                 else if(cmd[0] == "@require")
                 {
@@ -235,16 +236,17 @@ bool GlobalConfig::parse(QIODevice *ioDev)
             {
                 if(cmd[0] == "@siteurl" || cmd[0] == "@url")
                 {
-                    cmd.removeFirst();
-                    QString url = cmd.join(" ");
-                    if (!url.startsWith("http") && !url.startsWith("ftp"))
-                        url.prepend(m_baseURL + '/');
+                    QUrl url(cmd.join(" "));
+                    if (url.scheme().isEmpty())
+                        url = QUrl(m_baseURL + '/' + cmd[1]);
                     site->setURL(url);
                 }
                 else if(cmd[0] == "@sitetype" || cmd[0] == "@type")
                     site->setType(cmd[1] == "apachemodindex" ? Site::ApacheModIndex : Site::SourceForge );
-                else if(cmd[0] == "@mirrorurl")
-                    site->addMirror(cmd[1]);
+                else if(cmd[0] == "@mirrorurl") {
+                    QUrl url(cmd.join(" "));
+                    site->addMirror(url);
+                }
                 else if(cmd[0] == "@deps" || cmd[0] == "@require") {
                     QString dep = cmd[1];
                     cmd.removeFirst();
@@ -284,7 +286,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 site->setName(cmd.join(" "));
                 inSite = true;
             }
-            else if(cmd[0] == "@package") 
+            else if(cmd[0] == "@package")
             {
                  pkg = new Package;
                  m_packages.append(pkg);
@@ -301,8 +303,8 @@ void GlobalConfig::dump(const QString &title)
 {
     DUMP_HEADER(title);
     for (QList<Site*>::iterator s = sites()->begin(); s != sites()->end(); s++)
-        (*s)->dump(title);    
-  
+        (*s)->dump(title);
+
     for (QList<Package*>::iterator p = packages()->begin(); p != packages()->end(); p++)
         (*p)->dump(title);
     DUMP_FOOTER(title);

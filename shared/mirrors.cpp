@@ -24,8 +24,9 @@
 #include "downloader.h"
 #include "downloaderprogress.h"
 #include <QtDebug>
-#include <QFile>
 #include <QBuffer>
+#include <QFile>
+#include <QUrl>
 
 /**
 @TODO add  region to mirror list (<TH COLSPAN=5 BGCOLOR="YELLOW">...)
@@ -44,15 +45,15 @@ Mirrors::~Mirrors()
 {}
 
 /**
- get the list of mirrors 
- @return list of mirrors 
+ get the list of mirrors
+ @return list of mirrors
 */
 QStringList Mirrors::get
     ()
 {
     DownloaderProgress progress(0);
     Downloader download(true,&progress);
-    QString url = MIRROR_BASE_URL_KDE;
+    QUrl url(MIRROR_BASE_URL_KDE);
 #ifdef DEBUG
 
     QString out = "mirrors.html";
@@ -69,7 +70,7 @@ QStringList Mirrors::get
 
 /**
  parse mirror list from a local file
- 
+
  @param filename
  @return true if parse was performed successfully, false otherwise
 */
