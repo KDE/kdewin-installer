@@ -41,6 +41,7 @@ class BZip2IODevice::Private
     device(dev),
     iBufSize(1024*1024),
     initialized(false),
+    decomressStreamEnd(false),
     blocksize(bs)
     {}
 
@@ -51,12 +52,14 @@ class BZip2IODevice::Private
     qint64 doDecompress(char *out, qint64 iMaxLen);
     bool finishDecompress();
 
-    BZip2IODevice   *parent;
-    QIODevice   *device;
-    unsigned int iBufSize;
-    bool         initialized;
-    unsigned int blocksize;
-    bz_stream    stream;
+    BZip2IODevice  *parent;
+    QIODevice      *device;
+    unsigned int    iBufSize;
+    bool            initialized;
+    bool            decomressStreamEnd;
+    unsigned int    blocksize;
+    bz_stream       stream;
+    QByteArray      inBuf;
 };
 
 bool BZip2IODevice::Private::initializeCompress()
@@ -159,7 +162,7 @@ bool BZip2IODevice::Private::initializeDecompress()
   } else {
     initialized = true;
   }
-
+  decomressStreamEnd = false;
   return initialized;
 }
 
@@ -172,17 +175,19 @@ qint64 BZip2IODevice::Private::doDecompress(char *out, qint64 iMaxLen)
     finishDecompress();
     return -1;
   }
+  if(decomressStreamEnd)
+    return 0;
+
   if(iMaxLen > 2*1024*1024*1024LL) {
     finishCompress();
     parent->setErrorString(QLatin1String("Currently can't handle more than 2GB!"));
     return -1;
   }
 
-  QByteArray inBuf;
   stream.next_out  = out;
   stream.avail_out = iMaxLen;
   do {
-    if(ret != BZ_STREAM_END) {
+    if(ret != BZ_STREAM_END && stream.avail_in == 0) {
       inBuf = device->read(iBufSize);
       stream.next_in = inBuf.data();
       stream.avail_in = inBuf.size();
@@ -194,7 +199,8 @@ qint64 BZip2IODevice::Private::doDecompress(char *out, qint64 iMaxLen)
       finishDecompress();
       return -1;
     }
-  } while(stream.avail_out != 0 || ret != BZ_STREAM_END);
+  } while(stream.avail_out != 0 && ret != BZ_STREAM_END);
+  decomressStreamEnd = (ret == BZ_STREAM_END);
   return stream.next_out - out;
 }
 

@@ -210,7 +210,9 @@ bool TarFilter::Private::tph2fi(FileInformations &infos)
     return false;
   }
 
-  infos.fileName = codec->toUnicode(QByteArray(hdr.name,   sizeof(hdr.name)));
+  QByteArray ba(hdr.name,  sizeof(hdr.name));
+  ba.resize(qstrlen(ba.constData()));
+  infos.fileName = codec->toUnicode(ba);
   infos.fileSize = QByteArray(hdr.size,  sizeof(hdr.size)).toUInt(NULL, 8);
   infos.mode     = static_cast<QFile::Permissions>(QByteArray(hdr.mode,  sizeof(hdr.mode)).toUInt(NULL, 16));
   infos.uid      = QByteArray(hdr.uid,   sizeof(hdr.uid)).toUInt(NULL, 8);
@@ -243,9 +245,10 @@ bool TarFilter::Private::getHeader(FileInformations &infos)
       lastError = QLatin1String("Unexpected end of inputstream");
       return false;
     }
-    QString fileName = codec->toUnicode(fn.constData(), fn.size());
     if(!tph2fi(infos))
       return false;
+    int len = qstrlen(fn);
+    QString fileName = codec->toUnicode(fn.constData(), len);
     infos.fileName = fileName;
   }
 
