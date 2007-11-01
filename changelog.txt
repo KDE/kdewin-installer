@@ -1,9 +1,14 @@
 ChangeLog
 =========
 
+0.8.1
+-------
+- all:           - added .tar.bz2 support
+                 - some internal changes to allow 'file://' in config-local.txt
+
 0.8.0
 -------
-- installer-gui: - added category and package info display 
+- installer-gui: - added category and package info display
                  - added package related detailed notes 
                  - added hint files containing package description, categories and dependencies
                  - added hint file parsing for modindex site parser to get full package information 
