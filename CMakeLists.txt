@@ -240,6 +240,7 @@ install_files(/doc/${NAME}-${VERSION} FILES changelog.txt )
 install_files(/bin FILES bin/kdewin-installer-gui-${VERSION}.exe )
 install_files(/bin FILES bin/kdewin-installer-gui.bat )
 install_files(/bin FILES bin/kdewin-packager.exe )
+install_files(/bin FILES bin/kdewin-configer.exe)
 
 
 if (CMAKE_PRODUCTION_BUILD)
