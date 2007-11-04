@@ -483,10 +483,16 @@ bool Package::fromFileName(const QString &fileName, QString &pkgName, QString &p
     QString baseName;
 
     // first remove ending
-    int idx = fileName.lastIndexOf('.');
+    int idx  = fileName.lastIndexOf('.');
     if(idx != -1)
     {
         pkgFormat = fileName.mid(idx + 1);
+        baseName = fileName.left(idx).toLower();
+        if(pkgFormat == "bz2") {
+            int idx2 = fileName.lastIndexOf('.', idx - 1);
+            pkgFormat = fileName.mid(idx2 + 1);
+            idx = idx2;
+        }
         baseName = fileName.left(idx).toLower();
     }
     else

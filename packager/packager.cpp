@@ -83,7 +83,7 @@ bool Packager::createTbzFile(const QString &zipFile, const QString &filesRootDir
   if(!f.open(QIODevice::WriteOnly))
     ON_ERROR_S(qPrintable(QString("Error opening file %1 for writing").arg(zipFile + ".tar.bz2")));
 
-  BZip2IODevice bzip2(&f);
+  BZip2IODevice bzip2(&f, 9);
   if(!bzip2.open(QIODevice::WriteOnly))
     ON_ERROR_S(qPrintable(QString("Error opening file %1 for writing (%2)").arg(zipFile + ".tar.bz2").arg(bzip2.errorString())));
 

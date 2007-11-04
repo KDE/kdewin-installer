@@ -356,7 +356,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                         pkg->setCategory(hd.categories);
                         pkg->addDeps(hd.requires.split(" "));
                     }
-				} else if (fileName.endsWith("zip")) {
+        } else if (fileName.endsWith(".zip") || fileName.endsWith(".tbz") || fileName.endsWith(".tar.bz2") ) {
 					QString pkgName;
 					QString pkgVersion;
 					QString pkgType;
