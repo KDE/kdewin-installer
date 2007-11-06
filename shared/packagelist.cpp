@@ -331,18 +331,18 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                 // aspell-0.50.3-3.zip
                 // bzip2.hint
 
-				if (fileName.endsWith(".hint")) 
-				{
-					QStringList hintFile = QString(fileName).split(".");
-					QString pkgName = hintFile[0];
+                if (fileName.endsWith(".hint")) 
+                {
+                    QStringList hintFile = QString(fileName).split(".");
+                    QString pkgName = hintFile[0];
                     // download hint file
                     QByteArray ba;
                     d.start(m_baseURL + '/' + fileName, ba);
-					// check for download errors 
-					HintFileDescriptor hd;
-					parseHintFile(ba,hd);
-					Package *pkg = getPackage(pkgName);
-					if(!pkg) {
+                    // check for download errors 
+                    HintFileDescriptor hd;
+                    parseHintFile(ba,hd);
+                    Package *pkg = getPackage(pkgName);
+                    if(!pkg) {
                         Package p;
                         p.setName(pkgName);
                         p.setNotes(hd.shortDesc);
@@ -357,13 +357,13 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                         pkg->addDeps(hd.requires.split(" "));
                     }
         } else if (fileName.endsWith(".zip") || fileName.endsWith(".tbz") || fileName.endsWith(".tar.bz2") ) {
-					QString pkgName;
-					QString pkgVersion;
-					QString pkgType;
-					QString pkgFormat;
-					if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgFormat))
-						continue;
-					Package *pkg = getPackage(pkgName, pkgVersion.toAscii());
+                    QString pkgName;
+                    QString pkgVersion;
+                    QString pkgType;
+                    QString pkgFormat;
+                    if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgFormat))
+                        continue;
+                    Package *pkg = getPackage(pkgName, pkgVersion.toAscii());
                     if(!pkg) {
                         Package p;
                         p.setVersion(pkgVersion);
@@ -376,24 +376,24 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                         if(m_curSite)
                             p.setLongNotes(m_curSite->packageLongNotes(pkgName));
                         if (m_curSite)
-						{
+                        {
 #ifdef VERSIONED_DEPENDENCIES
-							p.addDeps(m_curSite->getDependencies(pkgName+"-"+pkgVersion));
+                            p.addDeps(m_curSite->getDependencies(pkgName+"-"+pkgVersion));
 #endif
                             p.addDeps(m_curSite->getDependencies(pkgName));
-						}
+                        }
                         addPackage(p);
                     } else {
                         Package::PackageItem item;
                         item.set(m_baseURL + '/' + fileName, "", pkgType.toAscii());
                         pkg->add(item);
                         if (m_curSite) 
-						{
+                        {
 #ifdef VERSIONED_DEPENDENCIES
-							pkg->addDeps(m_curSite->getDependencies(pkgName+"-"+pkgVersion));
+                            pkg->addDeps(m_curSite->getDependencies(pkgName+"-"+pkgVersion));
 #endif
                             pkg->addDeps(m_curSite->getDependencies(pkgName));
-						}
+                        }
                     }
                 }
                 else {
