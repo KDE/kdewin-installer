@@ -43,10 +43,6 @@ InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgre
 {
     m_database = new Database();
     m_downloader = new Downloader(/*blocking=*/ true,progressBar);
-#ifdef PRINT_AVAILABLE_PACKAGES
-    m_availablePackages = new PackageList();
-    m_availablePackages->setName("all packages");
-#endif
     m_database->setRoot(Settings::getInstance().installDir());
     m_installer = new Installer(m_instProgressBar );
     m_installer->setRoot(Settings::getInstance().installDir());
@@ -117,9 +113,6 @@ void InstallerEngine::createMainPackagelist()
             m_packageListList.append(packageList);
         }
         packageList->addPackage(*pkg);
-#ifdef PRINT_AVAILABLE_PACKAGES
-        m_availablePackages->addPackage(*pkg);
-#endif
     }
     foreach(PackageList *pkgList, m_packageListList)
         pkgList->syncWithDatabase(*m_database);
@@ -167,9 +160,6 @@ bool InstallerEngine::downloadPackageLists()
             qDebug() << "error reading package list from download html file";
             continue;
         }
-#ifdef PRINT_AVAILABLE_PACKAGES
-        m_availablePackages->append(*packageList);
-#endif
         packageList->syncWithDatabase(*m_database);
     }
     PackageList *packageList = getPackageListByName("outdated packages");
@@ -184,12 +174,6 @@ bool InstallerEngine::downloadPackageLists()
     if (Settings::hasDebug("InstallerEngine"))
         dump("downloadPackageLists");
 
-#ifdef PRINT_AVAILABLE_PACKAGES
-    m_database->resetHandledState();
-    m_availablePackages->syncWithDatabase(*m_database);
-    m_database->addUnhandledPackages(m_availablePackages);
-    m_packageListList.append(m_availablePackages);
-#endif
     return true;
 }
 

@@ -82,7 +82,6 @@ protected:
     GlobalConfig        *m_globalConfig;
     InstallerProgress   *m_instProgressBar;
     Database            *m_database;
-//    PackageList         *m_availablePackages; 
     void dump(const QString &title=QString());
 };
 
