@@ -228,7 +228,10 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     pkg->setLongNotes(cmd.join(" "));
                 }
                 else if(cmd[0] == "@category")
-                    pkg->setCategory(cmd[1]);
+				{
+                    cmd.removeFirst();
+                    pkg->setCategory(cmd.join(" "));
+				}
                 else if(cmd[0] == "@relocate")
                     pkg->addPathRelocation(cmd[1],col2);
             }
