@@ -376,14 +376,24 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                         if(m_curSite)
                             p.setLongNotes(m_curSite->packageLongNotes(pkgName));
                         if (m_curSite)
+						{
+#ifdef VERSIONED_DEPENDENCIES
+							p.addDeps(m_curSite->getDependencies(pkgName+"-"+pkgVersion));
+#endif
                             p.addDeps(m_curSite->getDependencies(pkgName));
+						}
                         addPackage(p);
                     } else {
                         Package::PackageItem item;
                         item.set(m_baseURL + '/' + fileName, "", pkgType.toAscii());
                         pkg->add(item);
-                        if (m_curSite)
+                        if (m_curSite) 
+						{
+#ifdef VERSIONED_DEPENDENCIES
+							pkg->addDeps(m_curSite->getDependencies(pkgName+"-"+pkgVersion));
+#endif
                             pkg->addDeps(m_curSite->getDependencies(pkgName));
+						}
                     }
                 }
                 else {
