@@ -378,10 +378,10 @@ QString Package::makeFileName(Package::Type type, bool bCreateDir)
     QString dir = Settings::getInstance().downloadDir();
     if (Settings::getInstance().nestedDownloadTree())
         dir += '/' + m_name + '/' + m_name + '-' + m_version + '/';
-	/* uncomment if downloads should be stored in category sub dirs
-	else
-		dir +='/' + m_category + '/';
-	*/
+    /* uncomment if downloads should be stored in category sub dirs
+    else
+        dir +='/' + m_category + '/';
+    */
     QDir d(dir);
 
     if(bCreateDir) {
@@ -450,19 +450,19 @@ void Package::setCategory(const QString &cat)
 
 void Package::addDeps(const QStringList &deps)
 {
-	foreach(QString dep, deps)
-	{
-		if (dep.contains(" "))
-		{
-			foreach(QString adep, dep.split(" "))
-			{
-				if (!m_deps.contains(adep))
-					m_deps << adep;
-			}
-		}
-		else if (!m_deps.contains(dep))
-			m_deps << deps;
-	}
+    foreach(QString dep, deps)
+    {
+        if (dep.contains(" "))
+        {
+            foreach(QString adep, dep.split(" "))
+            {
+                if (!m_deps.contains(adep))
+                    m_deps << adep;
+            }
+        }
+        else if (!m_deps.contains(dep))
+            m_deps << deps;
+    }
 }
 #endif
 
