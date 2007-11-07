@@ -32,8 +32,9 @@
 #include "package.h"
 #include "misc.h"
 #include <iostream>
-using namespace std; 
+using namespace std;
 
+static const QStringList g_fileFilter = QString("*.zip *.tbz *.tar.bz2").split(' ');
 bool findHintFiles(const QString &dir, QStringList &files)
 {
     QDir d(dir);
@@ -42,19 +43,16 @@ bool findHintFiles(const QString &dir, QStringList &files)
     d.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries | QDir::AllDirs);
     d.setNameFilters(filters);
     d.setSorting(QDir::Name);
-
     QFileInfoList list = d.entryInfoList();
-    QFileInfoList::ConstIterator it = list.constBegin();
-    QFileInfoList::ConstIterator end = list.constEnd();
-    for ( ; it != end; ++it) {
-        const QFileInfo &fi = *it;
+
+    Q_FOREACH(const QFileInfo fi, list) {
         if (fi.isDir()) {
           findHintFiles(fi.absoluteFilePath(),files);
         }
         else {
             files << fi.absoluteFilePath();
             qDebug() << fi.absoluteFilePath();
-        }        
+        }
     }
     return true;
 }
@@ -70,7 +68,7 @@ QByteArray createMD5Hash(const QString &fileName)
 
 bool createMD5Sums(const QStringList &hintFiles )
 {
-    foreach(QFileInfo hintFile, hintFiles) {
+    Q_FOREACH(const QFileInfo hintFile, hintFiles) {
 
         qDebug() << hintFile.absoluteFilePath();
 
@@ -81,20 +79,15 @@ bool createMD5Sums(const QStringList &hintFiles )
         QTextStream out(&md5sumFile);
 
         QDir d(hintFile.absolutePath());
-        QStringList filters;
-        filters << hintFile.baseName() + "*.zip";
+        QStringList filters = g_fileFilter;
         filters << "*.hint";
         d.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries);
         d.setNameFilters(filters);
         d.setSorting(QDir::Name);
         QFileInfoList list = d.entryInfoList();
-        QFileInfoList::ConstIterator it = list.constBegin();
-        QFileInfoList::ConstIterator end = list.constEnd();
-        QString version;
-        for ( ; it != end; ++it) {
-            const QFileInfo &fi = *it;
+        Q_FOREACH (const QFileInfo fi, list) {
             if (!fi.isDir()) {
-                out << createMD5Hash(fi.absoluteFilePath()) << " " << fi.fileName() + "\n";
+                out << createMD5Hash(fi.absoluteFilePath()) << " " << fi.size() << " " << fi.fileName() << "\n";
                 qDebug() << createMD5Hash(fi.absoluteFilePath()) << fi.fileName();
             }
         }
@@ -126,8 +119,7 @@ bool createCygwinLikeSetupIni(QTextStream &out, const QString &root, const QStri
         file.close();
 
         QDir d(hintFile.absolutePath());
-        QStringList filters;
-        filters << hintFile.baseName() + "*.zip";
+        QStringList filters = g_fileFilter;
         d.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries);
         d.setNameFilters(filters);
         d.setSorting(QDir::Name);
@@ -144,8 +136,8 @@ bool createCygwinLikeSetupIni(QTextStream &out, const QString &root, const QStri
                 QString pkgName;
                 QString pkgVersion;
                 QString pkgType;
-		QString pkgFormat;
-                Package::fromFileName(fi.completeBaseName()+".zip", pkgName, pkgVersion, pkgType,pkgFormat);
+                QString pkgFormat;
+                Package::fromFileName(fi.completeBaseName(), pkgName, pkgVersion, pkgType,pkgFormat);
                 if (version != pkgVersion) {
                     out << "version: " + pkgVersion + "\n";
                     version = pkgVersion;
@@ -157,9 +149,9 @@ bool createCygwinLikeSetupIni(QTextStream &out, const QString &root, const QStri
                     postfix = "-mingw: ";
                 else
                     postfix = ": ";
-                out << pkgType + postfix + fi.absoluteFilePath().toLower().replace(_root,"") 
+                out << pkgType + postfix + fi.absoluteFilePath().toLower().replace(_root,"")
                         + " " + QString::number(fi.size()) + " " + createMD5Hash(fi.absoluteFilePath()) + "\n";
-            }        
+            }
         }
     }
     return true;
@@ -167,10 +159,9 @@ bool createCygwinLikeSetupIni(QTextStream &out, const QString &root, const QStri
 
 bool createConfigTxt(QTextStream &out, const QString &root, const QStringList &hintFiles,bool withHeader = true)
 {
-    QString _root = root.toLower();
-    _root.replace("\\","/");
-    if (!root.endsWith("/"))
-        _root += "/";
+    QString _root = root.toLower().replace('\\','/');
+    if (!root.endsWith('/'))
+        _root += '/';
 
     if (withHeader) {
         out << "@format 1.1\n"
@@ -192,10 +183,9 @@ bool createConfigTxt(QTextStream &out, const QString &root, const QStringList &h
         if (!parseHintFile(hintFile.absoluteFilePath(),hint))
             continue;
 
-        QStringList compilers; 
+        QStringList compilers;
         QDir d(hintFile.absolutePath());
-        QStringList filters;
-        filters << hintFile.baseName() + "*.zip";
+        QStringList filters = g_fileFilter;
         d.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries);
         d.setNameFilters(filters);
         d.setSorting(QDir::Name);
@@ -207,25 +197,20 @@ bool createConfigTxt(QTextStream &out, const QString &root, const QStringList &h
         out << "@category " << hint.categories << "\n";
         out << "@require " << hint.requires << "\n";
 
-        QFileInfoList::ConstIterator it = list.constBegin();
-        QFileInfoList::ConstIterator end = list.constEnd();
         QString version;
-        for ( ; it != end; ++it) {
-            const QFileInfo &fi = *it;
-            if (fi.isDir()) {
+        QString pkgName;
+        QString pkgVersion;
+        QString pkgType;
+        QString pkgFormat;
+        Q_FOREACH (const QFileInfo fi, list) {
+            if (fi.isDir())
                 continue;
+            Package::fromFileName(fi.completeBaseName(), pkgName, pkgVersion, pkgType,pkgFormat);
+            if (version != pkgVersion) {
+                out << "@version " + pkgVersion + "\n";
+                version = pkgVersion;
             }
-            else {
-                QString pkgName;
-                QString pkgVersion;
-                QString pkgType;
-		QString pkgFormat;
-                Package::fromFileName(fi.completeBaseName()+".zip", pkgName, pkgVersion, pkgType,pkgFormat);
-                if (version != pkgVersion) {
-                    out << "@version " + pkgVersion + "\n";
-                    version = pkgVersion;
-                }
-                QString postfix;
+            QString postfix;
 /* uncomment to collect package for several compilers
                 if (pkgName.endsWith("-msvc"))
                     postfix = "-msvc ";
@@ -233,10 +218,9 @@ bool createConfigTxt(QTextStream &out, const QString &root, const QStringList &h
                     postfix = "-mingw ";
                 else
 */
-                    postfix = " ";
-                out << "@url-" + pkgType + postfix + fi.absoluteFilePath().toLower().replace(_root,"") 
-                        + " " + QString::number(fi.size()) + " " + createMD5Hash(fi.absoluteFilePath()) + "\n";
-            }        
+            postfix = " ";
+            out << "@url-" + pkgType + postfix + fi.absoluteFilePath().toLower().replace(_root,"")
+                    + " " + QString::number(fi.size()) + " " + createMD5Hash(fi.absoluteFilePath()) + "\n";
         }
     }
     return true;
@@ -244,11 +228,11 @@ bool createConfigTxt(QTextStream &out, const QString &root, const QStringList &h
 
 QStringList &addDeps(QStringList &deps, const QStringList &add)
 {
-	foreach(QString dep, add) 
+	foreach(QString dep, add)
 	{
 		if (dep.contains(" "))
 		{
-			foreach(QString adep, dep.split(" ")) 
+			foreach(QString adep, dep.split(" "))
 			{
 				if (!deps.contains(adep))
 					deps << adep;
@@ -265,9 +249,9 @@ bool printDependencies(const QString &root)
 {
     QStringList hintFiles;
     findHintFiles(root,hintFiles);
-    QHash<QString,QStringList> deps; 
+    QHash<QString,QStringList> deps;
 
-    foreach(QFileInfo hintFile, hintFiles) 
+    foreach(QFileInfo hintFile, hintFiles)
     {
         QString pkgName = hintFile.baseName();
         qDebug() << "parsing" << pkgName;
@@ -338,18 +322,18 @@ int main(int argc, char *argv[])
         }
         else if (args[i] == "-header" && hasValue) {
             headerFile = args[++i];
-        }            
+        }
         else if (args[i] == "-o" && hasValue) {
             outFile = args[++i];
-        }            
+        }
         else if (args[i] == "-printdeps")
             printDeps = true;
         else if (args[i] == "-verbose")
             verbose = 1;
-        else 
+        else
             printHelp(QString("unknown command line parameter(s): %1").arg(args[i]));
     }
-    
+
     if(root.isEmpty())
        printHelp("-root not specified");
 
@@ -367,31 +351,30 @@ int main(int argc, char *argv[])
 
     if (!outFile.isEmpty()) {
         f = new QFile(outFile);
-        if (f->open(QFile::WriteOnly | QFile::Text)) 
+        if (f->open(QFile::WriteOnly | QFile::Text))
             out = new QTextStream(f);
-	else
-	    qWarning() << "could not open file" << outFile;
+    else
+        qWarning() << "could not open file" << outFile;
     }
     if (!out)
         out = new QTextStream(stdout);
 
     if (!headerFile.isEmpty()) {
-	QFile header(headerFile);
-	header.open(QFile::ReadOnly);
-	*out << header.readAll();
-	header.close();
+        QFile header(headerFile);
+        header.open(QFile::ReadOnly);
+        *out << header.readAll();
+        header.close();
     }
 
     QStringList files;
     findHintFiles(root,files);
     if (createMD5)
         createMD5Sums(files);
-       
+
     createConfigTxt(*out,root,files,headerFile.isEmpty());
 
     delete out;
-    if (f)
-        delete f;
+    delete f;
     return 0;
 }
 
