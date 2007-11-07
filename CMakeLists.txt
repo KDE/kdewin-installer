@@ -15,10 +15,16 @@ find_package(KDEWIN_Packager)
 find_package(WinSCP)
 
 OPTION(SEVENZIP_UNPACK_SUPPORT "Enable 7-zip unpacking support" OFF)
+OPTION(BZIP2_UNPACK_SUPPORT "Enable tar.bz2 unpacking support" ON)
 OPTION(STATIC_BUILD "enable static build support" ON)
 OPTION(INSTALL_SYSTEM_LIBS "install required system libraries too (only in shared mode)" OFF)
 OPTION(BUILD_TESTS "build test applications " OFF)
 
+if (MSVC AND NOT CMAKE_BUILD_TOOL STREQUAL "nmake")
+    set (BZIP2_UNPACK_SUPPORT off)
+    MESSAGE(STATUS "Disabled tar.bz2 unpacking support because msvc could not link to bzlib.c")
+endif (MSVC AND NOT CMAKE_BUILD_TOOL STREQUAL "nmake")
+   
 # -------------------------------------------------------
 # build type settings
 # -------------------------------------------------------
@@ -60,30 +66,33 @@ endif (WIN32 OR CYGWIN)
 set (EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
 # get quazip_SOURCES/quazip_HEADERS/quazip_INCLUDE_DIR
-set(filters_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/tarfilter.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/bzip2iodevice.cpp
-)
-set(filters_HEADERS
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/tarfilter.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/bzip2iodevice.h
-)
-set(filters_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters)
 
-set(bzip2_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/blocksort.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/bzlib.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/compress.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/crctable.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/decompress.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/huffman.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/randtable.c
-)
-set(bzip2_HEADERS
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/bzlib.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/bzlib_private.h
-)
-set(bzip2_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4)
+if (BZIP2_UNPACK_SUPPORT)
+	set(filters_SOURCES
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/tarfilter.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/bzip2iodevice.cpp
+	)
+	set(filters_HEADERS
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/tarfilter.h
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/bzip2iodevice.h
+	)
+	set(filters_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters)
+
+	set(bzip2_SOURCES
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/blocksort.c
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/bzlib.c
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/compress.c
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/crctable.c
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/decompress.c
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/huffman.c
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/randtable.c
+	)
+	set(bzip2_HEADERS
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/bzlib.h
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/bzlib_private.h
+	)
+	set(bzip2_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4)
+endif (BZIP2_UNPACK_SUPPORT)
 
 set(quazip_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip/quazip/ioapi.c
