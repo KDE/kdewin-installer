@@ -20,11 +20,6 @@ OPTION(STATIC_BUILD "enable static build support" ON)
 OPTION(INSTALL_SYSTEM_LIBS "install required system libraries too (only in shared mode)" OFF)
 OPTION(BUILD_TESTS "build test applications " OFF)
 
-if (MSVC AND NOT CMAKE_BUILD_TOOL STREQUAL "nmake")
-    set (BZIP2_UNPACK_SUPPORT off)
-    MESSAGE(STATUS "Disabled tar.bz2 unpacking support because msvc could not link to bzlib.c")
-endif (MSVC AND NOT CMAKE_BUILD_TOOL STREQUAL "nmake")
-   
 # -------------------------------------------------------
 # build type settings
 # -------------------------------------------------------
