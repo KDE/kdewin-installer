@@ -54,9 +54,8 @@ InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgre
 
 InstallerEngine::~InstallerEngine()
 {
+    qDeleteAll(m_packageListList);
     m_packageListList.clear();
-    // FIXME: application crashes when calling qDeleteAll()
-    //qDeleteAll(m_packageListList);
     delete m_database;
     delete m_installer;
     delete m_downloader;

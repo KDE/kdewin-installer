@@ -119,7 +119,7 @@ void DownloaderProgress::setMaximum(int value)
 void DownloaderProgress::setValue(int value)
 {
     int unit = value/10240;
-    if (oldunit != value/10240)
+    if (oldunit != unit)
     {
         if (visible)
             putchar('.');

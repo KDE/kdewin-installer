@@ -69,7 +69,6 @@ private:
     DownloaderProgress *m_progress;
     QHttp      *m_http;
     QIODevice  *m_ioDevice;
-    QFile      *m_file;
     int         m_httpGetId;
     bool        m_httpRequestAborted;
     bool        m_blocking;

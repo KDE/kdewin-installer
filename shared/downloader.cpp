@@ -21,6 +21,7 @@
 **
 ****************************************************************************/
 
+#include <QApplication>
 #include <QBuffer>
 #include <QDebug>
 #include <QEventLoop>
@@ -38,7 +39,7 @@
 #include "misc.h"
 
 Downloader::Downloader(bool _blocking, DownloaderProgress *_progress)
-  : m_progress(_progress), m_http(0), m_ioDevice(0), m_file(0), m_httpGetId(~0U),
+  : m_progress(_progress), m_http(0), m_ioDevice(0), m_httpGetId(~0U),
     m_httpRequestAborted(false), m_blocking(_blocking), m_eventLoop(0)
 {
     init();
@@ -56,10 +57,12 @@ void Downloader::init()
 
 Downloader::~Downloader()
 {
-    if(m_http)
+    m_httpRequestAborted = true;
+    if(m_http) {
       m_http->abort();
-    delete m_http;
-    delete m_file;
+      qApp->processEvents();
+    }
+    delete m_ioDevice;
 }
 
 void Downloader::setError(const QString &str)
@@ -82,17 +85,16 @@ bool Downloader::start(const QUrl &url, const QString &fileName)
         return true;
     }
 
-    m_file = new QFile(fileName);
-    if (!m_file->open(QIODevice::WriteOnly))
+    QFile *file = new QFile(fileName);
+    if (!file->open(QIODevice::WriteOnly))
     {
-      setError(tr("Unable to open file %1: %2.").arg(fileName).arg(m_file->errorString()));
-      delete m_file;
-      m_file = 0;
+      setError(tr("Unable to open file %1: %2.").arg(fileName).arg(file->errorString()));
+      delete file;
       return false;
     }
 
-    qDebug() << "Downloading" << url.toString() << " to " << m_file->fileName();
-    return startInternal(url, m_file);
+    qDebug() << "Downloading" << url.toString() << " to " << file->fileName();
+    return startInternal(url, file);
 }
 
 bool Downloader::start(const QUrl &url, QByteArray &ba)
@@ -169,51 +171,30 @@ void Downloader::cancel()
 
 void Downloader::httpRequestFinished(int requestId, bool error)
 {
-    if (m_httpRequestAborted)
-    {
-        if (m_file)
-        {
-            m_file->close();
-            m_file->remove();
-            delete m_file;
-            m_file = 0;
-            m_ioDevice = 0;
-        }
-        else
-            if (m_ioDevice)
-            {
-                m_ioDevice->close();
-                delete m_ioDevice;
-                m_ioDevice = 0;
-            }
-
-        if (m_progress)
-            m_progress->hide();
-        return;
-    }
-
     if (requestId != m_httpGetId)
-        return;
+      return;
 
     if (m_progress)
-        m_progress->hide();
+      m_progress->hide();
     m_ioDevice->close();
 
-    if (error)
+    if (m_httpRequestAborted || error)
     {
-        if(m_file)
-            m_file->remove();
-        setError(tr("Download failed: %1.").arg(m_http->errorString()));
-    }
-    else
-    {
+        QFile *f = qobject_cast<QFile*>(m_ioDevice);
+        if (f)
+            f->remove();
+
+        if(error)
+            setError(tr("Download failed: %1.").arg(m_http->errorString()));
+        else
+            setError(tr("Download aborted: %1.").arg(m_http->errorString()));
+    } else {
         if (m_progress)
             m_progress->setStatus(tr("download ready"));
         qDebug() << "Download finished.";
     }
     delete m_ioDevice;
     m_ioDevice = 0;
-    m_file = 0;
 }
 
 void Downloader::readResponseHeader(const QHttpResponseHeader &responseHeader)
