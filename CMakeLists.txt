@@ -48,10 +48,6 @@ if (STATIC_BUILD AND MSVC)
 	set (CMAKE_EXE_LINKER_FLAGS_DEBUG "/debug /INCREMENTAL:NO /NODEFAULTLIB:msvcrt")
 endif (STATIC_BUILD AND MSVC)
 
-# we just need zlib include dir, linking to zlib is not needed
-include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${QT_INCLUDES} ${CMAKE_SOURCE_DIR}/3rdparty/zlib)
-
-
 # where to store executables
 if (WIN32 OR CYGWIN)
 	set (LIBRARY_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/bin)
@@ -189,12 +185,16 @@ set(installer_shared_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shared)
 # we need 'UNICODE'
 add_definitions(-DUNICODE)
 include_directories(
+  ${CMAKE_SOURCE_DIR} 
+  ${CMAKE_BINARY_DIR} 
+  ${CMAKE_SOURCE_DIR}/3rdparty/zlib
+  ${bzip2_INCLUDE_DIR}
   ${filters_INCLUDE_DIR}
   ${quazip_INCLUDE_DIR}
   ${qua7zip_INCLUDE_DIR}
   ${md5_INCLUDE_DIR}
   ${installer_shared_INCLUDE_DIR}
-  ${bzip2_INCLUDE_DIR}
+  ${QT_INCLUDES} 
 )
 configure_file(${CMAKE_SOURCE_DIR}/config.txt ${CMAKE_BINARY_DIR}/config.txt)
 configure_file(${CMAKE_SOURCE_DIR}/config.h.cmake ${CMAKE_BINARY_DIR}/config.h)
