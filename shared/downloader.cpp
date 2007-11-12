@@ -38,6 +38,8 @@
 #include "settings.h"
 #include "misc.h"
 
+/// @TODO: check operation in non blocking mode
+
 Downloader::Downloader(bool _blocking, DownloaderProgress *_progress)
   : m_progress(_progress), m_http(0), m_ioDevice(0), m_httpGetId(~0U),
     m_httpRequestAborted(false), m_blocking(_blocking), m_eventLoop(0)
@@ -146,6 +148,8 @@ bool Downloader::startInternal(const QUrl &url, QIODevice *ioDev)
 
     QByteArray query = url.encodedQuery();
     m_httpRequestAborted = false;
+    m_result = Undefined;
+    m_redirectLocation = "";
     m_httpGetId = m_http->get
                   (url.path() + (!query.isEmpty() ? "?" + url.encodedQuery() : QString()), m_ioDevice);
 
@@ -156,6 +160,12 @@ bool Downloader::startInternal(const QUrl &url, QIODevice *ioDev)
         m_eventLoop = new QEventLoop();
         m_eventLoop->exec();
         delete m_eventLoop;
+        if (m_result == Redirected) {
+            qDebug() << "restarted download from" << m_redirectLocation;
+            m_ioDevice->seek(0); // make sure we are on the start of the file or buffer 
+            startInternal(m_redirectLocation,m_ioDevice);
+        }
+        return m_result == Finished ? true : false;
     }
     return true;
 }
@@ -171,43 +181,61 @@ void Downloader::cancel()
 
 void Downloader::httpRequestFinished(int requestId, bool error)
 {
+    qDebug() << __FUNCTION__ << requestId << error;
     if (requestId != m_httpGetId)
       return;
 
-    if (m_progress)
-      m_progress->hide();
-    m_ioDevice->close();
+    if (m_result == Redirected) {
+        // redirect will be started in startInternal() for non blocking mode
+        return;
+    }
 
-    if (m_httpRequestAborted || error)
-    {
+    if (m_httpRequestAborted) {
+        m_result = Aborted;
         QFile *f = qobject_cast<QFile*>(m_ioDevice);
         if (f)
             f->remove();
-
-        if(error)
-            setError(tr("Download failed: %1.").arg(m_http->errorString()));
-        else
-            setError(tr("Download aborted: %1.").arg(m_http->errorString()));
-    } else {
+        setError(tr("Download aborted: %1.").arg(m_http->errorString()));
+    }
+    else if (error) {
+        m_result = Failed;
+        QFile *f = qobject_cast<QFile*>(m_ioDevice);
+        if (f)
+            f->remove();
+        setError(tr("Download failed: %1.").arg(m_http->errorString()));
+    }
+    else {
+        m_result = Finished;
         if (m_progress)
             m_progress->setStatus(tr("download ready"));
-        qDebug() << "Download finished.";
     }
+
+    if (m_progress)
+      m_progress->hide();
+
+    m_ioDevice->close();
     delete m_ioDevice;
     m_ioDevice = 0;
 }
 
 void Downloader::readResponseHeader(const QHttpResponseHeader &responseHeader)
 {
-    if (responseHeader.statusCode() != 200)
-    {
-        setError(tr("Download failed: %1.").arg(responseHeader.reasonPhrase()));
-        m_httpRequestAborted = true;
-        if (m_progress)
-            m_progress->hide();
-        m_http->abort();
-        return;
+    m_statusCode = responseHeader.statusCode();
+    if (m_statusCode == 302) {
+        qWarning() << __FUNCTION__ << "Download failed" << m_statusCode << responseHeader.reasonPhrase() << "new location:" << responseHeader.value("location");
+        setError(tr("Download failed: %1 %2.").arg(m_statusCode).arg(responseHeader.reasonPhrase() + " new location: " + responseHeader.value("location")) );
+        m_redirectLocation = responseHeader.value("location");
+        m_result = Redirected;
     }
+    else if (m_statusCode != 200)
+    {
+        qWarning() << __FUNCTION__ << "Download failed" << m_statusCode << responseHeader.reasonPhrase();
+        foreach(QString key, responseHeader.keys()) 
+            qWarning()  << key << responseHeader.allValues(key);
+        setError(tr("Download failed: %1 %2.").arg(m_statusCode).arg(responseHeader.reasonPhrase()));
+        m_result = Failed;
+    }
+    return;
 }
 
 void Downloader::updateDataReadProgress(int bytesRead, int totalBytes)

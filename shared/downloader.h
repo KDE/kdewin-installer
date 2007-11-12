@@ -25,6 +25,7 @@
 #define DOWNLOADER_H
 
 #include <QObject>
+#include <QUrl>
 
 class DownloaderProgress;
 class QEventLoop;
@@ -33,13 +34,13 @@ class QHttp;
 class QHttpResponseHeader;
 class QIODevice;
 class QString;
-class QUrl;
 
 class Downloader: public QObject
 {
     Q_OBJECT
 
 public:
+    typedef enum { Undefined, Finished, Failed, Aborted, Redirected } ResultType;
     Downloader(bool blocking=false, DownloaderProgress *progress=0);
 
     virtual ~Downloader();
@@ -50,6 +51,8 @@ public:
     bool start(const QUrl &url, const QString &fileName = QString());
     bool start(const QUrl &url, QByteArray &ba);
     void cancel();
+	QString resultString() { return m_resultString; }
+	ResultType result()    { return m_result; }
 
 signals:
     void done(bool error);
@@ -73,6 +76,11 @@ private:
     bool        m_httpRequestAborted;
     bool        m_blocking;
     QEventLoop *m_eventLoop;
+	QString		m_resultString;
+    ResultType  m_result;      
+    int         m_statusCode;       // used internal
+    QString     m_redirectLocation; // location for 302 FOUND status code 
+
 };
 
 #endif
