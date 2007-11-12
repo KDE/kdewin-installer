@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
     DownloaderProgress progress(0);
     Downloader download(true,&progress);
     Site site;
-    site.setURL("http://82.149.170.66/kde-windows/win32libs/");
+    site.setURL(QUrl("http://82.149.170.66/kde-windows/win32libs/"));
     site.setName("test");
     PackageList packageList;
     packageList.setCurrentSite(&site);
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 
     PackageList packageList2;
 
-    download.start("http://software.opensuse.org/download/KDE:/KDE3/SUSE_Linux_10.1/noarch/","packages2.html");
+    download.start(QUrl("http://software.opensuse.org/download/KDE:/KDE3/SUSE_Linux_10.1/noarch/"),"packages2.html");
     if (!packageList2.readHTMLFromFile("packages2.html",PackageList::ApacheModIndex))
     {
         qDebug() << "... failed ";

@@ -37,7 +37,7 @@ int main(int argc, char ** argv)
     PackageList packageList;
 
     qDebug() << "trying to download sourceforge related package list";
-    downloader.start("http://sourceforge.net/project/showfiles.php?group_id=23617","packages.html");
+    downloader.start(QUrl("http://sourceforge.net/project/showfiles.php?group_id=23617"),"packages.html");
 
     if (!packageList.readHTMLFromFile("packages.html",PackageList::SourceForge))
     {

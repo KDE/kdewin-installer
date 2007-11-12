@@ -21,25 +21,21 @@
 **
 ****************************************************************************/
 
-#include <QtDebug>
+#include <QtGlobal>
 #include <QCoreApplication>
+#include <QtDebug>
 
-#include "globalconfig.h"
-#include "downloader.h"
-#include "downloaderprogress.h"
+#include  "downloader.h"
+#include  "downloaderprogress.h"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
-    DownloaderProgress progress(0);
-    Downloader downloader(true,&progress);
+    DownloaderProgress dp(0);
+    Downloader d(true,&dp);
 
-    GlobalConfig globalConfig(&downloader);
-    QStringList files = globalConfig.fetch("http://82.149.170.66/kde-windows/installer/config.txt");
-    globalConfig.parse(files);
-    globalConfig.dump(__FUNCTION__);
-
+    qDebug() << "download return code" << d.start(QUrl("http://download.cegit.de/kde-windows/installer/config.txt"),"config.txt");
+    qDebug() << "download return code" << d.start(QUrl("http://go.microsoft.com/fwlink/?LinkId=51410&clcid=0x409"),"vcexpress.exe");
     return 0;
 }
-
