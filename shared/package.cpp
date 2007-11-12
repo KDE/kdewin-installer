@@ -404,7 +404,7 @@ bool Package::downloadItem(Downloader *downloader, Package::Type type)
     QString fn = makeFileName(type, true);
     if(QFile::exists(fn)) {
         qDebug() << __FUNCTION__ << " URL " << url.toString() << " already downloaded for type " << type;
-        return false;
+        return true;
     }
     qDebug() << __FUNCTION__ << " downloading URL " << url.toString() << " for type " << type;
     return downloader->start(url, fn);

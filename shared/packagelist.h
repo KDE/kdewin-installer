@@ -93,6 +93,11 @@ public:
         m_baseURL = baseURL;
     }
 
+    void setBaseURL(const QUrl &baseURL)
+    {
+        m_baseURL = baseURL.toString();
+    }
+
     // sets the current Site to get access to dep & deny lists
     void setCurrentSite(Site *s)
     {
