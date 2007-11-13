@@ -1,10 +1,16 @@
 ChangeLog
 =========
 
+recent
+------
+- installer-gui: - downloader is able to follow redirected urls using the 302 http response code
+
 0.8.1
 -------
 - all:           - added .tar.bz2 support
                  - some internal changes to allow 'file://' in config-local.txt
+- installer-gui: - removed downloaded files when download is broken 
+
 
 0.8.0
 -------

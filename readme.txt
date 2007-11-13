@@ -24,14 +24,12 @@ NOTES
  
 Known Bugs
 ==========
--  On large package install like qt doc package, the QListView Widget performs 
-   huge memory realloctions, which slow done install detail display very much. 
-   This seems to be a qt 4.x internal problem.
--  manifest files for source packages does not contain the full path, there must 
-   be prefixed src/<package>-<version>
+-  manifest files for gnuwin32 source packages does not contain the full path, there must 
+   be prefixed src/<package>-<version> - repackaging of the related package will help
 -  packager: stripping of dll's which are in use results in deleting the related dll. 
    Please make sure no one uses a dll when using the -strip option
-   
+-  It is not detected if a download breaks because for example in case of network failures or server error.
+   -> in work 
    
 TODO
 ====
@@ -56,19 +54,16 @@ TODO
       2 test
   
   3 gui 
-      1 add check for partial downloads
   	4 center checkboxes in package selector page -> not possible yet, see comment in source
   	8 add reinstall package support 
   	  -> currently by using a remove and install by hand 
-  	10 add a switch to select end user/developer operation (end user by default)
+  	10 add a switch to select end user/developer operation (developer mode by default)
   	  -> in end user mode only the bin packages are visible 
   	12 if remote config is not available only display installed packages
   	13 add update support
   	  -> currently implemented by removing old package, installing new package by hand
-  	17 add support for tar + gz/bzip2 package by using external win32 tools 
   	18 only display firefox proxy option is firefox is installed 
-    19 in case a file could not be downloaded  display a message box printing the reason 
-  
+    19 in case a file could not be downloaded display a message box printing the reason -> in work 
 
 2 packager
     1 add 7zip-suppport (at first by using external 7zip tool, because there is no usable 7zip compress library)
