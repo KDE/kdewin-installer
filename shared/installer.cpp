@@ -530,10 +530,19 @@ void Installer::setError(const QString &str)
 
 bool Installer::createQtConfigFile()
 {
-    QSettings qtConfig(m_root + "/bin/qt.conf",QSettings::IniFormat);
-    qtConfig.setValue("Paths/Prefix",m_root);
-    qtConfig.setValue("Translations","i18n");
-    qtConfig.sync();
+    if(!QFile::exists(m_root + "/bin/qt.conf")) {
+        QSettings qtConfig(m_root + "/bin/qt.conf",QSettings::IniFormat);
+        qtConfig.setValue("Paths/Prefix",       "");
+        qtConfig.setValue("Paths/Documentation","../doc");
+        qtConfig.setValue("Paths/Headers",      "../include");
+        qtConfig.setValue("Paths/Libraries",    "../lib");
+        qtConfig.setValue("Paths/Plugins",      "../plugins");
+        qtConfig.setValue("Paths/Translations", "../translations");
+        qtConfig.setValue("Paths/Settings",     "../etc");
+        qtConfig.setValue("Paths/Examples",     "../examples");
+        qtConfig.setValue("Paths/Demos",        "../demos");
+        qtConfig.sync();
+    }
     return true;
 }
 
