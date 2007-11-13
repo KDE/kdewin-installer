@@ -23,6 +23,7 @@
 #ifndef INSTALLER_H
 #define INSTALLER_H
 
+#include <QtCore/QProcess>
 #include "package.h"
 
 class Database;
@@ -48,7 +49,7 @@ public:
 
     Database *database() { return m_database; }
     void setDatabase(Database *database) { m_database = database; }
-    bool install(const QString &fileName, const StringHash &pathRelocations=StringHash());
+    bool install(Package *pkg, const QString &fileName, const StringHash &pathRelocations=StringHash());
     // installPackage(Package *pkg)
     //  bool readFromFile(QString const &fileName);
     //  bool writeToFile(QString const &fileName);
@@ -59,9 +60,10 @@ public:
     void setRoot(const QString &root);
     const QString root() const { return m_root; }
 
-public slots:
+public Q_SLOTS:
     void updatePackageList();
-
+protected Q_SLOTS:
+    void finished(int, QProcess::ExitStatus);
 protected:
     bool createManifestFile(const QString &destpath, const QString &zipFile);
     bool unbz2File(const QString &destpath, const QString &zipFile, const StringHash &pathRelocations);
@@ -76,6 +78,9 @@ protected:
     InstallerType m_type;
     QStringList m_files;
     Database *m_database;
+
+    QProcess* m_installExecutableProcess;
+    Package* m_packageToInstall;
 };
 
 #endif

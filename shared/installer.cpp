@@ -20,8 +20,10 @@
 **
 ****************************************************************************/
 
-#include <QtCore>
 #include <QtDebug>
+#include <QFileInfo>
+#include <QDir>
+#include <QApplication>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -60,7 +62,11 @@ Installer::Installer(InstallerProgress *_progress)
 }
 
 Installer::~Installer()
-{}
+{
+    if(m_installExecutableProcess)
+        m_installExecutableProcess->kill();
+    delete m_installExecutableProcess;
+}
 
 void Installer::setRoot(const QString &root)
 {
@@ -531,8 +537,9 @@ bool Installer::createQtConfigFile()
     return true;
 }
 
-bool Installer::install(const QString &fileName, const StringHash &pathRelocations)
+bool Installer::install(Package *pkg, const QString &fileName, const StringHash &pathRelocations)
 {
+    m_packageToInstall = pkg;
     if (fileName.endsWith(".zip"))
     {
       if(!unzipFile(m_root, fileName, pathRelocations))
@@ -549,19 +556,43 @@ bool Installer::install(const QString &fileName, const StringHash &pathRelocatio
           return false;
     }
 #ifdef Q_WS_WIN
-    else // for all other formats use windows assignments
+    else
+    if(fileName.endsWith(".exe") || fileName.endsWith(".msi"))
     {
-        // fixme: use QProcess to determine if all worked fine?
-        ShellExecuteW(0, L"open", (WCHAR*)fileName.utf16(), NULL, NULL, SW_SHOWNORMAL);
+        m_installExecutableProcess = new QProcess();
+        connect(m_installExecutableProcess,  SIGNAL(finished(int, QProcess::ExitStatus)),
+                                         this, SLOT(finished(int, QProcess::ExitStatus))); 
+        m_installExecutableProcess->start(fileName, QStringList("/Q"));   // FIXME: don't hardcode command line parameters!
+        do{
+            qApp->processEvents();
+        }while(!m_installExecutableProcess->waitForFinished());
+        delete m_installExecutableProcess;
+        m_installExecutableProcess = 0;
         return true;
     }
 #endif
+    else
+    {
+        setError(tr("Don't know what to do with %1").arg(fileName));
+        return false;
+    }
     createManifestFile(m_root, fileName);
     QFileInfo fi(fileName);
     if(fi.fileName().startsWith("qt"))
         createQtConfigFile();
 
     return true;
+}
+
+void Installer::finished(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    if(exitCode == 0 && exitStatus == QProcess::NormalExit) {
+        //m_installExeProcess;
+        //m_packageToInstall;
+        // write manifest file
+        //createManifestFileForExecutable();
+    }
+    // cleanup in dtor
 }
 
 #include "installer.moc"
