@@ -35,7 +35,7 @@ class InstallerEngineGui : public InstallerEngine
 public:
     enum Type { EndUser, Developer, Single };
 
-    InstallerEngineGui(DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
+    InstallerEngineGui(QWidget *parent, DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
 
     void setPageSelectorWidgetData(QTreeWidget *tree, QString categoryName=QString());
     void itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column, QTabWidget *info);
@@ -48,7 +48,10 @@ public:
     bool removePackages(QTreeWidget *tree, const QString &category=QString());
 
 private:
-    Type                 m_installMode;
+    Type    m_installMode;
+    QWidget *m_parent;
+    bool downloadPackageItem(Package *pkg, Package::Type type );
+
 
 };
 

@@ -76,7 +76,7 @@ QLabel* createTopLabel(const QString& str)
 InstallWizard::InstallWizard(QWidget *parent)
         : ComplexWizard(parent)
 {
-    engine = new InstallerEngineGui(progressBar,instProgressBar);
+    engine = new InstallerEngineGui(this,progressBar,instProgressBar);
     settingsPage = new SettingsPage(this);
 
     setWindowTitle(tr("KDE Installer - Version " VERSION));
@@ -552,7 +552,7 @@ void PackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
 void PackageSelectorPage::installDirChanged(const QString &dir)
 {
     delete engine;
-    engine = new InstallerEngineGui(wizard->progressBar,wizard->instProgressBar);
+    engine = new InstallerEngineGui(this,wizard->progressBar,wizard->instProgressBar);
     engine->readGlobalConfig();
     engine->downloadPackageLists();
     engine->setLeftTreeData(leftTree);
@@ -609,7 +609,8 @@ bool DownloadPage::isComplete()
     if (!Settings::getInstance().autoNextStep())
         wizard->nextButton->setEnabled(false);
     QApplication::instance()->processEvents();
-    engine->downloadPackages(tree);
+    if (!engine->downloadPackages(tree))
+        return false;
     if (!Settings::getInstance().autoNextStep())
         wizard->nextButton->setEnabled(true);
     else

@@ -28,6 +28,7 @@
 #include <QTreeWidget>
 #include <QTextEdit>
 #include <QFlags>
+#include <QMessageBox>
 
 #include "installerenginegui.h"
 #include "installwizard.h"
@@ -332,8 +333,8 @@ bool isMarkedForRemoval ( Package *pkg,Package::Type type )
     return state == _Remove;
 }
 
-InstallerEngineGui::InstallerEngineGui ( DownloaderProgress *progressBar,InstallerProgress *instProgressBar )
-        : InstallerEngine ( progressBar,instProgressBar )
+InstallerEngineGui::InstallerEngineGui (QWidget *parent, DownloaderProgress *progressBar,InstallerProgress *instProgressBar )
+        : InstallerEngine ( progressBar,instProgressBar ), m_parent(parent)
 {
     m_installMode = Single;
 }
@@ -681,6 +682,34 @@ void InstallerEngineGui::itemClickedPackageSelectorPage ( QTreeWidgetItem *item,
             setDependencies ( pkg,Package::BIN );
 }
 
+bool InstallerEngineGui::downloadPackageItem(Package *pkg, Package::Type type )
+{
+    bool all = false; //isMarkedForInstall(pkg,Package::ALL);
+    if ( !all && !isMarkedForInstall ( pkg,type ) ) 
+        return true;
+
+    while (1) {
+        if (pkg->downloadItem ( m_downloader, type ))
+            return true;
+        QMessageBox::StandardButton result = QMessageBox::critical(
+            m_parent,
+            tr("Download failed"),
+            tr("The download of the package failed with error %1").arg(m_downloader->resultString()),
+            QMessageBox::Cancel | QMessageBox::Ignore | QMessageBox::Retry,
+            QMessageBox::Retry
+        );
+        if (result == QMessageBox::Cancel)
+            return false;
+        else if (result == QMessageBox::Ignore)
+            return true;
+        else if (result == QMessageBox::Retry)
+            ; // try once again
+        else
+            ;
+    }
+}
+
+
 bool InstallerEngineGui::downloadPackages ( QTreeWidget *tree, const QString &category )
 {
     QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
@@ -696,15 +725,14 @@ bool InstallerEngineGui::downloadPackages ( QTreeWidget *tree, const QString &ca
             if ( Settings::hasDebug ( "InstallerEngineGui" ) )
                 pkg->dump ( "downloadPackages" );
 
-            bool all = false; //isMarkedForInstall(pkg,Package::ALL);
-            if ( all || isMarkedForInstall ( pkg,Package::BIN ) )
-                pkg->downloadItem ( m_downloader, Package::BIN );
-            if ( all || isMarkedForInstall ( pkg,Package::LIB ) )
-                pkg->downloadItem ( m_downloader, Package::LIB );
-            if ( all || isMarkedForInstall ( pkg,Package::DOC ) )
-                pkg->downloadItem ( m_downloader, Package::DOC );
-            if ( all || isMarkedForInstall ( pkg,Package::SRC ) )
-                pkg->downloadItem ( m_downloader, Package::SRC );
+            if (!downloadPackageItem(pkg,Package::BIN))
+                return false;
+            if (!downloadPackageItem(pkg,Package::LIB))
+                return false;
+            if (!downloadPackageItem(pkg,Package::DOC))
+                return false;
+            if (!downloadPackageItem(pkg,Package::SRC))
+                return false;
         }
     }
     return true;
