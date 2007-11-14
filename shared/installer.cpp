@@ -36,8 +36,10 @@
 
 #include "quazip.h"
 #include "quazipfile.h"
+#ifdef BZIP2_UNPACK_SUPPORT
 #include "tarfilter.h"
 #include "bzip2iodevice.h"
+#endif
 
 #ifdef SEVENZIP_UNPACK_SUPPORT
  #include "qua7zip.h"
@@ -169,6 +171,7 @@ bool Installer::createManifestFileForExecutable()
 
 bool Installer::unbz2File(const QString &destpath, const QString &zipFile, const StringHash &pathRelocations)
 {
+#ifdef BZIP2_UNPACK_SUPPORT
   QDir path(destpath);
 
   if(!path.exists())
@@ -264,6 +267,9 @@ bool Installer::unbz2File(const QString &destpath, const QString &zipFile, const
 
   bzip2.close();
   return true;
+#else
+  return false;
+#endif
 }
 
 bool Installer::unzipFile(const QString &destpath, const QString &zipFile, const StringHash &pathRelocations)
