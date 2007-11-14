@@ -484,7 +484,7 @@ void Package::addDeps(const QStringList &deps)
     {
         if (dep.contains(" "))
         {
-            foreach(QString adep, dep.split(" "))
+            foreach(QString adep, dep.split(" ",QString::SkipEmptyParts))
             {
                 if (!m_deps.contains(adep))
                     m_deps << adep;
@@ -674,6 +674,31 @@ QDebug &operator<<(QDebug &out, const Package &c)
     out << "notes:" << c.notes();
     out << "longNotes:" << c.longNotes();
     out << "deps:" << c.deps();
+/*
+	// @TODO: add relocs and packageItems
+    QString d;
+    StringHash::ConstIterator its = m_pathRelocs.constBegin();
+    for( ; its != m_pathRelocs.constEnd(); its++)
+    {
+        d += its.key() + " = " + its.value() + ' ';
+    }
+    qDebug() << DUMP_INDENT() << " m_pathRelocs: " << d;
+
+    QHash<Type, PackageItem>::ConstIterator it = m_packages.constBegin();
+    for( ; it != m_packages.constEnd(); ++it) {
+        it->dump();
+    }
+    DUMP_FOOTER(title,"Package");
+*/
     return out;
 }
+
+QDebug &operator<<(QDebug &out, const QList<Package*> &c)
+{
+    foreach(Package *p, c)
+        out << p;
+    return out;
+}
+
+
 

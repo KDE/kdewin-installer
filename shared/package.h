@@ -201,7 +201,8 @@ protected:
     bool       m_handled;      // marker for several operations
 };
 
-QDebug &operator<<(QDebug &out, const Package &c);
+QDebug &operator<<(QDebug &, const Package &);
+QDebug &operator<<(QDebug &, const QList<Package*> &);
 	
 Q_DECLARE_OPERATORS_FOR_FLAGS(Package::Types);
 
