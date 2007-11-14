@@ -148,6 +148,16 @@ void Package::PackageItem::dump(const QString &title) const
     DUMP_FOOTER(title,"PackageItem");
 }
 
+QDebug &operator<<(QDebug &out, const Package::PackageItem &c)
+{
+    out << "url:         " << c.url;
+    out << "fileName:    " << c.fileName;
+    out << "packageType: " << c.packageType;
+    out << "contentType: " << c.contentType;
+    out << "bInstalled:  " << c.bInstalled;
+    return out;
+}
+
 Package::Package()
 {
     m_handled = false;
@@ -158,14 +168,13 @@ Package::Package(const Package &other)
     m_packages   = other.m_packages;
     m_name       = other.m_name;
     m_version    = other.m_version;
-    m_category   = other.m_category;
+    m_categories = other.m_categories;
     m_deps       = other.m_deps;
     m_pathRelocs = other.m_pathRelocs;
     m_handled    = other.m_handled;
     m_notes      = other.m_notes;
     m_longNotes  = other.m_longNotes;
 }
-
 
 QString Package::getFileName(Package::Type contentType)
 {
@@ -344,12 +353,12 @@ bool Package::read(QTextStream &in)
 void Package::dump(const QString &title) const
 {
     DUMP_HEADER(title,"Package");
-    qDebug() << DUMP_INDENT() << "m_name:    " << m_name;
-    qDebug() << DUMP_INDENT() << "m_version: " << m_version;
-    qDebug() << DUMP_INDENT() << "m_category: " << m_category;
-    qDebug() << DUMP_INDENT() << "m_deps: " << m_deps.join(" ");
-    qDebug() << DUMP_INDENT() << "m_handled: " << m_handled;
-    qDebug() << DUMP_INDENT() << "m_notes: " << m_notes;
+    qDebug() << DUMP_INDENT() << "m_name:      " << m_name;
+    qDebug() << DUMP_INDENT() << "m_version:   " << m_version;
+    qDebug() << DUMP_INDENT() << "m_categories:" << m_categories;
+    qDebug() << DUMP_INDENT() << "m_deps:      " << m_deps.join(" ");
+    qDebug() << DUMP_INDENT() << "m_handled:   " << m_handled;
+    qDebug() << DUMP_INDENT() << "m_notes:     " << m_notes;
     qDebug() << DUMP_INDENT() << "m_longNotes: " << m_longNotes;
 
     QString d;
@@ -452,9 +461,21 @@ bool Package::removeItem(Installer *installer, Package::Type type)
 void Package::logOutput()
 {}
 
-void Package::setCategory(const QString &cat)
+void Package::addCategories(const QString &cat)
 {
-    m_category = cat;
+    if (cat.contains(" "))
+    {
+        foreach(QString acat, cat.split(" "))
+            m_categories << cat;
+    }
+    else
+        m_categories << cat;
+}
+
+void Package::addCategories(const QStringList &cats)
+{
+    foreach(QString cat, cats)
+        addCategories(cat);
 }
 
 void Package::addDeps(const QStringList &deps)
@@ -470,7 +491,7 @@ void Package::addDeps(const QStringList &deps)
             }
         }
         else if (!m_deps.contains(dep))
-            m_deps << deps;
+            m_deps << dep;
     }
 }
 #endif
@@ -644,3 +665,15 @@ QString Package::manifestFileName(const QString &pkgName, const QString &pkgVers
 {
     return pkgName + "-" + pkgVersion + "-" + Package::typeToString(type) +".mft";
 }
+
+QDebug &operator<<(QDebug &out, const Package &c)
+{
+    out << "name:" << c.name();
+    out << "version:" << c.version();
+    out << "categories:" << c.categories();
+    out << "notes:" << c.notes();
+    out << "longNotes:" << c.longNotes();
+    out << "deps:" << c.deps();
+    return out;
+}
+

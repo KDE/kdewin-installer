@@ -65,72 +65,102 @@ public:
             QString version;        // package item version
     };
 public:
-
+    typedef QHash<Type, PackageItem> PackageItemType;
+    
     Package();
     Package(const Package &other);
 
+    // base package related methods 
+
+    /// return name 
     const QString &name() const { return m_name; }
+    /// set name 
     void setName(QString const &name) { m_name = name; }
 
+    /// return version
     const QString &version() const { return m_version; }
+    /// set version
     void setVersion(const QString &version) { m_version = version; }
 
+    /// return notes 
     const QString &notes() const { return m_notes; }
+   
+    /// return long notes 
     void setNotes(const QString &notes) { m_notes = notes; }
 
+    /// return long notes 
     const QString &longNotes() const { return m_longNotes; }
+    /// set long notes 
     void setLongNotes(const QString &notes) { m_longNotes = notes; }
+
+    /// return package categories
+    const QStringList &categories() const { return m_categories; }
+    /// set package categories
+    void addCategories(const QStringList &cat);
+    /// set package categories
+    void addCategories(const QString &cat);
+
+    /// return package dependencies
+    const QStringList &deps() const { return m_deps; }
+    /// add package dependencies 
+    void addDeps(const QStringList &addDeps);
 
     QString toString(bool installed=false, const QString &delim = "-");
     QString getTypeAsString(bool requiredIsInstalled=false, const QString &delim = " ");
 
-    // returns fileName of package item e.g. xyz-1.2.3-bin.zip
-    QString getFileName(Package::Type contentType);
-    // returns complete url of package item e.g. http://host/path.../fileName
-    QUrl getUrl(Package::Type type);
+    /**
+     return path relocations - path relocations are used to install files from an archive into 
+     a different location 
+    */
+    StringHash &pathRelocations() { return m_pathRelocs; }
+    /// add path relocations
+    void addPathRelocation(const QString &key, const QString &value) { m_pathRelocs[key] = value; }
 
-    // set url of package item e.g. http://host/path.../fileName
-    bool setUrl(Package::Type type, const QUrl &url);
-
-    // add a file to this package
-    bool add(const PackageItem &item);
-
-    // set Install state of a package type (e.g. from gnuwin32 manifests)
-    void setInstalled(const Package &other);
-    // return state of a specific item type is available
+    /// package item related 
+    /// -> probably better return pointer to packageitem and access its methods 
+    
+    /// return state of a specific item type is available
     bool hasType(Package::Type contentType) const;
 
-    // check if specific content is already installed
-    bool isInstalled(Package::Type type) const;
-    // set that a specific content is already installed
-    void setInstalled(Package::Type type);
+    /// return modifiable package item
+    //PackageItem &get(Package::Type contentType);
 
-    // save package to stream
-    bool write(QTextStream &out);
-    // load package from stream
-    bool read(QTextStream &in);
+    /// add a package item to this package
+    bool add(const PackageItem &item);
 
-    // dump package content
-    void dump(const QString &title=QString()) const;
+    /// check if specific content is already installed
+    QT_DEPRECATED bool isInstalled(Package::Type type) const;
+    /// set that a specific content is already installed
+    QT_DEPRECATED void setInstalled(Package::Type type);
 
-    // download a package item
+    /// returns fileName of package item e.g. xyz-1.2.3-bin.zip
+    QString getFileName(Package::Type contentType);
+
+    /// returns complete url of package item e.g. http://host/path.../fileName
+    QUrl getUrl(Package::Type type);
+    /// set url of package item e.g. http://host/path.../fileName
+    bool setUrl(Package::Type type, const QUrl &url);
+
+    /// download a package item
     bool downloadItem(Downloader *downloader, Package::Type type);
+    /// install a package item
     bool installItem(Installer *installer, Package::Type type);
+    /// uninstall a package item
     bool removeItem(Installer *installer, Package::Type type);
 
-    // package category
-    const QString &category() const { return m_category; }
-    void setCategory(const QString &cat);
-
-    // package dependencies
-    void addDeps(const QStringList &addDeps);
-    const QStringList &deps() const { return m_deps; }
-
-    // filepath relocations for installing
-    void addPathRelocation(const QString &key, const QString &value) { m_pathRelocs[key] = value; }
-    StringHash &pathRelocations() { return m_pathRelocs; }
-
+    /// return specific type as string
     static QString typeToString(Package::Type type);
+
+    /// set Install state of a package type (e.g. from gnuwin32 manifests)
+    QT_DEPRECATED void setInstalled(const Package &other);
+
+    /// save package to stream
+    bool write(QTextStream &out);
+    /// load package from stream
+    bool read(QTextStream &in);
+
+    /// dump package content 
+    QT_DEPRECATED void dump(const QString &title=QString()) const;
 
     bool handled() const { return m_handled; }
     void setHandled(bool state) { m_handled = state; }
@@ -160,18 +190,19 @@ protected:
     // Creates the full path + filename for a package type, creates path when wanted
     QString makeFileName(Package::Type type, bool bCreateDir = false);
 
-    QHash<Type, PackageItem> m_packages;
-
+    PackageItemType m_packages;
     QString m_name;     // base name (a2ps)
     QString m_version;  // base version (4.13b-1)
     QString m_notes;    // notes from package.notes
     QString m_longNotes;// notes from package.notes
-    QString m_category;
+    QStringList m_categories;
     QStringList m_deps;
     StringHash m_pathRelocs;
     bool       m_handled;      // marker for several operations
 };
 
+QDebug &operator<<(QDebug &out, const Package &c);
+	
 Q_DECLARE_OPERATORS_FOR_FLAGS(Package::Types);
 
 #define PackageInfo Package

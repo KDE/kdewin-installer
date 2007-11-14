@@ -347,13 +347,13 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                         p.setName(pkgName);
                         p.setNotes(hd.shortDesc);
                         p.setLongNotes(hd.longDesc);
-                        p.setCategory(hd.categories);
+                        p.addCategories(hd.categories);
                         p.addDeps(hd.requires.split(" "));
                         addPackage(p);
                     } else {
                         pkg->setNotes(hd.shortDesc);
                         pkg->setLongNotes(hd.longDesc);
-                        pkg->setCategory(hd.categories);
+                        pkg->addCategories(hd.categories);
                         pkg->addDeps(hd.requires.split(" "));
                     }
         } else if (fileName.endsWith(".zip") || fileName.endsWith(".tbz") || fileName.endsWith(".tar.bz2") ) {
