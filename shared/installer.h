@@ -49,7 +49,7 @@ public:
 
     Database *database() { return m_database; }
     void setDatabase(Database *database) { m_database = database; }
-    bool install(Package *pkg, const QString &fileName, const StringHash &pathRelocations=StringHash());
+    bool install(Package *pkg, const Package::Type type, const QString &fileName, const StringHash &pathRelocations=StringHash());
     // installPackage(Package *pkg)
     //  bool readFromFile(QString const &fileName);
     //  bool writeToFile(QString const &fileName);
@@ -65,7 +65,7 @@ public Q_SLOTS:
 protected Q_SLOTS:
     void finished(int, QProcess::ExitStatus);
 protected:
-    bool createManifestFile(const QString &zipFile);
+    bool createManifestFile();
     bool createManifestFileForExecutable();
     bool unbz2File(const QString &destpath, const QString &zipFile, const StringHash &pathRelocations);
     bool unzipFile(const QString &destpath, const QString &zipFile, const StringHash &pathRelocations);
@@ -82,6 +82,7 @@ protected:
 
     QProcess* m_installExecutableProcess;
     Package* m_packageToInstall;
+    Package::Type m_installType;
 };
 
 #endif

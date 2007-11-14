@@ -430,7 +430,7 @@ bool Package::installItem(Installer *installer, Package::Type type)
         return false;
     }
     fileName = makeFileName(type);
-    if (!installer->install(this, fileName, pathRelocations()))
+    if (!installer->install(this, type, fileName, pathRelocations()))
     {
         qDebug() << __FUNCTION__ << " install failure for file " << fileName << " type " << type;
         return false;

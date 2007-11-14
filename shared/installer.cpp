@@ -100,26 +100,24 @@ void Installer::updatePackageList()
 #ifndef QUNZIP_BUFFER
 # define QUNZIP_BUFFER (256 * 1024)
 #endif
-bool Installer::createManifestFile(const QString &zipFile)
+bool Installer::createManifestFile()
 {
-    /*
-     * @TODO: use package definition for manifest file creating to be independend from filename, 
-     *        only issue is that package type must be parsed from the zip filename 
-    */
     QString destpath = m_root;
+    QString mFile = m_packageToInstall->manifestFileName(m_installType);
+    QString vFile = m_packageToInstall->versionFileName(m_installType);
+
     // write manifest file if not exist or is corrupted
-    QFileInfo f(zipFile);
-    QFileInfo a(destpath +"/manifest/"+ f.fileName().replace(".zip",".mft"));
+    QFileInfo a(destpath +"/manifest/"+ mFile);
     if (a.exists() && a.isFile() && a.size() > 0)
-    return true;
+        return true;
     // in some gnuwin32 packages the manifest file is a directory
     if (a.isDir())
     {
         QDir dd;
         dd.rmdir(a.absoluteFilePath());
     }
-    m_files << "manifest/"+ f.fileName().replace(".zip",".mft");
-    m_files << "manifest/"+ f.fileName().replace(".zip",".ver");
+    m_files << "manifest/"+ mFile;
+    m_files << "manifest/"+ vFile;
     QFile mf(a.absoluteFilePath());
     if (!mf.open(QIODevice::WriteOnly | QIODevice::Text))
         return false;
@@ -128,7 +126,7 @@ bool Installer::createManifestFile(const QString &zipFile)
     mf.close();
 
     // write .ver file if not exist
-    QFileInfo b(destpath +"/manifest/"+ f.fileName().replace(".zip",".ver"));
+    QFileInfo b(destpath +"/manifest/"+ vFile);
     if (b.exists() && b.isFile() && b.size() > 0)
         return true;
     QFile vf(b.absoluteFilePath());
@@ -138,9 +136,8 @@ bool Installer::createManifestFile(const QString &zipFile)
         return false;
     }
     QTextStream vo(&vf);
-    //  @TODO fill ver file with usefull values
-    vo << "dummy x.y.z Content description\n";
-    vo << "dummy:";
+    vo << m_packageToInstall->name() + " " + m_packageToInstall->version() + " " + m_packageToInstall->notes() + "\n";
+    vo << m_packageToInstall->name() + ":\n";
     vf.close();
 
     return true;
@@ -164,9 +161,8 @@ bool Installer::createManifestFileForExecutable()
         return false;
     }
     QTextStream vo(&vf);
-    //  @TODO fill ver file with usefull values
-    vo << "dummy x.y.z Content description\n";
-    vo << "dummy:";
+    vo << m_packageToInstall->name() + " " + m_packageToInstall->version() + " " + m_packageToInstall->notes() + "\n";
+    vo << m_packageToInstall->name() + ":\n";
     vf.close();
     return true;
 }
@@ -581,9 +577,11 @@ bool Installer::createQtConfigFile()
     return true;
 }
 
-bool Installer::install(Package *pkg, const QString &fileName, const StringHash &pathRelocations)
+bool Installer::install(Package *pkg, const Package::Type type, const QString &fileName, const StringHash &pathRelocations)
 {
     m_packageToInstall = pkg;
+    m_installType = type;
+
     if (fileName.endsWith(".zip"))
     {
       if(!unzipFile(m_root, fileName, pathRelocations))
@@ -620,7 +618,7 @@ bool Installer::install(Package *pkg, const QString &fileName, const StringHash 
         setError(tr("Don't know what to do with %1").arg(fileName));
         return false;
     }
-    createManifestFile(fileName);
+    createManifestFile();
     QFileInfo fi(fileName);
     if(fi.fileName().startsWith("qt"))
         createQtConfigFile();
@@ -634,6 +632,9 @@ void Installer::finished(int exitCode, QProcess::ExitStatus exitStatus)
         //m_installExeProcess;
         //m_packageToInstall;
         // write manifest file
+        /** @Note: the problem here is that installers (for example vcredist) does not return correct return codes 
+         *         or starts another executable which exit code isn't determinable (for example vcsetup) 
+         */
         createManifestFileForExecutable();
     }
     // cleanup in dtor
