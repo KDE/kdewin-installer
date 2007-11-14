@@ -21,6 +21,8 @@
 ****************************************************************************/
 
 #include <QDir>
+#include <QUrl>
+#include <QNetworkProxy>
 #include <QtDebug>
 
 #include "settings.h"
@@ -182,10 +184,9 @@ Settings &Settings::getInstance()
 
 
 #ifdef Q_OS_WIN
-bool Settings::getIEProxySettings(const QString &url, QString &host, int &port)
+bool Settings::getIEProxySettings(const QString &url, QNetworkProxy &proxy)
 {
-    host = QString();
-    port = 0;
+    // @TODO how to retrieve user and passwort 
     bool ok;
     quint32 enable = getWin32RegistryValue(hKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings","ProxyEnable",&ok).toUInt();
     if (!ok)
@@ -202,37 +203,30 @@ bool Settings::getIEProxySettings(const QString &url, QString &host, int &port)
     if(parts.count() != 2)
         return false;
 
-    host = parts[0];
-    port = parts[1].toInt();
-
-    qDebug() << enable << host << port;
+    proxy.setHostName(parts[0]);
+    proxy.setPort(parts[1].toInt());
+    proxy.setUser(proxyUser());
+    proxy.setPassword(proxyPassword());
     return true;
 }
 #endif
 
-bool Settings::getEnvironmentProxySettings(const QString &url, QString &host, int &port)
+bool Settings::getEnvironmentProxySettings(const QString &_url, QNetworkProxy &proxy)
 {
-  QString proxyServer = qgetenv("http_proxy");
-  if(!proxyServer.isEmpty()) {
-    QStringList parts = proxyServer.split(':');
-    if(parts.count() == 2) {
-      host = parts[0];
-      port = parts[1].toInt();
-    } else
-    if(parts.count() == 3) {
-      host = parts[1];
-      port = parts[2].toInt();
-    } else
-      return false;
+    QUrl url(qgetenv("http_proxy"));   
 
-    while (host[0] == '/')
-      host = host.mid(1);
-    return true;
-  }
-  return false;
+    if(url.isValid()) 
+    {
+        proxy.setHostName(url.host());
+        proxy.setPort(url.port(8080));
+        proxy.setUser(url.userName());
+        proxy.setPassword(url.password());
+        return true;
+    }
+    return false;
 }
 
-bool Settings::getFireFoxProxySettings(const QString &url, QString &host, int &port)
+bool Settings::getFireFoxProxySettings(const QString &url, QNetworkProxy &proxy)
 {
     static QHash<QString,QString> prefs;
     static bool prefsRead = false;
@@ -268,7 +262,6 @@ bool Settings::getFireFoxProxySettings(const QString &url, QString &host, int &p
         }
         prefsRead = true;
     }
-
     if (prefs.contains("network.proxy.type"))
     {
         int mode = prefs["network.proxy.type"].toInt();
@@ -281,43 +274,55 @@ bool Settings::getFireFoxProxySettings(const QString &url, QString &host, int &p
                        prefs.contains("network.proxy.share_proxy_settings")
                     && prefs["network.proxy.share_proxy_settings"] == "true")
             {
-                host = prefs["network.proxy.http"];
-                port = prefs["network.proxy.http_port"].toInt();
-                return true;
+                proxy.setHostName(prefs["network.proxy.http"]);
+                proxy.setPort(prefs["network.proxy.http_port"].toInt());
+                /// @TODO: get username and passwort from firefox settings
+                proxy.setUser(proxyUser());
+                proxy.setPassword(proxyPassword());
             }
-            host = prefs["network.proxy.ftp"];
-            port = prefs["network.proxy.ftp_port"].toInt();
+            else 
+            {
+                proxy.setHostName(prefs["network.proxy.ftp"]);
+                proxy.setPort(prefs["network.proxy.ftp_port"].toInt());
+                /// @TODO: get username and passwort from firefox settings
+                proxy.setUser(proxyUser());
+                proxy.setPassword(proxyPassword());
+
+            }
             return true;
         }
     }
-    host = QString();
-    port = 0;
     return false;
 }
 
-
-bool Settings::getProxySettings(const QString &url, QString &host, int &port)
+bool Settings::getProxySettings(const QString &url, QNetworkProxy &proxy)
 {
+    proxy.setType(QNetworkProxy::HttpProxy);
+
     // FIXME: add support for different ftp proxy settings
     switch(proxyMode()) {
 #ifdef Q_WS_WIN
         case InternetExplorer:
-            return getIEProxySettings(url, host, port);
+            return getIEProxySettings(url, proxy);
 #endif
         case FireFox:
-            return getFireFoxProxySettings(url, host, port);
+            return getFireFoxProxySettings(url, proxy);
+
         case Manual:
-            host = proxyHost();
-            port = proxyPort();
+            proxy.setHostName(proxyHost());
+            proxy.setPort(proxyPort());
+            proxy.setUser(proxyUser());
+            proxy.setPassword(proxyPassword());
             return true;
+
         case Environment:
-            return getEnvironmentProxySettings(url, host, port);
+            return getEnvironmentProxySettings(url, proxy);
+
         case None:
         default:
-            host = QString();
-            port = 0;
+            return false;
             break;
-    };
+    }
     return false;
 }
 

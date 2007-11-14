@@ -25,6 +25,7 @@
 
 #include <QObject>
 #include <QSettings>
+#include <QNetworkProxy>
 
 /**
  holds global options, which are stored in a local user specific config file
@@ -77,13 +78,17 @@ public:
     }
     const QString proxyHost() { return m_settings.value("proxyHost").toString(); }
     int proxyPort() { return m_settings.value("proxyPort").toInt(); }
+    const QString proxyUser() { return m_settings.value("proxyUser").toString(); }
+    const QString proxyPassword() { return m_settings.value("proxyPassword").toString(); }
+
     void setProxy(const QString &host, const QString &port) 
     {
         m_settings.setValue("proxyHost",host);
         m_settings.setValue("proxyPort",port);
         sync();
     }
-    bool getProxySettings(const QString &url, QString &host, int &port);
+
+    bool getProxySettings(const QString &url, QNetworkProxy &settings);
 
     bool installDetails() { return m_settings.value("installDetails", true).toBool(); }
     void setInstallDetails(bool state) { m_settings.setValue("installDetails", state); sync(); }
@@ -118,13 +123,22 @@ protected:
 private:
     QSettings m_settings;
 #ifdef Q_WS_WIN
-    bool getIEProxySettings(const QString &url, QString &host, int &port);
+    bool getIEProxySettings(const QString &url, QNetworkProxy &proxy);
 #endif
-    bool getFireFoxProxySettings(const QString &url, QString &host, int &port);
-    bool getEnvironmentProxySettings(const QString &url, QString &host, int &port);
+    bool getFireFoxProxySettings(const QString &url, QNetworkProxy &proxy);
+    bool getEnvironmentProxySettings(const QString &url, QNetworkProxy &proxy);
     QString debug(void) { return m_settings.value("debug", "").toString(); }
 };
 
+
+#include <QDebug>
+
+inline QDebug &operator<<(QDebug &out, QNetworkProxy &c)
+{
+    out << "host:" << c.hostName() << "port:" << c.port() 
+        << "user:" << c.user() << "password:" << (c.password().isEmpty() ? "empty" : "****");
+    return out;
+}
 
 
 #endif

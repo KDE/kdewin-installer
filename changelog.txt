@@ -1,10 +1,11 @@
 ChangeLog
 =========
 
-recent
+0.8.2
 ------
 - installer-gui: - downloader is able to follow redirected urls using the 302 http response code
                  - create package database entry for exe/msi installer to avoid multiple time installation 
+                 - initial support for proxy username and password, it is required to set it in the installer.ini using entries proxyUser= and proxyPassword=
                                   
 0.8.1
 -------

@@ -131,14 +131,14 @@ bool Downloader::start(const QUrl &url, QByteArray &ba)
 
 bool Downloader::startInternal(const QUrl &url, QIODevice *ioDev)
 {
-    QString host;
-    int port;
     Settings &s = Settings::getInstance();
-    s.getProxySettings(url.scheme(),host,port);
-    if (!host.isEmpty())
+    QNetworkProxy ps;
+
+    s.getProxySettings(url.scheme(),ps);
+    if (!ps.hostName().isEmpty())
     {
-        m_http->setProxy(host,port);
-        qDebug() << "Downloader proxy settings - host:" << host << "port:" << port;
+        m_http->setProxy(ps);
+        qDebug() << "Downloader proxy settings -" << ps;
     }
     m_ioDevice = ioDev;
 
