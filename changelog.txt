@@ -4,7 +4,8 @@ ChangeLog
 recent
 ------
 - installer-gui: - downloader is able to follow redirected urls using the 302 http response code
-
+                 - create package database entry for exe/msi installer to avoid multiple time installation 
+                                  
 0.8.1
 -------
 - all:           - added .tar.bz2 support

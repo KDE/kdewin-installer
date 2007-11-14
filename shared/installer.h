@@ -65,7 +65,8 @@ public Q_SLOTS:
 protected Q_SLOTS:
     void finished(int, QProcess::ExitStatus);
 protected:
-    bool createManifestFile(const QString &destpath, const QString &zipFile);
+    bool createManifestFile(const QString &zipFile);
+    bool createManifestFileForExecutable();
     bool unbz2File(const QString &destpath, const QString &zipFile, const StringHash &pathRelocations);
     bool unzipFile(const QString &destpath, const QString &zipFile, const StringHash &pathRelocations);
     bool un7zipFile(const QString &destpath, const QString &zipFile);

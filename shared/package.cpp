@@ -181,6 +181,15 @@ QUrl Package::getUrl(Package::Type contentType)
     return QString();
 }
 
+bool Package::setUrl(Package::Type contentType, const QUrl &url)
+{
+    if(!m_packages.contains(contentType))
+        return false;
+
+    m_packages[contentType].url = url;
+    return true;
+}
+
 bool Package::add(const PackageItem &item)
 {
     if(m_packages.contains(item.contentType)) {
@@ -612,6 +621,16 @@ bool Package::fromString(const QString &name, QString &pkgName, QString &pkgVers
     }
     else
         return false;
+}
+
+QString Package::manifestFileName(const Package::Type type)
+{
+    return Package::manifestFileName(m_name,m_version,type);
+}
+
+QString Package::versionFileName(const Package::Type type)
+{
+    return Package::versionFileName(m_name,m_version,type);
 }
 
 // returns version file name of package item e.g. xyz-1.2.3-bin.ver

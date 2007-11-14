@@ -100,40 +100,75 @@ void Installer::updatePackageList()
 #ifndef QUNZIP_BUFFER
 # define QUNZIP_BUFFER (256 * 1024)
 #endif
-bool Installer::createManifestFile(const QString &destpath, const QString &zipFile)
+bool Installer::createManifestFile(const QString &zipFile)
 {
-  // write manifest file if not exist or is corrupted
-  QFileInfo f(zipFile);
-  QFileInfo a(destpath +"/manifest/"+ f.fileName().replace(".zip",".mft"));
-  if (a.exists() && a.isFile() && a.size() > 0)
+    /*
+     * @TODO: use package definition for manifest file creating to be independend from filename, 
+     *        only issue is that package type must be parsed from the zip filename 
+    */
+    QString destpath = m_root;
+    // write manifest file if not exist or is corrupted
+    QFileInfo f(zipFile);
+    QFileInfo a(destpath +"/manifest/"+ f.fileName().replace(".zip",".mft"));
+    if (a.exists() && a.isFile() && a.size() > 0)
     return true;
     // in some gnuwin32 packages the manifest file is a directory
-  if (a.isDir())
-  {
-    QDir dd;
-    dd.rmdir(a.absoluteFilePath());
-  }
-  m_files << "manifest/"+ f.fileName().replace(".zip",".mft");
-  m_files << "manifest/"+ f.fileName().replace(".zip",".ver");
-  QFile fo(a.absoluteFilePath());
-  if (!fo.open(QIODevice::WriteOnly | QIODevice::Text))
-    return false;
-  QTextStream so(&fo);
-  so << m_files.join("\n");
+    if (a.isDir())
+    {
+        QDir dd;
+        dd.rmdir(a.absoluteFilePath());
+    }
+    m_files << "manifest/"+ f.fileName().replace(".zip",".mft");
+    m_files << "manifest/"+ f.fileName().replace(".zip",".ver");
+    QFile mf(a.absoluteFilePath());
+    if (!mf.open(QIODevice::WriteOnly | QIODevice::Text))
+        return false;
+    QTextStream mo(&mf);
+    mo << m_files.join("\n");
+    mf.close();
 
     // write .ver file if not exist
-  QFileInfo b(destpath +"/manifest/"+ f.fileName().replace(".zip",".ver"));
-  if (b.exists() && b.isFile() && b.size() > 0)
-    return true;
-  QFile verFile(b.absoluteFilePath());
-  if (!verFile.open(QIODevice::WriteOnly | QIODevice::Text))
-    return false;
-  QTextStream vFo(&verFile);
+    QFileInfo b(destpath +"/manifest/"+ f.fileName().replace(".zip",".ver"));
+    if (b.exists() && b.isFile() && b.size() > 0)
+        return true;
+    QFile vf(b.absoluteFilePath());
+    if (!vf.open(QIODevice::WriteOnly | QIODevice::Text)) 
+    {
+        mf.remove();
+        return false;
+    }
+    QTextStream vo(&vf);
     //  @TODO fill ver file with usefull values
-  vFo << "dummy x.y.z Content description\n";
-  vFo << "dummy:";
+    vo << "dummy x.y.z Content description\n";
+    vo << "dummy:";
+    vf.close();
 
-  return true;
+    return true;
+}
+
+bool Installer::createManifestFileForExecutable()
+{
+    QString mFile = m_packageToInstall->manifestFileName(Package::BIN);
+    QString vFile = m_packageToInstall->versionFileName(Package::BIN);
+    QFile mf(m_root + "/manifest/" + mFile);
+    if (!mf.open(QIODevice::WriteOnly | QIODevice::Text))
+        return false;
+    QTextStream mo(&mf);
+    mo << "manifest/"+ mFile + "\n";
+    mo << "manifest/"+ vFile + "\n";
+    mf.close();
+
+    QFile vf(m_root + "/manifest/" + vFile);
+    if (!vf.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        mf.remove();
+        return false;
+    }
+    QTextStream vo(&vf);
+    //  @TODO fill ver file with usefull values
+    vo << "dummy x.y.z Content description\n";
+    vo << "dummy:";
+    vf.close();
+    return true;
 }
 
 bool Installer::unbz2File(const QString &destpath, const QString &zipFile, const StringHash &pathRelocations)
@@ -585,7 +620,7 @@ bool Installer::install(Package *pkg, const QString &fileName, const StringHash 
         setError(tr("Don't know what to do with %1").arg(fileName));
         return false;
     }
-    createManifestFile(m_root, fileName);
+    createManifestFile(fileName);
     QFileInfo fi(fileName);
     if(fi.fileName().startsWith("qt"))
         createQtConfigFile();
@@ -599,7 +634,7 @@ void Installer::finished(int exitCode, QProcess::ExitStatus exitStatus)
         //m_installExeProcess;
         //m_packageToInstall;
         // write manifest file
-        //createManifestFileForExecutable();
+        createManifestFileForExecutable();
     }
     // cleanup in dtor
 }

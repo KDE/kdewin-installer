@@ -89,6 +89,9 @@ public:
     // returns complete url of package item e.g. http://host/path.../fileName
     QUrl getUrl(Package::Type type);
 
+    // set url of package item e.g. http://host/path.../fileName
+    bool setUrl(Package::Type type, const QUrl &url);
+
     // add a file to this package
     bool add(const PackageItem &item);
 
@@ -132,12 +135,21 @@ public:
     bool handled() const { return m_handled; }
     void setHandled(bool state) { m_handled = state; }
 
+    /// generate manifest file name
+    QString manifestFileName(const Package::Type type);
+
+    /// generate version file name
+    QString versionFileName(const Package::Type type);
+
     /// separate package name, version, type and file format from a filename
     static bool fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat);
+
     /// separate package name and version from a string
     static bool fromString(const QString &astring, QString &pkgName, QString &pkgVersion);
+
     /// generate manifest file name
     static QString manifestFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type);
+
     /// generate version file name
     static QString versionFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type);
 
