@@ -149,7 +149,7 @@ bool Downloader::startInternal(const QUrl &url, QIODevice *ioDev)
     QByteArray query = url.encodedQuery();
     m_httpRequestAborted = false;
     m_result = Undefined;
-    m_redirectLocation = "";
+    m_usedURL = url;
     m_httpGetId = m_http->get
                   (url.path() + (!query.isEmpty() ? "?" + url.encodedQuery() : QString()), m_ioDevice);
 
@@ -161,9 +161,9 @@ bool Downloader::startInternal(const QUrl &url, QIODevice *ioDev)
         m_eventLoop->exec();
         delete m_eventLoop;
         if (m_result == Redirected) {
-            qDebug() << "restarted download from" << m_redirectLocation;
+            qDebug() << "restarted download from" << m_redirectedURL;
             m_ioDevice->seek(0); // make sure we are on the start of the file or buffer 
-            startInternal(m_redirectLocation,m_ioDevice);
+            startInternal(m_redirectedURL,m_ioDevice);
         }
         return m_result == Finished ? true : false;
     }
@@ -224,7 +224,7 @@ void Downloader::readResponseHeader(const QHttpResponseHeader &responseHeader)
     if (m_statusCode == 302) {
         qWarning() << __FUNCTION__ << "Download failed" << m_statusCode << responseHeader.reasonPhrase() << "new location:" << responseHeader.value("location");
         setError(tr("Download failed: %1 %2.").arg(m_statusCode).arg(responseHeader.reasonPhrase() + " new location: " + responseHeader.value("location")) );
-        m_redirectLocation = responseHeader.value("location");
+        m_redirectedURL = responseHeader.value("location");
         m_result = Redirected;
     }
     else if (m_statusCode != 200)

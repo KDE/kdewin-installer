@@ -50,9 +50,14 @@ public:
     // start download
     bool start(const QUrl &url, const QString &fileName = QString());
     bool start(const QUrl &url, QByteArray &ba);
+    /// cancel started download 
     void cancel();
+    /// return result string 
 	QString resultString() { return m_resultString; }
+    /// return download result
 	ResultType result()    { return m_result; }
+    /// return real used url for downloading
+	const QUrl &usedURL()   { return m_usedURL; }
 
 signals:
     void done(bool error);
@@ -79,8 +84,8 @@ private:
 	QString		m_resultString;
     ResultType  m_result;      
     int         m_statusCode;       // used internal
-    QString     m_redirectLocation; // location for 302 FOUND status code 
-
+	QUrl        m_redirectedURL;    // holds redirected url when request finished with 302 status 
+    QUrl        m_usedURL;          // holds really used url, may change when 302 status 
 };
 
 #endif
