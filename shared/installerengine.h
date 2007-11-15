@@ -28,6 +28,7 @@
 
 #include "settings.h"
 #include "globalconfig.h"
+#include "packagecategorycache.h"
 
 class PackageList;
 class Downloader;
@@ -76,6 +77,7 @@ protected slots:
 
 protected:
     QList <PackageList*> m_packageListList;
+    PackageList*         m_packageResources;
     Installer           *m_installer;    // currently used installer
     Downloader          *m_downloader;
     InstallerProgress   *m_instProgress;

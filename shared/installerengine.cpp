@@ -97,25 +97,22 @@ void InstallerEngine::createMainPackagelist()
     if (Settings::hasDebug("InstallerEngine"))
         m_database->listPackages("createMainPackageList - installed packages");
 
+    m_packageResources = new PackageList();
+    m_packageListList.append(m_packageResources);
+
     QList<Package*>::iterator p;
     for (p = m_globalConfig->packages()->begin(); p != m_globalConfig->packages()->end(); p++)
     {
-        Package *pkg = (*p);
-        QString category = pkg->category();
-        if (category.isEmpty())
-            category = "main";
-        PackageList *packageList = getPackageListByName(category);
-        if (!packageList)
-        {
-            packageList = new PackageList();
-            packageList->setName(category);
-            m_packageListList.append(packageList);
-        }
-        packageList->addPackage(*pkg);
-    }
-    foreach(PackageList *pkgList, m_packageListList)
-        pkgList->syncWithDatabase(*m_database);
+        Package *pkg = *p;
+        pkg->addCategories("all");
+        if (pkg->name().contains("mingw"))
+            pkg->addCategories("mingw");
+        if (pkg->name().contains("msvc"))
+            pkg->addCategories("msvc");
 
+        m_packageResources->addPackage(*pkg);
+        categoryCache.addPackage(pkg);
+    }
     if (Settings::hasDebug("InstallerEngine"))
         dump("createMainPackageList");
 }
@@ -127,21 +124,17 @@ bool InstallerEngine::downloadPackageLists()
     for (s = m_globalConfig->sites()->begin(); s != m_globalConfig->sites()->end(); s++)
     {
         Site *site = (*s);
+        PackageList packageList;
         QString category = site->name();
         qDebug() << "download package file list for site: " << category << "from" << site->url();
-        PackageList *packageList = getPackageListByName(category);
-        if (!packageList)
-        {
-            packageList = new PackageList();
-            packageList->setName(category);
-            m_packageListList.append(packageList);
-        }
-        packageList->setNotes(site->notes());
+
+        categoryCache.setNote(category,site->notes());
+        packageList.setNotes(site->notes());
 
         // packagelist needs to access Site::getDependencies() && Site::isExclude()
-        packageList->setCurrentSite(site);
+        packageList.setCurrentSite(site);
 
-        packageList->setBaseURL(site->url().toString());    // why not use QUrl here?
+        packageList.setBaseURL(site->url().toString());    // why not use QUrl here?
 
 #ifdef DEBUG
         QFileInfo tmpFile(m_installer->root() + "/packages-"+site->name()+".html");
@@ -153,23 +146,25 @@ bool InstallerEngine::downloadPackageLists()
 #else
         QByteArray ba;
         m_downloader->start(site->url(), ba);
-        if (!packageList->readHTMLFromByteArray(ba,site->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge, true ))
+        if (!packageList.readHTMLFromByteArray(ba,site->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge, true ))
 #endif
         {
             qDebug() << "error reading package list from download html file";
             continue;
         }
-        packageList->syncWithDatabase(*m_database);
+        foreach(Package *pkg, packageList.packageList()) 
+        {
+            // merge with duplicated definition above
+            pkg->addCategories("all");
+            if (pkg->name().contains("mingw"))
+                pkg->addCategories("mingw");
+            if (pkg->name().contains("msvc"))
+                pkg->addCategories("msvc");
+
+            m_packageResources->addPackage(*pkg);
+            categoryCache.addPackage(pkg);
+        }
     }
-    PackageList *packageList = getPackageListByName("outdated packages");
-    if (!packageList)
-    {
-        packageList = new PackageList();
-        packageList->setName("installed");
-        packageList->setNotes("packages in this categories are installed, but are not listed in recent configuration because they are obsolate or outdated");
-        m_packageListList.append(packageList);
-    }
-    m_database->addUnhandledPackages(packageList);
     if (Settings::hasDebug("InstallerEngine"))
         dump("downloadPackageLists");
 

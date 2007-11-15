@@ -30,6 +30,8 @@
 #include <QFlags>
 #include <QMessageBox>
 
+#include <windows.h>
+
 #include "installerenginegui.h"
 #include "installwizard.h"
 #ifdef ENABLE_STYLE
@@ -52,13 +54,15 @@ PackageStates packageStates;
 
 // Column definitions in package list tree widget
 const int NameColumn = 0;
-const int VersionColumn = 1;
-const int ALLColumn = 2;
-const int BINColumn = 3;
-const int LIBColumn = 4;
-const int DOCColumn = 5;
-const int SRCColumn = 6;
-const int NotesColumn = 7;
+const int installedVersionColumn = 1;
+const int availableVersionColumn = 2;
+const int VersionColumn = 2;
+const int ALLColumn = 3;
+const int BINColumn = 4;
+const int LIBColumn = 5;
+const int DOCColumn = 6;
+const int SRCColumn = 7;
+const int NotesColumn = 8;
 const int ColumnCount = 8;
 
 int typeToColumn ( Package::Type type )
@@ -178,10 +182,10 @@ enum actionType { _initial, _next, _deps, _sync};
 /**
  @deprecated  use set...State
 */
-static void setState ( QTreeWidgetItem &item, const Package *pkg, int column, actionType action, int syncColumn=0 )
+static void setState ( QTreeWidgetItem &item, Package *available, Package *installed, int column, actionType action, int syncColumn=0 )
 {
     Package::Type type = columnToType ( column );
-
+    Package *pkg = installed;
     if ( !pkg )
         return;
     if ( type != Package::ALL && !pkg->hasType ( type ) ) {
@@ -305,19 +309,19 @@ static void setState ( QTreeWidgetItem &item, const Package *pkg, int column, ac
     }
 }
 
-static void setInitialState ( QTreeWidgetItem &item, const Package *pkg, int column )
+static void setInitialState ( QTreeWidgetItem &item, Package *available, Package *installed, int column )
 {
-    setState ( item,pkg,column,_initial );
+    setState ( item,available,installed,column,_initial );
 }
 
-static void setNextState ( QTreeWidgetItem &item, const Package *pkg, int column )
+static void setNextState ( QTreeWidgetItem &item, Package *available, Package *installed, int column )
 {
-    setState ( item,pkg,column,_next );
+    setState ( item,available,installed,column,_next );
 }
 
-static void setDependencyState ( QTreeWidgetItem &item, const Package *pkg, int column )
+static void setDependencyState ( QTreeWidgetItem &item, Package *available, Package *installed, int column )
 {
-    setState ( item,pkg,column,_deps );
+    setState ( item,available,installed,column,_deps );
 }
 
 
@@ -337,6 +341,7 @@ InstallerEngineGui::InstallerEngineGui (QWidget *parent, DownloaderProgress *pro
         : InstallerEngine ( progressBar,instProgressBar ), m_parent(parent)
 {
     m_installMode = Single;
+    //packageStates = new PackageStates(*m_packageResources,*m_database);
 }
 
 void InstallerEngineGui::setLeftTreeData ( QTreeWidget *tree )
@@ -349,43 +354,25 @@ void InstallerEngineGui::setLeftTreeData ( QTreeWidget *tree )
     tree->setHeaderLabels ( labels );
     QList<QTreeWidgetItem *> categoryList;
 
-    // adding top level items
-    QStringList names;
-    names << tr ( "all" ) << tr ( "all packages" );
-    QTreeWidgetItem *category = new QTreeWidgetItem ( ( QTreeWidget* ) 0, names );
-    QTreeWidgetItem *firstItem = category;
-    categoryList.append ( category );
-
+    qDebug() << categoryCache.categories();
     Settings &s = Settings::getInstance();
-    if ( s.compilerType() == Settings::unspecified ) {
-        names.clear();
-        names << tr ( "mingw" ) << tr ( "packages usable by win32 gcc" );
-        category = new QTreeWidgetItem ( ( QTreeWidget* ) 0, names );
-        categoryList.append ( category );
-
-        names.clear();
-        names << tr ( "msvc" ) << tr ( "packages usable by MS VC" );
-        category = new QTreeWidgetItem ( ( QTreeWidget* ) 0, names );
-        categoryList.append ( category );
-    }
-
-    QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
-    for ( ; k != m_packageListList.constEnd(); ++k ) {
-        if ( ( *k )->packageList().size() == 0 )
+    foreach (QString category,categoryCache.categories()) 
+    {
+        QStringList names = category.split(":");
+        if ( (s.compilerType() == Settings::MinGW ||s.compilerType() == Settings::MSVC) 
+                && (names[0] == "msvc" || names[0] == "mingw") )
             continue;
-        QStringList names;
-        names << ( *k )->Name();
-        names << ( *k )->notes();
-        QTreeWidgetItem *category = new QTreeWidgetItem ( ( QTreeWidget* ) 0, names );
-        category->setToolTip ( 0, ( *k )->notes() );
-        categoryList.append ( category );
+
+        QTreeWidgetItem *categoryItem = new QTreeWidgetItem ( ( QTreeWidget* ) 0, names );
+        categoryItem->setToolTip ( 0, names[1] );
+        categoryList.append ( categoryItem );
     }
     tree->insertTopLevelItems ( 0,categoryList );
     tree->expandAll();
     tree->sortItems ( 0,Qt::AscendingOrder );
     // FIXME: don't know how to select an item as done with mouse
-    tree->setCurrentItem ( firstItem );
-    firstItem->setSelected ( true );
+    //tree->setCurrentItem ( firstItem );
+    //firstItem->setSelected ( true );
     for ( int i = 0; i < tree->columnCount(); i++ )
         tree->resizeColumnToContents ( i );
 }
@@ -395,7 +382,8 @@ extern QTreeWidget *tree;
 void InstallerEngineGui::on_leftTree_itemClicked ( QTreeWidgetItem *item, int column, QTextEdit *info )
 {
     info->setText ( item->text ( 1 ) );
-    setPageSelectorWidgetData ( tree,item->text ( 0 ) );
+	QString category = item->text ( 0 );
+    setPageSelectorWidgetData ( tree,category );
 }
 
 void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString categoryName )
@@ -412,7 +400,8 @@ void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString 
 
     labels
     << tr ( "Package" )
-    << tr ( "Version" );
+    << tr ( "available" )
+    << tr ( "installed" );
     switch ( m_installMode ) {
     case Developer:
         labels
@@ -452,73 +441,49 @@ void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString 
     // adding top level items
     QList<QTreeWidgetItem *> categoryList;
 
-#ifdef DEBUG
-    qDebug() << "adding categories size:" << m_globalConfig->sites()->size();
-#endif
     Settings &s = Settings::getInstance();
 
-    QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
-    for ( ; k != m_packageListList.constEnd(); ++k ) {
-        if ( ( *k )->packageList().size() == 0 )
-            continue;
-        if ( !categoryName.isEmpty() && categoryName != "mingw" && categoryName != "msvc"
-                && categoryName != "all" && categoryName != ( *k )->Name() )
-            continue;
-#ifdef USE_CATEGORY_COLUMN
-        QStringList names;
-        names << ( *k )->Name();
-        names << "";
-        names << "";
-        names << "";
-        names << "";
-        names << "";
-        names << "";
-        names << "";
-//        names << (*k)->notes();
-        QTreeWidgetItem *category = new QTreeWidgetItem ( ( QTreeWidget* ) 0, names );
-        category->setToolTip ( 0, ( *k )->notes() );
-        categoryList.append ( category );
-#endif
-        // adding sub items
-        QList<Package*>::ConstIterator i = ( *k )->packageList().constBegin();
-        for ( ; i != ( *k )->packageList().constEnd(); ++i ) {
-            Package *pkg = *i;
-            if ( ( categoryName == "mingw"  || s.compilerType() == Settings::MinGW )
-                    && ( pkg->name().toLower().contains ( "msvc" ) || pkg->notes().toLower().contains ( "msvc" ) ) )
-                continue;
-            else if ( ( categoryName == "msvc"  || s.compilerType() == Settings::MSVC )
-                      && ( pkg->name().toLower().contains ( "mingw" ) || pkg->notes().toLower().contains ( "mingw" ) ) )
-                continue;
-            QStringList data;
-            data << pkg->name()
-            << pkg->version()
-            << QString();
-#ifdef USE_CATEGORY_COLUMN
-            QTreeWidgetItem *item = new QTreeWidgetItem ( category, data );
+#ifdef USE_PACKAGE_POINTER_FROM_CATEGORY_CACHE
+    foreach(Package *availablePackage,m_categoryCache->getPackages(categoryName)) 
 #else
-            QTreeWidgetItem *item = new QTreeWidgetItem ( ( QTreeWidgetItem* ) 0, data );
+    foreach(Package *availablePackage,categoryCache.packages(categoryName,*m_packageResources)) 
 #endif
-            if ( m_installMode == Single )
-                setInitialState ( *item,pkg,ALLColumn );
+    {
+        QString name = availablePackage->name();
+        if ( ( categoryName == "mingw"  || s.compilerType() == Settings::MinGW )
+                && ( name.contains ( "msvc" ) ) )
+            continue;
+        else if ( ( categoryName == "msvc"  || s.compilerType() == Settings::MSVC )
+                  && ( name.contains ( "mingw" ) ) )
+            continue;
 
-            setInitialState ( *item,pkg,BINColumn );
-            if ( m_installMode != Developer ) {
-                setInitialState ( *item,pkg,LIBColumn );
-                setInitialState ( *item,pkg,DOCColumn );
-            }
-            setInitialState ( *item,pkg,SRCColumn );
-            item->setText ( NotesColumn, pkg->notes() );
-            // FIXME
-            //item->setText(8, m_globalConfig->news()->value(pkg->name()+"-"+pkg->version()));
-            item->setToolTip ( ALLColumn, allToolTip );
-            item->setToolTip ( BINColumn, binToolTip );
-            item->setToolTip ( LIBColumn, libToolTip );
-            item->setToolTip ( DOCColumn, docToolTip );
-            item->setToolTip ( SRCColumn, srcToolTip );
-#ifndef USE_CATEGORY_COLUMN
-            categoryList.append ( item );
-#endif
+        QStringList data;
+        Package *installedPackage = m_database->getPackage(availablePackage->name());
+        QString installedVersion = installedPackage ? installedPackage->version() : "";
+        QString availableVersion = availablePackage->version();
+        data << availablePackage->name() 
+            << (availableVersion != installedVersion ? availablePackage->version() : "")
+            << installedVersion 
+            << QString();
+        QTreeWidgetItem *item = new QTreeWidgetItem ( ( QTreeWidgetItem* ) 0, data );
+        if ( m_installMode == Single )
+            setInitialState ( *item,availablePackage,installedPackage,ALLColumn );
+
+        setInitialState ( *item,availablePackage,installedPackage,BINColumn );
+        if ( m_installMode != Developer ) {
+            setInitialState ( *item,availablePackage,installedPackage,LIBColumn );
+            setInitialState ( *item,availablePackage,installedPackage,DOCColumn );
         }
+        setInitialState ( *item,availablePackage,installedPackage,SRCColumn );
+        item->setText ( NotesColumn, availablePackage->notes() );
+        // FIXME
+        //item->setText(8, m_globalConfig->news()->value(pkg->name()+"-"+pkg->version()));
+        item->setToolTip ( ALLColumn, allToolTip );
+        item->setToolTip ( BINColumn, binToolTip );
+        item->setToolTip ( LIBColumn, libToolTip );
+        item->setToolTip ( DOCColumn, docToolTip );
+        item->setToolTip ( SRCColumn, srcToolTip );
+        categoryList.append(item);
     }
     tree->addTopLevelItems ( categoryList );
     tree->expandAll();
@@ -585,20 +550,20 @@ void InstallerEngineGui::setDependencies ( Package *pkg, Package::Type type )
                 qDebug() << __FUNCTION__ << depItem->text ( NameColumn ) << depItem->text ( VersionColumn ) << "selected as dependency";
             /// the dependency is only for bin package and one way to switch on
             if ( m_installMode == Developer ) {
-                setState ( *depItem,depPkg,BINColumn,_deps );
-                setState ( *depItem,depPkg,LIBColumn,_deps );
-                setState ( *depItem,depPkg,DOCColumn,_deps );
+                setState ( *depItem,depPkg,0,BINColumn,_deps );
+                setState ( *depItem,depPkg,0,LIBColumn,_deps );
+                setState ( *depItem,depPkg,0,DOCColumn,_deps );
             } else if ( m_installMode == EndUser ) {
-                setState ( *depItem,depPkg,BINColumn,_deps );
+                setState ( *depItem,depPkg,0,BINColumn,_deps );
                 // lib is excluded
-                setState ( *depItem,depPkg,DOCColumn,_deps );
+                setState ( *depItem,depPkg,0,DOCColumn,_deps );
             } else if ( m_installMode == Single ) {
                 if ( type == Package::ALL ) {
-                    setState ( *depItem,depPkg,BINColumn,_deps );
-                    setState ( *depItem,depPkg,LIBColumn,_deps );
-                    setState ( *depItem,depPkg,DOCColumn,_deps );
+                    setState ( *depItem,depPkg,0,BINColumn,_deps );
+                    setState ( *depItem,depPkg,0,LIBColumn,_deps );
+                    setState ( *depItem,depPkg,0,DOCColumn,_deps );
                 } else
-                    setState ( *depItem,depPkg,BINColumn,_deps );
+                    setState ( *depItem,depPkg,0,BINColumn,_deps );
             }
         }
     }
@@ -606,11 +571,12 @@ void InstallerEngineGui::setDependencies ( Package *pkg, Package::Type type )
 
 void InstallerEngineGui::itemClickedPackageSelectorPage ( QTreeWidgetItem *item, int column, QTabWidget *packageInfo )
 {
-    Package *pkg = getPackageByName ( item->text ( NameColumn ),item->text ( VersionColumn ) );
+    Package *pkg = getPackageByName ( item->text ( NameColumn ),item->text ( availableVersionColumn ) );
     if ( !pkg ) {
         packageInfo->setEnabled ( false );
         return;
     }
+    Package *installedPkg = m_database->getPackage( item->text ( NameColumn ),item->text ( installedVersionColumn ).toAscii() );
 
     // Package Info display
     packageInfo->setEnabled ( true );
@@ -633,15 +599,15 @@ void InstallerEngineGui::itemClickedPackageSelectorPage ( QTreeWidgetItem *item,
     }
 
     e = ( QTextEdit* ) packageInfo->widget ( 2 );
-    if ( e ) {
+    if ( e && installedPkg) {
         QString list;
-        if ( pkg->isInstalled ( Package::BIN ) )
+        if ( installedPkg->isInstalled ( Package::BIN ) )
             list += tr ( "---- BIN package ----" ) + "\n" + m_database->getPackageFiles ( pkg->name(),Package::BIN ).join ( "\n" ) + "\n";
-        if ( pkg->isInstalled ( Package::LIB ) )
+        if ( installedPkg->isInstalled ( Package::LIB ) )
             list += tr ( "---- LIB package ----" ) + "\n" + m_database->getPackageFiles ( pkg->name(),Package::LIB ).join ( "\n" ) + "\n";
-        if ( pkg->isInstalled ( Package::DOC ) )
+        if ( installedPkg->isInstalled ( Package::DOC ) )
             list += tr ( "---- DOC package ----" ) + "\n" + m_database->getPackageFiles ( pkg->name(),Package::DOC ).join ( "\n" ) + "\n";
-        if ( pkg->isInstalled ( Package::SRC ) )
+        if ( installedPkg->isInstalled ( Package::SRC ) )
             list += tr ( "---- SRC package ----" ) + "\n" + m_database->getPackageFiles ( pkg->name(),Package::SRC ).join ( "\n" ) + "\n";
         if ( list.isEmpty() )
             packageInfo->setTabEnabled ( 2,false );
@@ -657,21 +623,21 @@ void InstallerEngineGui::itemClickedPackageSelectorPage ( QTreeWidgetItem *item,
         return;
 
     if ( m_installMode == Single && column == ALLColumn ) {
-        setNextState ( *item, pkg, ALLColumn );
-        setState ( *item,pkg,BINColumn,_sync,ALLColumn );
-        setState ( *item,pkg,LIBColumn,_sync,ALLColumn );
-        setState ( *item,pkg,DOCColumn,_sync,ALLColumn );
-        setState ( *item,pkg,SRCColumn,_sync,ALLColumn );
+        setNextState ( *item, pkg, installedPkg,ALLColumn );
+        setState ( *item,pkg,installedPkg,BINColumn,_sync,ALLColumn );
+        setState ( *item,pkg,installedPkg,LIBColumn,_sync,ALLColumn );
+        setState ( *item,pkg,installedPkg,DOCColumn,_sync,ALLColumn );
+        setState ( *item,pkg,installedPkg,SRCColumn,_sync,ALLColumn );
     } else if ( m_installMode == Developer && column == BINColumn ) {
-        setNextState ( *item,pkg,BINColumn );
-        setNextState ( *item,pkg,LIBColumn );
-        setNextState ( *item,pkg,DOCColumn );
+        setNextState ( *item,pkg,installedPkg,BINColumn );
+        setNextState ( *item,pkg,installedPkg,LIBColumn );
+        setNextState ( *item,pkg,installedPkg,DOCColumn );
     } else if ( m_installMode == EndUser && column == BINColumn ) {
-        setNextState ( *item,pkg,BINColumn );
+        setNextState ( *item,pkg,installedPkg,BINColumn );
         // lib excluded
-        setNextState ( *item,pkg,DOCColumn );
+        setNextState ( *item,pkg,installedPkg,DOCColumn );
     } else {
-        setNextState ( *item,pkg,column );
+        setNextState ( *item,pkg,installedPkg,column );
     }
 
     // select depending packages in case all or bin is selected
