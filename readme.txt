@@ -28,6 +28,7 @@ Known Bugs
    be prefixed src/<package>-<version> - repackaging of the related package will help
 -  packager: stripping of dll's which are in use results in deleting the related dll. 
    Please make sure no one uses a dll when using the -strip option
+-  installer: installing dll's which are in use cancels installing of the related package
    
 TODO
 ====
