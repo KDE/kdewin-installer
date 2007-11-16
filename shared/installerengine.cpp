@@ -54,8 +54,6 @@ InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgre
 
 InstallerEngine::~InstallerEngine()
 {
-    qDeleteAll(m_packageListList);
-    m_packageListList.clear();
     delete m_database;
     delete m_installer;
     delete m_downloader;
@@ -98,7 +96,6 @@ void InstallerEngine::createMainPackagelist()
         m_database->listPackages("createMainPackageList - installed packages");
 
     m_packageResources = new PackageList();
-    m_packageListList.append(m_packageResources);
 
     QList<Package*>::iterator p;
     for (p = m_globalConfig->packages()->begin(); p != m_globalConfig->packages()->end(); p++)
@@ -171,28 +168,9 @@ bool InstallerEngine::downloadPackageLists()
     return true;
 }
 
-PackageList *InstallerEngine::getPackageListByName(const QString &name)
-{
-    QList <PackageList *>::ConstIterator k;
-    for (k = m_packageListList.constBegin(); k != m_packageListList.constEnd(); ++k)
-    {
-        if ((*k)->Name() == name)
-            return (*k);
-    }
-    return 0;
-}
-
 Package *InstallerEngine::getPackageByName(const QString &name,const QString &version)
 {
-    Package *pkg;
-    QList <PackageList *>::iterator k;
-    for (k = m_packageListList.begin(); k != m_packageListList.end(); ++k)
-    {
-       pkg = (*k)->getPackage(name,version.toAscii());
-       if (pkg)
-           return pkg;
-    }
-    return 0;
+    return m_packageResources->getPackage(name,version.toAscii());
 }
 
 void InstallerEngine::stop()
@@ -214,23 +192,13 @@ void InstallerEngine::mirrorChanged(const QString &mirror)
     downloadPackageLists();
 }
 
-
 void InstallerEngine::dump(const QString &title)
 {
-    QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
-    for ( ; k != m_packageListList.constEnd(); ++k)
+    QList<Package*>::ConstIterator i = m_packageResources->packageList().constBegin();
+    for ( ; i != m_packageResources->packageList().constEnd(); ++i)
     {
-        if ((*k)->packageList().size() == 0)
-            continue;
-
-        // adding sub items
-        QList<Package*>::ConstIterator i = (*k)->packageList().constBegin();
-        for ( ; i != (*k)->packageList().constEnd(); ++i)
-        {
-            Package *pkg = *i;
-            qDebug() << pkg;
-            pkg->dump(__FUNCTION__);
-        }
+        Package *pkg = *i;
+        qDebug() << pkg;
     }
 }
 

@@ -76,7 +76,6 @@ protected slots:
     void mirrorChanged(const QString &mirror);
 
 protected:
-    QList <PackageList*> m_packageListList;
     PackageList*         m_packageResources;
     Installer           *m_installer;    // currently used installer
     Downloader          *m_downloader;
