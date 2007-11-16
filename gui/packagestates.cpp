@@ -27,8 +27,8 @@ void PackageStates::setState(QString pkgName, QString pkgVersion, Package::Type 
 {
     QString key = pkgName+'-'+pkgVersion;
     PackageFlags value;
-    if (states.contains(key)) 
-        value = states[key];
+    if (m_states.contains(key)) 
+        value = m_states[key];
     
     switch(type) {
         case Package::BIN: value.bin = state; break;
@@ -37,16 +37,16 @@ void PackageStates::setState(QString pkgName, QString pkgVersion, Package::Type 
         case Package::SRC: value.src = state; break;
         case Package::ALL: value.all = state; break;
     }
-    states[key] = value;
+    m_states[key] = value;
 }
 
 stateType PackageStates::getState(QString pkgName, QString pkgVersion, Package::Type type  )
 {
     QString key = pkgName+'-'+pkgVersion;
     
-    if (!states.contains(key))
+    if (!m_states.contains(key))
         return _Nothing;
-    PackageFlags value = states[key];
+    PackageFlags value = m_states[key];
 
     switch(type) {
         case Package::BIN: return value.bin;
@@ -56,4 +56,21 @@ stateType PackageStates::getState(QString pkgName, QString pkgVersion, Package::
         case Package::ALL: return value.all;
         default: return _Nothing;
     }
+}
+
+QDebug &operator<<(QDebug &out, const PackageStates &c)
+{
+    PackageStatesType::const_iterator i = c.m_states.begin();
+    for (;i != c.m_states.end(); ++i) 
+    {
+        if (i.key().isEmpty())
+            continue;
+        out << i.key() + ":" 
+            << "all" << c.m_states[i.key()].all 
+            << "bin" << c.m_states[i.key()].bin
+            << "lib" << c.m_states[i.key()].lib
+            << "doc" << c.m_states[i.key()].doc
+            << "src" << c.m_states[i.key()].src;
+    }
+    return out;
 }

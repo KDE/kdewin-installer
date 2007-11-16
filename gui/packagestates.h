@@ -3,6 +3,7 @@
 
 
 #include <QString>
+#include <QDebug>
 #include "package.h"
 
 enum stateType { _Nothing, _Install, _Update, _Remove}; // make sure _Install != 0 !!
@@ -20,6 +21,8 @@ class PackageFlags {
     stateType all,bin,lib,doc,src; 
 };
 
+typedef QHash<QString,PackageFlags> PackageStatesType;
+
 class PackageStates {
   public:
     PackageStates() {}
@@ -27,7 +30,9 @@ class PackageStates {
     stateType getState(QString pkgName, QString pkgVersion, Package::Type type  );
 
   protected:
-    QHash<QString,PackageFlags> states; 
+    PackageStatesType m_states; 
+    friend QDebug &operator<<(QDebug &, const PackageStates &);
 };
 
+QDebug &operator<<(QDebug &, const PackageStates &);
 #endif
