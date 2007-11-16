@@ -449,16 +449,16 @@ bool PackageList::setInstalledPackage(const Package &apkg)
     return true;
 }
 
-void PackageList::dump(const QString &title)
+QDebug & operator<<(QDebug &out, PackageList &c)
 {
-    qDebug() << "class PackageList dump: " << title;
-    qDebug() << "m_name       " << m_name;
-    qDebug() << "root         " << m_root;
-    qDebug() << "m_configFile " << m_configFile;
-    qDebug() << "m_baseURL    " << m_baseURL;
-    QList<Package*>::ConstIterator it = m_packageList.constBegin();
-    for ( ; it != m_packageList.constEnd(); ++it)
-        (*it)->dump();
+    out << "m_name       " << c.m_name;
+    out << "root         " << c.m_root;
+    out << "m_configFile " << c.m_configFile;
+    out << "m_baseURL    " << c.m_baseURL;
+    QList<Package*>::ConstIterator it = c.m_packageList.constBegin();
+    for ( ; it != c.m_packageList.constEnd(); ++it)
+        out << (*it);
+    return out;
 }
 
 #include "packagelist.moc"

@@ -106,7 +106,6 @@ public:
 
     // 0.5.3
     bool hasConfig();
-    void dump(const QString &title=QString());
 
 signals:
     void configLoaded();
@@ -123,6 +122,9 @@ private:
     QString m_notes;
 
     friend class Installer;
+    friend QDebug & operator<<(QDebug &, PackageList &);
 };
+
+QDebug & operator<<(QDebug &, PackageList &);
 
 #endif
