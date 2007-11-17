@@ -344,6 +344,17 @@ InstallerEngineGui::InstallerEngineGui (QWidget *parent, DownloaderProgress *pro
     //packageStates = new PackageStates(*m_packageResources,*m_database);
 }
 
+void InstallerEngineGui::init()
+{
+    InstallerEngine::init();
+}
+
+void InstallerEngineGui::reload()
+{
+    packageStates.clear();
+    InstallerEngine::reload();
+}
+
 void InstallerEngineGui::setLeftTreeData ( QTreeWidget *tree )
 {
     tree->clear();
@@ -359,9 +370,12 @@ void InstallerEngineGui::setLeftTreeData ( QTreeWidget *tree )
     foreach (QString category,categoryCache.categories()) 
     {
         QStringList names = category.split(":");
-        if ( (s.compilerType() == Settings::MinGW ||s.compilerType() == Settings::MSVC) 
+        if (names[0] != "all") 
+#if 0
+            if ( (s.compilerType() == Settings::MinGW ||s.compilerType() == Settings::MSVC) 
                 && (names[0] == "msvc" || names[0] == "mingw") )
-            continue;
+#endif
+                continue;
 
         QTreeWidgetItem *categoryItem = new QTreeWidgetItem ( ( QTreeWidget* ) 0, names );
         categoryItem->setToolTip ( 0, names[1] );
@@ -371,8 +385,8 @@ void InstallerEngineGui::setLeftTreeData ( QTreeWidget *tree )
     tree->expandAll();
     tree->sortItems ( 0,Qt::AscendingOrder );
     // FIXME: don't know how to select an item as done with mouse
-    //tree->setCurrentItem ( firstItem );
-    //firstItem->setSelected ( true );
+    tree->setCurrentItem ( categoryList.first() );
+    categoryList.first()->setSelected ( true );
     for ( int i = 0; i < tree->columnCount(); i++ )
         tree->resizeColumnToContents ( i );
 }
@@ -678,85 +692,67 @@ bool InstallerEngineGui::downloadPackageItem(Package *pkg, Package::Type type )
 
 bool InstallerEngineGui::downloadPackages ( QTreeWidget *tree, const QString &category )
 {
-    QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
-    for ( ; k != m_packageListList.constEnd(); ++k ) {
-        if ( ( *k )->packageList().size() == 0 )
+    QList<Package*>::ConstIterator i = m_packageResources->packageList().constBegin();
+    for ( ; i != m_packageResources->packageList().constEnd(); ++i ) {
+        Package *pkg = *i;
+        if ( !pkg )
             continue;
+        if ( Settings::hasDebug ( "InstallerEngineGui" ) )
+            pkg->dump ( "downloadPackages" );
 
-        QList<Package*>::ConstIterator i = ( *k )->packageList().constBegin();
-        for ( ; i != ( *k )->packageList().constEnd(); ++i ) {
-            Package *pkg = *i;
-            if ( !pkg )
-                continue;
-            if ( Settings::hasDebug ( "InstallerEngineGui" ) )
-                pkg->dump ( "downloadPackages" );
-
-            if (!downloadPackageItem(pkg,Package::BIN))
-                return false;
-            if (!downloadPackageItem(pkg,Package::LIB))
-                return false;
-            if (!downloadPackageItem(pkg,Package::DOC))
-                return false;
-            if (!downloadPackageItem(pkg,Package::SRC))
-                return false;
-        }
+        if (!downloadPackageItem(pkg,Package::BIN))
+            return false;
+        if (!downloadPackageItem(pkg,Package::LIB))
+            return false;
+        if (!downloadPackageItem(pkg,Package::DOC))
+            return false;
+        if (!downloadPackageItem(pkg,Package::SRC))
+            return false;
     }
     return true;
 }
 
 bool InstallerEngineGui::removePackages ( QTreeWidget *tree, const QString &category )
 {
-    QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
-    for ( ; k != m_packageListList.constEnd(); ++k ) {
-        if ( ( *k )->packageList().size() == 0 )
+    QList<Package*>::ConstIterator i = m_packageResources->packageList().constBegin();
+    for ( ; i != m_packageResources->packageList().constEnd(); ++i ) {
+        Package *pkg = *i;
+        if ( !pkg )
             continue;
-
-        QList<Package*>::ConstIterator i = ( *k )->packageList().constBegin();
-        for ( ; i != ( *k )->packageList().constEnd(); ++i ) {
-            Package *pkg = *i;
-            if ( !pkg )
-                continue;
-            if ( Settings::hasDebug ( "InstallerEngineGui" ) )
-                pkg->dump ( "removePackages" );
-            bool all = false; //isMarkedForRemoval(pkg,Package::ALL);
-            if ( all | isMarkedForRemoval ( pkg,Package::BIN ) )
-                pkg->removeItem ( m_installer, Package::BIN );
-            if ( all | isMarkedForRemoval ( pkg,Package::LIB ) )
-                pkg->removeItem ( m_installer, Package::LIB );
-            if ( all | isMarkedForRemoval ( pkg,Package::DOC ) )
-                pkg->removeItem ( m_installer, Package::DOC );
-            if ( all | isMarkedForRemoval ( pkg,Package::SRC ) )
-                pkg->removeItem ( m_installer, Package::SRC );
-        }
+        if ( Settings::hasDebug ( "InstallerEngineGui" ) )
+            pkg->dump ( "removePackages" );
+        bool all = false; //isMarkedForRemoval(pkg,Package::ALL);
+        if ( all | isMarkedForRemoval ( pkg,Package::BIN ) )
+            pkg->removeItem ( m_installer, Package::BIN );
+        if ( all | isMarkedForRemoval ( pkg,Package::LIB ) )
+            pkg->removeItem ( m_installer, Package::LIB );
+        if ( all | isMarkedForRemoval ( pkg,Package::DOC ) )
+            pkg->removeItem ( m_installer, Package::DOC );
+        if ( all | isMarkedForRemoval ( pkg,Package::SRC ) )
+            pkg->removeItem ( m_installer, Package::SRC );
     }
     return true;
 }
 
 bool InstallerEngineGui::installPackages ( QTreeWidget *tree,const QString &_category )
 {
-    QList <PackageList *>::ConstIterator k = m_packageListList.constBegin();
-    for ( ; k != m_packageListList.constEnd(); ++k ) {
-        if ( ( *k )->packageList().size() == 0 )
+    QList<Package*>::ConstIterator i = m_packageResources->packageList().constBegin();
+    for ( ; i != m_packageResources->packageList().constEnd(); ++i ) {
+        Package *pkg = *i;
+        if ( !pkg )
             continue;
-
-        QList<Package*>::ConstIterator i = ( *k )->packageList().constBegin();
-        for ( ; i != ( *k )->packageList().constEnd(); ++i ) {
-            Package *pkg = *i;
-            if ( !pkg )
-                continue;
-            if ( Settings::hasDebug ( "InstallerEngineGui" ) )
-                pkg->dump ( "installPackages" );
-            bool all = false;//isMarkedForInstall(pkg,Package::ALL);
-            if ( all || isMarkedForInstall ( pkg,Package::BIN ) )
-                pkg->installItem ( m_installer, Package::BIN );
-            if ( all || isMarkedForInstall ( pkg,Package::LIB ) )
-                pkg->installItem ( m_installer, Package::LIB );
-            if ( all || isMarkedForInstall ( pkg,Package::DOC ) )
-                pkg->installItem ( m_installer, Package::DOC );
-            if ( all || isMarkedForInstall ( pkg,Package::SRC ) )
-                pkg->installItem ( m_installer, Package::SRC );
-            // @TODO: where to handle desktop icons creating
-        }
+        if ( Settings::hasDebug ( "InstallerEngineGui" ) )
+            pkg->dump ( "installPackages" );
+        bool all = false;//isMarkedForInstall(pkg,Package::ALL);
+        if ( all || isMarkedForInstall ( pkg,Package::BIN ) )
+            pkg->installItem ( m_installer, Package::BIN );
+        if ( all || isMarkedForInstall ( pkg,Package::LIB ) )
+            pkg->installItem ( m_installer, Package::LIB );
+        if ( all || isMarkedForInstall ( pkg,Package::DOC ) )
+            pkg->installItem ( m_installer, Package::DOC );
+        if ( all || isMarkedForInstall ( pkg,Package::SRC ) )
+            pkg->installItem ( m_installer, Package::SRC );
+        // @TODO: where to handle desktop icons creating
     }
     return true;
 }

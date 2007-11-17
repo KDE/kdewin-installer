@@ -90,8 +90,7 @@ InstallWizard::InstallWizard(QWidget *parent)
     }
     else
     {
-        engine->readGlobalConfig();
-        engine->downloadPackageLists();
+        engine->init();
         packageSelectorPage = new PackageSelectorPage(this);
         setFirstPage(packageSelectorPage);
     }        
@@ -340,7 +339,6 @@ WizardPage *ProxySettingsPage::nextPage()
     if (proxyManual->isChecked())
         s.setProxy(proxyHost->text(),proxyPort->text());
 
-    engine->readGlobalConfig();
     wizard->mirrorSettingsPage = new MirrorSettingsPage(wizard);
     return wizard->mirrorSettingsPage;
 }
@@ -387,7 +385,7 @@ WizardPage *MirrorSettingsPage::nextPage()
     Settings &s = Settings::getInstance();
     s.setMirror(mirrorEdit->currentText());
 
-    engine->downloadPackageLists();
+    engine->init();
     wizard->packageSelectorPage = new PackageSelectorPage(wizard);
     wizard->settingsButton->show();
     s.setFirstRun(false);
@@ -551,10 +549,7 @@ void PackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
 
 void PackageSelectorPage::installDirChanged(const QString &dir)
 {
-    delete engine;
-    engine = new InstallerEngineGui(this,wizard->progressBar,wizard->instProgressBar);
-    engine->readGlobalConfig();
-    engine->downloadPackageLists();
+    engine->reload();
     engine->setLeftTreeData(leftTree);
     engine->setPageSelectorWidgetData(tree);
 }

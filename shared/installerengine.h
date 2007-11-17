@@ -49,16 +49,12 @@ class InstallerEngine : public QObject
 public:
     InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
     ~InstallerEngine();
-    /**
-        fetch configuration from local (file procotol), http or ftp mirrors 
-        The precedence is 
-    */
-    bool readGlobalConfig();
-    void createMainPackagelist();
-    bool downloadPackageLists();
+    /// init all package definitions
+    virtual void init();
+    /// reload all package definition
+    virtual void reload();
     void stop();
 
-    PackageList *getPackageListByName(const QString &name);
     Package *getPackageByName(const QString &name,const QString &version=QString());
 
     Installer *installer()
@@ -83,7 +79,19 @@ protected:
     GlobalConfig        *m_globalConfig;
     InstallerProgress   *m_instProgressBar;
     Database            *m_database;
+
     void dump(const QString &title=QString());
+    /**
+        fetch configuration from local (file procotol), http or ftp mirrors 
+        The precedence is 
+    */
+    bool readGlobalConfig();
+
+    /// adds packages defined directly in GlobalConfig
+    void addPackagesFromGlobalConfig();
+
+    /// adds package collected from site definition
+    bool addPackagesFromSites();
 };
 
 #endif

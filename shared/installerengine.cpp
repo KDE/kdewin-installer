@@ -48,6 +48,7 @@ InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgre
     m_installer->setRoot(Settings::getInstance().installDir());
     m_installer->setDatabase(m_database);
     m_globalConfig = new GlobalConfig(m_downloader);
+    m_packageResources = new PackageList();
     connect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString&)),this,SLOT(installDirChanged(const QString&)));
     connect(&Settings::getInstance(),SIGNAL(mirrorChanged(const QString&)),this,SLOT(mirrorChanged(const QString&)));
 }
@@ -58,6 +59,26 @@ InstallerEngine::~InstallerEngine()
     delete m_installer;
     delete m_downloader;
     delete m_globalConfig;
+}
+
+void InstallerEngine::init()
+{
+    readGlobalConfig();
+    addPackagesFromGlobalConfig();
+    addPackagesFromSites();
+}
+
+void InstallerEngine::reload()
+{
+    /// @TODO implement clear() method to clear the structures 
+    delete m_globalConfig;
+    m_globalConfig = new GlobalConfig(m_downloader);
+
+    delete m_packageResources;
+    m_packageResources = new PackageList();
+    categoryCache.clear();
+
+    init();
 }
 
 bool InstallerEngine::readGlobalConfig()
@@ -86,17 +107,11 @@ bool InstallerEngine::readGlobalConfig()
     if (!m_globalConfig->parse(configFiles))
         return false;
 
-    createMainPackagelist();
     return true;
 }
 
-void InstallerEngine::createMainPackagelist()
+void InstallerEngine::addPackagesFromGlobalConfig()
 {
-    if (Settings::hasDebug("InstallerEngine"))
-        m_database->listPackages("createMainPackageList - installed packages");
-
-    m_packageResources = new PackageList();
-
     QList<Package*>::iterator p;
     for (p = m_globalConfig->packages()->begin(); p != m_globalConfig->packages()->end(); p++)
     {
@@ -111,11 +126,11 @@ void InstallerEngine::createMainPackagelist()
         categoryCache.addPackage(pkg);
     }
     if (Settings::hasDebug("InstallerEngine"))
-        dump("createMainPackageList");
+        qDebug() << __FUNCTION__ << m_packageResources;
 }
 
 /// download all packagelists, which are available on the configured sites
-bool InstallerEngine::downloadPackageLists()
+bool InstallerEngine::addPackagesFromSites()
 {
     QList<Site*>::iterator s;
     for (s = m_globalConfig->sites()->begin(); s != m_globalConfig->sites()->end(); s++)
@@ -149,9 +164,12 @@ bool InstallerEngine::downloadPackageLists()
             qDebug() << "error reading package list from download html file";
             continue;
         }
+        if (Settings::hasDebug("InstallerEngine"))
+            qDebug() << __FUNCTION__ << packageList;
+
         foreach(Package *pkg, packageList.packageList()) 
         {
-            // merge with duplicated definition above
+            // add some generic categories
             pkg->addCategories("all");
             if (pkg->name().contains("mingw"))
                 pkg->addCategories("mingw");
@@ -162,8 +180,6 @@ bool InstallerEngine::downloadPackageLists()
             categoryCache.addPackage(pkg);
         }
     }
-    if (Settings::hasDebug("InstallerEngine"))
-        dump("downloadPackageLists");
 
     return true;
 }
@@ -186,10 +202,7 @@ void InstallerEngine::installDirChanged(const QString &newdir)
 
 void InstallerEngine::mirrorChanged(const QString &mirror)
 {
-    delete m_globalConfig;
-    m_globalConfig = new GlobalConfig(m_downloader);
-    readGlobalConfig();
-    downloadPackageLists();
+    reload();
 }
 
 void InstallerEngine::dump(const QString &title)

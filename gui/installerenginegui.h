@@ -36,6 +36,10 @@ public:
     enum Type { EndUser, Developer, Single };
 
     InstallerEngineGui(QWidget *parent, DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
+    /// init all package definitions 
+    virtual void init();
+    /// reload all package definitions
+    virtual void reload();
 
     void setPageSelectorWidgetData(QTreeWidget *tree, QString categoryName=QString());
     void itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column, QTabWidget *info);
