@@ -50,8 +50,6 @@ class GlobalConfig {
         /// return package orientated news
         QHash<QString, QString> *news() { return &m_news; }
 
-        /// dump internal objects
-        void dump(const QString &title=QString());
     protected:
         bool parseFromFile(const QString &fileName);
         bool parseFromByteArray(const QByteArray &ba);
@@ -65,7 +63,8 @@ class GlobalConfig {
         QList <Mirror*> m_mirrors;
         QString m_baseURL;
         Downloader *m_downloader;
-    friend QDebug &operator<<(QDebug &,const GlobalConfig &);
+
+    friend QDebug &operator<<(QDebug &,GlobalConfig &);
 };
 
 QDebug &operator<<(QDebug &,const GlobalConfig &);

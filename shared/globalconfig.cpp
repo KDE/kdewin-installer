@@ -140,11 +140,15 @@ bool GlobalConfig::parse(QIODevice *ioDev)
             if (inPackage)
             {
                 if (Settings::hasDebug("GlobalConfig"))
-                    pkg->dump(__FUNCTION__);
+                    qDebug() << __FUNCTION__ << *pkg;
                 inPackage=false;
             }
-            else if (inSite)
+            else if (inSite) 
+            {
+                if (Settings::hasDebug("GlobalConfig"))
+                    qDebug() << __FUNCTION__ << *site;
                 inSite=false;
+            }
             continue;
         }
         else if (line.startsWith('@'))
@@ -302,23 +306,16 @@ bool GlobalConfig::parse(QIODevice *ioDev)
     return true;
 }
 
-void GlobalConfig::dump(const QString &title)
-{
-    DUMP_HEADER(title);
-    for (QList<Site*>::iterator s = sites()->begin(); s != sites()->end(); s++)
-        (*s)->dump(title);
-
-    for (QList<Package*>::iterator p = packages()->begin(); p != packages()->end(); p++)
-        (*p)->dump(title);
-    DUMP_FOOTER(title);
-}
-
 QDebug &operator<<(QDebug &out,GlobalConfig &c)
 {
-    for (QList<Site*>::Iterator s = c.sites()->begin(); s != c.sites()->end(); s++)
+    out << c.m_baseURL;
+    for (QList<Site*>::Iterator s = c.m_sites.begin(); s != c.m_sites.end(); s++)
         out << *s;
 
-    for (QList<Package*>::Iterator p = c.packages()->begin(); p != c.packages()->end(); p++)
+    for (QList<Package*>::Iterator p = c.m_packages.begin(); p != c.m_packages.end(); p++)
+        out << *p;
+
+    for (QList<GlobalConfig::Mirror*>::Iterator p = c.m_mirrors.begin(); p != c.m_mirrors.end(); p++)
         out << *p;
 
     return out;
