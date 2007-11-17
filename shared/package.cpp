@@ -596,12 +596,12 @@ bool Package::fromFileName(const QString &fileName, QString &pkgName, QString &p
     }
     else if(parts.size() < 2)
     {
-        qDebug() << "can't parse filename " << baseName;
+        qWarning() << "can't parse filename " << baseName;
         return false;
     }
     else
     {
-        qDebug() << __FUNCTION__ << "unhandled case with" << baseName;
+        qWarning() << __FUNCTION__ << "unhandled case with" << baseName;
         return false;
     }
     return true;
