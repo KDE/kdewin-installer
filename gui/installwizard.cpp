@@ -467,10 +467,10 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
 
 #else
 
-	QSplitter *splitter = new QSplitter(wizard);
+    QSplitter *splitter = new QSplitter(wizard);
     splitter->setOrientation(Qt::Horizontal);
 
-	// left side of splitter 
+    // left side of splitter 
     leftTree  = new QTreeWidget(splitter);
     engine->setLeftTreeData(leftTree);
 
@@ -478,40 +478,40 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
     categoryInfo->setReadOnly(true);
 
     QWidget *gridLayoutLeft = new QWidget(splitter);
-	gridLayoutLeft->setContentsMargins(0, 0, 0, 0);
-	QVBoxLayout *vboxLayoutLeft = new QVBoxLayout(gridLayoutLeft);
+    gridLayoutLeft->setContentsMargins(0, 0, 0, 0);
+    QVBoxLayout *vboxLayoutLeft = new QVBoxLayout(gridLayoutLeft);
     vboxLayoutLeft->addWidget(leftTree,4);
     vboxLayoutLeft->addWidget(categoryInfo,1);
-	vboxLayoutLeft->setContentsMargins(0, 0, 0, 0);
+    vboxLayoutLeft->setContentsMargins(0, 0, 0, 0);
 
-	// right side of splitter 
-	tree = new QTreeWidget(splitter);
+    // right side of splitter 
+    tree = new QTreeWidget(splitter);
     engine->setPageSelectorWidgetData(tree);
 
-	QTextEdit *tab1 = new QTextEdit();
+    QTextEdit *tab1 = new QTextEdit();
     tab1->setReadOnly(true);
-	QTextEdit *tab2 = new QTextEdit();
+    QTextEdit *tab2 = new QTextEdit();
     tab2->setReadOnly(true);
-	QTextEdit *tab3 = new QTextEdit();
+    QTextEdit *tab3 = new QTextEdit();
     tab3->setReadOnly(true);
 
-	packageInfo = new QTabWidget();
-	packageInfo->addTab(tab1,tr("Description"));
-	packageInfo->addTab(tab2,tr("Dependencies"));
-	packageInfo->addTab(tab3,tr("Files"));
+    packageInfo = new QTabWidget();
+    packageInfo->addTab(tab1,tr("Description"));
+    packageInfo->addTab(tab2,tr("Dependencies"));
+    packageInfo->addTab(tab3,tr("Files"));
 
     QWidget *gridLayout = new QWidget(splitter);
-	gridLayout->setContentsMargins(0, 0, 0, 0);
-	QVBoxLayout *vboxLayout = new QVBoxLayout(gridLayout);
+    gridLayout->setContentsMargins(0, 0, 0, 0);
+    QVBoxLayout *vboxLayout = new QVBoxLayout(gridLayout);
     vboxLayout->addWidget(tree,3);
     vboxLayout->addWidget(packageInfo,1);
-	vboxLayout->setContentsMargins(0, 0, 0, 0);
+    vboxLayout->setContentsMargins(0, 0, 0, 0);
 
-	splitter->addWidget(gridLayoutLeft);
+    splitter->addWidget(gridLayoutLeft);
     splitter->addWidget(gridLayout);
     
-	// setup widget initial width 
-	QWidget *widget = splitter->widget(0);
+    // setup widget initial width 
+    QWidget *widget = splitter->widget(0);
     QSizePolicy policy = widget->sizePolicy();
     policy.setHorizontalStretch(2);
     widget->setSizePolicy(policy);
@@ -526,7 +526,7 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
     layout->addWidget(splitter,1,0,1,2);
     layout->setRowStretch(1,10);
     setLayout(layout);
-	packageInfo->hide();
+    packageInfo->hide();
 #endif
     on_leftTree_itemClicked(leftTree->currentItem(), 0);
 
@@ -712,7 +712,7 @@ FinishPage::FinishPage(InstallWizard *wizard)
     layout->addWidget(label);
     layout->addStretch(1);
     setLayout(layout);
-	wizard->backButton->setEnabled(true);
+    wizard->backButton->setEnabled(true);
  
 }
 
