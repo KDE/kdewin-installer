@@ -58,6 +58,11 @@ stateType PackageStates::getState(QString pkgName, QString pkgVersion, Package::
     }
 }
 
+void PackageStates::clear()
+{
+    m_states.clear();
+}
+
 QDebug &operator<<(QDebug &out, const PackageStates &c)
 {
     PackageStatesType::const_iterator i = c.m_states.begin();

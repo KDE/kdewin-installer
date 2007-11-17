@@ -43,6 +43,8 @@ class PackageCategoryCache
         QStringList categories();
         QList <QString>packages(const QString &category) { return m_data[category].packages; }
         QList <Package *>packages(const QString &category, PackageList &list);
+        /// clear all values
+        void clear();
 
     private:
         QMap<QString,CategoryListType> m_data;

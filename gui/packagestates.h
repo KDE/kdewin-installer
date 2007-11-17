@@ -28,6 +28,7 @@ class PackageStates {
     PackageStates() {}
     void setState(QString pkgName, QString pkgVersion, Package::Type type, stateType state);
     stateType getState(QString pkgName, QString pkgVersion, Package::Type type  );
+    void clear();
 
   protected:
     PackageStatesType m_states; 

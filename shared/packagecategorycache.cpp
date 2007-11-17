@@ -40,7 +40,7 @@ void PackageCategoryCache::addPackage(Package *pkg)
 QStringList PackageCategoryCache::categories()
 {
     QStringList keys;
-    QMap<QString, CategoryListType>::iterator i = m_data.begin();
+    QMap<QString, CategoryListType>::ConstIterator i = m_data.begin();
     for (;i != m_data.end(); ++i) 
     {
         // @TODO fix me empoty categories should not be added
@@ -63,5 +63,11 @@ QList <Package *>PackageCategoryCache::packages(const QString &category, Package
     }
     return packages;
 }
+
+void PackageCategoryCache::clear()
+{
+    m_data.clear();
+}
+
 
 PackageCategoryCache categoryCache;
