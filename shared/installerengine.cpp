@@ -172,6 +172,7 @@ bool InstallerEngine::addPackagesFromSites()
         {
             // add some generic categories
             pkg->addCategories("all");
+            pkg->addCategories(category);
             if (pkg->name().contains("mingw"))
                 pkg->addCategories("mingw");
             if (pkg->name().contains("msvc"))
