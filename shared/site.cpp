@@ -87,13 +87,17 @@ bool Site::isExclude(const QString &_package)
 
 QDebug &operator<<(QDebug &out, const Site &c)
 {
-    out << "m_name" << c.m_name;
-    out << "m_url" << c.m_url;
-    out<< "m_type" << c.m_type;
+    out << "Site ("
+        << "m_name" << c.m_name
+        << "m_url" << c.m_url
+        << "m_type" << c.m_type;
+
     Q_FOREACH(const QUrl &url, c.m_mirrors)
-        out << "m_mirror" << url.toString();
-    out << "m_excludes" << c.m_excludes.join(" ");
-    // FIXME: dump dependencies
+        out << "m_mirror" << url;
+
+    out << "m_excludes" << c.m_excludes.join(" ")
+        << "m_dependencies" << c.m_dependencies
+        << ")";
     return out;
 }
 
