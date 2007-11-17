@@ -184,6 +184,7 @@ enum actionType { _initial, _next, _deps, _sync};
 */
 static void setState ( QTreeWidgetItem &item, Package *available, Package *installed, int column, actionType action, int syncColumn=0 )
 {
+    qDebug() << __FUNCTION__ << available->name() << available->version() << (installed ? installed->version() : "") << action;
     Package::Type type = columnToType ( column );
     Package *pkg = installed;
     if ( !pkg )
@@ -689,7 +690,6 @@ bool InstallerEngineGui::downloadPackageItem(Package *pkg, Package::Type type )
     }
 }
 
-
 bool InstallerEngineGui::downloadPackages ( QTreeWidget *tree, const QString &category )
 {
     QList<Package*>::ConstIterator i = m_packageResources->packageList().constBegin();
@@ -698,7 +698,7 @@ bool InstallerEngineGui::downloadPackages ( QTreeWidget *tree, const QString &ca
         if ( !pkg )
             continue;
         if ( Settings::hasDebug ( "InstallerEngineGui" ) )
-            pkg->dump ( "downloadPackages" );
+            qDebug() << __FUNCTION__ << pkg;
 
         if (!downloadPackageItem(pkg,Package::BIN))
             return false;
@@ -720,7 +720,7 @@ bool InstallerEngineGui::removePackages ( QTreeWidget *tree, const QString &cate
         if ( !pkg )
             continue;
         if ( Settings::hasDebug ( "InstallerEngineGui" ) )
-            pkg->dump ( "removePackages" );
+            qDebug() << __FUNCTION__ << pkg;
         bool all = false; //isMarkedForRemoval(pkg,Package::ALL);
         if ( all | isMarkedForRemoval ( pkg,Package::BIN ) )
             pkg->removeItem ( m_installer, Package::BIN );
@@ -742,7 +742,7 @@ bool InstallerEngineGui::installPackages ( QTreeWidget *tree,const QString &_cat
         if ( !pkg )
             continue;
         if ( Settings::hasDebug ( "InstallerEngineGui" ) )
-            pkg->dump ( "installPackages" );
+            qDebug() << __FUNCTION__ << pkg;
         bool all = false;//isMarkedForInstall(pkg,Package::ALL);
         if ( all || isMarkedForInstall ( pkg,Package::BIN ) )
             pkg->installItem ( m_installer, Package::BIN );

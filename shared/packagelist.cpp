@@ -451,13 +451,13 @@ bool PackageList::setInstalledPackage(const Package &apkg)
 
 QDebug & operator<<(QDebug &out, PackageList &c)
 {
-    out << "m_name       " << c.m_name;
-    out << "root         " << c.m_root;
-    out << "m_configFile " << c.m_configFile;
-    out << "m_baseURL    " << c.m_baseURL;
+    out << "m_name" << c.m_name;
+    out << "root" << c.m_root;
+    out << "m_configFile" << c.m_configFile;
+    out << "m_baseURL" << c.m_baseURL;
     QList<Package*>::ConstIterator it = c.m_packageList.constBegin();
     for ( ; it != c.m_packageList.constEnd(); ++it)
-        out << (*it);
+        out << *(*it);
     return out;
 }
 
