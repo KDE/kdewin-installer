@@ -474,7 +474,7 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
     leftTree  = new QTreeWidget(splitter);
     engine->setLeftTreeData(leftTree);
 
-	categoryInfo = new QTextEdit();
+    categoryInfo = new QTextEdit();
     categoryInfo->setReadOnly(true);
 
     QWidget *gridLayoutLeft = new QWidget(splitter);
@@ -528,6 +528,7 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
     setLayout(layout);
 	packageInfo->hide();
 #endif
+    on_leftTree_itemClicked(leftTree->currentItem(), 0);
 
     connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
     connect(leftTree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(on_leftTree_itemClicked(QTreeWidgetItem *, int)));
@@ -538,12 +539,12 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
 void PackageSelectorPage::on_leftTree_itemClicked(QTreeWidgetItem *item, int column)
 {
     engine->on_leftTree_itemClicked(item,column,categoryInfo);
-	packageInfo->hide();
+    packageInfo->hide();
 }
 
 void PackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
 {
-	packageInfo->show();
+    packageInfo->show();
     engine->itemClickedPackageSelectorPage(item,column,packageInfo);
 }
 
