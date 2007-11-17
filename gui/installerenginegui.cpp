@@ -384,11 +384,11 @@ void InstallerEngineGui::setLeftTreeData ( QTreeWidget *tree )
     tree->insertTopLevelItems ( 0,categoryList );
     tree->expandAll();
     tree->sortItems ( 0,Qt::AscendingOrder );
-    // FIXME: don't know how to select an item as done with mouse
-    tree->setCurrentItem ( categoryList.first() );
-    categoryList.first()->setSelected ( true );
     for ( int i = 0; i < tree->columnCount(); i++ )
         tree->resizeColumnToContents ( i );
+
+    tree->setCurrentItem ( categoryList.first() );
+    categoryList.first()->setSelected ( true );
 }
 // @TODO
 extern QTreeWidget *tree;
@@ -396,7 +396,7 @@ extern QTreeWidget *tree;
 void InstallerEngineGui::on_leftTree_itemClicked ( QTreeWidgetItem *item, int column, QTextEdit *info )
 {
     info->setText ( item->text ( 1 ) );
-	QString category = item->text ( 0 );
+    QString category = item->text ( 0 );
     setPageSelectorWidgetData ( tree,category );
 }
 
