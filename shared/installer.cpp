@@ -52,7 +52,7 @@
 #endif
 
 Installer::Installer(InstallerProgress *_progress)
-        : QObject(), m_progress(_progress), m_type(Installer::Standard)
+        : QObject(), m_progress(_progress), m_type(Installer::Standard), m_installExecutableProcess(0)
 {
     m_root = ".";
 //  packageList = _packageList;
