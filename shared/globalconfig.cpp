@@ -312,3 +312,15 @@ void GlobalConfig::dump(const QString &title)
         (*p)->dump(title);
     DUMP_FOOTER(title);
 }
+
+QDebug &operator<<(QDebug &out,GlobalConfig &c)
+{
+    for (QList<Site*>::Iterator s = c.sites()->begin(); s != c.sites()->end(); s++)
+        out << *s;
+
+    for (QList<Package*>::Iterator p = c.packages()->begin(); p != c.packages()->end(); p++)
+        out << *p;
+
+    return out;
+}
+

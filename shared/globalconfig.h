@@ -65,6 +65,9 @@ class GlobalConfig {
         QList <Mirror*> m_mirrors;
         QString m_baseURL;
         Downloader *m_downloader;
+    friend QDebug &operator<<(QDebug &,const GlobalConfig &);
 };
+
+QDebug &operator<<(QDebug &,const GlobalConfig &);
 
 #endif
