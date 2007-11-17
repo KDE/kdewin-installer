@@ -87,7 +87,6 @@ public:
         m_notes = notes;
     }
 
-    void dump(const QString &title=QString());
 private:
     QString     m_name;
     QUrl        m_url;
@@ -99,6 +98,11 @@ private:
     QHash<QString, QStringList> m_dependencies;
     QHash<QString, QString> m_packageNotes;
     QHash<QString, QString> m_packageLongNotes;
+    friend QDebug &operator<<(QDebug&, const Site &);
 };
+
+QDebug &operator<<(QDebug&, const Site &);
+
+
 
 #endif
