@@ -313,6 +313,8 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
     case PackageList::ApacheModIndex:
         const char *lineKey1 = "alt=\"[   ]\"> <a href=\"";
         const char *lineKey2 = "alt=\"[   ]\" /> <a href=\"";
+        const char *lineKey3 = "alt=\"[txt]\"> <a href=\"";
+        const char *lineKey4 = "alt=\"[txt]\" /> <a href=\"";
         const char *fileKeyStart = "<a href=\"";
         const char *fileKeyEnd = "\">";
         int i = 0;
@@ -320,7 +322,8 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
         while (!ioDev->atEnd())
         {
             QByteArray line = ioDev->readLine().toLower();
-            if (line.contains(lineKey1) || line.contains(lineKey2))
+            if (line.contains(lineKey1) || line.contains(lineKey2) 
+            || line.contains(lineKey3) || line.contains(lineKey4))
             {
                 int a = line.lastIndexOf(fileKeyStart) + strlen(fileKeyStart);
                 int b = line.indexOf(fileKeyEnd,a);
@@ -331,14 +334,19 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                 // aspell-0.50.3-3.zip
                 // bzip2.hint
 
+#ifdef ENABLE_HINTFILE_SUPPORT
+                // @TODO using hint files results into duplicated package entries 
                 if (fileName.endsWith(".hint")) 
                 {
                     QStringList hintFile = QString(fileName).split(".");
                     QString pkgName = hintFile[0];
                     // download hint file
                     QByteArray ba;
-                    d.start(m_baseURL + '/' + fileName, ba);
-                    // check for download errors 
+                    if (!d.start(m_baseURL + '/' + fileName, ba)) 
+                    {
+                        qCritical() << "could not download" << m_baseURL + '/' + fileName;
+                        continue;
+                    }
                     HintFileDescriptor hd;
                     parseHintFile(ba,hd);
                     Package *pkg = getPackage(pkgName);
@@ -356,7 +364,9 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                         pkg->addCategories(hd.categories);
                         pkg->addDeps(hd.requires.split(" "));
                     }
-        } else if (fileName.endsWith(".zip") || fileName.endsWith(".tbz") || fileName.endsWith(".tar.bz2") ) {
+                } else 
+#endif
+                if (fileName.endsWith(".zip") || fileName.endsWith(".tbz") || fileName.endsWith(".tar.bz2") ) {
                     QString pkgName;
                     QString pkgVersion;
                     QString pkgType;
