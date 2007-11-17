@@ -137,24 +137,15 @@ bool Package::PackageItem::setContentType(const QString &type)
     }
 }
 
-void Package::PackageItem::dump(const QString &title) const
-{
-    DUMP_HEADER(title,"PackageItem");
-    qDebug() << DUMP_INDENT() << "url:         " << url;
-    qDebug() << DUMP_INDENT() << "fileName:    " << fileName;
-    qDebug() << DUMP_INDENT() << "packageType: " << packageType;
-    qDebug() << DUMP_INDENT() << "contentType: " << contentType;
-    qDebug() << DUMP_INDENT() << "bInstalled:  " << bInstalled;
-    DUMP_FOOTER(title,"PackageItem");
-}
-
 QDebug &operator<<(QDebug &out, const Package::PackageItem &c)
 {
-    out << "url:         " << c.url;
-    out << "fileName:    " << c.fileName;
-    out << "packageType: " << c.packageType;
-    out << "contentType: " << c.contentType;
-    out << "bInstalled:  " << c.bInstalled;
+    out << "PackageItem ("
+        << "url:" << c.url
+        << "fileName:" << c.fileName
+        << "packageType:" << c.packageType
+        << "contentType:" << c.contentType
+        << "bInstalled:" << c.bInstalled
+        << ")";
     return out;
 }
 
@@ -371,7 +362,7 @@ void Package::dump(const QString &title) const
 
     QHash<Type, PackageItem>::ConstIterator it = m_packages.constBegin();
     for( ; it != m_packages.constEnd(); ++it) {
-        it->dump();
+        qDebug() << *it;
     }
     DUMP_FOOTER(title,"Package");
 }
@@ -668,35 +659,34 @@ QString Package::manifestFileName(const QString &pkgName, const QString &pkgVers
 
 QDebug &operator<<(QDebug &out, const Package &c)
 {
-    out << "name:" << c.name();
-    out << "version:" << c.version();
-    out << "categories:" << c.categories();
-    out << "notes:" << c.notes();
-    out << "longNotes:" << c.longNotes();
-    out << "deps:" << c.deps();
-/*
-	// @TODO: add relocs and packageItems
-    QString d;
-    StringHash::ConstIterator its = m_pathRelocs.constBegin();
-    for( ; its != m_pathRelocs.constEnd(); its++)
-    {
-        d += its.key() + " = " + its.value() + ' ';
-    }
-    qDebug() << DUMP_INDENT() << " m_pathRelocs: " << d;
+    out << "Package (" 
+        << "name:" << c.name()
+        << "version:" << c.version()
+        << "categories:" << c.categories()
+        << "notes:" << c.notes()
+        << "longNotes:" << c.longNotes()
+        << "deps:" << c.deps()
+        << " m_pathRelocs: ";
 
-    QHash<Type, PackageItem>::ConstIterator it = m_packages.constBegin();
-    for( ; it != m_packages.constEnd(); ++it) {
-        it->dump();
-    }
-    DUMP_FOOTER(title,"Package");
-*/
+    StringHash::ConstIterator its = c.m_pathRelocs.constBegin();
+    for( ; its != c.m_pathRelocs.constEnd(); its++)
+        out << its.key() + "=" + its.value() ;
+
+    Package::PackageItemType::ConstIterator it = c.m_packages.constBegin();
+    for( ; it != c.m_packages.constEnd(); ++it)
+        out << *it;
+    out << ")";
     return out;
 }
 
+
 QDebug &operator<<(QDebug &out, const QList<Package*> &c)
 {
+    out << "QList<Package *> ("
+        << "size:" << c.size();
     foreach(Package *p, c)
-        out << p;
+        out << *p;
+    out << ")";
     return out;
 }
 

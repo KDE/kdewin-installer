@@ -371,12 +371,9 @@ void InstallerEngineGui::setLeftTreeData ( QTreeWidget *tree )
     foreach (QString category,categoryCache.categories()) 
     {
         QStringList names = category.split(":");
-        if (names[0] != "all") 
-#if 0
-            if ( (s.compilerType() == Settings::MinGW ||s.compilerType() == Settings::MSVC) 
-                && (names[0] == "msvc" || names[0] == "mingw") )
-#endif
-                continue;
+        if ( (s.compilerType() == Settings::MinGW ||s.compilerType() == Settings::MSVC) 
+            && (names[0] == "msvc" || names[0] == "mingw") )
+            continue;
 
         QTreeWidgetItem *categoryItem = new QTreeWidgetItem ( ( QTreeWidget* ) 0, names );
         categoryItem->setToolTip ( 0, names[1] );

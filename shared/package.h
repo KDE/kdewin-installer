@@ -27,6 +27,7 @@
 #include <QUrl>
 #include <QStringList>
 #include <QHash>
+#include <QDebug>
 
 #include "settings.h"
 
@@ -55,14 +56,14 @@ public:
             bool set(const QUrl &url, const QString &fn, Package::Type contentType, bool bInstalled = false);
             bool set(const QUrl &url, const QString &fn, const QByteArray &contentType, bool bInstalled = false);
             bool setContentType(const QString &type);
-            // dump content
-            void dump(const QString &title=QString()) const;
+
             QUrl    url;            // complete download url
             QString fileName;       // filename only
             QString packageType;    // zip / msi / ...
             Type    contentType;    // BIN / LIB / DOC / SRC
             bool    bInstalled;     // true if already installed
             QString version;        // package item version
+    friend QDebug &operator<<(QDebug &, const Package::PackageItem &);
     };
 public:
     typedef QHash<Type, PackageItem> PackageItemType;
@@ -199,11 +200,14 @@ protected:
     QStringList m_deps;
     StringHash m_pathRelocs;
     bool       m_handled;      // marker for several operations
+
+    friend QDebug &operator<<(QDebug &, const Package &);
 };
 
+QDebug &operator<<(QDebug &, const Package::PackageItem &);
 QDebug &operator<<(QDebug &, const Package &);
 QDebug &operator<<(QDebug &, const QList<Package*> &);
-	
+
 Q_DECLARE_OPERATORS_FOR_FLAGS(Package::Types);
 
 #define PackageInfo Package

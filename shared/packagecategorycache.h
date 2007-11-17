@@ -48,6 +48,7 @@ class PackageCategoryCache
 
     private:
         QMap<QString,CategoryListType> m_data;
+    friend QDebug &operator<<(QDebug &, const PackageCategoryCache &);
 };
 
 extern PackageCategoryCache categoryCache;

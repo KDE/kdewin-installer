@@ -66,6 +66,7 @@ void InstallerEngine::init()
     readGlobalConfig();
     addPackagesFromGlobalConfig();
     addPackagesFromSites();
+    qDebug() << "categoryCache" << categoryCache;
 }
 
 void InstallerEngine::reload()

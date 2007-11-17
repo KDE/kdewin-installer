@@ -70,4 +70,15 @@ void PackageCategoryCache::clear()
 }
 
 
+QDebug &operator<<(QDebug &out, const PackageCategoryCache &c)
+{
+    out << "PackageCategoryCache ("
+        << "size:" << c.m_data.size();
+    QMap<QString, PackageCategoryCache::CategoryListType>::ConstIterator i = c.m_data.begin();
+    for (;i != c.m_data.end(); ++i) 
+        out << "( category:" << i.key() << "notes:" << c.m_data[i.key()].notes << "packages:" << c.m_data[i.key()].packages << ")";
+    out << ")";
+    return out;
+}
+
 PackageCategoryCache categoryCache;
