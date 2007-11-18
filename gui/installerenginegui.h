@@ -55,6 +55,8 @@ private:
     Type    m_installMode;
     QWidget *m_parent;
     bool downloadPackageItem(Package *pkg, Package::Type type );
+    void updatePackageInfo(QTabWidget *packageInfo, const Package *availablePackage, const Package *installedPackage);
+
 
 
 };

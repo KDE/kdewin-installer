@@ -86,12 +86,15 @@ Package *PackageList::getPackage(const QString &name, const QByteArray &version)
         }
     }
     QList<Package*>::iterator it = m_packageList.begin();
-    for ( ; it != m_packageList.end(); ++it)
-        if ((*it)->name() == pkgName) {
-            if(!pkgVersion.isEmpty() && (*it)->version() != pkgVersion)
+    for ( ; it != m_packageList.end(); ++it) 
+    {
+        Package *p = *it;
+        if (p->name() == pkgName) {
+            if(!pkgVersion.isEmpty() && p->version() != pkgVersion)
                 continue;
-            return (*it);
+            return p;
         }
+    }
     return NULL;
 }
 

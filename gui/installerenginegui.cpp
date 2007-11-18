@@ -54,8 +54,8 @@ PackageStates packageStates;
 
 // Column definitions in package list tree widget
 const int NameColumn = 0;
-const int installedVersionColumn = 1;
-const int availableVersionColumn = 2;
+const int availableVersionColumn = 1;
+const int installedVersionColumn = 2;
 const int VersionColumn = 2;
 const int ALLColumn = 3;
 const int BINColumn = 4;
@@ -581,46 +581,42 @@ void InstallerEngineGui::setDependencies ( Package *pkg, Package::Type type )
     }
 }
 
-void InstallerEngineGui::itemClickedPackageSelectorPage ( QTreeWidgetItem *item, int column, QTabWidget *packageInfo )
+void InstallerEngineGui::updatePackageInfo(QTabWidget *packageInfo, const Package *availablePackage, const Package *installedPackage)
 {
-    Package *pkg = getPackageByName ( item->text ( NameColumn ),item->text ( availableVersionColumn ) );
-    if ( !pkg ) {
+    if ( !availablePackage && !installedPackage  ) { 
         packageInfo->setEnabled ( false );
         return;
     }
-    Package *installedPkg = m_database->getPackage( item->text ( NameColumn ),item->text ( installedVersionColumn ).toAscii() );
-
-    // Package Info display
     packageInfo->setEnabled ( true );
     QTextEdit *e = ( QTextEdit* ) packageInfo->widget ( 0 );
-    if ( !pkg->longNotes().isEmpty() ) {
+    if ( !availablePackage->longNotes().isEmpty() ) {
         packageInfo->setTabEnabled ( 0,true );
-        e->setText ( pkg->longNotes() );
+        e->setText ( availablePackage->longNotes() );
     } else {
         packageInfo->setTabEnabled ( 0,false );
         e->setText ( "" );
     }
     e = ( QTextEdit* ) packageInfo->widget ( 1 );
-    QString deps = pkg->deps().join ( "\n" );
+    QString deps = availablePackage->deps().join ( "\n" );
     if ( !deps.isEmpty() ) {
         packageInfo->setTabEnabled ( 1,true );
-        e->setText ( pkg->deps().join ( "\n" ) );
+        e->setText ( availablePackage->deps().join ( "\n" ) );
     } else {
         packageInfo->setTabEnabled ( 1,false );
         e->setText ( "" );
     }
 
     e = ( QTextEdit* ) packageInfo->widget ( 2 );
-    if ( e && installedPkg) {
+    if ( e && installedPackage) {
         QString list;
-        if ( installedPkg->isInstalled ( Package::BIN ) )
-            list += tr ( "---- BIN package ----" ) + "\n" + m_database->getPackageFiles ( pkg->name(),Package::BIN ).join ( "\n" ) + "\n";
-        if ( installedPkg->isInstalled ( Package::LIB ) )
-            list += tr ( "---- LIB package ----" ) + "\n" + m_database->getPackageFiles ( pkg->name(),Package::LIB ).join ( "\n" ) + "\n";
-        if ( installedPkg->isInstalled ( Package::DOC ) )
-            list += tr ( "---- DOC package ----" ) + "\n" + m_database->getPackageFiles ( pkg->name(),Package::DOC ).join ( "\n" ) + "\n";
-        if ( installedPkg->isInstalled ( Package::SRC ) )
-            list += tr ( "---- SRC package ----" ) + "\n" + m_database->getPackageFiles ( pkg->name(),Package::SRC ).join ( "\n" ) + "\n";
+        if ( installedPackage->isInstalled ( Package::BIN ) )
+            list += tr ( "---- BIN package ----" ) + "\n" + m_database->getPackageFiles ( installedPackage->name(),Package::BIN ).join ( "\n" ) + "\n";
+        if ( installedPackage->isInstalled ( Package::LIB ) )
+            list += tr ( "---- LIB package ----" ) + "\n" + m_database->getPackageFiles ( installedPackage->name(),Package::LIB ).join ( "\n" ) + "\n";
+        if ( installedPackage->isInstalled ( Package::DOC ) )
+            list += tr ( "---- DOC package ----" ) + "\n" + m_database->getPackageFiles ( installedPackage->name(),Package::DOC ).join ( "\n" ) + "\n";
+        if ( installedPackage->isInstalled ( Package::SRC ) )
+            list += tr ( "---- SRC package ----" ) + "\n" + m_database->getPackageFiles ( installedPackage->name(),Package::SRC ).join ( "\n" ) + "\n";
         if ( list.isEmpty() )
             packageInfo->setTabEnabled ( 2,false );
         else {
@@ -629,27 +625,42 @@ void InstallerEngineGui::itemClickedPackageSelectorPage ( QTreeWidgetItem *item,
         }
     } else
         packageInfo->setTabEnabled ( 2,false );
+}
+
+void InstallerEngineGui::itemClickedPackageSelectorPage ( QTreeWidgetItem *item, int column, QTabWidget *packageInfo )
+{
+    QString name = item->text ( NameColumn );
+    QString installedVersion = item->text ( installedVersionColumn );
+    QString availableVersion = item->text ( availableVersionColumn );
+
+    Package *installedPackage = m_database->getPackage( name,installedVersion.toAscii() );
+    Package *availablePackage = getPackageByName ( name,availableVersion  );
+    updatePackageInfo(packageInfo, availablePackage, installedPackage);
+    if ( !availablePackage && !installedPackage ) {
+        qWarning() << __FUNCTION__ << "neither available or installed package present for package" << name;
+        return;
+    }
 
     // end Package Info display
     if ( column < ALLColumn )
         return;
 
     if ( m_installMode == Single && column == ALLColumn ) {
-        setNextState ( *item, pkg, installedPkg,ALLColumn );
-        setState ( *item,pkg,installedPkg,BINColumn,_sync,ALLColumn );
-        setState ( *item,pkg,installedPkg,LIBColumn,_sync,ALLColumn );
-        setState ( *item,pkg,installedPkg,DOCColumn,_sync,ALLColumn );
-        setState ( *item,pkg,installedPkg,SRCColumn,_sync,ALLColumn );
+        setNextState ( *item, availablePackage, installedPackage,ALLColumn );
+        setState ( *item,availablePackage,installedPackage,BINColumn,_sync,ALLColumn );
+        setState ( *item,availablePackage,installedPackage,LIBColumn,_sync,ALLColumn );
+        setState ( *item,availablePackage,installedPackage,DOCColumn,_sync,ALLColumn );
+        setState ( *item,availablePackage,installedPackage,SRCColumn,_sync,ALLColumn );
     } else if ( m_installMode == Developer && column == BINColumn ) {
-        setNextState ( *item,pkg,installedPkg,BINColumn );
-        setNextState ( *item,pkg,installedPkg,LIBColumn );
-        setNextState ( *item,pkg,installedPkg,DOCColumn );
+        setNextState ( *item,availablePackage,installedPackage,BINColumn );
+        setNextState ( *item,availablePackage,installedPackage,LIBColumn );
+        setNextState ( *item,availablePackage,installedPackage,DOCColumn );
     } else if ( m_installMode == EndUser && column == BINColumn ) {
-        setNextState ( *item,pkg,installedPkg,BINColumn );
+        setNextState ( *item,availablePackage,installedPackage,BINColumn );
         // lib excluded
-        setNextState ( *item,pkg,installedPkg,DOCColumn );
+        setNextState ( *item,availablePackage,installedPackage,DOCColumn );
     } else {
-        setNextState ( *item,pkg,installedPkg,column );
+        setNextState ( *item,availablePackage,installedPackage,column );
     }
 
     // select depending packages in case all or bin is selected
