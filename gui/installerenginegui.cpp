@@ -665,10 +665,10 @@ void InstallerEngineGui::itemClickedPackageSelectorPage ( QTreeWidgetItem *item,
 
     // select depending packages in case all or bin is selected
     if ( column == ALLColumn )
-        setDependencies ( pkg,Package::ALL );
+        setDependencies ( availablePackage,Package::ALL );
     else
         if ( column == BINColumn )
-            setDependencies ( pkg,Package::BIN );
+            setDependencies ( availablePackage,Package::BIN );
 }
 
 bool InstallerEngineGui::downloadPackageItem(Package *pkg, Package::Type type )
