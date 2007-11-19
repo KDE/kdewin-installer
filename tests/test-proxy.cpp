@@ -37,24 +37,25 @@ int main(int argc, char *argv[])
     int port; 
     bool ret;
     Settings &s = Settings::getInstance();
+    QNetworkProxy ps;
 
     s.setProxyMode(Settings::InternetExplorer);
-    ret = s.getProxySettings(http, host, port);
-    qDebug() << "IE settings for " << http << ":" << ret << host << port;
-    ret = s.getProxySettings(ftp, host, port);
-    qDebug() << "IE settings for " << ftp << ":" << ret << host << port;
+    ret = s.getProxySettings(http, ps);
+    qDebug() << "IE settings for " << http << ":" << ret << ps;
+    ret = s.getProxySettings(ftp, ps);
+    qDebug() << "IE settings for " << ftp << ":" << ret << ps;
 
     s.setProxyMode(Settings::FireFox);
-    ret = s.getProxySettings(http, host, port);
-    qDebug() << "Firefox settings for " << http << ":" << ret << host << port;
-    ret = s.getProxySettings(ftp, host, port);
-    qDebug() << "Firefox settings for " << ftp << ":" << ret << host << port;
+    ret = s.getProxySettings(http, ps);
+    qDebug() << "Firefox settings for " << http << ":" << ret << ps;
+    ret = s.getProxySettings(ftp, ps);
+    qDebug() << "Firefox settings for " << ftp << ":" << ret << ps;
 
     s.setProxyMode(Settings::Manual);
-    ret = s.getProxySettings(http, host, port);
-    qDebug() << "Manual settings for " << http << ":" << ret << host << port;
-    ret = s.getProxySettings(ftp, host, port);
-    qDebug() << "Manual settings for " << ftp << ":" << ret << host << port;
+    ret = s.getProxySettings(http, ps);
+    qDebug() << "Manual settings for " << http << ":" << ret << ps;
+    ret = s.getProxySettings(ftp, ps);
+    qDebug() << "Manual settings for " << ftp << ":" << ret << ps;
 
     return 0;
 }
