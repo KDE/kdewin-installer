@@ -1,6 +1,10 @@
 ChangeLog
 =========
 
+recent
+-----
+- installer-gui: - package selecting refactored 
+
 0.8.2
 ------
 - installer-gui: - downloader is able to follow redirected urls using the 302 http response code

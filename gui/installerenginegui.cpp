@@ -57,12 +57,13 @@ const int NameColumn = 0;
 const int availableVersionColumn = 1;
 const int installedVersionColumn = 2;
 const int VersionColumn = 2;
-const int ALLColumn = 3;
-const int BINColumn = 4;
-const int LIBColumn = 5;
-const int DOCColumn = 6;
-const int SRCColumn = 7;
-const int NotesColumn = 8;
+
+const int ALLColumn = 2;
+const int BINColumn = 3;
+const int SRCColumn = 4;
+const int NotesColumn = 5;
+const int LIBColumn = 6;
+const int DOCColumn = 7;
 const int ColumnCount = 8;
 
 int typeToColumn ( Package::Type type )
@@ -177,172 +178,201 @@ void setIcon ( QTreeWidgetItem &item, Package::Type type, iconType action )
     // item.icon(column).setIconSize(QSize(22,22));
 }
 
-enum actionType { _initial, _next, _deps, _sync};
-
-/**
- @deprecated  use set...State
-*/
-static void setState ( QTreeWidgetItem &item, Package *available, Package *installed, int column, actionType action, int syncColumn=0 )
+void InstallerEngineGui::setInitialState ( QTreeWidgetItem &item, Package *available, Package *installed, int column )
 {
-    qDebug() << __FUNCTION__ << available->name() << available->version() << (installed ? installed->version() : "") << action;
-    Package::Type type = columnToType ( column );
-    Package *pkg = installed;
-    if ( !pkg )
+    if (available) 
+    {
+        if (available->hasType(Package::BIN))
+            setIcon(item,Package::BIN,_nothing);
+        if (m_installMode == Developer && available->hasType(Package::LIB))
+            setIcon(item,Package::BIN,_nothing);
+        if (m_installMode == Developer && available->hasType(Package::DOC))
+            setIcon(item,Package::BIN,_nothing);
+        if (available->hasType(Package::SRC))
+            setIcon(item,Package::SRC,_nothing);
+    }
+    if (installed) 
+    {
+        if (installed->isInstalled(Package::BIN))
+            setIcon(item,Package::BIN,_keepinstalled);
+        if (m_installMode == Developer && installed->isInstalled(Package::LIB))
+            setIcon(item,Package::BIN,_keepinstalled);
+        if ((m_installMode == EndUser || m_installMode == Developer)
+                && installed->isInstalled(Package::DOC))
+            setIcon(item,Package::BIN,_keepinstalled);
+        if (installed->isInstalled(Package::SRC))
+            setIcon(item,Package::SRC,_keepinstalled);
+    }
+}
+
+void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *available, Package *installed, int column )
+{
+    Package::Type type = columnToType(column);
+    if (type == Package::NONE)
         return;
-    if ( type != Package::ALL && !pkg->hasType ( type ) ) {
-        setIcon ( item,type,_disable );
-        return;
+
+    bool isAvailable;
+    bool isInstalled;
+
+    if (type == Package::BIN && m_installMode == Developer)
+    {
+        isAvailable = available && (available->hasType(type) || available->hasType(Package::LIB) || available->hasType(Package::DOC));
+        isInstalled = installed && (installed->isInstalled(type) || installed->hasType(Package::LIB) || installed->hasType(Package::DOC));
     }
+    else if (type == Package::BIN && m_installMode == EndUser)
+    {
+        isAvailable = available && (available->hasType(type) || available->hasType(Package::DOC));
+        isInstalled = installed && (installed->isInstalled(type) || installed->hasType(Package::DOC));
+    }
+    else 
+    {
+        isAvailable = available && available->hasType(type);
+        isInstalled = installed && installed->isInstalled(type);
+    }
+    bool sameVersion = available && installed && available->version() == installed->version();
 
-    switch ( action ) {
-    case _initial: {
-        stateType state = packageStates.getState ( pkg->name(),pkg->version(),type );
+    stateType currentState = packageStates.getState(available,type);
+    stateType newState = _Nothing;
+    iconType iconState = _nothing;
 
-        switch ( state ) {
-        case _Install:
-            if ( !pkg->isInstalled ( type ) ) {
-                setIcon ( item,type,_install );
-                packageStates.setState ( pkg->name(),pkg->version(),type,_Install );
-            }
-            break;
-        case _Nothing:
-            if ( pkg->isInstalled ( type ) ) {
-                setIcon ( item,type,_keepinstalled );
-                packageStates.setState ( pkg->name(),pkg->version(),type,_Nothing );
-            } else {
-                setIcon ( item,type,_nothing );
-                packageStates.setState ( pkg->name(),pkg->version(),type,_Nothing );
-            }
-            break;
-        case _Remove:
-            if ( pkg->isInstalled ( type ) ) {
-                setIcon ( item,type,_remove );
-                packageStates.setState ( pkg->name(),pkg->version(),type,_Remove );
-            } else {
-                setIcon ( item,type,_nothing );
-                packageStates.setState ( pkg->name(),pkg->version(),type,_Nothing );
-            }
-            break;
+    if (currentState == _Nothing) 
+    {
+        if (isAvailable && isInstalled && !sameVersion)
+        {
+            iconState = _update;
+            newState = _Update;
         }
-        break;
-    }
-
-    // enter next state depending on current state
-    case _next: {
-        stateType state = packageStates.getState ( pkg->name(),pkg->version(),type );
-
-        switch ( state ) {
-        case _Nothing:
-            if ( pkg->isInstalled ( type ) ||
-                    ( type == Package::ALL &&
-                      ( !pkg->hasType ( Package::BIN ) || pkg->isInstalled ( Package::BIN ) ) &&
-                      ( !pkg->hasType ( Package::LIB ) || pkg->isInstalled ( Package::LIB ) ) &&
-                      ( !pkg->hasType ( Package::DOC ) || pkg->isInstalled ( Package::DOC ) ) &&
-                      ( pkg->hasType ( Package::BIN ) || pkg->hasType ( Package::LIB ) || pkg->hasType ( Package::DOC ) ) ) ) {
-                setIcon ( item,type,_remove );
-                packageStates.setState ( pkg->name(),pkg->version(),type,_Remove );
-            } else {
-                setIcon ( item,type,_install );
-                packageStates.setState ( pkg->name(),pkg->version(),type,_Install );
-            }
-            break;
-
-        case _Remove:
-            if ( pkg->isInstalled ( type ) ) {
-                setIcon ( item,type,_keepinstalled );
-                packageStates.setState ( pkg->name(),pkg->version(),type,_Nothing );
-            } else {
-                setIcon ( item,type,_nothing );
-                packageStates.setState ( pkg->name(),pkg->version(),type,_Nothing );
-            }
-            break;
-
-        case _Install:
-            if ( pkg->isInstalled ( type ) ) {
-                setIcon ( item,type,_install );
-                packageStates.setState ( pkg->name(),pkg->version(),type,_Install );
-            } else {
-                setIcon ( item,type,_nothing );
-                packageStates.setState ( pkg->name(),pkg->version(),type,_Nothing );
-            }
-            break;
+        else if (isAvailable && isInstalled && sameVersion)
+        {
+            iconState = _remove;
+            newState = _Remove;
         }
-        break;
+        else if (!isAvailable && isInstalled)
+        {
+            iconState = _remove;
+            newState = _Remove;
+        }        
+        else if (isAvailable && !isInstalled)
+        {
+            iconState = _install;
+            newState = _Install;
+        }        
     }
-    // handle dependeny selecting
-    case _deps: {
-        if ( pkg->isInstalled ( type ) ) {
-        } else {
-            // FIXME: should be _autoinstall, but then the main package is using this icon too
-            setIcon ( item,type,_install );
-            packageStates.setState ( pkg->name(),pkg->version(),type,_Install );
+    else if (currentState == _Update) 
+    {
+        if (isAvailable && isInstalled && !sameVersion)
+        {
+            iconState = _remove;
+            newState = _Remove;
         }
-        break;
     }
-    case _sync: {
-        stateType state = packageStates.getState ( pkg->name(),pkg->version(),columnToType ( syncColumn ) );
+    else if (currentState == _Install) 
+    {
+        if (isAvailable && !isInstalled)
+        {
+            iconState = _nothing;
+            newState = _Nothing;
+        }        
+    }
+    else if (currentState == _Remove) 
+    {
+        if (isInstalled)
+        {
+            iconState =_keepinstalled;
+            newState = _Nothing;
+        }        
+    }
+    setIcon(item,type,iconState);
+    packageStates.setState(available,type,newState);
 
-        switch ( state ) {
-        case _Install:
-            if ( !pkg->isInstalled ( type ) ) {
-                setIcon ( item,type,_install );
-                packageStates.setState ( pkg->name(),pkg->version(),type,_Install );
-            }
-            break;
-        case _Nothing:
-            if ( !pkg->isInstalled ( type ) ) {
-                setIcon ( item,type,_nothing );
-                packageStates.setState ( pkg->name(),pkg->version(),type,_Nothing );
-            }
-            break;
-        case _Remove:
-            if ( pkg->isInstalled ( type ) ) {
-                setIcon ( item,type,_remove );
-                packageStates.setState ( pkg->name(),pkg->version(),type,_Remove );
-            } else {
-                setIcon ( item,type,_nothing );
-                packageStates.setState ( pkg->name(),pkg->version(),type,_Nothing );
-            }
-            break;
-        }
-        break;
+    // set additional package types for download/install/remove 
+    if (type == Package::BIN && m_installMode == Developer)
+    {
+        if (available->hasType(Package::LIB)) 
+            packageStates.setState(available,Package::LIB,newState);
+        if (available->hasType(Package::DOC))
+            packageStates.setState(available,Package::DOC,newState);
     }
-    }
+    else if (type == Package::BIN && m_installMode == EndUser)
+    {
+        if (available->hasType(Package::DOC))
+            packageStates.setState(available,Package::DOC,newState);
+    }  
 }
 
-static void setInitialState ( QTreeWidgetItem &item, Package *available, Package *installed, int column )
+bool InstallerEngineGui::setDependencyState(Package *_package)
 {
-    setState ( item,available,installed,column,_initial );
+    stateType state = packageStates.getState(_package,Package::BIN);
+    // @TODO check reverse dependency 
+    if (state == _Remove || state == _Nothing)
+        return true;
+
+    foreach(QString dep, _package->deps()) 
+    {
+        Package *package = m_packageResources->getPackage(dep);
+        if (!package)
+            continue;
+
+        // if package is already installed, don't install it again
+        if (m_database->getPackage(dep))
+            continue;
+
+        stateType state = packageStates.getState(package,Package::BIN);
+        if (state == _Nothing || state == _Remove)
+        {
+            qDebug() << __FUNCTION__ << "selected package" << package->name() << "in previous state" << state << "for installation"; 
+            packageStates.setState(package,Package::BIN,_Install);
+
+            // set additional package types for download/install/remove 
+            if (m_installMode == Developer)
+            {
+                if (package->hasType(Package::LIB)) 
+                    packageStates.setState(package,Package::LIB,_Install);
+                if (package->hasType(Package::DOC))
+                    packageStates.setState(package,Package::DOC,_Install);
+            }
+            else if (m_installMode == EndUser)
+            {
+                if (package->hasType(Package::DOC))
+                    packageStates.setState(package,Package::DOC,_Install);
+            }  
+        }        
+        setDependencyState(package);
+    }
+    return true;
 }
 
-static void setNextState ( QTreeWidgetItem &item, Package *available, Package *installed, int column )
+bool isMarkedForDownload ( Package *pkg,Package::Type type )
 {
-    setState ( item,available,installed,column,_next );
+    stateType state = packageStates.getState ( pkg, type );
+    bool result = state == _Install || state == _Update;
+    if (Settings::hasDebug ( "InstallerEngineGui" ) && result)
+        qDebug() << __FUNCTION__ << "select package for download" << pkg->name() << type;
+    return result;
 }
-
-static void setDependencyState ( QTreeWidgetItem &item, Package *available, Package *installed, int column )
-{
-    setState ( item,available,installed,column,_deps );
-}
-
 
 bool isMarkedForInstall ( Package *pkg,Package::Type type )
 {
-    stateType state = packageStates.getState ( pkg->name(),pkg->version(),type );
-    return state == _Install;
+    stateType state = packageStates.getState ( pkg, type );
+    bool result = state == _Install || state == _Update;
+    if (Settings::hasDebug ( "InstallerEngineGui" ) && result)
+        qDebug() << __FUNCTION__ << "select package for installation" << pkg->name() << type;
+    return result;
 }
 
 bool isMarkedForRemoval ( Package *pkg,Package::Type type )
 {
-    stateType state = packageStates.getState ( pkg->name(),pkg->version(),type );
-    return state == _Remove;
+    stateType state = packageStates.getState ( pkg, type );
+    bool result = state == _Remove || state == _Update;
+    if (Settings::hasDebug ( "InstallerEngineGui" ) && result)
+        qDebug() << __FUNCTION__ << "select package for removal" << pkg->name() << type;
+    return result;
 }
 
 InstallerEngineGui::InstallerEngineGui (QWidget *parent, DownloaderProgress *progressBar,InstallerProgress *instProgressBar )
         : InstallerEngine ( progressBar,instProgressBar ), m_parent(parent)
 {
-    m_installMode = Single;
-    //packageStates = new PackageStates(*m_packageResources,*m_database);
+    m_installMode = Developer; // install/update bin/lib/doc package
 }
 
 void InstallerEngineGui::init()
@@ -414,21 +444,16 @@ void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString 
     << tr ( "Package" )
     << tr ( "available" )
     << tr ( "installed" );
+    int _ColumnCount ;
     switch ( m_installMode ) {
     case Developer:
-        labels
-        << ""
-        << tr ( "bin/lib/doc" )
-        << ""
-        << "";
+        labels << tr ( "bin/lib/doc" );
+        _ColumnCount = ColumnCount-3;
         break;
 
     case EndUser:
-        labels
-        << ""
-        << tr ( "bin/doc" )
-        << ""
-        << "";
+        labels << tr ( "bin/doc" );
+        _ColumnCount = ColumnCount-3;
         break;
 
     case Single:
@@ -437,6 +462,7 @@ void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString 
         << tr ( "bin" )
         << tr ( "lib" )
         << tr ( "doc" );
+        _ColumnCount = ColumnCount-3;
         break;
     }
     labels
@@ -444,7 +470,7 @@ void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString 
     << tr ( "package notes" )
     ;
 
-    tree->setColumnCount ( ColumnCount );
+    tree->setColumnCount ( _ColumnCount );
     tree->setHeaderLabels ( labels );
     // see http://lists.trolltech.com/qt-interest/2006-06/thread00441-0.html
     // and Task Tracker Entry 106731
@@ -478,19 +504,11 @@ void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString 
             << installedVersion 
             << QString();
         QTreeWidgetItem *item = new QTreeWidgetItem ( ( QTreeWidgetItem* ) 0, data );
-        if ( m_installMode == Single )
-            setInitialState ( *item,availablePackage,installedPackage,ALLColumn );
+        setInitialState ( *item,availablePackage,installedPackage,0);
 
-        setInitialState ( *item,availablePackage,installedPackage,BINColumn );
-        if ( m_installMode != Developer ) {
-            setInitialState ( *item,availablePackage,installedPackage,LIBColumn );
-            setInitialState ( *item,availablePackage,installedPackage,DOCColumn );
-        }
-        setInitialState ( *item,availablePackage,installedPackage,SRCColumn );
         item->setText ( NotesColumn, availablePackage->notes() );
         // FIXME
         //item->setText(8, m_globalConfig->news()->value(pkg->name()+"-"+pkg->version()));
-        item->setToolTip ( ALLColumn, allToolTip );
         item->setToolTip ( BINColumn, binToolTip );
         item->setToolTip ( LIBColumn, libToolTip );
         item->setToolTip ( DOCColumn, docToolTip );
@@ -502,83 +520,6 @@ void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString 
     tree->sortItems ( 0,Qt::AscendingOrder );
     for ( int i = 0; i < tree->columnCount(); i++ )
         tree->resizeColumnToContents ( i );
-}
-
-
-/**
-  select depending packages of package pkg
-  @param pkg package of which the depending packages should be selected
-  @param type Type of selection: ALL or BIN
-  @todo add support for indirect dependencies
-  @todo check intalled versions of a depending package first to avoid selecting another version
-  @todo don't select dependend items when deselecting icon
-*/
-void InstallerEngineGui::setDependencies ( Package *pkg, Package::Type type )
-{
-    const QStringList &deps = pkg->deps();
-
-    if ( Settings::hasDebug ( "InstallerEngineGui" ) )
-        qDebug() << __FUNCTION__ << "found dependencies" << deps;
-    for ( int i = 0; i < deps.size(); ++i ) {
-        QString dep = deps.at ( i );
-        Package *depPkg = getPackageByName ( dep );
-        if ( !depPkg )
-            continue;
-        //setDependencies(depPkg,type);
-
-        // find item in display list
-        QList<QTreeWidgetItem *> items = tree->findItems ( depPkg->name(),Qt::MatchContains | Qt::MatchRecursive );
-        if ( !items.size() ) {
-            if ( m_installMode == Developer ) {
-                packageStates.setState ( depPkg->name(),depPkg->version(), Package::BIN, _Install );
-                packageStates.setState ( depPkg->name(),depPkg->version(), Package::LIB, _Install );
-                packageStates.setState ( depPkg->name(),depPkg->version(), Package::DOC, _Install );
-            } else
-                if ( m_installMode == EndUser ) {
-                    packageStates.setState ( depPkg->name(),depPkg->version(), Package::BIN, _Install );
-                    // lib is excluded
-                    packageStates.setState ( depPkg->name(),depPkg->version(), Package::DOC, _Install );
-                } else
-                    if ( m_installMode == Single ) {
-                        if ( type == Package::ALL ) {
-                            packageStates.setState ( depPkg->name(),depPkg->version(), Package::BIN, _Install );
-                            packageStates.setState ( depPkg->name(),depPkg->version(), Package::LIB, _Install );
-                            packageStates.setState ( depPkg->name(),depPkg->version(), Package::DOC, _Install );
-                        } else {
-                            packageStates.setState ( depPkg->name(),depPkg->version(), Package::BIN, _Install );
-                        }
-                    }
-        }
-        if ( Settings::hasDebug ( "InstallerEngineGui" ) )
-            qDebug() << __FUNCTION__ << "found " << items.size() << "displayed items";
-        for ( int j = 0; j < items.size(); ++j ) {
-            QTreeWidgetItem * depItem = static_cast<QTreeWidgetItem*> ( items[j] );
-            if ( depItem->text ( VersionColumn ) != depPkg->version() ) {
-                if ( Settings::hasDebug ( "InstallerEngineGui" ) )
-                    qDebug() << __FUNCTION__  << depItem->text ( NameColumn ) << depItem->text ( VersionColumn ) << "ignored because of version mismatch, requested" << dep;
-                continue;
-            }
-            if ( Settings::hasDebug ( "InstallerEngineGui" ) )
-                qDebug() << __FUNCTION__ << depItem->text ( NameColumn ) << depItem->text ( VersionColumn ) << "selected as dependency";
-            /// the dependency is only for bin package and one way to switch on
-            if ( m_installMode == Developer ) {
-                setState ( *depItem,depPkg,0,BINColumn,_deps );
-                setState ( *depItem,depPkg,0,LIBColumn,_deps );
-                setState ( *depItem,depPkg,0,DOCColumn,_deps );
-            } else if ( m_installMode == EndUser ) {
-                setState ( *depItem,depPkg,0,BINColumn,_deps );
-                // lib is excluded
-                setState ( *depItem,depPkg,0,DOCColumn,_deps );
-            } else if ( m_installMode == Single ) {
-                if ( type == Package::ALL ) {
-                    setState ( *depItem,depPkg,0,BINColumn,_deps );
-                    setState ( *depItem,depPkg,0,LIBColumn,_deps );
-                    setState ( *depItem,depPkg,0,DOCColumn,_deps );
-                } else
-                    setState ( *depItem,depPkg,0,BINColumn,_deps );
-            }
-        }
-    }
 }
 
 void InstallerEngineGui::updatePackageInfo(QTabWidget *packageInfo, const Package *availablePackage, const Package *installedPackage)
@@ -642,39 +583,45 @@ void InstallerEngineGui::itemClickedPackageSelectorPage ( QTreeWidgetItem *item,
     }
 
     // end Package Info display
-    if ( column < ALLColumn )
+    if ( column < BINColumn )
         return;
 
-    if ( m_installMode == Single && column == ALLColumn ) {
-        setNextState ( *item, availablePackage, installedPackage,ALLColumn );
-        setState ( *item,availablePackage,installedPackage,BINColumn,_sync,ALLColumn );
-        setState ( *item,availablePackage,installedPackage,LIBColumn,_sync,ALLColumn );
-        setState ( *item,availablePackage,installedPackage,DOCColumn,_sync,ALLColumn );
-        setState ( *item,availablePackage,installedPackage,SRCColumn,_sync,ALLColumn );
-    } else if ( m_installMode == Developer && column == BINColumn ) {
-        setNextState ( *item,availablePackage,installedPackage,BINColumn );
-        setNextState ( *item,availablePackage,installedPackage,LIBColumn );
-        setNextState ( *item,availablePackage,installedPackage,DOCColumn );
-    } else if ( m_installMode == EndUser && column == BINColumn ) {
-        setNextState ( *item,availablePackage,installedPackage,BINColumn );
-        // lib excluded
-        setNextState ( *item,availablePackage,installedPackage,DOCColumn );
-    } else {
-        setNextState ( *item,availablePackage,installedPackage,column );
+    if ( column == BINColumn || column == SRCColumn )
+    {
+#if 0
+        if (!checkRemoveDependencies(installedPackage))
+            if (QMessageBox::warning(this,
+                    "Remove failure",
+                    "This package is selected for removal but used by other packages. Should this package really be removed ?",
+                    QMessageBox::Cancel | QMessageBox::Ignore,QMessageBox::Cancel
+                    ) == QMessageBox::Cancel)
+                return;
+#endif
+        setNextState ( *item, availablePackage, installedPackage, column);
     }
+    // dependencies are selected later 
+}
 
-    // select depending packages in case all or bin is selected
-    if ( column == ALLColumn )
-        setDependencies ( availablePackage,Package::ALL );
-    else
-        if ( column == BINColumn )
-            setDependencies ( availablePackage,Package::BIN );
+bool InstallerEngineGui::checkRemoveDependencies()
+{
+    return true;
+}
+
+void InstallerEngineGui::checkUpdateDependencies()
+{
+    QList<Package*> list = packageStates.packages(m_packageResources);
+    QList<Package*>::ConstIterator i = list.constBegin();
+    for ( ; i != list.constEnd(); ++i ) {
+        Package *pkg = *i;
+        if (!setDependencyState(pkg))
+            break;
+    }
 }
 
 bool InstallerEngineGui::downloadPackageItem(Package *pkg, Package::Type type )
 {
     bool all = false; //isMarkedForInstall(pkg,Package::ALL);
-    if ( !all && !isMarkedForInstall ( pkg,type ) ) 
+    if ( !isMarkedForDownload ( pkg,type ) ) 
         return true;
 
     while (1) {
@@ -683,7 +630,7 @@ bool InstallerEngineGui::downloadPackageItem(Package *pkg, Package::Type type )
         QMessageBox::StandardButton result = QMessageBox::critical(
             m_parent,
             tr("Download failed"),
-            tr("The download of the package failed with error %1").arg(m_downloader->resultString()),
+            tr("The download of %1 failed with error %2").arg(pkg->getUrl(type).toString()).arg(m_downloader->resultString()),
             QMessageBox::Cancel | QMessageBox::Ignore | QMessageBox::Retry,
             QMessageBox::Retry
         );
@@ -700,13 +647,15 @@ bool InstallerEngineGui::downloadPackageItem(Package *pkg, Package::Type type )
 
 bool InstallerEngineGui::downloadPackages ( QTreeWidget *tree, const QString &category )
 {
-    QList<Package*>::ConstIterator i = m_packageResources->packageList().constBegin();
-    for ( ; i != m_packageResources->packageList().constEnd(); ++i ) {
+    checkUpdateDependencies();
+
+    qDebug() << __FUNCTION__ << packageStates;
+    QList<Package*> list = packageStates.packages(m_packageResources);
+    QList<Package*>::ConstIterator i = list.constBegin();
+    for ( ; i != list.constEnd(); ++i ) {
         Package *pkg = *i;
         if ( !pkg )
             continue;
-        if ( Settings::hasDebug ( "InstallerEngineGui" ) )
-            qDebug() << __FUNCTION__ << pkg;
 
         if (!downloadPackageItem(pkg,Package::BIN))
             return false;
@@ -722,13 +671,12 @@ bool InstallerEngineGui::downloadPackages ( QTreeWidget *tree, const QString &ca
 
 bool InstallerEngineGui::removePackages ( QTreeWidget *tree, const QString &category )
 {
-    QList<Package*>::ConstIterator i = m_packageResources->packageList().constBegin();
-    for ( ; i != m_packageResources->packageList().constEnd(); ++i ) {
+    QList<Package*> list = packageStates.packages(m_packageResources);
+    QList<Package*>::ConstIterator i = list.constBegin();
+    for ( ; i != list.constEnd(); ++i ) {
         Package *pkg = *i;
         if ( !pkg )
             continue;
-        if ( Settings::hasDebug ( "InstallerEngineGui" ) )
-            qDebug() << __FUNCTION__ << pkg;
         bool all = false; //isMarkedForRemoval(pkg,Package::ALL);
         if ( all | isMarkedForRemoval ( pkg,Package::BIN ) )
             pkg->removeItem ( m_installer, Package::BIN );
@@ -744,13 +692,12 @@ bool InstallerEngineGui::removePackages ( QTreeWidget *tree, const QString &cate
 
 bool InstallerEngineGui::installPackages ( QTreeWidget *tree,const QString &_category )
 {
-    QList<Package*>::ConstIterator i = m_packageResources->packageList().constBegin();
-    for ( ; i != m_packageResources->packageList().constEnd(); ++i ) {
+    QList<Package*> list = packageStates.packages(m_packageResources);
+    QList<Package*>::ConstIterator i = list.constBegin();
+    for ( ; i != list.constEnd(); ++i ) {
         Package *pkg = *i;
         if ( !pkg )
             continue;
-        if ( Settings::hasDebug ( "InstallerEngineGui" ) )
-            qDebug() << __FUNCTION__ << pkg;
         bool all = false;//isMarkedForInstall(pkg,Package::ALL);
         if ( all || isMarkedForInstall ( pkg,Package::BIN ) )
             pkg->installItem ( m_installer, Package::BIN );

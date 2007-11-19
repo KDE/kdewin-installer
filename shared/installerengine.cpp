@@ -168,7 +168,7 @@ bool InstallerEngine::addPackagesFromSites()
         if (Settings::hasDebug("InstallerEngine"))
             qDebug() << __FUNCTION__ << packageList;
 
-        foreach(Package *pkg, packageList.packageList()) 
+        foreach(Package *pkg, packageList.packages()) 
         {
             // add some generic categories
             pkg->addCategories("all");
@@ -209,8 +209,8 @@ void InstallerEngine::mirrorChanged(const QString &mirror)
 
 void InstallerEngine::dump(const QString &title)
 {
-    QList<Package*>::ConstIterator i = m_packageResources->packageList().constBegin();
-    for ( ; i != m_packageResources->packageList().constEnd(); ++i)
+    QList<Package*>::ConstIterator i = m_packageResources->packages().constBegin();
+    for ( ; i != m_packageResources->packages().constEnd(); ++i)
     {
         Package *pkg = *i;
         qDebug() << pkg;

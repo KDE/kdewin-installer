@@ -60,7 +60,7 @@ public:
     {
         return m_packageList.size();
     }
-    const QList <Package*> &packageList() const
+    const QList <Package*> &packages() const
     {
         return m_packageList;
     }

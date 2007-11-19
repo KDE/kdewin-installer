@@ -21,11 +21,12 @@
 ****************************************************************************/
 
 #include "packagestates.h"
+
 // @TODO add reference counter to be able to unselected indirect dependencies
 
 void PackageStates::setState(QString pkgName, QString pkgVersion, Package::Type type, stateType state)
 {
-    QString key = pkgName+'-'+pkgVersion;
+    QString key = getKey(pkgName,pkgVersion);
     PackageFlags value;
     if (m_states.contains(key)) 
         value = m_states[key];
@@ -40,9 +41,55 @@ void PackageStates::setState(QString pkgName, QString pkgVersion, Package::Type 
     m_states[key] = value;
 }
 
-stateType PackageStates::getState(QString pkgName, QString pkgVersion, Package::Type type  )
+void PackageStates::setState(Package *pkg, Package::Type type, stateType state)
 {
-    QString key = pkgName+'-'+pkgVersion;
+    setState(pkg->name(),pkg->version(),type,state);
+}
+
+#if 0
+bool PackageStates::setStates(const QList <Package *>&list, stateType state)
+{
+    QList<Package*>::ConstIterator it = list.constBegin();
+    for (; it != list.constEnd(); ++it) 
+    {
+        Package *p = *it;
+        if (p->isInstalled(Package::BIN))
+            setState(p->name(),p->version(),Package::BIN,state);
+        if (p->isInstalled(Package::LIB))
+            setState(p->name(),p->version(),Package::LIB,state);
+        if (p->isInstalled(Package::DOC))
+            setState(p->name(),p->version(),Package::DOC,state);
+        if (p->isInstalled(Package::SRC))
+            setState(p->name(),p->version(),Package::SRC,state);
+    }
+    return true;
+}
+#endif
+
+#if 0
+bool PackageStates::setPresentState(const QList <Package *>&list)
+{
+    QList<Package*>::ConstIterator it = list.constBegin();
+    for (; it != list.constEnd(); ++it) 
+    {
+        Package *p = *it;
+        if (p->isInstalled(Package::BIN))
+            addState(p->name(),p->version(),Package::BIN,state);
+        if (p->isInstalled(Package::LIB))
+            addState(p->name(),p->version(),Package::LIB,state);
+        if (p->isInstalled(Package::DOC))
+            addState(p->name(),p->version(),Package::DOC,state);
+        if (p->isInstalled(Package::SRC))
+            addState(p->name(),p->version(),Package::SRC,state);
+    }
+    return true;
+}
+
+#endif
+
+stateType PackageStates::getState(QString pkgName, QString pkgVersion, Package::Type type)
+{
+    QString key = getKey(pkgName,pkgVersion);
     
     if (!m_states.contains(key))
         return _Nothing;
@@ -57,10 +104,27 @@ stateType PackageStates::getState(QString pkgName, QString pkgVersion, Package::
         default: return _Nothing;
     }
 }
+stateType PackageStates::getState(Package* pkg, Package::Type type)
+{
+    return getState(pkg->name(),pkg->version(),type);
+}
 
 void PackageStates::clear()
 {
     m_states.clear();
+}
+
+QList <Package *>PackageStates::packages(PackageList *list)
+{
+    QList <Package *> packages;
+    PackageStatesType::iterator i = m_states.begin();
+    for (;i != m_states.end(); ++i) 
+    {
+        Package *p = list->getPackage(i.key());
+        if (p)
+            packages.append(p);
+    }
+    return packages;
 }
 
 QDebug &operator<<(QDebug &out, const PackageStates &c)

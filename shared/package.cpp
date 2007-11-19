@@ -137,13 +137,26 @@ bool Package::PackageItem::setContentType(const QString &type)
     }
 }
 
+static QString typeToString(Package::Type type)
+{
+    switch(type) {
+        case Package::BIN:   return "BIN";
+        case Package::LIB:   return "LIB";
+        case Package::DOC:   return "DOC";
+        case Package::SRC:   return "SRC";
+        default: return "unknown" + QString::number(type);
+    }
+}
+
+
+
 QDebug &operator<<(QDebug &out, const Package::PackageItem &c)
 {
     out << "PackageItem ("
         << "url:" << c.url
         << "fileName:" << c.fileName
         << "packageType:" << c.packageType
-        << "contentType:" << c.contentType
+        << "contentType:" << typeToString(c.contentType)
         << "bInstalled:" << c.bInstalled
         << ")";
     return out;
@@ -209,7 +222,6 @@ bool Package::hasType(Package::Type contentType) const
 {
     return m_packages.contains(contentType);
 }
-
 
 QString Package::toString(bool installed, const QString &delim)
 {

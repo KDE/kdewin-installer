@@ -45,11 +45,18 @@ public:
     void itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column, QTabWidget *info);
     void setLeftTreeData(QTreeWidget *tree=0);
     void on_leftTree_itemClicked(QTreeWidgetItem *item, int column, QTextEdit *info);
-    void setDependencies(Package *pkg, Package::Type type);
+    void checkUpdateDependencies();
+    bool checkRemoveDependencies();
 
     bool downloadPackages(QTreeWidget *tree, const QString &category=QString());
     bool installPackages(QTreeWidget *tree, const QString &category=QString());
     bool removePackages(QTreeWidget *tree, const QString &category=QString());
+
+protected:
+    void setInitialState(QTreeWidgetItem &item, Package *available, Package *installed,int column=0);
+    void setNextState(QTreeWidgetItem &item, Package *available, Package *installed, int column);
+    bool setDependencyState(Package *pkg);
+
 
 private:
     Type    m_installMode;
