@@ -53,10 +53,12 @@ public:
     {
         return m_database.size();
     }
-    const QList <Package*> &database() const
+
+    const QList <Package*> &packages() const
     {
         return m_database;
     }
+
     void dump(const QString &title=QString());
 
     static Database &getInstance();
@@ -78,6 +80,9 @@ signals:
 private:
     QList<Package*> m_database;
     QString m_root;
+
+    friend QDebug & operator<<(QDebug &, const Database &);
 };
 
+QDebug & operator<<(QDebug &, const Database &);
 #endif

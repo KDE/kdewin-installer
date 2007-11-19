@@ -188,12 +188,18 @@ Database &Database::getInstance()
     return database;
 }
 
-void Database::dump(const QString &title)
+QDebug & operator<<(QDebug &out, const Database &c)
 {
-    qDebug() << "class Database dump: " << title;
-    QList<Package*>::ConstIterator it = m_database.constBegin();
-    for ( ; it != m_database.constEnd(); ++it)
-        (*it)->dump();
+    out << "Database ("
+        << "m_root:" << c.m_root
+        << "QList<Package*> (size:" << c.m_database.size();
+
+    QList<Package*>::ConstIterator it = c.m_database.constBegin();
+    for ( ; it != c.m_database.constEnd(); ++it)
+        out << *it;
+
+    out << ") )";
+    return out;
 }
 
 #include "database.moc"
