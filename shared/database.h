@@ -37,49 +37,49 @@ class Database: public QObject
 {
     Q_OBJECT
 
-public:
-    Database();
-    virtual ~Database();
-    bool readFromDirectory(const QString &dirPath=QString());
-    void addPackage(const Package &package);
-    void listPackageFiles(const QString &pkgName, Package::Type pkgType=Package::BIN);
-    void listPackages(const QString &title=QString());
-    QStringList getPackageFiles(const QString &pkgName, Package::Type pkgType=Package::BIN);
-    Package *getPackage(const QString &pkgName, const QByteArray &version=QByteArray());
-    bool addUnhandledPackages(PackageList *packageList);
-    void resetHandledState(); 
+    public:
+        Database();
+        virtual ~Database();
+        bool readFromDirectory(const QString &dirPath=QString());
+        void addPackage(const Package &package);
+        void listPackageFiles(const QString &pkgName, Package::Type pkgType=Package::BIN);
+        void listPackages(const QString &title=QString());
+        QStringList getPackageFiles(const QString &pkgName, Package::Type pkgType=Package::BIN);
+        Package *getPackage(const QString &pkgName, const QByteArray &version=QByteArray());
+        bool addUnhandledPackages(PackageList *packageList);
+        void resetHandledState(); 
 
-    int size() const
-    {
-        return m_database.size();
-    }
+        int size() const
+        {
+            return m_database.size();
+        }
 
-    const QList <Package*> &packages() const
-    {
-        return m_database;
-    }
+        const QList <Package*> &packages() const
+        {
+            return m_database;
+        }
 
-    void dump(const QString &title=QString());
+        void dump(const QString &title=QString());
 
-    static Database &getInstance();
+        static Database &getInstance();
 
-    void setRoot(const QString &root)
-    {
-        m_root = root;
-        readFromDirectory();
-    }
+        void setRoot(const QString &root)
+        {
+            m_root = root;
+            readFromDirectory();
+        }
 
-    QString root() const
-    {
-        return m_root;
-    }
- 
-signals:
-    void configLoaded();
+        QString root() const
+        {
+            return m_root;
+        }
+     
+    signals:
+        void configLoaded();
 
-private:
-    QList<Package*> m_database;
-    QString m_root;
+    private:
+        QList<Package*> m_database;
+        QString m_root;
 
     friend QDebug & operator<<(QDebug &, const Database &);
 };
