@@ -227,14 +227,20 @@ void InstallerEngine::mirrorChanged(const QString &mirror)
     reload();
 }
 
-void InstallerEngine::dump(const QString &title)
+QDebug &operator<<(QDebug &out, const InstallerEngine &c)
 {
-    QList<Package*>::ConstIterator i = m_packageResources->packages().constBegin();
-    for ( ; i != m_packageResources->packages().constEnd(); ++i)
-    {
-        Package *pkg = *i;
-        qDebug() << pkg;
-    }
+    /// @TODO add more members
+    out << "InstallerEngine ("
+        << "m_packageResources:" << *c.m_packageResources
+//        << "m_installer:" << *(c.m_installer)
+       << "m_downloader:" << *(c.m_downloader)
+//        << "m_instProgress:" << *c.m_instProgress
+        << "m_globalConfig:" << *(c.m_globalConfig)
+//        << "m_instProgressBar:" << *c.m_instProgressBar
+        << "m_database:" << *(c.m_database)
+        << ")";
+    return out;
 }
+
 
 #include "installerengine.moc"

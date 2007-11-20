@@ -86,6 +86,7 @@ private:
     int         m_statusCode;       // used internal
 	QUrl        m_redirectedURL;    // holds redirected url when request finished with 302 status 
     QUrl        m_usedURL;          // holds really used url, may change when 302 status 
+    friend QDebug &operator<<(QDebug &, const Downloader &);
 };
 
 #endif

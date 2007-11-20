@@ -67,6 +67,6 @@ class GlobalConfig {
     friend QDebug &operator<<(QDebug &,GlobalConfig &);
 };
 
-QDebug &operator<<(QDebug &,const GlobalConfig &);
+//QDebug &operator<<(QDebug &,const GlobalConfig &);
 
 #endif

@@ -83,8 +83,6 @@ protected:
     InstallerProgress   *m_instProgressBar;
     Database            *m_database;
 
-    void dump(const QString &title=QString());
-    
     /// init all package definitions
     virtual void init();
     /// reload all package definition
@@ -104,6 +102,8 @@ protected:
 
     void initFinished();
 
+
+    friend QDebug &operator<<(QDebug &, const InstallerEngine &);
 };
 
 #endif

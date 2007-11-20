@@ -290,4 +290,17 @@ void Downloader::stateChanged(int state)
     qDebug() << "Downloader state changed:" << stateLabel;
 }
 
+QDebug &operator<<(QDebug &out, const Downloader &c)
+{
+    out << "Downloader ("
+        << "m_blocking:"      << c.m_blocking
+	    << "m_resultString:"  << c.m_resultString
+        << "m_result:"        << c.m_result      
+        << "m_statusCode:"    << c.m_statusCode
+	    << "m_redirectedURL:" << c.m_redirectedURL
+        << "m_usedURL:"       << c.m_usedURL
+        << ")";
+    return out;
+}
+
 #include "downloader.moc"
