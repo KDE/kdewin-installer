@@ -77,23 +77,30 @@ InstallWizard::InstallWizard(QWidget *parent)
         : ComplexWizard(parent)
 {
     engine = new InstallerEngineGui(this,progressBar,instProgressBar);
+    titlePage = new TitlePage(this);
+    pathSettingsPage = new PathSettingsPage(this);
+    proxySettingsPage = new ProxySettingsPage(this);
+    mirrorSettingsPage = new MirrorSettingsPage(this);
     settingsPage = new SettingsPage(this);
+    packageSelectorPage = new PackageSelectorPage(this);
+    downloadPage = new DownloadPage(this);
+    uninstallPage = new UninstallPage(this);
+    installPage = new InstallPage(this);
+    finishPage = new FinishPage(this);
 
     setWindowTitle(tr("KDE Installer - Version " VERSION));
     Settings &s = Settings::getInstance();
 
     if (s.isFirstRun() || s.showTitlePage())
     {
-        titlePage = new TitlePage(this);
         setFirstPage(titlePage);
         settingsButton->hide();
     }
     else
     {
         engine->init();
-        packageSelectorPage = new PackageSelectorPage(this);
         setFirstPage(packageSelectorPage);
-    }        
+    }
 }
 
 void InstallWizard::settingsButtonClicked()
@@ -147,7 +154,6 @@ WizardPage *TitlePage::nextPage()
 {
     wizard->nextButton->setEnabled(false);
     wizard->nextButton->setEnabled(true);
-    wizard->pathSettingsPage = new PathSettingsPage(wizard);
     return wizard->pathSettingsPage;
 }
 
@@ -247,7 +253,6 @@ WizardPage *PathSettingsPage::nextPage()
     if (compilerMSVC->isChecked())
         s.setCompilerType(Settings::MSVC);
 
-    wizard->proxySettingsPage = new ProxySettingsPage(wizard);
     return wizard->proxySettingsPage;
 }
 
@@ -339,7 +344,6 @@ WizardPage *ProxySettingsPage::nextPage()
     if (proxyManual->isChecked())
         s.setProxy(proxyHost->text(),proxyPort->text());
 
-    wizard->mirrorSettingsPage = new MirrorSettingsPage(wizard);
     return wizard->mirrorSettingsPage;
 }
 
@@ -386,7 +390,6 @@ WizardPage *MirrorSettingsPage::nextPage()
     s.setMirror(mirrorEdit->currentText());
 
     engine->init();
-    wizard->packageSelectorPage = new PackageSelectorPage(wizard);
     wizard->settingsButton->show();
     s.setFirstRun(false);
     return wizard->packageSelectorPage;
@@ -472,7 +475,6 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
 
     // left side of splitter 
     leftTree  = new QTreeWidget(splitter);
-    engine->setLeftTreeData(leftTree);
 
     categoryInfo = new QTextEdit();
     categoryInfo->setReadOnly(true);
@@ -486,7 +488,6 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
 
     // right side of splitter 
     tree = new QTreeWidget(splitter);
-    engine->setPageSelectorWidgetData(tree);
 
     QTextEdit *tab1 = new QTextEdit();
     tab1->setReadOnly(true);
@@ -528,12 +529,18 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
     setLayout(layout);
     packageInfo->hide();
 #endif
-    on_leftTree_itemClicked(leftTree->currentItem(), 0);
 
     connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
     connect(leftTree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(on_leftTree_itemClicked(QTreeWidgetItem *, int)));
     connect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
     connect(&Settings::getInstance(),SIGNAL(compilerTypeChanged()),this,SLOT(slotCompilerTypeChanged()));
+}
+
+void PackageSelectorPage::initPage()
+{
+    engine->setLeftTreeData(leftTree);
+    engine->setPageSelectorWidgetData(tree);
+    on_leftTree_itemClicked(leftTree->currentItem(), 0);
 }
 
 void PackageSelectorPage::on_leftTree_itemClicked(QTreeWidgetItem *item, int column)
@@ -571,7 +578,6 @@ WizardPage *PackageSelectorPage::nextPage()
         wizard->nextButton->setVisible(false);
         wizard->backButton->setVisible(false);
     }
-    wizard->downloadPage = new DownloadPage(wizard);
     return wizard->downloadPage;
 }
 
@@ -596,7 +602,6 @@ void DownloadPage::resetPage()
 
 WizardPage *DownloadPage::nextPage()
 {
-    wizard->uninstallPage = new UninstallPage(wizard);
     return wizard->uninstallPage;
 }
 
@@ -637,7 +642,6 @@ void UninstallPage::resetPage()
 
 WizardPage *UninstallPage::nextPage()
 {
-    wizard->installPage = new InstallPage(wizard);
     return wizard->installPage;
 }
 
@@ -673,7 +677,6 @@ void InstallPage::resetPage()
 
 WizardPage *InstallPage::nextPage()
 {
-    wizard->finishPage = new FinishPage(wizard);
     return wizard->finishPage;
 }
 
@@ -712,8 +715,12 @@ FinishPage::FinishPage(InstallWizard *wizard)
     layout->addWidget(label);
     layout->addStretch(1);
     setLayout(layout);
+}
+
+void FinishPage::initPage()
+{
     wizard->backButton->setEnabled(true);
- 
+    /// @TODO back button should go to package selector page 
 }
 
 void FinishPage::resetPage()
@@ -721,7 +728,7 @@ void FinishPage::resetPage()
 
 bool FinishPage::isComplete()
 {
-    return 1;
+    return true;
 }
 
 #include "installwizard.moc"

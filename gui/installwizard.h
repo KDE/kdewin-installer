@@ -192,6 +192,8 @@ public:
     void resetPage();
     WizardPage *nextPage();
     bool isComplete();
+    virtual void initPage();
+
 
 public slots:
     void itemClicked(QTreeWidgetItem *item, int column);
@@ -253,10 +255,11 @@ class FinishPage : public InstallWizardPage
 public:
     FinishPage(InstallWizard *wizard);
 
-	virtual WizardPage *nextPage() { return NULL; }
+    virtual WizardPage *nextPage() { return NULL; }
     virtual void resetPage();
     virtual bool isLastPage() { return true; }
     virtual bool isComplete();
+    virtual void initPage();
 
 private:
     QLabel *topLabel;

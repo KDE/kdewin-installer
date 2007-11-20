@@ -150,6 +150,7 @@ void ComplexWizard::switchPage(WizardPage *oldPage)
 
     WizardPage *newPage = history.last();
     mainLayout->insertWidget(0, newPage);
+    newPage->initPage();
     newPage->show();
     newPage->setFocus();
     connect(newPage, SIGNAL(completeStateChanged()),
