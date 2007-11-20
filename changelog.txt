@@ -6,6 +6,7 @@ recent
 - installer-gui: - package selecting refactored 
                  - enabled bzip2 install support by default 
                  - added proxy username and password in settings dialog
+                 - fixed multiple package loading in first run case
 
 0.8.2
 ------
