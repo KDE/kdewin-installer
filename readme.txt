@@ -6,7 +6,8 @@ See http://commit-digest.org/issues/2007-01-14/ for an article about the backgro
 
 State
 =====
-- The gui installer allows to download, install and update packages from different web location 
+The gui installer is able to download, install and update packages from different internet ftp 
+or http location with or without using a proxy. The command line installer is only minimal working. 
 
 NOTES
 ===== 
@@ -19,8 +20,6 @@ NOTES
 
 - to be able to use the update-mime-database package with kde please add the installation path to the 
   enviromment variable KDEDIRS
-
-
  
 Known Bugs
 ==========
@@ -56,11 +55,7 @@ TODO
   	4 center checkboxes in package selector page -> not possible yet, see comment in source
   	8 add reinstall package support 
   	  -> currently by using a remove and install by hand 
-  	10 add a switch to select end user/developer operation (developer mode by default)
-  	  -> in end user mode only the bin packages are visible 
   	12 if remote config is not available only display installed packages
-  	13 add update support
-  	  -> currently implemented by removing old package, installing new package by hand
   	18 only display firefox proxy option is firefox is installed 
     19 in case a file could not be downloaded display a message box printing the reason -> in work 
 
