@@ -295,7 +295,7 @@ bool Settings::getFireFoxProxySettings(const QString &url, QNetworkProxy &proxy)
     return false;
 }
 
-bool Settings::getProxySettings(const QString &url, QNetworkProxy &proxy)
+bool Settings::proxy(const QString &url, QNetworkProxy &proxy)
 {
     proxy.setType(QNetworkProxy::HttpProxy);
 

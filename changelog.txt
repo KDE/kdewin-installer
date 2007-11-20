@@ -4,6 +4,8 @@ ChangeLog
 recent
 -----
 - installer-gui: - package selecting refactored 
+                 - enabled bzip2 install support by default 
+                 - added proxy username and password in settings dialog
 
 0.8.2
 ------

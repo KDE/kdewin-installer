@@ -148,7 +148,17 @@ static QString typeToString(Package::Type type)
     }
 }
 
-
+QDebug &operator<<(QDebug &out, const Package::Type c)
+{
+    switch(c) {
+        case Package::BIN:   out << "BIN";  break;
+        case Package::LIB:   out << "LIB";  break;
+        case Package::DOC:   out << "DOC";  break;
+        case Package::SRC:   out << "SRC";  break;
+        default: out << "unknown" + QString::number(c);
+    }
+    return out;
+}
 
 QDebug &operator<<(QDebug &out, const Package::PackageItem &c)
 {
@@ -351,32 +361,6 @@ bool Package::read(QTextStream &in)
             qWarning() << "could not set SRC packageitem for package '" << parts.at(0) << "'";
     }
     return true;
-}
-
-void Package::dump(const QString &title) const
-{
-    DUMP_HEADER(title,"Package");
-    qDebug() << DUMP_INDENT() << "m_name:      " << m_name;
-    qDebug() << DUMP_INDENT() << "m_version:   " << m_version;
-    qDebug() << DUMP_INDENT() << "m_categories:" << m_categories;
-    qDebug() << DUMP_INDENT() << "m_deps:      " << m_deps.join(" ");
-    qDebug() << DUMP_INDENT() << "m_handled:   " << m_handled;
-    qDebug() << DUMP_INDENT() << "m_notes:     " << m_notes;
-    qDebug() << DUMP_INDENT() << "m_longNotes: " << m_longNotes;
-
-    QString d;
-    StringHash::ConstIterator its = m_pathRelocs.constBegin();
-    for( ; its != m_pathRelocs.constEnd(); its++)
-    {
-        d += its.key() + " = " + its.value() + ' ';
-    }
-    qDebug() << DUMP_INDENT() << " m_pathRelocs: " << d;
-
-    QHash<Type, PackageItem>::ConstIterator it = m_packages.constBegin();
-    for( ; it != m_packages.constEnd(); ++it) {
-        qDebug() << *it;
-    }
-    DUMP_FOOTER(title,"Package");
 }
 
 static bool makeDir(const QDir &dir)

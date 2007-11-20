@@ -30,6 +30,7 @@ void SettingsPage::init()
     ui.nestedDownloadTree->setCheckState(settings.nestedDownloadTree() ? Qt::Checked : Qt::Unchecked);
     ui.installDetails->setCheckState(settings.installDetails() ? Qt::Checked : Qt::Unchecked);
     ui.autoNextStep->setCheckState(settings.autoNextStep() ? Qt::Checked : Qt::Unchecked);
+    ui.developerMode->setCheckState(settings.isDeveloperMode() ? Qt::Checked : Qt::Unchecked);
 
     ui.rootPathEdit->setText(QDir::convertSeparators(settings.installDir()));
     ui.tempPathEdit->setText(QDir::convertSeparators(settings.downloadDir()));
@@ -48,10 +49,15 @@ void SettingsPage::init()
 		case Settings::MSVC: ui.compilerMSVC->setChecked(true); break;
         default: ui.compilerUnspecified->setChecked(true); break;
 	}
-
-    ui.proxyHost->setText(settings.proxyHost());
-    ui.proxyPort->setText(QString("%1").arg(settings.proxyPort()));
-    switchProxyFields(true);
+    QNetworkProxy proxy; 
+    if (settings.proxy("",proxy))
+    {
+        ui.proxyHost->setText(proxy.hostName());
+        ui.proxyPort->setText(QString("%1").arg(proxy.port()));
+        ui.proxyUserName->setText(proxy.user());
+        ui.proxyPassword->setText(proxy.password());
+        switchProxyFields(true);
+    }
 
     ui.downloadMirror->setEditText(QString("%1").arg(settings.mirror()));
 
@@ -87,6 +93,7 @@ void SettingsPage::accept()
     settings.setNestedDownloadTree(ui.nestedDownloadTree->checkState() == Qt::Checked ? true : false);
     settings.setInstallDetails(ui.installDetails->checkState() == Qt::Checked ? true : false);
     settings.setAutoNextStep(ui.autoNextStep->checkState() == Qt::Checked ? true : false);
+    settings.setDeveloperMode(ui.developerMode->checkState() == Qt::Checked ? true : false);
 
     settings.setInstallDir(ui.rootPathEdit->text());
     settings.setDownloadDir(ui.tempPathEdit->text());
@@ -99,8 +106,10 @@ void SettingsPage::accept()
         m = Settings::Manual;
     settings.setProxyMode(m);
     if (ui.proxyManual->isChecked())
-        settings.setProxy(ui.proxyHost->text(),ui.proxyPort->text());
-
+    {
+        QNetworkProxy proxy(QNetworkProxy::DefaultProxy,ui.proxyHost->text(),ui.proxyPort->text().toInt(),ui.proxyUserName->text(),ui.proxyPassword->text());
+        settings.setProxy(proxy);
+    }
 	if (ui.compilerUnspecified->isChecked())
 		settings.setCompilerType(Settings::unspecified);
 	if (ui.compilerMinGW->isChecked())

@@ -277,6 +277,10 @@ ProxySettingsPage::ProxySettingsPage(InstallWizard *wizard)
     proxyPortLabel = new QLabel(tr("Port"));
     proxyPort = new QLineEdit();
     proxyHost = new QLineEdit();
+    proxyUserNameLabel = new QLabel(tr("Username"));
+    proxyPasswordLabel = new QLabel(tr("Password"));
+    proxyUserName = new QLineEdit();
+    proxyPassword = new QLineEdit();
     proxyManual = new QRadioButton();
     proxyIE = new QRadioButton();
     proxyOff = new QRadioButton();
@@ -308,8 +312,13 @@ ProxySettingsPage::ProxySettingsPage(InstallWizard *wizard)
         default: proxyOff->setChecked(true); break;
     }
     switchProxyFields(true);
-    proxyHost->setText(s.proxyHost());
-    proxyPort->setText(QString("%1").arg(s.proxyPort()));
+
+    QNetworkProxy proxy;
+    s.proxy("",proxy);
+    proxyHost->setText(proxy.hostName());
+    proxyPort->setText(QString("%1").arg(proxy.port()));
+    proxyUserName->setText(proxy.user());
+    proxyPassword->setText(proxy.password());
 
     QGridLayout *layout = new QGridLayout;
     layout->setRowMinimumHeight(1, 10);
@@ -322,6 +331,10 @@ ProxySettingsPage::ProxySettingsPage(InstallWizard *wizard)
     layout->addWidget(proxyHost, 5, 3);
     layout->addWidget(proxyPortLabel, 5, 4);
     layout->addWidget(proxyPort, 5, 5);
+    layout->addWidget(proxyUserNameLabel, 6, 2);
+    layout->addWidget(proxyUserName, 6, 3);
+    layout->addWidget(proxyPasswordLabel, 6, 4);
+    layout->addWidget(proxyPassword, 6, 5);
     setLayout(layout);
 }
 
@@ -346,9 +359,11 @@ WizardPage *ProxySettingsPage::nextPage()
     if(proxyManual->isChecked())
         m = Settings::Manual;
     s.setProxyMode(m);
-    if (proxyManual->isChecked())
-        s.setProxy(proxyHost->text(),proxyPort->text());
-
+    if (proxyManual->isChecked()) 
+    {
+        QNetworkProxy proxy(QNetworkProxy::DefaultProxy,proxyHost->text(),proxyPort->text().toInt(),proxyUserName->text(),proxyPassword->text());
+        s.setProxy(proxy);
+    }
     return wizard->mirrorSettingsPage;
 }
 

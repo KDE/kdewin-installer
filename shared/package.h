@@ -203,7 +203,7 @@ protected:
 
     friend QDebug &operator<<(QDebug &, const Package &);
 };
-
+QDebug &operator<<(QDebug &, const Package::Type);
 QDebug &operator<<(QDebug &, const Package::PackageItem &);
 QDebug &operator<<(QDebug &, const Package &);
 QDebug &operator<<(QDebug &, const QList<Package*> &);

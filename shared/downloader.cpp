@@ -134,7 +134,7 @@ bool Downloader::startInternal(const QUrl &url, QIODevice *ioDev)
     Settings &s = Settings::getInstance();
     QNetworkProxy ps;
 
-    s.getProxySettings(url.scheme(),ps);
+    s.proxy(url.scheme(),ps);
     if (!ps.hostName().isEmpty())
     {
         m_http->setProxy(ps);

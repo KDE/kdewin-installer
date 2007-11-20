@@ -159,8 +159,8 @@ private slots:
 
 private:
     QLabel    *topLabel;
-    QLabel    *proxyHostLabel,*proxyPortLabel;
-    QLineEdit *proxyPort,*proxyHost;
+    QLabel    *proxyHostLabel,*proxyPortLabel,*proxyUserNameLabel,*proxyPasswordLabel;
+    QLineEdit *proxyPort,*proxyHost,*proxyUserName,*proxyPassword;
     QRadioButton *proxyOff,*proxyManual,*proxyIE,*proxyFireFox;
 };
 

@@ -66,6 +66,9 @@ public:
     bool isFirstRun() { return m_settings.value("FirstRun", true).toBool(); }
     void setFirstRun(bool bFirstRun) { m_settings.setValue("FirstRun", bFirstRun); sync(); }
 
+    bool isDeveloperMode() { return m_settings.value("DeveloperMode", true).toBool(); }
+    void setDeveloperMode(bool bMode) { m_settings.setValue("DeveloperMode", bMode); sync(); }
+
     // use nested download directory tree 
     bool nestedDownloadTree() { return m_settings.value("nestedDownloadTree", false).toBool(); }
     void setNestedDownloadTree(bool value) { m_settings.setValue("nestedDownloadTree", value); sync(); }
@@ -81,14 +84,21 @@ public:
     const QString proxyUser() { return m_settings.value("proxyUser").toString(); }
     const QString proxyPassword() { return m_settings.value("proxyPassword").toString(); }
 
+    bool proxy(const QString &url, QNetworkProxy &proxy);
     void setProxy(const QString &host, const QString &port) 
     {
         m_settings.setValue("proxyHost",host);
         m_settings.setValue("proxyPort",port);
         sync();
     }
-
-    bool getProxySettings(const QString &url, QNetworkProxy &settings);
+    void setProxy(QNetworkProxy &proxy)
+    {
+        m_settings.setValue("proxyHost",proxy.hostName());
+        m_settings.setValue("proxyPort",proxy.port());
+        m_settings.setValue("proxyUser",proxy.user());
+        m_settings.setValue("proxyPassword",proxy.password());
+        sync();
+    }
 
     bool installDetails() { return m_settings.value("installDetails", true).toBool(); }
     void setInstallDetails(bool state) { m_settings.setValue("installDetails", state); sync(); }
