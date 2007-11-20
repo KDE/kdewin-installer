@@ -375,7 +375,8 @@ bool isMarkedForRemoval ( Package *pkg,Package::Type type )
 InstallerEngineGui::InstallerEngineGui (QWidget *parent, DownloaderProgress *progressBar,InstallerProgress *instProgressBar )
         : InstallerEngine ( progressBar,instProgressBar ), m_parent(parent)
 {
-    m_installMode = Developer; // install/update bin/lib/doc package
+    Settings &s = Settings::getInstance();
+    m_installMode = s.isDeveloperMode() ? Developer : EndUser; 
 }
 
 void InstallerEngineGui::init()

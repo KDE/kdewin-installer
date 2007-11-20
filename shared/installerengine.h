@@ -49,10 +49,13 @@ class InstallerEngine : public QObject
 public:
     InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
     ~InstallerEngine();
-    /// init all package definitions
-    virtual void init();
-    /// reload all package definition
-    virtual void reload();
+
+    // read in global config 
+    void initGlobalConfig();
+    // add packages from global config or sites (requires proxy settings)
+    void initPackages();
+
+
     void stop();
 
     Package *getPackageByName(const QString &name,const QString &version=QString());
@@ -81,6 +84,12 @@ protected:
     Database            *m_database;
 
     void dump(const QString &title=QString());
+    
+    /// init all package definitions
+    virtual void init();
+    /// reload all package definition
+    virtual void reload();
+
     /**
         fetch configuration from local (file procotol), http or ftp mirrors 
         The precedence is 
@@ -92,6 +101,9 @@ protected:
 
     /// adds package collected from site definition
     bool addPackagesFromSites();
+
+    void initFinished();
+
 };
 
 #endif

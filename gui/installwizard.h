@@ -174,6 +174,7 @@ public:
     void resetPage();
     WizardPage *nextPage();
     bool isComplete();
+    void initPage();
 
 private:
     QLabel    *topLabel;

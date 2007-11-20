@@ -375,7 +375,6 @@ bool ProxySettingsPage::isComplete()
 MirrorSettingsPage::MirrorSettingsPage(InstallWizard *wizard)
         : InstallWizardPage(wizard)
 {
-    Settings &s = Settings::getInstance();
     topLabel = new QLabel(tr(
                               "<h1>Select Mirror</h1>"
                               "<p>Select the download mirror from where you want to download KDE packages.</p>"
@@ -384,21 +383,26 @@ MirrorSettingsPage::MirrorSettingsPage(InstallWizard *wizard)
     mirrorLabel = new QLabel(tr("&Download Mirror:"));
     mirrorEdit = new QComboBox;
     mirrorList = new QStringList;
-    for (QList<GlobalConfig::Mirror*>::iterator p = engine->globalConfig()->mirrors()->begin(); p != engine->globalConfig()->mirrors()->end(); p++) {
-//        mirrorEdit->addItem((*p)->url);
-        *mirrorList << QString((*p)->url);
-    }
-    rebuildMirrorList(0);
-
-    if (!s.mirror().isEmpty())
-        mirrorEdit->setEditText(s.mirror());
-
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(topLabel, 0, 0, 1, 2);
     layout->setRowMinimumHeight(1, 10);
     layout->addWidget(mirrorLabel, 2, 0);
     layout->addWidget(mirrorEdit, 2, 1);
     setLayout(layout);
+}
+
+void MirrorSettingsPage::initPage()
+{
+    engine->initGlobalConfig();
+    QList<GlobalConfig::Mirror*>::iterator p = engine->globalConfig()->mirrors()->begin();
+    for (; p != engine->globalConfig()->mirrors()->end(); p++) {
+        *mirrorList << QString((*p)->url);
+    }
+    rebuildMirrorList(0);
+
+    Settings &s = Settings::getInstance();
+    if (!s.mirror().isEmpty())
+        mirrorEdit->setEditText(s.mirror());
 }
 
 void MirrorSettingsPage::resetPage()
@@ -408,8 +412,8 @@ WizardPage *MirrorSettingsPage::nextPage()
 {
     Settings &s = Settings::getInstance();
     s.setMirror(mirrorEdit->currentText());
+    engine->initPackages();
 
-    engine->init();
     wizard->settingsButton->show();
     s.setFirstRun(false);
     return wizard->packageSelectorPage;
