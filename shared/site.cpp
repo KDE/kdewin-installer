@@ -21,6 +21,8 @@
 **
 ****************************************************************************/
 
+#include <QDebug>
+
 #include "config.h"
 #include "site.h"
 
@@ -83,6 +85,16 @@ bool Site::isExclude(const QString &_package)
 {
     QString package = _package.toLower();
     return (m_excludes.contains(package));
+}
+
+QDebug &operator<<(QDebug &out, const Site::SiteType &c)
+{
+    switch(c) {
+        case Site::SourceForge:    out << "SourceForge"; break;
+        case Site::ApacheModIndex: out << "ApacheModIndex"; break;
+        default:             out << c;
+    }
+    return out;
 }
 
 QDebug &operator<<(QDebug &out, const Site &c)

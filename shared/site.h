@@ -99,9 +99,9 @@ private:
     QHash<QString, QString> m_packageNotes;
     QHash<QString, QString> m_packageLongNotes;
     friend QDebug &operator<<(QDebug&, const Site &);
+    friend QDebug &operator<<(QDebug&, const SiteType &);
 };
 
-QDebug &operator<<(QDebug&, const Site &);
 
 
 
