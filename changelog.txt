@@ -1,11 +1,14 @@
 ChangeLog
 =========
 
-recent
+0.8.3
 -----
 - installer-gui: - package selecting refactored 
+                 - fixed package selecting cycle
+                 - fixed dependency selecting, supports no indirect dependencies 
+                 - display additional required dependencies into a separate page 
                  - enabled bzip2 install support by default 
-                 - added proxy username and password in settings dialog
+                 - added proxy username and password in proxy settings dialog
                  - fixed multiple package loading in first run case
 
 0.8.2

@@ -135,7 +135,7 @@ TitlePage::TitlePage(InstallWizard *wizard)
                           ));
     description->setReadOnly(true);
 
-    //    downloadPackagesRadioButton = new QRadioButton(tr("&download packages"));
+    //    downloadPackagesRadioButton = new QRadioButton(tr("download packages"));
     //    downloadAndInstallRadioButton = new QRadioButton(tr("&download and install packages"));
     //    setFocusProxy(downloadPackagesRadioButton);
 
@@ -380,7 +380,7 @@ MirrorSettingsPage::MirrorSettingsPage(InstallWizard *wizard)
                               "<p>Select the download mirror from where you want to download KDE packages.</p>"
                           ));
 
-    mirrorLabel = new QLabel(tr("&Download Mirror:"));
+    mirrorLabel = new QLabel(tr("Download Mirror:"));
     mirrorEdit = new QComboBox;
     mirrorList = new QStringList;
     QGridLayout *layout = new QGridLayout;
