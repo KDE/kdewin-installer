@@ -128,6 +128,7 @@ private:
     bool getFireFoxProxySettings(const QString &url, QNetworkProxy &proxy);
     bool getEnvironmentProxySettings(const QString &url, QNetworkProxy &proxy);
     QString debug(void) { return m_settings.value("debug", "").toString(); }
+    friend QDebug &operator<<(QDebug &, Settings &);
 };
 
 

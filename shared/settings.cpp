@@ -345,6 +345,23 @@ bool Settings::hasDebug(const QString area)
             || s.debug().toLower().contains(area.toLower()));
 }
 
+QDebug &operator<<(QDebug &out, Settings &c)
+{
+    out << "Settings ("
+        << "installDir:" << c.installDir()
+        << "downloadDir:" << c.downloadDir()
+        << "showTitlePage:" << c.showTitlePage()
+        << "createStartMenuEntries:" << c.createStartMenuEntries()
+        << "isFirstRun" << c.isFirstRun()
+        << "proxyMode" << c.proxyMode()
+        << "proxyHost" << c.proxyHost()
+        << "proxyPort" << c.proxyPort()
+        << "proxyUser" << c.proxyUser()
+        << "proxyPassword" << c.proxyPassword()
+        << ")";
+    return out;
+}
+
 
 
 
