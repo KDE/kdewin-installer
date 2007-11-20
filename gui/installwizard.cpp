@@ -29,6 +29,7 @@
 #include <QLineEdit>
 #include <QModelIndex>
 #include <QTreeWidgetItem>
+#include <QListWidget>
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QSplitter>
@@ -57,6 +58,9 @@ QTreeWidget *leftTree;
 
 InstallerEngineGui *engine;
 
+QListWidget *g_dependenciesList = 0;
+
+
 static
 QLabel* createTopLabel(const QString& str)
 {
@@ -84,6 +88,7 @@ InstallWizard::InstallWizard(QWidget *parent)
     settingsPage = new SettingsPage(this);
     packageSelectorPage = new PackageSelectorPage(this);
     downloadPage = new DownloadPage(this);
+    dependenciesPage = new DependenciesPage(this);
     uninstallPage = new UninstallPage(this);
     installPage = new InstallPage(this);
     finishPage = new FinishPage(this);
@@ -573,12 +578,12 @@ void PackageSelectorPage::resetPage()
 
 WizardPage *PackageSelectorPage::nextPage()
 {
-    if (Settings::getInstance().autoNextStep())
-    {
-        wizard->nextButton->setVisible(false);
-        wizard->backButton->setVisible(false);
-    }
-    return wizard->downloadPage;
+    engine->checkUpdateDependencies();
+    wizard->nextButton->setEnabled(true);
+    if (wizard->dependenciesPage->dependenciesList->count() > 0)
+        return wizard->dependenciesPage;
+    else
+       return wizard->downloadPage;
 }
 
 bool PackageSelectorPage::isComplete()
@@ -586,6 +591,33 @@ bool PackageSelectorPage::isComplete()
     return true;
 }
 
+DependenciesPage::DependenciesPage(InstallWizard *wizard)
+        : InstallWizardPage(wizard)
+{
+    topLabel = createTopLabel(tr("<center><b>Additional Packages</b></center>"));
+    dependenciesList = new QListWidget;
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(topLabel);
+    layout->addWidget(dependenciesList);
+    g_dependenciesList = dependenciesList;
+    setLayout(layout);
+}
+
+void DependenciesPage::resetPage()
+{
+}
+
+WizardPage *DependenciesPage::nextPage()
+{
+    if (Settings::getInstance().autoNextStep())
+    {
+        wizard->nextButton->setVisible(false);
+        wizard->backButton->setVisible(false);
+    }
+    g_dependenciesList = 0;
+    return wizard->downloadPage;
+}
 
 DownloadPage::DownloadPage(InstallWizard *wizard)
         : InstallWizardPage(wizard)
@@ -719,8 +751,9 @@ FinishPage::FinishPage(InstallWizard *wizard)
 
 void FinishPage::initPage()
 {
-    wizard->backButton->setEnabled(true);
     /// @TODO back button should go to package selector page 
+    // does not work yet 
+    // wizard->backButton->setEnabled(false);
 }
 
 void FinishPage::resetPage()

@@ -26,6 +26,7 @@
 #include <QtDebug>
 #include <QDir>
 #include <QTreeWidget>
+#include <QListWidget>
 #include <QTextEdit>
 #include <QFlags>
 #include <QMessageBox>
@@ -321,6 +322,8 @@ bool InstallerEngineGui::setDependencyState(Package *_package)
         if (state == _Nothing || state == _Remove)
         {
             qDebug() << __FUNCTION__ << "selected package" << package->name() << "in previous state" << state << "for installation"; 
+            if (g_dependenciesList)
+                g_dependenciesList->addItem(package->name());
             packageStates.setState(package,Package::BIN,_Install);
 
             // set additional package types for download/install/remove 
@@ -647,8 +650,6 @@ bool InstallerEngineGui::downloadPackageItem(Package *pkg, Package::Type type )
 
 bool InstallerEngineGui::downloadPackages ( QTreeWidget *tree, const QString &category )
 {
-    checkUpdateDependencies();
-
     qDebug() << __FUNCTION__ << packageStates;
     QList<Package*> list = packageStates.packages(m_packageResources);
     QList<Package*>::ConstIterator i = list.constBegin();

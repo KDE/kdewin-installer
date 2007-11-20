@@ -37,16 +37,20 @@ class QLabel;
 class QLineEdit;
 class QRadioButton;
 class QTextEdit;
+class QListWidget;
 class TitlePage;
 class PathSettingsPage;
 class ProxySettingsPage;
 class MirrorSettingsPage;
 class PackageSelectorPage;
+class DependenciesPage;
 class InstallPage;
 class UninstallPage;
 class DownloadPage;
 class FinishPage;
 class SettingsPage;
+
+extern QListWidget *g_dependenciesList;
 
 class InstallWizard : public ComplexWizard
 {
@@ -63,6 +67,7 @@ private:
     ProxySettingsPage *proxySettingsPage;
     MirrorSettingsPage *mirrorSettingsPage;
     PackageSelectorPage *packageSelectorPage;
+    DependenciesPage *dependenciesPage;
     DownloadPage *downloadPage;
     InstallPage *installPage;
     UninstallPage *uninstallPage;
@@ -75,6 +80,7 @@ private:
     friend class ProxySettingsPage;
     friend class MirrorSettingsPage;
     friend class PackageSelectorPage;
+    friend class DependenciesPage;
     friend class DownloadPage;
     friend class InstallPage;
     friend class UninstallPage;
@@ -206,6 +212,20 @@ private:
     QLabel *topLabel;
 	QTabWidget *packageInfo;
 	QTextEdit *categoryInfo;
+};
+
+class DependenciesPage: public InstallWizardPage
+{
+public:
+    DependenciesPage(InstallWizard *wizard);
+
+    void resetPage();
+    WizardPage *nextPage();
+
+private:
+    QLabel *topLabel;
+    QListWidget *dependenciesList;
+    friend class PackageSelectorPage;
 };
 
 class DownloadPage : public InstallWizardPage
