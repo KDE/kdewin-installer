@@ -772,7 +772,7 @@ void FinishPage::initPage()
 {
     /// @TODO back button should go to package selector page 
     // does not work yet 
-    // wizard->backButton->setEnabled(false);
+   wizard->backButton->setVisible(false);
 }
 
 void FinishPage::resetPage()
