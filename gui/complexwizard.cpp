@@ -160,12 +160,14 @@ void ComplexWizard::switchPage(WizardPage *oldPage)
     if (newPage->isLastPage())
     {
         nextButton->setEnabled(false);
+        nextButton->setVisible(false);
         finishButton->setEnabled(true);
         finishButton->setDefault(true);
     }
     else
     {
         nextButton->setDefault(true);
+        nextButton->setVisible(true);
         nextButton->setEnabled(true);
         finishButton->setEnabled(false);
     }
