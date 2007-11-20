@@ -136,6 +136,7 @@ bool Package::PackageItem::setContentType(const QString &type)
         return false;
     }
 }
+#endif
 
 static QString typeToString(Package::Type type)
 {
@@ -147,7 +148,6 @@ static QString typeToString(Package::Type type)
         default: return "unknown" + QString::number(type);
     }
 }
-
 QDebug &operator<<(QDebug &out, const Package::Type c)
 {
     switch(c) {
@@ -171,6 +171,8 @@ QDebug &operator<<(QDebug &out, const Package::PackageItem &c)
         << ")";
     return out;
 }
+
+#ifndef PACKAGE_SMALL_VERSION
 
 Package::Package()
 {
