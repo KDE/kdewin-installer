@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
     GlobalConfig globalConfig(&downloader);
     QStringList files = globalConfig.fetch("http://82.149.170.66/kde-windows/installer/config.txt");
     globalConfig.parse(files);
-    globalConfig.dump(__FUNCTION__);
+    qDebug() << globalConfig;
 
     return 0;
 }
