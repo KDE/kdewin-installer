@@ -34,27 +34,26 @@ int main(int argc, char *argv[])
     QString http("http://www.heise.de");
     QString ftp("ftp://www.heise.de");
     QString host; 
-    int port; 
     bool ret;
     Settings &s = Settings::getInstance();
     QNetworkProxy ps;
 
     s.setProxyMode(Settings::InternetExplorer);
-    ret = s.getProxySettings(http, ps);
+    ret = s.proxy(http, ps);
     qDebug() << "IE settings for " << http << ":" << ret << ps;
-    ret = s.getProxySettings(ftp, ps);
+    ret = s.proxy(ftp, ps);
     qDebug() << "IE settings for " << ftp << ":" << ret << ps;
 
     s.setProxyMode(Settings::FireFox);
-    ret = s.getProxySettings(http, ps);
+    ret = s.proxy(http, ps);
     qDebug() << "Firefox settings for " << http << ":" << ret << ps;
-    ret = s.getProxySettings(ftp, ps);
+    ret = s.proxy(ftp, ps);
     qDebug() << "Firefox settings for " << ftp << ":" << ret << ps;
 
     s.setProxyMode(Settings::Manual);
-    ret = s.getProxySettings(http, ps);
+    ret = s.proxy(http, ps);
     qDebug() << "Manual settings for " << http << ":" << ret << ps;
-    ret = s.getProxySettings(ftp, ps);
+    ret = s.proxy(ftp, ps);
     qDebug() << "Manual settings for " << ftp << ":" << ret << ps;
 
     return 0;

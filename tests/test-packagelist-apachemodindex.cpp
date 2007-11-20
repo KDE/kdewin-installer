@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
         qDebug() << "... failed ";
         return 1;
     }
-    packageList.dump("win32libs Package List");
+    qDebug() << "win32libs Package List" << packageList;
 
     PackageList packageList2;
 
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
         qDebug() << "... failed ";
         return 1;
     }
-    packageList2.dump("KDE i18n Package List");
+    qDebug() << "KDE i18n Package List" << packageList2;
 
 
     return 0;
