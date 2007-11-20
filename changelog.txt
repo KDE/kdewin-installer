@@ -1,6 +1,11 @@
 ChangeLog
 =========
 
+
+0.8.3-1
+-------
+- installer-gui: - fixed bug not been able to change developer mode
+
 0.8.3
 -----
 - installer-gui: - added update support
