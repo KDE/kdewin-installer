@@ -53,11 +53,11 @@ public:
     /// cancel started download 
     void cancel();
     /// return result string 
-	QString resultString() { return m_resultString; }
+    QString resultString() { return m_resultString; }
     /// return download result
-	ResultType result()    { return m_result; }
+    ResultType result()    { return m_result; }
     /// return real used url for downloading
-	const QUrl &usedURL()   { return m_usedURL; }
+    const QUrl &usedURL()   { return m_usedURL; }
 
 signals:
     void done(bool error);
@@ -81,10 +81,10 @@ private:
     bool        m_httpRequestAborted;
     bool        m_blocking;
     QEventLoop *m_eventLoop;
-	QString		m_resultString;
+    QString		m_resultString;
     ResultType  m_result;      
     int         m_statusCode;       // used internal
-	QUrl        m_redirectedURL;    // holds redirected url when request finished with 302 status 
+    QUrl        m_redirectedURL;    // holds redirected url when request finished with 302 status 
     QUrl        m_usedURL;          // holds really used url, may change when 302 status 
     friend QDebug &operator<<(QDebug &, const Downloader &);
 };
