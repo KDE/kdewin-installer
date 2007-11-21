@@ -27,6 +27,7 @@
 #include <QBuffer>
 #include <QFile>
 #include <QUrl>
+#include <QStringList>
 
 /**
 @TODO add  region to mirror list (<TH COLSPAN=5 BGCOLOR="YELLOW">...)
@@ -37,36 +38,30 @@
 #define MIRROR_BASE_URL_KDE "http://download.kde.org/mirrorstatus.html"
 #define MIRROR_BASE_URL_CYGWIN "http://www.cygwin.com/mirrors.lst"
 
-/// @param type of mirror
-Mirrors::Mirrors(MirrorType type)  : m_type(type)
-{}
-
-Mirrors::~Mirrors()
-{}
+Mirrors::Mirrors() 
+    : m_type(Cygwin) 
+{
+}
 
 /**
  get the list of mirrors
  @return list of mirrors
 */
-QStringList Mirrors::get
-    ()
+bool Mirrors::fetch(Type type, QUrl url)
 {
+    m_type = type;
     DownloaderProgress progress(0);
     Downloader download(true,&progress);
-    QUrl url(MIRROR_BASE_URL_KDE);
 #ifdef DEBUG
 
     QString out = "mirrors.html";
-    int ret = download.start(url,out);
-    return parse(out) ? m_mirrorList : QStringList();
 #else
-
-    QByteArray ba;
-    int ret = download.start(url,ba);
-    return parse(ba) ? m_mirrorList : QStringList();
+    QByteArray out;
 #endif
+    if (!download.start(url,out))
+        return false;
+    return parse(out);
 }
-
 
 /**
  parse mirror list from a local file
@@ -97,39 +92,66 @@ bool Mirrors::parse(const QByteArray &data)
 
 bool Mirrors::parse(QIODevice *ioDev)
 {
-#ifdef DEBUG
-    qDebug() << "1"  << m_type;
-#endif
-
-    switch (m_type)
-    {
+    m_mirrors.clear();
+    switch (m_type) {
     case KDE:
-        char *lineKey = " <TD ALIGN=\"RIGHT\"><A HREF=\"";
-        char *fileKeyStart = "<A HREF=\"";
-        char *fileKeyEnd = "\">";
-        while (!ioDev->atEnd())
         {
-            QByteArray line = ioDev->readLine();
-#ifdef DEBUG
-
-            qDebug() << "2"  << line << " " << lineKey;
-#endif
-
-            if (line.contains(lineKey))
+            char *lineKey = " <TD ALIGN=\"RIGHT\"><A HREF=\"";
+            char *fileKeyStart = "<A HREF=\"";
+            char *fileKeyEnd = "\">";
+            while (!ioDev->atEnd())
             {
-                int a = line.indexOf(fileKeyStart) + strlen(fileKeyStart);
-                int b = line.indexOf(fileKeyEnd,a);
-                QByteArray url = line.mid(a,b-a);
-#ifdef DEBUG
-
-                qDebug() << "3"  << url;
-#endif
-
-                m_mirrorList << url;
+                QByteArray line = ioDev->readLine();
+                if (line.contains(lineKey))
+                {
+                    int a = line.indexOf(fileKeyStart) + strlen(fileKeyStart);
+                    int b = line.indexOf(fileKeyEnd,a);
+                    QByteArray url = line.mid(a,b-a);
+                    MirrorType mirror;
+                    mirror.url = url;
+                    m_mirrors.append(mirror);
+                }
             }
         }
-        return true;
-    }
-    return false;
+        break;
 
+    case Cygwin:
+        {
+            while (!ioDev->atEnd())
+            {
+                QByteArray line = ioDev->readLine();
+                if (line.startsWith("#"))
+                    continue;
+                QList<QByteArray> a = line.split(';');
+                MirrorType mirror;
+                mirror.url = a[0];
+                mirror.name = a[1];
+                mirror.continent = a[2];
+                mirror.country = a[3];
+                m_mirrors.append(mirror);
+            }
+        }
+        break;
+    }
+    return true;
+}
+
+QDebug &operator<<(QDebug &out, const MirrorTypeList &c)
+{
+    out << "QList<MirrorType> (";
+    foreach(MirrorType m,c)
+        out << m;
+    out << ")";
+    return out;
+}
+
+QDebug &operator<<(QDebug &out, const MirrorType &c)
+{
+    out << "MirrorType ("
+        << "url:" << c.url
+        << "name:" << c.name
+        << "continent:" << c.continent
+        << "country:" << c.country
+        << ")";
+    return out;
 }

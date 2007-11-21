@@ -24,36 +24,45 @@
 
 #include <QObject>
 #include <QStringList>
+#include <QUrl>
 class QString;
 class QStringList;
 class QByteArray;
 class QFile;
 
+//http://webdev.cegit.de/snapshots/kde-windows;webdev.cegit.de;Europe;Germany,Essen
+
+class MirrorType 
+{
+    public:
+        QUrl url;
+        QString name;
+        QString continent; 
+        QString country; 
+    friend QDebug &operator<<(QDebug &,const MirrorType &);
+};
+
+typedef QList<MirrorType> MirrorTypeList;
+
 class Mirrors /* : public QObject */
 {
-
     //Q_OBJECT
+    public:
+        enum Type { KDE = 1 ,Cygwin= 2 };
 
-public:
-    enum MirrorType { KDE = 1 ,CYGWIN= 2 };
+        Mirrors();
+        bool fetch(Type type, QUrl url);
+        MirrorTypeList &mirrors() { return m_mirrors; }
 
-    Mirrors(MirrorType type);
-    ~Mirrors();
-    QStringList get
-        ();
+    protected:
+        bool parse(const QString &fileName);
+        bool parse(const QByteArray &data);
+        bool parse(QIODevice *ioDev);
 
-protected:
-    bool parse(const QString &fileName);
-    bool parse(const QByteArray &data);
-    bool parse(QIODevice *ioDev);
-    QStringList getList()
-    {
-        return m_mirrorList;
-    }
-
-private:
-    MirrorType m_type;
-    QStringList m_mirrorList;
+        Type m_type;
+        QList<MirrorType> m_mirrors;
 };
+
+QDebug &operator<<(QDebug &,const MirrorTypeList &);
 
 #endif
