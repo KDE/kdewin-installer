@@ -97,6 +97,9 @@ void InstallerEngine::reload()
 
     delete m_packageResources;
     m_packageResources = new PackageList();
+    delete m_database;
+    m_database = new Database();
+    m_database->setRoot(Settings::getInstance().installDir());
     categoryCache.clear();
 
     init();
