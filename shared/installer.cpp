@@ -206,7 +206,7 @@ bool Installer::unbz2File(const QString &destpath, const QString &zipFile, const
     QString name = tarFileInfo.fileName;
     for(StringHash::const_iterator i = pathRelocations.constBegin(); i != pathRelocations.constEnd(); i++)
     {
-      name = name.replace(i.key(),i.value());
+      name = name.replace(QRegExp(i.key()),i.value());
     }
     m_files << name;
     QString outPath = path.filePath(name);
@@ -312,7 +312,7 @@ bool Installer::unzipFile(const QString &destpath, const QString &zipFile, const
     QString name = info.name;
     for(StringHash::const_iterator i = pathRelocations.constBegin(); i != pathRelocations.constEnd(); i++)
     {
-      name = name.replace(i.key(),i.value());
+      name = name.replace(QRegExp(i.key()),i.value());
     }
     m_files << name;
     QString outPath = path.filePath(name);
