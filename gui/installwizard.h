@@ -39,6 +39,7 @@ class QRadioButton;
 class QTextEdit;
 class QListWidget;
 class TitlePage;
+class DownloadSettingsPage;
 class PathSettingsPage;
 class ProxySettingsPage;
 class MirrorSettingsPage;
@@ -48,7 +49,6 @@ class InstallPage;
 class UninstallPage;
 class DownloadPage;
 class FinishPage;
-class SettingsPage;
 
 extern QListWidget *g_dependenciesList;
 
@@ -64,6 +64,7 @@ private slots:
 private:
     TitlePage *titlePage;
     PathSettingsPage *pathSettingsPage;
+    DownloadSettingsPage *downloadSettingsPage;
     ProxySettingsPage *proxySettingsPage;
     MirrorSettingsPage *mirrorSettingsPage;
     PackageSelectorPage *packageSelectorPage;
@@ -77,6 +78,7 @@ private:
     friend class SettingsPage;
     friend class TitlePage;
     friend class PathSettingsPage;
+    friend class DownloadSettingsPage;
     friend class ProxySettingsPage;
     friend class MirrorSettingsPage;
     friend class PackageSelectorPage;
@@ -87,16 +89,18 @@ private:
     friend class FinishPage;
 };
 
+
 class InstallWizardPage : public WizardPage
 {
 
 public:
-    InstallWizardPage(InstallWizard *wizard)
-            : WizardPage(wizard), wizard(wizard)
-    {}
+    InstallWizardPage(InstallWizard *wizard, SettingsSubPage *s=0);
 
 protected:
     InstallWizard *wizard;
+    SettingsSubPage *page;
+    QLabel *topLabel;
+    QLabel *statusLabel;
 };
 
 class TitlePage : public InstallWizardPage
@@ -106,11 +110,18 @@ public:
 
     void resetPage();
     WizardPage *nextPage();
+};
 
-private:
-    QLabel *topLabel;
-    //    QRadioButton *downloadPackagesRadioButton;
-    //    QRadioButton *downloadAndInstallRadioButton;
+class DownloadSettingsPage : public InstallWizardPage
+{
+    Q_OBJECT
+
+public:
+    DownloadSettingsPage(InstallWizard *wizard, SettingsSubPage *s);
+
+    void resetPage();
+    WizardPage *nextPage();
+    bool isComplete();
 };
 
 class PathSettingsPage : public InstallWizardPage
@@ -118,29 +129,11 @@ class PathSettingsPage : public InstallWizardPage
     Q_OBJECT
 
 public:
-    PathSettingsPage(InstallWizard *wizard);
+    PathSettingsPage(InstallWizard *wizard, SettingsSubPage *s);
 
     void resetPage();
     WizardPage *nextPage();
     bool isComplete();
-
-public slots:
-    void selectRootPath(void);
-    void selectTempPath(void);
-
-private:
-    QLabel    *topLabel;
-    QLabel    *rootPathLabel;
-    QLineEdit *rootPathEdit;
-    QPushButton *rootPathSelect;
-    QLabel    *tempPathLabel;
-    QLineEdit *tempPathEdit;
-    QPushButton *tempPathSelect;
-	QLabel *compilerLabel;
-	QRadioButton *compilerMinGW;
-    QRadioButton *compilerMSVC;
-    QRadioButton *compilerUnspecified;
-
 };
 
 class ProxySettingsPage : public InstallWizardPage
@@ -148,20 +141,11 @@ class ProxySettingsPage : public InstallWizardPage
     Q_OBJECT
 
 public:
-    ProxySettingsPage(InstallWizard *wizard);
+    ProxySettingsPage(InstallWizard *wizard, SettingsSubPage *s);
 
     void resetPage();
     WizardPage *nextPage();
     bool isComplete();
-
-private slots:
-    void switchProxyFields(bool checked);
-
-private:
-    QLabel    *topLabel;
-    QLabel    *proxyHostLabel,*proxyPortLabel,*proxyUserNameLabel,*proxyPasswordLabel;
-    QLineEdit *proxyPort,*proxyHost,*proxyUserName,*proxyPassword;
-    QRadioButton *proxyOff,*proxyManual,*proxyIE,*proxyFireFox;
 };
 
 class MirrorSettingsPage : public InstallWizardPage
@@ -177,7 +161,6 @@ public:
     void initPage();
 
 private:
-    QLabel    *topLabel;
     QLabel    *mirrorLabel;
     QComboBox *mirrorEdit;
     QStringList *mirrorList;
@@ -201,7 +184,6 @@ public:
     bool isComplete();
     virtual void initPage();
 
-
 public slots:
     void itemClicked(QTreeWidgetItem *item, int column);
     void on_leftTree_itemClicked(QTreeWidgetItem *item, int column);
@@ -210,7 +192,6 @@ public slots:
     void slotCompilerTypeChanged(void);
 
 private:
-    QLabel *topLabel;
 	QTabWidget *packageInfo;
 	QTextEdit *categoryInfo;
 };
@@ -224,7 +205,6 @@ public:
     WizardPage *nextPage();
 
 private:
-    QLabel *topLabel;
     QListWidget *dependenciesList;
     friend class PackageSelectorPage;
 };
@@ -238,9 +218,6 @@ public:
     virtual WizardPage *nextPage();
     virtual bool isComplete();
     virtual void reject();
-
-private:
-    QLabel *topLabel;
 };
 
 class UninstallPage : public InstallWizardPage
@@ -253,7 +230,6 @@ public:
     bool isComplete();
 
 private:
-    QLabel *topLabel;
     InstallerProgress *fileList;
 };
 
@@ -267,7 +243,6 @@ public:
     bool isComplete();
 
 private:
-    QLabel *topLabel;
     InstallerProgress *fileList;
 };
 
@@ -283,7 +258,6 @@ public:
     virtual void initPage();
 
 private:
-    QLabel *topLabel;
     QLabel *bottomLabel;
     QCheckBox *agreeCheckBox;
 };

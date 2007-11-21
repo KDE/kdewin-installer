@@ -81,11 +81,14 @@ InstallWizard::InstallWizard(QWidget *parent)
         : ComplexWizard(parent)
 {
     engine = new InstallerEngineGui(this,progressBar,instProgressBar);
-    titlePage = new TitlePage(this);
-    pathSettingsPage = new PathSettingsPage(this);
-    proxySettingsPage = new ProxySettingsPage(this);
-    mirrorSettingsPage = new MirrorSettingsPage(this);
+    // must be first
     settingsPage = new SettingsPage(this);
+
+    titlePage = new TitlePage(this);
+    pathSettingsPage = new PathSettingsPage(this,settingsPage->installPage());
+    downloadSettingsPage = new DownloadSettingsPage(this,settingsPage->downloadPage());
+    proxySettingsPage = new ProxySettingsPage(this,settingsPage->proxyPage());
+    mirrorSettingsPage = new MirrorSettingsPage(this);
     packageSelectorPage = new PackageSelectorPage(this);
     downloadPage = new DownloadPage(this);
     dependenciesPage = new DependenciesPage(this);
@@ -115,6 +118,15 @@ void InstallWizard::settingsButtonClicked()
     settingsPage->exec();
 }
 
+
+InstallWizardPage::InstallWizardPage(InstallWizard *wizard, SettingsSubPage *s)
+            : WizardPage(wizard), wizard(wizard), page(s)
+{
+    statusLabel = new QLabel(tr(
+        "<hr><br>Note: Move the mouse over one of the labels on the left side and wait some seconds to see "
+        " detailed informations about this topic"
+    ));
+}
 
 TitlePage::TitlePage(InstallWizard *wizard)
         : InstallWizardPage(wizard)
@@ -162,214 +174,101 @@ WizardPage *TitlePage::nextPage()
     return wizard->pathSettingsPage;
 }
 
-PathSettingsPage::PathSettingsPage(InstallWizard *wizard)
-        : InstallWizardPage(wizard)
+
+PathSettingsPage::PathSettingsPage(InstallWizard *wizard,SettingsSubPage *page)
+        : InstallWizardPage(wizard,page)
 {
-    Settings &s = Settings::getInstance();
     topLabel = new QLabel(tr(
-                              "<h1>Select Directories</h1>"
-                              "<p>Select the directory where you want to install the KDE packages and where to download packages.</p>"
-                          ));
-
-    rootPathLabel = new QLabel(tr("&RootPath:"));
-    rootPathEdit = new QLineEdit;
-    rootPathLabel->setBuddy(rootPathEdit);
-    setFocusProxy(rootPathEdit);
-    rootPathEdit->setText(s.installDir());
-
-    rootPathSelect = new QPushButton("...", this);
-    connect(rootPathSelect, SIGNAL(pressed()),this, SLOT(selectRootPath()));
-
-    tempPathLabel = new QLabel(tr("&Temporary download path:"));
-    tempPathEdit = new QLineEdit;
-    tempPathLabel->setBuddy(tempPathEdit);
-    tempPathEdit->setText(s.downloadDir());
-
-    tempPathSelect = new QPushButton("...", this);
-    connect(tempPathSelect, SIGNAL(pressed()),this, SLOT(selectTempPath()));
-
-    compilerLabel = new QLabel(tr("Compiler type:"));
-    compilerMinGW = new QRadioButton(tr("MinGW"));
-    compilerMSVC = new QRadioButton(tr("MSVC"));
-    compilerUnspecified = new QRadioButton(tr("&unspecified"));
-
-    switch (s.compilerType()) {
-        case Settings::unspecified: compilerUnspecified->setChecked(true); break;
-        case Settings::MinGW: compilerMinGW->setChecked(true); break;
-        case Settings::MSVC: compilerMSVC->setChecked(true); break;
-        default: compilerUnspecified->setChecked(true); break;
-    }
-
-    QGridLayout *layout = new QGridLayout;
-    layout->addWidget(topLabel, 0, 0, 1, 2);
-    layout->setRowMinimumHeight(1, 10);
-    layout->addWidget(rootPathLabel, 2, 0);
-    layout->addWidget(rootPathEdit, 2, 1);
-    layout->addWidget(rootPathSelect, 2, 2);
-    layout->addWidget(tempPathLabel, 3, 0);
-    layout->addWidget(tempPathEdit, 3, 1);
-    layout->addWidget(tempPathSelect, 3, 2);
-    layout->addWidget(compilerLabel, 4, 0);
-
-    QHBoxLayout *layout2 = new QHBoxLayout;
-    layout2->addWidget(compilerMinGW, 0);
-    layout2->addWidget(compilerMSVC, 1);
-    layout2->addWidget(compilerUnspecified, 2);
-    layout2->addStretch(10);
-    layout->addLayout(layout2, 4,1,1,3);
-
-    layout->setRowMinimumHeight(4, 10);
-    layout->setRowStretch(6, 1);
+        "<h1>Basic Setup</h1>"
+        "<p>Select the directory where you want to install the KDE packages, "
+        "for which compiler this installation should be and which installation mode you prefer.</p>"
+    ));
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(topLabel,1,Qt::AlignTop);
+    layout->addWidget(page->widget(),10);
+    layout->addWidget(statusLabel,1,Qt::AlignBottom);
     setLayout(layout);
 }
 
-void PathSettingsPage::selectRootPath()
-{
-    QString fileName = QFileDialog::getExistingDirectory(this,
-                       tr("Select Root Installation Directory"),
-                       "",
-                       QFileDialog::ShowDirsOnly| QFileDialog::DontResolveSymlinks);
-    rootPathEdit->setText(fileName);
-}
-
-void PathSettingsPage::selectTempPath()
-{
-    QString fileName = QFileDialog::getExistingDirectory(this,
-                       tr("Select Download Directory"),
-                       "",
-                       QFileDialog::ShowDirsOnly| QFileDialog::DontResolveSymlinks);
-    tempPathEdit->setText(fileName);
-}
-
 void PathSettingsPage::resetPage()
-{}
-
-WizardPage *PathSettingsPage::nextPage()
 {
-    Settings &s = Settings::getInstance();
-    s.setInstallDir(rootPathEdit->text());
-    s.setDownloadDir(tempPathEdit->text());
-
-    if (compilerUnspecified->isChecked())
-        s.setCompilerType(Settings::unspecified);
-    if (compilerMinGW->isChecked())
-        s.setCompilerType(Settings::MinGW);
-    if (compilerMSVC->isChecked())
-        s.setCompilerType(Settings::MSVC);
-
-    return wizard->proxySettingsPage;
+    page->reset();
 }
 
 bool PathSettingsPage::isComplete()
 {
-    return (!rootPathEdit->text().isEmpty());
+    return page->isComplete();
 }
 
-ProxySettingsPage::ProxySettingsPage(InstallWizard *wizard)
-        : InstallWizardPage(wizard)
+WizardPage *PathSettingsPage::nextPage()
+{
+    page->accept();
+    return wizard->downloadSettingsPage;
+}
+
+
+DownloadSettingsPage::DownloadSettingsPage(InstallWizard *wizard,SettingsSubPage *page)
+        : InstallWizardPage(wizard,page)
+{
+    topLabel = new QLabel(tr(
+        "<h1>Download Settings</h1>"
+        "<p>Select the directory where your temporay download location should be"
+        " and which mirror your like to use</p>"
+    ));
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(topLabel,1,Qt::AlignTop);
+    layout->addWidget(page->widget(),10);
+    layout->addWidget(statusLabel,1,Qt::AlignBottom);
+    setLayout(layout);
+}
+
+void DownloadSettingsPage::resetPage()
+{
+    page->reset();
+}
+
+WizardPage *DownloadSettingsPage::nextPage()
+{
+    page->accept();
+    return wizard->proxySettingsPage;
+}
+
+bool DownloadSettingsPage::isComplete()
+{
+    return page->isComplete();
+}
+
+
+ProxySettingsPage::ProxySettingsPage(InstallWizard *wizard,SettingsSubPage *page)
+        : InstallWizardPage(wizard,page)
 {
     topLabel = new QLabel(tr(
                               "<h1>Select Proxy Settings</h1>"
                               "<p>Choose the proxy type and enter proxy host and port if required.</p>"
                           ));
-    proxyHostLabel = new QLabel(tr("Host"));
-    proxyPortLabel = new QLabel(tr("Port"));
-    proxyPort = new QLineEdit();
-    proxyHost = new QLineEdit();
-    proxyUserNameLabel = new QLabel(tr("Username"));
-    proxyPasswordLabel = new QLabel(tr("Password"));
-    proxyUserName = new QLineEdit();
-    proxyPassword = new QLineEdit();
-    proxyManual = new QRadioButton();
-    proxyIE = new QRadioButton();
-    proxyOff = new QRadioButton();
-    proxyFireFox = new QRadioButton();
-    proxyOff->setText(QApplication::translate("SettingsDialog", "direct connection", 0, QApplication::UnicodeUTF8));
-#ifdef Q_WS_WIN
-    proxyIE->setText(QApplication::translate("SettingsDialog", "IE settings", 0, QApplication::UnicodeUTF8));
-#else
-    proxyIE->setText(QApplication::translate("SettingsDialog", "Environment settings", 0, QApplication::UnicodeUTF8));
-#endif
-    proxyFireFox->setText(QApplication::translate("SettingsDialog", "FireFox settings", 0, QApplication::UnicodeUTF8));
-    proxyManual->setText(QApplication::translate("SettingsDialog", "manual settings", 0, QApplication::UnicodeUTF8));
-
-    connect( proxyOff,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
-    connect( proxyIE,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
-    connect( proxyFireFox,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
-    connect( proxyManual,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
-
-    Settings &s = Settings::getInstance();
-    switch (s.proxyMode()) {
-#ifdef Q_WS_WIN
-        case Settings::InternetExplorer: proxyIE->setChecked(true); break;
-#else
-        case Settings::Environment: proxyIE->setChecked(true); break;
-#endif
-        case Settings::Manual: proxyManual->setChecked(true); break;
-        case Settings::FireFox: proxyFireFox->setChecked(true); break;
-        case Settings::None: 
-        default: proxyOff->setChecked(true); break;
-    }
-    switchProxyFields(true);
-
-    QNetworkProxy proxy;
-    s.proxy("",proxy);
-    proxyHost->setText(proxy.hostName());
-    proxyPort->setText(QString("%1").arg(proxy.port()));
-    proxyUserName->setText(proxy.user());
-    proxyPassword->setText(proxy.password());
-
-    QGridLayout *layout = new QGridLayout;
-    layout->setRowMinimumHeight(1, 10);
-    layout->addWidget(topLabel, 0, 0, 1, 2);
-    layout->addWidget(proxyOff, 2, 0);
-    layout->addWidget(proxyIE, 3, 0);
-    layout->addWidget(proxyFireFox, 4, 0);
-    layout->addWidget(proxyManual, 5, 0);
-    layout->addWidget(proxyHostLabel, 5, 2);
-    layout->addWidget(proxyHost, 5, 3);
-    layout->addWidget(proxyPortLabel, 5, 4);
-    layout->addWidget(proxyPort, 5, 5);
-    layout->addWidget(proxyUserNameLabel, 6, 2);
-    layout->addWidget(proxyUserName, 6, 3);
-    layout->addWidget(proxyPasswordLabel, 6, 4);
-    layout->addWidget(proxyPassword, 6, 5);
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(topLabel,1,Qt::AlignTop);
+    layout->addWidget(page->widget(),10);
+    layout->addWidget(statusLabel,1,Qt::AlignBottom);
     setLayout(layout);
 }
 
-void ProxySettingsPage::switchProxyFields(bool checked)
-{
-    proxyHost->setEnabled(proxyManual->isChecked());
-    proxyPort->setEnabled(proxyManual->isChecked());
-}
-
 void ProxySettingsPage::resetPage()
-{}
+{
+    page->reset();
+}
 
 WizardPage *ProxySettingsPage::nextPage()
 {
-    Settings &s = Settings::getInstance();
-
-    Settings::ProxyMode m = Settings::None;
-    if(proxyIE->isChecked())
-        m = Settings::InternetExplorer;
-    if(proxyFireFox->isChecked())
-        m = Settings::FireFox;
-    if(proxyManual->isChecked())
-        m = Settings::Manual;
-    s.setProxyMode(m);
-    if (proxyManual->isChecked()) 
-    {
-        QNetworkProxy proxy(QNetworkProxy::DefaultProxy,proxyHost->text(),proxyPort->text().toInt(),proxyUserName->text(),proxyPassword->text());
-        s.setProxy(proxy);
-    }
+    page->accept();
     return wizard->mirrorSettingsPage;
 }
 
 bool ProxySettingsPage::isComplete()
 {
-    return true;
+    return page->isComplete();
 }
+
 
 MirrorSettingsPage::MirrorSettingsPage(InstallWizard *wizard)
         : InstallWizardPage(wizard)
@@ -383,14 +282,21 @@ MirrorSettingsPage::MirrorSettingsPage(InstallWizard *wizard)
     mirrorEdit = new QComboBox;
     mirrorList = new QStringList;
     QGridLayout *layout = new QGridLayout;
-    layout->addWidget(topLabel, 0, 0, 1, 2);
+    layout->addWidget(topLabel, 0, 0, 1, 2,Qt::AlignTop);
     layout->setRowMinimumHeight(1, 10);
     layout->addWidget(mirrorLabel, 2, 0);
     layout->addWidget(mirrorEdit, 2, 1);
+    /// @TODO add stretch item 
+    layout->addWidget(statusLabel,10,0,1,2,Qt::AlignBottom);
     setLayout(layout);
 }
 
 void MirrorSettingsPage::initPage()
+{
+    // obsolate: resetPage does this already
+}
+
+void MirrorSettingsPage::resetPage()
 {
     engine->initGlobalConfig();
     QList<GlobalConfig::Mirror*>::iterator p = engine->globalConfig()->mirrors()->begin();
@@ -403,9 +309,6 @@ void MirrorSettingsPage::initPage()
     if (!s.mirror().isEmpty())
         mirrorEdit->setEditText(s.mirror());
 }
-
-void MirrorSettingsPage::resetPage()
-{}
 
 WizardPage *MirrorSettingsPage::nextPage()
 {
