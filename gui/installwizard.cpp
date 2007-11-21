@@ -215,7 +215,6 @@ PathSettingsPage::PathSettingsPage(InstallWizard *wizard)
     layout2->addWidget(compilerMinGW, 0);
     layout2->addWidget(compilerMSVC, 1);
     layout2->addWidget(compilerUnspecified, 2);
-    layout2->addWidget(compilerUnspecified, 2);
     layout2->addStretch(10);
     layout->addLayout(layout2, 4,1,1,3);
 
