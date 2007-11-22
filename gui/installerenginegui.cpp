@@ -59,13 +59,12 @@ const int availableVersionColumn = 1;
 const int installedVersionColumn = 2;
 const int VersionColumn = 2;
 
-const int ALLColumn = 2;
-const int BINColumn = 3;
-const int SRCColumn = 4;
-const int NotesColumn = 5;
-const int LIBColumn = 6;
-const int DOCColumn = 7;
-const int ColumnCount = 8;
+int BINColumn = 3;
+int SRCColumn = 4;
+int NotesColumn = 5;
+int LIBColumn = 6;
+int DOCColumn = 7;
+int ColumnCount = 8;
 
 int typeToColumn ( Package::Type type )
 {
@@ -79,26 +78,22 @@ int typeToColumn ( Package::Type type )
     case Package::SRC :
         return SRCColumn;
     default:
-        return ALLColumn;
+        return 0;
     }
 }
 
 Package::Type columnToType ( int column )
 {
-    switch ( column ) {
-    case BINColumn:
+    if (column == BINColumn)
         return Package::BIN;
-    case LIBColumn:
+    else if (column = LIBColumn)
         return Package::LIB;
-    case DOCColumn:
+    else if (column = DOCColumn)
         return Package::DOC;
-    case SRCColumn:
+    else if (column = SRCColumn)
         return Package::SRC;
-    case ALLColumn:
-        return Package::ALL;
-    default :
+    else
         return Package::NONE;
-    }
 }
 
 enum iconType {_install, _autoinstall,_keepinstalled, _update, _remove, _nothing, _disable};
@@ -377,6 +372,28 @@ InstallerEngineGui::InstallerEngineGui (QWidget *parent, DownloaderProgress *pro
 {
     Settings &s = Settings::getInstance();
     m_installMode = s.isDeveloperMode() ? Developer : EndUser; 
+    if (m_installMode == Single)
+    {
+        BINColumn = 3;
+        LIBColumn = 4;
+        DOCColumn = 5;
+        SRCColumn = 6;
+        NotesColumn = 7;
+        ColumnCount = 8;
+    }
+    else if (m_installMode == Developer)
+    {
+        BINColumn = 3;
+        SRCColumn = 4;
+        NotesColumn = 5;
+        ColumnCount = 6;
+    }
+    else if (m_installMode == EndUser)
+    {
+        BINColumn = 3;
+        NotesColumn = 4;
+        ColumnCount = 5;
+    }
 }
 
 void InstallerEngineGui::init()
@@ -451,26 +468,21 @@ void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString 
     int _ColumnCount ;
     switch ( m_installMode ) {
     case Developer:
-        labels << tr ( "bin/lib/doc" );
+        labels << tr ( "bin/lib/doc" ) << tr ( "src" );
         _ColumnCount = ColumnCount-3;
         break;
 
     case EndUser:
         labels << tr ( "bin/doc" );
-        _ColumnCount = ColumnCount-3;
+        _ColumnCount = ColumnCount-4;
         break;
 
     case Single:
-        labels
-        << tr ( "all" )
-        << tr ( "bin" )
-        << tr ( "lib" )
-        << tr ( "doc" );
-        _ColumnCount = ColumnCount-3;
+        labels << tr ( "all" )<< tr ( "bin" ) << tr ( "lib" ) << tr ( "doc" ) << tr ( "src" );
+        _ColumnCount = ColumnCount;
         break;
     }
     labels
-    << tr ( "src" )
     << tr ( "package notes" )
     ;
 
@@ -485,11 +497,7 @@ void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString 
 
     Settings &s = Settings::getInstance();
 
-#ifdef USE_PACKAGE_POINTER_FROM_CATEGORY_CACHE
-    foreach(Package *availablePackage,m_categoryCache->getPackages(categoryName)) 
-#else
     foreach(Package *availablePackage,categoryCache.packages(categoryName,*m_packageResources)) 
-#endif
     {
         QString name = availablePackage->name();
         if ( ( categoryName == "mingw"  || s.compilerType() == Settings::MinGW )
@@ -514,9 +522,14 @@ void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString 
         // FIXME
         //item->setText(8, m_globalConfig->news()->value(pkg->name()+"-"+pkg->version()));
         item->setToolTip ( BINColumn, binToolTip );
-        item->setToolTip ( LIBColumn, libToolTip );
-        item->setToolTip ( DOCColumn, docToolTip );
-        item->setToolTip ( SRCColumn, srcToolTip );
+        if (m_installMode == Single)
+        {
+            item->setToolTip ( LIBColumn, libToolTip );
+            item->setToolTip ( DOCColumn, docToolTip );
+            item->setToolTip ( SRCColumn, srcToolTip );
+        }
+        if (m_installMode == Developer)
+            item->setToolTip ( SRCColumn, srcToolTip );
         categoryList.append(item);
     }
     tree->addTopLevelItems ( categoryList );
