@@ -221,7 +221,7 @@ void Downloader::httpRequestFinished(int requestId, bool error)
 void Downloader::readResponseHeader(const QHttpResponseHeader &responseHeader)
 {
     m_statusCode = responseHeader.statusCode();
-    if (m_statusCode == 302) {
+    if (m_statusCode == 301 || m_statusCode == 302) {
         qWarning() << __FUNCTION__ << "Download failed" << m_statusCode << responseHeader.reasonPhrase() << "new location:" << responseHeader.value("location");
         setError(tr("Download failed: %1 %2.").arg(m_statusCode).arg(responseHeader.reasonPhrase() + " new location: " + responseHeader.value("location")) );
         m_redirectedURL = responseHeader.value("location");
