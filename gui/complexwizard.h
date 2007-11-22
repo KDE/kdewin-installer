@@ -57,6 +57,9 @@ protected:
     InstallerProgress *instProgressBar;
     QPushButton *nextButton;
     QPushButton *backButton;
+    QPushButton *cancelButton;
+    QPushButton *AboutButton;
+    QPushButton *finishButton;
 
 protected slots:
     void backButtonClicked();
@@ -69,9 +72,6 @@ private:
     void switchPage(WizardPage *oldPage);
 
     QList<WizardPage *> history;
-    QPushButton *AboutButton;
-    QPushButton *cancelButton;
-    QPushButton *finishButton;
     QHBoxLayout *buttonLayout;
     QVBoxLayout *mainLayout;
 
