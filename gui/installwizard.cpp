@@ -293,11 +293,6 @@ MirrorSettingsPage::MirrorSettingsPage(InstallWizard *wizard)
     setLayout(layout);
 }
 
-void MirrorSettingsPage::initPage()
-{
-    // obsolate: resetPage does this already
-}
-
 void MirrorSettingsPage::resetPage()
 {
     engine->initGlobalConfig();
@@ -459,7 +454,7 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
 #endif
 }
 
-void PackageSelectorPage::initPage()
+void PackageSelectorPage::resetPage()
 {
     connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
     connect(leftTree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(on_leftTree_itemClicked(QTreeWidgetItem *, int)));
@@ -494,9 +489,6 @@ void PackageSelectorPage::slotCompilerTypeChanged()
     engine->setLeftTreeData(leftTree);
     engine->setPageSelectorWidgetData(tree);
 }
-
-void PackageSelectorPage::resetPage()
-{}
 
 WizardPage *PackageSelectorPage::nextPage()
 {
@@ -676,16 +668,13 @@ FinishPage::FinishPage(InstallWizard *wizard)
     setLayout(layout);
 }
 
-void FinishPage::initPage()
+void FinishPage::resetPage()
 {
     /// @TODO back button should go to package selector page 
     // does not work yet 
    wizard->backButton->setVisible(false);
    wizard->cancelButton->setVisible(false);
 }
-
-void FinishPage::resetPage()
-{}
 
 bool FinishPage::isComplete()
 {

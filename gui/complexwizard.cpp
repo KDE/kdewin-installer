@@ -144,8 +144,6 @@ void ComplexWizard::switchPage(WizardPage *newPage)
 
     newPage->resetPage();
     mainLayout->insertWidget(0, newPage);
-    /// @TODO remove this obsolate method
-    newPage->initPage();
     newPage->show();
     newPage->setFocus();
     connect(newPage, SIGNAL(completeStateChanged()),

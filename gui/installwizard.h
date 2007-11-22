@@ -158,7 +158,6 @@ public:
     void resetPage();
     WizardPage *nextPage();
     bool isComplete();
-    void initPage();
 
 private:
     QLabel    *mirrorLabel;
@@ -182,7 +181,6 @@ public:
     void resetPage();
     WizardPage *nextPage();
     bool isComplete();
-    virtual void initPage();
 
 public slots:
     void itemClicked(QTreeWidgetItem *item, int column);
@@ -255,7 +253,6 @@ public:
     virtual void resetPage();
     virtual bool isLastPage() { return true; }
     virtual bool isComplete();
-    virtual void initPage();
 
 private:
     QLabel *bottomLabel;

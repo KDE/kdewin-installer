@@ -98,7 +98,6 @@ public:
     virtual bool isLastPage() { return false; }
     virtual bool isComplete() { return true; }
     virtual void reject() {};
-    virtual void initPage() {};
 
 signals:
     void completeStateChanged();
