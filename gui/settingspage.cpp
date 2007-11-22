@@ -4,6 +4,7 @@
 
 #include "settings.h"
 #include "settingspage.h"
+#include "database.h"
 
 QWidget *SettingsDownloadPage::widget()
 {
@@ -63,9 +64,9 @@ QWidget *SettingsInstallPage::widget()
 {
     ui.installGroupBox->setFlat(true);
     ui.installGroupBox->setTitle("");
-    ui.installWarningLabel->setVisible(false);
     return ui.installGroupBox;
 }
+
 void SettingsInstallPage::reset()
 {
     ui.createStartMenuEntries->setEnabled(false);
@@ -74,12 +75,35 @@ void SettingsInstallPage::reset()
     ui.rootPathEdit->setText(QDir::convertSeparators(s.installDir()));
     ui.tempPathEdit->setText(QDir::convertSeparators(s.downloadDir()));
 
+    // logical grouping isn't available in the designer yet :-P
+    QButtonGroup *groupA = new QButtonGroup(this);
+    groupA->addButton(ui.compilerUnspecified);
+    groupA->addButton(ui.compilerMinGW);
+    groupA->addButton(ui.compilerMSVC);
+
+    if (Database::isAnyPackageInstalled(s.installDir()))
+    {
+        ui.compilerUnspecified->setEnabled(false);
+        ui.compilerMinGW->setEnabled(false);
+        ui.compilerMSVC->setEnabled(false);
+    }
     switch (s.compilerType()) {
 		case Settings::unspecified: ui.compilerUnspecified->setChecked(true); break;
 		case Settings::MinGW: ui.compilerMinGW->setChecked(true); break;
 		case Settings::MSVC: ui.compilerMSVC->setChecked(true); break;
-        default: ui.compilerUnspecified->setChecked(true); break;
+        default: ui.compilerMinGW->setChecked(true); break;
 	}
+
+    QButtonGroup *groupB = new QButtonGroup(this);
+    groupB->addButton(ui.installModeDeveloper);
+    groupB->addButton(ui.installModeEndUser);
+
+    if (Database::isAnyPackageInstalled(s.installDir()))
+    {
+        ui.installModeDeveloper->setEnabled(false); 
+        ui.installModeEndUser->setEnabled(false);
+    }
+
     if (s.isDeveloperMode())
         ui.installModeDeveloper->setChecked(true); 
     else 

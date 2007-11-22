@@ -100,7 +100,7 @@ public:
         sync();
     }
 
-    bool installDetails() { return m_settings.value("installDetails", true).toBool(); }
+    bool installDetails() { return m_settings.value("installDetails", false).toBool(); }
     void setInstallDetails(bool state) { m_settings.setValue("installDetails", state); sync(); }
     
     bool autoNextStep() { return m_settings.value("autoNextStep", true).toBool(); }

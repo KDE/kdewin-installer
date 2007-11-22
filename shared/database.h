@@ -73,7 +73,9 @@ class Database: public QObject
         {
             return m_root;
         }
-     
+
+        static bool isAnyPackageInstalled(const QString &installRoot);
+
     signals:
         void configLoaded();
 

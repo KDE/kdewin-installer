@@ -82,7 +82,7 @@ protected:
     GlobalConfig        *m_globalConfig;
     InstallerProgress   *m_instProgressBar;
     Database            *m_database;
-
+    bool                m_initFinished;
     /// init all package definitions
     virtual void init();
     /// reload all package definition

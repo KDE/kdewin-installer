@@ -1,6 +1,17 @@
 ChangeLog
 =========
 
+0.8.3-3
+-------
+- installer-gui: - reorderd wizard pages (install path, proxy settings, download location, mirror)
+                   because before loading the initial config proxy settings must be present
+                 - fixed duplicate package display when running the first time                    
+                 - added end user and developer install mode 
+                 - disabled compiler type and install mode changes when packages are installed
+
+0.8.3-2
+-------
+- installer-gui: - fixed case where packages are displayed twice
 
 0.8.3-1
 -------

@@ -49,6 +49,9 @@ InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgre
     m_installer->setDatabase(m_database);
     m_globalConfig = new GlobalConfig(m_downloader);
     m_packageResources = new PackageList();
+    m_initFinished = false;
+    connect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString&)),this,SLOT(installDirChanged(const QString&)));
+    connect(&Settings::getInstance(),SIGNAL(mirrorChanged(const QString&)),this,SLOT(mirrorChanged(const QString&)));
 }
 
 InstallerEngine::~InstallerEngine()
@@ -73,11 +76,7 @@ void InstallerEngine::initPackages()
 
 void InstallerEngine::initFinished()
 {
-	// signals are activated only when package lists are loaded 
-	// otherwise setting the mirror will caus a reload signal, 
-	// which loads the package multiple times 
-    connect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString&)),this,SLOT(installDirChanged(const QString&)));
-    connect(&Settings::getInstance(),SIGNAL(mirrorChanged(const QString&)),this,SLOT(mirrorChanged(const QString&)));
+    m_initFinished = true;
     qDebug() << "categoryCache" << categoryCache;
 }
 
@@ -227,7 +226,8 @@ void InstallerEngine::installDirChanged(const QString &newdir)
 
 void InstallerEngine::mirrorChanged(const QString &mirror)
 {
-    reload();
+    if (m_initFinished)
+        reload();
 }
 
 QDebug &operator<<(QDebug &out, const InstallerEngine &c)

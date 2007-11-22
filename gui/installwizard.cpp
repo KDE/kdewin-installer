@@ -86,8 +86,8 @@ InstallWizard::InstallWizard(QWidget *parent)
 
     titlePage = new TitlePage(this);
     pathSettingsPage = new PathSettingsPage(this,settingsPage->installPage());
-    downloadSettingsPage = new DownloadSettingsPage(this,settingsPage->downloadPage());
     proxySettingsPage = new ProxySettingsPage(this,settingsPage->proxyPage());
+    downloadSettingsPage = new DownloadSettingsPage(this,settingsPage->downloadPage());
     mirrorSettingsPage = new MirrorSettingsPage(this);
     packageSelectorPage = new PackageSelectorPage(this);
     downloadPage = new DownloadPage(this);
@@ -122,10 +122,14 @@ void InstallWizard::settingsButtonClicked()
 InstallWizardPage::InstallWizardPage(InstallWizard *wizard, SettingsSubPage *s)
             : WizardPage(wizard), wizard(wizard), page(s)
 {
+#if 1
+    statusLabel = new QLabel("");
+#else
     statusLabel = new QLabel(tr(
         "<hr><br>Note: Move the mouse over one of the labels on the left side and wait some seconds to see "
         " detailed informations about this topic"
     ));
+#endif
 }
 
 TitlePage::TitlePage(InstallWizard *wizard)
@@ -174,7 +178,6 @@ WizardPage *TitlePage::nextPage()
     return wizard->pathSettingsPage;
 }
 
-
 PathSettingsPage::PathSettingsPage(InstallWizard *wizard,SettingsSubPage *page)
         : InstallWizardPage(wizard,page)
 {
@@ -203,39 +206,7 @@ bool PathSettingsPage::isComplete()
 WizardPage *PathSettingsPage::nextPage()
 {
     page->accept();
-    return wizard->downloadSettingsPage;
-}
-
-
-DownloadSettingsPage::DownloadSettingsPage(InstallWizard *wizard,SettingsSubPage *page)
-        : InstallWizardPage(wizard,page)
-{
-    topLabel = new QLabel(tr(
-        "<h1>Download Settings</h1>"
-        "<p>Select the directory where your temporay download location should be"
-        " and which mirror your like to use</p>"
-    ));
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(topLabel,1,Qt::AlignTop);
-    layout->addWidget(page->widget(),10);
-    layout->addWidget(statusLabel,1,Qt::AlignBottom);
-    setLayout(layout);
-}
-
-void DownloadSettingsPage::resetPage()
-{
-    page->reset();
-}
-
-WizardPage *DownloadSettingsPage::nextPage()
-{
-    page->accept();
     return wizard->proxySettingsPage;
-}
-
-bool DownloadSettingsPage::isComplete()
-{
-    return page->isComplete();
 }
 
 
@@ -261,10 +232,41 @@ void ProxySettingsPage::resetPage()
 WizardPage *ProxySettingsPage::nextPage()
 {
     page->accept();
-    return wizard->mirrorSettingsPage;
+    return wizard->downloadSettingsPage;
 }
 
 bool ProxySettingsPage::isComplete()
+{
+    return page->isComplete();
+}
+
+
+DownloadSettingsPage::DownloadSettingsPage(InstallWizard *wizard,SettingsSubPage *page)
+        : InstallWizardPage(wizard,page)
+{
+    topLabel = new QLabel(tr(
+        "<h1>Download Settings</h1>"
+        "<p>Select the directory where downloaded files are saved into.</p>"
+    ));
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(topLabel,1,Qt::AlignTop);
+    layout->addWidget(page->widget(),10);
+    layout->addWidget(statusLabel,1,Qt::AlignBottom);
+    setLayout(layout);
+}
+
+void DownloadSettingsPage::resetPage()
+{
+    page->reset();
+}
+
+WizardPage *DownloadSettingsPage::nextPage()
+{
+    page->accept();
+    return wizard->mirrorSettingsPage;
+}
+
+bool DownloadSettingsPage::isComplete()
 {
     return page->isComplete();
 }
@@ -455,15 +457,14 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
     setLayout(layout);
     packageInfo->hide();
 #endif
-
-    connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
-    connect(leftTree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(on_leftTree_itemClicked(QTreeWidgetItem *, int)));
-    connect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
-    connect(&Settings::getInstance(),SIGNAL(compilerTypeChanged()),this,SLOT(slotCompilerTypeChanged()));
 }
 
 void PackageSelectorPage::initPage()
 {
+    connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
+    connect(leftTree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(on_leftTree_itemClicked(QTreeWidgetItem *, int)));
+    connect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
+    connect(&Settings::getInstance(),SIGNAL(compilerTypeChanged()),this,SLOT(slotCompilerTypeChanged()));
     engine->setLeftTreeData(leftTree);
     engine->setPageSelectorWidgetData(tree);
     on_leftTree_itemClicked(leftTree->currentItem(), 0);
@@ -499,6 +500,10 @@ void PackageSelectorPage::resetPage()
 
 WizardPage *PackageSelectorPage::nextPage()
 {
+    disconnect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),0,0);
+    disconnect(leftTree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),0,0);
+    disconnect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString &)),0,0);
+    disconnect(&Settings::getInstance(),SIGNAL(compilerTypeChanged()),0,0);
     engine->checkUpdateDependencies();
     wizard->nextButton->setEnabled(true);
     if (wizard->dependenciesPage->dependenciesList->count() > 0)

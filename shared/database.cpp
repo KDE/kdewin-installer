@@ -188,6 +188,13 @@ Database &Database::getInstance()
     return database;
 }
 
+bool Database::isAnyPackageInstalled(const QString &installRoot)
+{
+    QDir d(installRoot+ "/manifest");
+    return d.exists();
+}
+
+
 QDebug & operator<<(QDebug &out, const Database &c)
 {
     out << "Database ("
