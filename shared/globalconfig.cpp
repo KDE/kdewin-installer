@@ -297,8 +297,8 @@ bool GlobalConfig::parse(QIODevice *ioDev)
             {
                  pkg = new Package;
                  m_packages.append(pkg);
-                 l = l.mid(9);
-                 pkg->setName(l);
+                 cmd.removeFirst();
+                 pkg->setName(cmd.join(" "));
                  inPackage=true;
             }
         }
