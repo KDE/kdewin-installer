@@ -81,7 +81,7 @@ private:
     bool        m_httpRequestAborted;
     bool        m_blocking;
     QEventLoop *m_eventLoop;
-    QString		m_resultString;
+    QString     m_resultString;
     ResultType  m_result;      
     int         m_statusCode;       // used internal
     QUrl        m_redirectedURL;    // holds redirected url when request finished with 302 status 
