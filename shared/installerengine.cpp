@@ -39,7 +39,7 @@ QString InstallerEngine::defaultConfigURL;
 QString InstallerEngine::fallBackURL = "http://82.149.170.66/kde-windows";
 
 InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar)
-    : QObject(), m_instProgressBar(instProgressBar)
+    : QObject(), m_instProgressBar(instProgressBar), m_addedPackages(false), m_globalConfigReaded(false)
 {
     m_database = new Database();
     m_downloader = new Downloader(/*blocking=*/ true,progressBar);
@@ -64,43 +64,33 @@ InstallerEngine::~InstallerEngine()
 
 void InstallerEngine::initGlobalConfig()
 {
+    if (m_globalConfigReaded) 
+        m_globalConfig->clear();
     readGlobalConfig();
+    m_globalConfigReaded = true;
 }
 
 void InstallerEngine::initPackages()
 {
+    if (m_addedPackages)
+        m_packageResources->clear();
     addPackagesFromGlobalConfig();
     addPackagesFromSites();
-    initFinished();
-}
-
-void InstallerEngine::initFinished()
-{
+    m_addedPackages = true;
     m_initFinished = true;
-    qDebug() << "categoryCache" << categoryCache;
 }
 
 void InstallerEngine::init()
 {
-    readGlobalConfig();
-    addPackagesFromGlobalConfig();
-    addPackagesFromSites();
-    initFinished();
+    initGlobalConfig();
+    initPackages();
 }
 
 void InstallerEngine::reload()
 {
-    /// @TODO implement clear() method to clear the structures 
-    delete m_globalConfig;
-    m_globalConfig = new GlobalConfig(m_downloader);
-
-    delete m_packageResources;
-    m_packageResources = new PackageList();
-    delete m_database;
-    m_database = new Database();
+    m_database->clear();
     m_database->setRoot(Settings::getInstance().installDir());
     categoryCache.clear();
-
     init();
 }
 

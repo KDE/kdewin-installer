@@ -295,6 +295,7 @@ MirrorSettingsPage::MirrorSettingsPage(InstallWizard *wizard)
 
 void MirrorSettingsPage::resetPage()
 {
+    /// @TODO don't know how to avoid reloading all the stuff when we are going back 
     engine->initGlobalConfig();
     QList<GlobalConfig::Mirror*>::iterator p = engine->globalConfig()->mirrors()->begin();
     for (; p != engine->globalConfig()->mirrors()->end(); p++) {

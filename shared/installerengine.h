@@ -83,6 +83,8 @@ protected:
     InstallerProgress   *m_instProgressBar;
     Database            *m_database;
     bool                m_initFinished;
+    bool                m_globalConfigReaded;
+    bool                m_addedPackages;
     /// init all package definitions
     virtual void init();
     /// reload all package definition
@@ -99,9 +101,6 @@ protected:
 
     /// adds package collected from site definition
     bool addPackagesFromSites();
-
-    void initFinished();
-
 
     friend QDebug &operator<<(QDebug &, const InstallerEngine &);
 };
