@@ -560,14 +560,15 @@ WizardPage *DownloadPage::nextPage()
 
 bool DownloadPage::isComplete()
 {
-    if (!Settings::getInstance().autoNextStep())
-        wizard->nextButton->setEnabled(false);
+    wizard->backButton->setEnabled(false);
+    wizard->nextButton->setEnabled(false);
     QApplication::instance()->processEvents();
-    if (!engine->downloadPackages(tree))
+    bool result = engine->downloadPackages(tree);
+    wizard->nextButton->setEnabled(true);
+    wizard->backButton->setEnabled(true);
+    if (!result)
         return false;
-    if (!Settings::getInstance().autoNextStep())
-        wizard->nextButton->setEnabled(true);
-    else
+    if (Settings::getInstance().autoNextStep())
         emit wizard->nextButtonClicked();
     return true;
 }
@@ -600,14 +601,14 @@ WizardPage *UninstallPage::nextPage()
 
 bool UninstallPage::isComplete()
 {
-    if (!Settings::getInstance().autoNextStep())
-        wizard->nextButton->setEnabled(false);
+    wizard->nextButton->setEnabled(false);
+    wizard->backButton->setEnabled(false);
     QApplication::instance()->processEvents();
     // FIXME: add remove progressbar 
     engine->removePackages(tree);
-    if (!Settings::getInstance().autoNextStep())
-        wizard->nextButton->setEnabled(true);
-    else
+    wizard->nextButton->setEnabled(true);
+    wizard->backButton->setEnabled(true);
+    if (Settings::getInstance().autoNextStep())
         emit wizard->nextButtonClicked();
     return true;
 }
@@ -635,13 +636,13 @@ WizardPage *InstallPage::nextPage()
 
 bool InstallPage::isComplete()
 {
-    if (!Settings::getInstance().autoNextStep())
-        wizard->nextButton->setEnabled(false);
+    wizard->nextButton->setEnabled(false);
+    wizard->backButton->setEnabled(false);
     QApplication::instance()->processEvents();
     engine->installPackages(tree);
-    if (!Settings::getInstance().autoNextStep())
-        wizard->nextButton->setEnabled(true);
-    else
+    wizard->nextButton->setEnabled(true);
+    wizard->backButton->setEnabled(true);
+    if (Settings::getInstance().autoNextStep())
         emit wizard->nextButtonClicked();
     return true;
 }
@@ -675,6 +676,7 @@ void FinishPage::initPage()
     /// @TODO back button should go to package selector page 
     // does not work yet 
    wizard->backButton->setVisible(false);
+   wizard->cancelButton->setVisible(false);
 }
 
 void FinishPage::resetPage()
