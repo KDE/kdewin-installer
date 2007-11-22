@@ -180,24 +180,47 @@ void InstallerEngineGui::setInitialState ( QTreeWidgetItem &item, Package *avail
     {
         if (available->hasType(Package::BIN))
             setIcon(item,Package::BIN,_nothing);
-        if (m_installMode == Developer && available->hasType(Package::LIB))
-            setIcon(item,Package::BIN,_nothing);
-        if (m_installMode == Developer && available->hasType(Package::DOC))
-            setIcon(item,Package::BIN,_nothing);
-        if (available->hasType(Package::SRC))
-            setIcon(item,Package::SRC,_nothing);
+        if (m_installMode == Developer)
+        {
+            if (available->hasType(Package::LIB))
+                setIcon(item,Package::BIN,_nothing);
+            if (available->hasType(Package::DOC))
+                setIcon(item,Package::BIN,_nothing);
+            if (available->hasType(Package::SRC))
+                setIcon(item,Package::SRC,_nothing);
+        }
+        else if (m_installMode == Single)
+        {
+            if (available->hasType(Package::LIB))
+                setIcon(item,Package::LIB,_nothing);
+            if (available->hasType(Package::DOC))
+                setIcon(item,Package::DOC,_nothing);
+            if (available->hasType(Package::SRC))
+                setIcon(item,Package::SRC,_nothing);
+        }
     }
     if (installed) 
     {
         if (installed->isInstalled(Package::BIN))
             setIcon(item,Package::BIN,_keepinstalled);
-        if (m_installMode == Developer && installed->isInstalled(Package::LIB))
-            setIcon(item,Package::BIN,_keepinstalled);
-        if ((m_installMode == EndUser || m_installMode == Developer)
-                && installed->isInstalled(Package::DOC))
-            setIcon(item,Package::BIN,_keepinstalled);
-        if (installed->isInstalled(Package::SRC))
-            setIcon(item,Package::SRC,_keepinstalled);
+        if (m_installMode == Developer)
+        {
+            if (installed->isInstalled(Package::LIB))
+                setIcon(item,Package::BIN,_keepinstalled);
+            if (installed->isInstalled(Package::DOC))
+                setIcon(item,Package::BIN,_keepinstalled);
+            if (installed->isInstalled(Package::SRC))
+                setIcon(item,Package::SRC,_keepinstalled);
+        }
+        else if(m_installMode == Single)
+        {
+            if (installed->isInstalled(Package::LIB))
+                setIcon(item,Package::LIB,_keepinstalled);
+            if (installed->isInstalled(Package::DOC))
+                setIcon(item,Package::DOC,_keepinstalled);
+            if (installed->isInstalled(Package::SRC))
+                setIcon(item,Package::SRC,_keepinstalled);
+        }
     }
 }
 
@@ -387,12 +410,17 @@ InstallerEngineGui::InstallerEngineGui (QWidget *parent, DownloaderProgress *pro
         SRCColumn = 4;
         NotesColumn = 5;
         ColumnCount = 6;
+        LIBColumn = 0;
+        DOCColumn = 0;
     }
     else if (m_installMode == EndUser)
     {
         BINColumn = 3;
         NotesColumn = 4;
         ColumnCount = 5;
+        LIBColumn = 0;
+        DOCColumn = 0;
+        SRCColumn = 0;
     }
 }
 
@@ -455,38 +483,40 @@ void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString 
     QStringList labels;
     QList<QTreeWidgetItem *> items;
     // QTreeWidgetItem *item;
-    QString allToolTip ( "select this checkbox to install/remove/update binaries, headers, import libraries and docs of this package" );
-    QString binToolTip ( "select this checkbox to install/remove/update the binaries of this package" );
-    QString libToolTip ( "select this checkbox to install/remove/update header and import libraries of this package" );
-    QString docToolTip ( "select this checkbox to install/remove/update the documentation of this package" );
-    QString srcToolTip ( "select this checkbox to install/remove/update the source of this package" );
+    QString binToolTip;
+    QString libToolTip;
+    QString docToolTip;
+    QString srcToolTip;
 
     labels
     << tr ( "Package" )
     << tr ( "available" )
     << tr ( "installed" );
-    int _ColumnCount ;
     switch ( m_installMode ) {
     case Developer:
         labels << tr ( "bin/lib/doc" ) << tr ( "src" );
-        _ColumnCount = ColumnCount-3;
+        binToolTip = "select this checkbox to install/remove/update the binary, development and doc part of this package";
+        srcToolTip = "select this checkbox to install/remove/update the source of this package";
         break;
 
     case EndUser:
         labels << tr ( "bin/doc" );
-        _ColumnCount = ColumnCount-4;
+        binToolTip = "select this checkbox to install/remove/update the binary and doc part of this package";
         break;
 
     case Single:
         labels << tr ( "all" )<< tr ( "bin" ) << tr ( "lib" ) << tr ( "doc" ) << tr ( "src" );
-        _ColumnCount = ColumnCount;
+        binToolTip = "select this checkbox to install/remove/update the binaries of this package";
+        libToolTip = "select this checkbox to install/remove/update header and import libraries of this package";
+        docToolTip = "select this checkbox to install/remove/update the documentation of this package";
+        srcToolTip = "select this checkbox to install/remove/update the source of this package";
         break;
     }
     labels
     << tr ( "package notes" )
     ;
 
-    tree->setColumnCount ( _ColumnCount );
+    tree->setColumnCount ( ColumnCount );
     tree->setHeaderLabels ( labels );
     // see http://lists.trolltech.com/qt-interest/2006-06/thread00441-0.html
     // and Task Tracker Entry 106731
@@ -518,18 +548,22 @@ void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString 
         QTreeWidgetItem *item = new QTreeWidgetItem ( ( QTreeWidgetItem* ) 0, data );
         setInitialState ( *item,availablePackage,installedPackage,0);
 
+        /// @TODO add printing notes from ver file 
         item->setText ( NotesColumn, availablePackage->notes() );
-        // FIXME
-        //item->setText(8, m_globalConfig->news()->value(pkg->name()+"-"+pkg->version()));
         item->setToolTip ( BINColumn, binToolTip );
-        if (m_installMode == Single)
+
+        if (m_installMode == Developer)
+            item->setToolTip ( SRCColumn, srcToolTip );
+        else if (m_installMode == EndUser)
+        {
+            item->setToolTip ( DOCColumn, docToolTip );
+        }
+        else if (m_installMode == Single)
         {
             item->setToolTip ( LIBColumn, libToolTip );
             item->setToolTip ( DOCColumn, docToolTip );
             item->setToolTip ( SRCColumn, srcToolTip );
         }
-        if (m_installMode == Developer)
-            item->setToolTip ( SRCColumn, srcToolTip );
         categoryList.append(item);
     }
     tree->addTopLevelItems ( categoryList );
