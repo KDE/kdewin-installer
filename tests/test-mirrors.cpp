@@ -32,16 +32,16 @@ int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
-    Mirrors m0(Mirrors::KDE);
-    if (m0.fetch( QUrl("http://download.kde.org/mirrorstatus.html")) )
+    Mirrors m0;
+    if (m0.fetch(Mirrors::KDE, QUrl("http://download.kde.org/mirrorstatus.html")) )
         qDebug() << m0.mirrors();
 
-    Mirrors m(Mirrors::Cygwin);
-    if (m.fetch( QUrl("http://www.cygwin.com/mirrors.lst")) )
+    Mirrors m;
+    if (m.fetch(Mirrors::Cygwin, QUrl("http://www.cygwin.com/mirrors.lst")) )
         qDebug() << m.mirrors();
 
-    Mirrors m1(Mirrors::Cygwin);
-    if (m1.fetch(QUrl("http://download.cegit.de/kde-windows/mirrors.lst")) )
+    Mirrors m1;
+    if (m1.fetch(Mirrors::Cygwin,QUrl("http://download.cegit.de/kde-windows/mirrors.lst")) )
         qDebug() << m1.mirrors();
     return 0;
 
