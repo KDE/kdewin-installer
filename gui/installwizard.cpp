@@ -671,8 +671,7 @@ FinishPage::FinishPage(InstallWizard *wizard)
 
 void FinishPage::resetPage()
 {
-    /// @TODO back button should go to package selector page 
-    // does not work yet 
+   /// @TODO back button should go to package selector page 
    wizard->backButton->setVisible(false);
    wizard->cancelButton->setVisible(false);
 }

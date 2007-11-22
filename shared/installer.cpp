@@ -429,7 +429,7 @@ bool Installer::unzipFile(const QString &destpath, const QString &zipFile, const
   if (!verFile.open(QIODevice::WriteOnly | QIODevice::Text))
     return false;
   QTextStream vFo(&verFile);
-    //  @TODO fill ver file with usefull values
+    //  @TODO fill ver file with usefull values from available package
   vFo << "dummy x.y.z Content description\n";
   vFo << "dummy:";
 

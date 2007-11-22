@@ -322,7 +322,7 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
 bool InstallerEngineGui::setDependencyState(Package *_package)
 {
     stateType state = packageStates.getState(_package,Package::BIN);
-    // @TODO check reverse dependency 
+    // @TODO check reverse dependency when deleting
     if (state == _Remove || state == _Nothing)
         return true;
 

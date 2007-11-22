@@ -43,7 +43,6 @@ QStringList PackageCategoryCache::categories()
     QMap<QString, CategoryListType>::ConstIterator i = m_data.begin();
     for (;i != m_data.end(); ++i) 
     {
-        // @TODO fix me empoty categories should not be added
         if (!i.key().isEmpty())
             keys << i.key() + ":" + m_data[i.key()].notes;
     }

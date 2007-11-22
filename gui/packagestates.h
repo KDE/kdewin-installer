@@ -33,7 +33,6 @@ class PackageStates {
     void setState(Package *pkg, Package::Type type, stateType state);
     stateType getState(QString pkgName, QString pkgVersion, Package::Type type  );
     stateType getState(Package *pkg, Package::Type type);
-    // @TODO this list should return packages and package state  
     QList <Package *>packages(PackageList *list);
     void clear();
 
