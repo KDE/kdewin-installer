@@ -33,7 +33,7 @@
 #include "installerprogress.h"
 
 ComplexWizard::ComplexWizard(QWidget *parent)
-        : QDialog(parent), currentPage(0)
+        : QDialog(parent)
 {
     setWindowFlags(Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);
     aboutButton = new QPushButton(tr("About"));
@@ -104,7 +104,9 @@ void ComplexWizard::readSettings()
 
 void ComplexWizard::setFirstPage(WizardPage *page)
 {
-    switchPage(page);
+    page->resetPage();
+    history.append(page);
+    switchPage(0);
 }
 
 void ComplexWizard::backButtonClicked()
@@ -120,37 +122,41 @@ void ComplexWizard::nextButtonClicked()
     nextButton->setEnabled(false);
     finishButton->setDefault(false);
 
-    WizardPage *newPage = currentPage->nextPage();
-    switchPage(newPage);
+    WizardPage *oldPage = history.last();
+    WizardPage *newPage = oldPage->nextPage();
+    newPage->resetPage();
+    history.append(newPage);
+
+    switchPage(oldPage);
 }
 
 void ComplexWizard::completeStateChanged()
 {
+    WizardPage *currentPage = history.last();
     if (currentPage->isLastPage())
         finishButton->setEnabled(currentPage->isComplete());
     else
         nextButton->setEnabled(currentPage->isComplete());
 }
 
-void ComplexWizard::switchPage(WizardPage *newPage)
+void ComplexWizard::switchPage(WizardPage *oldPage)
 {
-    if (currentPage)
+    if (oldPage)
     {
-        currentPage->hide();
-        mainLayout->removeWidget(currentPage);
-        disconnect(currentPage, SIGNAL(completeStateChanged()),
+        oldPage->hide();
+        mainLayout->removeWidget(oldPage);
+        disconnect(oldPage, SIGNAL(completeStateChanged()),
                    this, SLOT(completeStateChanged()));
     }
 
-    newPage->resetPage();
+    WizardPage *newPage = history.last();
     mainLayout->insertWidget(0, newPage);
     newPage->show();
     newPage->setFocus();
     connect(newPage, SIGNAL(completeStateChanged()),
             this, SLOT(completeStateChanged()));
 
-    currentPage = newPage;
-    backButton->setEnabled(history.size() > 0);
+    backButton->setEnabled(history.size() != 1);
     if (newPage->isLastPage())
     {
         nextButton->setEnabled(false);
@@ -170,7 +176,7 @@ void ComplexWizard::switchPage(WizardPage *newPage)
 
 void ComplexWizard::cancelButtonClicked()
 {
-    currentPage->reject();
+    history.last()->reject();
     writeSettings();
     reject();
     close();
@@ -181,7 +187,7 @@ void ComplexWizard::cancelButtonClicked()
 void ComplexWizard::settingsButtonClicked()
 {
     // @TODO really required  ?
-    currentPage->reject();
+    history.last()->reject();
     reject();
 }
 
