@@ -78,6 +78,7 @@ private:
     void writeSettings();
     void readSettings();
     void closeEvent(QCloseEvent *event);
+    WizardPage *currentPage;
 
 };
 
