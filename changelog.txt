@@ -1,6 +1,14 @@
 ChangeLog
 =========
 
+0.8.3-4
+-------
+- installer-gui: - fixed http 302 Permanted moved condition
+                 - fixed more duplicated package display
+                 - fixed some display issued related to end user and developer install mode 
+                 - removed fixed package names length in the @package config definition
+                 - disabled next and back button when downloading/removing and installing
+
 0.8.3-3
 -------
 - installer-gui: - reorderd wizard pages (install path, proxy settings, download location, mirror)
