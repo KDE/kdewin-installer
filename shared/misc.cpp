@@ -483,6 +483,8 @@ bool removeStartMenuEntries(const QString &dir, const QString &category)
 QVariant getWin32RegistryValue(RegKey akey, const QString& subKey, const QString& item, bool *ok)
 {
 #define FAILURE { if (ok) *ok = false; return QString(); }
+    if (ok)
+        *ok = true;
 
     if (subKey.isEmpty())
         FAILURE;
