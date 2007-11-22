@@ -194,7 +194,6 @@ bool Database::isAnyPackageInstalled(const QString &installRoot)
     return d.exists();
 }
 
-
 QDebug & operator<<(QDebug &out, const Database &c)
 {
     out << "Database ("

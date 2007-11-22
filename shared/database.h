@@ -48,6 +48,7 @@ class Database: public QObject
         Package *getPackage(const QString &pkgName, const QByteArray &version=QByteArray());
         bool addUnhandledPackages(PackageList *packageList);
         void resetHandledState(); 
+        void clear() { m_database.clear(); }
 
         int size() const
         {

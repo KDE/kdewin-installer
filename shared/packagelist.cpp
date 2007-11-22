@@ -462,6 +462,12 @@ bool PackageList::setInstalledPackage(const Package &apkg)
     return true;
 }
 
+void PackageList::clear()
+{
+    m_packageList.clear();
+    m_curSite = 0;
+}
+
 QDebug & operator<<(QDebug &out, PackageList &c)
 {
     out << "PackageList( " 

@@ -49,6 +49,7 @@ class GlobalConfig {
         QList<Mirror*> *mirrors() { return &m_mirrors; }
         /// return package orientated news
         QHash<QString, QString> *news() { return &m_news; }
+        void clear(); 
 
     protected:
         bool parseFromFile(const QString &fileName);

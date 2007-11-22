@@ -107,6 +107,8 @@ public:
     // 0.5.3
     bool hasConfig();
 
+    void clear();
+
 signals:
     void configLoaded();
 

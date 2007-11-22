@@ -306,6 +306,15 @@ bool GlobalConfig::parse(QIODevice *ioDev)
     return true;
 }
 
+void GlobalConfig::clear()
+{
+    m_sites.clear();
+    m_news.clear();
+    m_mirrors.clear();
+    m_packages.clear();
+}
+
+
 QDebug &operator<<(QDebug &out,GlobalConfig &c)
 {
     out << c.m_baseURL;
