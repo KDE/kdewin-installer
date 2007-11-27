@@ -5,50 +5,23 @@
 #include "settings.h"
 #include "settingspage.h"
 #include "database.h"
+#include "mirrors.h"
 
 QWidget *SettingsDownloadPage::widget()
 {
     ui.downloadGroupBox->setFlat(true);
     ui.downloadGroupBox->setTitle("");
-    ui.downloadMirror->setVisible(false);
-    ui.downloadMirrorLabel->setVisible(false);
     return ui.downloadGroupBox;
 }
 
 void SettingsDownloadPage::reset()
 {
-#if 0
-    ui.downloadMirror->setEditText(QString("%1").arg(s.mirror()));
-
-    if (m_globalConfig && ui.downloadMirror->count() == 0) 
-    {
-        int currentIndex = 0;
-        if (m_globalConfig->mirrors()->size() > 0) 
-        {
-            QList<GlobalConfig::Mirror*>::iterator p = m_globalConfig->mirrors()->begin();
-            for (int i = 0; p != m_globalConfig->mirrors()->end(); p++, i++)
-            {
-                mirrorList << ((*p)->url);
-                if (s.mirror() == (*p)->url)
-                    currentIndex = i;
-            }
-        }
-        else if (!s.mirror().isEmpty())
-            mirrorList << s.mirror();
-
-        mirrorList << s.localMirrors();
-
-        rebuildMirrorList(0);
-    }
-#endif
+    /// @TODO set initial values 
 }
 
 void SettingsDownloadPage::accept()
 {
     s.setDownloadDir(ui.tempPathEdit->text());
-    if (!ui.downloadMirror->currentText().isEmpty() 
-            && s.mirror() != ui.downloadMirror->currentText())
-        s.setMirror(ui.downloadMirror->currentText());
 }
 
 void SettingsDownloadPage::reject()
@@ -57,7 +30,62 @@ void SettingsDownloadPage::reject()
 
 bool SettingsDownloadPage::isComplete()
 {
-    return !ui.rootPathEdit->text().isEmpty();
+    return !ui.tempPathEdit->text().isEmpty();
+}
+
+QWidget *SettingsMirrorPage::widget()
+{
+    ui.mirrorGroupBox->setFlat(true);
+    ui.mirrorGroupBox->setTitle("");
+    return ui.mirrorGroupBox;
+}
+
+void SettingsMirrorPage::reset()
+{
+    Mirrors &mirrors = Mirrors::getInstance();
+    if (mirrors.mirrors().size() == 0)
+    {
+        /// @TODO add vivible progress bar
+        if ( !mirrors.fetch(Mirrors::Cygwin,QUrl("http://download.cegit.de/kde-windows/mirrors.lst")) ) 
+        {
+            qCritical() << "could not load mirrors"; 
+            // display warning box
+        }
+    }
+
+    QUrl currentMirror = QUrl(s.mirror());
+    
+	foreach(MirrorType m, mirrors.mirrors())
+	{
+        qDebug() << m;
+    	ui.downloadMirror->addItem(m.toString(),m.url);
+    }
+    qDebug() << currentMirror;
+    int index = ui.downloadMirror->findData(currentMirror);
+    if (index != -1)
+        ui.downloadMirror->setCurrentIndex(index);
+    else
+    {
+        ui.downloadMirror->addItem(currentMirror.toString(),currentMirror);
+        ui.downloadMirror->setCurrentIndex(ui.downloadMirror->count()-1);
+    }
+}
+
+void SettingsMirrorPage::accept()
+{
+    QUrl data = ui.downloadMirror->itemData(ui.downloadMirror->currentIndex()).toUrl();
+    qDebug() << data;
+    if (!data.isEmpty() && QUrl(s.mirror()) != data)
+        s.setMirror(data.toString());
+}
+
+void SettingsMirrorPage::reject()
+{
+}
+
+bool SettingsMirrorPage::isComplete()
+{
+    return !ui.downloadMirror->currentText().isEmpty();
 }
 
 QWidget *SettingsInstallPage::widget()
@@ -192,14 +220,16 @@ bool SettingsProxyPage::isComplete()
 }
 
 SettingsPage::SettingsPage(QWidget *parent)
-: QDialog(parent), m_globalConfig(0), s(Settings::getInstance()), 
+: QDialog(parent), s(Settings::getInstance()), 
   m_downloadPage(ui), 
   m_installPage(ui), 
-  m_proxyPage(ui)
+  m_proxyPage(ui),
+  m_mirrorPage(ui)
 {
     ui.setupUi(this);
     connect( ui.rootPathSelect,SIGNAL(clicked()),this,SLOT(rootPathSelectClicked()) );
     connect( ui.tempPathSelect,SIGNAL(clicked()),this,SLOT(tempPathSelectClicked()) );
+	connect( ui.addMirrorButton,SIGNAL(clicked()), this, SLOT(addNewMirrorClicked()));
 
     connect( ui.proxyManual,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
     connect( ui.proxyFireFox,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
@@ -216,12 +246,14 @@ void SettingsPage::init()
     m_downloadPage.reset();
     m_installPage.reset();
     m_proxyPage.reset();
+    m_mirrorPage.reset();
 
     ui.displayTitlePage->setCheckState(s.showTitlePage() ? Qt::Checked : Qt::Unchecked);
     ui.createStartMenuEntries->setCheckState(s.createStartMenuEntries() ? Qt::Checked : Qt::Unchecked);
     ui.nestedDownloadTree->setCheckState(s.nestedDownloadTree() ? Qt::Checked : Qt::Unchecked);
     ui.installDetails->setCheckState(s.installDetails() ? Qt::Checked : Qt::Unchecked);
     ui.autoNextStep->setCheckState(s.autoNextStep() ? Qt::Checked : Qt::Unchecked);
+    
 }
 
 void SettingsPage::accept()
@@ -230,6 +262,7 @@ void SettingsPage::accept()
     m_downloadPage.accept();
     m_installPage.accept();
     m_proxyPage.accept();
+    m_mirrorPage.accept();
 
     s.setShowTitlePage(ui.displayTitlePage->checkState() == Qt::Checked ? true : false);
     s.setNestedDownloadTree(ui.nestedDownloadTree->checkState() == Qt::Checked ? true : false);
@@ -240,7 +273,11 @@ void SettingsPage::accept()
 void SettingsPage::reject()
 {
     hide();
-    init(); // reinit page to restore old settings
+    m_downloadPage.reject();
+    m_installPage.reject();
+    m_proxyPage.reject();
+    m_mirrorPage.reject();
+    init(); // reinit page to restore old settings, is this really required ? 
 }
 
 void SettingsPage::rootPathSelectClicked()
@@ -263,15 +300,18 @@ void SettingsPage::tempPathSelectClicked()
         ui.tempPathEdit->setText(QDir::toNativeSeparators(fileName));
 }
 
-void SettingsPage::rebuildMirrorList(int index)
+
+void SettingsPage::addNewMirrorClicked()
 {
-    disconnect(ui.downloadMirror, SIGNAL(currentIndexChanged(int)), 0, 0);
-	ui.downloadMirror->clear();
-	ui.downloadMirror->addItems(mirrorList);
-	ui.downloadMirror->addItem("...Add Mirror...", 0);
-	ui.downloadMirror->setCurrentIndex(index);
-	connect(ui.downloadMirror, SIGNAL(currentIndexChanged(int)), this, SLOT(addNewMirror(int)));
+	bool ok;
+    QString text = QInputDialog::getText(this, tr("Add a new Mirror"),
+                                         tr("Mirror address:"), QLineEdit::Normal,
+                                         QString("http://"), &ok);
+    if (ok && !text.isEmpty()) 
+        ui.downloadMirror->addItem(text,QUrl(text));
 }
+
+
 
 void SettingsPage::switchProxyFields(bool mode)
 {
@@ -280,23 +320,6 @@ void SettingsPage::switchProxyFields(bool mode)
     ui.proxyUserName->setEnabled(mode);
     ui.proxyPassword->setEnabled(mode);
 }
-
-void SettingsPage::addNewMirror(int index)
-{
-	if(index == ui.downloadMirror->count() - 1)
-	{
-		bool ok;
-	    QString text = QInputDialog::getText(this, tr("Add a new Mirror"),
-	                                         tr("Mirror address:"), QLineEdit::Normal,
-	                                         QString("http://"), &ok);
-        if (ok && !text.isEmpty()) {
-            mirrorList << text;
-            s.addLocalMirror(text);
-        }
-		rebuildMirrorList(ui.downloadMirror->count() - 1);
-	}
-}
-
 
 
 #if test

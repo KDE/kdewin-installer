@@ -427,6 +427,7 @@ InstallerEngineGui::InstallerEngineGui (QWidget *parent, DownloaderProgress *pro
 void InstallerEngineGui::init()
 {
     InstallerEngine::init();
+    /// @TODO add updates to category cache     
 }
 
 void InstallerEngineGui::reload()
@@ -464,14 +465,19 @@ void InstallerEngineGui::setLeftTreeData ( QTreeWidget *tree )
     for ( int i = 0; i < tree->columnCount(); i++ )
         tree->resizeColumnToContents ( i );
 
-    tree->setCurrentItem ( categoryList.first() );
-    categoryList.first()->setSelected ( true );
+    if (categoryList.size() > 0)
+    {
+        tree->setCurrentItem ( categoryList.first() );
+        categoryList.first()->setSelected ( true );
+    }        
 }
 // @TODO
 extern QTreeWidget *tree;
 
 void InstallerEngineGui::on_leftTree_itemClicked ( QTreeWidgetItem *item, int column, QTextEdit *info )
 {
+    if (!item || !info)
+        return; 
     info->setText ( item->text ( 1 ) );
     QString category = item->text ( 0 );
     setPageSelectorWidgetData ( tree,category );

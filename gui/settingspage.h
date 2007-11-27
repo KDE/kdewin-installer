@@ -31,7 +31,7 @@ class SettingsDownloadPage : public SettingsSubPage
     Q_OBJECT 
 
 public: 
-    SettingsDownloadPage(Ui::SettingsDialog &ui) 
+    SettingsDownloadPage(Ui::SettingsDialog &ui)
         : SettingsSubPage(ui) {}
     virtual QWidget *widget();
     virtual void reset();
@@ -40,8 +40,20 @@ public:
     virtual bool isComplete();
 
 protected:
-    GlobalConfig *m_globalConfig;
-    QStringList mirrorList;
+};
+
+class SettingsMirrorPage : public SettingsSubPage
+{
+    Q_OBJECT 
+
+public: 
+    SettingsMirrorPage(Ui::SettingsDialog &ui)
+        : SettingsSubPage(ui) {}
+    virtual QWidget *widget();
+    virtual void reset();
+    virtual void accept();
+    virtual void reject();
+    virtual bool isComplete();
 };
 
 class SettingsInstallPage : public SettingsSubPage
@@ -75,35 +87,31 @@ class SettingsPage : public QDialog
 public:
     SettingsPage(QWidget *parent = 0);
     void init();
-    void setGlobalConfig(GlobalConfig *globalConfig) 
+    QT_DEPRECATED void setGlobalConfig(GlobalConfig *globalConfig) 
     { 
-        m_globalConfig = globalConfig; 
     }
     SettingsDownloadPage *downloadPage() { return &m_downloadPage; }
     SettingsInstallPage *installPage() { return &m_installPage; }
     SettingsProxyPage *proxyPage() {return &m_proxyPage; }
+    SettingsMirrorPage *mirrorPage() {return &m_mirrorPage; }
 
 protected:
     SettingsDownloadPage m_downloadPage;
     SettingsInstallPage m_installPage;
     SettingsProxyPage m_proxyPage;
+    SettingsMirrorPage m_mirrorPage;
 
 private slots: 
     void accept();
     void reject();
     void rootPathSelectClicked();
     void tempPathSelectClicked();
+    void addNewMirrorClicked();
     void switchProxyFields(bool checked);
-    void addNewMirror(int index);
      
 private:
     Ui::SettingsDialog ui;
-    GlobalConfig *m_globalConfig;
-    void rebuildMirrorList(int index);
     Settings &s;
-    QStringList mirrorList;
-
-friend class SettingsDownloadPage;
 };
  
 

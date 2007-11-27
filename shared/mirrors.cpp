@@ -119,7 +119,7 @@ bool Mirrors::parse(QIODevice *ioDev)
         {
             while (!ioDev->atEnd())
             {
-                QByteArray line = ioDev->readLine();
+                QByteArray line = ioDev->readLine().replace("\n","");
                 if (line.startsWith("#"))
                     continue;
                 QList<QByteArray> a = line.split(';');
@@ -135,6 +135,12 @@ bool Mirrors::parse(QIODevice *ioDev)
     }
     return true;
 }
+
+Mirrors &Mirrors::getInstance()
+{
+    static Mirrors mirrors;
+    return mirrors;
+}    
 
 QDebug &operator<<(QDebug &out, const MirrorTypeList &c)
 {

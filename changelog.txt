@@ -1,6 +1,12 @@
 ChangeLog
 =========
 
+recent
+------
+- installer-gui: - separated mirror list from config file. It is now loaded from the file 
+                   mirrors.lst from the top level dir of download.cegit.de
+                 - refactored winzard pages - the page content comes from the SettingsPage
+
 0.8.3-4
 -------
 - installer-gui: - fixed http 302 Permanted moved condition

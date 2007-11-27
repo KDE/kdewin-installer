@@ -49,6 +49,7 @@
 #include "installerenginegui.h"
 #include "settings.h"
 #include "settingspage.h"
+#include "mirrors.h"
 
 extern InstallWizard *wizard;
 
@@ -88,7 +89,7 @@ InstallWizard::InstallWizard(QWidget *parent)
     pathSettingsPage = new PathSettingsPage(this,settingsPage->installPage());
     proxySettingsPage = new ProxySettingsPage(this,settingsPage->proxyPage());
     downloadSettingsPage = new DownloadSettingsPage(this,settingsPage->downloadPage());
-    mirrorSettingsPage = new MirrorSettingsPage(this);
+    mirrorSettingsPage = new MirrorSettingsPage(this,settingsPage->mirrorPage());
     packageSelectorPage = new PackageSelectorPage(this);
     downloadPage = new DownloadPage(this);
     dependenciesPage = new DependenciesPage(this);
@@ -272,79 +273,39 @@ bool DownloadSettingsPage::isComplete()
 }
 
 
-MirrorSettingsPage::MirrorSettingsPage(InstallWizard *wizard)
-        : InstallWizardPage(wizard)
+MirrorSettingsPage::MirrorSettingsPage(InstallWizard *wizard,SettingsSubPage *page)
+        : InstallWizardPage(wizard,page)
 {
     topLabel = new QLabel(tr(
                               "<h1>Select Mirror</h1>"
                               "<p>Select the download mirror from where you want to download KDE packages.</p>"
                           ));
 
-    mirrorLabel = new QLabel(tr("Download Mirror:"));
-    mirrorEdit = new QComboBox;
-    mirrorList = new QStringList;
-    QGridLayout *layout = new QGridLayout;
-    layout->addWidget(topLabel, 0, 0, 1, 2,Qt::AlignTop);
-    layout->setRowMinimumHeight(1, 10);
-    layout->addWidget(mirrorLabel, 2, 0);
-    layout->addWidget(mirrorEdit, 2, 1);
-    /// @TODO add stretch item 
-    layout->addWidget(statusLabel,10,0,1,2,Qt::AlignBottom);
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(topLabel,1,Qt::AlignTop);
+    layout->addWidget(page->widget(),10);
+    layout->addWidget(statusLabel,1,Qt::AlignBottom);
     setLayout(layout);
 }
 
 void MirrorSettingsPage::resetPage()
 {
-    /// @TODO don't know how to avoid reloading all the stuff when we are going back 
-    engine->initGlobalConfig();
-    QList<GlobalConfig::Mirror*>::iterator p = engine->globalConfig()->mirrors()->begin();
-    for (; p != engine->globalConfig()->mirrors()->end(); p++) {
-        *mirrorList << QString((*p)->url);
-    }
-    rebuildMirrorList(0);
-
-    Settings &s = Settings::getInstance();
-    if (!s.mirror().isEmpty())
-        mirrorEdit->setEditText(s.mirror());
+    page->reset();
 }
 
 WizardPage *MirrorSettingsPage::nextPage()
 {
-    Settings &s = Settings::getInstance();
-    s.setMirror(mirrorEdit->currentText());
-    engine->initPackages();
-
+    page->accept();
     wizard->settingsButton->show();
+
+    Settings &s = Settings::getInstance();
     s.setFirstRun(false);
     return wizard->packageSelectorPage;
 }
 
 bool MirrorSettingsPage::isComplete()
 {
-    return (!mirrorEdit->currentText().isEmpty());
-}
-
-void MirrorSettingsPage::addNewMirror(int index)
-{
-    if(index == mirrorEdit->count() - 1) {
-        bool ok;
-        QString text = QInputDialog::getText(this, tr("Add a new Mirror"),
-                                             tr("Mirror address:"), QLineEdit::Normal,
-                                             QString("http://"), &ok);
-        if (ok && !text.isEmpty() && text != "http://") 
-            *mirrorList << text;
-        rebuildMirrorList(mirrorEdit->count() - 1);
-    }
-}
-
-void MirrorSettingsPage::rebuildMirrorList(int index)
-{
-    disconnect(mirrorEdit, SIGNAL(currentIndexChanged(int)), 0, 0);
-    mirrorEdit->clear();
-    mirrorEdit->addItems(*mirrorList);
-    mirrorEdit->addItem(tr("...Add Mirror..."), 0);
-    mirrorEdit->setCurrentIndex(index);
-    connect(mirrorEdit, SIGNAL(currentIndexChanged(int)), this, SLOT(addNewMirror(int)));
+    return page->isComplete();
 }
 
 PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
@@ -357,7 +318,7 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
     splitter->setOrientation(Qt::Vertical);
 
     leftTree  = new QTreeWidget;
-    engine->setLeftTreeData(leftTree);
+    //engine->setLeftTreeData(leftTree);
 
     QHBoxLayout* hl = new QHBoxLayout;
     hl->addWidget(leftTree);
@@ -371,7 +332,7 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
     top->setLayout(hl);
 
     tree = new QTreeWidget;
-    engine->setPageSelectorWidgetData(tree);
+    //engine->setPageSelectorWidgetData(tree);
 
     splitter->addWidget(top);
     splitter->addWidget(tree);
@@ -457,6 +418,8 @@ PackageSelectorPage::PackageSelectorPage(InstallWizard *wizard)
 
 void PackageSelectorPage::resetPage()
 {
+    /// @TODO display separate window
+    engine->init();
     connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
     connect(leftTree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(on_leftTree_itemClicked(QTreeWidgetItem *, int)));
     connect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));

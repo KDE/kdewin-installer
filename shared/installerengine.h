@@ -71,6 +71,7 @@ public:
     static QString fallBackURL;
 
 protected slots:
+    //@ TODO using this slots make thing much complicater as necessary 
     void installDirChanged(const QString &newdir);
     void mirrorChanged(const QString &mirror);
 

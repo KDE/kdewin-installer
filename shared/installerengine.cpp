@@ -211,6 +211,7 @@ void InstallerEngine::stop()
 void InstallerEngine::installDirChanged(const QString &newdir)
 {
     m_installer->setRoot(newdir);
+    // this will fetch installed packages
     m_database->setRoot(newdir);
 }
 

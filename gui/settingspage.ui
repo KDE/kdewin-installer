@@ -6,11 +6,14 @@
     <x>0</x>
     <y>0</y>
     <width>591</width>
-    <height>536</height>
+    <height>554</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Dialog</string>
+  </property>
+  <property name="modal" >
+   <bool>true</bool>
   </property>
   <widget class="QLabel" name="label_2" >
    <property name="geometry" >
@@ -38,7 +41,7 @@ p, li { white-space: pre-wrap; }
    <property name="geometry" >
     <rect>
      <x>350</x>
-     <y>330</y>
+     <y>360</y>
      <width>231</width>
      <height>151</height>
     </rect>
@@ -101,7 +104,7 @@ p, li { white-space: pre-wrap; }
    <property name="geometry" >
     <rect>
      <x>10</x>
-     <y>330</y>
+     <y>360</y>
      <width>331</width>
      <height>151</height>
     </rect>
@@ -261,7 +264,7 @@ p, li { white-space: pre-wrap; }
    <property name="geometry" >
     <rect>
      <x>390</x>
-     <y>500</y>
+     <y>520</y>
      <width>191</width>
      <height>25</height>
     </rect>
@@ -476,7 +479,7 @@ p, li { white-space: pre-wrap; }
      <x>10</x>
      <y>200</y>
      <width>571</width>
-     <height>121</height>
+     <height>81</height>
     </rect>
    </property>
    <property name="title" >
@@ -552,11 +555,24 @@ p, li { white-space: pre-wrap; }
      <string>...</string>
     </property>
    </widget>
+  </widget>
+  <widget class="QGroupBox" name="mirrorGroupBox" >
+   <property name="geometry" >
+    <rect>
+     <x>10</x>
+     <y>290</y>
+     <width>571</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="title" >
+    <string>Mirror Settings</string>
+   </property>
    <widget class="QComboBox" name="downloadMirror" >
     <property name="geometry" >
      <rect>
       <x>130</x>
-      <y>82</y>
+      <y>20</y>
       <width>330</width>
       <height>22</height>
      </rect>
@@ -566,7 +582,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry" >
      <rect>
       <x>20</x>
-      <y>80</y>
+      <y>18</y>
       <width>101</width>
       <height>26</height>
      </rect>
@@ -584,11 +600,46 @@ p, li { white-space: pre-wrap; }
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
+   <widget class="QPushButton" name="addMirrorButton" >
+    <property name="geometry" >
+     <rect>
+      <x>480</x>
+      <y>20</y>
+      <width>75</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text" >
+     <string>Add &amp;Mirror</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <tabstops>
   <tabstop>rootPathEdit</tabstop>
   <tabstop>rootPathSelect</tabstop>
+  <tabstop>compilerMinGW</tabstop>
+  <tabstop>compilerMSVC</tabstop>
+  <tabstop>compilerUnspecified</tabstop>
+  <tabstop>installModeEndUser</tabstop>
+  <tabstop>installModeDeveloper</tabstop>
+  <tabstop>createStartMenuEntries</tabstop>
+  <tabstop>tempPathEdit</tabstop>
+  <tabstop>tempPathSelect</tabstop>
+  <tabstop>nestedDownloadTree</tabstop>
+  <tabstop>downloadMirror</tabstop>
+  <tabstop>addMirrorButton</tabstop>
+  <tabstop>proxyOff</tabstop>
+  <tabstop>proxyIE</tabstop>
+  <tabstop>proxyFireFox</tabstop>
+  <tabstop>proxyManual</tabstop>
+  <tabstop>proxyHost</tabstop>
+  <tabstop>proxyPort</tabstop>
+  <tabstop>proxyUserName</tabstop>
+  <tabstop>proxyPassword</tabstop>
+  <tabstop>displayTitlePage</tabstop>
+  <tabstop>installDetails</tabstop>
+  <tabstop>autoNextStep</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>
@@ -600,8 +651,8 @@ p, li { white-space: pre-wrap; }
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>647</x>
-     <y>329</y>
+     <x>580</x>
+     <y>520</y>
     </hint>
     <hint type="destinationlabel" >
      <x>157</x>
@@ -616,8 +667,8 @@ p, li { white-space: pre-wrap; }
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>715</x>
-     <y>329</y>
+     <x>580</x>
+     <y>520</y>
     </hint>
     <hint type="destinationlabel" >
      <x>286</x>

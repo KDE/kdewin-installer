@@ -40,6 +40,10 @@ class MirrorType
         QString continent; 
         QString country; 
     friend QDebug &operator<<(QDebug &,const MirrorType &);
+        QString toString()
+        {
+            return name + " (" + continent + "," + country + ")";
+        }            
 };
 
 typedef QList<MirrorType> MirrorTypeList;
@@ -53,6 +57,7 @@ class Mirrors /* : public QObject */
         Mirrors();
         bool fetch(Type type, QUrl url);
         MirrorTypeList &mirrors() { return m_mirrors; }
+        static Mirrors &getInstance();
 
     protected:
         bool parse(const QString &fileName);

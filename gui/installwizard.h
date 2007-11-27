@@ -153,19 +153,11 @@ class MirrorSettingsPage : public InstallWizardPage
     Q_OBJECT
 
 public:
-    MirrorSettingsPage(InstallWizard *wizard);
+    MirrorSettingsPage(InstallWizard *wizard, SettingsSubPage *s);
 
     void resetPage();
     WizardPage *nextPage();
     bool isComplete();
-
-private:
-    QLabel    *mirrorLabel;
-    QComboBox *mirrorEdit;
-    QStringList *mirrorList;
-    void rebuildMirrorList(int index);
-private slots:
-    void addNewMirror(int index);
 };
 
 class QTreeWidget;

@@ -174,6 +174,7 @@ set(installer_shared_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/package.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/packagelist.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/site.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/mirrors.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/settings.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/installerengine.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/misc.h
