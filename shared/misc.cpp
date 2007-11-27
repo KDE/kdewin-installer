@@ -759,7 +759,7 @@ void myMessageOutput(QtMsgType type, const char *msg)
          log->flush();
          abort();
     }
-    f.close();
+    log->close();
 }
 
 
