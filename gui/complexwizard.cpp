@@ -179,7 +179,6 @@ void ComplexWizard::cancelButtonClicked()
     history.last()->reject();
     writeSettings();
     reject();
-    close();
     qApp->closeAllWindows();
     qApp->exit(0);
 }
