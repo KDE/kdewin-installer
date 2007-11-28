@@ -107,7 +107,6 @@ InstallWizard::InstallWizard(QWidget *parent)
     }
     else
     {
-        engine->init();
         setFirstPage(packageSelectorPage);
     }
 }
