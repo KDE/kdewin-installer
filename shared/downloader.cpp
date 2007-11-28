@@ -84,16 +84,19 @@ bool Downloader::start(const QUrl &url, const QString &fileName)
     {
         QFile::remove(fileName);
         QFile::copy(url.toLocalFile(),fileName);
+        m_fileName = fileName;
         return true;
     }
 
     QFile *file = new QFile(fileName);
     if (!file->open(QIODevice::WriteOnly))
     {
-      setError(tr("Unable to open file %1: %2.").arg(fileName).arg(file->errorString()));
-      delete file;
-      return false;
+        setError(tr("Unable to open file %1: %2.").arg(fileName).arg(file->errorString()));
+        delete file;
+        m_fileName = "";
+        return false;
     }
+    m_fileName = fileName;
 
     qDebug() << "Downloading" << url.toString() << " to " << file->fileName();
     return startInternal(url, file);
@@ -101,6 +104,8 @@ bool Downloader::start(const QUrl &url, const QString &fileName)
 
 bool Downloader::start(const QUrl &url, QByteArray &ba)
 {
+    m_fileName = "";
+    
     if(url.isEmpty())
         return true;
     if (m_progress)
@@ -177,6 +182,8 @@ void Downloader::cancel()
     m_httpRequestAborted = true;
     qDebug() << "Download canceled.";
     m_http->abort();
+    if (!m_fileName.isEmpty())
+        QFile::remove(m_fileName);
 }
 
 void Downloader::httpRequestFinished(int requestId, bool error)
