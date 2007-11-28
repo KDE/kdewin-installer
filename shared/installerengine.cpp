@@ -39,7 +39,8 @@ QString InstallerEngine::defaultConfigURL;
 QString InstallerEngine::fallBackURL = "http://82.149.170.66/kde-windows";
 
 InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar)
-    : QObject(), m_instProgressBar(instProgressBar), m_addedPackages(false), m_globalConfigReaded(false)
+    : QObject(), m_instProgressBar(instProgressBar), m_addedPackages(false), m_globalConfigReaded(false),
+    m_canceled(false), m_initFinished(false)
 {
     m_database = new Database();
     m_downloader = new Downloader(/*blocking=*/ true,progressBar);
@@ -49,7 +50,7 @@ InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgre
     m_installer->setDatabase(m_database);
     m_globalConfig = new GlobalConfig(m_downloader);
     m_packageResources = new PackageList();
-    m_initFinished = false;
+
     connect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString&)),this,SLOT(installDirChanged(const QString&)));
     connect(&Settings::getInstance(),SIGNAL(mirrorChanged(const QString&)),this,SLOT(mirrorChanged(const QString&)));
 }
@@ -206,6 +207,7 @@ Package *InstallerEngine::getPackageByName(const QString &name,const QString &ve
 void InstallerEngine::stop()
 {
     m_downloader->cancel();
+    m_canceled = true;
 }
 
 void InstallerEngine::installDirChanged(const QString &newdir)

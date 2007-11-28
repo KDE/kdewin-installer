@@ -460,6 +460,7 @@ WizardPage *PackageSelectorPage::nextPage()
     disconnect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString &)),0,0);
     disconnect(&Settings::getInstance(),SIGNAL(compilerTypeChanged()),0,0);
     engine->checkUpdateDependencies();
+    wizard->settingsButton->setEnabled(false);
     wizard->nextButton->setEnabled(true);
     if (wizard->dependenciesPage->dependenciesList->count() > 0)
         return wizard->dependenciesPage;

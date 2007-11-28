@@ -547,6 +547,8 @@ void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString 
         Package *installedPackage = m_database->getPackage(availablePackage->name());
         QString installedVersion = installedPackage ? installedPackage->version() : "";
         QString availableVersion = availablePackage->version();
+
+        /// @TODO add version format check to be sure available package is really newer
         data << availablePackage->name() 
             << (availableVersion != installedVersion ? availablePackage->version() : "")
             << installedVersion 
@@ -681,7 +683,7 @@ bool InstallerEngineGui::downloadPackageItem(Package *pkg, Package::Type type )
     if ( !isMarkedForDownload ( pkg,type ) ) 
         return true;
 
-    while (1) {
+    while (!m_canceled) {
         if (pkg->downloadItem ( m_downloader, type ))
             return true;
         QMessageBox::StandardButton result = QMessageBox::critical(
@@ -711,6 +713,8 @@ bool InstallerEngineGui::downloadPackages ( QTreeWidget *tree, const QString &ca
         Package *pkg = *i;
         if ( !pkg )
             continue;
+        if (m_canceled)
+            return false;
 
         if (!downloadPackageItem(pkg,Package::BIN))
             return false;
@@ -732,6 +736,9 @@ bool InstallerEngineGui::removePackages ( QTreeWidget *tree, const QString &cate
         Package *pkg = *i;
         if ( !pkg )
             continue;
+        if (m_canceled)
+            return false;
+
         bool all = false; //isMarkedForRemoval(pkg,Package::ALL);
         if ( all | isMarkedForRemoval ( pkg,Package::BIN ) )
             pkg->removeItem ( m_installer, Package::BIN );
@@ -753,6 +760,9 @@ bool InstallerEngineGui::installPackages ( QTreeWidget *tree,const QString &_cat
         Package *pkg = *i;
         if ( !pkg )
             continue;
+        if (m_canceled)
+            return false;
+
         bool all = false;//isMarkedForInstall(pkg,Package::ALL);
         if ( all || isMarkedForInstall ( pkg,Package::BIN ) )
             pkg->installItem ( m_installer, Package::BIN );
