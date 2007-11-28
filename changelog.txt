@@ -1,11 +1,14 @@
 ChangeLog
 =========
 
-recent
+0.8.3-5
 ------
 - installer-gui: - separated mirror list from config file. It is now loaded from the file 
                    mirrors.lst from the top level dir of download.cegit.de
                  - refactored winzard pages - the page content comes from the SettingsPage
+                 - cleaned internal structure to avoid displaying duplicated packages
+                 - fixed download canceling 
+                 - delete zero length files when download was canceled.
 
 0.8.3-4
 -------
