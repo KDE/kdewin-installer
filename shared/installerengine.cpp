@@ -120,7 +120,7 @@ bool InstallerEngine::readGlobalConfig()
 
     if (!m_globalConfig->parse(configFiles))
         return false;
-
+    qDebug() << "globalconfig has timestamp" << m_globalConfig->timeStamp().toString(Qt::SystemLocaleDate);
     return true;
 }
 

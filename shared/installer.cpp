@@ -108,10 +108,16 @@ bool Installer::createManifestFile()
     QString mFile = m_packageToInstall->manifestFileName(m_installType);
     QString vFile = m_packageToInstall->versionFileName(m_installType);
 
-    // write manifest file if not exist or is corrupted
+    
     QFileInfo a(destpath +"/manifest/"+ mFile);
-    if (a.exists() && a.isFile() && a.size() > 0)
+
+    // write manifest file by ourself if it is not exist or is corrupted 
+    // or path relocations had been applied
+    if (m_packageToInstall->pathRelocations().size() == 0 && 
+            a.exists() && a.isFile() && a.size() > 0)
         return true;
+    
+    
     // in some gnuwin32 packages the manifest file is a directory
     if (a.isDir())
     {
@@ -207,6 +213,7 @@ bool Installer::unbz2File(const QString &destpath, const QString &zipFile, const
     for(StringHash::const_iterator i = pathRelocations.constBegin(); i != pathRelocations.constEnd(); i++)
     {
       name = name.replace(QRegExp(i.key()),i.value());
+      qDebug() << __FUNCTION__ << tarFileInfo.fileName << "relocated to" << name;
     }
     m_files << name;
     QString outPath = path.filePath(name);
@@ -308,11 +315,12 @@ bool Installer::unzipFile(const QString &destpath, const QString &zipFile, const
       setError(tr("Can not get file information from zip file %1").arg(zipFile));
       return false;
     }
-        // relocate path names
+    // relocate path names
     QString name = info.name;
     for(StringHash::const_iterator i = pathRelocations.constBegin(); i != pathRelocations.constEnd(); i++)
     {
-      name = name.replace(QRegExp(i.key()),i.value());
+      name.replace(QRegExp(i.key()),i.value());
+      qDebug() << __FUNCTION__ << info.name << "relocated to" << name;
     }
     m_files << name;
     QString outPath = path.filePath(name);

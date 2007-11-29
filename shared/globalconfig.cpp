@@ -162,6 +162,10 @@ bool GlobalConfig::parse(QIODevice *ioDev)
 
             if (cmd[0] == "@format")
                 ;
+            else if (cmd[0] == "@timestamp")
+            {
+                m_timestamp = QDateTime::fromString(cmd[1],"YYYYMMddHHmm");
+            }
             else if (cmd[0] == "@mirror")
             {
                 mirror = new Mirror;
@@ -171,12 +175,12 @@ bool GlobalConfig::parse(QIODevice *ioDev)
             }
             else if (cmd[0] == "@news")
             {
-                QString name = cmd[1];
-                QString version = cmd[2];
+                QString date = cmd[1];
+                QString package = cmd[2];
                 cmd.removeFirst();
                 cmd.removeFirst();
                 cmd.removeFirst();
-                m_news[name+"-"+version] = cmd.join(" ");
+                m_news[date+"-"+package] = cmd.join(" ");
             }
             else if(inPackage)
             {
@@ -301,6 +305,8 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                  pkg->setName(cmd.join(" "));
                  inPackage=true;
             }
+            else
+                qWarning() << "unknown tag in config file" << cmd;
         }
     }
     return true;

@@ -25,6 +25,9 @@
 
 #include "site.h"
 #include "package.h"
+
+#include <QDateTime>
+
 class Downloader;
 
 class GlobalConfig {
@@ -49,6 +52,7 @@ class GlobalConfig {
         QList<Mirror*> *mirrors() { return &m_mirrors; }
         /// return package orientated news
         QHash<QString, QString> *news() { return &m_news; }
+        QDateTime &timeStamp() { return m_timestamp; }
         void clear(); 
 
     protected:
@@ -64,6 +68,7 @@ class GlobalConfig {
         QList <Mirror*> m_mirrors;
         QString m_baseURL;
         Downloader *m_downloader;
+        QDateTime m_timestamp;
 
     friend QDebug &operator<<(QDebug &,GlobalConfig &);
 };

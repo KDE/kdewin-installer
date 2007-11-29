@@ -1,6 +1,14 @@
 ChangeLog
 =========
 
+recent
+------
+- installer-gui: - fixed regular expression support for filename relocation on unpack
+                 - ignore package manifest files when filepath relocating on unpacking is used, 
+                   they are incorrect 
+                 - added timestamp to config file and print it to the log file, this can be used 
+                   for an live update client
+
 0.8.3-5
 ------
 - installer-gui: - separated mirror list from config file. It is now loaded from the file 

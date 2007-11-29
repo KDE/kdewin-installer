@@ -49,7 +49,8 @@ public:
 
     Database *database() { return m_database; }
     void setDatabase(Database *database) { m_database = database; }
-    bool install(Package *pkg, const Package::Type type, const QString &fileName, const StringHash &pathRelocations=StringHash());
+    /// @TODO pathRelocations are obsolated, they can be retrieved from the pkg parameter
+    QT_DEPRECATED bool install(Package *pkg, const Package::Type type, const QString &fileName, const StringHash &pathRelocations=StringHash());
     // installPackage(Package *pkg)
     //  bool readFromFile(QString const &fileName);
     //  bool writeToFile(QString const &fileName);
