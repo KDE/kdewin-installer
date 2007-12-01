@@ -8,6 +8,8 @@ recent
                    they are incorrect 
                  - added timestamp to config file and print it to the log file, this can be used 
                    for an live update client
+                 - added @minversion config item to set minimal required installer version, 
+                   if used installer version is lower as required a message box is printed 
 
 0.8.3-5
 ------

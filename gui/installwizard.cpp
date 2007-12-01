@@ -50,6 +50,7 @@
 #include "settings.h"
 #include "settingspage.h"
 #include "mirrors.h"
+#include "installerdialogs.h"
 
 extern InstallWizard *wizard;
 
@@ -97,7 +98,13 @@ InstallWizard::InstallWizard(QWidget *parent)
     installPage = new InstallPage(this);
     finishPage = new FinishPage(this);
 
-    setWindowTitle(tr("KDE Installer - Version " VERSION));
+    QString windowTitle = tr("KDE Installer - Version " VERSION);
+    setWindowTitle(windowTitle);
+
+    InstallerDialogs &d = InstallerDialogs::getInstance();
+    d.setTitle(windowTitle);
+    d.setParent(this);
+
     Settings &s = Settings::getInstance();
 
     if (s.isFirstRun() || s.showTitlePage())

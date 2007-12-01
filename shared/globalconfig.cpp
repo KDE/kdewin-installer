@@ -162,6 +162,8 @@ bool GlobalConfig::parse(QIODevice *ioDev)
 
             if (cmd[0] == "@format")
                 ;
+            else if (cmd[0] == "@minversion")
+                m_minimalInstallerVersion = cmd[1];
             else if (cmd[0] == "@timestamp")
             {
                 m_timestamp = QDateTime::fromString(cmd[1],"YYYYMMddHHmm");

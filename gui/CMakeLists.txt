@@ -37,6 +37,7 @@ set(installer_GUI_SOURCES
    installerenginegui.cpp
    packagestates.cpp
    main.cpp
+   installerdialogs.cpp
 )
 
 set(installer_GUI_HEADERS
@@ -45,6 +46,7 @@ set(installer_GUI_HEADERS
    settingspage.h
    installerenginegui.h
    packagestates.h
+   installerdialogs.h
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})

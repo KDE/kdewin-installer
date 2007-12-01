@@ -54,6 +54,8 @@ class GlobalConfig {
         QHash<QString, QString> *news() { return &m_news; }
         QDateTime &timeStamp() { return m_timestamp; }
         void clear(); 
+        /// return version of required installer
+        const QString &minimalInstallerVersion() { return m_minimalInstallerVersion; }
 
     protected:
         bool parseFromFile(const QString &fileName);
@@ -69,6 +71,7 @@ class GlobalConfig {
         QString m_baseURL;
         Downloader *m_downloader;
         QDateTime m_timestamp;
+        QString m_minimalInstallerVersion;
 
     friend QDebug &operator<<(QDebug &,GlobalConfig &);
 };

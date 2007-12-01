@@ -22,6 +22,7 @@
 
 // uncomment to display text instead of icons
 //#define DISABLE_ICONS
+#include "config.h"
 
 #include <QtDebug>
 #include <QDir>
@@ -49,6 +50,7 @@
 #include "database.h"
 
 #include "packagestates.h"
+#include "installerdialogs.h"
 
 /// holds the package selection and icon states
 PackageStates packageStates;
@@ -424,9 +426,31 @@ InstallerEngineGui::InstallerEngineGui (QWidget *parent, DownloaderProgress *pro
     }
 }
 
+int versionToInt(QString version)
+{
+    QStringList v = version.replace("-",".").split(".");
+    int n = 0;
+    foreach(QString a,v) 
+    {
+        bool ok;
+        int b = a.toInt(&ok);
+        if (ok)
+        {   
+            n += b;
+            n *= 100;
+        }
+    }
+    return n;
+}
+
 void InstallerEngineGui::init()
 {
-    InstallerEngine::init();
+    initGlobalConfig();
+    int minVersion = versionToInt(m_globalConfig->minimalInstallerVersion());
+    int currentVersion = versionToInt(VERSION);
+    if (minVersion != 0 && currentVersion < minVersion)
+        InstallerDialogs::getInstance().installerOutdated();
+    initPackages();
     /// @TODO add updates to category cache     
 }
 
