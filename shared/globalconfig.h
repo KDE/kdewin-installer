@@ -46,12 +46,19 @@ class GlobalConfig {
 
         /// return list of site definitions
         QList<Site*> *sites()  { return &m_sites;   } 
+
         /// return list of package definitions 
         QList<Package*> *packages() { return &m_packages; }
+
         /// return list of mirrors
         QList<Mirror*> *mirrors() { return &m_mirrors; }
+        
+        /// return category notes
+        QHash <QString,QString> &categoryNotes() { return m_categoryNotes; }
+        
         /// return package orientated news
         QHash<QString, QString> *news() { return &m_news; }
+
         QDateTime &timeStamp() { return m_timestamp; }
         void clear(); 
         /// return version of required installer
@@ -67,6 +74,7 @@ class GlobalConfig {
         QList <Package*> m_packages;
         // package news <key,value> where key = <name>-<version>
         QHash <QString,QString> m_news;
+        QHash <QString,QString> m_categoryNotes;
         QList <Mirror*> m_mirrors;
         QString m_baseURL;
         Downloader *m_downloader;

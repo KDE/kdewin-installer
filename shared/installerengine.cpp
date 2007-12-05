@@ -68,6 +68,10 @@ void InstallerEngine::initGlobalConfig()
     if (m_globalConfigReaded) 
         m_globalConfig->clear();
     readGlobalConfig();
+    QHash<QString, QString>::const_iterator i = m_globalConfig->categoryNotes().constBegin();
+    for (; i != m_globalConfig->categoryNotes().constEnd(); i++) 
+        categoryCache.setNote(i.key(),i.value());
+
     m_globalConfigReaded = true;
 }
 
@@ -190,6 +194,9 @@ bool InstallerEngine::addPackagesFromSites()
                 pkg->addCategories("mingw");
             if (pkg->name().contains("msvc"))
                 pkg->addCategories("msvc");
+
+            // add categories defined in the config 
+            pkg->addCategories(site->packageCategories(pkg->name()));
 
             m_packageResources->addPackage(*pkg);
             categoryCache.addPackage(pkg);

@@ -184,6 +184,13 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 cmd.removeFirst();
                 m_news[date+"-"+package] = cmd.join(" ");
             }
+            else if (cmd[0] == "@categorynotes")
+            {
+                QString category = cmd[1];
+                cmd.removeFirst();
+                cmd.removeFirst();
+                m_categoryNotes[category] = cmd.join(" ");
+            }
             else if(inPackage)
             {
                 if(cmd[0] == "@version")
@@ -289,6 +296,12 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     cmd.removeFirst();
                     cmd.removeFirst();
                     site->setPackageLongNotes(pkg,cmd.join(" "));
+                }
+                else if(cmd[0] == "@pkgcategory") {
+                    QString pkg = cmd[1];
+                    cmd.removeFirst();
+                    cmd.removeFirst();
+                    site->setPackageCategories(pkg,cmd);
                 }
             }
             else if(cmd[0] == "@site")

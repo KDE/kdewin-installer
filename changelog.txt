@@ -1,15 +1,20 @@
 ChangeLog
 =========
 
-recent
-------
+0.8.4
+-----
+- installer-gui: - added @minversion config item to set minimal required installer version, 
+                   if used installer version is lower as required a message box is printed 
+                 - added @categorynotes config item to set category specific notes outside a site section
+                 - added @pkgcategory config item in site section to add packages to a specific category
+
+0.8.3-6
+-------
 - installer-gui: - fixed regular expression support for filename relocation on unpack
                  - ignore package manifest files when filepath relocating on unpacking is used, 
                    they are incorrect 
                  - added timestamp to config file and print it to the log file, this can be used 
                    for an live update client
-                 - added @minversion config item to set minimal required installer version, 
-                   if used installer version is lower as required a message box is printed 
 
 0.8.3-5
 ------

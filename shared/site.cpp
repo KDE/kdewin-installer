@@ -71,6 +71,16 @@ QString Site::packageLongNotes(const QString &package)
     return m_packageLongNotes[package];
 }
 
+void Site::setPackageCategories(const QString &package, const QStringList &categories)
+{
+    m_packageCategories[package] = categories;
+}
+
+QStringList &Site::packageCategories(const QString &package)
+{
+    return m_packageCategories[package];
+}
+
 void Site::addExcludes(const QStringList &excludes)
 {
     QStringList::ConstIterator it = excludes.constBegin();
