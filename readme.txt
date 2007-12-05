@@ -41,9 +41,6 @@ TODO
     4 add mode for installing from local package directory 
       Q: how to restore the categories ? 
       Q: May be by storing packages into category dirs 
-    5 add support for relocatinng files in the root zip path 
-       example: the depends package installs all files in the install root
-                but all files should be located in bin dir
     6 remove empty directories when removing packages
     7 check for file in use
    
@@ -57,15 +54,15 @@ TODO
   	  -> currently by using a remove and install by hand 
   	12 if remote config is not available only display installed packages
   	18 only display firefox proxy option is firefox is installed 
-    19 in case a file could not be downloaded display a message box printing the reason -> in work 
 
 2 packager
-    1 add 7zip-suppport (at first by using external 7zip tool, because there is no usable 7zip compress library)
     2 exlude *d.exe in strip 
     3 exclude .#* *.rej *.orig files in src package
     4 add *d.exe files to lib package 
     5 don't exclude exe's ending with d from bin package when a debug version using dd is present, only the debug version should go into lib 
 
+3 mirror structure 
+    1 move config.txt and installer to top level dir of mirror 
 
 
 cmake support
