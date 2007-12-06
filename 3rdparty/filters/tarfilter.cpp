@@ -54,8 +54,8 @@ class TarFilter::Private
     Private(QIODevice *dev, QTextCodec *c)
   : device(dev),
     codec(c ? c : QTextCodec::codecForLocale()),
-    nextChunkSize(-1),
-    iBufSize(1024*1024)
+    iBufSize(1024*1024),
+    nextChunkSize(-1)
   {}
 
     struct tar_posix_header
@@ -103,6 +103,8 @@ bool TarFilter::Private::fi2tph(const FileInformations &infos)
   if(fn.startsWith('/'))
     fn = fn.mid(1);
 
+  long unsigned int fileSize = infos.fileType == directory ? 0 : infos.fileSize;
+  long unsigned int mtime    = infos.mtime != -1 ? infos.mtime : time(NULL);
   tar_posix_header hdr;
   memset(&hdr, 0, sizeof(hdr));
   QByteArray fn_part1 = fn.left(sizeof(hdr.name));
@@ -110,8 +112,8 @@ bool TarFilter::Private::fi2tph(const FileInformations &infos)
   sprintf(hdr.mode,   "%07x",     0x0fff & infos.mode);
   sprintf(hdr.uid,    "%07o",     infos.uid);
   sprintf(hdr.gid,    "%07o",     infos.gid);
-  sprintf(hdr.size,   "%011o",    infos.fileType == directory ? 0 : infos.fileSize);
-  sprintf(hdr.mtime,  "%011o",    infos.mtime != -1 ? infos.mtime : time(NULL));
+  sprintf(hdr.size,   "%011lo",   fileSize);
+  sprintf(hdr.mtime,  "%011lo",   mtime);
   memset(hdr.chksum,  ' ',        sizeof(hdr.chksum)); // 8 * ' '
   hdr.typeflag = infos.fileType;
   //memset(hdr.linkname, 0,          sizeof(hdr.linkname));
@@ -129,7 +131,7 @@ bool TarFilter::Private::fi2tph(const FileInformations &infos)
 
   int checksum = 0;
   const unsigned char *ptr = (const unsigned char*)(&hdr);
-  for (int i = 0; i < sizeof(hdr); i++)
+  for (unsigned i = 0; i < sizeof(hdr); i++)
     checksum += ptr[i];
   sprintf(hdr.chksum, "%06o", checksum);
 
@@ -203,7 +205,7 @@ bool TarFilter::Private::tph2fi(FileInformations &infos)
   memset(hdr.chksum, ' ', sizeof(hdr.chksum));
   int realChecksum = 0;
   const unsigned char *ptr = (const unsigned char*)(&hdr);
-  for (int i = 0; i < sizeof(hdr); i++)
+  for (unsigned i = 0; i < sizeof(hdr); i++)
     realChecksum += ptr[i];
   if(checksum != realChecksum) {
     lastError = QString(QLatin1String("Checksum does not match! needed: %1, got: %2")).arg(checksum).arg(realChecksum);

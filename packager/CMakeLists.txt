@@ -44,9 +44,17 @@ if (CMAKE_PRODUCTION_BUILD)
 endif (CMAKE_PRODUCTION_BUILD)
 
 if (UPX_EXECUTABLE AND CMAKE_PRODUCTION_BUILD)
-    add_custom_command(
-        TARGET kdewin-packager
-        POST_BUILD
-        COMMAND ${UPX_EXECUTABLE} --lzma -9 "${EXECUTABLE_OUTPUT_PATH}/kdewin-packager.exe"
-    )
+    if(WIN32)
+        add_custom_command(
+            TARGET kdewin-packager
+            POST_BUILD
+            COMMAND ${UPX_EXECUTABLE} --lzma -9 "${EXECUTABLE_OUTPUT_PATH}/kdewin-packager.exe"
+        )
+    else(WIN32)
+        add_custom_command(
+            TARGET kdewin-packager
+            POST_BUILD
+            COMMAND ${UPX_EXECUTABLE} --lzma -9 "${EXECUTABLE_OUTPUT_PATH}/kdewin-packager"
+        )
+    endif(WIN32)
 endif (UPX_EXECUTABLE AND CMAKE_PRODUCTION_BUILD)

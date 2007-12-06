@@ -73,11 +73,11 @@ QStringList GlobalConfig::fetch(const QString &baseURL)
 
 bool GlobalConfig::parse(const QStringList &configFiles)
 {
-    bool ret;
+    bool ret = true;
     foreach(QString configFile, configFiles) {
         ret = parseFromFile(configFile);
         if (Settings::hasDebug("GlobalConfig"))
-            qDebug() << "parse config file " << configFile << (ret == true ? "okay" : "failure") ;
+            qDebug() << "parse config file " << configFile << (ret ? "okay" : "failure") ;
     }
     return ret;
 }
@@ -126,8 +126,8 @@ bool GlobalConfig::parse(QIODevice *ioDev)
 {
     bool inSite = false;
     bool inPackage = false;
-    Site *site;
-    Package *pkg;
+    Site *site = 0;
+    Package *pkg = 0;
     Mirror *mirror;
 
     while (!ioDev->atEnd())
@@ -143,7 +143,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     qDebug() << __FUNCTION__ << *pkg;
                 inPackage=false;
             }
-            else if (inSite) 
+            else if (inSite)
             {
                 if (Settings::hasDebug("GlobalConfig"))
                     qDebug() << __FUNCTION__ << *site;

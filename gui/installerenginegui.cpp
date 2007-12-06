@@ -32,8 +32,6 @@
 #include <QFlags>
 #include <QMessageBox>
 
-#include <windows.h>
-
 #include "installerenginegui.h"
 #include "installwizard.h"
 #ifdef ENABLE_STYLE
@@ -178,7 +176,7 @@ void setIcon ( QTreeWidgetItem &item, Package::Type type, iconType action )
 
 void InstallerEngineGui::setInitialState ( QTreeWidgetItem &item, Package *available, Package *installed, int column )
 {
-    if (available) 
+    if (available)
     {
         if (available->hasType(Package::BIN))
             setIcon(item,Package::BIN,_nothing);
@@ -201,7 +199,7 @@ void InstallerEngineGui::setInitialState ( QTreeWidgetItem &item, Package *avail
                 setIcon(item,Package::SRC,_nothing);
         }
     }
-    if (installed) 
+    if (installed)
     {
         if (installed->isInstalled(Package::BIN))
             setIcon(item,Package::BIN,_keepinstalled);
@@ -245,7 +243,7 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
         isAvailable = available && (available->hasType(type) || available->hasType(Package::DOC));
         isInstalled = installed && (installed->isInstalled(type) || installed->hasType(Package::DOC));
     }
-    else 
+    else
     {
         isAvailable = available && available->hasType(type);
         isInstalled = installed && installed->isInstalled(type);
@@ -256,7 +254,7 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
     stateType newState = _Nothing;
     iconType iconState = _nothing;
 
-    if (currentState == _Nothing) 
+    if (currentState == _Nothing)
     {
         if (isAvailable && isInstalled && !sameVersion)
         {
@@ -272,14 +270,14 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
         {
             iconState = _remove;
             newState = _Remove;
-        }        
+        }
         else if (isAvailable && !isInstalled)
         {
             iconState = _install;
             newState = _Install;
-        }        
+        }
     }
-    else if (currentState == _Update) 
+    else if (currentState == _Update)
     {
         if (isAvailable && isInstalled && !sameVersion)
         {
@@ -287,29 +285,29 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
             newState = _Remove;
         }
     }
-    else if (currentState == _Install) 
+    else if (currentState == _Install)
     {
         if (isAvailable && !isInstalled)
         {
             iconState = _nothing;
             newState = _Nothing;
-        }        
+        }
     }
-    else if (currentState == _Remove) 
+    else if (currentState == _Remove)
     {
         if (isInstalled)
         {
             iconState =_keepinstalled;
             newState = _Nothing;
-        }        
+        }
     }
     setIcon(item,type,iconState);
     packageStates.setState(available,type,newState);
 
-    // set additional package types for download/install/remove 
+    // set additional package types for download/install/remove
     if (type == Package::BIN && m_installMode == Developer)
     {
-        if (available->hasType(Package::LIB)) 
+        if (available->hasType(Package::LIB))
             packageStates.setState(available,Package::LIB,newState);
         if (available->hasType(Package::DOC))
             packageStates.setState(available,Package::DOC,newState);
@@ -318,7 +316,7 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
     {
         if (available->hasType(Package::DOC))
             packageStates.setState(available,Package::DOC,newState);
-    }  
+    }
 }
 
 bool InstallerEngineGui::setDependencyState(Package *_package)
@@ -328,7 +326,7 @@ bool InstallerEngineGui::setDependencyState(Package *_package)
     if (state == _Remove || state == _Nothing)
         return true;
 
-    foreach(QString dep, _package->deps()) 
+    foreach(QString dep, _package->deps())
     {
         Package *package = m_packageResources->getPackage(dep);
         if (!package)
@@ -341,15 +339,15 @@ bool InstallerEngineGui::setDependencyState(Package *_package)
         stateType state = packageStates.getState(package,Package::BIN);
         if (state == _Nothing || state == _Remove)
         {
-            qDebug() << __FUNCTION__ << "selected package" << package->name() << "in previous state" << state << "for installation"; 
+            qDebug() << __FUNCTION__ << "selected package" << package->name() << "in previous state" << state << "for installation";
             if (g_dependenciesList)
                 g_dependenciesList->addItem(package->name());
             packageStates.setState(package,Package::BIN,_Install);
 
-            // set additional package types for download/install/remove 
+            // set additional package types for download/install/remove
             if (m_installMode == Developer)
             {
-                if (package->hasType(Package::LIB)) 
+                if (package->hasType(Package::LIB))
                     packageStates.setState(package,Package::LIB,_Install);
                 if (package->hasType(Package::DOC))
                     packageStates.setState(package,Package::DOC,_Install);
@@ -358,8 +356,8 @@ bool InstallerEngineGui::setDependencyState(Package *_package)
             {
                 if (package->hasType(Package::DOC))
                     packageStates.setState(package,Package::DOC,_Install);
-            }  
-        }        
+            }
+        }
         setDependencyState(package);
     }
     return true;
@@ -396,7 +394,7 @@ InstallerEngineGui::InstallerEngineGui (QWidget *parent, DownloaderProgress *pro
         : InstallerEngine ( progressBar,instProgressBar ), m_parent(parent)
 {
     Settings &s = Settings::getInstance();
-    m_installMode = s.isDeveloperMode() ? Developer : EndUser; 
+    m_installMode = s.isDeveloperMode() ? Developer : EndUser;
     if (m_installMode == Single)
     {
         BINColumn = 3;
@@ -430,12 +428,12 @@ int versionToInt(QString version)
 {
     QStringList v = version.replace("-",".").split(".");
     int n = 0;
-    foreach(QString a,v) 
+    foreach(QString a,v)
     {
         bool ok;
         int b = a.toInt(&ok);
         if (ok)
-        {   
+        {
             n += b;
             n *= 100;
         }
@@ -451,7 +449,7 @@ void InstallerEngineGui::init()
     if (minVersion != 0 && currentVersion < minVersion)
         InstallerDialogs::getInstance().installerOutdated();
     initPackages();
-    /// @TODO add updates to category cache     
+    /// @TODO add updates to category cache
 }
 
 void InstallerEngineGui::reload()
@@ -472,10 +470,10 @@ void InstallerEngineGui::setLeftTreeData ( QTreeWidget *tree )
 
     qDebug() << categoryCache.categories();
     Settings &s = Settings::getInstance();
-    foreach (QString category,categoryCache.categories()) 
+    foreach (QString category,categoryCache.categories())
     {
         QStringList names = category.split(":");
-        if ( (s.compilerType() == Settings::MinGW ||s.compilerType() == Settings::MSVC) 
+        if ( (s.compilerType() == Settings::MinGW ||s.compilerType() == Settings::MSVC)
             && (names[0] == "msvc" || names[0] == "mingw") )
             continue;
 
@@ -493,7 +491,7 @@ void InstallerEngineGui::setLeftTreeData ( QTreeWidget *tree )
     {
         tree->setCurrentItem ( categoryList.first() );
         categoryList.first()->setSelected ( true );
-    }        
+    }
 }
 // @TODO
 extern QTreeWidget *tree;
@@ -501,7 +499,7 @@ extern QTreeWidget *tree;
 void InstallerEngineGui::on_leftTree_itemClicked ( QTreeWidgetItem *item, int column, QTextEdit *info )
 {
     if (!item || !info)
-        return; 
+        return;
     info->setText ( item->text ( 1 ) );
     QString category = item->text ( 0 );
     setPageSelectorWidgetData ( tree,category );
@@ -557,7 +555,7 @@ void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString 
 
     Settings &s = Settings::getInstance();
 
-    foreach(Package *availablePackage,categoryCache.packages(categoryName,*m_packageResources)) 
+    foreach(Package *availablePackage,categoryCache.packages(categoryName,*m_packageResources))
     {
         QString name = availablePackage->name();
         if ( ( categoryName == "mingw"  || s.compilerType() == Settings::MinGW )
@@ -573,14 +571,14 @@ void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString 
         QString availableVersion = availablePackage->version();
 
         /// @TODO add version format check to be sure available package is really newer
-        data << availablePackage->name() 
+        data << availablePackage->name()
             << (availableVersion != installedVersion ? availablePackage->version() : "")
-            << installedVersion 
+            << installedVersion
             << QString();
         QTreeWidgetItem *item = new QTreeWidgetItem ( ( QTreeWidgetItem* ) 0, data );
         setInitialState ( *item,availablePackage,installedPackage,0);
 
-        /// @TODO add printing notes from ver file 
+        /// @TODO add printing notes from ver file
         item->setText ( NotesColumn, availablePackage->notes() );
         item->setToolTip ( BINColumn, binToolTip );
 
@@ -607,7 +605,7 @@ void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString 
 
 void InstallerEngineGui::updatePackageInfo(QTabWidget *packageInfo, const Package *availablePackage, const Package *installedPackage)
 {
-    if ( !availablePackage && !installedPackage  ) { 
+    if ( !availablePackage && !installedPackage  ) {
         packageInfo->setEnabled ( false );
         return;
     }
@@ -682,7 +680,7 @@ void InstallerEngineGui::itemClickedPackageSelectorPage ( QTreeWidgetItem *item,
 #endif
         setNextState ( *item, availablePackage, installedPackage, column);
     }
-    // dependencies are selected later 
+    // dependencies are selected later
 }
 
 bool InstallerEngineGui::checkRemoveDependencies()
@@ -704,7 +702,7 @@ void InstallerEngineGui::checkUpdateDependencies()
 bool InstallerEngineGui::downloadPackageItem(Package *pkg, Package::Type type )
 {
     bool all = false; //isMarkedForInstall(pkg,Package::ALL);
-    if ( !isMarkedForDownload ( pkg,type ) ) 
+    if ( !isMarkedForDownload ( pkg,type ) )
         return true;
 
     while (!m_canceled) {

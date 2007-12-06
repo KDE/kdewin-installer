@@ -268,6 +268,8 @@ QString Package::getTypeAsString(bool requiredIsInstalled, const QString &delim)
             case SRC:
                 types += "src" + delim;
                 break;
+          default:
+                break;
         };
     }
     return types;
@@ -657,7 +659,7 @@ QString Package::manifestFileName(const QString &pkgName, const QString &pkgVers
 
 QDebug &operator<<(QDebug &out, const Package &c)
 {
-    out << "Package (" 
+    out << "Package ("
         << "name:" << c.name()
         << "version:" << c.version()
         << "categories:" << c.categories()

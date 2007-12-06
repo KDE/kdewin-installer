@@ -154,7 +154,6 @@ bool BZip2IODevice::Private::initializeDecompress()
   if(initialized)
     return true;
   memset(&stream, 0, sizeof(stream));
-  int blockSize = (blocksize > 0 && blocksize < 10) ? blocksize : 5;
   int ret = BZ2_bzDecompressInit (&stream, 0, 0);
   if(ret != BZ_OK) {
     parent->setErrorString(QString(QLatin1String("Error initializing bzip2: %1")).arg(ret));
@@ -169,7 +168,6 @@ bool BZip2IODevice::Private::initializeDecompress()
 qint64 BZip2IODevice::Private::doDecompress(char *out, qint64 iMaxLen)
 {
   int ret = -1;
-  int iBytesWritten = 0;
   if(!initialized) {
     parent->setErrorString(QLatin1String("Internal Error - bzip not initialized"));
     finishDecompress();

@@ -74,19 +74,19 @@ Package *PackageList::getPackage(const QString &name, const QByteArray &version)
 #endif
     QString pkgName = name;
     QString pkgVersion = version;
-    // name may have version info included, split it 
-    if (version.isEmpty()) 
+    // name may have version info included, split it
+    if (version.isEmpty())
     {
         QString _pkgName;
         QString _pkgVersion;
         if (PackageInfo::fromString(name, _pkgName, _pkgVersion) && !_pkgVersion.isEmpty())
         {
             pkgName = _pkgName;
-            pkgVersion = _pkgVersion; 
+            pkgVersion = _pkgVersion;
         }
     }
     QList<Package*>::iterator it = m_packageList.begin();
-    for ( ; it != m_packageList.end(); ++it) 
+    for ( ; it != m_packageList.end(); ++it)
     {
         Package *p = *it;
         if (p->name() == pkgName) {
@@ -155,7 +155,7 @@ bool PackageList::readFromFile(const QString &_fileName)
 
     QString comment = in.readLine();
     QString format = in.readLine();
-        
+
     while (!in.atEnd())
     {
         Package pkg;
@@ -197,7 +197,7 @@ bool PackageList::syncWithFile(const QString &_fileName)
 
     QString comment = in.readLine();
     QString format = in.readLine();
-        
+
     Package *apkg;
     while (!in.atEnd())
     {
@@ -241,7 +241,7 @@ bool PackageList::syncWithDatabase(Database &database)
             pkg = database.getPackage(apkg->name());
             if (!pkg || pkg->handled())
                 continue;
-            // if this installed package is already in the package list 
+            // if this installed package is already in the package list
             // may be it comes later in the list, don't add it twice
             Package *p = getPackage(pkg->name(),pkg->version().toAscii());
             if (p)
@@ -320,12 +320,11 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
         const char *lineKey4 = "alt=\"[txt]\" /> <a href=\"";
         const char *fileKeyStart = "<a href=\"";
         const char *fileKeyEnd = "\">";
-        int i = 0;
 
         while (!ioDev->atEnd())
         {
             QByteArray line = ioDev->readLine().toLower();
-            if (line.contains(lineKey1) || line.contains(lineKey2) 
+            if (line.contains(lineKey1) || line.contains(lineKey2)
             || line.contains(lineKey3) || line.contains(lineKey4))
             {
                 int a = line.lastIndexOf(fileKeyStart) + strlen(fileKeyStart);
@@ -338,14 +337,14 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                 // bzip2.hint
 
 #ifdef ENABLE_HINTFILE_SUPPORT
-                // @TODO using hint files results into duplicated package entries 
-                if (fileName.endsWith(".hint")) 
+                // @TODO using hint files results into duplicated package entries
+                if (fileName.endsWith(".hint"))
                 {
                     QStringList hintFile = QString(fileName).split(".");
                     QString pkgName = hintFile[0];
                     // download hint file
                     QByteArray ba;
-                    if (!d.start(m_baseURL + '/' + fileName, ba)) 
+                    if (!d.start(m_baseURL + '/' + fileName, ba))
                     {
                         qCritical() << "could not download" << m_baseURL + '/' + fileName;
                         continue;
@@ -367,7 +366,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                         pkg->addCategories(hd.categories);
                         pkg->addDeps(hd.requires.split(" "));
                     }
-                } else 
+                } else
 #endif
                 if (fileName.endsWith(".zip") || fileName.endsWith(".tbz") || fileName.endsWith(".tar.bz2") ) {
                     QString pkgName;
@@ -400,7 +399,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                         Package::PackageItem item;
                         item.set(m_baseURL + '/' + fileName, "", pkgType.toAscii());
                         pkg->add(item);
-                        if (m_curSite) 
+                        if (m_curSite)
                         {
 #ifdef VERSIONED_DEPENDENCIES
                             pkg->addDeps(m_curSite->getDependencies(pkgName+"-"+pkgVersion));
@@ -410,7 +409,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                     }
                 }
                 else {
-                    qDebug() << __FUNCTION__ << "unsupported package format" << fileName; 
+                    qDebug() << __FUNCTION__ << "unsupported package format" << fileName;
                 }
             }
         }
@@ -470,8 +469,8 @@ void PackageList::clear()
 
 QDebug & operator<<(QDebug &out, PackageList &c)
 {
-    out << "PackageList( " 
-        << "m_name:" << c.m_name 
+    out << "PackageList( "
+        << "m_name:" << c.m_name
         << "m_root:" << c.m_root
         << "m_configFile:" << c.m_configFile
         << "m_baseURL:" << c.m_baseURL

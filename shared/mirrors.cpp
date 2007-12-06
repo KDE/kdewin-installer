@@ -38,8 +38,8 @@
 #define MIRROR_BASE_URL_KDE "http://download.kde.org/mirrorstatus.html"
 #define MIRROR_BASE_URL_CYGWIN "http://www.cygwin.com/mirrors.lst"
 
-Mirrors::Mirrors() 
-    : m_type(Cygwin) 
+Mirrors::Mirrors()
+    : m_type(Cygwin)
 {
 }
 
@@ -140,9 +140,9 @@ Mirrors &Mirrors::getInstance()
 {
     static Mirrors mirrors;
     return mirrors;
-}    
+}
 
-QDebug &operator<<(QDebug &out, const MirrorTypeList &c)
+QDebug operator<<(QDebug out, const MirrorTypeList &c)
 {
     out << "QList<MirrorType> (";
     foreach(MirrorType m,c)
@@ -151,7 +151,7 @@ QDebug &operator<<(QDebug &out, const MirrorTypeList &c)
     return out;
 }
 
-QDebug &operator<<(QDebug &out, const MirrorType &c)
+QDebug operator<<(QDebug out, const MirrorType &c)
 {
     out << "MirrorType ("
         << "url:" << c.url

@@ -26,6 +26,7 @@
 #include <QtDebug>
 #include <QCoreApplication>
 #include <QFileInfo>
+#include <QUrl>
 #include <QDir>
 
 #include "packager.h"

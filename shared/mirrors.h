@@ -32,18 +32,19 @@ class QFile;
 
 //http://webdev.cegit.de/snapshots/kde-windows;webdev.cegit.de;Europe;Germany,Essen
 
-class MirrorType 
+class MirrorType
 {
     public:
         QUrl url;
         QString name;
-        QString continent; 
-        QString country; 
-    friend QDebug &operator<<(QDebug &,const MirrorType &);
-        QString toString()
+        QString continent;
+        QString country;
+
+        friend QDebug operator<<(QDebug,const MirrorType &);
+        QString toString() const
         {
             return name + " (" + continent + "," + country + ")";
-        }            
+        }
 };
 
 typedef QList<MirrorType> MirrorTypeList;
@@ -68,6 +69,6 @@ class Mirrors /* : public QObject */
         QList<MirrorType> m_mirrors;
 };
 
-QDebug &operator<<(QDebug &,const MirrorTypeList &);
+QDebug operator<<(QDebug,const MirrorTypeList &);
 
 #endif

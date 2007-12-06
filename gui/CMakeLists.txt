@@ -100,10 +100,17 @@ if (CMAKE_PRODUCTION_BUILD)
 endif (CMAKE_PRODUCTION_BUILD)
 
 if (CMAKE_PRODUCTION_BUILD AND STATIC_BUILD AND UPX_EXECUTABLE)
-    add_custom_command(
-        TARGET kdewin-installer-gui-${VERSION}
-        POST_BUILD
-        COMMAND ${UPX_EXECUTABLE} --lzma -9 "${EXECUTABLE_OUTPUT_PATH}/kdewin-installer-gui-${VERSION}.exe"
-
-    )
+    if(WIN32)
+        add_custom_command(
+            TARGET kdewin-installer-gui-${VERSION}
+            POST_BUILD
+            COMMAND ${UPX_EXECUTABLE} --lzma -9 "${EXECUTABLE_OUTPUT_PATH}/kdewin-installer-gui-${VERSION}.exe"
+        )
+    else(WIN32)
+        add_custom_command(
+            TARGET kdewin-installer-gui-${VERSION}
+            POST_BUILD
+            COMMAND ${UPX_EXECUTABLE} --lzma -9 "${EXECUTABLE_OUTPUT_PATH}/kdewin-installer-gui-${VERSION}"
+        )
+    endif(WIN32)
 endif (CMAKE_PRODUCTION_BUILD AND STATIC_BUILD AND UPX_EXECUTABLE)

@@ -74,7 +74,7 @@ Package *Database::getPackage(const QString &pkgName, const QByteArray &version)
 bool Database::addUnhandledPackages(PackageList *packageList)
 {
     QList<Package*>::iterator it = m_database.begin();
-    for ( ; it != m_database.end(); ++it) 
+    for ( ; it != m_database.end(); ++it)
     {
         if (!(*it)->handled())
             packageList->addPackage(*(*it));
@@ -85,7 +85,7 @@ bool Database::addUnhandledPackages(PackageList *packageList)
 void Database::resetHandledState()
 {
     QList<Package*>::iterator it = m_database.begin();
-    for ( ; it != m_database.end(); ++it) 
+    for ( ; it != m_database.end(); ++it)
     {
         (*it)->setHandled(false);
     }
@@ -138,7 +138,7 @@ bool Database::readFromDirectory(const QString &_dir)
 
     QString dir;
     if (_dir.isEmpty())
-        dir = m_root + "/manifest"; 
+        dir = m_root + "/manifest";
     else
         dir = _dir;
     QDir d(dir);
@@ -148,9 +148,9 @@ bool Database::readFromDirectory(const QString &_dir)
 
     QFileInfoList list = d.entryInfoList();
     QFileInfo fi;
-     
+
     for (int i = 0; i < list.size(); i++) {
-        QFileInfo fi = list[i];        
+        QFileInfo fi = list[i];
         QString fileName = fi.fileName();
         QString pkgName;
         QString pkgVersion;
@@ -159,14 +159,14 @@ bool Database::readFromDirectory(const QString &_dir)
         if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgFormat))
             continue;
         Package *pkg;
-        if (pkg = getPackage(pkgName,pkgVersion.toAscii())) 
+        if ((pkg = getPackage(pkgName,pkgVersion.toAscii())) != NULL)
         {
             Package::PackageItem pi;
-            pi.bInstalled =true; 
+            pi.bInstalled =true;
             pi.setContentType(pkgType);
             pkg->add(pi);
         }
-        else 
+        else
         {
             Package *pkg =  new Package;
             pkg->setName(pkgName);
@@ -177,7 +177,7 @@ bool Database::readFromDirectory(const QString &_dir)
             pkg->add(pi);
             m_database.append(pkg);
         }
-    }        
+    }
     emit configLoaded();
     return true;
 }

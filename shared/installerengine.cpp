@@ -39,8 +39,11 @@ QString InstallerEngine::defaultConfigURL;
 QString InstallerEngine::fallBackURL = "http://82.149.170.66/kde-windows";
 
 InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar)
-    : QObject(), m_instProgressBar(instProgressBar), m_addedPackages(false), m_globalConfigReaded(false),
-    m_canceled(false), m_initFinished(false)
+    : m_instProgressBar(instProgressBar),
+      m_globalConfigReaded(false),
+      m_initFinished(false),
+      m_addedPackages(false),
+      m_canceled(false)
 {
     m_database = new Database();
     m_downloader = new Downloader(/*blocking=*/ true,progressBar);
@@ -65,7 +68,7 @@ InstallerEngine::~InstallerEngine()
 
 void InstallerEngine::initGlobalConfig()
 {
-    if (m_globalConfigReaded) 
+    if (m_globalConfigReaded)
         m_globalConfig->clear();
     readGlobalConfig();
     QHash<QString, QString>::const_iterator i = m_globalConfig->categoryNotes().constBegin();
@@ -185,7 +188,7 @@ bool InstallerEngine::addPackagesFromSites()
         if (Settings::hasDebug("InstallerEngine"))
             qDebug() << __FUNCTION__ << packageList;
 
-        foreach(Package *pkg, packageList.packages()) 
+        foreach(Package *pkg, packageList.packages())
         {
             // add some generic categories
             pkg->addCategories("all");
