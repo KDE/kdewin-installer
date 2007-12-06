@@ -57,7 +57,7 @@ void SettingsMirrorPage::reset()
     
 	foreach(MirrorType m, mirrors.mirrors())
 	{
-        qDebug() << m;
+        qDebug() << m.toString();
     	ui.downloadMirror->addItem(m.toString(),m.url);
     }
     qDebug() << currentMirror;
