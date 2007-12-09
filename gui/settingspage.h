@@ -24,6 +24,8 @@ public:
 protected:
     Settings &s;
     Ui::SettingsDialog &ui;
+signals:
+    void completeStateChanged();
 };
 
 class SettingsDownloadPage : public SettingsSubPage
@@ -54,6 +56,8 @@ public:
     virtual void accept();
     virtual void reject();
     virtual bool isComplete();
+private slots:
+    void mirrorChanged(int mirrorNumber);
 };
 
 class SettingsInstallPage : public SettingsSubPage

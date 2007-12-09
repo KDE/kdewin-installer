@@ -292,6 +292,7 @@ MirrorSettingsPage::MirrorSettingsPage(InstallWizard *wizard,SettingsSubPage *pa
     layout->addWidget(page->widget(),10);
     layout->addWidget(statusLabel,1,Qt::AlignBottom);
     setLayout(layout);
+    connect(page, SIGNAL(completeStateChanged()), wizard, SLOT(completeStateChanged()));
 }
 
 void MirrorSettingsPage::resetPage()

@@ -46,7 +46,7 @@ void SettingsMirrorPage::reset()
     if (mirrors.mirrors().size() == 0)
     {
         /// @TODO add vivible progress bar
-        if ( !mirrors.fetch(Mirrors::Cygwin,QUrl("http://download.cegit.de/kde-windows/mirrors.lst")) )
+        if ( !mirrors.fetch(Mirrors::Cygwin, QUrl("http://download.cegit.de/kde-windows/mirrors.lst")) )
         {
             qCritical() << "could not load mirrors";
             // display warning box
@@ -58,7 +58,7 @@ void SettingsMirrorPage::reset()
     foreach(MirrorType m, mirrors.mirrors())
     {
         qDebug() << m.toString();
-        ui.downloadMirror->addItem(m.toString(),m.url);
+        ui.downloadMirror->addItem(m.toString(), m.url);
     }
     qDebug() << currentMirror;
     int index = ui.downloadMirror->findData(currentMirror);
@@ -66,9 +66,16 @@ void SettingsMirrorPage::reset()
           ui.downloadMirror->setCurrentIndex(index);
     else
     {
-          ui.downloadMirror->addItem(currentMirror.toString(),currentMirror);
+          ui.downloadMirror->addItem(currentMirror.toString(), currentMirror);
           ui.downloadMirror->setCurrentIndex(ui.downloadMirror->count()-1);
     }
+    connect(ui.downloadMirror, SIGNAL(activated( int )), this, SLOT(mirrorChanged( int )));
+}
+
+void SettingsMirrorPage::mirrorChanged( int numberMirror )
+{
+    qDebug() << "mirrorChanged signal caught";
+    emit completeStateChanged();
 }
 
 void SettingsMirrorPage::accept()
