@@ -29,9 +29,11 @@
 #include <QTreeWidget>
 
 #include "packagelist.h"
+#include "globalconfig.h"
 #include "database.h"
 #include "downloader.h"
 #include "misc.h"
+#include "hintfile.h"
 
 PackageList::PackageList()
         : QObject()
@@ -271,7 +273,8 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
 {
     if (!append)
         m_packageList.clear();
-    Downloader d(true); // for notes, maybe async?
+
+    m_parserConfigFileFound = true;
 
     switch (type)
     {
@@ -320,6 +323,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
         const char *lineKey4 = "alt=\"[txt]\" /> <a href=\"";
         const char *fileKeyStart = "<a href=\"";
         const char *fileKeyEnd = "\">";
+        QStringList files;
 
         while (!ioDev->atEnd())
         {
@@ -335,87 +339,134 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                 // kde3-i18n-vi-3.5.5-67.9.noarch.rpm
                 // aspell-0.50.3-3.zip
                 // bzip2.hint
-
-#ifdef ENABLE_HINTFILE_SUPPORT
-                // @TODO using hint files results into duplicated package entries
-                if (fileName.endsWith(".hint"))
-                {
-                    QStringList hintFile = QString(fileName).split(".");
-                    QString pkgName = hintFile[0];
-                    // download hint file
-                    QByteArray ba;
-                    if (!d.start(m_baseURL + '/' + fileName, ba))
-                    {
-                        qCritical() << "could not download" << m_baseURL + '/' + fileName;
-                        continue;
-                    }
-                    HintFileDescriptor hd;
-                    parseHintFile(ba,hd);
-                    Package *pkg = getPackage(pkgName);
-                    if(!pkg) {
-                        Package p;
-                        p.setName(pkgName);
-                        p.setNotes(hd.shortDesc);
-                        p.setLongNotes(hd.longDesc);
-                        p.addCategories(hd.categories);
-                        p.addDeps(hd.requires.split(" "));
-                        addPackage(p);
-                    } else {
-                        pkg->setNotes(hd.shortDesc);
-                        pkg->setLongNotes(hd.longDesc);
-                        pkg->addCategories(hd.categories);
-                        pkg->addDeps(hd.requires.split(" "));
-                    }
-                } else
-#endif
-                if (fileName.endsWith(".zip") || fileName.endsWith(".tbz") || fileName.endsWith(".tar.bz2") ) {
-                    QString pkgName;
-                    QString pkgVersion;
-                    QString pkgType;
-                    QString pkgFormat;
-                    if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgFormat))
-                        continue;
-                    Package *pkg = getPackage(pkgName, pkgVersion.toAscii());
-                    if(!pkg) {
-                        Package p;
-                        p.setVersion(pkgVersion);
-                        p.setName(pkgName);
-                        Package::PackageItem item;
-                        item.set(m_baseURL + '/' + fileName, "", pkgType.toAscii());
-                        p.add(item);
-                        if(m_curSite)
-                            p.setNotes(m_curSite->packageNote(pkgName));
-                        if(m_curSite)
-                            p.setLongNotes(m_curSite->packageLongNotes(pkgName));
-                        if (m_curSite)
-                        {
-#ifdef VERSIONED_DEPENDENCIES
-                            p.addDeps(m_curSite->getDependencies(pkgName+"-"+pkgVersion));
-#endif
-                            p.addDeps(m_curSite->getDependencies(pkgName));
-                        }
-                        addPackage(p);
-                    } else {
-                        Package::PackageItem item;
-                        item.set(m_baseURL + '/' + fileName, "", pkgType.toAscii());
-                        pkg->add(item);
-                        if (m_curSite)
-                        {
-#ifdef VERSIONED_DEPENDENCIES
-                            pkg->addDeps(m_curSite->getDependencies(pkgName+"-"+pkgVersion));
-#endif
-                            pkg->addDeps(m_curSite->getDependencies(pkgName));
-                        }
-                    }
-                }
-                else {
-                    qDebug() << __FUNCTION__ << "unsupported package format" << fileName;
-                }
+                files << fileName;
             }
         }
+        addPackagesFromFileNames(files);
         break;
     }
     emit configLoaded();
+    return true;
+}
+
+bool PackageList::addPackageFromHintFile(const QString &fileName)
+{
+    Downloader d(true); // for notes, maybe async?
+
+    // if a config file is present, don't scan hint files, we assume that they 
+    // are merged into the config file 
+    if (m_parserConfigFileFound)
+        return false;
+
+    QStringList hintFile = QString(fileName).split(".");
+    QString pkgName = hintFile[0];
+    // download hint file
+    QByteArray ba;
+    if (!d.start(m_baseURL + '/' + fileName, ba)) 
+    {
+        qCritical() << "could not download" << m_baseURL + '/' + fileName;
+        return false;
+    }
+    HintFile hf;
+    HintFileType hd;
+    hf.parse(ba,hd);
+    Package *pkg = getPackage(pkgName);
+    if(!pkg) {
+        Package p;
+        p.setName(pkgName);
+        p.setNotes(hd.shortDesc);
+        p.setLongNotes(hd.longDesc);
+        p.addCategories(hd.categories);
+        p.addDeps(hd.requires.split(" "));
+        addPackage(p);
+    } else {
+        pkg->setNotes(hd.shortDesc);
+        pkg->setLongNotes(hd.longDesc);
+        pkg->addCategories(hd.categories);
+        pkg->addDeps(hd.requires.split(" "));
+    }
+    return true;
+}
+
+bool PackageList::addPackagesFromFileNames(const QStringList &files)    
+{
+    if (files.contains("config.txt")) 
+    {
+        Downloader d(true,0);
+        // fetch config file 
+        QFileInfo cfi(Settings::getInstance().downloadDir()+"/config-temp.txt");
+        bool ret = d.start(m_baseURL + "/config.txt",cfi.absoluteFilePath());
+
+        GlobalConfig g(0);
+        g.setBaseURL(m_baseURL);
+        QStringList configFile = QStringList() << cfi.absoluteFilePath();
+        if (!g.parse(configFile))
+            return false;
+
+        // add package from globalconfig 
+        QList<Package*>::iterator p;
+        for (p = g.packages()->begin(); p != g.packages()->end(); p++)
+        {
+            Package *pkg = *p;
+            addPackage(*pkg);
+        }
+        // sites are not supported here 
+        m_parserConfigFileFound = true;
+    }
+    
+    foreach(QString fileName, files)
+    {
+#ifdef ENABLE_HINTFILE_SUPPORT
+        // @TODO using hint files results into duplicated package entries 
+        if (fileName.endsWith(".hint")) 
+        {
+            addPackageFromHintFile(fileName);
+        } else 
+#endif
+        if (fileName.endsWith(".zip") || fileName.endsWith(".tbz") || fileName.endsWith(".tar.bz2") ) {
+            QString pkgName;
+            QString pkgVersion;
+            QString pkgType;
+            QString pkgFormat;
+            if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgFormat))
+                continue;
+            Package *pkg = getPackage(pkgName, pkgVersion.toAscii());
+            if(!pkg) {
+                Package p;
+                p.setVersion(pkgVersion);
+                p.setName(pkgName);
+                Package::PackageItem item;
+                item.set(m_baseURL + '/' + fileName, "", pkgType.toAscii());
+                p.add(item);
+                if(m_curSite)
+                    p.setNotes(m_curSite->packageNote(pkgName));
+                if(m_curSite)
+                    p.setLongNotes(m_curSite->packageLongNotes(pkgName));
+                if (m_curSite)
+                {
+#ifdef VERSIONED_DEPENDENCIES
+                    p.addDeps(m_curSite->getDependencies(pkgName+"-"+pkgVersion));
+#endif
+                    p.addDeps(m_curSite->getDependencies(pkgName));
+                }
+                addPackage(p);
+            } else {
+                Package::PackageItem item;
+                item.set(m_baseURL + '/' + fileName, "", pkgType.toAscii());
+                pkg->add(item);
+                if (m_curSite) 
+                {
+#ifdef VERSIONED_DEPENDENCIES
+                    pkg->addDeps(m_curSite->getDependencies(pkgName+"-"+pkgVersion));
+#endif
+                    pkg->addDeps(m_curSite->getDependencies(pkgName));
+                }
+            }
+        }
+        else {
+            qDebug() << __FUNCTION__ << "unsupported package format" << fileName; 
+        }
+    }
     return true;
 }
 

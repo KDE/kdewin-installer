@@ -29,10 +29,12 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QCryptographicHash>
-#include "package.h"
-#include "misc.h"
 #include <iostream>
 using namespace std;
+
+#include "package.h"
+#include "hintfile.h"
+
 
 static const QStringList g_fileFilter = QString("*.zip *.tbz *.tar.bz2").split(' ');
 bool findHintFiles(const QString &dir, QStringList &files)
@@ -179,8 +181,8 @@ bool createConfigTxt(QTextStream &out, const QString &root, const QStringList &h
 
     foreach(QFileInfo hintFile, hintFiles) {
 
-        HintFileDescriptor hint;
-        if (!parseHintFile(hintFile.absoluteFilePath(),hint))
+        HintFileType hint;
+        if (!HintFile::parseHintFile(hintFile.absoluteFilePath(),hint))
             continue;
 
         QStringList compilers;
@@ -255,8 +257,8 @@ bool printDependencies(const QString &root)
     {
         QString pkgName = hintFile.baseName();
         qDebug() << "parsing" << pkgName;
-        HintFileDescriptor hint;
-        if (!parseHintFile(hintFile.absoluteFilePath(),hint))
+        HintFileType hint;
+        if (!HintFile::parseHintFile(hintFile.absoluteFilePath(),hint))
             continue;
         if (hint.requires.isEmpty())
         {

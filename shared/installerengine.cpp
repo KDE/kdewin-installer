@@ -169,18 +169,9 @@ bool InstallerEngine::addPackagesFromSites()
 
         packageList.setBaseURL(site->url().toString());    // why not use QUrl here?
 
-#ifdef DEBUG
-        QFileInfo tmpFile(m_installer->root() + "/packages-"+site->name()+".html");
-        if (!tmpFile.exists())
-            m_downloader->start(site->url(), tmpFile.absoluteFilePath());
-
-        // load and parse
-        if (!packageList->readHTMLFromFile(tmpFile.absoluteFilePath(),site->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge ))
-#else
         QByteArray ba;
         m_downloader->start(site->url(), ba);
         if (!packageList.readHTMLFromByteArray(ba,site->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge, true ))
-#endif
         {
             qDebug() << "error reading package list from download html file";
             continue;

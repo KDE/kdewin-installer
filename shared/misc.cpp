@@ -43,58 +43,6 @@
 #include "misc.h"
 #include "settings.h"
 
-bool parseHintFile(QIODevice *ioDev, HintFileDescriptor &pkg)
-{
-    bool ldesc = false;
-	QString longDesc;
-    while (!ioDev->atEnd()) {
-        QByteArray line = ioDev->readLine().replace("\n"," ");
-        if (line.startsWith("sdesc: ")) {
-             pkg.shortDesc = line.mid(8,line.length()-8-1).trimmed().replace("\"","");
-			 continue;
-        }
-        if (line.startsWith("ldesc: ")) {
-             ldesc = true;
-             longDesc = line.mid(8);
-        }
-        else if (line.startsWith("category: ")) {
-            ldesc = false;
-            pkg.categories = line.replace("category: ","").trimmed();
-        }    
-        else if (line.startsWith("requires: ")) {
-            ldesc = false;
-            pkg.requires = line.replace("requires: ","").trimmed();
-        }
-        else if (ldesc) {
-			longDesc += line;
-        }
-    }
-	pkg.longDesc = longDesc.trimmed().replace("\"","");
-
-	return true;
-}
-
-bool parseHintFile(const QString &hintFile,HintFileDescriptor &pkg)
-{
-    QFile file(hintFile);
-
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-         return false;
-
-	return parseHintFile(&file,pkg);
-}
-
-
-bool parseHintFile(const QByteArray &_ba, HintFileDescriptor &pkg)
-{
-    QByteArray ba(_ba);
-    QBuffer buf(&ba);
-
-    if (!buf.open(QIODevice::ReadOnly| QIODevice::Text))
-        return false;
-	return parseHintFile(&buf,pkg);
-}
-
 #ifndef MISC_SMALL_VERSION
 /*
     add correct prefix for win32 filesystem functions

@@ -98,6 +98,7 @@ public:
         m_baseURL = baseURL.toString();
     }
 
+
     // sets the current Site to get access to dep & deny lists
     void setCurrentSite(Site *s)
     {
@@ -112,7 +113,9 @@ public:
 signals:
     void configLoaded();
 
-private:
+protected:
+    bool addPackagesFromFileNames(const QStringList &files);
+    bool addPackageFromHintFile(const QString &file);
     bool readHTMLInternal(QIODevice *ioDev, PackageList::Type type, bool append=false);
 private:
     QList<Package*> m_packageList;
@@ -122,6 +125,7 @@ private:
     QString m_baseURL;
     Site *m_curSite;
     QString m_notes;
+    bool m_parserConfigFileFound; /// indicates the a config file was found for a parsed web site
 
     friend class Installer;
     friend QDebug & operator<<(QDebug &, PackageList &);

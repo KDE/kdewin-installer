@@ -3,11 +3,13 @@ set (configer_SOURCES
 	main.cpp
 	../shared/package.cpp
 	../shared/misc.cpp
+	../shared/hintfile.cpp
 )
 
 set (configer_HEADERS
 	../shared/package.h
 	../shared/misc.h
+	../shared/hintfile.h
 )
 
 include_directories(

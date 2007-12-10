@@ -63,6 +63,7 @@ class GlobalConfig {
         void clear(); 
         /// return version of required installer
         const QString &minimalInstallerVersion() { return m_minimalInstallerVersion; }
+        void setBaseURL(const QUrl &url) { m_baseURL = url.toString(); }
 
     protected:
         bool parseFromFile(const QString &fileName);
