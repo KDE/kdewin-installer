@@ -37,6 +37,11 @@ void PackageCategoryCache::addPackage(Package *pkg)
         m_data[category].packages.append(pkg->name());
 }
 
+bool caseInsensitiveLessThan(const QString &s1, const QString &s2)
+{
+    return s1.toLower() < s2.toLower();
+}
+
 QStringList PackageCategoryCache::categories()
 {
     QStringList keys;
@@ -46,6 +51,7 @@ QStringList PackageCategoryCache::categories()
         if (!i.key().isEmpty())
             keys << i.key() + ":" + m_data[i.key()].notes;
     }
+    qSort(keys.begin(), keys.end(), caseInsensitiveLessThan);
     return keys;
 }
 
