@@ -457,7 +457,7 @@ void Package::addCategories(const QString &cat)
     if (cat.contains(" "))
     {
         foreach(QString acat, cat.split(" "))
-            m_categories << cat;
+            m_categories << acat;
     }
     else
         m_categories << cat;
