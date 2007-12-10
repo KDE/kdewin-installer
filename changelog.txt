@@ -1,5 +1,13 @@
 ChangeLog
 =========
+0.8.4-1
+-------
+- installer-gui: - added support for parsing config.txt files in subdirectories, which contains collected informations 
+                   about packages located in the related directory.
+                 - fixed a bug which is indicated by a disabled next button in mirror dialog wizard page. 
+                 - sort package categories in the left window case insensitive 
+                 - added support for multi line text using \n in @details and @pkgdetails item 
+                 - fixed bug not adding categories correct from setup.hint files 
 
 0.8.4
 -----

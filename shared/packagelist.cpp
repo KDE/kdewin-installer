@@ -44,7 +44,7 @@ PackageList::PackageList()
     m_root = ".";
     m_configFile = "/packages.txt";
     m_curSite = 0;
-
+    m_parserConfigFileFound = 0;
 }
 
 PackageList::~PackageList()
@@ -274,7 +274,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
     if (!append)
         m_packageList.clear();
 
-    m_parserConfigFileFound = true;
+    m_parserConfigFileFound = false;
 
     switch (type)
     {
@@ -346,6 +346,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
         break;
     }
     emit configLoaded();
+    m_parserConfigFileFound = false;
     return true;
 }
 
@@ -396,22 +397,26 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files)
         // fetch config file 
         QFileInfo cfi(Settings::getInstance().downloadDir()+"/config-temp.txt");
         bool ret = d.start(m_baseURL + "/config.txt",cfi.absoluteFilePath());
-
-        GlobalConfig g(0);
-        g.setBaseURL(m_baseURL);
-        QStringList configFile = QStringList() << cfi.absoluteFilePath();
-        if (!g.parse(configFile))
-            return false;
-
-        // add package from globalconfig 
-        QList<Package*>::iterator p;
-        for (p = g.packages()->begin(); p != g.packages()->end(); p++)
+        if (ret) 
         {
-            Package *pkg = *p;
-            addPackage(*pkg);
+            GlobalConfig g(0);
+            g.setBaseURL(m_baseURL);
+            QStringList configFile = QStringList() << cfi.absoluteFilePath();
+            if (!g.parse(configFile))
+                return false;
+
+            // add package from globalconfig 
+            QList<Package*>::iterator p;
+            for (p = g.packages()->begin(); p != g.packages()->end(); p++)
+            {
+                Package *pkg = *p;
+                addPackage(*pkg);
+            }
+            // sites are not supported here 
+            m_parserConfigFileFound = true;
+            // config.txt overrides all other definitions
+            return true;
         }
-        // sites are not supported here 
-        m_parserConfigFileFound = true;
     }
     
     foreach(QString fileName, files)
