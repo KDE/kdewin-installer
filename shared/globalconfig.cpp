@@ -242,7 +242,8 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 }
                 else if(cmd[0] == "@details") {
                     cmd.removeFirst();
-                    pkg->setLongNotes(cmd.join(" "));
+                    QString notes = cmd.join(" ").replace("\\n","\n");
+                    pkg->setLongNotes(notes);
                 }
                 else if(cmd[0] == "@category")
                 {
@@ -295,7 +296,8 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     QString pkg = cmd[1];
                     cmd.removeFirst();
                     cmd.removeFirst();
-                    site->setPackageLongNotes(pkg,cmd.join(" "));
+                    QString details = cmd.join(" ").replace("\\n","\n");
+                    site->setPackageLongNotes(pkg,details);
                 }
                 else if(cmd[0] == "@pkgcategory") {
                     QString pkg = cmd[1];
