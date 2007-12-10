@@ -86,11 +86,11 @@ Package::Type columnToType ( int column )
 {
     if (column == BINColumn)
         return Package::BIN;
-    else if (column = LIBColumn)
+    else if (column == LIBColumn)
         return Package::LIB;
-    else if (column = DOCColumn)
+    else if (column == DOCColumn)
         return Package::DOC;
-    else if (column = SRCColumn)
+    else if (column == SRCColumn)
         return Package::SRC;
     else
         return Package::NONE;
