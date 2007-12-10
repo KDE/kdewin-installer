@@ -485,7 +485,6 @@ void InstallerEngineGui::setLeftTreeData ( QTreeWidget *tree )
     }
     tree->insertTopLevelItems ( 0,categoryList );
     tree->expandAll();
-    tree->sortItems ( 0,Qt::AscendingOrder );
     for ( int i = 0; i < tree->columnCount(); i++ )
         tree->resizeColumnToContents ( i );
 
