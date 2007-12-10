@@ -302,7 +302,9 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
         }
     }
     setIcon(item,type,iconState);
-    packageStates.setState(available,type,newState);
+
+    if (available->hasType(type))
+        packageStates.setState(available,type,newState);
 
     // set additional package types for download/install/remove
     if (type == Package::BIN && m_installMode == Developer)
