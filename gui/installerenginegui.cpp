@@ -66,7 +66,7 @@ int LIBColumn = 6;
 int DOCColumn = 7;
 int ColumnCount = 8;
 
-int typeToColumn ( Package::Type type )
+static int typeToColumn ( Package::Type type )
 {
     switch ( type ) {
     case Package::BIN :
@@ -98,7 +98,7 @@ Package::Type columnToType ( int column )
 
 enum iconType {_install, _autoinstall,_keepinstalled, _update, _remove, _nothing, _disable};
 
-void setIcon ( QTreeWidgetItem &item, Package::Type type, iconType action )
+static void setIcon ( QTreeWidgetItem &item, Package::Type type, iconType action )
 {
 #ifndef DISABLE_ICONS
     static QIcon *ai;
@@ -174,43 +174,62 @@ void setIcon ( QTreeWidgetItem &item, Package::Type type, iconType action )
     // item.icon(column).setIconSize(QSize(22,22));
 }
 
+static void setIcon ( QTreeWidgetItem &item, Package::Type type, stateType state, iconType defType )
+{
+  iconType t = defType;
+  switch( state ) {
+    case _Install:
+      t = _install;
+      break;
+    case _Update:
+      t = _update;
+      break;
+    case _Remove:
+      t = _remove;
+      break;
+    default:
+      break;
+  }
+  setIcon( item, type, t );
+}
+
 void InstallerEngineGui::setInitialState ( QTreeWidgetItem &item, Package *available, Package *installed, int column )
 {
     if (available)
     {
         if (available->hasType(Package::BIN))
-            setIcon(item,Package::BIN,_nothing);
+            setIcon(item,Package::BIN,packageStates.getState(available,Package::BIN),_nothing);
         if (m_installMode == Developer)
         {
             if (available->hasType(Package::LIB))
-                setIcon(item,Package::BIN,_nothing);
+                setIcon(item,Package::BIN,packageStates.getState(available,Package::LIB),_nothing);
             if (available->hasType(Package::DOC))
-                setIcon(item,Package::BIN,_nothing);
+                setIcon(item,Package::BIN,packageStates.getState(available,Package::DOC),_nothing);
             if (available->hasType(Package::SRC))
-                setIcon(item,Package::SRC,_nothing);
+                setIcon(item,Package::SRC,packageStates.getState(available,Package::SRC),_nothing);
         }
         else if (m_installMode == Single)
         {
             if (available->hasType(Package::LIB))
-                setIcon(item,Package::LIB,_nothing);
+                setIcon(item,Package::LIB,packageStates.getState(available,Package::LIB),_nothing);
             if (available->hasType(Package::DOC))
-                setIcon(item,Package::DOC,_nothing);
+                setIcon(item,Package::DOC,packageStates.getState(available,Package::DOC),_nothing);
             if (available->hasType(Package::SRC))
-                setIcon(item,Package::SRC,_nothing);
+                setIcon(item,Package::SRC,packageStates.getState(available,Package::SRC),_nothing);
         }
     }
     if (installed)
     {
         if (installed->isInstalled(Package::BIN))
-            setIcon(item,Package::BIN,_keepinstalled);
+            setIcon(item,Package::BIN,packageStates.getState(installed,Package::BIN),_keepinstalled);
         if (m_installMode == Developer)
         {
             if (installed->isInstalled(Package::LIB))
-                setIcon(item,Package::BIN,_keepinstalled);
+                setIcon(item,Package::BIN,packageStates.getState(installed,Package::BIN),_keepinstalled);
             if (installed->isInstalled(Package::DOC))
-                setIcon(item,Package::BIN,_keepinstalled);
+                setIcon(item,Package::BIN,packageStates.getState(installed,Package::BIN),_keepinstalled);
             if (installed->isInstalled(Package::SRC))
-                setIcon(item,Package::SRC,_keepinstalled);
+                setIcon(item,Package::SRC,packageStates.getState(installed,Package::BIN),_keepinstalled);
         }
         else if(m_installMode == Single)
         {
@@ -725,6 +744,7 @@ bool InstallerEngineGui::downloadPackageItem(Package *pkg, Package::Type type )
         else
             ;
     }
+    return false;
 }
 
 bool InstallerEngineGui::downloadPackages ( QTreeWidget *tree, const QString &category )
