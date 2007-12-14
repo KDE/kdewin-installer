@@ -40,7 +40,7 @@ class MirrorType
         QString continent;
         QString country;
 
-        friend QDebug operator<<(QDebug,const MirrorType &);
+        friend QDebug &operator<<(QDebug &,const MirrorType &);
         QString toString() const
         {
             return name + " (" + continent + "," + country + ")";
@@ -69,6 +69,6 @@ class Mirrors /* : public QObject */
         QList<MirrorType> m_mirrors;
 };
 
-QDebug operator<<(QDebug,const MirrorTypeList &);
+QDebug &operator<<(QDebug &,const MirrorTypeList &);
 
 #endif

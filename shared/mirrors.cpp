@@ -142,7 +142,7 @@ Mirrors &Mirrors::getInstance()
     return mirrors;
 }
 
-QDebug operator<<(QDebug out, const MirrorTypeList &c)
+QDebug &operator<<(QDebug &out, const MirrorTypeList &c)
 {
     out << "QList<MirrorType> (";
     foreach(MirrorType m,c)
@@ -151,7 +151,7 @@ QDebug operator<<(QDebug out, const MirrorTypeList &c)
     return out;
 }
 
-QDebug operator<<(QDebug out, const MirrorType &c)
+QDebug &operator<<(QDebug &out, const MirrorType &c)
 {
     out << "MirrorType ("
         << "url:" << c.url
