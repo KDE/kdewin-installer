@@ -235,9 +235,11 @@ SettingsPage::SettingsPage(QWidget *parent)
 {
     ui.setupUi(this);
     connect( ui.rootPathSelect,SIGNAL(clicked()),this,SLOT(rootPathSelectClicked()) );
+    connect( ui.rootPathEdit,SIGNAL(textChanged()),this,SLOT(rootPathEditChanged()) );
+
     connect( ui.tempPathSelect,SIGNAL(clicked()),this,SLOT(tempPathSelectClicked()) );
 	connect( ui.addMirrorButton,SIGNAL(clicked()), this, SLOT(addNewMirrorClicked()));
-
+	
     connect( ui.proxyManual,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
     connect( ui.proxyFireFox,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
     connect( ui.proxyIE,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
@@ -295,6 +297,16 @@ void SettingsPage::rootPathSelectClicked()
                        QFileDialog::ShowDirsOnly| QFileDialog::DontResolveSymlinks);
     if(!fileName.isEmpty())
         ui.rootPathEdit->setText(QDir::toNativeSeparators(fileName));
+}
+
+void SettingsPage::rootPathEditChanged()
+{
+    // update select boxes
+    s.setInstallDir(ui.rootPathEdit->text());
+    bool f = Database::isAnyPackageInstalled(s.installDir());
+    ui.compilerUnspecified->setEnabled(!f);
+    ui.compilerMinGW->setEnabled(!f);
+    ui.compilerMSVC->setEnabled(!f);
 }
 
 void SettingsPage::tempPathSelectClicked()
