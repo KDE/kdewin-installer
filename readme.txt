@@ -20,6 +20,10 @@ NOTES
 
 - to be able to use the update-mime-database package with kde please add the installation path to the 
   enviromment variable KDEDIRS
+
+- runtime dependencies should be separated from the build requirement. perl for example is a build requirement of kdebase. 
+- some msi files are started without displaying a gui like perl. This should be fixed
+
  
 Known Bugs
 ==========
@@ -28,7 +32,7 @@ Known Bugs
 -  packager: stripping of dll's which are in use results in deleting the related dll. 
    Please make sure no one uses a dll when using the -strip option
 -  installer: installing dll's which are in use cancels installing of the related package
-   
+  
 TODO
 ====
 
