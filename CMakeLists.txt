@@ -237,6 +237,7 @@ add_subdirectory(tests)
 add_subdirectory(packager)
 add_subdirectory(doc)
 add_subdirectory(configer)
+add_subdirectory(menubuilder)
 #add_subdirectory(tools)
 
 if (WIN32)
@@ -252,7 +253,8 @@ install_files(/doc/${NAME}-${VERSION} FILES changelog.txt )
 install_files(/bin FILES bin/kdewin-installer-gui-${VERSION}.exe )
 install_files(/bin FILES bin/kdewin-installer-gui.bat )
 install_files(/bin FILES bin/kdewin-packager.exe )
-install_files(/bin FILES bin/kdewin-configer.exe)
+install_files(/bin FILES bin/kdewin-configer.exe )
+install_files(/bin FILES bin/kdewin-menubuilder.exe )
 
 
 if (CMAKE_PRODUCTION_BUILD)

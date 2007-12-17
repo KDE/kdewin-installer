@@ -26,6 +26,8 @@
 #include <QRegExp>
 #include <QString>
 #include <QStringList>
+#include <QSettings>
+#include <QIODevice>
 
 struct InstallFile
 {
@@ -59,7 +61,10 @@ bool findExecutables(QList<InstallFile> &fileList, const QString &root, const QS
 bool generateFileList(QList<InstallFile> &result, const QString &root, const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList);
 bool generateFileList(QList<InstallFile> &result, const QString &root, const QString &subdir, const QString &filter, const QString &exclude = QString());
 
-bool createStartMenuEntries(const QString &dir, const QString &category=QString());
+bool readDesktopFile(QIODevice &device, QSettings::SettingsMap &map);
+bool writeDesktopFile(QIODevice &device, const QSettings::SettingsMap &map);
+
+bool createStartMenuEntries(const QString &dir, const QString &installDir, const QString &category=QString());
 bool removeStartMenuEntries(const QString &dir, const QString &category=QString());
 
 typedef enum RegKey { hKEY_CURRENT_USER, hKEY_LOCAL_MACHINE, hKEY_CLASSES_ROOT };

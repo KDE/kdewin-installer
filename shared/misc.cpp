@@ -246,6 +246,32 @@ bool generateFileList(QList<InstallFile> &fileList, const QString &root, const Q
 }
 
 #ifdef Q_WS_WIN
+#define EOL_SIZE 2
+bool readDesktopFile(QIODevice &device, QSettings::SettingsMap &map)
+{
+    bool ret = true;
+    qint64 buffersize = 1025;
+    char buf[buffersize - 1];
+    QString group;
+    while(device.readLine(buf, buffersize - 1) != -1) {
+        QString buffer = QString(buf).left(QString(buf).size() - EOL_SIZE);
+        QString key = buffer.split("=")[ 0 ];
+        if(!key.startsWith("[")) {
+            map.insert(group + QString("/") + key, buffer.mid(key.size() + 1, buffer.size() - key.size()));
+        } else {
+            group = buffer.mid(1, buffer.lastIndexOf("]") - 1);
+        }
+    }
+    return ret;
+}
+
+bool writeDesktopFile(QIODevice &device, const QSettings::SettingsMap &map)
+{
+    return false;
+}
+
+
+
 // from http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/platform/shell/programmersguide/shell_int/shell_int_programming/shortcuts/shortcut.asp
 // CreateLink - uses the Shell's IShellLink and IPersistFile interfaces 
 //              to create and store a shortcut to the specified object. 
@@ -270,9 +296,10 @@ bool CreateLink(const QString &_fileName, const QString &_linkName, const QStrin
     LPCWSTR lpszDesc     = (LPCWSTR)description.utf16();
     LPCWSTR lpszWorkDir  = (LPCWSTR)workingDir.utf16();
 
+    CoInitialize(NULL);    
     // Get a pointer to the IShellLink interface. 
-    hres = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, 
-                            IID_IShellLink, (LPVOID*)&psl); 
+    hres = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_ALL, IID_IShellLinkW, (LPVOID*)&psl); 
+
     if (SUCCEEDED(hres)) 
     { 
         IPersistFile* ppf; 
@@ -289,7 +316,7 @@ bool CreateLink(const QString &_fileName, const QString &_linkName, const QStrin
             return false;
         }
         if(!SUCCEEDED(psl->SetWorkingDirectory(lpszWorkDir))) {
-            qDebug() << "error setting description for link to " << description;
+            qDebug() << "error setting working Directory for link to " << workingDir;
             psl->Release();
             return false;
         }
@@ -309,7 +336,10 @@ bool CreateLink(const QString &_fileName, const QString &_linkName, const QStrin
             ppf->Release(); 
         } 
         psl->Release(); 
-    } 
+    } else {
+        qDebug() << "Error: Got no pointer to the IShellLink interface.";
+    }
+    CoUninitialize(); // cleanup COM after you're done using its services    
     return SUCCEEDED(hres); 
 }
 
@@ -332,13 +362,15 @@ QString getStartMenuPath(bool bAllUsers)
 /* 
  * create start menu entries from installed desktop files 
  */
-bool createStartMenuEntries(const QString &dir, const QString &category)
+bool createStartMenuEntries(const QString &dir, const QString &installDir, const QString &category)
 {
     QList<InstallFile> fileList;
     generateFileList(fileList,dir,"","*.desktop");
     
     QList<InstallFile>::ConstIterator it = fileList.constBegin();
     QList<InstallFile>::ConstIterator end = fileList.constEnd();
+    const QSettings::Format DesktopFormat = QSettings::registerFormat("desktop", readDesktopFile, writeDesktopFile);
+    
     for( ; it != end; ++it)
     {
         QString file = it->inputFile;
@@ -346,16 +378,19 @@ bool createStartMenuEntries(const QString &dir, const QString &category)
         registry.beginGroup("StartMenuEntries");
         registry.beginGroup(category);
 
-        QSettings settings(dir + '/' + file, QSettings::IniFormat);
+        QSettings settings(dir + '/' + file, DesktopFormat);
+//        QSettings settings(dir + '/' + file, QSettings::IniFormat);
 
-        QString name = settings.value("Desktop Entry/Name").toString();
-        QString mimeType = settings.value("Desktop Entry/Mime Type").toString();
-        QString genericName = settings.value("Desktop Entry/GenericName").toString();
-        // TODO: get full path here!
-        QString exec = settings.value("Desktop Entry/Exec").toString();
-        QString icon = settings.value("Desktop Entry/Icon").toString();
-        QString categories = settings.value("Desktop Entry/Categories").toString();
-        
+        settings.beginGroup("Desktop Entry");
+        QString name = settings.value("Name").toString();
+        QString mimeType = settings.value("Mime Type").toString();
+        QString genericName = settings.value("GenericName").toString();
+        QString exec = installDir + settings.value("Exec").toString().split(" ")[0];
+        QString icon = settings.value("Icon").toString();
+// currently of no use...
+        QStringList categories = settings.value("Categories").toString().split(";");
+        qDebug() << file.remove(".desktop") << " Categories: " << categories;
+        settings.endGroup();
         if (!exec.isEmpty()) 
         {
             QString p = getStartMenuPath(false);
@@ -382,7 +417,7 @@ bool createStartMenuEntries(const QString &dir, const QString &category)
             }
 
             if(!CreateLink(exec, pathLink, "description")) {
-                qDebug() << "Can't create link!";
+                qDebug() << "Can't create link!" << exec << pathLink;
                 continue;
             }
             registry.setValue("exec", pathLink);
