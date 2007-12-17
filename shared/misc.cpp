@@ -254,7 +254,8 @@ bool readDesktopFile(QIODevice &device, QSettings::SettingsMap &map)
     char buf[buffersize - 1];
     QString group;
     while(device.readLine(buf, buffersize - 1) != -1) {
-        QString buffer = QString(buf).left(QString(buf).size() - EOL_SIZE);
+        QString buffer = QString(buf).trimmed();
+        qDebug() << buffer;
         QString key = buffer.split("=")[ 0 ];
         if(!key.startsWith("[")) {
             map.insert(group + QString("/") + key, buffer.mid(key.size() + 1, buffer.size() - key.size()));
@@ -386,10 +387,11 @@ bool createStartMenuEntries(const QString &dir, const QString &installDir, const
         QString mimeType = settings.value("Mime Type").toString();
         QString genericName = settings.value("GenericName").toString();
         QString exec = installDir + settings.value("Exec").toString().split(" ")[0];
+        qDebug() << settings.value("Exec").toString();
         QString icon = settings.value("Icon").toString();
 // currently of no use...
         QStringList categories = settings.value("Categories").toString().split(";");
-        qDebug() << file.remove(".desktop") << " Categories: " << categories;
+        qDebug() << file.replace(".desktop", ".lnk") << " Categories: " << categories;
         settings.endGroup();
         if (!exec.isEmpty()) 
         {
@@ -416,7 +418,7 @@ bool createStartMenuEntries(const QString &dir, const QString &installDir, const
                 }
             }
 
-            if(!CreateLink(exec, pathLink, "description")) {
+            if(!CreateLink(exec, pathLink, "description", installDir)) {
                 qDebug() << "Can't create link!" << exec << pathLink;
                 continue;
             }
