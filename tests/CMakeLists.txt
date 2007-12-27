@@ -6,13 +6,13 @@ source_group(quazip  FILES ${quazip_SOURCES}  ${quazip_HEADERS})
 source_group(qua7zip FILES ${qua7zip_SOURCES} ${qua7zip_HEADERS})
 
 set (SOURCES 
-	${installer_shared_SOURCES}
-	${quazip_HEADERS}
+    ${installer_shared_SOURCES}
+    ${quazip_HEADERS}
     ${quazip_SOURCES}
     ${qua7zip_SOURCES}
     ${qua7zip_HEADERS}
     ${md5_SOURCES}
-	${md5_HEADERS}
+    ${md5_HEADERS}
     ${bzip2_SOURCES}
     ${bzip2_HEADERS}
     ${filters_SOURCES}
@@ -26,12 +26,12 @@ target_link_libraries(mylib)
 list(APPEND LIBS mylib)
 
 set (test_mirrors_SOURCES 
-	test-mirrors.cpp 
-	../shared/mirrors.cpp
-	../shared/settings.cpp
-	../shared/downloader.cpp
-	../shared/downloaderprogress.cpp
-	../shared/misc.cpp
+    test-mirrors.cpp 
+    ../shared/mirrors.cpp
+    ../shared/settings.cpp
+    ../shared/downloader.cpp
+    ../shared/downloaderprogress.cpp
+    ../shared/misc.cpp
 )
 
 qt4_automoc(${test_mirrors_SOURCES})
@@ -39,70 +39,70 @@ add_executable(test-mirrors ${test_mirrors_SOURCES})
 target_link_libraries(test-mirrors ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
 
 set (test_downloader_SOURCES 
-	test-downloader.cpp 
-	../shared/mirrors.cpp
-	../shared/settings.cpp
-	../shared/downloader.cpp
-	../shared/downloaderprogress.cpp
-	../shared/misc.cpp
+    test-downloader.cpp 
+    ../shared/mirrors.cpp
+    ../shared/settings.cpp
+    ../shared/downloader.cpp
+    ../shared/downloaderprogress.cpp
+    ../shared/misc.cpp
 )
 qt4_automoc(${test_downloader_SOURCES})
 add_executable(test-downloader ${test_downloader_SOURCES})
 target_link_libraries(test-downloader ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
 
 set (test-packagelist-apachemodindex_SOURCES
-	test-packagelist-apachemodindex.cpp
+    test-packagelist-apachemodindex.cpp
 )
 qt4_automoc(${test-packagelist-apachemodindex_SOURCES})
 add_executable(test-packagelist-apachemodindex ${test-packagelist-apachemodindex_SOURCES})
 target_link_libraries(test-packagelist-apachemodindex ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
 
 set (test-packagelist-sourceforge_SOURCES
-	test-packagelist-sourceforge.cpp
+    test-packagelist-sourceforge.cpp
 )
 qt4_automoc(${test-packagelist-sourceforge_SOURCES})
 add_executable(test-packagelist-sourceforge ${test-packagelist-sourceforge_SOURCES})
 target_link_libraries(test-packagelist-sourceforge ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
 
 set (test-globalconfig_SOURCES
-	test-globalconfig.cpp
+    test-globalconfig.cpp
 )
 qt4_automoc(${test-globalconfig_SOURCES})
 add_executable(test-globalconfig ${test-globalconfig_SOURCES})
 target_link_libraries(test-globalconfig ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
 
 set (test-settings_SOURCES
-	test-settings.cpp
-	../shared/settings.cpp
-	../shared/misc.cpp
+    test-settings.cpp
+    ../shared/settings.cpp
+    ../shared/misc.cpp
 )
 qt4_automoc(${test-settings_SOURCES})
 add_executable(test-settings ${test-settings_SOURCES})
 target_link_libraries(test-settings ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
 
 set (test-packager_SOURCES
-	test-packager.cpp
-	../packager/packager.cpp
-	../shared/misc.cpp
+    test-packager.cpp
+    ../packager/packager.cpp
+    ../shared/misc.cpp
 )
 qt4_automoc(${test-packager_SOURCES})
 add_executable(test-packager ${test-packager_SOURCES})
 target_link_libraries(test-packager ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
 
 set (test-startmenu_SOURCES
-	test-startmenu.cpp
-	../shared/misc.cpp
+    test-startmenu.cpp
+    ../shared/misc.cpp
 )
 qt4_automoc(${test-startmenu_SOURCES})
 add_executable(test-startmenu ${test-startmenu_SOURCES})
 target_link_libraries(test-startmenu ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
 
 set (test-proxy_SOURCES
-	test-proxy.cpp
-	../shared/misc.cpp
-	../shared/misc.h
-	../shared/settings.cpp
-	../shared/settings.h
+    test-proxy.cpp
+    ../shared/misc.cpp
+    ../shared/misc.h
+    ../shared/settings.cpp
+    ../shared/settings.h
 )
 qt4_automoc(${test-proxy_SOURCES})
 add_executable(test-proxy ${test-proxy_SOURCES})
@@ -110,7 +110,7 @@ target_link_libraries(test-proxy ${QT_QTMAIN_LIBRARIES} ${QT_QTNETWORK_LIBRARY} 
 
 set (TEST_NAME test-database)
 set (${TEST_NAME}_SOURCES
-	${TEST_NAME}.cpp
+    ${TEST_NAME}.cpp
 )
 qt4_automoc(${${TEST_NAME}_SOURCES})
 add_executable(${TEST_NAME} ${${TEST_NAME}_SOURCES})
