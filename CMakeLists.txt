@@ -31,61 +31,61 @@ set (CMAKE_PRODUCTION_BUILD 0)
 
 if (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel)
     set (CMAKE_PRODUCTION_BUILD 1)
-	# disable qDebug output
-	#add_definitions(-DQT_NO_DEBUG_OUTPUT)
+    # disable qDebug output
+    #add_definitions(-DQT_NO_DEBUG_OUTPUT)
 endif (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel)
 
 if (STATIC_BUILD AND MSVC)
     MESSAGE(STATUS "Note: Static build choosed. Please make sure that Qt is build with /MT flags")
-	set (CMAKE_C_FLAGS_RELEASE "/MT /O2 /Ob2 /D NDEBUG")
-	set (CMAKE_CXX_FLAGS_RELEASE "/MT /O2 /Ob2 /D NDEBUG")
-	set (CMAKE_EXE_LINKER_FLAGS_RELEASE "/INCREMENTAL:NO /NODEFAULTLIB:msvcrt")
-	set (CMAKE_C_FLAGS_RELWITHDEBINFO "/MT /O2 /Ob2 /D NDEBUG")
-	set (CMAKE_CXX_FLAGS_RELWITHDEBINFO "/MT /O2 /Ob2 /D NDEBUG")
-	set (CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "/INCREMENTAL:NO /NODEFAULTLIB:msvcrt")
-	set (CMAKE_C_FLAGS_MINSIZEREL "/MT /O1 /Ob1 /D NDEBUG")
-	set (CMAKE_CXX_FLAGS_MINSIZEREL "/MT /O1 /Ob1 /D NDEBUG")
-	set (CMAKE_EXE_LINKER_FLAGS_MINSIZEREL "/INCREMENTAL:NO /NODEFAULTLIB:msvcrt")
-	set (CMAKE_C_FLAGS_DEBUG "/D_DEBUG /MTd /Zi  /Ob0 /Od /RTC1 ")
-	set (CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /MTd /Zi /Ob0 /Od /RTC1 ")
-	set (CMAKE_EXE_LINKER_FLAGS_DEBUG "/debug /INCREMENTAL:NO /NODEFAULTLIB:msvcrt")
+    set (CMAKE_C_FLAGS_RELEASE "/MT /O2 /Ob2 /D NDEBUG")
+    set (CMAKE_CXX_FLAGS_RELEASE "/MT /O2 /Ob2 /D NDEBUG")
+    set (CMAKE_EXE_LINKER_FLAGS_RELEASE "/INCREMENTAL:NO /NODEFAULTLIB:msvcrt")
+    set (CMAKE_C_FLAGS_RELWITHDEBINFO "/MT /O2 /Ob2 /D NDEBUG")
+    set (CMAKE_CXX_FLAGS_RELWITHDEBINFO "/MT /O2 /Ob2 /D NDEBUG")
+    set (CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "/INCREMENTAL:NO /NODEFAULTLIB:msvcrt")
+    set (CMAKE_C_FLAGS_MINSIZEREL "/MT /O1 /Ob1 /D NDEBUG")
+    set (CMAKE_CXX_FLAGS_MINSIZEREL "/MT /O1 /Ob1 /D NDEBUG")
+    set (CMAKE_EXE_LINKER_FLAGS_MINSIZEREL "/INCREMENTAL:NO /NODEFAULTLIB:msvcrt")
+    set (CMAKE_C_FLAGS_DEBUG "/D_DEBUG /MTd /Zi  /Ob0 /Od /RTC1 ")
+    set (CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /MTd /Zi /Ob0 /Od /RTC1 ")
+    set (CMAKE_EXE_LINKER_FLAGS_DEBUG "/debug /INCREMENTAL:NO /NODEFAULTLIB:msvcrt")
 endif (STATIC_BUILD AND MSVC)
 
 # where to store executables
 if (WIN32 OR CYGWIN)
-	set (LIBRARY_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/bin)
+    set (LIBRARY_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/bin)
 else (WIN32 OR CYGWIN)
-	set (LIBRARY_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/lib)
+    set (LIBRARY_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/lib)
 endif (WIN32 OR CYGWIN)
 set (EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
 # get quazip_SOURCES/quazip_HEADERS/quazip_INCLUDE_DIR
 
 if (BZIP2_UNPACK_SUPPORT)
-	set(filters_SOURCES
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/tarfilter.cpp
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/bzip2iodevice.cpp
-	)
-	set(filters_HEADERS
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/tarfilter.h
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/bzip2iodevice.h
-	)
-	set(filters_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters)
+    set(filters_SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/tarfilter.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/bzip2iodevice.cpp
+    )
+    set(filters_HEADERS
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/tarfilter.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/bzip2iodevice.h
+    )
+    set(filters_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters)
 
-	set(bzip2_SOURCES
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/blocksort.c
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/bzlib.c
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/compress.c
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/crctable.c
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/decompress.c
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/huffman.c
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/randtable.c
-	)
-	set(bzip2_HEADERS
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/bzlib.h
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/bzlib_private.h
-	)
-	set(bzip2_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4)
+    set(bzip2_SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/blocksort.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/bzlib.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/compress.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/crctable.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/decompress.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/huffman.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/randtable.c
+    )
+    set(bzip2_HEADERS
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/bzlib.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/bzlib_private.h
+    )
+    set(bzip2_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4)
 endif (BZIP2_UNPACK_SUPPORT)
 
 set(quazip_SOURCES
@@ -143,11 +143,11 @@ endif(SEVENZIP_UNPACK_SUPPORT)
 
 set(md5_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/md5/md5.cpp
-	)
+    )
 
 set(md5_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/md5/md5.h
-	)
+    )
 set(md5_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/md5)
 
 # set installer_shared_SOURCES/installer_shared_HEADERS
@@ -168,6 +168,7 @@ set(installer_shared_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/uninstall.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/packagecategorycache.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/hintfile.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/installerbase.cpp
 )
 
 set(installer_shared_HEADERS
@@ -187,6 +188,7 @@ set(installer_shared_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/uninstall.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/packagecategorycache.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/hintfile.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/installerbase.h
 )
 set(installer_shared_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shared)
 
@@ -274,9 +276,9 @@ if (CMAKE_PRODUCTION_BUILD AND INSTALL_SYSTEM_LIBS)
     if (MINGW)
         find_file(MINGW_DLL mingwm10.dll)
         install_files (/bin FILES  ${MINGW_DLL})
-	else (MINGW)
-		INCLUDE(InstallRequiredSystemLibraries)
-	endif (MINGW)
+    else (MINGW)
+        INCLUDE(InstallRequiredSystemLibraries)
+    endif (MINGW)
 endif (CMAKE_PRODUCTION_BUILD AND INSTALL_SYSTEM_LIBS)
 
 if (KDEWIN_PACKAGER_FOUND)
