@@ -47,7 +47,7 @@ static void printHelp( const QString &addInfo )
     ts << "Options: \t" << "[desktop file] path to the .desktop file that will be translated according to the content"
        << "\n\t\t"      << "both a simple file or a folder containing the file are valid"
        << "\n\t\t"      << "[--category Category/Path] the category path"
-       << "\n\t\t"      << "[--remove] remove the Startmenu-Entries"
+       << "\n\t\t"      << "[--remove] remove the Start menu entries"
        << "\n\t\t"      << "[--installpath Install/Path] the install path where the binaries reside"
        << "\n\t\t"      << "--help giving you this help"
        << "\n";
