@@ -5,6 +5,8 @@ set (VERSION_MINOR 8)
 set (VERSION_PATCH 4)
 set (VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 
+message(STATUS "A happy New Year to all KDE folks!!!!")
+
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
