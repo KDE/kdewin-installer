@@ -251,12 +251,12 @@ bool readDesktopFile(QIODevice &device, QSettings::SettingsMap &map)
 {
     bool ret = true;
     qint64 buffersize = 1025;
-    char buf[buffersize - 1];
+    QByteArray buf(buffersize - 1, '\0');
     QString group;
-    while(device.readLine(buf, buffersize - 1) != -1) {
+    while(device.readLine(buf.data(), buffersize - 1) != -1) {
         QString buffer = QString(buf).trimmed();
         qDebug() << buffer;
-        QString key = buffer.split("=")[ 0 ];
+        QString key = buffer.split('=')[ 0 ];
         if(!key.startsWith("[")) {
             map.insert(group + QString("/") + key, buffer.mid(key.size() + 1, buffer.size() - key.size()));
         } else {

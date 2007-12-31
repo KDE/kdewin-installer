@@ -247,19 +247,6 @@ if (WIN32)
     addExplorerWrapper(${NAME})
 endif(WIN32)
 
-#
-# install section
-#
-install_files(/doc/${NAME}-${VERSION} FILES readme.txt )
-install_files(/doc/${NAME}-${VERSION} FILES changelog.txt )
-install_files(/bin FILES bin/kdewin-installer-gui.bat )
-#install_files(/bin FILES bin/kdewin-installer-gui-${VERSION}.exe )
-#install_files(/bin FILES bin/kdewin-packager.exe )
-#install_files(/bin FILES bin/kdewin-configer.exe )
-#install_files(/bin FILES bin/kdewin-menubuilder.exe )
-install(TARGETS kdewin-installer-gui-${VERSION} kdewin-configer kdewin-packager kdewin-menubuilder DESTINATION bin)
-
-
 if (CMAKE_PRODUCTION_BUILD)
     install( FILES cmake/modules/FINDKDEWIN_Packager.cmake  DESTINATION  share/apps/cmake/modules )
 endif (CMAKE_PRODUCTION_BUILD)
