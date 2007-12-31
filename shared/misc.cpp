@@ -255,7 +255,6 @@ bool readDesktopFile(QIODevice &device, QSettings::SettingsMap &map)
     QString group;
     while(device.readLine(buf.data(), buffersize - 1) != -1) {
         QString buffer = QString(buf).trimmed();
-        qDebug() << buffer;
         QString key = buffer.split('=')[ 0 ];
         if(!key.startsWith("[")) {
             map.insert(group + QString("/") + key, buffer.mid(key.size() + 1, buffer.size() - key.size()));
@@ -368,30 +367,61 @@ bool createStartMenuEntries(const QString &dir, const QString &installDir, const
     QList<InstallFile> fileList;
     generateFileList(fileList,dir,"","*.desktop");
     
-    QList<InstallFile>::ConstIterator it = fileList.constBegin();
-    QList<InstallFile>::ConstIterator end = fileList.constEnd();
     const QSettings::Format DesktopFormat = QSettings::registerFormat("desktop", readDesktopFile, writeDesktopFile);
     
-    for( ; it != end; ++it)
+    Q_FOREACH( const InstallFile &installFile, fileList )
     {
-        QString file = it->inputFile;
+        QString file = installFile.inputFile;
+        QString startMenuCategory;
         QSettings registry("kdewin-installer");
         registry.beginGroup("StartMenuEntries");
         registry.beginGroup(category);
 
         QSettings settings(dir + '/' + file, DesktopFormat);
-//        QSettings settings(dir + '/' + file, QSettings::IniFormat);
 
         settings.beginGroup("Desktop Entry");
         QString name = settings.value("Name").toString();
         QString mimeType = settings.value("Mime Type").toString();
         QString genericName = settings.value("GenericName").toString();
-        QString exec = installDir + settings.value("Exec").toString().split(" ")[0];
-        qDebug() << settings.value("Exec").toString();
+        QString exec = installDir + settings.value("Exec").toString().split(' ')[0];
         QString icon = settings.value("Icon").toString();
-// currently of no use...
-        QStringList categories = settings.value("Categories").toString().split(";");
-        qDebug() << file.replace(".desktop", ".lnk") << " Categories: " << categories;
+
+        QStringList categories = settings.value("Categories").toString().split(';');
+        file.replace(".desktop", ".lnk");
+        
+        QStringList catIgnore = QString( FREEDESKTOP_IGNORE_CATEGORIES ).split(';');
+        QStringList catMain = QString( FREEDESKTOP_MAIN_CATEGORIES ).split(';');
+        QStringList catSub = QString( FREEDESKTOP_SUB_CATEGORIES ).split(';');
+        QString catMainFirst;
+        QString catSubFirst;
+        
+        // catIgnore is the shortest List
+        Q_FOREACH( const QString &str, catIgnore ) {
+            categories.removeAll(str);
+        }
+
+        // categories isn't to long as well
+        Q_FOREACH( const QString &str, categories ) {
+            if( catMain.contains( str ) ) {
+                startMenuCategory = str;
+                startMenuCategory.append("/");
+                break;
+            }
+        }
+        
+        Q_FOREACH( const QString &str, categories ) {
+            if( catSub.contains( str ) ) {
+                
+                    startMenuCategory += str + "/";
+                break;
+            }
+        }
+        
+        if(!category.isEmpty() && category != "Miscelleanous") {
+            startMenuCategory = category;
+            startMenuCategory.append("/");
+        }
+        
         settings.endGroup();
         if (!exec.isEmpty()) 
         {
@@ -401,10 +431,10 @@ bool createStartMenuEntries(const QString &dir, const QString &installDir, const
                 continue;
             }
 
-            QString dir = p + '/' + category + '/';
+            QString dir = p + "/KDE/" + startMenuCategory;
             QDir d(dir);
             if(!d.exists()) {
-                if(!d.mkdir(dir)) {
+                if(!d.mkpath(dir)) {
                     qDebug() << "Can't create directory " << d.absolutePath();
                     continue;
                 }
@@ -413,7 +443,7 @@ bool createStartMenuEntries(const QString &dir, const QString &installDir, const
             QFile f(pathLink);
             if(f.exists()) {
                 if(!f.remove()) {
-                    qDebug() << "Can't remove already existant file " << d.absolutePath();
+                    qDebug() << "Can't remove already existant file " << f.fileName();
                     continue;
                 }
             }
@@ -426,7 +456,7 @@ bool createStartMenuEntries(const QString &dir, const QString &installDir, const
         }
     }
     // note: this method should be called after installing when the related setting page 
-    //       entry is checked 
+    //       entry is checked
     return true;
 }
 

@@ -46,6 +46,9 @@ static void printHelp( const QString &addInfo )
     ts << "\n";
     ts << "Options: \t" << "[desktop file] path to the .desktop file that will be translated according to the content"
        << "\n\t\t"      << "both a simple file or a folder containing the file are valid"
+       << "\n\t\t"      << "[--category Category/Path] the category path"
+       << "\n\t\t"      << "[--remove] remove the Startmenu-Entries"
+       << "\n\t\t"      << "[--installpath Install/Path] the install path where the binaries reside"
        << "\n\t\t"      << "--help giving you this help"
        << "\n";
 
@@ -66,7 +69,7 @@ int main( int argc, char *argv[] )
     args.removeAt( 0 );   // name of executable
 
     int idx = args.indexOf( "--help" );
-    if( idx != -1 && idx < args.count() - 1 ) {
+    if( idx != -1 && idx < args.count() ) {
         printHelp( QString() );
     }
 
@@ -77,7 +80,7 @@ int main( int argc, char *argv[] )
         args.removeAt( idx );
     } else {
         category = "Miscelleanous";
-        qDebug() << QString( "category missing; assuming category %1" ).arg( category );
+        qDebug() << QString( "category missing; assuming category %1 if not present in the desktop files" ).arg( category );
     }
 
     idx = args.indexOf( "--installpath" );
@@ -90,11 +93,6 @@ int main( int argc, char *argv[] )
         qDebug() << QString( "installpath missing; assuming installpath %1" ).arg( installpath );
     }
 
-    idx = args.indexOf( "--build" );
-    if( idx != -1 && idx < args.count() - 1 ) {
-        args.removeAt( idx );
-    }
-    
     idx = args.indexOf( "--remove" );
     if( idx != -1 && idx < args.count() - 1 ) {
         args.removeAt( idx );
