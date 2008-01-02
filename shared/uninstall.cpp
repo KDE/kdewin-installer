@@ -63,9 +63,7 @@ bool Uninstall::uninstallPackage(bool bUseHashWhenPossible)
         m_progress->setMaximum(files.size());
         m_progress->show();
     }
-    QList<FileItem>::ConstIterator it = files.constBegin();
-    for( ; it != files.constEnd(); it++ ) {
-        FileItem fileItem = *it;
+    Q_FOREACH( const FileItem &fileItem, files) {
         fi.setFile(fileItem.fileName);
 
         if(!fi.exists())
@@ -146,6 +144,22 @@ bool Uninstall::checkInstalledFiles()
     return true;
 }
 
+static bool isHash(const QString &str)
+{
+  static QChar a('a'), b('b'), c('c'), d('d'), e('e'), f('f');
+  if(str.length() != 32)
+    return false;
+  for(int i = 0; i < 32; i++) {
+    if(!str[i].isNumber()) {
+      QChar ch = str[i].toLower();
+      if(ch != a && ch != b && ch != c &&
+         ch != d && ch != e && ch != f)
+         return false;
+    }
+  }
+  return true;
+}
+
 bool Uninstall::readManifestFile(QList<FileItem> &fileList)
 {
     QFile f(m_packageName);
@@ -170,8 +184,17 @@ bool Uninstall::readManifestFile(QList<FileItem> &fileList)
             hash = QString();
             fileName = QString::fromUtf8(l);
         } else {
-             hash = l.mid(idx+1);
-             fileName = QString::fromUtf8(l.left(idx));
+            hash = l.mid(idx+1);
+            fileName = QString::fromUtf8(l.left(idx));
+            if(!isHash(hash)) {
+              if(!isHash(fileName)) {
+                emit warning(QString("invalid entry in manifest file: '%1'").arg(QString::fromUtf8(l)));
+                continue;
+              }
+              QString tmp = hash;
+              hash = fileName;
+              fileName = tmp;
+            }
         }
         fileName = m_rootDir + '/' + fileName.replace("\\ ", " ");
         fi.setFile(fileName);

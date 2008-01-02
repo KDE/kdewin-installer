@@ -170,7 +170,7 @@ bool Database::readFromDirectory(const QString &_dir)
         {
             Package *pkg =  new Package;
             pkg->setName(pkgName);
-            pkg->setVersion(pkgVersion);
+            pkg->setInstalledVersion(pkgVersion);
             Package::PackageItem pi;
             pi.bInstalled = true;
             pi.setContentType(pkgType);

@@ -579,16 +579,17 @@ void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString 
     {
         QString name = availablePackage->name();
         if ( ( categoryName == "mingw"  || s.compilerType() == Settings::MinGW )
-                && ( name.contains ( "msvc" ) ) )
+                && ( name.endsWith ( QLatin1String( "-msvc" ) ) ) )
             continue;
         else if ( ( categoryName == "msvc"  || s.compilerType() == Settings::MSVC )
-                  && ( name.contains ( "mingw" ) ) )
+                  && ( name.endsWith ( QLatin1String ( "-mingw" ) ) ) )
             continue;
 
         QStringList data;
         Package *installedPackage = m_database->getPackage(availablePackage->name());
-        QString installedVersion = installedPackage ? installedPackage->version() : "";
+        QString installedVersion = installedPackage ? installedPackage->installedVersion() : "";
         QString availableVersion = availablePackage->version();
+        availablePackage->setInstalledVersion(installedVersion);
 
         /// @TODO add version format check to be sure available package is really newer
         data << availablePackage->name()

@@ -79,9 +79,14 @@ public:
     void setName(QString const &name) { m_name = name; }
 
     /// return version
-    const QString &version() const { return m_version; }
+    const QString &version() const { return m_version.isEmpty() ? m_installedversion : m_version; }
     /// set version
     void setVersion(const QString &version) { m_version = version; }
+
+    /// return installed version
+    const QString &installedVersion() const { return m_installedversion; }
+    /// set version
+    void setInstalledVersion(const QString &version) { m_installedversion = version; }
 
     /// return notes 
     const QString &notes() const { return m_notes; }
@@ -194,6 +199,7 @@ protected:
     PackageItemType m_packages;
     QString m_name;     // base name (a2ps)
     QString m_version;  // base version (4.13b-1)
+    QString m_installedversion;
     QString m_notes;    // notes from package.notes
     QString m_longNotes;// notes from package.notes
     QStringList m_categories;

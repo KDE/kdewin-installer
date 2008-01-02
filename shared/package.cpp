@@ -190,6 +190,7 @@ Package::Package(const Package &other)
     m_handled    = other.m_handled;
     m_notes      = other.m_notes;
     m_longNotes  = other.m_longNotes;
+    m_installedversion = other.m_installedversion;
 }
 
 QString Package::getFileName(Package::Type contentType)
@@ -443,7 +444,7 @@ bool Package::installItem(Installer *installer, Package::Type type)
 
 bool Package::removeItem(Installer *installer, Package::Type type)
 {
-    QString manifestFile = installer->root()+"/manifest/"+Package::manifestFileName(name(),version(),type);
+    QString manifestFile = installer->root()+"/manifest/"+Package::manifestFileName(name(),installedVersion(),type);
     Uninstall ui(installer->root(),manifestFile);
     ui.uninstallPackage(false);
     return true;
