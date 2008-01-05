@@ -23,6 +23,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QFileInfo>
+#include <QtCore/QTextCodec>
 
 #include "database.h"
 #include "package.h"
@@ -109,6 +110,7 @@ void Database::listPackageFiles(const QString &pkgName, Package::Type pkgType)
     qDebug() << files;
 }
 
+extern bool isHash(const QString &str);
 QStringList Database::getPackageFiles(const QString &pkgName, Package::Type pkgType)
 {
     QStringList files;
@@ -121,11 +123,24 @@ QStringList Database::getPackageFiles(const QString &pkgName, Package::Type pkgT
     if (!file.open(QIODevice::ReadOnly| QIODevice::Text))
         return files;
 
+    int iPosFilename = -1;
     QTextStream in(&file);
+    in.setCodec(QTextCodec::codecForName("UTF-8"));
     while (!in.atEnd()) {
-        QString line = in.readLine().toAscii();
+        QString line = in.readLine();
         QStringList parts = line.split(' ');
-        files << parts[0];
+        if(iPosFilename == -1) {
+          for(int i = 0; i < parts.count(); i++) {
+            if(!isHash(parts[i])) {
+              iPosFilename = i;
+              break;
+            }
+          }
+        }
+        if(iPosFilename == -1)
+          continue;
+        if(parts.count() > iPosFilename)
+          files << parts[iPosFilename];
     }
     return files;
 }

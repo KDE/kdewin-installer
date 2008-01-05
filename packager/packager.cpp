@@ -314,6 +314,7 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
     QBuffer b(&mf.data);
     b.open(QIODevice::WriteOnly);
     QTextStream out(&b);
+    out.setCodec(QTextCodec::codecForName("UTF-8"));
     Q_FOREACH(const InstallFile &file, fileList) {
         const QString &fn = file.inputFile;
         QFile f(file.bAbsInputPath ? fn : rootDir + '/' + fn);

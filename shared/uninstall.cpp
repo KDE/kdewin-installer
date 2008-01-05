@@ -144,7 +144,7 @@ bool Uninstall::checkInstalledFiles()
     return true;
 }
 
-static bool isHash(const QString &str)
+bool isHash(const QString &str)
 {
   static QChar a('a'), b('b'), c('c'), d('d'), e('e'), f('f');
   if(str.length() != 32)

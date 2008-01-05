@@ -121,8 +121,7 @@ bool Installer::createManifestFile()
     // in some gnuwin32 packages the manifest file is a directory
     if (a.isDir())
     {
-        QDir dd;
-        dd.rmdir(a.absoluteFilePath());
+        QDir().rmdir(a.absoluteFilePath());
     }
     m_files << "manifest/"+ mFile;
     m_files << "manifest/"+ vFile;
@@ -130,6 +129,7 @@ bool Installer::createManifestFile()
     if (!mf.open(QIODevice::WriteOnly | QIODevice::Text))
         return false;
     QTextStream mo(&mf);
+    mo.setCodec(QTextCodec::codecForName("UTF-8"));
     mo << m_files.join("\n");
     mf.close();
 
@@ -144,6 +144,7 @@ bool Installer::createManifestFile()
         return false;
     }
     QTextStream vo(&vf);
+    vo.setCodec(QTextCodec::codecForName("UTF-8"));
     vo << m_packageToInstall->name() + " " + m_packageToInstall->version() + " " + m_packageToInstall->notes() + "\n";
     vo << m_packageToInstall->name() + ":\n";
     vf.close();
