@@ -127,20 +127,18 @@ QStringList Database::getPackageFiles(const QString &pkgName, Package::Type pkgT
     QTextStream in(&file);
     in.setCodec(QTextCodec::codecForName("UTF-8"));
     while (!in.atEnd()) {
-        QString line = in.readLine();
-        QStringList parts = line.split(' ');
-        if(iPosFilename == -1) {
-          for(int i = 0; i < parts.count(); i++) {
-            if(!isHash(parts[i])) {
-              iPosFilename = i;
-              break;
-            }
+        QStringList parts = in.readLine().split(' ');
+        if(iPosFilename != -1 && parts.count() > iPosFilename) {
+          files << parts[iPosFilename];
+          continue;
+        }
+        for(int i = 0; i < parts.count(); i++) {
+          if(!isHash(parts[i])) {
+            iPosFilename = i;
+            files << parts[iPosFilename];
+            break;
           }
         }
-        if(iPosFilename == -1)
-          continue;
-        if(parts.count() > iPosFilename)
-          files << parts[iPosFilename];
     }
     return files;
 }
