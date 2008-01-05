@@ -18,6 +18,7 @@ find_package(WinSCP)
 
 OPTION(SEVENZIP_UNPACK_SUPPORT "Enable 7-zip unpacking support" OFF)
 OPTION(BZIP2_UNPACK_SUPPORT "Enable tar.bz2 unpacking support" ON)
+# todo detect static qt library automatically 
 OPTION(STATIC_BUILD "enable static build support" ON)
 OPTION(INSTALL_SYSTEM_LIBS "install required system libraries too (only in shared mode)" OFF)
 OPTION(BUILD_TESTS "build test applications " OFF)
@@ -29,12 +30,23 @@ OPTION(BUILD_TESTS "build test applications " OFF)
 # CMake generators if no build type is set.
 MESSAGE(STATUS "Build Type:" ${CMAKE_BUILD_TYPE})
 
-set (CMAKE_PRODUCTION_BUILD 0)
+# PACK_EXECUTABLES enables packing of executable 
+set (PACK_EXECUTABLE 0)
 
 if (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel OR CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo)
-    set (CMAKE_PRODUCTION_BUILD 1)
+    if (STATIC_BUILD)
+        if (UPX_EXECUTABLE)
+            set (PACK_EXECUTABLE 1)
+        endif (UPX_EXECUTABLE)
+        set (INSTALL_SYSTEM_LIBS 0)
+    else (STATIC_BUILD)
+        # add shared mode options 
+    endif (STATIC_BUILD) 
     # disable qDebug output
     #add_definitions(-DQT_NO_DEBUG_OUTPUT)
+else (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel OR CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo)
+    set (STATIC_BUILD 0)
+    set (INSTALL_SYSTEM_LIBS 0)
 endif (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel OR CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo)
 
 if (STATIC_BUILD AND MSVC)
@@ -249,12 +261,10 @@ if (WIN32)
     addExplorerWrapper(${NAME})
 endif(WIN32)
 
-if (CMAKE_PRODUCTION_BUILD)
-    install( FILES cmake/modules/FINDKDEWIN_Packager.cmake  DESTINATION  share/apps/cmake/modules )
-endif (CMAKE_PRODUCTION_BUILD)
+install( FILES cmake/modules/FINDKDEWIN_Packager.cmake  DESTINATION  share/apps/cmake/modules )
 
 # install required shared libraries
-if (CMAKE_PRODUCTION_BUILD AND INSTALL_SYSTEM_LIBS)
+if (INSTALL_SYSTEM_LIBS)
     set (QT_QTCORE_LIBRARY ${QT_LIBRARY_DIR}/../bin/QtCore4.dll)
     set (QT_QTGUI_LIBRARY ${QT_LIBRARY_DIR}/../bin/QtGui4.dll)
     set (QT_QTNETWORK_LIBRARY ${QT_LIBRARY_DIR}/../bin/QtNetwork4.dll)
@@ -269,7 +279,7 @@ if (CMAKE_PRODUCTION_BUILD AND INSTALL_SYSTEM_LIBS)
     else (MINGW)
         INCLUDE(InstallRequiredSystemLibraries)
     endif (MINGW)
-endif (CMAKE_PRODUCTION_BUILD AND INSTALL_SYSTEM_LIBS)
+endif (INSTALL_SYSTEM_LIBS)
 
 if (KDEWIN_PACKAGER_FOUND)
     KDEWIN_PACKAGER(${NAME} ${VERSION} "KDEWIN installer" "")

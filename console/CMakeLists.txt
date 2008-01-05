@@ -36,6 +36,4 @@ add_executable(kdewin-installer-console ${all_sources})
 
 target_link_libraries(kdewin-installer-console ${QT_QTMAIN_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
 
-if (CMAKE_PRODUCTION_BUILD)
-    install_targets(/bin kdewin-installer-console )
-endif (CMAKE_PRODUCTION_BUILD)
+install_targets(/bin kdewin-installer-console )
