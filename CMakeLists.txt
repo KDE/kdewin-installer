@@ -28,6 +28,14 @@ OPTION(BUILD_TESTS "build test applications " OFF)
 # CMake generators if no build type is set.
 MESSAGE(STATUS "Build Type:" ${CMAKE_BUILD_TYPE})
 
+if (QT_CONFIG MATCHES ".*static.*")
+    set (STATIC_BUILD 1)
+    MESSAGE(STATUS "Qt is build in static mode - use static build mode too")
+else (QT_CONFIG MATCHES ".*static.*")
+    set (STATIC_BUILD 0)
+    MESSAGE(STATUS "Qt is build in shared mode - use shared build mode too")
+endif (QT_CONFIG MATCHES ".*static.*")
+
 # PACK_EXECUTABLES enables packing of executable 
 set (PACK_EXECUTABLE 0)
 
@@ -48,7 +56,7 @@ else (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel 
 endif (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel OR CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo)
 
 if (STATIC_BUILD AND MSVC)
-    MESSAGE(STATUS "Note: Static build choosed. Please make sure that Qt is build with /MT flags")
+    MESSAGE(STATUS "Note: Please make sure that Qt is build with /MT flags")
     set (CMAKE_C_FLAGS_RELEASE "/MT /O2 /Ob2 /D NDEBUG")
     set (CMAKE_CXX_FLAGS_RELEASE "/MT /O2 /Ob2 /D NDEBUG")
     set (CMAKE_EXE_LINKER_FLAGS_RELEASE "/INCREMENTAL:NO /NODEFAULTLIB:msvcrt")
