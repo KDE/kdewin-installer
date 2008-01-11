@@ -170,6 +170,10 @@
 # These variables are set to "" Because Qt structure changed 
 # (They make no sense in Qt4)
 #  QT_QT_LIBRARY        Qt-Library is now split
+#
+# (They make no sense in Qt4)
+#  QT_CONFIG        Qt's qmake CONFIG variable
+
 
 # Copyright (c) 2002 Kitware, Inc., Insight Consortium.  All rights reserved.
 # See Copyright.txt or http://www.cmake.org/HTML/Copyright.html for details.
@@ -272,6 +276,9 @@ IF (QT_QMAKE_EXECUTABLE)
       SET(QT4_QMAKE_FOUND TRUE)
     ENDIF (found_vers LESS req_vers)
   ENDIF (qt_version_tmp)
+
+  # load qt configuration
+  QT_QUERY_QMAKE(QT_CONFIG "CONFIG")
 
 ENDIF (QT_QMAKE_EXECUTABLE)
 
@@ -715,6 +722,8 @@ IF (QT4_QMAKE_FOUND)
     FIND_LIBRARY(QT_QTMAIN_LIBRARY NAMES qtmain PATHS ${QT_LIBRARY_DIR} NO_DEFAULT_PATH)
   ENDIF(WIN32)
 
+
+
   ############################################
   #
   # Check the existence of the libraries.
@@ -725,23 +734,17 @@ IF (QT4_QMAKE_FOUND)
     IF (QT_${basename}_LIBRARY OR QT_${basename}_LIBRARY_DEBUG)
 
       IF(MSVC)
+        IF (NOT CMAKE_BUILD_TYPE STREQUAL Debug AND QT_${basename}_LIBRARY AND QT_CONFIG MATCHES ".*release.*")
+            SET(QT_${basename}_LIBRARY ${QT_${basename}_LIBRARY} )
+        endif (NOT CMAKE_BUILD_TYPE STREQUAL Debug AND QT_${basename}_LIBRARY AND QT_CONFIG MATCHES ".*release.*")
+
+        IF (CMAKE_BUILD_TYPE STREQUAL Debug AND QT_${basename}_LIBRARY_DEBUG AND QT_CONFIG MATCHES ".*debug.*")
+            SET(QT_${basename}_LIBRARY ${QT_${basename}_LIBRARY_DEBUG} )
+        endif (CMAKE_BUILD_TYPE STREQUAL Debug AND QT_${basename}_LIBRARY_DEBUG AND QT_CONFIG MATCHES ".*debug.*")
         
-        # Both set
-        IF (QT_${basename}_LIBRARY AND QT_${basename}_LIBRARY_DEBUG)
-          #SET(QT_${basename}_LIBRARY optimized ${QT_${basename}_LIBRARY} debug ${QT_${basename}_LIBRARY_DEBUG})
-          SET(QT_${basename}_LIBRARY ${QT_${basename}_LIBRARY} )
-        ENDIF (QT_${basename}_LIBRARY AND QT_${basename}_LIBRARY_DEBUG)
-
-        # Only debug was found
-        IF (NOT QT_${basename}_LIBRARY AND QT_${basename}_LIBRARY_DEBUG)
-          SET(QT_${basename}_LIBRARY ${QT_${basename}_LIBRARY_DEBUG})
-        ENDIF (NOT QT_${basename}_LIBRARY AND QT_${basename}_LIBRARY_DEBUG)
-
-        # Hmm, is this used anywhere ? Yes, in UseQt4.cmake. We are currently incompatible :-(
-        # this makes FindQt4.cmake unusable for other projects 
-        #SET(QT_${basename}_LIBRARIES optimized ${QT_${basename}_LIBRARY} debug ${QT_${basename}_LIBRARY_DEBUG})
-        SET(QT_${basename}_LIBRARIES ${QT_${basename}_LIBRARY})
-
+        if (NOT QT_${basename}_LIBRARY)
+            message(ERROR "no build mode related library for QT_${basename}_LIBRARY found")
+        endif (NOT QT_${basename}_LIBRARY)
       ENDIF(MSVC)
 
       SET(QT_${basename}_LIBRARY ${QT_${basename}_LIBRARY} CACHE FILEPATH "The Qt ${basename} library")
@@ -805,7 +808,7 @@ IF (QT4_QMAKE_FOUND)
   # find moc and uic using qmake
   QT_QUERY_QMAKE(QT_MOC_EXECUTABLE_INTERNAL "QMAKE_MOC")
   QT_QUERY_QMAKE(QT_UIC_EXECUTABLE_INTERNAL "QMAKE_UIC")
-
+  
   FILE(TO_CMAKE_PATH 
     "${QT_MOC_EXECUTABLE_INTERNAL}" QT_MOC_EXECUTABLE_INTERNAL)
   FILE(TO_CMAKE_PATH 
