@@ -1,5 +1,19 @@
 ChangeLog
 =========
+0.8.4-x
+- packager:       - added switch -hashfirst to place hash values in the first column instead of the second column.
+- buildsystem:    - added qt build mode detection - it now supports shared, static with static runtime and static with shared runtime
+
+0.8.4-4
+-------
+- package format: - manifest files now uses UTF-8 encoding
+		  - .manifest files supports now md5 hashes in front of the filename
+- configer:       - writes timestamp to package list, which could be checked by the installer to see 
+                    if there are updates there (not implemented yet)
+- installer-gui:  - fixed package manifest file format change 
+                  - make sure to uninstall the correct package version when a newer version already exists
+- menubuilder:    - added tool for startmenu entry generation from desktop files
+
 0.8.4-1
 -------
 - installer-gui: - added support for parsing config.txt files in subdirectories, which contains collected informations 
