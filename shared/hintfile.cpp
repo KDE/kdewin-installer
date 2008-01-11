@@ -27,7 +27,7 @@
 bool HintFile::parse(QIODevice *ioDev, HintFileType &hf)
 {
     bool ldesc = false;
-	QString longDesc;
+    QString longDesc;
     while (!ioDev->atEnd()) {
         QByteArray line = ioDev->readLine().replace("\n","");
 
@@ -48,12 +48,12 @@ bool HintFile::parse(QIODevice *ioDev, HintFileType &hf)
             hf.requires = line.replace("requires: ","").trimmed();
         }
         else if (ldesc) {
-			longDesc += "\n" + line;
+            longDesc += "\n" + line;
         }
     }
-	hf.longDesc = longDesc.trimmed().replace("\"","");
+    hf.longDesc = longDesc.trimmed().replace("\"","");
 
-	return true;
+    return true;
 }
 
 bool HintFile::parse(const QString &hintFile, HintFileType &hf)
@@ -63,7 +63,7 @@ bool HintFile::parse(const QString &hintFile, HintFileType &hf)
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
          return false;
 
-	return parse(&file,hf);
+    return parse(&file,hf);
 }
 
 
@@ -74,7 +74,7 @@ bool HintFile::parse(const QByteArray &_ba, HintFileType &hf)
 
     if (!buf.open(QIODevice::ReadOnly| QIODevice::Text))
         return false;
-	return parse(&buf,hf);
+    return parse(&buf,hf);
 }
 
 
