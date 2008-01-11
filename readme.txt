@@ -41,6 +41,8 @@ Known Bugs
 -  gui-installer: changing compiler type is not possible when install root is changed to 
    a location where no packages are installed 
    -> run 'del "%APPDATA%\kde\installer.ini" ' on command line and restart installer
+
+-  gui-installer: is is not possible to deselect eigen and gmm package
   
 TODO
 ====
