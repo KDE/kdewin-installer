@@ -24,17 +24,19 @@ OPTION(BUILD_TESTS "build test applications " OFF)
 # -------------------------------------------------------
 # build type settings
 # -------------------------------------------------------
+message(${QT_CONFIG})
+if (QT_CONFIG MATCHES ".*shared.*")
+    set (STATIC_BUILD 0)
+    MESSAGE(STATUS "Qt is build in shared mode - use shared build mode too")
+else (QT_CONFIG MATCHES ".*shared.*")
+    set (STATIC_BUILD 1)
+    MESSAGE(STATUS "Qt is build in static mode - use static build mode too")
+endif (QT_CONFIG MATCHES ".*shared.*")
+
 # Set a default build type for single-configuration
 # CMake generators if no build type is set.
 MESSAGE(STATUS "Build Type:" ${CMAKE_BUILD_TYPE})
 
-if (QT_CONFIG MATCHES ".*static.*")
-    set (STATIC_BUILD 1)
-    MESSAGE(STATUS "Qt is build in static mode - use static build mode too")
-else (QT_CONFIG MATCHES ".*static.*")
-    set (STATIC_BUILD 0)
-    MESSAGE(STATUS "Qt is build in shared mode - use shared build mode too")
-endif (QT_CONFIG MATCHES ".*static.*")
 
 # PACK_EXECUTABLES enables packing of executable 
 set (PACK_EXECUTABLE 0)
