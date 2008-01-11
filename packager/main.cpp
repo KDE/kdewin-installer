@@ -51,6 +51,7 @@ static void printHelp(const QString &addInfo)
        << "\n\t\t"      << "-complete also create all-in-one package with all files"
        << "\n\t\t"      << "-verbose display verbose processing informations"
        << "\n\t\t"      << "-compression <1|2> - set compression mode to"
+       << "\n\t\t"      << "-hashfirst print hashes in manifest file lists before file (default: no)"
        << "\n\t\t\t"    << "1 - zip, default"
        << "\n\t\t\t"    << "2 - tar.bz2"
        << "\n";
@@ -71,6 +72,7 @@ int main(int argc, char *argv[])
     bool strip = false;
     bool verbose = false;
     bool debugLibs = false;
+    bool hashFirst = false;
     unsigned int compressionMode = 1; // zip
 
     args.removeAt(0);   // name of executable
@@ -122,6 +124,12 @@ int main(int argc, char *argv[])
     idx = args.indexOf("-strip");
     if(idx != -1) {
         strip = 1;
+        args.removeAt(idx);
+    }
+
+    idx = args.indexOf("-hashfirst");
+    if(idx != -1) {
+        hashFirst = true;
         args.removeAt(idx);
     }
 
@@ -201,6 +209,7 @@ int main(int argc, char *argv[])
     packager.setVerbose(verbose);
     packager.setWithDebugLibs(debugLibs);
     packager.setCompressionMode(compressionMode);
+    packager.setHashEntriesFirst(hashFirst);
 
     if (strip)
        packager.stripFiles(rootDir.filePath());

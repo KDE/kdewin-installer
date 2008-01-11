@@ -52,7 +52,8 @@ Packager::Packager(const QString &packageName, const QString &packageVersion, co
     m_notes(packageNotes),
     m_verbose(false),
     m_debugLibs(false),
-    m_compMode(1)
+    m_compMode(1),
+    m_hashEntriesFirst(0)
 {
     qDebug() << m_name;
     qDebug() << m_version;
@@ -326,7 +327,10 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
         QString md5Hash = qtMD5(ba);
         QByteArray fnUtf8 = file.outputFile.isEmpty() ? file.inputFile.toUtf8() : file.outputFile.toUtf8();
         fnUtf8.replace(' ', "\\ "); // escape ' '
-        out << md5Hash << ' ' << fnUtf8 << '\n';
+        if (m_hashEntriesFirst)
+            out << md5Hash << ' ' << fnUtf8 << '\n';
+        else
+            out << fnUtf8 << ' ' << md5Hash << '\n';
     }
     // qt needs a specific config file
     if ((m_name.startsWith("qt") || m_name.startsWith("q++") || m_name.startsWith("q.."))
