@@ -29,9 +29,18 @@ Known Bugs
 ==========
 -  manifest files for gnuwin32 source packages does not contain the full path, there must 
    be prefixed src/<package>-<version> - repackaging of the related package will help
+   
 -  packager: stripping of dll's which are in use results in deleting the related dll. 
    Please make sure no one uses a dll when using the -strip option
--  installer: installing dll's which are in use cancels installing of the related package
+
+-  gui-installer: installing dll's which are in use cancels installing of the related package
+
+-  gui-installer: switching back to the mirror setting page when in package selecting page 
+   may result in package displayed twice or more. 
+
+-  gui-installer: changing compiler type is not possible when install root is changed to 
+   a location where no packages are installed 
+   -> run 'del "%APPDATA%\kde\installer.ini" ' on command line and restart installer
   
 TODO
 ====
@@ -39,25 +48,24 @@ TODO
 1 installer 
 
   1 common 
-    2 complete methods for writing windows start menues entries -> ready, but not tested 
-    3 write environment settings scripts (KDELIBS,PATH ??), this may also affect 
-      windows start menu entries writing 
-    4 add mode for installing from local package directory 
+    2 check for file in use when removing files from packages
+    3 add mode for installing from local package directory
       Q: how to restore the categories ? 
-      Q: May be by storing packages into category dirs 
-    6 remove empty directories when removing packages
-    7 check for file in use
+      A: May be by storing packages into category dirs 
+    4 remove empty directories when removing packages 
+    5 test creating start menu entries support
    
   2 command line installer 
-      1 add long command line options like operation mode --install, --erase, --list --query, ... 
-      2 test
+    1 add long command line options like operation mode --install, --erase, --list --query, ... 
+    2 implement basic functionality 
+    3 test
   
   3 gui 
+  	1 add reinstall package support -> currently by using a remove and install by hand 
+    2 add return to the package selector package after installing package 
+  	2 if remote config is not available only display installed packages
+  	3 only display firefox proxy option is firefox is installed 
   	4 center checkboxes in package selector page -> not possible yet, see comment in source
-  	8 add reinstall package support 
-  	  -> currently by using a remove and install by hand 
-  	12 if remote config is not available only display installed packages
-  	18 only display firefox proxy option is firefox is installed 
 
 2 packager
     2 exlude *d.exe in strip 
@@ -65,9 +73,12 @@ TODO
     4 add *d.exe files to lib package 
     5 don't exclude exe's ending with d from bin package when a debug version using dd is present, only the debug version should go into lib 
 
-3 mirror structure 
+3 configer 
+    1 add support to config.txt for using flat directory structures (= only one directory), which is required for sourceforge mirrors
+      this requires also extending config.txt parser 
+    
+2 mirror structure 
     1 move config.txt and installer to top level dir of mirror 
-
 
 cmake support
 =============
