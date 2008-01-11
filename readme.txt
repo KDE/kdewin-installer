@@ -50,7 +50,9 @@ TODO
 1 installer 
 
   1 common 
-    2 check for file in use when removing files from packages
+    1 check for file in use when removing files from packages
+    2 add source documentation (when api is mostly stable)
+    2 complete package descriptor format (separate build/runtime requirements) 
     3 add mode for installing from local package directory
       Q: how to restore the categories ? 
       A: May be by storing packages into category dirs 
@@ -63,17 +65,17 @@ TODO
     3 test
   
   3 gui 
-  	1 add reinstall package support -> currently by using a remove and install by hand 
+    1 add reinstall package support -> currently by using a remove and install by hand 
     2 add return to the package selector package after installing package 
-  	2 if remote config is not available only display installed packages
-  	3 only display firefox proxy option is firefox is installed 
-  	4 center checkboxes in package selector page -> not possible yet, see comment in source
+    3 if remote config is not available only display installed packages
+    4 only display firefox proxy option is firefox is installed 
+    5 center checkboxes in package selector page -> not possible yet, see comment in source
 
 2 packager
-    2 exlude *d.exe in strip 
-    3 exclude .#* *.rej *.orig files in src package
-    4 add *d.exe files to lib package 
-    5 don't exclude exe's ending with d from bin package when a debug version using dd is present, only the debug version should go into lib 
+    1 exlude *d.exe in strip 
+    2 exclude .#* *.rej *.orig files in src package
+    3 add *d.exe files to lib package 
+    4 don't exclude exe's ending with d from bin package when a debug version using dd is present, only the debug version should go into lib 
 
 3 configer 
     1 add support to config.txt for using flat directory structures (= only one directory), which is required for sourceforge mirrors
