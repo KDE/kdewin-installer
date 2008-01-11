@@ -24,13 +24,20 @@ OPTION(BUILD_TESTS "build test applications " OFF)
 # -------------------------------------------------------
 # build type settings
 # -------------------------------------------------------
-message(${QT_CONFIG})
 if (QT_CONFIG MATCHES ".*shared.*")
     set (STATIC_BUILD 0)
     MESSAGE(STATUS "Qt is build in shared mode - use shared build mode too")
 else (QT_CONFIG MATCHES ".*shared.*")
     set (STATIC_BUILD 1)
-    MESSAGE(STATUS "Qt is build in static mode - use static build mode too")
+    if (MSVC)
+        QT_QUERY_QMAKE(QMAKE_CFLAGS_RELEASE "QMAKE_CFLAGS_RELEASE")
+        if (QMAKE_CFLAGS_RELEASE MATCHES ".*-MT.*")
+            MESSAGE(STATUS "Qt is build in static mode - use static build mode too")
+        else (QMAKE_CFLAGS_RELEASE MATCHES ".*-MT.*")
+            MESSAGE(FATAL_ERROR "Qt is build static but with unsupported shared runtime - rebuild Qt with QMAKE_CFLAGS_RELEASE containing -MT"
+            )
+        endif (QMAKE_CFLAGS_RELEASE MATCHES ".*-MT.*")
+    endif (MSVC)
 endif (QT_CONFIG MATCHES ".*shared.*")
 
 # Set a default build type for single-configuration
@@ -58,7 +65,6 @@ else (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel 
 endif (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel OR CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo)
 
 if (STATIC_BUILD AND MSVC)
-    MESSAGE(STATUS "Note: Please make sure that Qt is build with /MT flags")
     set (CMAKE_C_FLAGS_RELEASE "/MT /O2 /Ob2 /D NDEBUG")
     set (CMAKE_CXX_FLAGS_RELEASE "/MT /O2 /Ob2 /D NDEBUG")
     set (CMAKE_EXE_LINKER_FLAGS_RELEASE "/INCREMENTAL:NO /NODEFAULTLIB:msvcrt")
