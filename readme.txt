@@ -58,6 +58,7 @@ TODO
       A: May be by storing packages into category dirs 
     4 remove empty directories when removing packages 
     5 test creating start menu entries support
+    6 add support to create/remove start menu entries for a specific package, which is required for the installer 
    
   2 command line installer 
     1 add long command line options like operation mode --install, --erase, --list --query, ... 
