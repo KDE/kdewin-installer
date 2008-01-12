@@ -524,11 +524,11 @@ QVariant getWin32RegistryValue(RegKey akey, const QString& subKey, const QString
 
     QVariant res;
     switch(dwType) {
-		case REG_MULTI_SZ:
+        case REG_MULTI_SZ:
             // FIXME: this should give a QStringList; to be implemented later
-			FAILURE;
-			break;
-		case REG_EXPAND_SZ:
+            FAILURE;
+            break;
+        case REG_EXPAND_SZ:
         case REG_SZ: {
             QByteArray ba(dwSize * 2, 0);
             if (ERROR_SUCCESS != RegQueryValueExW(hKey, WIN32_CAST_CHAR item.utf16(), NULL, &dwType, (LPBYTE)ba.data(), &dwSize))
@@ -588,7 +588,7 @@ bool setWin32RegistryValue(const RegKey& akey, const QString& subKey, const QStr
         default: return false;
     }
 /*
-	it needs to be sure that QVariant can be converted to the Registry Data Types REG_BINARY | REG_DWORD | REG_EXPAND_SZ | REG_SZ
+    it needs to be sure that QVariant can be converted to the Registry Data Types REG_BINARY | REG_DWORD | REG_EXPAND_SZ | REG_SZ
 */
 
     if(qvType == qt_unknown) {
@@ -597,15 +597,15 @@ bool setWin32RegistryValue(const RegKey& akey, const QString& subKey, const QStr
             case QVariant::Date:
             case QVariant::DateTime:
             case QVariant::Time:
-            case QVariant::String:		qvType = qt_String; break;
-            case QVariant::ByteArray:	qvType = qt_BINARY; break;
+            case QVariant::String:        qvType = qt_String; break;
+            case QVariant::ByteArray:    qvType = qt_BINARY; break;
             case QVariant::ULongLong:
             case QVariant::LongLong:
             case QVariant::Bool:
             case QVariant::UInt:
-            case QVariant::Int:			qvType = qt_DWORD; break;
-            case QVariant::StringList:	qvType = qt_MultiString; break;
-            default:					return false;
+            case QVariant::Int:            qvType = qt_DWORD; break;
+            case QVariant::StringList:    qvType = qt_MultiString; break;
+            default:                    return false;
         }
     }
 

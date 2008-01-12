@@ -123,11 +123,11 @@ void SettingsInstallPage::reset()
         ui.compilerMSVC->setEnabled(false);
     }
     switch (s.compilerType()) {
-		case Settings::unspecified: ui.compilerUnspecified->setChecked(true); break;
-		case Settings::MinGW: ui.compilerMinGW->setChecked(true); break;
-		case Settings::MSVC: ui.compilerMSVC->setChecked(true); break;
+        case Settings::unspecified: ui.compilerUnspecified->setChecked(true); break;
+        case Settings::MinGW: ui.compilerMinGW->setChecked(true); break;
+        case Settings::MSVC: ui.compilerMSVC->setChecked(true); break;
         default: ui.compilerMinGW->setChecked(true); break;
-	}
+    }
 
     QButtonGroup *groupB = new QButtonGroup(this);
     groupB->addButton(ui.installModeDeveloper);
@@ -153,11 +153,11 @@ void SettingsInstallPage::accept()
     s.setDeveloperMode(ui.installModeDeveloper->isChecked());
 
     if (ui.compilerUnspecified->isChecked())
-		s.setCompilerType(Settings::unspecified);
-	if (ui.compilerMinGW->isChecked())
-		s.setCompilerType(Settings::MinGW);
-	if (ui.compilerMSVC->isChecked())
-		s.setCompilerType(Settings::MSVC);
+        s.setCompilerType(Settings::unspecified);
+    if (ui.compilerMinGW->isChecked())
+        s.setCompilerType(Settings::MinGW);
+    if (ui.compilerMSVC->isChecked())
+        s.setCompilerType(Settings::MSVC);
 }
 
 void SettingsInstallPage::reject()
@@ -178,7 +178,7 @@ QWidget *SettingsProxyPage::widget()
 
 void SettingsProxyPage::reset()
 {
-	switch (s.proxyMode()) {
+    switch (s.proxyMode()) {
         case Settings::InternetExplorer: ui.proxyIE->setChecked(true); break;
         case Settings::Manual: ui.proxyManual->setChecked(true); break;
         case Settings::FireFox: ui.proxyFireFox->setChecked(true); break;
@@ -238,8 +238,8 @@ SettingsPage::SettingsPage(QWidget *parent)
     connect( ui.rootPathEdit,SIGNAL(textChanged()),this,SLOT(rootPathEditChanged()) );
 
     connect( ui.tempPathSelect,SIGNAL(clicked()),this,SLOT(tempPathSelectClicked()) );
-	connect( ui.addMirrorButton,SIGNAL(clicked()), this, SLOT(addNewMirrorClicked()));
-	
+    connect( ui.addMirrorButton,SIGNAL(clicked()), this, SLOT(addNewMirrorClicked()));
+    
     connect( ui.proxyManual,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
     connect( ui.proxyFireFox,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
     connect( ui.proxyIE,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
@@ -322,7 +322,7 @@ void SettingsPage::tempPathSelectClicked()
 
 void SettingsPage::addNewMirrorClicked()
 {
-	bool ok;
+    bool ok;
     QString text = QInputDialog::getText(this, tr("Add a new Mirror"),
                                          tr("Mirror address:"), QLineEdit::Normal,
                                          QString("http://"), &ok);

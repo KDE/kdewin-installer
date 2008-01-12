@@ -182,8 +182,8 @@ public slots:
     void slotCompilerTypeChanged(void);
 
 private:
-	QTabWidget *packageInfo;
-	QTextEdit *categoryInfo;
+    QTabWidget *packageInfo;
+    QTextEdit *categoryInfo;
 };
 
 class DependenciesPage: public InstallWizardPage

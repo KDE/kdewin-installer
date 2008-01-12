@@ -78,8 +78,8 @@ public:
     void setPackageNote(const QString &package, const QString &notes);
     QString packageNote(const QString &package);
 
-	void setPackageLongNotes(const QString &package, const QString &note);
-	QString packageLongNotes(const QString &package);
+    void setPackageLongNotes(const QString &package, const QString &note);
+    QString packageLongNotes(const QString &package);
 
     void setPackageCategories(const QString &package, const QStringList &categories);
     QStringList &packageCategories(const QString &package);

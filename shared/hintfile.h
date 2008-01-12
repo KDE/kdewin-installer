@@ -33,6 +33,8 @@ typedef struct {
     QString longDesc;
     QString categories;
     QString requires;
+    QString version;
+    QString compiler;
 } HintFileType;
 
 class HintFile {

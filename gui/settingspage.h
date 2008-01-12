@@ -112,7 +112,7 @@ private slots:
     void tempPathSelectClicked();
     void addNewMirrorClicked();
     void switchProxyFields(bool checked);
-	void rootPathEditChanged();
+    void rootPathEditChanged();
      
 private:
     Ui::SettingsDialog ui;

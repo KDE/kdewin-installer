@@ -42,14 +42,22 @@ bool HintFile::parse(QIODevice *ioDev, HintFileType &hf)
         else if (line.startsWith("category: ")) {
             ldesc = false;
             hf.categories = line.replace("category: ","").trimmed();
-        }    
+        }
         else if (line.startsWith("requires: ")) {
             ldesc = false;
             hf.requires = line.replace("requires: ","").trimmed();
         }
+        else if (line.startsWith("version: ")) {
+            ldesc = false;
+            hf.version = line.replace("version: ","").trimmed();
+        }
+        else if (line.startsWith("compiler: ")) {
+            ldesc = false;
+            hf.compiler = line.replace("compiler: ","").trimmed();
+        }
         else if (ldesc) {
             longDesc += "\n" + line;
-        }
+       }
     }
     hf.longDesc = longDesc.trimmed().replace("\"","");
 
