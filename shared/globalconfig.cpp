@@ -51,14 +51,23 @@ QStringList GlobalConfig::fetch(const QString &baseURL)
             configFiles << cfr.absoluteFilePath();
         }
         else
-        {
+        {   
+            QUrl url(baseURL + "/config.txt");
             QFileInfo cfi(Settings::getInstance().downloadDir()+"/config.txt");
-            ret = m_downloader->start(baseURL + "/installer/config.txt",cfi.absoluteFilePath());
+            ret = m_downloader->start(url,cfi.absoluteFilePath());
             if (Settings::hasDebug("GlobalConfig"))
-                qDebug() << "download remote config file to" << cfi.absoluteFilePath() << "..." << (ret == true ? "okay" : "failure") ;
+                qDebug() << "download remote config file from" <<  url << "to" << cfi.absoluteFilePath() << "..." << (ret == true ? "okay" : "failure") ;
             if (ret)
                 configFiles << cfi.absoluteFilePath();
-
+            else 
+            {
+                QUrl url(baseURL + "/installer/config.txt");
+                ret = m_downloader->start(url,cfi.absoluteFilePath());
+                if (Settings::hasDebug("GlobalConfig"))
+                    qDebug() << "download remote config file from" <<  url << "to" << cfi.absoluteFilePath() << "..." << (ret == true ? "okay" : "failure") ;
+                if (ret)
+                    configFiles << cfi.absoluteFilePath();
+            }
         }
 
         QFileInfo fi(Settings::getInstance().downloadDir()+"/config-local.txt");
@@ -257,13 +266,16 @@ bool GlobalConfig::parse(QIODevice *ioDev)
             {
                 if(cmd[0] == "@siteurl" || cmd[0] == "@url")
                 {
-                    QUrl url(cmd.join(" "));
+                    QUrl url(cmd[1]);
                     if (url.scheme().isEmpty())
                         url = QUrl(m_baseURL + '/' + cmd[1]);
                     site->setURL(url);
                 }
                 else if(cmd[0] == "@sitetype" || cmd[0] == "@type")
-                    site->setType(cmd[1] == "apachemodindex" ? Site::ApacheModIndex : Site::SourceForge );
+                {
+                    if (!site->setType(cmd[1]))
+                        qCritical() << "unknown site type" << cmd[1];
+                }
                 else if(cmd[0] == "@mirrorurl") {
                     QUrl url(cmd.join(" "));
                     site->addMirror(url);
@@ -340,16 +352,27 @@ void GlobalConfig::clear()
 
 QDebug &operator<<(QDebug &out,GlobalConfig &c)
 {
-    out << c.m_baseURL;
-    for (QList<Site*>::Iterator s = c.m_sites.begin(); s != c.m_sites.end(); s++)
+    out << "GlobalConfig ("
+        << "m_baseURL" << c.m_baseURL
+        << "m_sites";
+    foreach(const Site* s, c.m_sites)
         out << *s;
 
-    for (QList<Package*>::Iterator p = c.m_packages.begin(); p != c.m_packages.end(); p++)
+    out << "m_packages";
+    foreach(const Package* p, c.m_packages)
         out << *p;
 
-    for (QList<GlobalConfig::Mirror*>::Iterator p = c.m_mirrors.begin(); p != c.m_mirrors.end(); p++)
-        out << *p;
+    out << "m_mirrors";
+    foreach(const GlobalConfig::Mirror* m, c.m_mirrors)
+        out << *m;
 
+    return out;
+}
+
+
+QDebug &operator <<(QDebug &out,const GlobalConfig::Mirror &c)
+{
+    out << " Mirror (" << "url" << c.url << "location" << c.location << ")";
     return out;
 }
 

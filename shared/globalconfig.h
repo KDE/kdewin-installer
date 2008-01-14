@@ -32,10 +32,12 @@ class Downloader;
 
 class GlobalConfig {
     public:
-        typedef struct {
-            QString url;
-            QString location;
-        } Mirror;
+        class Mirror {
+            public: 
+                QString url;
+                QString location;
+                friend QDebug &operator <<(QDebug &,const GlobalConfig::Mirror &);
+        };
 
         GlobalConfig(Downloader *downloader);
         ~GlobalConfig();
