@@ -84,7 +84,7 @@ public:
     {
         m_notes = notes;
     }
-    const QString &BaseURL() const
+    const QUrl &BaseURL() const
     {
         return m_baseURL;
     }
@@ -92,13 +92,10 @@ public:
     {
         m_baseURL = baseURL;
     }
-
     void setBaseURL(const QUrl &baseURL)
     {
-        m_baseURL = baseURL.toString();
+        m_baseURL = baseURL;
     }
-
-
     // sets the current Site to get access to dep & deny lists
     void setCurrentSite(Site *s)
     {
@@ -122,7 +119,7 @@ private:
     QString m_root;
     QString m_configFile;
     QString m_name;
-    QString m_baseURL;
+    QUrl m_baseURL;
     Site *m_curSite;
     QString m_notes;
     bool m_parserConfigFileFound; /// indicates the a config file was found for a parsed web site

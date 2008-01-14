@@ -167,7 +167,7 @@ bool InstallerEngine::addPackagesFromSites()
         // packagelist needs to access Site::getDependencies() && Site::isExclude()
         packageList.setCurrentSite(site);
 
-        packageList.setBaseURL(site->url().toString());    // why not use QUrl here?
+        packageList.setBaseURL(site->url());
 
         QByteArray ba;
         m_downloader->start(site->url(), ba);

@@ -363,9 +363,9 @@ bool PackageList::addPackageFromHintFile(const QString &fileName)
     QString pkgName = hintFile[0];
     // download hint file
     QByteArray ba;
-    if (!d.start(m_baseURL + '/' + fileName, ba)) 
+    if (!d.start(m_baseURL.toString() + '/' + fileName, ba)) 
     {
-        qCritical() << "could not download" << m_baseURL + '/' + fileName;
+        qCritical() << "could not download" << m_baseURL.toString() + '/' + fileName;
         return false;
     }
     HintFile hf;
@@ -396,7 +396,7 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files)
         Downloader d(true,0);
         // fetch config file 
         QFileInfo cfi(Settings::getInstance().downloadDir()+"/config-temp.txt");
-        bool ret = d.start(m_baseURL + "/config.txt",cfi.absoluteFilePath());
+        bool ret = d.start(m_baseURL.toString() + "/config.txt",cfi.absoluteFilePath());
         if (ret) 
         {
             GlobalConfig g(0);
@@ -441,7 +441,7 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files)
                 p.setVersion(pkgVersion);
                 p.setName(pkgName);
                 Package::PackageItem item;
-                item.set(m_baseURL + '/' + fileName, "", pkgType.toAscii());
+                item.set(m_baseURL.toString() + '/' + fileName, "", pkgType.toAscii());
                 p.add(item);
                 if(m_curSite)
                     p.setNotes(m_curSite->packageNote(pkgName));
@@ -457,7 +457,7 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files)
                 addPackage(p);
             } else {
                 Package::PackageItem item;
-                item.set(m_baseURL + '/' + fileName, "", pkgType.toAscii());
+                item.set(m_baseURL.toString() + '/' + fileName, "", pkgType.toAscii());
                 pkg->add(item);
                 if (m_curSite) 
                 {
