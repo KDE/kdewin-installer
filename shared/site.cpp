@@ -1,6 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2007 Christian Ehrlicher <Ch.Ehrlicher@gmx.de>
+** Copyright (C) 2007 Ralf Habacker <ralf.habacker@freenet.de>
 ** All rights reserved.
 **
 ** This file is part of the KDE installer for windows
@@ -54,6 +55,22 @@ QStringList Site::getDependencies(const QString &_package)
 void Site::setPackageNote(const QString &package, const QString &note)
 {
     m_packageNotes[package] = note;
+}
+
+bool Site::setType(const QString &type)
+{
+    if (type == "apachemodindex")
+        setType(Site::ApacheModIndex);
+    else if (type == "sourceforge")
+        setType(Site::SourceForge);
+    else if (type == "sourceforge-mirror")
+        setType(Site::SourceForgeMirror);
+    else 
+    {
+        setType(Site::ApacheModIndex);
+        return false;
+    }
+    return true;
 }
 
 QString Site::packageNote(const QString &package)

@@ -36,7 +36,7 @@ class Site
 {
 
 public:
-    enum SiteType {SourceForge, ApacheModIndex};
+    enum SiteType {SourceForge, SourceForgeMirror, ApacheModIndex};
 
     QString name() const { return m_name; }
     void setName(const QString &name)
@@ -69,6 +69,8 @@ public:
         m_type = type;
     }
 
+    bool setType(const QString &type);
+
     void addDependencies(const QString &package, const QStringList &deps);
     QStringList getDependencies(const QString &package);
 
@@ -83,7 +85,6 @@ public:
 
     void setPackageCategories(const QString &package, const QStringList &categories);
     QStringList &packageCategories(const QString &package);
-
 
     void addExcludes(const QStringList &excludes);
     bool isExclude(const QString &package);
