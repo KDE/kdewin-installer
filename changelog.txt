@@ -1,13 +1,16 @@
 ChangeLog
 =========
-0.8.4-x
+0.8.4-5
 - packager:       - added switch -hashfirst to place hash values in the first column instead of the second column.
 - buildsystem:    - added qt build mode detection - it now supports shared, static with static runtime and static with shared runtime
+                  - removed build system warning about default library libcmt when configuring for static debug builds 
+- installer-gui:  - fixed bug selecting empty line in mirror list when no mirror was used before 
+                  - made mirror list parser more robust against not complete mirror records 
 
 0.8.4-4
 -------
 - package format: - manifest files now uses UTF-8 encoding
-		  - .manifest files supports now md5 hashes in front of the filename
+                  - manifest files supports now md5 hashes in front of the filename
 - configer:       - writes timestamp to package list, which could be checked by the installer to see 
                     if there are updates there (not implemented yet)
 - installer-gui:  - fixed package manifest file format change 
