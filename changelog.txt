@@ -6,6 +6,7 @@ ChangeLog
                   - removed build system warning about default library libcmt when configuring for static debug builds 
 - installer-gui:  - fixed bug selecting empty line in mirror list when no mirror was used before 
                   - made mirror list parser more robust against not complete mirror records 
+                  - print qt version used for building installer in about box
 
 0.8.4-4
 -------
