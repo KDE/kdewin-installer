@@ -60,16 +60,21 @@ void SettingsMirrorPage::reset()
         qDebug() << m.toString();
         ui.downloadMirror->addItem(m.toString(), m.url);
     }
-    qDebug() << currentMirror;
-    int index = ui.downloadMirror->findData(currentMirror);
-    if (index != -1)
-          ui.downloadMirror->setCurrentIndex(index);
-    else
-    {
-          ui.downloadMirror->addItem(currentMirror.toString(), currentMirror);
-          ui.downloadMirror->setCurrentIndex(ui.downloadMirror->count()-1);
-    }
-    connect(ui.downloadMirror, SIGNAL(activated( int )), this, SLOT(mirrorChanged( int )));
+	if (!currentMirror.isEmpty()) 
+	{
+		qDebug() << currentMirror;
+		int index = ui.downloadMirror->findData(currentMirror);
+		if (index != -1)
+			  ui.downloadMirror->setCurrentIndex(index);
+		else
+		{
+			  ui.downloadMirror->addItem(currentMirror.toString(), currentMirror);
+			  ui.downloadMirror->setCurrentIndex(ui.downloadMirror->count()-1);
+		}
+	}
+	else
+		ui.downloadMirror->setCurrentIndex(0);
+	connect(ui.downloadMirror, SIGNAL(activated( int )), this, SLOT(mirrorChanged( int )));
 }
 
 void SettingsMirrorPage::mirrorChanged( int numberMirror )
