@@ -34,7 +34,10 @@ void PackageCategoryCache::setNote(const QString &category, const QString &notes
 void PackageCategoryCache::addPackage(Package *pkg)
 {
     foreach(QString category, pkg->categories())
-        m_data[category].packages.append(pkg->name());
+    {
+        if (!m_data[category].packages.contains(pkg->name()))
+            m_data[category].packages.append(pkg->name());
+    }
 }
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2)
