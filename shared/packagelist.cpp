@@ -269,6 +269,58 @@ bool PackageList::syncWithDatabase(Database &database)
     return true;
 }
 
+inline bool isPackageFileName(const QString fileName)
+{
+    return ( fileName.endsWith(".zip") || fileName.endsWith(".tbz") || fileName.endsWith(".tar.bz2") );
+}
+
+class FileType {
+    public:
+        FileType(const QString &v, const QString &f) { version = v; fileName = f; }
+    QString version;
+    QString fileName;
+};
+
+// filter List to get latest versions
+QStringList filterFileName(QStringList & files)
+{
+    QStringList filteredFiles;
+
+    QMap<QString,FileType*> packages; 
+    foreach(QString fileName, files)
+    {
+        if (isPackageFileName(fileName) ) 
+        {
+            QString pkgName;
+            QString pkgVersion;
+            QString pkgType;
+            QString pkgFormat;
+            if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgFormat))
+                continue;
+            QString key = pkgName+"-"+pkgType;
+            if (packages.contains(key))
+            {
+                qDebug() << "compare" << fileName << "with" << key << packages.value(key)->version << pkgVersion << (packages.value(key)->version < pkgVersion);
+                if (packages.value(key)->version < pkgVersion)
+                {
+                    qDebug() << "using" << fileName << "as higher version";
+                    packages[key]->version = pkgVersion;
+                    packages[key]->fileName = fileName;
+                }
+            }
+            else
+            {
+                qDebug() << "added" << fileName;
+                packages[key] = new FileType(pkgVersion,fileName);
+            }
+        }
+    }
+    foreach(FileType *p,packages)
+        filteredFiles << p->fileName;
+
+    return filteredFiles;
+}
+
 bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, bool append)
 {
     if (!append)
@@ -316,6 +368,35 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
         }
         break;
 
+    // for example http://www.mirrorservice.org/sites/download.sourceforge.net/pub/sourceforge/k/kd/kde-cygwin/
+    case PackageList::SourceForgeMirror:
+        {
+            const char *lineKey1 = "<td><a href=\"";
+            const char *fileKeyEnd = "\"><img alt";
+            QStringList files;
+            QUrl baseURL(m_baseURL);
+
+            while (!ioDev->atEnd())
+            {
+                QByteArray line = ioDev->readLine().toLower();
+
+                if (line.contains(lineKey1))
+                {
+                    int a = line.lastIndexOf(lineKey1) + strlen(lineKey1);
+                    int b = line.indexOf(fileKeyEnd,a);
+                    QString fileName = line.mid(a,b-a).replace(baseURL.path(),"");
+                    if (isPackageFileName(fileName))
+                    {
+                        qDebug() << fileName;
+                        files << fileName;
+                    }
+                }
+            }
+            files = filterFileName(files);
+            addPackagesFromFileNames(files,true);
+        }
+        break;
+
     case PackageList::ApacheModIndex:
         const char *lineKey1 = "alt=\"[   ]\"> <a href=\"";
         const char *lineKey2 = "alt=\"[   ]\" /> <a href=\"";
@@ -342,6 +423,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                 files << fileName;
             }
         }
+        files = filterFileName(files);
         addPackagesFromFileNames(files);
         break;
     }
@@ -389,9 +471,9 @@ bool PackageList::addPackageFromHintFile(const QString &fileName)
     return true;
 }
 
-bool PackageList::addPackagesFromFileNames(const QStringList &files)    
+bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignoreConfigTxt)    
 {
-    if (files.contains("config.txt")) 
+    if (!ignoreConfigTxt && files.contains("config.txt")) 
     {
         Downloader d(true,0);
         // fetch config file 

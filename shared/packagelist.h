@@ -40,7 +40,7 @@ class PackageList : public QObject
     Q_OBJECT
 
 public:
-    enum Type {SourceForge, ApacheModIndex};
+    enum Type {SourceForge, SourceForgeMirror, ApacheModIndex};
 
     PackageList();
     virtual ~PackageList();
@@ -111,7 +111,8 @@ signals:
     void configLoaded();
 
 protected:
-    bool addPackagesFromFileNames(const QStringList &files);
+    bool addPackagesFromFileNames(const QStringList &files, bool ignoreConfigTxt=false);
+
     bool addPackageFromHintFile(const QString &file);
     bool readHTMLInternal(QIODevice *ioDev, PackageList::Type type, bool append=false);
 private:
