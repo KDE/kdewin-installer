@@ -84,6 +84,21 @@ void InstallerEngine::initPackages()
         m_packageResources->clear();
     addPackagesFromGlobalConfig();
     addPackagesFromSites();
+
+    // add site independend package category relations
+    QHash<QString, QStringList>::const_iterator i = m_globalConfig->categoryPackages().constBegin();
+    for (; i != m_globalConfig->categoryPackages().constEnd(); i++) 
+    {
+        foreach (QString name,i.value())
+        {
+            Package *pkg = m_packageResources->getPackage(name);
+            if (pkg)
+            {
+                pkg->addCategories(i.key());
+                categoryCache.addPackage(pkg);
+            }
+        }
+    }
     m_addedPackages = true;
     m_initFinished = true;
 }
@@ -170,8 +185,25 @@ bool InstallerEngine::addPackagesFromSites()
         packageList.setBaseURL(site->url());
 
         QByteArray ba;
-        m_downloader->start(site->url(), ba);
-        if (!packageList.readHTMLFromByteArray(ba,site->Type() == Site::ApacheModIndex ? PackageList::ApacheModIndex : PackageList::SourceForge, true ))
+        if (!m_downloader->start(site->url(), ba))
+        {
+            // @TODO: add gui message box
+            qCritical() << "failed to download site list" << site->url();
+            return false;
+        }
+        PackageList::Type type;
+
+        switch(site->Type()) {
+        case Site::SourceForge:    type = PackageList::SourceForge; break;
+        case Site::SourceForgeMirror: type = PackageList::SourceForgeMirror; break;
+        case Site::ApacheModIndex: type = PackageList::ApacheModIndex; break;
+        default:
+            qWarning() << "unknown Site type" << site->Type();
+            type = PackageList::ApacheModIndex;
+            break;
+        }
+
+        if (!packageList.readHTMLFromByteArray(ba, type, true ))
         {
             qDebug() << "error reading package list from download html file";
             continue;
