@@ -42,8 +42,13 @@ class BZip2IODevice::Private
     iBufSize(1024*1024),
     initialized(false),
     decomressStreamEnd(false),
-    blocksize(bs)
+    blocksize(bs),
+    data(0)
     {}
+    ~Private()
+    {
+      delete[] data;
+    }
 
     bool initializeCompress();
     qint64 doCompress(const char *in, qint64 iLen);
@@ -59,7 +64,7 @@ class BZip2IODevice::Private
     bool            decomressStreamEnd;
     unsigned int    blocksize;
     bz_stream       stream;
-    QByteArray      inBuf;
+    char           *data;
 };
 
 bool BZip2IODevice::Private::initializeCompress()
@@ -184,11 +189,15 @@ qint64 BZip2IODevice::Private::doDecompress(char *out, qint64 iMaxLen)
 
   stream.next_out  = out;
   stream.avail_out = iMaxLen;
+  if(!data)
+    data = new char[iBufSize];
   do {
     if(ret != BZ_STREAM_END && stream.avail_in == 0) {
-      inBuf = device->read(iBufSize);
-      stream.next_in = inBuf.data();
-      stream.avail_in = inBuf.size();
+      qint64 iReadCnt = device->read(data, iBufSize);
+      if(iReadCnt <= 0)
+        return -1;
+      stream.next_in = data;
+      stream.avail_in = iReadCnt;
     }
 
     ret = BZ2_bzDecompress(&stream);
