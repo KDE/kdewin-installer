@@ -58,6 +58,9 @@ class GlobalConfig {
         /// return category notes
         QHash <QString,QString> &categoryNotes() { return m_categoryNotes; }
         
+        /// return category packages relations
+        QHash <QString,QStringList> &categoryPackages() { return m_categoryPackages; }
+
         /// return package orientated news
         QHash<QString, QString> *news() { return &m_news; }
 
@@ -78,6 +81,7 @@ class GlobalConfig {
         // package news <key,value> where key = <name>-<version>
         QHash <QString,QString> m_news;
         QHash <QString,QString> m_categoryNotes;
+        QHash <QString,QStringList> m_categoryPackages;
         QList <Mirror*> m_mirrors;
         QString m_baseURL;
         Downloader *m_downloader;

@@ -200,6 +200,13 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 cmd.removeFirst();
                 m_categoryNotes[category] = cmd.join(" ");
             }
+            else if (cmd[0] == "@categorypackages")
+            {
+                QString category = cmd[1];
+                cmd.removeFirst();
+                cmd.removeFirst();
+                m_categoryPackages[category] << cmd;
+            }
             else if(inPackage)
             {
                 if(cmd[0] == "@version")
