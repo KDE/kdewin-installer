@@ -75,7 +75,7 @@ void Downloader::setError(const QString &str)
 bool Downloader::start(const QUrl &url, const QString &fileName)
 {
     if(url.isEmpty())
-        return true;
+        return false;
     if (m_progress)
         m_progress->setTitle(tr("Downloading %1 to %2").arg(url.toString()).arg(fileName));
 
@@ -170,7 +170,7 @@ bool Downloader::startInternal(const QUrl &url, QIODevice *ioDev)
             m_ioDevice->seek(0); // make sure we are on the start of the file or buffer 
             startInternal(m_redirectedURL,m_ioDevice);
         }
-        return m_result == Finished ? true : false;
+        return m_result == Finished && m_statusCode == 200 ? true : false;
     }
     return true;
 }
