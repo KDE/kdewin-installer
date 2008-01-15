@@ -14,8 +14,8 @@ class SettingsSubPage : public QObject
     Q_OBJECT 
 
 public:
-    SettingsSubPage(Ui::SettingsDialog &_ui) 
-        : s(Settings::getInstance()), ui(_ui) {}
+    SettingsSubPage(Ui::SettingsDialog &_ui, QWidget *_parent) 
+        : s(Settings::getInstance()), ui(_ui), parent(_parent) {}
     virtual QWidget *widget() = 0;
     virtual void reset() = 0;
     virtual void accept() = 0;
@@ -24,6 +24,7 @@ public:
 protected:
     Settings &s;
     Ui::SettingsDialog &ui;
+	QWidget *parent;
 signals:
     void completeStateChanged();
 };
@@ -33,8 +34,8 @@ class SettingsDownloadPage : public SettingsSubPage
     Q_OBJECT 
 
 public: 
-    SettingsDownloadPage(Ui::SettingsDialog &ui)
-        : SettingsSubPage(ui) {}
+    SettingsDownloadPage(Ui::SettingsDialog &ui, QWidget *parent)
+        : SettingsSubPage(ui,parent) {}
     virtual QWidget *widget();
     virtual void reset();
     virtual void accept();
@@ -49,8 +50,8 @@ class SettingsMirrorPage : public SettingsSubPage
     Q_OBJECT 
 
 public: 
-    SettingsMirrorPage(Ui::SettingsDialog &ui)
-        : SettingsSubPage(ui) {}
+    SettingsMirrorPage(Ui::SettingsDialog &ui, QWidget *parent)
+        : SettingsSubPage(ui, parent) {}
     virtual QWidget *widget();
     virtual void reset();
     virtual void accept();
@@ -58,13 +59,14 @@ public:
     virtual bool isComplete();
 private slots:
     void mirrorChanged(int mirrorNumber);
+	void addNewMirrorClicked();
 };
 
 class SettingsInstallPage : public SettingsSubPage
 {
 public: 
-    SettingsInstallPage(Ui::SettingsDialog &ui) 
-        : SettingsSubPage(ui) {}
+    SettingsInstallPage(Ui::SettingsDialog &ui, QWidget *parent) 
+        : SettingsSubPage(ui, parent) {}
     virtual QWidget *widget();
     virtual void reset();
     virtual void accept();
@@ -75,8 +77,8 @@ public:
 class SettingsProxyPage : public SettingsSubPage
 {
 public: 
-    SettingsProxyPage(Ui::SettingsDialog &ui) 
-        : SettingsSubPage(ui) {}
+    SettingsProxyPage(Ui::SettingsDialog &ui, QWidget *parent) 
+        : SettingsSubPage(ui, parent) {}
     virtual QWidget *widget();
     virtual void reset();
     virtual void accept();
@@ -110,7 +112,6 @@ private slots:
     void reject();
     void rootPathSelectClicked();
     void tempPathSelectClicked();
-    void addNewMirrorClicked();
     void switchProxyFields(bool checked);
     void rootPathEditChanged();
      

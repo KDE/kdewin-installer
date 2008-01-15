@@ -75,6 +75,7 @@ void SettingsMirrorPage::reset()
     else
         ui.downloadMirror->setCurrentIndex(0);
     connect(ui.downloadMirror, SIGNAL(activated( int )), this, SLOT(mirrorChanged( int )));
+    connect(ui.addMirrorButton,SIGNAL(clicked()), this, SLOT(addNewMirrorClicked()));
 }
 
 void SettingsMirrorPage::mirrorChanged( int numberMirror )
@@ -98,6 +99,20 @@ void SettingsMirrorPage::reject()
 bool SettingsMirrorPage::isComplete()
 {
     return !ui.downloadMirror->currentText().isEmpty();
+}
+
+
+void SettingsMirrorPage::addNewMirrorClicked()
+{
+    bool ok;
+    QString text = QInputDialog::getText(parent, tr("Add a new Mirror"),
+                                         tr("Mirror address:"), QLineEdit::Normal,
+                                         QString("http://"), &ok);
+    if (ok && !text.isEmpty())
+	{
+        ui.downloadMirror->addItem(text,QUrl(text));
+		ui.downloadMirror->setCurrentIndex(ui.downloadMirror->count()-1);
+	}
 }
 
 QWidget *SettingsInstallPage::widget()
@@ -233,17 +248,16 @@ bool SettingsProxyPage::isComplete()
 
 SettingsPage::SettingsPage(QWidget *parent)
 : QDialog(parent), s(Settings::getInstance()),
-  m_downloadPage(ui),
-  m_installPage(ui),
-  m_proxyPage(ui),
-  m_mirrorPage(ui)
+  m_downloadPage(ui,parent),
+  m_installPage(ui,parent),
+  m_proxyPage(ui,parent),
+  m_mirrorPage(ui,parent)
 {
     ui.setupUi(this);
     connect( ui.rootPathSelect,SIGNAL(clicked()),this,SLOT(rootPathSelectClicked()) );
     connect( ui.rootPathEdit,SIGNAL(textChanged()),this,SLOT(rootPathEditChanged()) );
 
-    connect( ui.tempPathSelect,SIGNAL(clicked()),this,SLOT(tempPathSelectClicked()) );
-    connect( ui.addMirrorButton,SIGNAL(clicked()), this, SLOT(addNewMirrorClicked()));
+	connect( ui.tempPathSelect,SIGNAL(clicked()),this,SLOT(tempPathSelectClicked()) );
     
     connect( ui.proxyManual,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
     connect( ui.proxyFireFox,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
@@ -323,19 +337,6 @@ void SettingsPage::tempPathSelectClicked()
     if(!fileName.isEmpty())
         ui.tempPathEdit->setText(QDir::toNativeSeparators(fileName));
 }
-
-
-void SettingsPage::addNewMirrorClicked()
-{
-    bool ok;
-    QString text = QInputDialog::getText(this, tr("Add a new Mirror"),
-                                         tr("Mirror address:"), QLineEdit::Normal,
-                                         QString("http://"), &ok);
-    if (ok && !text.isEmpty())
-        ui.downloadMirror->addItem(text,QUrl(text));
-}
-
-
 
 void SettingsPage::switchProxyFields(bool mode)
 {
