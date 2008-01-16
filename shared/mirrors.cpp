@@ -123,11 +123,11 @@ bool Mirrors::parse(QIODevice *ioDev)
                 if (line.startsWith("#") || line.size() == 0)
                     continue;
                 QList<QByteArray> a = line.split(';');
-				if (a.size() < 4) 
-				{
-					qWarning() << "invalid mirror list entry" << line << "-> ignored";
-					continue; 
-				}
+                if (a.size() < 4) 
+                {
+                    qWarning() << "invalid mirror list entry" << line << "-> ignored";
+                    continue; 
+                }
                 MirrorType mirror;
                 mirror.url = a[0];
                 mirror.name = a[1];
