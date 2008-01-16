@@ -24,6 +24,9 @@ OPTION(BUILD_TESTS "build test applications " OFF)
 # -------------------------------------------------------
 # build type settings
 # -------------------------------------------------------
+# load qt configuration
+QT_QUERY_QMAKE(QT_CONFIG "CONFIG")
+
 if (QT_CONFIG MATCHES ".*shared.*")
     set (STATIC_BUILD 0)
     MESSAGE(STATUS "Qt is build in shared mode - use shared build mode too")
