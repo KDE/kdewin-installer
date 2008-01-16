@@ -125,17 +125,24 @@ bool InstallerEngine::readGlobalConfig()
     if (!defaultConfigURL.isEmpty()) // command line overrides
     {
         configFiles = m_globalConfig->fetch(defaultConfigURL);
+        m_usedDownloadSource = defaultConfigURL;
     }
     if (configFiles.isEmpty())
     {
         hostURL = Settings::getInstance().mirror();
         if (!hostURL.isEmpty())
+        {
             configFiles = m_globalConfig->fetch(hostURL);
+            m_usedDownloadSource = hostURL;
+        }
     }
     if (configFiles.isEmpty())
     {
         if (hostURL != fallBackURL) // fallBack URL is other url
+        {
             configFiles = m_globalConfig->fetch(fallBackURL);
+            m_usedDownloadSource = fallBackURL;
+        }
     }
     if (configFiles.isEmpty())
         return false;

@@ -87,6 +87,7 @@ protected:
     bool                m_globalConfigReaded;
     bool                m_addedPackages;
     bool                m_canceled;
+    QUrl                m_usedDownloadSource;
     /// init all package definitions
     virtual void init();
     /// reload all package definition
