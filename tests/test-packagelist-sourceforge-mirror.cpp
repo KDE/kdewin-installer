@@ -1,0 +1,52 @@
+/****************************************************************************
+**
+** Copyright (C) 2007 Ralf Habacker <ralf.habacker@freenet.de>
+** All rights reserved.
+**
+** This file is part of the KDE installer for windows
+**
+** This file may be used under the terms of the GNU General Public
+** License version 2.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of
+** this file.  Please review the following information to ensure GNU
+** General Public Licensing requirements will be met:
+** http://www.trolltech.com/products/qt/opensource.html
+**
+** If you are unsure which license is appropriate for your use, please
+** review the following information:
+** http://www.trolltech.com/products/qt/licensing.html or contact the
+** sales department at sales@trolltech.com.
+**
+** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+**
+****************************************************************************/
+
+#include <QtDebug>
+#include <QCoreApplication>
+
+#include "packagelist.h"
+#include "downloader.h"
+#include "installer.h"
+
+
+int main(int argc, char ** argv)
+{
+    QCoreApplication app(argc,argv);
+
+    Downloader downloader(/*blocking=*/ true);
+    PackageList packageList;
+    packageList.setBaseURL("http://www.mirrorservice.org/sites/download.sourceforge.net/pub/sourceforge/k/kd/kde-cygwin/");
+
+    qDebug() << "trying to download sourceforge related package list";
+    downloader.start(QUrl(packageList.BaseURL()),"packages.html");
+
+    if (!packageList.readHTMLFromFile("packages.html",PackageList::SourceForgeMirror))
+    {
+        qDebug() << "... failed ";
+        return false;
+    }
+    packageList.listPackages("Package List");
+    return 0;
+}
+
