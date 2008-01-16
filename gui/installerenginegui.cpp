@@ -482,12 +482,17 @@ void InstallerEngineGui::reload()
 void InstallerEngineGui::setLeftTreeData ( QTreeWidget *tree )
 {
     tree->clear();
-    QStringList labels;
-    QList<QTreeWidgetItem *> items;
-    labels << tr ( "Paket Groups" );
     tree->setColumnCount ( 1 );
-    tree->setHeaderLabels ( labels );
+    // header
+    QTreeWidgetItem *headerItem = new QTreeWidgetItem();
+    headerItem->setText(0,tr ( "Paket Groups" ));
+    headerItem->setToolTip(0,
+        "Url:  "+ m_usedDownloadSource.toString() + 
+        "\nDate: " + m_globalConfig->timeStamp().toString("dd.MM.yyyy hh:mm"));
+    tree->setHeaderItem(headerItem);
+
     QList<QTreeWidgetItem *> categoryList;
+    QList<QTreeWidgetItem *> items;
 
     qDebug() << categoryCache.categories();
     Settings &s = Settings::getInstance();
