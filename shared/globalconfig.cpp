@@ -175,7 +175,8 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 m_minimalInstallerVersion = cmd[1];
             else if (cmd[0] == "@timestamp")
             {
-                m_timestamp = QDateTime::fromString(cmd[1],"YYYYMMddHHmm");
+                m_timestamp = QDateTime::fromString(cmd[1],"yyyyMMddHHmm");
+                qDebug() << m_timestamp;
             }
             else if (cmd[0] == "@mirror")
             {
@@ -288,10 +289,10 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     site->addMirror(url);
                 }
                 else if(cmd[0] == "@deps" || cmd[0] == "@require") {
-                    QString dep = cmd[1];
+                    QString pkg = cmd[1];
                     cmd.removeFirst();
                     cmd.removeFirst();
-                    site->addDependencies(dep, cmd);
+                    site->addDependencies(pkg, cmd);
                 }
                 else if(cmd[0] == "@exclude") {
                     cmd.removeFirst();
