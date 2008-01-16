@@ -24,6 +24,7 @@
 #include <QtDebug>
 #include <QCoreApplication>
 
+#include "config.h"
 #include "globalconfig.h"
 #include "downloader.h"
 #include "downloaderprogress.h"
@@ -36,10 +37,13 @@ int main(int argc, char *argv[])
     Downloader downloader(true,&progress);
 
     GlobalConfig globalConfig(&downloader);
-    QStringList files = globalConfig.fetch("http://82.149.170.66/kde-windows/installer/config.txt");
+    QStringList files = globalConfig.fetch("http://82.149.170.66/kde-windows/installer");
     globalConfig.parse(files);
     qDebug() << globalConfig;
 
+    GlobalConfig localConfig(&downloader);
+    localConfig.parse(QStringList() << CMAKE_SOURCE_DIR "/tests/data/config-site.txt");
+    qDebug() << localConfig;
     return 0;
 }
 
