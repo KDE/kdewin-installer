@@ -444,7 +444,17 @@ void PackageSelectorPage::on_leftTree_itemClicked(QTreeWidgetItem *item, int col
 
 void PackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
 {
-    packageInfo->show();
+    if (column == 0) 
+    {
+        static QTreeWidgetItem *lastItem = 0;
+        if (lastItem == item)
+            packageInfo->isVisible() ? packageInfo->hide() : packageInfo->show();
+        else
+            packageInfo->show();
+        lastItem = item;
+    }
+    else 
+        packageInfo->hide();
     engine->itemClickedPackageSelectorPage(item,column,packageInfo);
 }
 
