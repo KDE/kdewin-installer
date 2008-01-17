@@ -494,13 +494,14 @@ bool PackageSelectorPage::isComplete()
 DependenciesPage::DependenciesPage(InstallWizard *wizard)
         : InstallWizardPage(wizard)
 {
-    topLabel = createTopLabel(tr("<center><b>Additional Packages</b></center>"));
+    topLabel = createTopLabel(tr("<center><b>Additional required Packages selected</b></center>"));
     dependenciesList = new QListWidget;
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(topLabel);
     layout->addWidget(dependenciesList);
     g_dependenciesList = dependenciesList;
+    layout->addStretch(1);
     setLayout(layout);
 }
 
@@ -526,6 +527,7 @@ DownloadPage::DownloadPage(InstallWizard *wizard)
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(topLabel);
+    layout->addStretch(1);
     setLayout(layout);
 }
 
@@ -567,6 +569,7 @@ UninstallPage::UninstallPage(InstallWizard *wizard)
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(topLabel);
     layout->addWidget(fileList);
+    layout->addStretch(1);
     setLayout(layout);
 }
 
@@ -602,6 +605,7 @@ InstallPage::InstallPage(InstallWizard *wizard)
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(topLabel);
     layout->addWidget(fileList);
+    layout->addStretch(1);
     setLayout(layout);
 }
 
