@@ -1,0 +1,35 @@
+# not accessable 
+#http://gd.tuwien.ac.at/kde/unstable/3.97/windows
+http://ftp.scarlet.be/pub/kde/unstable/3.97/windows;ftp.scarlet.be;Europe;Belgium;
+http://mirrors.dotsrc.org/kde/unstable/3.97/windows;mirrors.dotsrc.org;Europe;Denmark
+http://webdev.cegit.de/snapshots/kde-windows;webdev.cegit.de;Europe;Germany;
+http://www-ftp.lip6.fr/pub/X11/kde/unstable/3.97/windows;www-ftp.lip6.fr;Europe;France;
+http://fr2.rpmfind.net/linux/KDE/unstable/3.97/windows;fr2.rpmfind.net;Europe;France;
+http://kde-mirror.freenux.org/unstable/3.97/windows;kde-mirror.freenux.org;Europe;France;
+http://ftp.funet.fi/pub/mirrors/ftp.kde.org/pub/kde/unstable/3.97/windows;ftp.funet.fi;Europe;Finland;
+# not accessable 
+#http://ftp.unina.it/pub/Linux/kde/unstable/3.97/windows;ftp.unina.it;Europe;Italy;
+http://ftp.ntua.gr/pub/X11/kde/unstable/3.97/windows;ftp.ntua.gr;Europe;Greece;
+http://ftp.heanet.ie/mirrors/ftp.kde.org/unstable/3.97/windows;ftp.heanet.ie;Europe;Ireland;
+http://ftp.esat.net/mirrors/ftp.kde.org/pub/kde/unstable/3.97/windows;ftp.esat.net;Europe;Ireland
+http://ftp.tuniv.szczecin.pl/pub/kde/unstable/3.97/windows;ftp.tuniv.szczecin.pl;Europe;Poland;
+http://sunsite.icm.edu.pl/pub/unix/kde/unstable/3.97/windows;sunsite.icm.edu.pl;Europe;Poland;
+http://mirrors.evolva.ro/kdeftp/unstable/3.97/windows;mirrors.evolva.ro;Europe;Romania
+# not accessable 
+#http://www.mirrorservice.org/sites/ftp.kde.org/pub/kde/unstable/3.97/windows;www.mirrorservice.org;Europe:United Kingdom;
+http://ftp.gtlib.cc.gatech.edu/pub/kde/unstable/3.97/windows;ftp.gtlib.cc.gatech.edu;North America;United States;
+http://kde.mirrors.tds.net/pub/kde/unstable/3.97/windows;;kde.mirrors.tds.net;North America;United States;
+http://ftp.ussg.iu.edu/kde/unstable/3.97/windows;ftp.ussg.iu.edu;America;United States;
+http://mirrors.isc.org/pub/kde/unstable/3.97/windows;mirrors.isc.org;North America;United States;
+http://mirror.cc.columbia.edu/pub/software/kde/unstable/3.97/windows;mirror.cc.columbia.edu;America;United States;
+http://mirror.csclub.uwaterloo.ca/kde/unstable/3.97/windows;mirror.csclub.uwaterloo.ca;North America;Canada;
+http://ftp.rhnet.is/pub/kde/unstable/3.97/windows;ftp.rhnet.is;;Iceland;
+http://mirror.pacific.net.au/kde/unstable/3.97/windows;mirror.pacific.net.au;Asia & Oceania;Australia;
+http://public.planetmirror.com/pub/kde/unstable/3.97/windows;public.planetmirror.com;Asia & Oceania;Australia;
+http://www.qtopia.org.cn/ftp/mirror/ftp.kde.org/unstable/3.97/windows;www.qtopia.org.cn;Asia & Oceania;China;
+http://ftp.ring.gr.jp/pub/X/kde/unstable/3.97/windows;ftp.ring.gr.jp;Asia & Oceania;Japan;
+http://ftp.kddlabs.co.jp/pub/X11/kde/unstable/3.97/windows;ftp.kddlabs.co.jp;Asia & Oceania;Japan;
+http://ftp.yz.yamagata-u.ac.jp/pub/X11/wm/kde/unstable/3.97/windows;ftp.yz.yamagata-u.ac.jp;Asia & Oceania;Japan;
+http://ftp.sayclub.com/pub/X/KDE/unstable/3.97/windows;ftp.sayclub.com;Asia & Oceania;Republic of Korea;
+http://ftp.twaren.net/Unix/X/KDE/unstable/3.97/windows;ftp.twaren.net;Asia & Oceania;Thaiwan
+http://download.cegit.de/kde-windows;download.cegit.de;Europe;Germany [Development only];
