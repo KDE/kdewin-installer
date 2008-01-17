@@ -36,32 +36,53 @@ int main(int argc, char *argv[])
     DownloaderProgress progress(0);
     Downloader download(true,&progress);
     Site site;
-    site.setURL(QUrl("http://82.149.170.66/kde-windows/win32libs/"));
-    site.setName("test");
-    PackageList packageList;
-    packageList.setCurrentSite(&site);
-    packageList.setBaseURL(site.url());
-    
-    qDebug() << "trying to download win32 related package list";
-    download.start(site.url(),"packages1.html");
-    if (!packageList.readHTMLFromFile("packages1.html",PackageList::ApacheModIndex))
-    {
-        qDebug() << "... failed ";
-        return 1;
+
+    QStringList args = app.arguments();
+    args.removeFirst();
+
+    if (args.size() > 0) {
+        foreach(QString arg, args) {
+            QUrl url (arg);
+            site.setURL(url);
+            site.setName(arg);
+            PackageList packageList;
+            packageList.setCurrentSite(&site);
+            packageList.setBaseURL(site.url());
+            QString fileName = url.path().replace("/","_") + ".txt";
+            download.start(site.url(),fileName);            
+            if (!packageList.readHTMLFromFile(fileName,PackageList::ApacheModIndex)) {
+                qDebug() << "parsing" << arg << "... failed ";
+            }
+            qDebug() << arg << packageList;
+        }
     }
-    qDebug() << "win32libs Package List" << packageList;
+    else {
+        site.setURL(QUrl("http://82.149.170.66/kde-windows/win32libs/"));
+        site.setName("test");
+        PackageList packageList;
+        packageList.setCurrentSite(&site);
+        packageList.setBaseURL(site.url());
+        
+        qDebug() << "trying to download win32 related package list";
+        download.start(site.url(),"packages1.html");
+        if (!packageList.readHTMLFromFile("packages1.html",PackageList::ApacheModIndex))
+        {
+            qDebug() << "... failed ";
+            return 1;
+        }
+        qDebug() << "win32libs Package List" << packageList;
 
-    PackageList packageList2;
+        PackageList packageList2;
 
-    download.start(QUrl("http://software.opensuse.org/download/KDE:/KDE3/SUSE_Linux_10.1/noarch/"),"packages2.html");
-    if (!packageList2.readHTMLFromFile("packages2.html",PackageList::ApacheModIndex))
-    {
-        qDebug() << "... failed ";
-        return 1;
+        download.start(QUrl("http://software.opensuse.org/download/KDE:/KDE3/SUSE_Linux_10.1/noarch/"),"packages2.html");
+        if (!packageList2.readHTMLFromFile("packages2.html",PackageList::ApacheModIndex))
+        {
+            qDebug() << "... failed ";
+            return 1;
+        }
+        qDebug() << "KDE i18n Package List" << packageList2;
+
     }
-    qDebug() << "KDE i18n Package List" << packageList2;
-
-
     return 0;
 }
 
