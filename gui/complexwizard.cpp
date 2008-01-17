@@ -199,7 +199,7 @@ void ComplexWizard::aboutButtonClicked()
         tr("KDE-Installer"),
         tr("The KDEWIN Installer is an open source application, "
            "which makes it able to install KDE applications on windows.\n"
-           "\nAuthors: \n\n\tRalf Habacker\n\tChristian Ehrlicher\n"
+           "\nAuthors: \n\n\tRalf Habacker\n\tChristian Ehrlicher\n\tPatrick Spendrin\n"
            "\n\n\nbuild with Qt version " QTVERSION
           ),
           QMessageBox::Ok
