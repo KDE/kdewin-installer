@@ -269,7 +269,12 @@ bool PackageList::syncWithDatabase(Database &database)
     return true;
 }
 
-inline bool isPackageFileName(const QString fileName)
+inline bool isPackageFileName(const QString &fileName)
+{
+    return ( fileName.endsWith(".zip") || fileName.endsWith(".tbz") || fileName.endsWith(".tar.bz2") );
+}
+
+inline bool isPackageFileName(const QByteArray &fileName)
 {
     return ( fileName.endsWith(".zip") || fileName.endsWith(".tbz") || fileName.endsWith(".tar.bz2") );
 }
@@ -370,58 +375,36 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
 
     // for example http://www.mirrorservice.org/sites/download.sourceforge.net/pub/sourceforge/k/kd/kde-cygwin/
     case PackageList::SourceForgeMirror:
-        {
-            const char *lineKey1 = "<td><a href=\"";
-            const char *fileKeyEnd = "\"><img alt";
-            QStringList files;
-            QUrl baseURL(m_baseURL);
-
-            while (!ioDev->atEnd())
-            {
-                QByteArray line = ioDev->readLine().toLower();
-
-                if (line.contains(lineKey1))
-                {
-                    int a = line.lastIndexOf(lineKey1) + strlen(lineKey1);
-                    int b = line.indexOf(fileKeyEnd,a);
-                    QString fileName = line.mid(a,b-a).replace(baseURL.path(),"");
-                    if (isPackageFileName(fileName))
-                    {
-                        qDebug() << fileName;
-                        files << fileName;
-                    }
-                }
-            }
-            files = filterFileName(files);
-            addPackagesFromFileNames(files,true);
-        }
-        break;
-
     case PackageList::ApacheModIndex:
-        const char *lineKey1 = "alt=\"[   ]\"> <a href=\"";
-        const char *lineKey2 = "alt=\"[   ]\" /> <a href=\"";
-        const char *lineKey3 = "alt=\"[txt]\"> <a href=\"";
-        const char *lineKey4 = "alt=\"[txt]\" /> <a href=\"";
-        const char *fileKeyStart = "<a href=\"";
-        const char *fileKeyEnd = "\">";
+        const char *startKey1 = "<a href=\"";
+        const char *startKey2 = "<A HREF=\"";
+        const char *endKey = "\">";
+        QByteArray data = ioDev->readAll();
+        int startKeyLength = strlen(startKey1);
+        int endKeyLength = strlen(endKey);
+        QUrl baseURL(m_baseURL);
         QStringList files;
-
-        while (!ioDev->atEnd())
+        int a;
+        int b,i;
+        for (a = 0 ; a < data.size(); a = b + endKeyLength)
         {
-            QByteArray line = ioDev->readLine().toLower();
-            if (line.contains(lineKey1) || line.contains(lineKey2)
-            || line.contains(lineKey3) || line.contains(lineKey4))
-            {
-                int a = line.lastIndexOf(fileKeyStart) + strlen(fileKeyStart);
-                int b = line.indexOf(fileKeyEnd,a);
-                QByteArray fileName = line.mid(a,b-a);
-
-                // desktop-translations-10.1-41.3.noarch.rpm
-                // kde3-i18n-vi-3.5.5-67.9.noarch.rpm
-                // aspell-0.50.3-3.zip
-                // bzip2.hint
-                files << fileName;
-            }
+            if ((i = data.indexOf(startKey1,a)) == -1 && (i = data.indexOf(startKey2,a)) == -1)
+                break;
+            a = i + startKeyLength;
+            b = data.indexOf(endKey,a);
+            QUrl url = data.mid(a,b-a);
+            if (!url.isValid())
+                continue;
+            QString path = url.path();
+            if (path.isEmpty())
+                continue;
+            if (!isPackageFileName(path))
+                continue;
+            int c = path.lastIndexOf('/');
+            if (c != -1)
+                 files << path.mid(c+1);
+            else
+                 files << path;
         }
         files = filterFileName(files);
         addPackagesFromFileNames(files);
