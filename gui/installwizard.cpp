@@ -635,7 +635,7 @@ FinishPage::FinishPage(InstallWizard *wizard)
 {
     topLabel = createTopLabel(tr("<center><b>Installation finished</b></center>"));
     QLabel* label = new QLabel(tr(
-         "<p>Now you able to run kde application.</p>"
+         "<p>Now you are able to run kde application.</p>"
          "<p>Please open an explorer window and navigate to the bin folder of the kde installation root.</p>"
          "<p>There you will find several applications which can be started by a simple click on the executable.</p>"
          "<p>In further versions of this installer it will be also possible to start kde applications from<br>"
@@ -646,7 +646,7 @@ FinishPage::FinishPage(InstallWizard *wizard)
          "<li>if you have problems using this installer or </li>"
          "<li>if you like to contribute time and/or money to this famous project</li></ul>"
          "please contact the <a href=\"http://mail.kde.org/mailman/listinfo/kde-windows\">"
-         "kde-windows@kde.org</a> mailing list at http://mail.kde.org/mailman/listinfo/kde-windows"
+         "kde-windows@kde.org</a> mailing list at http://mail.kde.org/mailman/listinfo/kde-windows."
          "</p>"
          "<p>Have fun using KDE on windows.</p>" 
          "<p></p>"
