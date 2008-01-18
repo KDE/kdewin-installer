@@ -46,7 +46,7 @@ InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgre
       m_canceled(false)
 {
     m_database = new Database();
-    m_downloader = new Downloader(/*blocking=*/ true,progressBar);
+    m_downloader = new Downloader(progressBar);
     m_database->setRoot(Settings::getInstance().installDir());
     m_installer = new Installer(m_instProgressBar );
     m_installer->setRoot(Settings::getInstance().installDir());

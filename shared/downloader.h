@@ -24,70 +24,64 @@
 #ifndef DOWNLOADER_H
 #define DOWNLOADER_H
 
-#include <QObject>
-#include <QUrl>
+#include <QtCore/QObject>
+#include <QtCore/QString>
+#include <QtCore/QUrl>
 
-class DownloaderProgress;
-class QEventLoop;
-class QFile;
-class QHttp;
-class QHttpResponseHeader;
+
 class QIODevice;
-class QString;
-
-class Downloader: public QObject
+class DownloaderProgress;
+class Downloader : public QObject
 {
-    Q_OBJECT
-
+  Q_OBJECT
 public:
-    typedef enum { Undefined, Finished, Failed, Aborted, Redirected } ResultType;
-    Downloader(bool blocking=false, DownloaderProgress *progress=0);
+  typedef enum { Undefined, Finished, Failed, Aborted, Redirected } ResultType;
+  Downloader ( DownloaderProgress *progress=0 );
+  virtual ~Downloader();
 
-    virtual ~Downloader();
-    // set http proxy
-    void setProxy(const QString &host, int port);
+  // start download
+  bool start ( const QUrl &url, const QString &fileName = QString() );
+  bool start ( const QUrl &url, QByteArray &ba );
+  /// cancel started download
+  void cancel();
+  /// return result string
+  QString resultString() const {
+    return m_resultString;
+  }
+  /// return download result
+  ResultType result()    const {
+    return m_result;
+  }
+  /// return real used url for downloading
+  QUrl       usedURL()   const {
+    return m_usedURL;
+  }
 
-    // start download
-    bool start(const QUrl &url, const QString &fileName = QString());
-    bool start(const QUrl &url, QByteArray &ba);
-    /// cancel started download 
-    void cancel();
-    /// return result string 
-    QString resultString() { return m_resultString; }
-    /// return download result
-    ResultType result()    { return m_result; }
-    /// return real used url for downloading
-    const QUrl &usedURL()   { return m_usedURL; }
+Q_SIGNALS:
+  void done ( bool error );
+  void error ( const QString &error );
+  void progress( double dltotal, double dlnow );
+protected Q_SLOTS:
+  void threadFinished( int ret ); // ret == CURLcode (enum)
+  int progressCallback( double ultotal, double ulnow );
+protected:
+  void setError( const QString &errStr );
+  bool startInternal ( const QUrl &url );
+  size_t curlWrite( const char * data, size_t  size );
+  static size_t curlWriteCallback( void *ptr, size_t size, size_t nmemb, void *stream);
+  static int curlProgressCallback( void *clientp, double dltotal, double dlnow,
+                                   double ultotal, double ulnow );
+protected:
+  DownloaderProgress *m_progress;
+  ResultType  m_result;
+  QString     m_resultString;
+  QUrl        m_usedURL;
+  QIODevice  *m_ioDevice;
+  QString     m_fileName;         /// holds filename in case target is a file
+  class Private;
+  Private * const d;
 
-signals:
-    void done(bool error);
-
-private slots:
-    void httpRequestFinished(int requestId, bool error);
-    void readResponseHeader(const QHttpResponseHeader &responseHeader);
-    void updateDataReadProgress(int bytesRead, int totalBytes);
-    void allDone(bool error);
-    void stateChanged(int state);
-
-private:
-    void init();
-    void setError(const QString&);
-    bool startInternal(const QUrl &url, QIODevice *ioDev);
-private:
-    DownloaderProgress *m_progress;
-    QHttp      *m_http;
-    QIODevice  *m_ioDevice;
-    int         m_httpGetId;
-    bool        m_httpRequestAborted;
-    bool        m_blocking;
-    QEventLoop *m_eventLoop;
-    QString     m_resultString;
-    ResultType  m_result;      
-    int         m_statusCode;       /// used internal
-    QUrl        m_redirectedURL;    /// holds redirected url when request finished with 302 status 
-    QUrl        m_usedURL;          /// holds really used url, may change when 302 status 
-    QString     m_fileName;         /// holds filename in case target is a file
-    friend QDebug &operator<<(QDebug &, const Downloader &);
+  friend QDebug &operator<<(QDebug &, const Downloader &);
 };
 
 #endif

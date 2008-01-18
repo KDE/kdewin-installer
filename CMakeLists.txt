@@ -95,7 +95,9 @@ endif (WIN32 OR CYGWIN)
 set (EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
 # get quazip_SOURCES/quazip_HEADERS/quazip_INCLUDE_DIR
-
+#
+# BZIP2
+#
 if (BZIP2_UNPACK_SUPPORT)
     set(filters_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/tarfilter.cpp
@@ -123,6 +125,88 @@ if (BZIP2_UNPACK_SUPPORT)
     set(bzip2_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4)
 endif (BZIP2_UNPACK_SUPPORT)
 
+#
+# LIBCURL
+#
+set(curl_SRCS
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/base64.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/connect.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/content_encoding.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/cookie.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/dict.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/easy.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/escape.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/file.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/formdata.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/ftp.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/getenv.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/getinfo.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/gtls.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/hash.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/hostares.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/hostasyn.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/hostip.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/hostip4.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/hostip6.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/hostsyn.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/hostthre.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/http.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/http_chunks.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/http_digest.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/http_negotiate.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/http_ntlm.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/if2ip.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/inet_ntop.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/inet_pton.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/krb4.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/krb5.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/ldap.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/llist.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/md5.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/memdebug.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/mprintf.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/multi.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/netrc.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/nss.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/parsedate.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/progress.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/qssl.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/security.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/select.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/sendf.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/share.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/socks.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/speedcheck.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/splay.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/ssh.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/sslgen.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/ssluse.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/strdup.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/strequal.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/strerror.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/strtok.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/strtoofft.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/telnet.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/tftp.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/timeval.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/transfer.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/url.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/version.c
+)
+set(curl_HEADERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/include/curl/curl.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/include/curl/curlver.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/include/curl/easy.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/include/curl/mprintf.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/include/curl/multi.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/include/curl/stdcheaders.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/include/curl/types.h
+)
+set(curl_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/include)
+
+#
+# QUAZIP
+#
 set(quazip_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip/quazip/ioapi.c
     ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip/quazip/unzip.c
@@ -131,7 +215,6 @@ set(quazip_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip/quazip/quazipfile.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip/quazip/quazipnewinfo.cpp
 )
-
 set(quazip_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip/quazip/ioapi.h
     ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip/quazip/unzip.h
@@ -208,6 +291,7 @@ set(installer_shared_SOURCES
 
 set(installer_shared_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/downloader.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/downloader_p.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/downloaderprogress.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/installerprogress.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/installer.h
@@ -227,8 +311,6 @@ set(installer_shared_HEADERS
 )
 set(installer_shared_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shared)
 
-# we need 'UNICODE'
-add_definitions(-DUNICODE)
 include_directories(
   ${CMAKE_SOURCE_DIR} 
   ${CMAKE_BINARY_DIR} 

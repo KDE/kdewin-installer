@@ -21,293 +21,267 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-#include <QBuffer>
-#include <QDebug>
-#include <QEventLoop>
-#include <QFileInfo>
-#include <QHttp>
-#include <QString>
-#include <QUrl>
-#include <QDateTime>
-
-#include "packagelist.h"
-#include "package.h"
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <curl/curl.h>
 #include "downloader.h"
+#include "downloader_p.h"
+
+#include <QtCore/QBuffer>
+#include <QtCore/QByteArray>
+#include <QtCore/QDebug>
+#include <QtCore/QEventLoop>
+#include <QtCore/QFile>
+#include <QtCore/QTemporaryFile>
+#include <QtCore/QThread>
+#include <QtGui/QApplication>
+#include <QtNetwork/QNetworkProxy>
+
 #include "downloaderprogress.h"
 #include "settings.h"
-#include "misc.h"
 
-/// @TODO: check operation in non blocking mode
 
-Downloader::Downloader(bool _blocking, DownloaderProgress *_progress)
-  : m_progress(_progress), m_http(0), m_ioDevice(0), m_httpGetId(~0U),
-    m_httpRequestAborted(false), m_blocking(_blocking), m_eventLoop(0)
+
+MyThread::MyThread(CURL *handle, QObject *parent)
+ : QThread(parent), curlHandle(handle), bCancel(false)
 {
-    init();
+  curl_easy_setopt( curlHandle, CURLOPT_PROGRESSFUNCTION, MyThread::curlProgressCallback );
+  curl_easy_setopt( curlHandle, CURLOPT_PROGRESSDATA, this );
 }
 
-void Downloader::init()
+void MyThread::run()
 {
-    m_http = new QHttp(this);
-    connect(m_http, SIGNAL(requestFinished(int, bool)),this, SLOT(httpRequestFinished(int, bool)));
-    connect(m_http, SIGNAL(dataReadProgress(int, int)),this, SLOT(updateDataReadProgress(int, int)));
-    connect(m_http, SIGNAL(responseHeaderReceived(const QHttpResponseHeader &)),this, SLOT(readResponseHeader(const QHttpResponseHeader &)));
-    connect(m_http, SIGNAL(done(bool)),this, SLOT(allDone(bool)));
-    connect(m_http, SIGNAL(stateChanged(int)),this, SLOT(stateChanged(int)));
+  bCancel = false;
+  CURLcode ret = curl_easy_perform( curlHandle );
+  emit done( ret );
+}
+
+void MyThread::cancel()
+{
+  bCancel = true;
+}
+
+int MyThread::progressCallback(double dltotal, double dlnow)
+{
+  if(bCancel)
+    return 1;
+  emit progress( dltotal, dlnow );
+  return bCancel;
+}
+
+int MyThread::curlProgressCallback(void *clientp, double dltotal, double dlnow,
+                                    double ultotal, double ulnow)
+{
+  MyThread *that = static_cast<MyThread*>(clientp);
+  return that->progressCallback( dltotal, dlnow );
+}
+
+// needed to hide curl handle from the rest - including curl/curl.h isn't very
+// optimal
+class Downloader::Private {
+public:
+  Private()
+    : curlHandle(0), thread(NULL), cancel(false), finished(false), ret(CURLE_OK)
+  {}
+  ~Private()
+  {
+    if( thread )
+      thread->terminate();
+    curl_easy_cleanup(curlHandle);
+    delete thread;
+  }
+  CURL     *curlHandle;
+  MyThread *thread;
+  bool      cancel;
+  bool      finished;
+  CURLcode  ret;
+};
+
+Downloader::Downloader ( DownloaderProgress *progress )
+  : m_progress ( progress ), m_result ( Undefined ), m_ioDevice(NULL),
+    d( new Private() )
+{
+  curl_global_init(CURL_GLOBAL_ALL);
 }
 
 Downloader::~Downloader()
 {
-    m_httpRequestAborted = true;
-    if(m_http) {
-      m_http->abort();
-      qApp->processEvents();
-    }
-    delete m_ioDevice;
+  curl_global_cleanup();
 }
 
-void Downloader::setError(const QString &str)
+bool Downloader::start ( const QUrl &url, const QString &fileName )
 {
-    qWarning(qPrintable(str));
+  if ( url.isEmpty() )
+    return false;
+  if ( m_progress )
+    m_progress->setTitle ( tr ( "Downloading %1 to %2" ).arg ( url.toString() ).arg ( fileName ) );
+
+  QTemporaryFile *file = new QTemporaryFile ( fileName + ".part" );
+  if ( !file->open () ) {
+    setError ( tr ( "Unable to open file %1: %2." ).arg ( fileName ).arg ( file->errorString() ) );
+    delete file;
+    m_fileName = QString();
+    return false;
+  }
+  m_ioDevice = file;
+  m_fileName = fileName;
+
+  qDebug() << "Downloading" << url.toString() << " to " << file->fileName();
+  return startInternal ( url );
 }
 
-bool Downloader::start(const QUrl &url, const QString &fileName)
+bool Downloader::start ( const QUrl &url, QByteArray &ba )
 {
-    if(url.isEmpty())
-        return false;
-    if (m_progress)
-        m_progress->setTitle(tr("Downloading %1 to %2").arg(url.toString()).arg(fileName));
+  m_fileName = QString();
 
-    QString scheme = url.scheme();
-    if (scheme.isEmpty() || scheme == QLatin1String("file"))
-    {
-        QFile::remove(fileName);
-        QFile::copy(url.toLocalFile(),fileName);
-        m_fileName = fileName;
-        return true;
-    }
-
-    QFile *file = new QFile(fileName);
-    if (!file->open(QIODevice::WriteOnly))
-    {
-        setError(tr("Unable to open file %1: %2.").arg(fileName).arg(file->errorString()));
-        delete file;
-        m_fileName = "";
-        return false;
-    }
-    m_fileName = fileName;
-
-    qDebug() << "Downloading" << url.toString() << " to " << file->fileName();
-    return startInternal(url, file);
-}
-
-bool Downloader::start(const QUrl &url, QByteArray &ba)
-{
-    m_fileName = "";
-    
-    if(url.isEmpty())
-        return true;
-    if (m_progress)
-        m_progress->setTitle(tr("Downloading %1").arg(url.toString()));
-
-    QBuffer *buf = new QBuffer(&ba);
-    if(!buf->open(QIODevice::WriteOnly))
-    {
-        setError(tr("Internal error!"));
-        return false;
-    }
-
-    QString scheme = url.scheme();
-    if (scheme.isEmpty() || scheme == QLatin1String("file"))
-    {
-      QFile f(url.toLocalFile());
-      if(!f.open(QIODevice::ReadOnly)) {
-        setError(tr("Unable to open file %1: %2.").arg(f.fileName()).arg(f.errorString()));
-        return false;
-      }
-      ba = f.readAll();
-      return true;
-    }
-
-    qDebug() << "Downloading" << url.toString() << " to memory";
-    return startInternal(url, buf);
-}
-
-bool Downloader::startInternal(const QUrl &url, QIODevice *ioDev)
-{
-    Settings &s = Settings::getInstance();
-    QNetworkProxy ps;
-
-    s.proxy(url.scheme(),ps);
-    if (!ps.hostName().isEmpty())
-    {
-        m_http->setProxy(ps);
-        qDebug() << "Downloader proxy settings -" << ps;
-    }
-    m_ioDevice = ioDev;
-
-    m_http->setHost(url.host(), url.port() != -1 ? url.port() : 80);
-    if (!url.userName().isEmpty())
-        m_http->setUser(url.userName(), url.password());
-
-    QByteArray query = url.encodedQuery();
-    m_httpRequestAborted = false;
-    m_result = Undefined;
-    m_usedURL = url;
-    m_httpGetId = m_http->get
-                  (url.path() + (!query.isEmpty() ? "?" + url.encodedQuery() : QString()), m_ioDevice);
-
-    if (m_progress)
-        m_progress->show();
-    if (m_blocking)
-    {
-        m_eventLoop = new QEventLoop();
-        m_eventLoop->exec();
-        delete m_eventLoop;
-        if (m_result == Redirected) {
-            qDebug() << "restarted download from" << m_redirectedURL;
-            m_ioDevice->seek(0); // make sure we are on the start of the file or buffer 
-            startInternal(m_redirectedURL,m_ioDevice);
-        }
-        return m_result == Finished && m_statusCode == 200 ? true : false;
-    }
+  if ( url.isEmpty() )
     return true;
+  if ( m_progress )
+    m_progress->setTitle ( tr ( "Downloading %1" ).arg ( url.toString() ) );
+
+  m_ioDevice = new QBuffer ( &ba );
+  if ( !m_ioDevice->open ( QIODevice::WriteOnly ) ) {
+    setError ( tr ( "Internal error!" ) );
+    delete m_ioDevice;
+    m_ioDevice = 0;
+    return false;
+  }
+
+  qDebug() << "Downloading" << url.toString() << " to memory";
+  return startInternal ( url );
+}
+
+bool Downloader::startInternal ( const QUrl &url )
+{
+  d->cancel = false;
+  qDebug() << "downloading: "<< url;
+  if( !d->curlHandle ) {
+    d->curlHandle = curl_easy_init();
+    if( d->curlHandle == NULL )
+      setError( tr( "Error initializing curl" ) );
+    curl_easy_setopt( d->curlHandle, CURLOPT_WRITEFUNCTION, Downloader::curlWriteCallback );
+    curl_easy_setopt( d->curlHandle, CURLOPT_WRITEDATA, this );
+    curl_easy_setopt( d->curlHandle, CURLOPT_NOPROGRESS, 0 );
+  }
+
+  Settings &s = Settings::getInstance();
+  QNetworkProxy ps;
+
+  s.proxy( url.scheme(), ps );
+
+  curl_easy_setopt( d->curlHandle, CURLOPT_URL, url.toEncoded().constData() );
+  // curl reads from environment when nothing is set
+  if( !ps.hostName().isEmpty() && s.proxyMode() != Settings::Environment ) {
+    curl_easy_setopt( d->curlHandle, CURLOPT_PROXY, ps.hostName().toLocal8Bit().constData() );
+    curl_easy_setopt( d->curlHandle, CURLOPT_PROXYPORT, ps.port() );
+    QString user =  ps.user() + ":" +  ps.password();
+    curl_easy_setopt( d->curlHandle, CURLOPT_PROXYUSERPWD, user.toLocal8Bit().constData() );
+  }
+  if( url.port() != -1 ) {
+    curl_easy_setopt( d->curlHandle, CURLOPT_FTPPORT, url.port() );
+  }
+  if( !d->thread ) {
+    d->thread = new MyThread( d->curlHandle, this );
+    connect(d->thread, SIGNAL(done(int)), this, SLOT(threadFinished(int)));
+    connect(d->thread, SIGNAL(progress(double, double)), this, SLOT(progressCallback(double, double)));
+  }
+  if(m_progress) {
+    m_progress->setValue(0);
+    m_progress->show();
+    m_progress->setTitle(tr("Downloading %1").arg(url.toString()));
+  }
+  d->finished = false;
+  d->thread->start();
+  QEventLoop *loop;
+  do {
+    loop = new QEventLoop(this);
+    loop->processEvents(QEventLoop::AllEvents, 50);
+  } while ( !d->finished );
+  if(m_progress)
+    m_progress->hide();
+  delete loop;
+  return (d->ret == 0);
+}
+
+void Downloader::threadFinished( int _ret )
+{
+  d->ret = static_cast<CURLcode>(_ret);
+  d->finished = true;
+  bool bRet = (d->ret == CURLE_OK);
+  if( !m_fileName.isEmpty() ) {
+    QTemporaryFile *tf = static_cast<QTemporaryFile*>(m_ioDevice);
+    QString fn = tf->fileName();
+    tf->close();
+    if( QFile::exists( m_fileName ) ) {
+      if( !QFile::remove( m_fileName ) ) {
+        setError( tr( "Error removing old %1" ).arg( m_fileName ) );
+        bRet = false;
+      }
+    }
+    if( !QFile::rename( fn, m_fileName ) ) {
+      setError( tr( "Error renaming %1 to %2" ).arg( fn ).arg( m_fileName ) );
+      bRet = false;
+    }
+  } else {
+    m_ioDevice->close();
+  }
+  delete m_ioDevice;
+  m_ioDevice = 0;
+  if( d->ret )
+    setError( QString( curl_easy_strerror ( d->ret ) ) );
+  emit done( bRet );
+}
+
+size_t Downloader::curlWrite( const char * data, size_t size )
+{
+  fprintf(stderr, "%s\n", data);
+  return m_ioDevice->write( data, size );
+}
+
+size_t Downloader::curlWriteCallback( void *data, size_t size, size_t nmemb, void *stream)
+{
+  Downloader *that = reinterpret_cast<Downloader*>(stream);
+  return that->curlWrite( reinterpret_cast<const char*>(data), size * nmemb );
+}
+
+int Downloader::progressCallback(double dltotal, double dlnow)
+{
+  if(d->cancel)
+    return 1;
+  qApp->processEvents();
+  if(m_progress) {
+    m_progress->setMaximum(dltotal);
+    m_progress->setValue(dlnow);
+  }
+  qApp->processEvents();
+  emit progress( dltotal, dlnow );
+  return d->cancel;
+}
+
+int Downloader::curlProgressCallback(void *clientp, double dltotal, double dlnow,
+                                    double ultotal, double ulnow)
+{
+  Downloader *that = static_cast<Downloader*>(clientp);
+  return that->progressCallback( dltotal, dlnow );
 }
 
 void Downloader::cancel()
 {
-    if (m_progress)
-        m_progress->setStatus(tr("Download canceled."));
-    m_httpRequestAborted = true;
-    qDebug() << "Download canceled.";
-    m_http->abort();
-    if (!m_fileName.isEmpty())
-        QFile::remove(m_fileName);
+  d->cancel = true;
+  if(d->thread)
+    d->thread->cancel();
 }
 
-void Downloader::httpRequestFinished(int requestId, bool error)
+void Downloader::setError( const QString &errStr )
 {
-    qDebug() << __FUNCTION__ << requestId << error;
-    if (requestId != m_httpGetId)
-      return;
-
-    if (m_result == Redirected) {
-        // redirect will be started in startInternal() for non blocking mode
-        return;
-    }
-
-    if (m_httpRequestAborted) {
-        m_result = Aborted;
-        QFile *f = qobject_cast<QFile*>(m_ioDevice);
-        if (f)
-            f->remove();
-        setError(tr("Download aborted: %1.").arg(m_http->errorString()));
-    }
-    else if (error) {
-        m_result = Failed;
-        QFile *f = qobject_cast<QFile*>(m_ioDevice);
-        if (f)
-            f->remove();
-        setError(tr("Download failed: %1.").arg(m_http->errorString()));
-    }
-    else {
-        m_result = Finished;
-        if (m_progress)
-            m_progress->setStatus(tr("download ready"));
-    }
-
-    if (m_progress)
-      m_progress->hide();
-
-    m_ioDevice->close();
-    delete m_ioDevice;
-    m_ioDevice = 0;
+  qDebug() << errStr;
+  emit error( errStr );
 }
 
-void Downloader::readResponseHeader(const QHttpResponseHeader &responseHeader)
+QDebug &operator<<(QDebug &debug, const Downloader &)
 {
-    m_statusCode = responseHeader.statusCode();
-    if (m_statusCode == 301 || m_statusCode == 302) {
-        qWarning() << __FUNCTION__ << "Download failed" << m_statusCode << responseHeader.reasonPhrase() << "new location:" << responseHeader.value("location");
-        setError(tr("Download failed: %1 %2.").arg(m_statusCode).arg(responseHeader.reasonPhrase() + " new location: " + responseHeader.value("location")) );
-        m_redirectedURL = responseHeader.value("location");
-        m_result = Redirected;
-    }
-    else if (m_statusCode != 200)
-    {
-        qWarning() << __FUNCTION__ << "Download failed" << m_statusCode << responseHeader.reasonPhrase();
-        foreach(QString key, responseHeader.keys()) 
-            qWarning()  << key << responseHeader.allValues(key);
-        setError(tr("Download failed: %1 %2.").arg(m_statusCode).arg(responseHeader.reasonPhrase()));
-        m_result = Failed;
-    }
-    return;
-}
-
-void Downloader::updateDataReadProgress(int bytesRead, int totalBytes)
-{
-    if (m_httpRequestAborted)
-        return;
-
-    if (m_progress)
-    {
-        m_progress->setMaximum(totalBytes);
-        m_progress->setValue(bytesRead);
-    }
-}
-
-void Downloader::allDone(bool error)
-{
-    emit done(error);
-    if (m_blocking)
-        m_eventLoop->quit();
-}
-
-
-void Downloader::stateChanged(int state)
-{
-    QString stateLabel;
-    switch (state)
-    {
-    case QHttp::Unconnected  :
-        stateLabel = tr("Unconnected");
-        break;
-    case QHttp::HostLookup   :
-        stateLabel = tr("HostLookup ");
-        break;
-    case QHttp::Connecting   :
-        stateLabel = tr("Connecting ");
-        break;
-    case QHttp::Sending      :
-        stateLabel = tr("Sending    ");
-        break;
-    case QHttp::Reading      :
-        stateLabel = tr("Reading    ");
-        break;
-    case QHttp::Connected    :
-        stateLabel = tr("Connected  ");
-        break;
-    case QHttp::Closing      :
-        stateLabel = tr("Closing    ");
-        break;
-    }
-    if (m_progress)
-        m_progress->setStatus(stateLabel);
-    qDebug() << "Downloader state changed:" << stateLabel;
-}
-
-QDebug &operator<<(QDebug &out, const Downloader &c)
-{
-    out << "Downloader ("
-        << "m_blocking:"      << c.m_blocking
-        << "m_resultString:"  << c.m_resultString
-        << "m_result:"        << c.m_result      
-        << "m_statusCode:"    << c.m_statusCode
-        << "m_redirectedURL:" << c.m_redirectedURL
-        << "m_usedURL:"       << c.m_usedURL
-        << ")";
-    return out;
+  return debug;
 }
 
 #include "downloader.moc"
+#include "downloader_p.moc"

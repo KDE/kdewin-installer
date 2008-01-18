@@ -51,7 +51,7 @@ bool Mirrors::fetch(Type type, QUrl url)
 {
     m_type = type;
     DownloaderProgress progress(0);
-    Downloader download(true,&progress);
+    Downloader download(&progress);
 #ifdef DEBUG
 
     QString out = "mirrors.html";

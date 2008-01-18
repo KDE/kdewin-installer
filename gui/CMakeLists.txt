@@ -88,10 +88,19 @@ source_group(filters FILES ${filters_SOURCES} ${filters_HEADERS})
 source_group(quazip  FILES ${quazip_SOURCES}  ${quazip_HEADERS})
 source_group(qua7zip FILES ${qua7zip_SOURCES} ${qua7zip_HEADERS})
 
-qt4_automoc(${all_sources})
+include_directories(${curl_INCLUDE_DIR})
+add_definitions(-DCURL_STATICLIB)
+add_library(curl STATIC ${curl_SRCS} ${curl_HDRS})
+set_target_properties(curl PROPERTIES COMPILE_FLAGS "-DBUILDING_LIBCURL -I${curl_INCLUDE_DIR}/../lib")
 
+qt4_automoc(${all_sources})
 add_executable(kdewin-installer-gui-${VERSION} WIN32 ${all_sources})
-target_link_libraries(kdewin-installer-gui-${VERSION} ${QT_QTMAIN_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${GUI_LIBS})
+
+target_link_libraries(kdewin-installer-gui-${VERSION} Wldap32
+                      ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY}  ${QT_QTGUI_LIBRARY}
+                      ${QT_QTNETWORK_LIBRARY} ${GUI_LIBS} curl
+)
+
 write_file(${EXECUTABLE_OUTPUT_PATH}/kdewin-installer-gui.bat "start kdewin-installer-gui-${VERSION}.exe")
 
 install_targets(/bin kdewin-installer-gui-${VERSION} )

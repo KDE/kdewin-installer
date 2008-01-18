@@ -417,7 +417,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
 
 bool PackageList::addPackageFromHintFile(const QString &fileName)
 {
-    Downloader d(true); // for notes, maybe async?
+    Downloader d; // for notes
 
     // if a config file is present, don't scan hint files, we assume that they 
     // are merged into the config file 
@@ -458,7 +458,7 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
 {
     if (!ignoreConfigTxt && files.contains("config.txt")) 
     {
-        Downloader d(true,0);
+        Downloader d(0);
         // fetch config file 
         QFileInfo cfi(Settings::getInstance().downloadDir()+"/config-temp.txt");
         bool ret = d.start(m_baseURL.toString() + "/config.txt",cfi.absoluteFilePath());
