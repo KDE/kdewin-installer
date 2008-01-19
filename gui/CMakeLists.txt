@@ -89,9 +89,9 @@ source_group(qua7zip FILES ${qua7zip_SOURCES} ${qua7zip_HEADERS})
 qt4_automoc(${all_sources})
 add_executable(kdewin-installer-gui-${VERSION} WIN32 ${all_sources})
 
-target_link_libraries(kdewin-installer-gui-${VERSION} Wldap32
+target_link_libraries(kdewin-installer-gui-${VERSION}
                       ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY}  ${QT_QTGUI_LIBRARY}
-                      ${QT_QTNETWORK_LIBRARY} ${GUI_LIBS} curl
+                      ${QT_QTNETWORK_LIBRARY} ${GUI_LIBS}
 )
 
 write_file(${EXECUTABLE_OUTPUT_PATH}/kdewin-installer-gui.bat "start kdewin-installer-gui-${VERSION}.exe")

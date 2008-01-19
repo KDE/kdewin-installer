@@ -58,6 +58,7 @@ if (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel OR
     if (STATIC_BUILD)
         if (UPX_EXECUTABLE)
             set (PACK_EXECUTABLE 1)
+            message(STATUS "upx found, packing of executables enables")
         endif (UPX_EXECUTABLE)
         set (INSTALL_SYSTEM_LIBS 0)
     else (STATIC_BUILD)
@@ -97,8 +98,7 @@ set (EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 # add 3rdparty sources and definitions 
 include(3rdparty/CMakeLists.txt)
 # this will define .... _HEADERS, ...._SOURCES, ..._INCLUDE_DIR. for ... = quazip, bzip2, curl, filter,md5
-
-# note: add_subdirectory does not work for unknown reason 
+# add_subdirectory does not work for unknown reason 
 
 
 # set installer_shared_SOURCES/installer_shared_HEADERS
@@ -155,8 +155,8 @@ configure_file(${CMAKE_SOURCE_DIR}/config.h.cmake ${CMAKE_BINARY_DIR}/config.h)
 
 #FIXME: ${BZIP2_LIBRARIES} -> 3rdparty
 if (UNIX)
-  set (LIBS pthread dl z rt ${BZIP2_LIBRARIES})
-  set (GUI_LIBS pthread dl z rt ${BZIP2_LIBRARIES})
+  set (LIBS pthread dl z rt ${BZIP2_LIBRARIES} ${CURL_LIBRARIES})
+  set (GUI_LIBS pthread dl z rt ${BZIP2_LIBRARIES} ${CURL_LIBRARIES})
   if (STATIC_BUILD)
     find_package(X11)
     find_package(Freetype)
@@ -171,8 +171,8 @@ else(UNIX)
     set (FIRST_LIBS mingw32)
   endif(MINGW)
   # required for static linking
-  set (LIBS kernel32 user32 shell32 uuid ole32 advapi32 ws2_32 shlwapi ${BZIP2_LIBRARIES})
-  set (GUI_LIBS gdi32 comdlg32 oleaut32 imm32 winmm winspool ws2_32 ole32 uuid user32 advapi32 shlwapi)
+  set (LIBS kernel32 user32 shell32 uuid ole32 advapi32 ws2_32 shlwapi ${BZIP2_LIBRARIES} ${CURL_LIBRARIES})
+  set (GUI_LIBS gdi32 comdlg32 oleaut32 imm32 winmm winspool ws2_32 ole32 uuid user32 advapi32 shlwapi ${CURL_LIBRARIES})
 endif (UNIX)
 
 
