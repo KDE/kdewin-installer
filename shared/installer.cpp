@@ -208,17 +208,20 @@ bool Installer::unbz2File(const QString &destpath, const QString &zipFile, const
   }
   TarFilter tf(&bzip2);
   TarFilter::FileInformations tarFileInfo;
+
+  QString name;
+  QFileInfo fi;
+  QFile newFile;
   while(tf.getData(tarFileInfo)) {
     // relocate path names
-    QString name = tarFileInfo.fileName;
-    for(StringHash::const_iterator i = pathRelocations.constBegin(); i != pathRelocations.constEnd(); i++)
+    name = tarFileInfo.fileName;
+    for(StringHash::const_iterator i = pathRelocations.constBegin(); i != pathRelocations.constEnd(); ++i)
     {
       name = name.replace(QRegExp(i.key()),i.value());
       qDebug() << __FUNCTION__ << tarFileInfo.fileName << "relocated to" << name;
     }
     m_files << name;
-    QString outPath = path.filePath(name);
-    QFileInfo fi(outPath);
+    fi.setFile(path.filePath(name));
 
         // is it's a subdir ?
     if(tarFileInfo.fileType == TarFilter::directory)
@@ -255,7 +258,7 @@ bool Installer::unbz2File(const QString &destpath, const QString &zipFile, const
     }
 
     // create new file
-    QFile newFile(fi.absoluteFilePath());
+    newFile.setFileName(fi.absoluteFilePath());
     if(!newFile.open(QIODevice::WriteOnly))
     {
       setError(tr("Can not creating file %1").arg(fi.absoluteFilePath()));
@@ -265,6 +268,7 @@ bool Installer::unbz2File(const QString &destpath, const QString &zipFile, const
     fprintf(stdout, "filename: %s\n", qPrintable(newFile.fileName()));
     if (m_progress)
       m_progress->setTitle(tr("Installing %1").arg(newFile.fileName()));
+    qApp->processEvents();
 
     if(!tf.getData(&newFile)) {
       setError(tr("Can't write to file %1 (%2)").arg(fi.absoluteFilePath()).arg(newFile.errorString()));
@@ -308,6 +312,11 @@ bool Installer::unzipFile(const QString &destpath, const QString &zipFile, const
     m_progress->show();
   }
 
+  QString name;
+  QFileInfo fi;
+  QFile newFile;
+  QByteArray ba;
+  ba.resize(QUNZIP_BUFFER);
   for(bool bOk = z.goToFirstFile(); bOk; bOk = z.goToNextFile())
   {
         // get file information
@@ -317,15 +326,14 @@ bool Installer::unzipFile(const QString &destpath, const QString &zipFile, const
       return false;
     }
     // relocate path names
-    QString name = info.name;
+    name = info.name;
     for(StringHash::const_iterator i = pathRelocations.constBegin(); i != pathRelocations.constEnd(); i++)
     {
       name.replace(QRegExp(i.key()),i.value());
       qDebug() << __FUNCTION__ << info.name << "relocated to" << name;
     }
     m_files << name;
-    QString outPath = path.filePath(name);
-    QFileInfo fi(outPath);
+    fi.setFile(path.filePath(name));
 
         // is it's a subdir ?
     if(info.compressedSize == 0 && info.uncompressedSize == 0)
@@ -371,7 +379,7 @@ bool Installer::unzipFile(const QString &destpath, const QString &zipFile, const
     }
 
         // create new file
-    QFile newFile(fi.absoluteFilePath());
+    newFile.setFileName(fi.absoluteFilePath());
     if(!newFile.open(QIODevice::WriteOnly))
     {
       setError(tr("Can not creating file %1").arg(fi.absoluteFilePath()));
@@ -385,9 +393,6 @@ bool Installer::unzipFile(const QString &destpath, const QString &zipFile, const
         // copy data
         // FIXME: check for not that huge filesize ?
     qint64 iBytesRead;
-    QByteArray ba;
-    ba.resize(QUNZIP_BUFFER);
-
     while((iBytesRead = file.read(ba.data(), QUNZIP_BUFFER)) > 0)
       newFile.write(ba.data(), iBytesRead);
 

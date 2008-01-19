@@ -48,7 +48,7 @@ bool findHintFiles(const QString &dir, QStringList &files)
     d.setSorting(QDir::Name);
     QFileInfoList list = d.entryInfoList();
 
-    Q_FOREACH(const QFileInfo fi, list) {
+    Q_FOREACH(const QFileInfo &fi, list) {
         if (fi.isDir()) {
           findHintFiles(fi.absoluteFilePath(),files);
         }
@@ -71,7 +71,7 @@ QByteArray createMD5Hash(const QString &fileName)
 
 bool createMD5Sums(const QStringList &hintFiles )
 {
-    Q_FOREACH(const QFileInfo hintFile, hintFiles) {
+    Q_FOREACH(const QFileInfo &hintFile, hintFiles) {
 
         qDebug() << hintFile.absoluteFilePath();
 
@@ -203,7 +203,7 @@ bool createConfigTxt(QTextStream &out, const QString &root, const QStringList &h
         QString pkgVersion;
         QString pkgType;
         QString pkgFormat;
-        Q_FOREACH (const QFileInfo fi, list) {
+        Q_FOREACH (const QFileInfo &fi, list) {
             if (fi.isDir())
                 continue;
             Package::fromFileName(fi.completeBaseName(), pkgName, pkgVersion, pkgType,pkgFormat);
@@ -229,11 +229,11 @@ bool createConfigTxt(QTextStream &out, const QString &root, const QStringList &h
 
 QStringList &addDeps(QStringList &deps, const QStringList &add)
 {
-    foreach(QString dep, add)
+    foreach(const QString &dep, add)
     {
         if (dep.contains(" "))
         {
-            foreach(QString adep, dep.split(" "))
+            foreach(const QString &adep, dep.split(" "))
             {
                 if (!deps.contains(adep))
                     deps << adep;

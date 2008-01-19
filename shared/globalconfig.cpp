@@ -83,7 +83,7 @@ QStringList GlobalConfig::fetch(const QString &baseURL)
 bool GlobalConfig::parse(const QStringList &configFiles)
 {
     bool ret = true;
-    foreach(QString configFile, configFiles) {
+    foreach(const QString &configFile, configFiles) {
         ret = parseFromFile(configFile);
         if (Settings::hasDebug("GlobalConfig"))
             qDebug() << "parse config file " << configFile << (ret ? "okay" : "failure") ;

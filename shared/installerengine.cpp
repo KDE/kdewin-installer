@@ -89,7 +89,7 @@ void InstallerEngine::initPackages()
     QHash<QString, QStringList>::const_iterator i = m_globalConfig->categoryPackages().constBegin();
     for (; i != m_globalConfig->categoryPackages().constEnd(); i++) 
     {
-        foreach (QString name,i.value())
+        foreach (const QString &name,i.value())
         {
             Package *pkg = m_packageResources->getPackage(name);
             if (pkg)

@@ -292,7 +292,7 @@ QStringList filterFileName(QStringList & files)
     QStringList filteredFiles;
 
     QMap<QString,FileType*> packages; 
-    foreach(QString fileName, files)
+    foreach(const QString &fileName, files)
     {
         if (isPackageFileName(fileName) ) 
         {
@@ -484,7 +484,7 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
         }
     }
     
-    foreach(QString fileName, files)
+    foreach(const QString &fileName, files)
     {
 #ifdef ENABLE_HINTFILE_SUPPORT
         // @TODO using hint files results into duplicated package entries 

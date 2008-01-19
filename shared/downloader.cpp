@@ -254,12 +254,10 @@ int Downloader::progressCallback ( double dltotal, double dlnow )
 {
   if ( d->cancel )
     return 1;
-  qApp->processEvents();
   if ( d->progress ) {
     d->progress->setMaximum ( dltotal );
     d->progress->setValue ( dlnow );
   }
-  qApp->processEvents();
   emit progress ( dltotal, dlnow );
   return d->cancel;
 }

@@ -347,7 +347,7 @@ bool InstallerEngineGui::setDependencyState(Package *_package)
     if (state == _Remove || state == _Nothing)
         return true;
 
-    foreach(QString dep, _package->deps())
+    foreach(const QString &dep, _package->deps())
     {
         Package *package = m_packageResources->getPackage(dep);
         if (!package)
@@ -447,9 +447,9 @@ InstallerEngineGui::InstallerEngineGui (QWidget *parent, DownloaderProgress *pro
 
 int versionToInt(QString version)
 {
-    QStringList v = version.replace("-",".").split(".");
+    QStringList v = version.replace('-','.').split('.');
     int n = 0;
-    foreach(QString a,v)
+    foreach(const QString &a,v)
     {
         bool ok;
         int b = a.toInt(&ok);
@@ -496,7 +496,7 @@ void InstallerEngineGui::setLeftTreeData ( QTreeWidget *tree )
 
     qDebug() << categoryCache.categories();
     Settings &s = Settings::getInstance();
-    foreach (QString category,categoryCache.categories())
+    foreach (const QString &category,categoryCache.categories())
     {
         QStringList names = category.split(":");
         if ( (s.compilerType() == Settings::MinGW ||s.compilerType() == Settings::MSVC)

@@ -457,7 +457,7 @@ void Package::addCategories(const QString &cat)
 {
     if (cat.contains(" "))
     {
-        foreach(QString acat, cat.split(" "))
+        foreach(const QString &acat, cat.split(" "))
             m_categories << acat;
     }
     else
@@ -466,17 +466,17 @@ void Package::addCategories(const QString &cat)
 
 void Package::addCategories(const QStringList &cats)
 {
-    foreach(QString cat, cats)
+    foreach(const QString &cat, cats)
         addCategories(cat);
 }
 
 void Package::addDeps(const QStringList &deps)
 {
-    foreach(QString dep, deps)
+    foreach(const QString &dep, deps)
     {
         if (dep.contains(" "))
         {
-            foreach(QString adep, dep.split(" ",QString::SkipEmptyParts))
+            foreach(const QString &adep, dep.split(" ",QString::SkipEmptyParts))
             {
                 if (!m_deps.contains(adep))
                     m_deps << adep;
