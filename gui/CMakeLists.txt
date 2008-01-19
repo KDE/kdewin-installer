@@ -88,11 +88,6 @@ source_group(filters FILES ${filters_SOURCES} ${filters_HEADERS})
 source_group(quazip  FILES ${quazip_SOURCES}  ${quazip_HEADERS})
 source_group(qua7zip FILES ${qua7zip_SOURCES} ${qua7zip_HEADERS})
 
-include_directories(${curl_INCLUDE_DIR})
-add_definitions(-DCURL_STATICLIB)
-add_library(curl STATIC ${curl_SRCS} ${curl_HDRS})
-set_target_properties(curl PROPERTIES COMPILE_FLAGS "-DBUILDING_LIBCURL -I${curl_INCLUDE_DIR}/../lib")
-
 qt4_automoc(${all_sources})
 add_executable(kdewin-installer-gui-${VERSION} WIN32 ${all_sources})
 
