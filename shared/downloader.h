@@ -29,13 +29,12 @@
 #include <QtCore/QUrl>
 
 
-class QIODevice;
 class DownloaderProgress;
 class Downloader : public QObject
 {
   Q_OBJECT
 public:
-  typedef enum { Undefined, Finished, Failed, Aborted, Redirected } ResultType;
+  typedef enum { Undefined, Finished, Failed, Aborted } ResultType;
   Downloader ( DownloaderProgress *progress=0 );
   virtual ~Downloader();
 
@@ -60,28 +59,25 @@ public:
 Q_SIGNALS:
   void done ( bool error );
   void error ( const QString &error );
-  void progress( double dltotal, double dlnow );
+  void progress ( double dltotal, double dlnow );
 protected Q_SLOTS:
-  void threadFinished( int ret ); // ret == CURLcode (enum)
-  int progressCallback( double ultotal, double ulnow );
+  void threadFinished ( int ret ); // ret == CURLcode (enum)
+  int progressCallback ( double ultotal, double ulnow );
 protected:
-  void setError( const QString &errStr );
+  void setError ( const QString &errStr );
   bool startInternal ( const QUrl &url );
-  size_t curlWrite( const char * data, size_t  size );
-  static size_t curlWriteCallback( void *ptr, size_t size, size_t nmemb, void *stream);
-  static int curlProgressCallback( void *clientp, double dltotal, double dlnow,
-                                   double ultotal, double ulnow );
+  size_t curlWrite ( const char * data, size_t  size );
+  static size_t curlWriteCallback ( void *ptr, size_t size, size_t nmemb, void *stream );
+  static int curlProgressCallback ( void *clientp, double dltotal, double dlnow,
+                                    double ultotal, double ulnow );
 protected:
-  DownloaderProgress *m_progress;
   ResultType  m_result;
   QString     m_resultString;
   QUrl        m_usedURL;
-  QIODevice  *m_ioDevice;
-  QString     m_fileName;         /// holds filename in case target is a file
   class Private;
   Private * const d;
 
-  friend QDebug &operator<<(QDebug &, const Downloader &);
+  friend QDebug &operator<< ( QDebug &, const Downloader & );
 };
 
 #endif

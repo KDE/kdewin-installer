@@ -89,7 +89,7 @@ int main( int argc, char *argv[] )
         args.removeAt( idx + 1 );
         args.removeAt( idx );
     } else {
-        installpath = QString( getenv( "KDEROOT" ) ) + QDir::separator() + QString( "bin" ) + QDir::separator();
+        installpath = QString::fromLocal8Bit( qgetenv( "KDEROOT" ) ) + QDir::separator() + QString( "bin" ) + QDir::separator();
         qDebug() << QString( "installpath missing; assuming installpath %1" ).arg( installpath );
     }
 
