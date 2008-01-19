@@ -94,179 +94,12 @@ else (WIN32 OR CYGWIN)
 endif (WIN32 OR CYGWIN)
 set (EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
-# get quazip_SOURCES/quazip_HEADERS/quazip_INCLUDE_DIR
-#
-# BZIP2
-#
-if (BZIP2_UNPACK_SUPPORT)
-    set(filters_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/tarfilter.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/bzip2iodevice.cpp
-    )
-    set(filters_HEADERS
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/tarfilter.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters/bzip2iodevice.h
-    )
-    set(filters_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/filters)
+# add 3rdparty sources and definitions 
+include(3rdparty/CMakeLists.txt)
+# this will define .... _HEADERS, ...._SOURCES, ..._INCLUDE_DIR. for ... = quazip, bzip2, curl, filter,md5
 
-    set(bzip2_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/blocksort.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/bzlib.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/compress.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/crctable.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/decompress.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/huffman.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/randtable.c
-    )
-    set(bzip2_HEADERS
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/bzlib.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4/bzlib_private.h
-    )
-    set(bzip2_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2-1.0.4)
-endif (BZIP2_UNPACK_SUPPORT)
+# note: add_subdirectory does not work for unknown reason 
 
-#
-# LIBCURL
-#
-set(curl_SRCS
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/base64.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/connect.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/content_encoding.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/cookie.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/dict.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/easy.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/escape.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/file.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/formdata.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/ftp.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/getenv.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/getinfo.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/gtls.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/hash.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/hostares.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/hostasyn.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/hostip.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/hostip4.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/hostip6.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/hostsyn.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/hostthre.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/http.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/http_chunks.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/http_digest.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/http_negotiate.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/http_ntlm.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/if2ip.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/inet_ntop.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/inet_pton.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/krb4.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/krb5.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/ldap.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/llist.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/md5.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/memdebug.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/mprintf.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/multi.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/netrc.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/nss.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/parsedate.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/progress.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/qssl.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/security.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/select.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/sendf.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/share.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/socks.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/speedcheck.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/splay.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/ssh.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/sslgen.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/ssluse.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/strdup.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/strequal.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/strerror.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/strtok.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/strtoofft.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/telnet.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/tftp.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/timeval.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/transfer.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/url.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/lib/version.c
-)
-set(curl_HEADERS
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/include/curl/curl.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/include/curl/curlver.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/include/curl/easy.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/include/curl/mprintf.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/include/curl/multi.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/include/curl/stdcheaders.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/include/curl/types.h
-)
-set(curl_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/curl/include)
-
-#
-# QUAZIP
-#
-set(quazip_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip/quazip/ioapi.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip/quazip/unzip.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip/quazip/zip.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip/quazip/quazip.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip/quazip/quazipfile.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip/quazip/quazipnewinfo.cpp
-)
-set(quazip_HEADERS
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip/quazip/ioapi.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip/quazip/unzip.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip/quazip/zip.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip/quazip/quazip.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip/quazip/quazipfile.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip/quazip/quazipnewinfo.h
-)
-set(quazip_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip/quazip)
-
-if(SEVENZIP_UNPACK_SUPPORT)
-  set(qua7zip_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/qua7zip.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/utils.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Archive/7z_C/7zAlloc.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Archive/7z_C/7zBuffer.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Archive/7z_C/7zCrc.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Archive/7z_C/7zDecode.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Archive/7z_C/7zExtract.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Archive/7z_C/7zHeader.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Archive/7z_C/7zIn.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Archive/7z_C/7zItem.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Archive/7z_C/7zMethodID.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Compress/LZMA_C/LzmaDecode.c
-    )
-
-  set(qua7zip_HEADERS
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/qua7zip.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/utils.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Archive/7z_C/7zAlloc.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Archive/7z_C/7zBuffer.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Archive/7z_C/7zCrc.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Archive/7z_C/7zDecode.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Archive/7z_C/7zExtract.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Archive/7z_C/7zHeader.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Archive/7z_C/7zIn.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Archive/7z_C/7zItem.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Archive/7z_C/7zMethodID.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Compress/LZMA_C/LzmaDecode.h
-    )
-
-  set(qua7zip_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qua7zip)
-endif(SEVENZIP_UNPACK_SUPPORT)
-
-set(md5_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/md5/md5.cpp
-    )
-
-set(md5_HEADERS
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/md5/md5.h
-    )
-set(md5_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/md5)
 
 # set installer_shared_SOURCES/installer_shared_HEADERS
 set(installer_shared_SOURCES
@@ -314,12 +147,6 @@ set(installer_shared_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shared)
 include_directories(
   ${CMAKE_SOURCE_DIR} 
   ${CMAKE_BINARY_DIR} 
-  ${CMAKE_SOURCE_DIR}/3rdparty/zlib
-  ${bzip2_INCLUDE_DIR}
-  ${filters_INCLUDE_DIR}
-  ${quazip_INCLUDE_DIR}
-  ${qua7zip_INCLUDE_DIR}
-  ${md5_INCLUDE_DIR}
   ${installer_shared_INCLUDE_DIR}
   ${QT_INCLUDES} 
 )
