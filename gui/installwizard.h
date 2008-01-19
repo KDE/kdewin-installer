@@ -29,15 +29,19 @@
 
 
 #include <QObject>
-#include "complexwizard.h"
+
+#include <QWizard>
 #include "settingspage.h"
+#include "installerprogress.h"
 
 class QCheckBox;
 class QLabel;
 class QLineEdit;
 class QRadioButton;
-class QTextEdit;
 class QListWidget;
+class QTextEdit;
+class QTreeWidget;
+class QTreeWidgetItem;
 class TitlePage;
 class DownloadSettingsPage;
 class PathSettingsPage;
@@ -52,52 +56,47 @@ class FinishPage;
 
 extern QListWidget *g_dependenciesList;
 
-class InstallWizard : public ComplexWizard
+class InstallWizard : public QWizard
 {
     Q_OBJECT
 public:
+    enum {
+        titlePage,
+        pathSettingsPage,
+        downloadSettingsPage,
+        proxySettingsPage,
+        mirrorSettingsPage,
+        packageSelectorPage,
+        dependenciesPage,
+        downloadPage,
+        uninstallPage,
+        installPage,
+        finishPage,
+        settingsPage
+     };
+
     InstallWizard(QWidget *parent = 0);
+    protected:
 
 private slots:
-    virtual void settingsButtonClicked();
-    
-private:
-    TitlePage *titlePage;
-    PathSettingsPage *pathSettingsPage;
-    DownloadSettingsPage *downloadSettingsPage;
-    ProxySettingsPage *proxySettingsPage;
-    MirrorSettingsPage *mirrorSettingsPage;
-    PackageSelectorPage *packageSelectorPage;
-    DependenciesPage *dependenciesPage;
-    DownloadPage *downloadPage;
-    InstallPage *installPage;
-    UninstallPage *uninstallPage;
-    FinishPage *finishPage;
-    SettingsPage *settingsPage;
+    void aboutButtonClicked();
+    void settingsButtonClicked();
+    void slotCurrentIdChanged(int id);
 
-    friend class SettingsPage;
-    friend class TitlePage;
-    friend class PathSettingsPage;
-    friend class DownloadSettingsPage;
-    friend class ProxySettingsPage;
-    friend class MirrorSettingsPage;
-    friend class PackageSelectorPage;
-    friend class DependenciesPage;
-    friend class DownloadPage;
-    friend class InstallPage;
-    friend class UninstallPage;
-    friend class FinishPage;
+private:
+    SettingsPage *_settingsPage;
 };
 
-
-class InstallWizardPage : public WizardPage
+class InstallWizardPage : public QWizardPage
 {
-
 public:
-    InstallWizardPage(InstallWizard *wizard, SettingsSubPage *s=0);
+    InstallWizardPage(SettingsSubPage *s=0);
+
+    virtual void initializePage();
+    virtual int nextId();
+    virtual bool isComplete();
 
 protected:
-    InstallWizard *wizard;
     SettingsSubPage *page;
     QLabel *topLabel;
     QLabel *statusLabel;
@@ -105,11 +104,13 @@ protected:
 
 class TitlePage : public InstallWizardPage
 {
-public:
-    TitlePage(InstallWizard *wizard);
+    Q_OBJECT
 
-    void resetPage();
-    WizardPage *nextPage();
+public:
+    TitlePage();
+
+    void initializePage();
+    int nextId();
 };
 
 class DownloadSettingsPage : public InstallWizardPage
@@ -117,10 +118,10 @@ class DownloadSettingsPage : public InstallWizardPage
     Q_OBJECT
 
 public:
-    DownloadSettingsPage(InstallWizard *wizard, SettingsSubPage *s);
+    DownloadSettingsPage(SettingsSubPage *s);
 
-    void resetPage();
-    WizardPage *nextPage();
+    void initializePage();
+    int nextId();
     bool isComplete();
 };
 
@@ -129,10 +130,10 @@ class PathSettingsPage : public InstallWizardPage
     Q_OBJECT
 
 public:
-    PathSettingsPage(InstallWizard *wizard, SettingsSubPage *s);
+    PathSettingsPage(SettingsSubPage *s);
 
-    void resetPage();
-    WizardPage *nextPage();
+    void initializePage();
+    int nextId();
     bool isComplete();
 };
 
@@ -141,10 +142,10 @@ class ProxySettingsPage : public InstallWizardPage
     Q_OBJECT
 
 public:
-    ProxySettingsPage(InstallWizard *wizard, SettingsSubPage *s);
+    ProxySettingsPage(SettingsSubPage *s);
 
-    void resetPage();
-    WizardPage *nextPage();
+    void initializePage();
+    int nextId();
     bool isComplete();
 };
 
@@ -153,25 +154,22 @@ class MirrorSettingsPage : public InstallWizardPage
     Q_OBJECT
 
 public:
-    MirrorSettingsPage(InstallWizard *wizard, SettingsSubPage *s);
+    MirrorSettingsPage(SettingsSubPage *s);
 
-    void resetPage();
-    WizardPage *nextPage();
+    void initializePage();
+    int nextId();
     bool isComplete();
 };
-
-class QTreeWidget;
-class QTreeWidgetItem;
 
 class PackageSelectorPage : public InstallWizardPage
 {
     Q_OBJECT
 
 public:
-    PackageSelectorPage(InstallWizard *wizard);
+    PackageSelectorPage();
 
-    void resetPage();
-    WizardPage *nextPage();
+    void initializePage();
+    int nextId();
     bool isComplete();
 
 public slots:
@@ -188,11 +186,13 @@ private:
 
 class DependenciesPage: public InstallWizardPage
 {
-public:
-    DependenciesPage(InstallWizard *wizard);
+    Q_OBJECT
 
-    void resetPage();
-    WizardPage *nextPage();
+public:
+    DependenciesPage();
+
+    void initializePage();
+    int nextId();
 
 private:
     QListWidget *dependenciesList;
@@ -201,50 +201,50 @@ private:
 
 class DownloadPage : public InstallWizardPage
 {
-public:
-    DownloadPage(InstallWizard *wizard);
+    Q_OBJECT
 
-    void resetPage();
-    virtual WizardPage *nextPage();
-    virtual bool isComplete();
-    virtual void reject();
+public:
+    DownloadPage();
+
+    void initializePage();
+    int nextId();
+    bool isComplete();
+    void reject();
 };
 
 class UninstallPage : public InstallWizardPage
 {
+    Q_OBJECT
+
 public:
-    UninstallPage(InstallWizard *wizard);
+    UninstallPage();
 
-    void resetPage();
-    WizardPage *nextPage();
+    void initializePage();
+    int nextId();
     bool isComplete();
-
-private:
-    InstallerProgress *fileList;
 };
 
 class InstallPage : public InstallWizardPage
 {
+    Q_OBJECT
+
 public:
-    InstallPage(InstallWizard *wizard);
+    InstallPage();
 
-    void resetPage();
-    WizardPage *nextPage();
+    void initializePage();
+    int nextId();
     bool isComplete();
-
-private:
-    InstallerProgress *fileList;
 };
 
 class FinishPage : public InstallWizardPage
 {
-public:
-    FinishPage(InstallWizard *wizard);
+    Q_OBJECT
 
-    virtual WizardPage *nextPage() { return NULL; }
-    virtual void resetPage();
-    virtual bool isLastPage() { return true; }
-    virtual bool isComplete();
+public:
+    FinishPage();
+
+    void initializePage();
+    bool isComplete();
 
 private:
     QLabel *bottomLabel;

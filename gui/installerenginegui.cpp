@@ -33,6 +33,7 @@
 #include <QMessageBox>
 
 #include "installerenginegui.h"
+#include "downloader.h"
 #include "installwizard.h"
 #ifdef ENABLE_STYLE
 #define DISABLE_ICONS
