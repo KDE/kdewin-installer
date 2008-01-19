@@ -22,7 +22,6 @@
 
 #include <QDir>
 #include <QUrl>
-#include <QNetworkProxy>
 #include <QtDebug>
 
 #include "settings.h"
@@ -184,7 +183,7 @@ Settings &Settings::getInstance()
 
 
 #ifdef Q_OS_WIN
-bool Settings::getIEProxySettings(const QString &url, QNetworkProxy &proxy)
+bool Settings::getIEProxySettings(const QString &url, proxySettings &proxy)
 {
     // @TODO how to retrieve user and passwort 
     bool ok;
@@ -203,30 +202,30 @@ bool Settings::getIEProxySettings(const QString &url, QNetworkProxy &proxy)
     if(parts.count() != 2)
         return false;
 
-    proxy.setHostName(parts[0]);
-    proxy.setPort(parts[1].toInt());
-    proxy.setUser(proxyUser());
-    proxy.setPassword(proxyPassword());
+    proxy.hostname = parts[0];
+    proxy.port = parts[1].toInt();
+    proxy.user = proxyUser();
+    proxy.password = proxyPassword();
     return true;
 }
 #endif
 
-bool Settings::getEnvironmentProxySettings(const QString &_url, QNetworkProxy &proxy)
+bool Settings::getEnvironmentProxySettings(const QString &_url, proxySettings &proxy)
 {
     QUrl url(qgetenv("http_proxy"));   
 
     if(url.isValid()) 
     {
-        proxy.setHostName(url.host());
-        proxy.setPort(url.port(8080));
-        proxy.setUser(url.userName());
-        proxy.setPassword(url.password());
+        proxy.hostname = url.host();
+        proxy.port = url.port(8080);
+        proxy.user = url.userName();
+        proxy.password = url.password();
         return true;
     }
     return false;
 }
 
-bool Settings::getFireFoxProxySettings(const QString &url, QNetworkProxy &proxy)
+bool Settings::getFireFoxProxySettings(const QString &url, proxySettings &proxy)
 {
     static QHash<QString,QString> prefs;
     static bool prefsRead = false;
@@ -274,19 +273,19 @@ bool Settings::getFireFoxProxySettings(const QString &url, QNetworkProxy &proxy)
                        prefs.contains("network.proxy.share_proxy_settings")
                     && prefs["network.proxy.share_proxy_settings"] == "true")
             {
-                proxy.setHostName(prefs["network.proxy.http"]);
-                proxy.setPort(prefs["network.proxy.http_port"].toInt());
+                proxy.hostname = prefs["network.proxy.http"];
+                proxy.port = prefs["network.proxy.http_port"].toInt();
                 /// @TODO: get username and passwort from firefox settings
-                proxy.setUser(proxyUser());
-                proxy.setPassword(proxyPassword());
+                proxy.user = proxyUser();
+                proxy.password = proxyPassword();
             }
             else 
             {
-                proxy.setHostName(prefs["network.proxy.ftp"]);
-                proxy.setPort(prefs["network.proxy.ftp_port"].toInt());
+                proxy.hostname = prefs["network.proxy.ftp"];
+                proxy.port = prefs["network.proxy.ftp_port"].toInt();
                 /// @TODO: get username and passwort from firefox settings
-                proxy.setUser(proxyUser());
-                proxy.setPassword(proxyPassword());
+                proxy.user = proxyUser();
+                proxy.password = proxyPassword();
 
             }
             return true;
@@ -295,10 +294,8 @@ bool Settings::getFireFoxProxySettings(const QString &url, QNetworkProxy &proxy)
     return false;
 }
 
-bool Settings::proxy(const QString &url, QNetworkProxy &proxy)
+bool Settings::proxy(const QString &url, proxySettings &proxy)
 {
-    proxy.setType(QNetworkProxy::HttpProxy);
-
     // FIXME: add support for different ftp proxy settings
     switch(proxyMode()) {
 #ifdef Q_WS_WIN
@@ -309,10 +306,10 @@ bool Settings::proxy(const QString &url, QNetworkProxy &proxy)
             return getFireFoxProxySettings(url, proxy);
 
         case Manual:
-            proxy.setHostName(proxyHost());
-            proxy.setPort(proxyPort());
-            proxy.setUser(proxyUser());
-            proxy.setPassword(proxyPassword());
+            proxy.hostname = proxyHost();
+            proxy.port = proxyPort();
+            proxy.user = proxyUser();
+            proxy.password = proxyPassword();
             return true;
 
         case Environment:

@@ -169,15 +169,15 @@ bool Downloader::startInternal ( const QUrl &url )
   }
 
   Settings &s = Settings::getInstance();
-  QNetworkProxy ps;
+  Settings::proxySettings ps;
   s.proxy ( url.scheme(), ps );
 
   curl_easy_setopt ( d->curlHandle, CURLOPT_URL, url.toEncoded().constData() );
   // curl reads from environment when nothing is set
-  if ( !ps.hostName().isEmpty() && s.proxyMode() != Settings::Environment ) {
-    curl_easy_setopt ( d->curlHandle, CURLOPT_PROXY, ps.hostName().toLocal8Bit().constData() );
-    curl_easy_setopt ( d->curlHandle, CURLOPT_PROXYPORT, ps.port() );
-    QString user =  ps.user() + ":" +  ps.password();
+  if ( !ps.hostname.isEmpty() && s.proxyMode() != Settings::Environment ) {
+    curl_easy_setopt ( d->curlHandle, CURLOPT_PROXY, ps.hostname.toLocal8Bit().constData() );
+    curl_easy_setopt ( d->curlHandle, CURLOPT_PROXYPORT, ps.port );
+    QString user =  ps.user + ":" +  ps.password;
     curl_easy_setopt ( d->curlHandle, CURLOPT_PROXYUSERPWD, user.toLocal8Bit().constData() );
   }
   if ( url.port() != -1 ) {

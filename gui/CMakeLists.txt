@@ -91,7 +91,7 @@ add_executable(kdewin-installer-gui-${VERSION} WIN32 ${all_sources})
 
 target_link_libraries(kdewin-installer-gui-${VERSION}
                       ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY}  ${QT_QTGUI_LIBRARY}
-                      ${QT_QTNETWORK_LIBRARY} ${GUI_LIBS}
+                      ${GUI_LIBS}
 )
 
 write_file(${EXECUTABLE_OUTPUT_PATH}/kdewin-installer-gui.bat "start kdewin-installer-gui-${VERSION}.exe")

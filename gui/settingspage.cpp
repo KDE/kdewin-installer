@@ -206,13 +206,13 @@ void SettingsProxyPage::reset()
         default: ui.proxyOff->setChecked(true); break;
     }
 
-    QNetworkProxy proxy;
+    Settings::proxySettings proxy;
     if (s.proxy("",proxy))
     {
-        ui.proxyHost->setText(proxy.hostName());
-        ui.proxyPort->setText(QString("%1").arg(proxy.port()));
-        ui.proxyUserName->setText(proxy.user());
-        ui.proxyPassword->setText(proxy.password());
+        ui.proxyHost->setText(proxy.hostname);
+        ui.proxyPort->setText(QString("%1").arg(proxy.port));
+        ui.proxyUserName->setText(proxy.user);
+        ui.proxyPassword->setText(proxy.password);
         ui.proxyHost->setEnabled(ui.proxyManual->isChecked());
         ui.proxyPort->setEnabled(ui.proxyManual->isChecked());
         ui.proxyUserName->setEnabled(ui.proxyManual->isChecked());
@@ -232,7 +232,11 @@ void SettingsProxyPage::accept()
     s.setProxyMode(m);
     if (ui.proxyManual->isChecked())
     {
-        QNetworkProxy proxy(QNetworkProxy::DefaultProxy,ui.proxyHost->text(),ui.proxyPort->text().toInt(),ui.proxyUserName->text(),ui.proxyPassword->text());
+        Settings::proxySettings proxy;
+        proxy.hostname = ui.proxyHost->text();
+        proxy.port = ui.proxyPort->text().toInt();
+        proxy.user = ui.proxyUserName->text();
+        proxy.password = ui.proxyPassword->text();
         s.setProxy(proxy);
     }
 }
