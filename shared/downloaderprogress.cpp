@@ -31,8 +31,6 @@
 
 #ifdef USE_GUI
 
-#include "complexwizard.h"
-
 DownloaderProgress::DownloaderProgress(QWidget *parent)
 {
     statusLabel = new QLabel();

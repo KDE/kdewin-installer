@@ -33,7 +33,7 @@
 // FIXME: This should be solved better 
 #ifdef USE_GUI
 #include "installwizard.h"
-extern InstallWizard *wizard;
+extern InstallerProgress *installProgressBar;
 #endif
 
 Uninstall::Uninstall(const QString &rootDir, const QString &packageName)
@@ -50,7 +50,7 @@ bool Uninstall::uninstallPackage(bool bUseHashWhenPossible)
     QFileInfo fi;
     QFile f;
 #ifdef USE_GUI
-    InstallerProgress *m_progress = &wizard->installProgressBar();
+    InstallerProgress *m_progress = installProgressBar;
 #else
     InstallerProgress *m_progress = 0;
 #endif
