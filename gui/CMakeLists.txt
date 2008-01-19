@@ -31,7 +31,6 @@ ENDMACRO (QT4_ADD_RESOURCES2)
 
 
 set(installer_GUI_SOURCES
-   complexwizard.cpp
    installwizard.cpp
    settingspage.cpp
    installerenginegui.cpp
@@ -41,7 +40,6 @@ set(installer_GUI_SOURCES
 )
 
 set(installer_GUI_HEADERS
-   complexwizard.h
    installwizard.h
    settingspage.h
    installerenginegui.h
