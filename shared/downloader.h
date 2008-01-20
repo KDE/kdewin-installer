@@ -35,7 +35,7 @@ class Downloader : public QObject
   Q_OBJECT
 public:
   typedef enum { Undefined, Finished, Failed, Aborted } ResultType;
-  Downloader ( DownloaderProgress *progress=0 );
+  Downloader ( DownloaderProgress *progress=0, QObject *parent=0);
   virtual ~Downloader();
 
   // start download
@@ -59,7 +59,6 @@ public:
 Q_SIGNALS:
   void done ( bool error );
   void error ( const QString &error );
-  void progress ( double dltotal, double dlnow );
 protected Q_SLOTS:
   void threadFinished ( int ret ); // ret == CURLcode (enum)
   int progressCallback ( double ultotal, double ulnow );

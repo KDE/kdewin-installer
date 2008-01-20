@@ -100,8 +100,8 @@ public:
   QString     fileName;         /// holds filename in case target is a file
 };
 
-Downloader::Downloader ( DownloaderProgress *progress )
-    : m_result ( Undefined ), d ( new Private ( progress ) )
+Downloader::Downloader ( DownloaderProgress *progress, QObject *parent )
+    : QObject( parent), m_result ( Undefined ), d ( new Private ( progress ) )
 {
   curl_global_init ( CURL_GLOBAL_ALL );
 }
@@ -258,7 +258,6 @@ int Downloader::progressCallback ( double dltotal, double dlnow )
     d->progress->setMaximum ( dltotal );
     d->progress->setValue ( dlnow );
   }
-  emit progress ( dltotal, dlnow );
   return d->cancel;
 }
 
@@ -274,11 +273,12 @@ void Downloader::cancel()
   d->cancel = true;
   if ( d->thread )
     d->thread->cancel();
+  setError( tr( "Canceled by user" ) );
 }
 
 void Downloader::setError ( const QString &errStr )
 {
-  qDebug() << errStr;
+  qWarning( qPrintable(errStr) );
   emit error ( errStr );
 }
 
