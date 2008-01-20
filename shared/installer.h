@@ -63,15 +63,9 @@ public:
 
 public Q_SLOTS:
     void updatePackageList();
-protected Q_SLOTS:
-    void finished(int, QProcess::ExitStatus);
 protected:
     bool createManifestFile();
     bool createManifestFileForExecutable();
-    bool unbz2File(const QString &destpath, const QString &zipFile, const StringHash &pathRelocations);
-    bool unzipFile(const QString &destpath, const QString &zipFile, const StringHash &pathRelocations);
-    bool un7zipFile(const QString &destpath, const QString &zipFile);
-    void setError(const QString &str);
     bool createQtConfigFile();
 
     QString m_root;
@@ -81,7 +75,6 @@ protected:
     QStringList m_files;
     Database *m_database;
 
-    QProcess* m_installExecutableProcess;
     Package* m_packageToInstall;
     Package::Type m_installType;
 };

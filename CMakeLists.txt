@@ -119,6 +119,7 @@ set(installer_shared_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/uninstall.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/packagecategorycache.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/hintfile.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/unpacker.cpp
 #    ${CMAKE_CURRENT_SOURCE_DIR}/shared/installerbase.cpp
 )
 
@@ -140,6 +141,8 @@ set(installer_shared_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/uninstall.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/packagecategorycache.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/hintfile.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/unpacker.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/unpacker_p.h
 #    ${CMAKE_CURRENT_SOURCE_DIR}/shared/installerbase.h
 )
 set(installer_shared_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shared)
