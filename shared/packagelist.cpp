@@ -322,6 +322,7 @@ QStringList filterFileName(QStringList & files)
     }
     foreach(FileType *p,packages)
         filteredFiles << p->fileName;
+    qDeleteAll(packages);
 
     return filteredFiles;
 }

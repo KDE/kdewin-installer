@@ -52,5 +52,7 @@ int main(int argc, char *argv[])
 #endif
 
     wizard = new InstallWizard();
-    return wizard->exec();
+    int ret = wizard->exec();
+    delete wizard;
+    return ret;
 }

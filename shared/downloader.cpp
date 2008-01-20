@@ -195,9 +195,8 @@ bool Downloader::startInternal ( const QUrl &url )
   }
   d->finished = false;
   d->thread->start();
-  QEventLoop *loop;
+  QEventLoop *loop = new QEventLoop ( this );
   do {
-    loop = new QEventLoop ( this );
     loop->processEvents ( QEventLoop::AllEvents, 50 );
   } while ( !d->finished );
   if ( d->progress )

@@ -423,9 +423,8 @@ bool Unpacker::unpackFile ( const QString &fn, const QString &destpath, const St
         m_progress->setTitle ( tr ( "Unpacking %1" ).arg ( fn ) );
     }
     m_thread->unpackFile ( fn, destpath, pathRelocations );
-    QEventLoop *loop;
+    QEventLoop *loop = new QEventLoop ( this );
     do {
-        loop = new QEventLoop ( this );
         loop->processEvents ( QEventLoop::AllEvents, 50 );
     } while ( !m_bFinished );
     delete loop;
