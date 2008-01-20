@@ -1,6 +1,7 @@
 /****************************************************************************
 **
-** Copyright (C) 2006 Ralf Habacker. All rights reserved.
+** Copyright (C) 2006-2008 Ralf Habacker <ralf.habacker@freenet.de>
+**  All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
@@ -92,7 +93,8 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent)
     // must be first
     setWizardStyle(QWizard::ModernStyle);
     setPixmap(QWizard::LogoPixmap,QPixmap(":/images/logo.png"));
-    setPixmap(QWizard::BannerPixmap, QPixmap(":/images/banner.png"));
+    // setting a banner limit the installer width 
+	//    setPixmap(QWizard::BannerPixmap, QPixmap(":/images/banner.png"));
 
     QPushButton *aboutButton = new QPushButton(tr("About"));
     setButton(QWizard::CustomButton1, aboutButton );
@@ -108,17 +110,21 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent)
     QPushButton *retryButton = new QPushButton(tr("Retry"));
     setButton(QWizard::CustomButton3, retryButton);
     setOption(QWizard::HaveCustomButton3, true);
+    retryButton->hide();
     connect(retryButton, SIGNAL(clicked()), this, SLOT(restart()) );
+
+    //setOption(QWizard::HaveCancelButton, true);
 
     setOption(QWizard::CancelButtonOnLeft,true);
 
+/*
     QList<QWizard::WizardButton> layout;
     layout << QWizard::CustomButton1 << QWizard::Stretch << QWizard::CustomButton2 << QWizard::Stretch 
             << QWizard::CancelButton << QWizard::BackButton 
 //            << QWizard::CustomButton3 
             << QWizard::NextButton << QWizard::FinishButton;
     setButtonLayout(layout);
-
+*/
     setPage(titlePage, new TitlePage()); 
     setPage(pathSettingsPage, new PathSettingsPage(_settingsPage->installPage())); 
     setPage(proxySettingsPage, new ProxySettingsPage(_settingsPage->proxyPage())); 
@@ -134,6 +140,7 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent)
     QString windowTitle = tr("KDE Installer - Version " VERSION);
     setWindowTitle(windowTitle);
     setSizeGripEnabled(true);
+    setWindowFlags(windowFlags()|Qt::WindowMaximizeButtonHint);
 
     InstallerDialogs &d = InstallerDialogs::getInstance();
     d.setTitle(windowTitle);
@@ -194,22 +201,18 @@ void InstallWizard::slotCurrentIdChanged(int id)
             next();
     }
     else if (id == uninstallPage) {
-        button(QWizard::CancelButton)->setEnabled(false);
         button(QWizard::BackButton)->setEnabled(false);
         button(QWizard::NextButton)->setEnabled(false);
         engine->removePackages(tree);
-        button(QWizard::CancelButton)->setEnabled(true);
         button(QWizard::BackButton)->setEnabled(true);
         button(QWizard::NextButton)->setEnabled(true);
         if (Settings::getInstance().autoNextStep())
             next();
     }
     else if (id == installPage) {
-        button(QWizard::CancelButton)->setEnabled(false);
         button(QWizard::BackButton)->setEnabled(false);
         button(QWizard::NextButton)->setEnabled(false);
         engine->installPackages(tree);
-        button(QWizard::CancelButton)->setEnabled(true);
         button(QWizard::BackButton)->setEnabled(true);
         button(QWizard::NextButton)->setEnabled(true);
         if (Settings::getInstance().autoNextStep())
@@ -523,6 +526,7 @@ void PackageSelectorPage::initializePage()
     engine->setPageSelectorWidgetData(tree);
     on_leftTree_itemClicked(leftTree->currentItem(), 0);
     wizard()->button(QWizard::CustomButton2)->show();
+    wizard()->button(QWizard::CustomButton3)->hide();
 }
 
 void PackageSelectorPage::on_leftTree_itemClicked(QTreeWidgetItem *item, int column)
@@ -693,12 +697,12 @@ FinishPage::FinishPage() : InstallWizardPage(0)
     setSubTitle(tr(" "));
 
     QLabel* label = new QLabel(tr(
-         "Now you should be able to run kde applications."
-         "Please open an explorer window and navigate to the bin folder of the kde installation root."
-         "There you will find several applications which can be started by a simple click on the executable."
-         "In further versions of this installer it will be also possible to start kde applications from<br>"
-         "the windows start menu."
-         "If you <ul>"
+         "<p>Now you should be able to run kde applications.</p>"
+         "<p>Please open an explorer window and navigate to the bin folder of the kde installation root.</p>"
+         "<p>There you will find several applications which can be started by a simple click on the executable.</p>"
+         "<p>In further versions of this installer it will be also possible to start kde applications from<br>"
+         "the windows start menu.</p>"
+         "<p>If you <ul>"
          "<li>have questions about the KDE on windows project see <a href=\"http://windows.kde.org\">http://windows.kde.org</a></li>"
          "<li>like to get a technical overview about this project see <br><a href=\"http://techbase.kde.org/index.php?title=Projects/KDE_on_Windows\">Techbase - KDE on Windows</a></li>"
          "<li>have problems using this installer or with running kde applications<br>"
@@ -706,7 +710,7 @@ FinishPage::FinishPage() : InstallWizardPage(0)
          "kde-windows@kde.org</a> mailing list."
          "</li>"
          "<li>like to contribute time and/or money to this project contact us also on the above mentioned list.</li>"
-         "</ul>"
+         "</ul></p>"
          ""
          "Have fun using KDE on windows." 
          ""
@@ -726,7 +730,9 @@ void FinishPage::initializePage()
 {
     setFinalPage(true);
     wizard()->setOption(QWizard::NoCancelButton,true);
+    wizard()->setOption(QWizard::HaveCustomButton3, false);
     wizard()->button(QWizard::CustomButton3)->show();
+
     wizard()->setOption(QWizard::NoBackButtonOnLastPage,true);
 }
 
