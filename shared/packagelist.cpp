@@ -291,10 +291,10 @@ QStringList filterFileName(QStringList & files)
 {
     QStringList filteredFiles;
 
-    QMap<QString,FileType*> packages; 
+    QMap<QString,FileType*> packages;
     foreach(const QString &fileName, files)
     {
-        if (isPackageFileName(fileName) ) 
+        if (isPackageFileName(fileName) )
         {
             QString pkgName;
             QString pkgVersion;
@@ -393,7 +393,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
                 break;
             a = i + startKeyLength;
             b = data.indexOf(endKey,a);
-            QUrl url = data.mid(a,b-a);
+            QUrl url = QUrl(data.mid(a,b-a));
             if (!url.isValid())
                 continue;
             QString path = url.path();
@@ -420,8 +420,8 @@ bool PackageList::addPackageFromHintFile(const QString &fileName)
 {
     Downloader d; // for notes
 
-    // if a config file is present, don't scan hint files, we assume that they 
-    // are merged into the config file 
+    // if a config file is present, don't scan hint files, we assume that they
+    // are merged into the config file
     if (m_parserConfigFileFound)
         return false;
 
@@ -429,7 +429,7 @@ bool PackageList::addPackageFromHintFile(const QString &fileName)
     QString pkgName = hintFile[0];
     // download hint file
     QByteArray ba;
-    if (!d.start(m_baseURL.toString() + '/' + fileName, ba)) 
+    if (!d.start(m_baseURL.toString() + '/' + fileName, ba))
     {
         qCritical() << "could not download" << m_baseURL.toString() + '/' + fileName;
         return false;
@@ -455,15 +455,15 @@ bool PackageList::addPackageFromHintFile(const QString &fileName)
     return true;
 }
 
-bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignoreConfigTxt)    
+bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignoreConfigTxt)
 {
-    if (!ignoreConfigTxt && files.contains("config.txt")) 
+    if (!ignoreConfigTxt && files.contains("config.txt"))
     {
         Downloader d(0);
-        // fetch config file 
+        // fetch config file
         QFileInfo cfi(Settings::getInstance().downloadDir()+"/config-temp.txt");
         bool ret = d.start(m_baseURL.toString() + "/config.txt",cfi.absoluteFilePath());
-        if (ret) 
+        if (ret)
         {
             GlobalConfig g(0);
             g.setBaseURL(m_baseURL);
@@ -471,28 +471,28 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
             if (!g.parse(configFile))
                 return false;
 
-            // add package from globalconfig 
+            // add package from globalconfig
             QList<Package*>::iterator p;
             for (p = g.packages()->begin(); p != g.packages()->end(); p++)
             {
                 Package *pkg = *p;
                 addPackage(*pkg);
             }
-            // sites are not supported here 
+            // sites are not supported here
             m_parserConfigFileFound = true;
             // config.txt overrides all other definitions
             return true;
         }
     }
-    
+
     foreach(const QString &fileName, files)
     {
 #ifdef ENABLE_HINTFILE_SUPPORT
-        // @TODO using hint files results into duplicated package entries 
-        if (fileName.endsWith(".hint")) 
+        // @TODO using hint files results into duplicated package entries
+        if (fileName.endsWith(".hint"))
         {
             addPackageFromHintFile(fileName);
-        } else 
+        } else
 #endif
         if (fileName.endsWith(".zip") || fileName.endsWith(".tbz") || fileName.endsWith(".tar.bz2") ) {
             QString pkgName;
@@ -525,7 +525,7 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
                 Package::PackageItem item;
                 item.set(m_baseURL.toString() + '/' + fileName, "", pkgType.toAscii());
                 pkg->add(item);
-                if (m_curSite) 
+                if (m_curSite)
                 {
 #ifdef VERSIONED_DEPENDENCIES
                     pkg->addDeps(m_curSite->getDependencies(pkgName+"-"+pkgVersion));
@@ -535,7 +535,7 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
             }
         }
         else {
-            qDebug() << __FUNCTION__ << "unsupported package format" << fileName; 
+            qDebug() << __FUNCTION__ << "unsupported package format" << fileName;
         }
     }
     return true;

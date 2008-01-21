@@ -21,8 +21,11 @@
 **
 ****************************************************************************/
 
-#include <winsock2.h>
-#include <ws2tcpip.h>
+#include <QtCore/qconfig.h>
+#ifdef Q_OS_WIN
+  #include <winsock2.h>
+  #include <ws2tcpip.h>
+#endif
 #include <curl/curl.h>
 #include "downloader.h"
 #include "downloader_p.h"
@@ -34,7 +37,6 @@
 #include <QtCore/QFile>
 #include <QtCore/QTemporaryFile>
 #include <QtCore/QThread>
-#include <QtGui/QApplication>
 #include <QtNetwork/QNetworkProxy>
 
 #include "downloaderprogress.h"
@@ -170,9 +172,9 @@ bool Downloader::startInternal ( const QUrl &url )
 
   Settings &s = Settings::getInstance();
   Settings::proxySettings ps;
-  s.proxy ( url.scheme(), ps );
+  s.proxy ( m_usedURL.scheme(), ps );
 
-  curl_easy_setopt ( d->curlHandle, CURLOPT_URL, url.toEncoded().constData() );
+  curl_easy_setopt ( d->curlHandle, CURLOPT_URL, m_usedURL.toEncoded().constData() );
   // curl reads from environment when nothing is set
   if ( !ps.hostname.isEmpty() && s.proxyMode() != Settings::Environment ) {
     curl_easy_setopt ( d->curlHandle, CURLOPT_PROXY, ps.hostname.toLocal8Bit().constData() );
@@ -180,8 +182,8 @@ bool Downloader::startInternal ( const QUrl &url )
     QString user =  ps.user + ":" +  ps.password;
     curl_easy_setopt ( d->curlHandle, CURLOPT_PROXYUSERPWD, user.toLocal8Bit().constData() );
   }
-  if ( url.port() != -1 ) {
-    curl_easy_setopt ( d->curlHandle, CURLOPT_FTPPORT, url.port() );
+  if ( m_usedURL.port() != -1 ) {
+    curl_easy_setopt ( d->curlHandle, CURLOPT_FTPPORT, m_usedURL.port() );
   }
   if ( !d->thread ) {
     d->thread = new MyThread ( d->curlHandle, this );
@@ -191,7 +193,7 @@ bool Downloader::startInternal ( const QUrl &url )
   if ( d->progress ) {
     d->progress->setValue ( 0 );
     d->progress->show();
-    d->progress->setTitle ( tr ( "Downloading %1" ).arg ( url.toString() ) );
+    d->progress->setTitle ( tr ( "Downloading %1" ).arg ( m_usedURL.toString() ) );
   }
   d->finished = false;
   d->thread->start();
@@ -254,8 +256,8 @@ int Downloader::progressCallback ( double dltotal, double dlnow )
   if ( d->cancel )
     return 1;
   if ( d->progress ) {
-    d->progress->setMaximum ( dltotal );
-    d->progress->setValue ( dlnow );
+    d->progress->setMaximum ( (int)dltotal );
+    d->progress->setValue ( (int)dlnow );
   }
   return d->cancel;
 }

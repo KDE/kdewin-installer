@@ -51,7 +51,7 @@ QStringList GlobalConfig::fetch(const QString &baseURL)
             configFiles << cfr.absoluteFilePath();
         }
         else
-        {   
+        {
             QUrl url(baseURL + "/config.txt");
             QFileInfo cfi(Settings::getInstance().downloadDir()+"/config.txt");
             ret = m_downloader->start(url,cfi.absoluteFilePath());
@@ -59,7 +59,7 @@ QStringList GlobalConfig::fetch(const QString &baseURL)
                 qDebug() << "download remote config file from" <<  url << "to" << cfi.absoluteFilePath() << "..." << (ret == true ? "okay" : "failure") ;
             if (ret)
                 configFiles << cfi.absoluteFilePath();
-            else 
+            else
             {
                 QUrl url(baseURL + "/installer/config.txt");
                 ret = m_downloader->start(url,cfi.absoluteFilePath());
@@ -351,9 +351,15 @@ bool GlobalConfig::parse(QIODevice *ioDev)
 
 void GlobalConfig::clear()
 {
+    qDeleteAll(m_sites);
     m_sites.clear();
+
     m_news.clear();
+
+    qDeleteAll(m_mirrors);
     m_mirrors.clear();
+
+    qDeleteAll(m_packages);
     m_packages.clear();
 }
 

@@ -44,6 +44,7 @@
 #include "settings.h"
 
 #ifndef MISC_SMALL_VERSION
+#ifdef Q_WS_WIN
 /*
     add correct prefix for win32 filesystem functions
     described in msdn, but taken from Qt's qfsfileeninge_win.cpp
@@ -58,6 +59,7 @@ static QString longFileName(const QString &path)
     }
     return prefix + absPath;
 }
+#endif  // Q_WS_WIN
 
 bool parseQtIncludeFiles(QList<InstallFile> &fileList, const QString &root, const QString &subdir, const QString &filter, const QString &exclude)
 {
@@ -187,7 +189,7 @@ bool generateFileList(QList<InstallFile> &fileList, const QString &root, const Q
 
    QStringList manifestList;
    QStringList executableList;
-     
+
    QFileInfoList::ConstIterator it = list.constBegin();
    QFileInfoList::ConstIterator end = list.constEnd();
    for ( ; it != end; ++it) {
@@ -273,20 +275,20 @@ bool writeDesktopFile(QIODevice &device, const QSettings::SettingsMap &map)
 
 
 // from http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/platform/shell/programmersguide/shell_int/shell_int_programming/shortcuts/shortcut.asp
-// CreateLink - uses the Shell's IShellLink and IPersistFile interfaces 
-//              to create and store a shortcut to the specified object. 
+// CreateLink - uses the Shell's IShellLink and IPersistFile interfaces
+//              to create and store a shortcut to the specified object.
 //
-// Returns true if link <linkName> could be created, otherwise false. 
+// Returns true if link <linkName> could be created, otherwise false.
 //
 // Parameters:
 // fileName     - full path to file to create link to
-// linkName     - full path to the link to be created 
+// linkName     - full path to the link to be created
 // description  - description of the link (for tooltip)
 
-bool CreateLink(const QString &_fileName, const QString &_linkName, const QString &description, const QString &workingDir = QString()) 
-{ 
-    HRESULT hres; 
-    IShellLinkW* psl; 
+bool CreateLink(const QString &_fileName, const QString &_linkName, const QString &description, const QString &workingDir = QString())
+{
+    HRESULT hres;
+    IShellLinkW* psl;
 
     QString fileName = _fileName;
     QString linkName = longFileName(_linkName);
@@ -296,15 +298,15 @@ bool CreateLink(const QString &_fileName, const QString &_linkName, const QStrin
     LPCWSTR lpszDesc     = (LPCWSTR)description.utf16();
     LPCWSTR lpszWorkDir  = (LPCWSTR)workingDir.utf16();
 
-    CoInitialize(NULL);    
-    // Get a pointer to the IShellLink interface. 
-    hres = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_ALL, IID_IShellLinkW, (LPVOID*)&psl); 
+    CoInitialize(NULL);
+    // Get a pointer to the IShellLink interface.
+    hres = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_ALL, IID_IShellLinkW, (LPVOID*)&psl);
 
-    if (SUCCEEDED(hres)) 
-    { 
-        IPersistFile* ppf; 
- 
-        // Set the path to the shortcut target and add the description. 
+    if (SUCCEEDED(hres))
+    {
+        IPersistFile* ppf;
+
+        // Set the path to the shortcut target and add the description.
         if(!SUCCEEDED(psl->SetPath(lpszPathObj))) {
             qDebug() << "error setting path for link to " << fileName;
             psl->Release();
@@ -320,27 +322,27 @@ bool CreateLink(const QString &_fileName, const QString &_linkName, const QStrin
             psl->Release();
             return false;
         }
-        
- 
-        // Query IShellLink for the IPersistFile interface for saving the 
-        // shortcut in persistent storage. 
-        hres = psl->QueryInterface(IID_IPersistFile, (LPVOID*)&ppf); 
- 
-        if (SUCCEEDED(hres)) 
-        { 
+
+
+        // Query IShellLink for the IPersistFile interface for saving the
+        // shortcut in persistent storage.
+        hres = psl->QueryInterface(IID_IPersistFile, (LPVOID*)&ppf);
+
+        if (SUCCEEDED(hres))
+        {
             hres = ppf->Save(lpszPathLink, TRUE);
-            // Save the link by calling IPersistFile::Save. 
+            // Save the link by calling IPersistFile::Save.
             if(!SUCCEEDED(hres))
                 qDebug() << "error saving link to " << linkName;
 
-            ppf->Release(); 
-        } 
-        psl->Release(); 
+            ppf->Release();
+        }
+        psl->Release();
     } else {
         qDebug() << "Error: Got no pointer to the IShellLink interface.";
     }
-    CoUninitialize(); // cleanup COM after you're done using its services    
-    return SUCCEEDED(hres); 
+    CoUninitialize(); // cleanup COM after you're done using its services
+    return SUCCEEDED(hres);
 }
 
 
@@ -351,7 +353,7 @@ QString getStartMenuPath(bool bAllUsers)
     WCHAR wPath[MAX_PATH+1];
 
     hRes = SHGetFolderPathW(NULL, idl, NULL, 0, wPath);
-    if (SUCCEEDED(hRes)) 
+    if (SUCCEEDED(hRes))
     {
         QString s = QString::fromUtf16((unsigned short*)wPath);
         return s;
@@ -359,16 +361,16 @@ QString getStartMenuPath(bool bAllUsers)
     return QString();
 }
 
-/* 
- * create start menu entries from installed desktop files 
+/*
+ * create start menu entries from installed desktop files
  */
 bool createStartMenuEntries(const QString &dir, const QString &installDir, const QString &category)
 {
     QList<InstallFile> fileList;
     generateFileList(fileList,dir,"","*.desktop");
-    
+
     const QSettings::Format DesktopFormat = QSettings::registerFormat("desktop", readDesktopFile, writeDesktopFile);
-    
+
     Q_FOREACH( const InstallFile &installFile, fileList )
     {
         QString file = installFile.inputFile;
@@ -388,13 +390,13 @@ bool createStartMenuEntries(const QString &dir, const QString &installDir, const
 
         QStringList categories = settings.value("Categories").toString().split(';');
         file.replace(".desktop", ".lnk");
-        
+
         QStringList catIgnore = QString( FREEDESKTOP_IGNORE_CATEGORIES ).split(';');
         QStringList catMain = QString( FREEDESKTOP_MAIN_CATEGORIES ).split(';');
         QStringList catSub = QString( FREEDESKTOP_SUB_CATEGORIES ).split(';');
         QString catMainFirst;
         QString catSubFirst;
-        
+
         // catIgnore is the shortest List
         Q_FOREACH( const QString &str, catIgnore ) {
             categories.removeAll(str);
@@ -408,22 +410,22 @@ bool createStartMenuEntries(const QString &dir, const QString &installDir, const
                 break;
             }
         }
-        
+
         Q_FOREACH( const QString &str, categories ) {
             if( catSub.contains( str ) ) {
-                
+
                     startMenuCategory += str + "/";
                 break;
             }
         }
-        
+
         if(!category.isEmpty() && category != "Miscelleanous") {
             startMenuCategory = category;
             startMenuCategory.append("/");
         }
-        
+
         settings.endGroup();
-        if (!exec.isEmpty()) 
+        if (!exec.isEmpty())
         {
             QString p = getStartMenuPath(false);
             if(p.isEmpty()) {
@@ -455,7 +457,7 @@ bool createStartMenuEntries(const QString &dir, const QString &installDir, const
             registry.setValue("exec", pathLink);
         }
     }
-    // note: this method should be called after installing when the related setting page 
+    // note: this method should be called after installing when the related setting page
     //       entry is checked
     return true;
 }
@@ -488,7 +490,7 @@ bool removeStartMenuEntries(const QString &dir, const QString &category)
 /**
  \return a value from MS Windows native registry.
  @param akey is usually one of HKEY_CLASSES_ROOT, HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE
-        constants defined in WinReg.h. 
+        constants defined in WinReg.h.
  @param subKey is a registry subkey defined as a path to a registry folder, eg.
         "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"
         ('\' delimiter must be used)
@@ -503,15 +505,15 @@ QVariant getWin32RegistryValue(RegKey akey, const QString& subKey, const QString
 
     if (subKey.isEmpty())
         FAILURE;
-        
+
     HKEY key;
     switch(akey) {
-        case hKEY_CURRENT_USER: key = HKEY_CURRENT_USER; break; 
-        case hKEY_LOCAL_MACHINE: key = HKEY_LOCAL_MACHINE; break; 
+        case hKEY_CURRENT_USER: key = HKEY_CURRENT_USER; break;
+        case hKEY_LOCAL_MACHINE: key = HKEY_LOCAL_MACHINE; break;
         case hKEY_CLASSES_ROOT: key = HKEY_CLASSES_ROOT; break;
         default: FAILURE;
     }
-    
+
     HKEY hKey;
     DWORD dwType;
     DWORD dwSize;
@@ -561,7 +563,7 @@ QVariant getWin32RegistryValue(RegKey akey, const QString& subKey, const QString
 /**
  \insert a value into MS Windows native registry.
  @param akey is usually one of HKEY_CLASSES_ROOT, HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE
-        constants defined in WinReg.h. 
+        constants defined in WinReg.h.
  @param subKey is a registry subkey defined as a path to a registry folder, eg.
         "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"
         ('\' delimiter must be used)
@@ -580,10 +582,10 @@ bool setWin32RegistryValue(const RegKey& akey, const QString& subKey, const QStr
     BYTE *lpData;
 
     if (subKey.isEmpty()) return false;
-        
+
     switch(akey) {
-        case hKEY_CURRENT_USER: key = HKEY_CURRENT_USER; break; 
-        case hKEY_LOCAL_MACHINE: key = HKEY_LOCAL_MACHINE; break; 
+        case hKEY_CURRENT_USER: key = HKEY_CURRENT_USER; break;
+        case hKEY_LOCAL_MACHINE: key = HKEY_LOCAL_MACHINE; break;
         case hKEY_CLASSES_ROOT: key = HKEY_CLASSES_ROOT; break;
         default: return false;
     }
@@ -614,7 +616,7 @@ bool setWin32RegistryValue(const RegKey& akey, const QString& subKey, const QStr
                                     lpData = (BYTE *) value.toString().toLocal8Bit().data();
                                     dwSize = sizeof(char) * value.toString().toLocal8Bit().length();
                                     break;
-        case qt_DWORD:              dwType = REG_DWORD; 
+        case qt_DWORD:              dwType = REG_DWORD;
                                     lt = value.toInt();             // thinking that it will return qint32 == long signed int(16)!!!!
                                     lpData = (BYTE *)& lt;
                                     dwSize = sizeof(DWORD);
@@ -646,7 +648,7 @@ bool setWin32RegistryValue(const RegKey& akey, const QString& subKey, const QStr
 /**
  \delete a value from MS Windows native registry.
  @param akey is usually one of HKEY_CLASSES_ROOT, HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE
-        constants defined in WinReg.h. 
+        constants defined in WinReg.h.
  @param subKey is a registry subkey defined as a path to a registry folder, eg.
         "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"
         ('\' delimiter must be used)
@@ -670,10 +672,10 @@ bool delWin32RegistryValue(const RegKey& akey, const QString& subKey)
 
     QString hSubKey = subKey.right(subKey.length() - subKey.lastIndexOf("\\") - 1);
     QString lSubKey = subKey.left(subKey.lastIndexOf("\\"));
-        
+
     switch(akey) {
-        case hKEY_CURRENT_USER: key = HKEY_CURRENT_USER; break; 
-        case hKEY_LOCAL_MACHINE: key = HKEY_LOCAL_MACHINE; break; 
+        case hKEY_CURRENT_USER: key = HKEY_CURRENT_USER; break;
+        case hKEY_LOCAL_MACHINE: key = HKEY_LOCAL_MACHINE; break;
         case hKEY_CLASSES_ROOT: key = HKEY_CLASSES_ROOT; break;
         default: return false;
     }
@@ -780,7 +782,7 @@ void myMessageOutput(QtMsgType type, const char *msg)
 
 /**
  redirect all Qt debug, warning and error messages to a file
-*/ 
+*/
 void setMessageHandler()
 {
     qInstallMsgHandler(myMessageOutput);
