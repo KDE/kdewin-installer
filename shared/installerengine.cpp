@@ -38,8 +38,9 @@
 QString InstallerEngine::defaultConfigURL;
 QString InstallerEngine::fallBackURL = "http://82.149.170.66/kde-windows";
 
-InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar)
-    : m_instProgressBar(instProgressBar),
+InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar, QObject *parent)
+    : QObject(parent),
+      m_instProgressBar(instProgressBar),
       m_globalConfigReaded(false),
       m_initFinished(false),
       m_addedPackages(false),
@@ -64,6 +65,7 @@ InstallerEngine::~InstallerEngine()
     delete m_installer;
     delete m_downloader;
     delete m_globalConfig;
+    delete m_packageResources;
 }
 
 void InstallerEngine::initGlobalConfig()

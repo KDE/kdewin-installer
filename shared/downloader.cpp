@@ -110,6 +110,7 @@ Downloader::Downloader ( DownloaderProgress *progress, QObject *parent )
 
 Downloader::~Downloader()
 {
+  delete d;
   curl_global_cleanup();
 }
 
@@ -241,7 +242,6 @@ void Downloader::threadFinished ( int _ret )
 
 size_t Downloader::curlWrite ( const char * data, size_t size )
 {
-  fprintf ( stderr, "%s\n", data );
   return d->ioDevice->write ( data, size );
 }
 

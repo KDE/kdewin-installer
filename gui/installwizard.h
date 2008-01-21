@@ -75,6 +75,7 @@ public:
      };
 
     InstallWizard(QWidget *parent = 0);
+    ~InstallWizard();
 protected:
     void writeSettings();
     void readSettings();

@@ -47,7 +47,7 @@ class InstallerEngine : public QObject
 {
     Q_OBJECT
 public:
-    InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
+    InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar, QObject *parent);
     ~InstallerEngine();
 
     // read in global config 

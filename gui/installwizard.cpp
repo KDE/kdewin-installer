@@ -162,6 +162,10 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0)
     readSettings();
 }
 
+InstallWizard::~InstallWizard()
+{
+}
+
 void InstallWizard::aboutButtonClicked()
 {
     QMessageBox::information(this,
@@ -196,9 +200,8 @@ void InstallWizard::cancelButtonClicked()
     if (aPage)
         aPage->cancel();
     writeSettings();
+    QDialog::reject();
     qApp->closeAllWindows();
-    qApp->exit(0);
-    exit(0);
 }
 
 void InstallWizard::writeSettings()
@@ -266,12 +269,12 @@ void InstallWizard::slotCurrentIdChanged(int id)
 InstallWizardPage::InstallWizardPage(SettingsSubPage *s) : page(s)
 {
 #if 1
-    statusLabel = new QLabel("");
+    statusLabel = new QLabel("", this);
 #else
     statusLabel = new QLabel(tr(
     "<hr><br>Note: Move the mouse over one of the labels on the left side and wait some seconds to see "
     " detailed informations about this topic"
-    ));
+    ), this);
 #endif
 }
 
@@ -295,8 +298,6 @@ void InstallWizardPage::cancel()
 
 TitlePage::TitlePage() : InstallWizardPage()
 {
-    QGroupBox* box = new QGroupBox;
-
     setTitle(tr("KDE for Windows Installer"));
     setSubTitle(tr("Release " VERSION));
 /*

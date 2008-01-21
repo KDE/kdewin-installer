@@ -102,22 +102,22 @@ enum iconType {_install, _autoinstall,_keepinstalled, _update, _remove, _nothing
 static void setIcon ( QTreeWidgetItem &item, Package::Type type, iconType action )
 {
 #ifndef DISABLE_ICONS
-    static QIcon *ai;
-    static QIcon *ii;
-    static QIcon *ki;
-    static QIcon *ni;
-    static QIcon *id;
-    static QIcon *dl;
-    static QIcon *up;
+    static QIcon ai;
+    static QIcon ii;
+    static QIcon ki;
+    static QIcon ni;
+    static QIcon id;
+    static QIcon dl;
+    static QIcon up;
 
-    if ( !ii ) {
-        ai = new QIcon ( ":/images/autoinstall.xpm" );
-        ii = new QIcon ( ":/images/install.xpm" );
-        ki = new QIcon ( ":/images/keepinstalled.xpm" );
-        ni = new QIcon ( ":/images/noinst.xpm" );
-        id = new QIcon ( ":/images/install_disabled.xpm" );
-        dl = new QIcon ( ":/images/del.xpm" );
-        up = new QIcon ( ":/images/update.xpm" );
+    if ( ii.isNull() ) {
+        ai = QIcon ( ":/images/autoinstall.xpm" );
+        ii = QIcon ( ":/images/install.xpm" );
+        ki = QIcon ( ":/images/keepinstalled.xpm" );
+        ni = QIcon ( ":/images/noinst.xpm" );
+        id = QIcon ( ":/images/install_disabled.xpm" );
+        dl = QIcon ( ":/images/del.xpm" );
+        up = QIcon ( ":/images/update.xpm" );
     }
 #endif
     int column = typeToColumn ( type );
@@ -125,25 +125,25 @@ static void setIcon ( QTreeWidgetItem &item, Package::Type type, iconType action
 #ifndef DISABLE_ICONS
     switch ( action ) {
     case _autoinstall:
-        item.setIcon ( column,*ai );
+        item.setIcon ( column, ai );
         return;
     case _install:
-        item.setIcon ( column,*ii );
+        item.setIcon ( column, ii );
         return;
     case _keepinstalled:
-        item.setIcon ( column,*ki );
+        item.setIcon ( column, ki );
         return;
     case _remove:
-        item.setIcon ( column,*dl );
+        item.setIcon ( column, dl );
         return;
     case _update:
-        item.setIcon ( column,*up );
+        item.setIcon ( column, up );
         return;
     case _nothing:
-        item.setIcon ( column,*ni );
+        item.setIcon ( column, ni );
         return;
     case _disable:
-        item.setIcon ( column,*id );
+        item.setIcon ( column, id );
         return;
     }
 #else
@@ -413,7 +413,7 @@ bool isMarkedForRemoval ( Package *pkg,Package::Type type )
 }
 
 InstallerEngineGui::InstallerEngineGui (QWidget *parent, DownloaderProgress *progressBar,InstallerProgress *instProgressBar )
-        : InstallerEngine ( progressBar,instProgressBar ), m_parent(parent)
+        : InstallerEngine ( progressBar,instProgressBar, parent ), m_parent(parent)
 {
     Settings &s = Settings::getInstance();
     m_installMode = s.isDeveloperMode() ? Developer : EndUser;

@@ -94,6 +94,7 @@ bool GlobalConfig::parse(const QStringList &configFiles)
 GlobalConfig::~GlobalConfig()
 {
     qDeleteAll(m_sites);
+    qDeleteAll(m_mirrors);
     qDeleteAll(m_packages);
 }
 
