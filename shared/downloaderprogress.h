@@ -34,7 +34,7 @@ class QProgressBar;
 class DownloaderProgress : public QWidget
 {
 public:
-    DownloaderProgress(QWidget *parent);
+    DownloaderProgress(QWidget *parent=0);
     ~DownloaderProgress();
     void hide();
     void setTitle(const QString &title);
@@ -42,6 +42,7 @@ public:
     void setMaximum(int value);
     void setValue(int value);
     void show();
+    DownloaderProgress &getInstance();
 private:
     QLabel *titleLabel;
     QLabel *statusLabel;
@@ -52,13 +53,14 @@ private:
 class DownloaderProgress
 {
 public:
-    DownloaderProgress(QObject *parent);
+    DownloaderProgress(QObject *parent=0);
     void hide();
     void setTitle(const QString &title);
     void setStatus(const QString &status);
     void setMaximum(int value);
     void setValue(int value);
     void show();
+    DownloaderProgress &getInstance();
 
 private:
     int oldunit;

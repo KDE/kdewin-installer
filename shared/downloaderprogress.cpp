@@ -132,5 +132,8 @@ void DownloaderProgress::show()
 
 #endif
 
-
-
+DownloaderProgress &DownloaderProgress::getInstance()
+{
+    static DownloaderProgress instance;
+    return instance;
+}
