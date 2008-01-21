@@ -30,6 +30,7 @@
 #include <QWidget>
 class QLabel;
 class QProgressBar;
+class QVBoxLayout;
 
 class DownloaderProgress : public QWidget
 {
@@ -47,6 +48,7 @@ private:
     QLabel *titleLabel;
     QLabel *statusLabel;
     QProgressBar *progress;
+    QVBoxLayout *mainLayout; 
 };
 
 #else

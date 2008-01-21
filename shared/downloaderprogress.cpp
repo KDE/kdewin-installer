@@ -41,7 +41,7 @@ DownloaderProgress::DownloaderProgress(QWidget *parent)
     statusLayout->addWidget(progress);
 
     titleLabel = new QLabel();
-    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout = new QVBoxLayout;
     mainLayout->addWidget(titleLabel);
     mainLayout->addLayout(statusLayout);
     setLayout(mainLayout);
@@ -50,9 +50,8 @@ DownloaderProgress::DownloaderProgress(QWidget *parent)
 
 DownloaderProgress::~DownloaderProgress()
 {
-    delete titleLabel;
-    delete statusLabel;
-    delete progress;
+    delete mainLayout;
+    mainLayout = 0;
 }
 
 void DownloaderProgress::hide()
