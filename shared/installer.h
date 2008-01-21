@@ -27,8 +27,9 @@
 #include "package.h"
 
 class Database;
-class PackageList;
 class InstallerProgress;
+class PackageList;
+class Unpacker;
 
 class Installer : public QObject
 {
@@ -60,6 +61,7 @@ public:
     bool isEnabled();
     void setRoot(const QString &root);
     const QString root() const { return m_root; }
+    void cancel();
 
 public Q_SLOTS:
     void updatePackageList();
@@ -74,6 +76,7 @@ protected:
     InstallerType m_type;
     QStringList m_files;
     Database *m_database;
+    Unpacker *m_unpacker;
 
     Package* m_packageToInstall;
     Package::Type m_installType;

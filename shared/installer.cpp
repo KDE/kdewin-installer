@@ -46,22 +46,15 @@ Installer::Installer(InstallerProgress *_progress)
         : QObject(), m_progress(_progress), m_type(Installer::Standard)
 {
     m_root = ".";
-//  packageList = _packageList;
-//  if(packageList)
-//  {
-//      packageList->m_root = m_root;
-//  }
-//  connect (packageList,SIGNAL(configLoaded()),this,SLOT(updatePackageList()));
 }
 
 Installer::~Installer()
-{}
+{
+}
 
 void Installer::setRoot(const QString &root)
 {
     m_root = root;
-//    packageList->m_root = m_root = root;
-//    QDir().mkdir(m_root);
 }
 
 bool Installer::isEnabled()
@@ -182,18 +175,28 @@ bool Installer::install(Package *pkg, const Package::Type type, const QString &f
     m_packageToInstall = pkg;
     m_installType = type;
 
-    Unpacker p(m_progress, this);
-    if(!p.unpackFile(fileName, m_root, pathRelocations))
-      return false;
+    m_unpacker = new Unpacker(m_progress, this);
 
-    m_files = p.getUnpackedFiles();
+    if(!m_unpacker->unpackFile(fileName, m_root, pathRelocations)) {
+        delete m_unpacker;
+        return false;
+    }
+    
+    m_files = m_unpacker->getUnpackedFiles();
     createManifestFile();
 
     QFileInfo fi(fileName);
     if(fi.fileName().startsWith("qt"))
         createQtConfigFile();
 
+    delete m_unpacker;
     return true;
+}
+
+void Installer::cancel()
+{
+    if (m_unpacker)
+        m_unpacker->cancel();
 }
 
 #include "installer.moc"
