@@ -16,7 +16,7 @@ find_package(WinSCP)
 
 OPTION(SEVENZIP_UNPACK_SUPPORT "Enable 7-zip unpacking support" OFF)
 OPTION(BZIP2_UNPACK_SUPPORT "Enable tar.bz2 unpacking support" ON)
-# todo detect static qt library automatically 
+# todo detect static qt library automatically
 OPTION(STATIC_BUILD "enable static build support" ON)
 OPTION(INSTALL_SYSTEM_LIBS "install required system libraries too (only in shared mode)" OFF)
 OPTION(BUILD_TESTS "build test applications " OFF)
@@ -51,7 +51,7 @@ endif (QT_CONFIG MATCHES ".*shared.*")
 MESSAGE(STATUS "Build Type:" ${CMAKE_BUILD_TYPE})
 
 
-# PACK_EXECUTABLES enables packing of executable 
+# PACK_EXECUTABLES enables packing of executable
 set (PACK_EXECUTABLE 0)
 
 if (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel OR CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo)
@@ -62,8 +62,8 @@ if (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel OR
         endif (UPX_EXECUTABLE)
         set (INSTALL_SYSTEM_LIBS 0)
     else (STATIC_BUILD)
-        # add shared mode options 
-    endif (STATIC_BUILD) 
+        # add shared mode options
+    endif (STATIC_BUILD)
     # disable qDebug output
     #add_definitions(-DQT_NO_DEBUG_OUTPUT)
 else (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel OR CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo)
@@ -95,10 +95,10 @@ else (WIN32 OR CYGWIN)
 endif (WIN32 OR CYGWIN)
 set (EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
-# add 3rdparty sources and definitions 
+# add 3rdparty sources and definitions
 include(3rdparty/CMakeLists.txt)
 # this will define .... _HEADERS, ...._SOURCES, ..._INCLUDE_DIR. for ... = quazip, bzip2, curl, filter,md5
-# add_subdirectory does not work for unknown reason 
+# add_subdirectory does not work for unknown reason
 
 
 # set installer_shared_SOURCES/installer_shared_HEADERS
@@ -148,10 +148,10 @@ set(installer_shared_HEADERS
 set(installer_shared_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shared)
 
 include_directories(
-  ${CMAKE_SOURCE_DIR} 
-  ${CMAKE_BINARY_DIR} 
+  ${CMAKE_SOURCE_DIR}
+  ${CMAKE_BINARY_DIR}
   ${installer_shared_INCLUDE_DIR}
-  ${QT_INCLUDES} 
+  ${QT_INCLUDES}
 )
 configure_file(${CMAKE_SOURCE_DIR}/config.txt ${CMAKE_BINARY_DIR}/config.txt)
 configure_file(${CMAKE_SOURCE_DIR}/config.h.cmake ${CMAKE_BINARY_DIR}/config.h)
@@ -186,7 +186,9 @@ add_subdirectory(tests)
 add_subdirectory(packager)
 add_subdirectory(doc)
 add_subdirectory(configer)
-add_subdirectory(menubuilder)
+if(WIN32)
+  add_subdirectory(menubuilder)
+endif(WIN32)
 #add_subdirectory(tools)
 
 if (WIN32)

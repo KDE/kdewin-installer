@@ -107,13 +107,18 @@ set(curl_HEADERS
 )
 set(curl_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/curl/include)
 
-include_directories(${curl_INCLUDE_DIR})
+if(WIN32)
+  include_directories(${curl_INCLUDE_DIR})
+  add_definitions(-DCURL_STATICLIB -DWITHOUT_MM_LIB)
+  add_library(curl STATIC ${curl_SOURCES} ${curl_HEADERS})
+  set_target_properties(curl PROPERTIES COMPILE_FLAGS "-DBUILDING_LIBCURL -I${curl_INCLUDE_DIR}/../lib")
 
-add_definitions(-DCURL_STATICLIB -DWITHOUT_MM_LIB)
-add_library(curl STATIC ${curl_SOURCES} ${curl_HEADERS})
-set_target_properties(curl PROPERTIES COMPILE_FLAGS "-DBUILDING_LIBCURL -I${curl_INCLUDE_DIR}/../lib")
-
-set (CURL_LIBRARIES curl Wldap32)
+  set (CURL_LIBRARIES curl Wldap32)
+else(WIN32)
+  find_package(CURL REQUIRED)
+  set (CURL_LIBRARIES ${CURL_LIBRARY})
+  include_directories( ${CURL_INCLUDE_DIR})
+endif(WIN32)
 
 #
 # QUAZIP
