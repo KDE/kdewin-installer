@@ -53,8 +53,6 @@
 #include "mirrors.h"
 #include "installerdialogs.h"
 
-extern InstallWizard *wizard;
-
 // must be global
 QTreeWidget *tree;
 QTreeWidget *leftTree;
@@ -84,7 +82,7 @@ QLabel* createTopLabel(const QString& str)
 InstallerProgress *installProgressBar;
 DownloaderProgress *progressBar;
 
-InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent)
+InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0)
 {
     progressBar = new DownloaderProgress(this);
     installProgressBar = new InstallerProgress(this);
@@ -107,15 +105,18 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent)
     setOption(QWizard::HaveCustomButton2, true);
     connect(settingsButton, SIGNAL(clicked()), this, SLOT(settingsButtonClicked()) );
 
+#ifdef HAVE_RETRY_BUTTON
     QPushButton *retryButton = new QPushButton(tr("Retry"));
     setButton(QWizard::CustomButton3, retryButton);
     setOption(QWizard::HaveCustomButton3, true);
     retryButton->hide();
     connect(retryButton, SIGNAL(clicked()), this, SLOT(restart()) );
+#endif
+    connect(button(QWizard::CancelButton), SIGNAL(clicked()), this, SLOT(cancelButtonClicked()) );
 
     //setOption(QWizard::HaveCancelButton, true);
 
-    setOption(QWizard::CancelButtonOnLeft,true);
+    //setOption(QWizard::CancelButtonOnLeft,true);
 
 /*
     QList<QWizard::WizardButton> layout;
@@ -158,6 +159,7 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent)
         setStartId(packageSelectorPage);
     }
     connect(this, SIGNAL(currentIdChanged(int)), this, SLOT(slotCurrentIdChanged(int)) );
+    readSettings();
 }
 
 void InstallWizard::aboutButtonClicked()
@@ -173,11 +175,52 @@ void InstallWizard::aboutButtonClicked()
     );
 }
 
+int InstallWizard::nextId() const 
+{
+    InstallWizardPage *aPage = static_cast<InstallWizardPage*>(currentPage());
+    if (aPage)
+        return aPage->nextId(); 
+}
+
 void InstallWizard::settingsButtonClicked()
 {
     _settingsPage->setGlobalConfig(engine->globalConfig());
     _settingsPage->init();
     _settingsPage->exec();
+}
+
+void InstallWizard::cancelButtonClicked()
+{
+    InstallWizardPage *aPage = static_cast<InstallWizardPage*>(currentPage());
+    if (aPage)
+        aPage->cancel();
+    writeSettings();
+    qApp->closeAllWindows();
+    qApp->exit(0);
+    exit(0);
+}
+
+void InstallWizard::writeSettings()
+{
+    Settings &settings = Settings::getInstance();
+
+    settings.beginGroup("Geometry");
+    settings.setValue("normalGeometry", normalGeometry());
+    settings.setValue("maximized", isMaximized());
+    settings.endGroup();
+}
+
+void InstallWizard::readSettings()
+{
+    Settings &settings = Settings::getInstance();
+
+    settings.beginGroup("Geometry");
+    setGeometry(settings.value("normalGeometry", QRect(200,200, 400, 400)).toRect());
+    if (settings.value("maximized", false).toBool()) {
+      setWindowState(Qt::WindowMaximized);
+    }
+
+    settings.endGroup();
 }
 
 // @TODO: The nextId() methods are not called for unknown reason, 
@@ -190,11 +233,9 @@ void InstallWizard::slotCurrentIdChanged(int id)
             next();
     }
     else if (id == downloadPage) {
-        button(QWizard::CancelButton)->setEnabled(false);
         button(QWizard::BackButton)->setEnabled(false);
         button(QWizard::NextButton)->setEnabled(false);
         engine->downloadPackages(tree);
-        button(QWizard::CancelButton)->setEnabled(true);
         button(QWizard::BackButton)->setEnabled(true);
         button(QWizard::NextButton)->setEnabled(true);
         if (Settings::getInstance().autoNextStep())
@@ -218,6 +259,7 @@ void InstallWizard::slotCurrentIdChanged(int id)
         if (Settings::getInstance().autoNextStep())
             next();
     }
+    m_lastId = id;
 }
 
 InstallWizardPage::InstallWizardPage(SettingsSubPage *s) : page(s)
@@ -236,7 +278,7 @@ void InstallWizardPage::initializePage()
 {
 }
 
-int InstallWizardPage::nextId() 
+int InstallWizardPage::nextId() const
 {
     return QWizardPage::nextId();
 }
@@ -244,6 +286,10 @@ int InstallWizardPage::nextId()
 bool InstallWizardPage::isComplete()
 {
     return QWizardPage::isComplete();
+}
+
+void InstallWizardPage::cancel()
+{
 }
 
 TitlePage::TitlePage() : InstallWizardPage()
@@ -318,10 +364,15 @@ bool PathSettingsPage::isComplete()
     return page->isComplete();
 }
 
-int PathSettingsPage::nextId()
+int PathSettingsPage::nextId() const
+{
+    return InstallWizard::proxySettingsPage;
+}
+
+bool PathSettingsPage::validatePage()
 {
     page->accept();
-    return InstallWizard::proxySettingsPage;
+    return true;
 }
 
 ProxySettingsPage::ProxySettingsPage(SettingsSubPage *s) : InstallWizardPage(s)
@@ -339,10 +390,16 @@ void ProxySettingsPage::initializePage()
     page->reset();
 }
 
-int ProxySettingsPage::nextId()
+int ProxySettingsPage::nextId() const
 {
     page->accept();
     return InstallWizard::downloadSettingsPage;
+}
+
+bool ProxySettingsPage::validatePage()
+{
+    page->accept();
+    return true;
 }
 
 bool ProxySettingsPage::isComplete()
@@ -353,7 +410,7 @@ bool ProxySettingsPage::isComplete()
 DownloadSettingsPage::DownloadSettingsPage(SettingsSubPage *s) : InstallWizardPage(s)
 {
     setTitle(tr("Download Settings"));
-    setSubTitle(tr("Select the directory where downloaded files are saved into."));
+    setSubTitle(tr("Select the directory where downloaded files are finishPaged into."));
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(page->widget(),10);
@@ -366,10 +423,16 @@ void DownloadSettingsPage::initializePage()
     page->reset();
 }
 
-int DownloadSettingsPage::nextId()
+int DownloadSettingsPage::nextId() const
 {
     page->accept();
     return InstallWizard::mirrorSettingsPage;
+}
+
+bool DownloadSettingsPage::validatePage()
+{
+    page->accept();
+    return true;
 }
 
 bool DownloadSettingsPage::isComplete()
@@ -393,14 +456,18 @@ void MirrorSettingsPage::initializePage()
     page->reset();
 }
 
-int MirrorSettingsPage::nextId()
+int MirrorSettingsPage::nextId() const
+{
+    return InstallWizard::packageSelectorPage;
+}
+
+bool MirrorSettingsPage::validatePage()
 {
     page->accept();
-    wizard()->button(QWizard::CustomButton2)->show();
-
     Settings &s = Settings::getInstance();
     s.setFirstRun(false);
-    return InstallWizard::packageSelectorPage;
+    wizard()->button(QWizard::CustomButton2)->show();
+    return true;
 }
 
 bool MirrorSettingsPage::isComplete()
@@ -564,21 +631,23 @@ void PackageSelectorPage::slotCompilerTypeChanged()
     engine->setPageSelectorWidgetData(tree);
 }
 
-int PackageSelectorPage::nextId()
+int PackageSelectorPage::nextId() const
 {
-/*
+    if (g_dependenciesList->count() > 0)
+        return InstallWizard::dependenciesPage;
+    else
+       return InstallWizard::downloadPage;
+}
+
+bool PackageSelectorPage::validatePage()
+{
     disconnect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),0,0);
     disconnect(leftTree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),0,0);
     disconnect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString &)),0,0);
     disconnect(&Settings::getInstance(),SIGNAL(compilerTypeChanged()),0,0);
     engine->checkUpdateDependencies();
     wizard()->button(QWizard::CustomButton2)->hide();
-    if (g_dependenciesList->count() > 0)
-        return InstallWizard::dependenciesPage;
-    else
-       return InstallWizard::downloadPage;
-*/
-    return InstallWizard::dependenciesPage;
+    return true;
 }
 
 bool PackageSelectorPage::isComplete()
@@ -604,9 +673,14 @@ void DependenciesPage::initializePage()
     wizard()->setOption(QWizard::HaveCustomButton2,false);
 }
 
-int DependenciesPage::nextId()
+int DependenciesPage::nextId() const
 {
     return InstallWizard::downloadPage;
+}
+
+bool DependenciesPage::validatePage()
+{
+    return true;
 }
 
 DownloadPage::DownloadPage() : InstallWizardPage(0)
@@ -625,7 +699,7 @@ void DownloadPage::initializePage()
     wizard()->setOption(QWizard::HaveCustomButton2,false);
 }
 
-int DownloadPage::nextId()
+int DownloadPage::nextId() const
 {
     return InstallWizard::uninstallPage;
 }
@@ -635,10 +709,15 @@ bool DownloadPage::isComplete()
     return true;
 }
 
-void DownloadPage::reject()
+void DownloadPage::cancel()
 {
     //@ TODO 
     engine->stop();
+}
+
+bool DownloadPage::validatePage()
+{
+    return true;
 }
 
 UninstallPage::UninstallPage() : InstallWizardPage(0)
@@ -656,12 +735,22 @@ void UninstallPage::initializePage()
 {
 }
 
-int UninstallPage::nextId()
+int UninstallPage::nextId() const
 {
     return InstallWizard::installPage;
 }
 
 bool UninstallPage::isComplete()
+{
+    return true;
+}
+
+void UninstallPage::cancel()
+{
+    engine->stop();
+}
+
+bool UninstallPage::validatePage()
 {
     return true;
 }
@@ -681,12 +770,22 @@ void InstallPage::initializePage()
 {
 }
 
-int InstallPage::nextId()
+int InstallPage::nextId() const
 {
     return InstallWizard::finishPage;
 }
 
 bool InstallPage::isComplete()
+{
+    return true;
+}
+
+void InstallPage::cancel()
+{
+    engine->stop();
+}
+
+bool InstallPage::validatePage()
 {
     return true;
 }
@@ -730,9 +829,10 @@ void FinishPage::initializePage()
 {
     setFinalPage(true);
     wizard()->setOption(QWizard::NoCancelButton,true);
+#ifdef HAVE_RETRY_BUTTON
     wizard()->setOption(QWizard::HaveCustomButton3, false);
     wizard()->button(QWizard::CustomButton3)->show();
-
+#endif
     wizard()->setOption(QWizard::NoBackButtonOnLastPage,true);
 }
 

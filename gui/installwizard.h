@@ -27,7 +27,6 @@
 // define to enable different style
 //#define ENABLE_STYLE
 
-
 #include <QObject>
 
 #include <QWizard>
@@ -76,15 +75,20 @@ public:
      };
 
     InstallWizard(QWidget *parent = 0);
-    protected:
+protected:
+    void writeSettings();
+    void readSettings();
+    virtual int nextId() const;
 
 private slots:
     void aboutButtonClicked();
     void settingsButtonClicked();
+    void cancelButtonClicked();
     void slotCurrentIdChanged(int id);
 
 private:
     SettingsPage *_settingsPage;
+    int m_lastId;
 };
 
 class InstallWizardPage : public QWizardPage
@@ -93,8 +97,9 @@ public:
     InstallWizardPage(SettingsSubPage *s=0);
 
     virtual void initializePage();
-    virtual int nextId();
+    virtual int nextId() const;
     virtual bool isComplete();
+    virtual void cancel();
 
 protected:
     SettingsSubPage *page;
@@ -121,8 +126,9 @@ public:
     DownloadSettingsPage(SettingsSubPage *s);
 
     void initializePage();
-    int nextId();
     bool isComplete();
+    int nextId() const;
+    bool validatePage();
 };
 
 class PathSettingsPage : public InstallWizardPage
@@ -133,8 +139,9 @@ public:
     PathSettingsPage(SettingsSubPage *s);
 
     void initializePage();
-    int nextId();
     bool isComplete();
+    int nextId() const;
+    bool validatePage();
 };
 
 class ProxySettingsPage : public InstallWizardPage
@@ -145,8 +152,9 @@ public:
     ProxySettingsPage(SettingsSubPage *s);
 
     void initializePage();
-    int nextId();
     bool isComplete();
+    int nextId() const;
+    bool validatePage();
 };
 
 class MirrorSettingsPage : public InstallWizardPage
@@ -157,8 +165,9 @@ public:
     MirrorSettingsPage(SettingsSubPage *s);
 
     void initializePage();
-    int nextId();
     bool isComplete();
+    int nextId() const;
+    bool validatePage();
 };
 
 class PackageSelectorPage : public InstallWizardPage
@@ -169,8 +178,9 @@ public:
     PackageSelectorPage();
 
     void initializePage();
-    int nextId();
     bool isComplete();
+    int nextId() const;
+    bool validatePage();
 
 public slots:
     void itemClicked(QTreeWidgetItem *item, int column);
@@ -192,7 +202,8 @@ public:
     DependenciesPage();
 
     void initializePage();
-    int nextId();
+    int nextId() const;
+    bool validatePage();
 
 private:
     QListWidget *dependenciesList;
@@ -206,10 +217,11 @@ class DownloadPage : public InstallWizardPage
 public:
     DownloadPage();
 
+    void cancel();
     void initializePage();
-    int nextId();
     bool isComplete();
-    void reject();
+    int nextId() const;
+    bool validatePage();
 };
 
 class UninstallPage : public InstallWizardPage
@@ -219,9 +231,11 @@ class UninstallPage : public InstallWizardPage
 public:
     UninstallPage();
 
+    void cancel();
     void initializePage();
-    int nextId();
     bool isComplete();
+    int nextId() const;
+    bool validatePage();
 };
 
 class InstallPage : public InstallWizardPage
@@ -231,9 +245,11 @@ class InstallPage : public InstallWizardPage
 public:
     InstallPage();
 
+    void cancel();
     void initializePage();
-    int nextId();
     bool isComplete();
+    int nextId() const;
+    bool validatePage();
 };
 
 class FinishPage : public InstallWizardPage
