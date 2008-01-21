@@ -92,8 +92,12 @@ void DownloaderProgress::setMaximum(int value)
 void DownloaderProgress::setValue(int value)
 {
     progress->setValue(value);
-    if (value == 0 || value - lastValue < 20000)  
+    if (value == 0)
         return;
+    // only update rate when difference >= 1% 
+    int diff = (value - lastValue) * 100 / (progress->maximum() - progress->minimum()); 
+    if (diff == 0)
+        return; 
     QDateTime now = QDateTime::currentDateTime();
     int seconds = now.toTime_t() - initTime.toTime_t();
     if (seconds == 0)
