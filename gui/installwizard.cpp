@@ -180,6 +180,7 @@ int InstallWizard::nextId() const
     InstallWizardPage *aPage = static_cast<InstallWizardPage*>(currentPage());
     if (aPage)
         return aPage->nextId(); 
+    return -1;
 }
 
 void InstallWizard::settingsButtonClicked()
