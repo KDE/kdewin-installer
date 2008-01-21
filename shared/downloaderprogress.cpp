@@ -35,7 +35,8 @@ DownloaderProgress::DownloaderProgress(QWidget *parent)
 {
     statusLabel = new QLabel();
     progress = new QProgressBar(parent);
-
+    speedLabel = new QLabel();
+    
     QHBoxLayout *statusLayout = new QHBoxLayout;
     statusLayout->addWidget(statusLabel);
     statusLayout->addWidget(progress);
@@ -44,6 +45,7 @@ DownloaderProgress::DownloaderProgress(QWidget *parent)
     mainLayout = new QVBoxLayout;
     mainLayout->addWidget(titleLabel);
     mainLayout->addLayout(statusLayout);
+    mainLayout->addWidget(speedLabel);
     setLayout(mainLayout);
     hide();
 }
@@ -76,16 +78,29 @@ void DownloaderProgress::show()
     titleLabel->show();
     statusLabel->show();
     progress->show();
+    initTime = QDateTime::currentDateTime();
 }
 
 void DownloaderProgress::setMaximum(int value)
 {
+    if (progress->maximum() == value)
+        return;
     progress->setMaximum(value);
+    titleLabel->setText(titleLabel->text() + tr(" (%1 KBytes)").arg(value/1024));
 }
 
 void DownloaderProgress::setValue(int value)
 {
     progress->setValue(value);
+    if (value == 0 || value - lastValue < 20000)  
+        return;
+    QDateTime now = QDateTime::currentDateTime();
+    int seconds = now.toTime_t() - initTime.toTime_t();
+    if (seconds == 0)
+        return;
+    int speed = value/seconds;
+    speedLabel->setText(tr("Download rate: %1 KBytes/s").arg(speed/1024));
+    lastValue = value;
 }
 
 #else // console implementation

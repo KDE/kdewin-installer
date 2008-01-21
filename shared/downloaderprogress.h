@@ -28,6 +28,7 @@
 #ifdef USE_GUI
 
 #include <QWidget>
+#include <QDateTime>
 class QLabel;
 class QProgressBar;
 class QVBoxLayout;
@@ -49,6 +50,9 @@ private:
     QLabel *statusLabel;
     QProgressBar *progress;
     QVBoxLayout *mainLayout; 
+    QDateTime initTime; 
+    QLabel *speedLabel;
+    int lastValue;
 };
 
 #else
