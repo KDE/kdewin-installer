@@ -65,8 +65,11 @@ void UPThread::run()
     if ( m_filename.endsWith ( ".7z" ) ) {
         bOk = un7zipFile();
     } else
-    if ( m_filename.endsWith ( ".exe" ) || m_filename.endsWith ( ".msi" ) ) {
+    if ( m_filename.endsWith ( ".exe" ) ) {
         bOk = unpackExe();
+    } else 
+    if ( m_filename.endsWith ( ".msi" ) ) {
+        bOk = unpackMsi();
     } else {
         emit error ( tr ( "Don't know what to do with %1" ).arg ( m_filename ) );
     }
@@ -333,6 +336,24 @@ bool UPThread::unpackExe()
 #ifdef Q_OS_WIN
     QProcess proc;
     proc.start ( m_filename, QStringList ( "/Q" ) );   // FIXME: don't hardcode command line parameters!
+    if ( !proc.waitForStarted() )
+        return false;
+    do {
+        msleep ( 50 );
+    } while ( !proc.waitForFinished() );
+
+    return ( proc.exitStatus() == QProcess::NormalExit && proc.exitCode() == 0 );
+#else
+    emit error ( tr ( "Don't know how to execute %1 on a non windows system." ).arg ( m_filename ) );
+    return false;
+#endif
+}
+
+bool UPThread::unpackMsi()
+{
+#ifdef Q_OS_WIN
+    QProcess proc;
+    proc.start ( "msiexec", QStringList() << "/I" << QDir::toNativeSeparators(m_filename)); 
     if ( !proc.waitForStarted() )
         return false;
     do {
