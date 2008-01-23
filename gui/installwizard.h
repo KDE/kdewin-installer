@@ -79,7 +79,6 @@ public:
 protected:
     void writeSettings();
     void readSettings();
-    virtual int nextId() const;
 
 private slots:
     void aboutButtonClicked();
@@ -116,7 +115,7 @@ public:
     TitlePage();
 
     void initializePage();
-    int nextId();
+    int nextId() const;
 };
 
 class DownloadSettingsPage : public InstallWizardPage

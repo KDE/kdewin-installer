@@ -92,7 +92,7 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0)
     setWizardStyle(QWizard::ModernStyle);
     setPixmap(QWizard::LogoPixmap,QPixmap(":/images/logo.png"));
     // setting a banner limit the installer width 
-	//    setPixmap(QWizard::BannerPixmap, QPixmap(":/images/banner.png"));
+    // setPixmap(QWizard::BannerPixmap, QPixmap(":/images/banner.png"));
 
     QPushButton *aboutButton = new QPushButton(tr("About"));
     setButton(QWizard::CustomButton1, aboutButton );
@@ -104,6 +104,7 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0)
     setButton(QWizard::CustomButton2, settingsButton);
     setOption(QWizard::HaveCustomButton2, true);
     connect(settingsButton, SIGNAL(clicked()), this, SLOT(settingsButtonClicked()) );
+    settingsButton->hide();
 
 #ifdef HAVE_RETRY_BUTTON
     QPushButton *retryButton = new QPushButton(tr("Retry"));
@@ -113,11 +114,6 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0)
     connect(retryButton, SIGNAL(clicked()), this, SLOT(restart()) );
 #endif
     connect(button(QWizard::CancelButton), SIGNAL(clicked()), this, SLOT(cancelButtonClicked()) );
-
-    //setOption(QWizard::HaveCancelButton, true);
-
-    //setOption(QWizard::CancelButtonOnLeft,true);
-
 /*
     QList<QWizard::WizardButton> layout;
     layout << QWizard::CustomButton1 << QWizard::Stretch << QWizard::CustomButton2 << QWizard::Stretch 
@@ -147,17 +143,7 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0)
     d.setTitle(windowTitle);
     d.setParent(this);
 
-    Settings &s = Settings::getInstance();
-
-    if (s.isFirstRun() || s.showTitlePage())
-    {
-        setStartId(titlePage);
-        settingsButton->hide();
-    }
-    else
-    {
-        setStartId(packageSelectorPage);
-    }
+    setStartId(titlePage);
     connect(this, SIGNAL(currentIdChanged(int)), this, SLOT(slotCurrentIdChanged(int)) );
     readSettings();
 }
@@ -179,14 +165,6 @@ void InstallWizard::aboutButtonClicked()
     );
 }
 
-int InstallWizard::nextId() const 
-{
-    InstallWizardPage *aPage = static_cast<InstallWizardPage*>(currentPage());
-    if (aPage)
-        return aPage->nextId(); 
-    return -1;
-}
-
 void InstallWizard::settingsButtonClicked()
 {
     _settingsPage->setGlobalConfig(engine->globalConfig());
@@ -196,9 +174,17 @@ void InstallWizard::settingsButtonClicked()
 
 void InstallWizard::cancelButtonClicked()
 {
+/* 
+    //there is no page set for this signal 
+    int i = currentId();
     InstallWizardPage *aPage = static_cast<InstallWizardPage*>(currentPage());
     if (aPage)
         aPage->cancel();
+    else 
+        qDebug() << "no page for cancel";
+    // let installer engine handle this case 
+*/
+    engine->stop();
     writeSettings();
     QDialog::reject();
     qApp->closeAllWindows();
@@ -335,11 +321,13 @@ void TitlePage::initializePage()
     setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/watermark.png"));
 }
 
-int TitlePage::nextId()
+int TitlePage::nextId() const
 {
-    //wizard->nextButton->setEnabled(false);
-    //wizard->nextButton->setEnabled(true);
-    return InstallWizard::pathSettingsPage;
+    Settings &s = Settings::getInstance();
+    if (s.isFirstRun() || s.showTitlePage())
+        return InstallWizard::pathSettingsPage;
+    else
+        return InstallWizard::packageSelectorPage;
 }
 
 PathSettingsPage::PathSettingsPage(SettingsSubPage *s) : InstallWizardPage(s)
@@ -830,7 +818,8 @@ FinishPage::FinishPage() : InstallWizardPage(0)
 void FinishPage::initializePage()
 {
     setFinalPage(true);
-    wizard()->setOption(QWizard::NoCancelButton,true);
+    //wizard()->setOption(QWizard::NoCancelButton,true);
+    wizard()->button(QWizard::CancelButton)->setEnabled(false);
 #ifdef HAVE_RETRY_BUTTON
     wizard()->setOption(QWizard::HaveCustomButton3, false);
     wizard()->button(QWizard::CustomButton3)->show();
