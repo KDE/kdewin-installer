@@ -82,8 +82,7 @@ QLabel* createTopLabel(const QString& str)
 InstallerProgress *installProgressBar;
 DownloaderProgress *progressBar;
 
-InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0)
-{
+InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     progressBar = new DownloaderProgress(this);
     installProgressBar = new InstallerProgress(this);
 
@@ -93,12 +92,12 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0)
     setPixmap(QWizard::LogoPixmap,QPixmap(":/images/logo.png"));
     // setting a banner limit the installer width 
     // setPixmap(QWizard::BannerPixmap, QPixmap(":/images/banner.png"));
-
+/*
     QPushButton *aboutButton = new QPushButton(tr("About"));
     setButton(QWizard::CustomButton1, aboutButton );
     setOption(QWizard::HaveCustomButton1, true);
     connect(aboutButton, SIGNAL(clicked()), this, SLOT(aboutButtonClicked()) );
-
+*/
     _settingsPage = new SettingsPage(this);
     QPushButton *settingsButton = new QPushButton(tr("Settings"));
     setButton(QWizard::CustomButton2, settingsButton);
@@ -291,12 +290,26 @@ TitlePage::TitlePage() : InstallWizardPage()
     version->setAlignment(Qt::AlignRight);
 */
     QLabel* description = new QLabel(tr(
-                          "<p>This setup program is used for the initial installation of KDE for Windows application.</p>"
+                          "<p>This setup program is used for the installation of KDE for Windows application.</p>"
                           "<p>The pages that follow will guide you through the installation.</p>"
                           "<p>Please note that by default this installer will install "
                           "only a basic set of applications by default. You can always "
-                          "run this program at any time in the future to add, remove, or "
+                          "run this program at any time in the future to add, remove or "
                           "upgrade packages if necessary.</p>"
+                          "<p>This software is licensed under an open source license and build with Qt<sup>1</sup> version " QTVERSION "</p>"
+                          "<p>Contributors: <ul>"
+                          "<li>Ralf Habacker - main application, design"
+                          "<li>Christian Ehrlicher - curl and uncompress support, bug fixing"
+                          "<li>Patrick Spendrin - worked on start menue support"
+                          "</ul></p>"
+                          "<p> </p>"
+                          "<p> </p>"
+                          "<p> </p>"
+                          "<p> </p>"
+                          "<p> </p>"
+                          "<p> </p>"
+                          "<p> </p>"
+                          "<small><sup>1</sup> Qt and the Qt logo are trademarks of Trolltech in Norway, the United States and other countries.</small>"
                           ));
 
 
@@ -304,6 +317,8 @@ TitlePage::TitlePage() : InstallWizardPage()
     //    downloadPackagesRadioButton = new QRadioButton(tr("download packages"));
     //    downloadAndInstallRadioButton = new QRadioButton(tr("&download and install packages"));
     //    setFocusProxy(downloadPackagesRadioButton);
+
+    // @TODO add select box for experts mode 
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(description);
@@ -786,28 +801,29 @@ FinishPage::FinishPage() : InstallWizardPage(0)
     setSubTitle(tr(" "));
 
     QLabel* label = new QLabel(tr(
-         "<p>Now you should be able to run kde applications.</p>"
-         "<p>Please open an explorer window and navigate to the bin folder of the kde installation root.</p>"
-         "<p>There you will find several applications which can be started by a simple click on the executable.</p>"
-         "<p>In further versions of this installer it will be also possible to start kde applications from<br>"
-         "the windows start menu.</p>"
+         "<p>Now you should be able to run kde applications. "
+         "Please open an explorer window and navigate to the bin folder of the kde installation root. "
+         "There you will find several applications which can be started by a simple click on the executable.</p>"
+         "<p>In further versions of this installer it will be also possible "
+         "to start kde applications from the windows start menu.</p>"
          "<p>If you <ul>"
-         "<li>have questions about the KDE on windows project see <a href=\"http://windows.kde.org\">http://windows.kde.org</a></li>"
-         "<li>like to get a technical overview about this project see <br><a href=\"http://techbase.kde.org/index.php?title=Projects/KDE_on_Windows\">Techbase - KDE on Windows</a></li>"
-         "<li>have problems using this installer or with running kde applications<br>"
-         "please contact the <a href=\"http://mail.kde.org/mailman/listinfo/kde-windows\">"
-         "kde-windows@kde.org</a> mailing list."
-         "</li>"
-         "<li>like to contribute time and/or money to this project contact us also on the above mentioned list.</li>"
+         "<li>like to see the KDE on windows project web site see <a href=\"http://windows.kde.org\">http://windows.kde.org</a></li>"
+         "<li>like to get community support for this installer and/or running kde applications please contact "
+            "the <a href=\"http://mail.kde.org/mailman/listinfo/kde-windows\">kde-windows@kde.org</a> mailing list.</li>"
+         "<li>like to contribute time and/or money to this project contact also the above mentioned list."
+            "There are always interesting projects where you can join.</li>"
          "</ul></p>"
-         ""
-         "Have fun using KDE on windows." 
-         ""
-         ""
-         "The KDE on Windows team"
-    ));
+         "<p>Have fun using KDE on windows.</p>" 
+         "<p> </p>"
+         "<p><b>The KDE on Windows team</b></p>"
+         "<p>&nbsp;</p>"
+         "<p>&nbsp;</p>"
+         "<p>This software is designed to provide powerfull and flexible network based install systems using a modern gui toolkit. "
+         "If you need assistance or have specific needs for such a services, please contact <a href=\"mailto:ralf@habacker.de\">Ralf Habacker</a></p>"
+         ));
 
     label->setOpenExternalLinks (true);
+    label->setWordWrap(true);
     
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(label);
