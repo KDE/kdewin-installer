@@ -33,7 +33,7 @@ int main(int argc, char ** argv)
 {
     QCoreApplication app(argc,argv);
 
-    Downloader downloader(/*blocking=*/ true);
+    Downloader downloader;
     PackageList packageList;
 
     qDebug() << "trying to download sourceforge related package list";

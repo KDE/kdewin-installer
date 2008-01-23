@@ -34,7 +34,7 @@ int main(int argc, char ** argv)
 {
     QCoreApplication app(argc,argv);
 
-    Downloader downloader(/*blocking=*/ true);
+    Downloader downloader;
     PackageList packageList;
     packageList.setBaseURL("http://www.mirrorservice.org/sites/download.sourceforge.net/pub/sourceforge/k/kd/kde-cygwin/");
 

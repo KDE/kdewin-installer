@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
 
     DownloaderProgress progress(0);
-    Downloader download(true,&progress);
+    Downloader download(&progress);
     Site site;
 
     QStringList args = app.arguments();

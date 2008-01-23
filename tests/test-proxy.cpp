@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
     QString host; 
     bool ret;
     Settings &s = Settings::getInstance();
-    QNetworkProxy ps;
+    Settings::proxySettings ps;
 
     s.setProxyMode(Settings::InternetExplorer);
     ret = s.proxy(http, ps);

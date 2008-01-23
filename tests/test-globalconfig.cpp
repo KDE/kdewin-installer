@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
 
     DownloaderProgress progress(0);
-    Downloader downloader(true,&progress);
+    Downloader downloader(&progress);
 
     GlobalConfig globalConfig(&downloader);
     QStringList files = globalConfig.fetch("http://82.149.170.66/kde-windows/installer");
