@@ -75,7 +75,7 @@ public:
      };
 
     InstallWizard(QWidget *parent = 0);
-    ~InstallWizard();
+    virtual ~InstallWizard();
 protected:
     void writeSettings();
     void readSettings();
@@ -83,7 +83,7 @@ protected:
 private slots:
     void aboutButtonClicked();
     void settingsButtonClicked();
-    void cancelButtonClicked();
+    virtual void reject();
     void slotCurrentIdChanged(int id);
     void slotEngineError(const QString &);
 

@@ -114,7 +114,6 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     retryButton->hide();
     connect(retryButton, SIGNAL(clicked()), this, SLOT(restart()) );
 #endif
-    connect(button(QWizard::CancelButton), SIGNAL(clicked()), this, SLOT(cancelButtonClicked()) );
 /*
     QList<QWizard::WizardButton> layout;
     layout << QWizard::CustomButton1 << QWizard::Stretch << QWizard::CustomButton2 << QWizard::Stretch 
@@ -173,9 +172,8 @@ void InstallWizard::settingsButtonClicked()
     _settingsPage->exec();
 }
 
-void InstallWizard::cancelButtonClicked()
+void InstallWizard::reject()
 {
-/* 
     //there is no page set for this signal 
     int i = currentId();
     InstallWizardPage *aPage = static_cast<InstallWizardPage*>(currentPage());
@@ -184,12 +182,10 @@ void InstallWizard::cancelButtonClicked()
     else 
         qDebug() << "no page for cancel";
     // let installer engine handle this case 
-*/
+
     engine->stop();
     writeSettings();
     QDialog::reject();
-    qApp->closeAllWindows();
-    exit(0);
 }
 
 void InstallWizard::writeSettings()
@@ -228,7 +224,7 @@ void InstallWizard::slotCurrentIdChanged(int id)
         button(QWizard::BackButton)->setEnabled(false);
         button(QWizard::NextButton)->setEnabled(false);
         if (!engine->downloadPackages(tree)) {
-            cancelButtonClicked();
+            reject();
             return;
         }
         button(QWizard::BackButton)->setEnabled(true);
@@ -240,7 +236,7 @@ void InstallWizard::slotCurrentIdChanged(int id)
         button(QWizard::BackButton)->setEnabled(false);
         button(QWizard::NextButton)->setEnabled(false);
         if (!engine->removePackages(tree)) {
-            cancelButtonClicked();
+            reject();
             return;
         }
         button(QWizard::BackButton)->setEnabled(true);
@@ -252,7 +248,7 @@ void InstallWizard::slotCurrentIdChanged(int id)
         button(QWizard::BackButton)->setEnabled(false);
         button(QWizard::NextButton)->setEnabled(false);
         if (!engine->installPackages(tree)) {
-            cancelButtonClicked();
+            reject();
             return;
         }
         button(QWizard::BackButton)->setEnabled(true);
