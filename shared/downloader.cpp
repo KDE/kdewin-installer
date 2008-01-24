@@ -169,6 +169,7 @@ bool Downloader::startInternal ( const QUrl &url )
     curl_easy_setopt ( d->curlHandle, CURLOPT_WRITEFUNCTION, Downloader::curlWriteCallback );
     curl_easy_setopt ( d->curlHandle, CURLOPT_WRITEDATA, this );
     curl_easy_setopt ( d->curlHandle, CURLOPT_NOPROGRESS, 0 );
+    curl_easy_setopt ( d->curlHandle, CURLOPT_FOLLOWLOCATION, 1);  
   }
 
   Settings &s = Settings::getInstance();
