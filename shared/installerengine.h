@@ -53,7 +53,7 @@ public:
     // read in global config 
     void initGlobalConfig();
     // add packages from global config or sites (requires proxy settings)
-    void initPackages();
+    bool initPackages();
 
 
     void stop();
@@ -69,6 +69,9 @@ public:
     /// download url 
     static QString defaultConfigURL;
     static QString fallBackURL;
+
+Q_SIGNALS:
+    void error ( const QString &error );
 
 protected slots:
     //@ TODO using this slots make thing much complicater as necessary 
@@ -89,7 +92,7 @@ protected:
     bool                m_canceled;
     QUrl                m_usedDownloadSource;
     /// init all package definitions
-    virtual void init();
+    virtual bool init();
     /// reload all package definition
     virtual void reload();
 
@@ -100,7 +103,7 @@ protected:
     bool readGlobalConfig();
 
     /// adds packages defined directly in GlobalConfig
-    void addPackagesFromGlobalConfig();
+    bool addPackagesFromGlobalConfig();
 
     /// adds package collected from site definition
     bool addPackagesFromSites();

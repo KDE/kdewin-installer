@@ -80,12 +80,14 @@ void InstallerEngine::initGlobalConfig()
     m_globalConfigReaded = true;
 }
 
-void InstallerEngine::initPackages()
+bool InstallerEngine::initPackages()
 {
     if (m_addedPackages)
         m_packageResources->clear();
-    addPackagesFromGlobalConfig();
-    addPackagesFromSites();
+    if (!addPackagesFromGlobalConfig())
+        return false;
+    if (!addPackagesFromSites())
+        return false;
 
     // add site independend package category relations
     QHash<QString, QStringList>::const_iterator i = m_globalConfig->categoryPackages().constBegin();
@@ -103,12 +105,13 @@ void InstallerEngine::initPackages()
     }
     m_addedPackages = true;
     m_initFinished = true;
+    return true;
 }
 
-void InstallerEngine::init()
+bool InstallerEngine::init()
 {
     initGlobalConfig();
-    initPackages();
+    return initPackages();
 }
 
 void InstallerEngine::reload()
@@ -155,7 +158,7 @@ bool InstallerEngine::readGlobalConfig()
     return true;
 }
 
-void InstallerEngine::addPackagesFromGlobalConfig()
+bool InstallerEngine::addPackagesFromGlobalConfig()
 {
     QList<Package*>::iterator p;
     for (p = m_globalConfig->packages()->begin(); p != m_globalConfig->packages()->end(); p++)
@@ -172,6 +175,7 @@ void InstallerEngine::addPackagesFromGlobalConfig()
     }
     if (Settings::hasDebug("InstallerEngine"))
         qDebug() << __FUNCTION__ << m_packageResources;
+    return true;
 }
 
 /// download all packagelists, which are available on the configured sites
@@ -193,11 +197,13 @@ bool InstallerEngine::addPackagesFromSites()
 
         packageList.setBaseURL(site->url());
 
+        QUrl listURL = site->listURL().isEmpty() ? site->url() : site->listURL();
+
         QByteArray ba;
-        if (!m_downloader->start(site->url(), ba))
+        qDebug() << listURL;
+        if (!m_downloader->start(listURL, ba))
         {
-            // @TODO: add gui message box
-            qCritical() << "failed to download site list" << site->url();
+            emit error(tr("failed to download site list page from %1").arg(listURL.toString()));
             return false;
         }
         PackageList::Type type;
@@ -207,14 +213,14 @@ bool InstallerEngine::addPackagesFromSites()
         case Site::SourceForgeMirror: type = PackageList::SourceForgeMirror; break;
         case Site::ApacheModIndex: type = PackageList::ApacheModIndex; break;
         default:
-            qWarning() << "unknown Site type" << site->Type();
+            emit error("unknown Site type "  + site->Type());
             type = PackageList::ApacheModIndex;
             break;
         }
 
         if (!packageList.readHTMLFromByteArray(ba, type, true ))
         {
-            qDebug() << "error reading package list from download html file";
+            emit error("error reading package list from download html file");
             continue;
         }
         if (Settings::hasDebug("InstallerEngine"))
