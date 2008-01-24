@@ -85,6 +85,7 @@ private slots:
     void settingsButtonClicked();
     void cancelButtonClicked();
     void slotCurrentIdChanged(int id);
+    void slotEngineError(const QString &);
 
 private:
     SettingsPage *_settingsPage;

@@ -87,6 +87,8 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     installProgressBar = new InstallerProgress(this);
 
     engine = new InstallerEngineGui(this,progressBar,installProgressBar);
+    connect(engine, SIGNAL(error(const QString &)), this, SLOT(slotEngineError(const QString &)) );
+
     // must be first
     setWizardStyle(QWizard::ModernStyle);
     setPixmap(QWizard::LogoPixmap,QPixmap(":/images/logo.png"));
@@ -187,6 +189,7 @@ void InstallWizard::cancelButtonClicked()
     writeSettings();
     QDialog::reject();
     qApp->closeAllWindows();
+    exit(0);
 }
 
 void InstallWizard::writeSettings()
@@ -224,7 +227,10 @@ void InstallWizard::slotCurrentIdChanged(int id)
     else if (id == downloadPage) {
         button(QWizard::BackButton)->setEnabled(false);
         button(QWizard::NextButton)->setEnabled(false);
-        engine->downloadPackages(tree);
+        if (!engine->downloadPackages(tree)) {
+            cancelButtonClicked();
+            return;
+        }
         button(QWizard::BackButton)->setEnabled(true);
         button(QWizard::NextButton)->setEnabled(true);
         if (Settings::getInstance().autoNextStep())
@@ -233,7 +239,10 @@ void InstallWizard::slotCurrentIdChanged(int id)
     else if (id == uninstallPage) {
         button(QWizard::BackButton)->setEnabled(false);
         button(QWizard::NextButton)->setEnabled(false);
-        engine->removePackages(tree);
+        if (!engine->removePackages(tree)) {
+            cancelButtonClicked();
+            return;
+        }
         button(QWizard::BackButton)->setEnabled(true);
         button(QWizard::NextButton)->setEnabled(true);
         if (Settings::getInstance().autoNextStep())
@@ -242,13 +251,26 @@ void InstallWizard::slotCurrentIdChanged(int id)
     else if (id == installPage) {
         button(QWizard::BackButton)->setEnabled(false);
         button(QWizard::NextButton)->setEnabled(false);
-        engine->installPackages(tree);
+        if (!engine->installPackages(tree)) {
+            cancelButtonClicked();
+            return;
+        }
         button(QWizard::BackButton)->setEnabled(true);
         button(QWizard::NextButton)->setEnabled(true);
         if (Settings::getInstance().autoNextStep())
             next();
     }
     m_lastId = id;
+}
+
+void InstallWizard::slotEngineError(const QString &msg)
+{
+    QMessageBox::StandardButton result = QMessageBox::critical(
+        this,
+        tr("Error"),
+        msg,
+        QMessageBox::Cancel
+    );
 }
 
 InstallWizardPage::InstallWizardPage(SettingsSubPage *s) : page(s)
