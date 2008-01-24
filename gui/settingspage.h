@@ -113,7 +113,7 @@ private slots:
     void rootPathSelectClicked();
     void tempPathSelectClicked();
     void switchProxyFields(bool checked);
-    void rootPathEditChanged();
+    void rootPathEditChanged(const QString &);
      
 private:
     Ui::SettingsDialog ui;
