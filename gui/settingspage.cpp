@@ -142,6 +142,13 @@ void SettingsInstallPage::reset()
         ui.compilerMinGW->setEnabled(false);
         ui.compilerMSVC->setEnabled(false);
     }
+    else
+    {
+        ui.compilerUnspecified->setEnabled(true);
+        ui.compilerMinGW->setEnabled(true);
+        ui.compilerMSVC->setEnabled(true);
+    }
+
     switch (s.compilerType()) {
         case Settings::unspecified: ui.compilerUnspecified->setChecked(true); break;
         case Settings::MinGW: ui.compilerMinGW->setChecked(true); break;
@@ -157,6 +164,11 @@ void SettingsInstallPage::reset()
     {
         ui.installModeDeveloper->setEnabled(false);
         ui.installModeEndUser->setEnabled(false);
+    }
+    else
+    {
+        ui.installModeDeveloper->setEnabled(true);
+        ui.installModeEndUser->setEnabled(true);
     }
 
     if (s.isDeveloperMode())
@@ -259,7 +271,6 @@ SettingsPage::SettingsPage(QWidget *parent)
 {
     ui.setupUi(this);
     connect( ui.rootPathSelect,SIGNAL(clicked()),this,SLOT(rootPathSelectClicked()) );
-    connect( ui.rootPathEdit,SIGNAL(textChanged(const QString &)),this,SLOT(rootPathEditChanged(const QString &)) );
 	connect( ui.tempPathSelect,SIGNAL(clicked()),this,SLOT(tempPathSelectClicked()) );
     
     connect( ui.proxyManual,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
