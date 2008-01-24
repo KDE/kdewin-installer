@@ -463,14 +463,15 @@ int versionToInt(QString version)
     return n;
 }
 
-void InstallerEngineGui::init()
+bool InstallerEngineGui::init()
 {
     initGlobalConfig();
     int minVersion = versionToInt(m_globalConfig->minimalInstallerVersion());
     int currentVersion = versionToInt(VERSION);
     if (minVersion != 0 && currentVersion < minVersion)
         InstallerDialogs::getInstance().installerOutdated();
-    initPackages();
+    return initPackages();
+
     /// @TODO add updates to category cache
 }
 

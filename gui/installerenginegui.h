@@ -37,7 +37,7 @@ public:
 
     InstallerEngineGui(QWidget *parent, DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
     /// init all package definitions 
-    virtual void init();
+    virtual bool init();
     /// reload all package definitions
     virtual void reload();
 
