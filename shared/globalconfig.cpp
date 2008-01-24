@@ -280,6 +280,13 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                         url = QUrl(m_baseURL + '/' + cmd[1]);
                     site->setURL(url);
                 }
+                else if(cmd[0] == "@url-list")
+                {
+                    QUrl url(cmd[1]);
+                    if (url.scheme().isEmpty())
+                        url = QUrl(m_baseURL + '/' + cmd[1]);
+                    site->setListURL(url);
+                }
                 else if(cmd[0] == "@sitetype" || cmd[0] == "@type")
                 {
                     if (!site->setType(cmd[1]))

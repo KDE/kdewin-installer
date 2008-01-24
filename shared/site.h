@@ -50,6 +50,12 @@ public:
         m_url = url;
     }
 
+    QUrl listURL() const { return m_listUrl; }
+    void setListURL(const QUrl &url)
+    {
+        m_listUrl = url;
+    }
+
     const QUrlList &mirrors() const { return m_mirrors; }
     void addMirror(const QUrl &mirror)
     {
@@ -97,6 +103,7 @@ public:
 
 private:
     QString     m_name;
+    QUrl        m_listUrl; 
     QUrl        m_url;
     QString     m_notes;
     SiteType    m_type;
