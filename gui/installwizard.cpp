@@ -185,7 +185,7 @@ void InstallWizard::reject()
 
     engine->stop();
     writeSettings();
-    QDialog::reject();
+    QWizard::reject();
 }
 
 void InstallWizard::writeSettings()
