@@ -32,20 +32,24 @@
 #ifdef USE_GUI
 
 DownloaderProgress::DownloaderProgress(QWidget *parent)
-{
-    statusLabel = new QLabel();
-    progress = new QProgressBar(parent);
-    speedLabel = new QLabel();
-    
+{    
+    mainLayout = new QVBoxLayout;
+
     QHBoxLayout *statusLayout = new QHBoxLayout;
+    mainLayout->addLayout(statusLayout);
+
+    statusLabel = new QLabel;
     statusLayout->addWidget(statusLabel);
+
+    progress = new QProgressBar(parent);
     statusLayout->addWidget(progress);
 
-    titleLabel = new QLabel();
-    mainLayout = new QVBoxLayout;
+    titleLabel = new QLabel;
     mainLayout->addWidget(titleLabel);
-    mainLayout->addLayout(statusLayout);
+
+    speedLabel = new QLabel;
     mainLayout->addWidget(speedLabel);
+
     setLayout(mainLayout);
     hide();
 }

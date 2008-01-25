@@ -26,7 +26,6 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QListWidget>
-#include <QApplication>
 
 #include "installerprogress.h"
 #include "settings.h"
@@ -34,47 +33,46 @@
 #ifdef USE_GUI
 InstallerProgress::InstallerProgress(QWidget *parent)
 {
-    titleLabel = new QLabel();
     QVBoxLayout *mainLayout = new QVBoxLayout;
+
+    titleLabel = new QLabel;
     mainLayout->addWidget(titleLabel);
-    progress = new QListWidget(parent);
+
     QHBoxLayout *statusLayout = new QHBoxLayout;
-    statusLabel = new QLabel();
-    statusLayout->addWidget(statusLabel);
-    statusLayout->addWidget(progress);
     mainLayout->addLayout(statusLayout);
+
+    statusLabel = new QLabel;
+    statusLayout->addWidget(statusLabel);
+    progress = new QListWidget;
+    statusLayout->addWidget(progress);
+
     setLayout(mainLayout);
     hide();
 }
 
 InstallerProgress::~InstallerProgress()
-{
-    delete titleLabel;
-    delete statusLabel;
-    delete progress;
-}
+{}
 
 void InstallerProgress::hide()
 {
     titleLabel->hide();
     statusLabel->hide();
     progress->hide();
+    QWidget::hide();
 }
 
 void InstallerProgress::setTitle(const QString &label)
 {
-    static int i = 0;
     if (!Settings::getInstance().installDetails())
     {
         titleLabel->setText(label);
-        QApplication::instance()->processEvents();
     }
     else 
     {
+        static int i = 0;
         progress->addItem(label);
         if (i++ % 10 == 0) {
             progress->scrollToBottom();
-            QApplication::instance()->processEvents();
         }
     }
 }
@@ -93,6 +91,7 @@ void InstallerProgress::show()
         statusLabel->show();
         progress->show();
     }
+    QWidget::show();
 }
 
 void InstallerProgress::setMaximum(int value)
