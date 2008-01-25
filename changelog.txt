@@ -1,5 +1,12 @@
 ChangeLog
 =========
+0.8.6
+-----
+- common:         - added ftp downloading support by using the curl library 
+                  - added support for using sourceforge mirrors as download source 
+                     (use http://xxxx.dl.sourceforge.net/sourceforge/kde-windows as mirror url) 
+- installer-gui:  - used QWizard for the gui 
+ 
 0.8.5
 -----
 - packager:       - added switch -hashfirst to place hash values in the first column instead of the second column.
