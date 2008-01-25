@@ -31,7 +31,7 @@
 #include "downloader.h"
 #include "installer.h"
 #include "database.h"
-#include "uninstall.h"
+#include "uninstaller.h"
 
 #ifndef PACKAGE_SMALL_VERSION
 /**
@@ -431,7 +431,7 @@ bool Package::installItem(Installer *installer, Package::Type type)
         return false;
     }
     fileName = makeFileName(type);
-    if (!installer->install(this, type, fileName, pathRelocations()))
+    if (!installer->install(this, type, fileName))
     {
         qDebug() << __FUNCTION__ << " install failure for file " << fileName << " type " << type;
         return false;
@@ -445,8 +445,7 @@ bool Package::installItem(Installer *installer, Package::Type type)
 bool Package::removeItem(Installer *installer, Package::Type type)
 {
     QString manifestFile = installer->root()+"/manifest/"+Package::manifestFileName(name(),installedVersion(),type);
-    Uninstall ui(installer->root(),manifestFile);
-    ui.uninstallPackage(false);
+    installer->uninstall(manifestFile);
     return true;
 }
 

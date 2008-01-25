@@ -36,6 +36,7 @@
 #include "installerprogress.h"
 #include "packagelist.h"
 #include "unpacker.h"
+#include "uninstaller.h"
 
 //#define DEBUG
 #ifdef Q_CC_MSVC
@@ -43,7 +44,8 @@
 #endif
 
 Installer::Installer(InstallerProgress *_progress)
-        : QObject(), m_progress(_progress), m_type(Installer::Standard)
+        : m_progress(_progress), m_type(Installer::Standard),
+          m_unpacker(0),  m_uninstaller(0)
 {
     m_root = ".";
 }
@@ -170,15 +172,16 @@ bool Installer::createQtConfigFile()
     return true;
 }
 
-bool Installer::install(Package *pkg, const Package::Type type, const QString &fileName, const StringHash &pathRelocations)
+bool Installer::install(Package *pkg, const Package::Type type, const QString &fileName)
 {
     m_packageToInstall = pkg;
     m_installType = type;
 
     m_unpacker = new Unpacker(m_progress, this);
 
-    if(!m_unpacker->unpackFile(fileName, m_root, pathRelocations)) {
-        delete m_unpacker;
+    if(!m_unpacker->unpackFile(fileName, m_root, pkg->pathRelocations())) {
+        m_unpacker->deleteLater();
+        m_unpacker = 0;
         return false;
     }
     
@@ -189,14 +192,26 @@ bool Installer::install(Package *pkg, const Package::Type type, const QString &f
     if(fi.fileName().startsWith("qt"))
         createQtConfigFile();
 
-    delete m_unpacker;
+    m_unpacker->deleteLater();
+    m_unpacker = 0;
     return true;
+}
+
+bool Installer::uninstall(const QString &pathToManifest)
+{
+    m_uninstaller = new Uninstaller(m_progress, this);
+    bool bRet = m_uninstaller->uninstallPackage(pathToManifest, m_root);
+    m_uninstaller->deleteLater();
+    m_uninstaller = 0;
+    return bRet;
 }
 
 void Installer::cancel()
 {
     if (m_unpacker)
         m_unpacker->cancel();
+    if (m_uninstaller)
+        m_uninstaller->cancel();
 }
 
 #include "installer.moc"

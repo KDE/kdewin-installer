@@ -79,14 +79,11 @@ QLabel* createTopLabel(const QString& str)
 }
 */
 
-InstallerProgress *installProgressBar;
-DownloaderProgress *progressBar;
-
 InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
-    progressBar = new DownloaderProgress(this);
-    installProgressBar = new InstallerProgress(this);
+    DownloaderProgress *downloadProgressBar = new DownloaderProgress(this);
+    InstallerProgress *installProgressBar = new InstallerProgress(this);
 
-    engine = new InstallerEngineGui(this,progressBar,installProgressBar);
+    engine = new InstallerEngineGui(this,downloadProgressBar,installProgressBar);
     connect(engine, SIGNAL(error(const QString &)), this, SLOT(slotEngineError(const QString &)) );
 
     // must be first
@@ -129,9 +126,9 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     setPage(mirrorSettingsPage, new MirrorSettingsPage(_settingsPage->mirrorPage())); 
     setPage(packageSelectorPage, new PackageSelectorPage()); 
     setPage(dependenciesPage, new DependenciesPage()); 
-    setPage(downloadPage, new DownloadPage()); 
-    setPage(uninstallPage, new UninstallPage()); 
-    setPage(installPage, new InstallPage()); 
+    setPage(downloadPage, new DownloadPage(downloadProgressBar)); 
+    setPage(uninstallPage, new UninstallPage(installProgressBar)); 
+    setPage(installPage, new InstallPage(installProgressBar)); 
     setPage(finishPage, new FinishPage()); 
 
     QString windowTitle = tr("KDE Installer - Version " VERSION);
@@ -706,13 +703,13 @@ bool DependenciesPage::validatePage()
     return true;
 }
 
-DownloadPage::DownloadPage() : InstallWizardPage(0)
+DownloadPage::DownloadPage(DownloaderProgress *progress) : InstallWizardPage(0)
 {
     setTitle(tr("Downloading packages"));
     setSubTitle(tr(" "));
 
     QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(progressBar);
+    layout->addWidget(progress);
     layout->addStretch(1);
     setLayout(layout);
 }
@@ -743,13 +740,13 @@ bool DownloadPage::validatePage()
     return true;
 }
 
-UninstallPage::UninstallPage() : InstallWizardPage(0)
+UninstallPage::UninstallPage(InstallerProgress *progress) : InstallWizardPage(0)
 {
     setTitle(tr("Uninstalling packages"));
     setSubTitle(tr(" "));
 
     QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(installProgressBar);
+    layout->addWidget(progress);
     layout->addStretch(1);
     setLayout(layout);
 }
@@ -778,13 +775,13 @@ bool UninstallPage::validatePage()
     return true;
 }
 
-InstallPage::InstallPage() : InstallWizardPage(0)
+InstallPage::InstallPage(InstallerProgress *progress) : InstallWizardPage(0)
 {
     setTitle(tr("Installing packages"));
     setSubTitle(tr(" "));
 
     QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(installProgressBar);
+    layout->addWidget(progress);
     layout->addStretch(1);
     setLayout(layout);
 }

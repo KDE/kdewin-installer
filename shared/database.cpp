@@ -110,7 +110,7 @@ void Database::listPackageFiles(const QString &pkgName, Package::Type pkgType)
     qDebug() << files;
 }
 
-extern bool isHash(const QString &str);
+extern bool isHash(const QByteArray &str);
 QStringList Database::getPackageFiles(const QString &pkgName, Package::Type pkgType)
 {
     QStringList files;
@@ -133,7 +133,7 @@ QStringList Database::getPackageFiles(const QString &pkgName, Package::Type pkgT
           continue;
         }
         for(int i = 0; i < parts.count(); i++) {
-          if(!isHash(parts[i])) {
+          if(!isHash(parts[i].toUtf8())) {
             iPosFilename = i;
             files << parts[iPosFilename];
             break;

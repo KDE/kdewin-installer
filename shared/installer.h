@@ -29,6 +29,7 @@
 class Database;
 class InstallerProgress;
 class PackageList;
+class Uninstaller;
 class Unpacker;
 
 class Installer : public QObject
@@ -51,7 +52,8 @@ public:
     Database *database() { return m_database; }
     void setDatabase(Database *database) { m_database = database; }
     /// @TODO pathRelocations are obsolated, they can be retrieved from the pkg parameter
-    QT_DEPRECATED bool install(Package *pkg, const Package::Type type, const QString &fileName, const StringHash &pathRelocations=StringHash());
+    bool install(Package *pkg, const Package::Type type, const QString &fileName);
+    bool uninstall(const QString &pathToManifest);
     // installPackage(Package *pkg)
     //  bool readFromFile(QString const &fileName);
     //  bool writeToFile(QString const &fileName);
@@ -77,6 +79,7 @@ protected:
     QStringList m_files;
     Database *m_database;
     Unpacker *m_unpacker;
+    Uninstaller *m_uninstaller;
 
     Package* m_packageToInstall;
     Package::Type m_installType;

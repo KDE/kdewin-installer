@@ -31,7 +31,6 @@
 
 #include <QWizard>
 #include "settingspage.h"
-#include "installerprogress.h"
 
 class QCheckBox;
 class QLabel;
@@ -52,6 +51,8 @@ class InstallPage;
 class UninstallPage;
 class DownloadPage;
 class FinishPage;
+class InstallerProgress;
+class DownloaderProgress;
 
 extern QListWidget *g_dependenciesList;
 
@@ -216,7 +217,7 @@ class DownloadPage : public InstallWizardPage
     Q_OBJECT
 
 public:
-    DownloadPage();
+    DownloadPage(DownloaderProgress *progress);
 
     void cancel();
     void initializePage();
@@ -230,7 +231,7 @@ class UninstallPage : public InstallWizardPage
     Q_OBJECT
 
 public:
-    UninstallPage();
+    UninstallPage(InstallerProgress *progress);
 
     void cancel();
     void initializePage();
@@ -244,7 +245,7 @@ class InstallPage : public InstallWizardPage
     Q_OBJECT
 
 public:
-    InstallPage();
+    InstallPage(InstallerProgress *progress);
 
     void cancel();
     void initializePage();
