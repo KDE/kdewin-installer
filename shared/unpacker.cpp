@@ -243,7 +243,7 @@ bool UPThread::unbz2File()
     }
 
     bzip2.close();
-    return tf.error();
+    return !tf.error();
 #else   // BZIP2_UNPACK_SUPPORT
     emit error ( tr ( "BZip2 support not compiled in for %1" ).arg ( m_filename ) );
     return false;
