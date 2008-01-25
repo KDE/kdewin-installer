@@ -736,6 +736,8 @@ bool InstallerEngineGui::downloadPackageItem(Package *pkg, Package::Type type )
     while (!m_canceled) {
         if (pkg->downloadItem ( m_downloader, type ))
             return true;
+        if(m_downloader->result() == Downloader::Aborted)
+            return false;
         QMessageBox::StandardButton result = QMessageBox::critical(
             m_parent,
             tr("Download failed"),

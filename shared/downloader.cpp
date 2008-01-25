@@ -216,7 +216,7 @@ void Downloader::threadFinished ( int _ret )
   bool bRet = ( d->ret == CURLE_OK );
   m_result = d->cancel ? Aborted : bRet ? Finished : Failed;
 
-  if ( !d->fileName.isEmpty() ) {
+  if ( bRet && !d->fileName.isEmpty() ) {
     QTemporaryFile *tf = static_cast<QTemporaryFile*> ( d->ioDevice );
     QString fn = tf->fileName();
     tf->close();
