@@ -324,6 +324,11 @@ void TarFilter::setBufferSize(unsigned int size)
   d->iBufSize = size > 1024 ? size : 1024;
 }
 
+bool TarFilter::error() const
+{
+  return !d->lastError.isEmpty();
+}
+
 QString TarFilter::lastError() const
 {
   return d->lastError;

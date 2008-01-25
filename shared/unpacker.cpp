@@ -235,9 +235,15 @@ bool UPThread::unbz2File()
         }
         newFile.close();
     }
+    if( tf.error() ) {
+      if( bzip2.errorString().isEmpty() )
+        emit error ( tr ( "Error reading from tar stream (%1)" ).arg( tf.lastError() ) );
+      else
+        emit error ( tr ( "Error reading from file %1 (%2)" ).arg ( fi.absoluteFilePath() ).arg( bzip2.errorString() ) );
+    }
 
     bzip2.close();
-    return true;
+    return tf.error();
 #else   // BZIP2_UNPACK_SUPPORT
     emit error ( tr ( "BZip2 support not compiled in for %1" ).arg ( m_filename ) );
     return false;

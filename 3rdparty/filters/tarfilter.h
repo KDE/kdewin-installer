@@ -80,6 +80,7 @@ class TarFilter
 
     void setLocaleCodec(QTextCodec *codec); // default: codecForLocale()
     void setBufferSize(unsigned int size);  // default: 1MB
+    bool error() const;                     // true when an error occoured
     QString lastError() const;              // last error occoured, not rest on usage
 
     // add Data to a tar stream

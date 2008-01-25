@@ -56,6 +56,7 @@ class BZip2IODevice::Private
     bool initializeDecompress();
     qint64 doDecompress(char *out, qint64 iMaxLen);
     bool finishDecompress();
+    QString bzipError2String(int errCode);
 
     BZip2IODevice  *parent;
     QIODevice      *device;
@@ -75,7 +76,7 @@ bool BZip2IODevice::Private::initializeCompress()
   int blockSize = (blocksize > 0 && blocksize < 10) ? blocksize : 5;
   int ret = BZ2_bzCompressInit (&stream, blockSize, 0, 0);
   if(ret != BZ_OK) {
-    parent->setErrorString(QString(QLatin1String("Error initializing bzip2: %1")).arg(ret));
+    parent->setErrorString(QString(QLatin1String("Error initializing bzip2: %1")).arg(bzipError2String(ret)));
     initialized = false;
   } else {
     initialized = true;
@@ -88,8 +89,9 @@ qint64 BZip2IODevice::Private::doCompress(const char *in, qint64 iMaxLen)
 {
   int ret = -1;
   if(!initialized) {
+    if(parent->errorString().isEmpty())
+      parent->setErrorString(QLatin1String("Internal Error - bzip not initialized"));
     finishCompress();
-    parent->setErrorString(QLatin1String("Internal Error - bzip not initialized"));
     return -1;
   }
   if(iMaxLen > 2*1024*1024*1024LL) {
@@ -109,7 +111,7 @@ qint64 BZip2IODevice::Private::doCompress(const char *in, qint64 iMaxLen)
     ret = BZ2_bzCompress(&stream, BZ_RUN);
     if(ret != BZ_RUN_OK) {
       finishCompress();
-      parent->setErrorString(QString(QLatin1String("Error executing BZ2_bzCompress: %1")).arg(ret));
+      parent->setErrorString(QString(QLatin1String("Error executing BZ2_bzCompress: %1")).arg(bzipError2String(ret)));
       return false;
     }
     int iBytesToWrite = outBuf.size() - stream.avail_out;
@@ -138,7 +140,7 @@ bool BZip2IODevice::Private::finishCompress()
     ret = BZ2_bzCompress(&stream, BZ_FINISH);
     if(ret != BZ_FINISH_OK && ret != BZ_STREAM_END) {
       finishCompress();
-      parent->setErrorString(QString(QLatin1String("Error executing BZ2_bzCompress: %1")).arg(ret));
+      parent->setErrorString(QString(QLatin1String("Error executing BZ2_bzCompress: %1")).arg(bzipError2String(ret)));
       return false;
     }
     int iBytesToWrite = outBuf.size() - stream.avail_out;
@@ -161,7 +163,7 @@ bool BZip2IODevice::Private::initializeDecompress()
   memset(&stream, 0, sizeof(stream));
   int ret = BZ2_bzDecompressInit (&stream, 0, 0);
   if(ret != BZ_OK) {
-    parent->setErrorString(QString(QLatin1String("Error initializing bzip2: %1")).arg(ret));
+    parent->setErrorString(QString(QLatin1String("Error initializing bzip2: %1")).arg(bzipError2String(ret)));
     initialized = false;
   } else {
     initialized = true;
@@ -174,7 +176,8 @@ qint64 BZip2IODevice::Private::doDecompress(char *out, qint64 iMaxLen)
 {
   int ret = -1;
   if(!initialized) {
-    parent->setErrorString(QLatin1String("Internal Error - bzip not initialized"));
+    if(parent->errorString().isEmpty())
+      parent->setErrorString(QLatin1String("Internal Error - bzip not initialized"));
     finishDecompress();
     return -1;
   }
@@ -202,7 +205,7 @@ qint64 BZip2IODevice::Private::doDecompress(char *out, qint64 iMaxLen)
 
     ret = BZ2_bzDecompress(&stream);
     if(ret != BZ_OK && ret != BZ_STREAM_END) {
-      parent->setErrorString(QString(QLatin1String("Error executing BZ2_bzCompress: %1")).arg(ret));
+      parent->setErrorString(QString(QLatin1String("Error executing BZ2_bzCompress: %1")).arg(bzipError2String(ret)));
       finishDecompress();
       return -1;
     }
@@ -219,6 +222,33 @@ bool BZip2IODevice::Private::finishDecompress()
 
   initialized = false;
   return true;
+}
+
+QString BZip2IODevice::Private::bzipError2String( int errCode )
+{
+  switch( errCode ) {
+    case BZ_SEQUENCE_ERROR:
+      return QLatin1String("Sequence error");
+    case BZ_PARAM_ERROR:
+      return QLatin1String("Parameter not correct");
+    case BZ_MEM_ERROR:
+      return QLatin1String("Memory allocation error");
+    case BZ_DATA_ERROR:
+      return QLatin1String("Invalid input data");
+    case BZ_DATA_ERROR_MAGIC:
+      return QLatin1String("Not a bzip2 file");
+    case BZ_IO_ERROR:
+      return QLatin1String("I/O error");
+    case BZ_UNEXPECTED_EOF:
+      return QLatin1String("Unexpected end of file");
+    case BZ_OUTBUFF_FULL:
+      return QLatin1String("Output buffer full");
+    case BZ_CONFIG_ERROR:
+      return QLatin1String("Wrong config parameter");
+    default:
+      break;
+  };
+  return QString::number( errCode );
 }
 
 //
@@ -285,6 +315,7 @@ bool BZip2IODevice::open(OpenMode mode)
     if(!d->initializeCompress())
       return false;
   }
+  setErrorString(QString());
   setOpenMode(mode);
   return QIODevice::open(mode);
 }
