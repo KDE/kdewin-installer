@@ -29,10 +29,8 @@
 #include <QMessageBox>
 #include <QUrl>
 
-GlobalConfig::GlobalConfig(Downloader *downloader)
-{
-    m_downloader = downloader;
-}
+GlobalConfig::GlobalConfig()
+{}
 
 QStringList GlobalConfig::fetch(const QString &baseURL)
 {
@@ -54,7 +52,7 @@ QStringList GlobalConfig::fetch(const QString &baseURL)
         {
             QUrl url(baseURL + "/config.txt");
             QFileInfo cfi(Settings::getInstance().downloadDir()+"/config.txt");
-            ret = m_downloader->start(url,cfi.absoluteFilePath());
+            ret = Downloader::instance()->start(url,cfi.absoluteFilePath());
             if (Settings::hasDebug("GlobalConfig"))
                 qDebug() << "download remote config file from" <<  url << "to" << cfi.absoluteFilePath() << "..." << (ret == true ? "okay" : "failure") ;
             if (ret)
@@ -62,7 +60,7 @@ QStringList GlobalConfig::fetch(const QString &baseURL)
             else
             {
                 QUrl url(baseURL + "/installer/config.txt");
-                ret = m_downloader->start(url,cfi.absoluteFilePath());
+                ret = Downloader::instance()->start(url,cfi.absoluteFilePath());
                 if (Settings::hasDebug("GlobalConfig"))
                     qDebug() << "download remote config file from" <<  url << "to" << cfi.absoluteFilePath() << "..." << (ret == true ? "okay" : "failure") ;
                 if (ret)

@@ -23,32 +23,20 @@
 #ifndef INSTALLERPROGRESS_H
 #define INSTALLERPROGRESS_H
 
-#include <QString>
+#include "downloaderprogress.h"
 
 #ifdef USE_GUI
 
-#include <QWidget>
-
-class QLabel;
-class QProgressBar;
 class QListWidget;
-
-class InstallerProgress : public QWidget
+class InstallerProgress : public GenericProgress
 {
 public:
     InstallerProgress(QWidget *parent);
-    ~InstallerProgress();
-    void hide();
+    virtual ~InstallerProgress();
     void setTitle(const QString &title);
-    void setStatus(const QString &status);
-    void setMaximum(int value);
-    void setValue(int value);
     void show();
 private:
-    QLabel *titleLabel;
-    QLabel *statusLabel;
-//    QProgressBar *progress;
-        QListWidget *progress;
+    QListWidget *m_progress;
 };
 
 #else

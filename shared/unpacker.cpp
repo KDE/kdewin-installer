@@ -24,6 +24,7 @@
 #include "unpacker.h"
 #include "unpacker_p.h"
 
+#include <QtCore/QDebug>
 #include <QtCore/QDir>
 #include <QtCore/QEventLoop>
 #include <QtCore/QFile>
@@ -413,17 +414,35 @@ bool UPThread::makeSurePathExists ( const QFileInfo &fi, bool bIsDir )
 /*
     Unpacker
  */
-Unpacker::Unpacker ( InstallerProgress *progress, QObject *parent )
-        : QObject ( parent ), m_progress ( progress ), m_thread ( NULL ), m_bFinished ( true ), m_bRet ( false )
+class UnpackerSingleton
 {
-}
+public:
+  UnpackerSingleton() {};
+
+  Unpacker unpacker;
+};
+Q_GLOBAL_STATIC(UnpackerSingleton, sUnpacker);
+
+Unpacker::Unpacker ()
+        : m_progress ( NULL ), m_thread ( NULL ), m_bFinished ( true ), m_bRet ( false )
+{}
 
 Unpacker::~Unpacker()
+{}
+
+Unpacker *Unpacker::instance()
 {
+  return &sUnpacker()->unpacker;
+}
+
+void Unpacker::setProgress(InstallerProgress *progress)
+{
+  m_progress = progress;
 }
 
 bool Unpacker::unpackFile ( const QString &fn, const QString &destpath, const StringHash &pathRelocations )
 {
+    qDebug() << __FUNCTION__ << "filename: " << fn << "root: " << destpath;
     m_bFinished = true;
     m_bRet = false;
 
@@ -445,7 +464,6 @@ bool Unpacker::unpackFile ( const QString &fn, const QString &destpath, const St
         connect ( m_thread, SIGNAL ( error ( QString ) ), this, SLOT ( setError ( QString ) ) );
     }
     if ( m_progress ) {
-        m_progress->setValue ( 0 );
         m_progress->show();
         m_progress->setTitle ( tr ( "Unpacking %1" ).arg ( fn ) );
     }
@@ -458,6 +476,7 @@ bool Unpacker::unpackFile ( const QString &fn, const QString &destpath, const St
     if ( m_progress )
         m_progress->hide();
 
+    qDebug() << __FUNCTION__ << "ret: " << m_bRet;
     return m_bRet;
 }
 

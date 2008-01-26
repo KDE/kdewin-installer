@@ -23,36 +23,40 @@
 #ifndef DOWNLOADERPROGRESS_H
 #define DOWNLOADERPROGRESS_H
 
-#include <QString>
-
 #ifdef USE_GUI
 
-#include <QWidget>
-#include <QDateTime>
+#include <QtGui/QWidget>
+
+class QString;
 class QLabel;
 class QProgressBar;
-class QVBoxLayout;
-
-class DownloaderProgress : public QWidget
+class GenericProgress : public QWidget
 {
 public:
-    DownloaderProgress(QWidget *parent=0);
-    ~DownloaderProgress();
-    void hide();
-    void setTitle(const QString &title);
-    void setStatus(const QString &status);
+    GenericProgress(QWidget *parent);
+    virtual ~GenericProgress();
+    virtual void setTitle(const QString &title);
+    virtual void setStatus(const QString &status);
+    virtual void show();
+    virtual void hide();
+protected:
+    QLabel *m_titleLabel;
+    QLabel *m_statusLabel;
+};
+
+class DownloaderProgress : public GenericProgress
+{
+public:
+    DownloaderProgress(QWidget *parent);
+    virtual ~DownloaderProgress();
     void setMaximum(int value);
     void setValue(int value);
     void show();
-    DownloaderProgress &getInstance();
 private:
-    QLabel *titleLabel;
-    QLabel *statusLabel;
-    QProgressBar *progress;
-    QVBoxLayout *mainLayout; 
-    QDateTime initTime; 
-    QLabel *speedLabel;
-    int lastValue;
+    time_t m_initTime; 
+    QLabel *m_speedLabel;
+    int m_lastValue;
+    QProgressBar *m_progress;
 };
 
 #else

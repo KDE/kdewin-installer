@@ -35,9 +35,13 @@ class Downloader : public QObject
   Q_OBJECT
 public:
   typedef enum { Undefined, Finished, Failed, Aborted } ResultType;
-  Downloader ( DownloaderProgress *progress=0, QObject *parent=0);
+public:
+  // dtor
   virtual ~Downloader();
-
+  // singleton
+  static Downloader *instance();
+  // for user interaction
+  void setProgress(DownloaderProgress *progress);
   // start download
   bool start ( const QUrl &url, const QString &fileName = QString() );
   bool start ( const QUrl &url, QByteArray &ba );
@@ -77,6 +81,10 @@ protected:
   Private * const d;
 
   friend QDebug &operator<< ( QDebug &, const Downloader & );
+private:
+  Downloader ();
+
+  friend class DownloaderSingleton;
 };
 
 #endif

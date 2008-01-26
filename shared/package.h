@@ -148,7 +148,7 @@ public:
     bool setUrl(Package::Type type, const QUrl &url);
 
     /// download a package item
-    bool downloadItem(Downloader *downloader, Package::Type type);
+    bool downloadItem(Package::Type type);
     /// install a package item
     bool installItem(Installer *installer, Package::Type type);
     /// uninstall a package item

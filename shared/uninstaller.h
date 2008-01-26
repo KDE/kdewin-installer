@@ -33,8 +33,12 @@ class Uninstaller : public QObject
 {
     Q_OBJECT
 public:
-    Uninstaller(InstallerProgress *progress, QObject *parent);
+    // dtor
     virtual ~Uninstaller();
+    // singleton
+    static Uninstaller *instance();
+    // for user interaction
+    void setProgress(InstallerProgress *progress);
     // uninstall a package
     bool uninstallPackage(const QString &pathToManifest, const QString &root);
     // cancel uninstalling
@@ -53,6 +57,10 @@ protected:
     UIThread *m_thread;
     bool m_bFinished;
     bool m_bRet;
+private:
+    Uninstaller();
+
+    friend class UninstallerSingleton;
 };
 
 #endif  // UNINSTALL_H

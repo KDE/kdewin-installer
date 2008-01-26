@@ -21,6 +21,7 @@
 **
 ****************************************************************************/
 
+#include <QtCore/QDebug>
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
@@ -93,12 +94,11 @@ void UIThread::run()
         }
 
         emit progress(fileItem.fileName);
-        msleep(1000);
-/*
+
         if(!QFile::remove(fileItem.fileName)) {
             emit warning(QString("Can't remove %1").arg(fileItem.fileName));
             continue;
-        } */
+        }
     }
     emit done(true);
 }
@@ -174,16 +174,36 @@ void UIThread::start ( Priority priority )
 /*
     Uninstaller
  */
-Uninstaller::Uninstaller(InstallerProgress *progress, QObject *parent)
-  : QObject(parent), m_progress(progress), m_thread(NULL), m_bFinished(true), m_bRet(false)
+class UninstallerSingleton
+{
+public:
+  UninstallerSingleton() {};
+
+  Uninstaller uninstaller;
+};
+Q_GLOBAL_STATIC(UninstallerSingleton, sUninstaller);
+
+Uninstaller::Uninstaller()
+  : m_thread(NULL), m_bFinished(true), m_bRet(false)
 {}
 
 Uninstaller::~Uninstaller()
 {}
 
+Uninstaller *Uninstaller::instance()
+{
+  return &sUninstaller()->uninstaller;
+}
+
+void Uninstaller::setProgress(InstallerProgress *progress)
+{
+  m_progress = progress;
+}
+
 // uninstall a package
 bool Uninstaller::uninstallPackage(const QString &pathToManifest, const QString &root)
 {
+    qDebug() << __FUNCTION__ << "path: " << pathToManifest << "root: " << root;
     m_bFinished = true;
     m_bRet = false;
 
@@ -201,7 +221,6 @@ bool Uninstaller::uninstallPackage(const QString &pathToManifest, const QString 
         connect ( m_thread, SIGNAL ( warning ( QString ) ), this, SLOT ( setWarning ( QString ) ) );
     }
     if ( m_progress ) {
-        m_progress->setValue ( 0 );
         m_progress->show();
         m_progress->setTitle ( tr ( "Uninstalling %1" ).arg ( pathToManifest ) );
     }
@@ -214,6 +233,7 @@ bool Uninstaller::uninstallPackage(const QString &pathToManifest, const QString 
     if ( m_progress )
         m_progress->hide();
 
+    qDebug() << __FUNCTION__ << "ret: " << m_bRet;
     return m_bRet;
 }
 

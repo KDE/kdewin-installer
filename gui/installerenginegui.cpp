@@ -412,8 +412,8 @@ bool isMarkedForRemoval ( Package *pkg,Package::Type type )
     return result;
 }
 
-InstallerEngineGui::InstallerEngineGui (QWidget *parent, DownloaderProgress *progressBar,InstallerProgress *instProgressBar )
-        : InstallerEngine ( progressBar,instProgressBar, parent ), m_parent(parent)
+InstallerEngineGui::InstallerEngineGui (QWidget *parent)
+        : InstallerEngine ( parent ), m_parent(parent)
 {
     Settings &s = Settings::getInstance();
     m_installMode = s.isDeveloperMode() ? Developer : EndUser;
@@ -734,14 +734,14 @@ bool InstallerEngineGui::downloadPackageItem(Package *pkg, Package::Type type )
         return true;
 
     while (!m_canceled) {
-        if (pkg->downloadItem ( m_downloader, type ))
+        if (pkg->downloadItem ( type ))
             return true;
-        if(m_downloader->result() == Downloader::Aborted)
+        if(Downloader::instance()->result() == Downloader::Aborted)
             return false;
         QMessageBox::StandardButton result = QMessageBox::critical(
             m_parent,
             tr("Download failed"),
-            tr("The download of %1 failed with error %2").arg(pkg->getUrl(type).toString()).arg(m_downloader->resultString()),
+            tr("The download of %1 failed with error %2").arg(pkg->getUrl(type).toString()).arg(Downloader::instance()->resultString()),
             QMessageBox::Cancel | QMessageBox::Ignore | QMessageBox::Retry,
             QMessageBox::Retry
         );

@@ -26,90 +26,101 @@
 #include <QProgressBar>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <time.h>
 
 #include "downloaderprogress.h"
 
 #ifdef USE_GUI
+GenericProgress::GenericProgress(QWidget *parent)
+  : QWidget(parent), m_titleLabel(NULL), m_statusLabel(NULL)
+{}
 
+GenericProgress::~GenericProgress()
+{}
+
+void GenericProgress::setTitle(const QString &title)
+{
+    if(m_titleLabel)
+      m_titleLabel->setText(title);
+}
+
+void GenericProgress::setStatus(const QString &status)
+{
+  if(m_statusLabel)
+      m_statusLabel->setText(status);
+}
+
+void GenericProgress::show()
+{
+  QWidget::show();
+}
+
+void GenericProgress::hide()
+{
+  QWidget::hide();
+}
+
+/*
+  DownloaderProgress
+*/
 DownloaderProgress::DownloaderProgress(QWidget *parent)
+  : GenericProgress(parent), m_lastValue(0)
 {    
-    mainLayout = new QVBoxLayout;
+    QVBoxLayout *mainLayout = new QVBoxLayout;
 
     QHBoxLayout *statusLayout = new QHBoxLayout;
     mainLayout->addLayout(statusLayout);
 
-    statusLabel = new QLabel;
-    statusLayout->addWidget(statusLabel);
+    m_statusLabel = new QLabel;
+    statusLayout->addWidget(m_statusLabel);
 
-    progress = new QProgressBar(parent);
-    statusLayout->addWidget(progress);
+    m_progress = new QProgressBar(parent);
+    statusLayout->addWidget(m_progress);
 
-    titleLabel = new QLabel;
-    mainLayout->addWidget(titleLabel);
+    m_titleLabel = new QLabel;
+    mainLayout->addWidget(m_titleLabel);
 
-    speedLabel = new QLabel;
-    mainLayout->addWidget(speedLabel);
+    m_speedLabel = new QLabel;
+    mainLayout->addWidget(m_speedLabel);
 
     setLayout(mainLayout);
     hide();
 }
 
 DownloaderProgress::~DownloaderProgress()
-{
-    delete mainLayout;
-    mainLayout = 0;
-}
-
-void DownloaderProgress::hide()
-{
-    titleLabel->hide();
-    statusLabel->hide();
-    progress->hide();
-}
-
-void DownloaderProgress::setTitle(const QString &label)
-{
-    titleLabel->setText(label);
-}
-
-void DownloaderProgress::setStatus(const QString &label)
-{
-    statusLabel->setText(label);
-}
+{}
 
 void DownloaderProgress::show()
 {
-    titleLabel->show();
-    statusLabel->show();
-    progress->show();
-    initTime = QDateTime::currentDateTime();
+    m_initTime = time(NULL);
+    GenericProgress::show();
 }
 
 void DownloaderProgress::setMaximum(int value)
 {
-    if (progress->maximum() == value)
+    if (m_progress->maximum() == value)
         return;
-    progress->setMaximum(value);
-    titleLabel->setText(titleLabel->text() + tr(" (%1 KBytes)").arg(value/1024));
+    m_progress->setMaximum(value);
+    m_titleLabel->setText(m_titleLabel->text() + tr(" (%1 KBytes)").arg(value/1024));
 }
 
 void DownloaderProgress::setValue(int value)
 {
-    progress->setValue(value);
-    int range = progress->maximum() - progress->minimum();
+    m_progress->setValue(value);
+    int range = m_progress->maximum() - m_progress->minimum();
     if (value == 0 || range == 0)
         return;
     // only update rate when difference >= 1% 
-    int diff = (value - lastValue) * 100 / range; 
+    int diff = (value - m_lastValue) * 100 / range; 
     if (diff == 0)
         return; 
-    QDateTime now = QDateTime::currentDateTime();
-    int seconds = now.toTime_t() - initTime.toTime_t();
+    time_t now = time(NULL);
+    time_t seconds = now - m_initTime;
     if (seconds == 0)
         return;
     int speed = value/seconds;
-    speedLabel->setText(tr("Download rate: %1 KBytes/s").arg(speed/1024));
-    lastValue = value;
+    m_speedLabel->setText(tr("Download rate: %1 KBytes/s").arg(speed/1024));
+    m_lastValue = value;
 }
 
 #else // console implementation
@@ -154,9 +165,3 @@ void DownloaderProgress::show()
 }
 
 #endif
-
-DownloaderProgress &DownloaderProgress::getInstance()
-{
-    static DownloaderProgress instance;
-    return instance;
-}

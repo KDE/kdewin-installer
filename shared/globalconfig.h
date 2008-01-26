@@ -39,7 +39,7 @@ class GlobalConfig {
                 friend QDebug &operator <<(QDebug &,const GlobalConfig::Mirror &);
         };
 
-        GlobalConfig(Downloader *downloader);
+        GlobalConfig();
         ~GlobalConfig();
         /// fetch local or remote config files 
         QStringList fetch(const QString &baseURL);
@@ -84,7 +84,6 @@ class GlobalConfig {
         QHash <QString,QStringList> m_categoryPackages;
         QList <Mirror*> m_mirrors;
         QString m_baseURL;
-        Downloader *m_downloader;
         QDateTime m_timestamp;
         QString m_minimalInstallerVersion;
 

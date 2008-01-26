@@ -51,8 +51,6 @@ class InstallPage;
 class UninstallPage;
 class DownloadPage;
 class FinishPage;
-class InstallerProgress;
-class DownloaderProgress;
 
 extern QListWidget *g_dependenciesList;
 
@@ -217,7 +215,7 @@ class DownloadPage : public InstallWizardPage
     Q_OBJECT
 
 public:
-    DownloadPage(DownloaderProgress *progress);
+    DownloadPage();
 
     void cancel();
     void initializePage();
@@ -231,7 +229,7 @@ class UninstallPage : public InstallWizardPage
     Q_OBJECT
 
 public:
-    UninstallPage(InstallerProgress *progress);
+    UninstallPage();
 
     void cancel();
     void initializePage();
@@ -245,7 +243,7 @@ class InstallPage : public InstallWizardPage
     Q_OBJECT
 
 public:
-    InstallPage(InstallerProgress *progress);
+    InstallPage();
 
     void cancel();
     void initializePage();

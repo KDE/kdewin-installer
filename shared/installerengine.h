@@ -47,8 +47,8 @@ class InstallerEngine : public QObject
 {
     Q_OBJECT
 public:
-    InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar, QObject *parent);
-    ~InstallerEngine();
+    InstallerEngine(QObject *parent);
+    virtual ~InstallerEngine();
 
     // read in global config 
     void initGlobalConfig();
@@ -81,10 +81,7 @@ protected slots:
 protected:
     PackageList*         m_packageResources;
     Installer           *m_installer;    // currently used installer
-    Downloader          *m_downloader;
-    InstallerProgress   *m_instProgress;
     GlobalConfig        *m_globalConfig;
-    InstallerProgress   *m_instProgressBar;
     Database            *m_database;
     bool                m_initFinished;
     bool                m_globalConfigReaded;

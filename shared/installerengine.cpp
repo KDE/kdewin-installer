@@ -38,21 +38,19 @@
 QString InstallerEngine::defaultConfigURL;
 QString InstallerEngine::fallBackURL = "http://82.149.170.66/kde-windows";
 
-InstallerEngine::InstallerEngine(DownloaderProgress *progressBar,InstallerProgress *instProgressBar, QObject *parent)
+InstallerEngine::InstallerEngine(QObject *parent)
     : QObject(parent),
-      m_instProgressBar(instProgressBar),
       m_globalConfigReaded(false),
       m_initFinished(false),
       m_addedPackages(false),
       m_canceled(false)
 {
     m_database = new Database();
-    m_downloader = new Downloader(progressBar);
     m_database->setRoot(Settings::getInstance().installDir());
-    m_installer = new Installer(m_instProgressBar );
+    m_installer = new Installer( );
     m_installer->setRoot(Settings::getInstance().installDir());
     m_installer->setDatabase(m_database);
-    m_globalConfig = new GlobalConfig(m_downloader);
+    m_globalConfig = new GlobalConfig();
     m_packageResources = new PackageList();
 
     connect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString&)),this,SLOT(installDirChanged(const QString&)));
@@ -63,7 +61,6 @@ InstallerEngine::~InstallerEngine()
 {
     delete m_database;
     delete m_installer;
-    delete m_downloader;
     delete m_globalConfig;
     delete m_packageResources;
 }
@@ -201,7 +198,7 @@ bool InstallerEngine::addPackagesFromSites()
 
         QByteArray ba;
         qDebug() << listURL;
-        if (!m_downloader->start(listURL, ba))
+        if (!Downloader::instance()->start(listURL, ba))
         {
             emit error(tr("failed to download site list page from %1").arg(listURL.toString()));
             return false;
@@ -254,7 +251,7 @@ Package *InstallerEngine::getPackageByName(const QString &name,const QString &ve
 
 void InstallerEngine::stop()
 {
-    m_downloader->cancel();
+    Downloader::instance()->cancel();
     m_canceled = true;
 }
 
@@ -277,7 +274,7 @@ QDebug &operator<<(QDebug &out, const InstallerEngine &c)
     out << "InstallerEngine ("
         << "m_packageResources:" << *c.m_packageResources
 //        << "m_installer:" << *(c.m_installer)
-       << "m_downloader:" << *(c.m_downloader)
+        << "m_downloader:" << *(Downloader::instance())
 //        << "m_instProgress:" << *c.m_instProgress
         << "m_globalConfig:" << *(c.m_globalConfig)
 //        << "m_instProgressBar:" << *c.m_instProgressBar

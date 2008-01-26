@@ -34,9 +34,12 @@ class Unpacker : public QObject
 {
     Q_OBJECT
 public:
-    Unpacker ( InstallerProgress *progress = 0, QObject *parent = 0 );
+    // dtor
     virtual ~Unpacker();
-
+    // singleton
+    static Unpacker *instance();
+    // for user interaction
+    void setProgress(InstallerProgress *progress);
     // unpack file
     bool unpackFile ( const QString &fn, const QString &destpath, const StringHash &pathRelocations );
     /// cancel file unpack
@@ -55,6 +58,10 @@ protected:
     UPThread *m_thread;
     bool m_bFinished;
     bool m_bRet;
+private:
+    Unpacker ();
+
+    friend class UnpackerSingleton;
 };
 
 #endif  // UNPACKER_H

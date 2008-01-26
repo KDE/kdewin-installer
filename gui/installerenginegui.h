@@ -24,7 +24,6 @@
 #define INSTALLERENGINEGUI_H
 
 #include "installerengine.h"
-#include "downloaderprogress.h"
 #include "package.h"
 
 class QTabWidget;
@@ -35,7 +34,7 @@ class InstallerEngineGui : public InstallerEngine
 public:
     enum Type { EndUser, Developer, Single };
 
-    InstallerEngineGui(QWidget *parent, DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
+    InstallerEngineGui(QWidget *parent);
     /// init all package definitions 
     virtual bool init();
     /// reload all package definitions
@@ -63,9 +62,6 @@ private:
     QWidget *m_parent;
     bool downloadPackageItem(Package *pkg, Package::Type type );
     void updatePackageInfo(QTabWidget *packageInfo, const Package *availablePackage, const Package *installedPackage);
-
-
-
 };
 
 #endif

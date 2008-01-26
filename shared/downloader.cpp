@@ -78,14 +78,23 @@ int MyThread::curlProgressCallback ( void *clientp, double dltotal, double dlnow
   return that->progressCallback ( dltotal, dlnow );
 }
 
+class DownloaderSingleton
+{
+public:
+  DownloaderSingleton() {};
+
+  Downloader downloader;
+};
+Q_GLOBAL_STATIC(DownloaderSingleton, sDownloader);
+
 // needed to hide curl handle from the rest - including curl/curl.h isn't very
 // optimal
 class Downloader::Private
 {
 public:
-  Private ( DownloaderProgress *_progress )
+  Private ()
       : curlHandle ( 0 ), thread ( NULL ), cancel ( false ), finished ( false ), ret ( CURLE_OK ),
-      progress ( _progress ), ioDevice ( NULL ) {}
+      progress ( 0 ), ioDevice ( NULL ) {}
   ~Private() {
     if ( thread )
       thread->terminate();
@@ -102,8 +111,8 @@ public:
   QString     fileName;         /// holds filename in case target is a file
 };
 
-Downloader::Downloader ( DownloaderProgress *progress, QObject *parent )
-    : QObject( parent), m_result ( Undefined ), d ( new Private ( progress ) )
+Downloader::Downloader ()
+    : m_result ( Undefined ), d ( new Private () )
 {
   curl_global_init ( CURL_GLOBAL_ALL );
 }
@@ -112,6 +121,16 @@ Downloader::~Downloader()
 {
   delete d;
   curl_global_cleanup();
+}
+
+Downloader *Downloader::instance()
+{
+  return &sDownloader()->downloader;
+}
+
+void Downloader::setProgress(DownloaderProgress *progress)
+{
+  d->progress = progress;
 }
 
 bool Downloader::start ( const QUrl &url, const QString &fileName )
@@ -158,6 +177,8 @@ bool Downloader::start ( const QUrl &url, QByteArray &ba )
 
 bool Downloader::startInternal ( const QUrl &url )
 {
+  qDebug() << __FUNCTION__ << "url: " << url.toString();
+
   m_usedURL = url;
   m_result = Undefined;
   d->cancel = false;
@@ -206,6 +227,7 @@ bool Downloader::startInternal ( const QUrl &url )
   if ( d->progress )
     d->progress->hide();
   delete loop;
+  qDebug() << __FUNCTION__ << "ret: " << (d->ret == 0);
   return ( d->ret == 0 );
 }
 

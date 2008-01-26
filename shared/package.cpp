@@ -404,7 +404,7 @@ QString Package::makeFileName(Package::Type type, bool bCreateDir)
     return d.absoluteFilePath(getFileName(type));
 }
 
-bool Package::downloadItem(Downloader *downloader, Package::Type type)
+bool Package::downloadItem(Package::Type type)
 {
     QUrl url = getUrl(type);
     if (url.isEmpty()) {
@@ -417,7 +417,7 @@ bool Package::downloadItem(Downloader *downloader, Package::Type type)
         return true;
     }
     qDebug() << __FUNCTION__ << " downloading URL " << url.toString() << " for type " << type;
-    return downloader->start(url, fn);
+    return Downloader::instance()->start(url, fn);
 }
 
 bool Package::installItem(Installer *installer, Package::Type type)

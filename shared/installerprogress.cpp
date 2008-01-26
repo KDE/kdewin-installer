@@ -32,19 +32,21 @@
 
 #ifdef USE_GUI
 InstallerProgress::InstallerProgress(QWidget *parent)
+: GenericProgress(parent)
 {
     QVBoxLayout *mainLayout = new QVBoxLayout;
 
-    titleLabel = new QLabel;
-    mainLayout->addWidget(titleLabel);
+    m_titleLabel = new QLabel;
+    mainLayout->addWidget(m_titleLabel);
 
     QHBoxLayout *statusLayout = new QHBoxLayout;
     mainLayout->addLayout(statusLayout);
 
-    statusLabel = new QLabel;
-    statusLayout->addWidget(statusLabel);
-    progress = new QListWidget;
-    statusLayout->addWidget(progress);
+    m_statusLabel = new QLabel;
+    statusLayout->addWidget(m_statusLabel);
+
+    m_progress = new QListWidget;
+    statusLayout->addWidget(m_progress);
 
     setLayout(mainLayout);
     hide();
@@ -53,56 +55,35 @@ InstallerProgress::InstallerProgress(QWidget *parent)
 InstallerProgress::~InstallerProgress()
 {}
 
-void InstallerProgress::hide()
-{
-    titleLabel->hide();
-    statusLabel->hide();
-    progress->hide();
-    QWidget::hide();
-}
-
 void InstallerProgress::setTitle(const QString &label)
 {
     if (!Settings::getInstance().installDetails())
     {
-        titleLabel->setText(label);
+        m_titleLabel->setText(label);
     }
     else 
     {
         static int i = 0;
-        progress->addItem(label);
+        m_progress->addItem(label);
         if (i++ % 10 == 0) {
-            progress->scrollToBottom();
+            m_progress->scrollToBottom();
         }
     }
 }
 
-void InstallerProgress::setStatus(const QString &label)
-{
-    if (statusLabel)
-        statusLabel->setText(label);
-}
-
 void InstallerProgress::show()
 {
-    titleLabel->show();
     if (Settings::getInstance().installDetails())
     {
-        statusLabel->show();
-        progress->show();
+        m_statusLabel->show();
+        m_progress->show();
+    } else {
+        m_statusLabel->hide();
+        m_progress->hide();
     }
-    QWidget::show();
+    GenericProgress::show();
 }
 
-void InstallerProgress::setMaximum(int value)
-{
-    //progress->setMaximum(value);
-}
-
-void InstallerProgress::setValue(int value)
-{
-    //progress->setValue(value);
-}
 
 #else // console implementation
 

@@ -27,7 +27,6 @@
 #include "package.h"
 
 class Database;
-class InstallerProgress;
 class PackageList;
 class Uninstaller;
 class Unpacker;
@@ -38,7 +37,7 @@ class Installer : public QObject
 
 public:
     enum InstallerType { Standard, GNUWIN32 };
-    Installer(InstallerProgress *progress=0);
+    Installer();
     ~Installer();
     InstallerType Type() const
     {
@@ -74,12 +73,9 @@ protected:
 
     QString m_root;
     QString configFile;
-    InstallerProgress *m_progress;
     InstallerType m_type;
     QStringList m_files;
     Database *m_database;
-    Unpacker *m_unpacker;
-    Uninstaller *m_uninstaller;
 
     Package* m_packageToInstall;
     Package::Type m_installType;

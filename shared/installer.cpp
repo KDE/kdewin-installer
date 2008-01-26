@@ -43,9 +43,8 @@
 # define __PRETTY_FUNCTION__ __FUNCTION__
 #endif
 
-Installer::Installer(InstallerProgress *_progress)
-        : m_progress(_progress), m_type(Installer::Standard),
-          m_unpacker(0),  m_uninstaller(0)
+Installer::Installer()
+        : m_type(Installer::Standard)
 {
     m_root = ".";
 }
@@ -177,41 +176,29 @@ bool Installer::install(Package *pkg, const Package::Type type, const QString &f
     m_packageToInstall = pkg;
     m_installType = type;
 
-    m_unpacker = new Unpacker(m_progress, this);
-
-    if(!m_unpacker->unpackFile(fileName, m_root, pkg->pathRelocations())) {
-        m_unpacker->deleteLater();
-        m_unpacker = 0;
+    if(!Unpacker::instance()->unpackFile(fileName, m_root, pkg->pathRelocations())) {
         return false;
     }
     
-    m_files = m_unpacker->getUnpackedFiles();
+    m_files = Unpacker::instance()->getUnpackedFiles();
     createManifestFile();
 
     QFileInfo fi(fileName);
     if(fi.fileName().startsWith("qt"))
         createQtConfigFile();
 
-    m_unpacker->deleteLater();
-    m_unpacker = 0;
     return true;
 }
 
 bool Installer::uninstall(const QString &pathToManifest)
 {
-    m_uninstaller = new Uninstaller(m_progress, this);
-    bool bRet = m_uninstaller->uninstallPackage(pathToManifest, m_root);
-    m_uninstaller->deleteLater();
-    m_uninstaller = 0;
-    return bRet;
+    return Uninstaller::instance()->uninstallPackage(pathToManifest, m_root);
 }
 
 void Installer::cancel()
 {
-    if (m_unpacker)
-        m_unpacker->cancel();
-    if (m_uninstaller)
-        m_uninstaller->cancel();
+    Unpacker::instance()->cancel();
+    Uninstaller::instance()->cancel();
 }
 
 #include "installer.moc"

@@ -418,8 +418,6 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
 
 bool PackageList::addPackageFromHintFile(const QString &fileName)
 {
-    Downloader d; // for notes
-
     // if a config file is present, don't scan hint files, we assume that they
     // are merged into the config file
     if (m_parserConfigFileFound)
@@ -429,7 +427,7 @@ bool PackageList::addPackageFromHintFile(const QString &fileName)
     QString pkgName = hintFile[0];
     // download hint file
     QByteArray ba;
-    if (!d.start(m_baseURL.toString() + '/' + fileName, ba))
+    if (!Downloader::instance()->start(m_baseURL.toString() + '/' + fileName, ba))
     {
         qCritical() << "could not download" << m_baseURL.toString() + '/' + fileName;
         return false;
@@ -459,13 +457,12 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
 {
     if (!ignoreConfigTxt && files.contains("config.txt"))
     {
-        Downloader d(0);
         // fetch config file
         QFileInfo cfi(Settings::getInstance().downloadDir()+"/config-temp.txt");
-        bool ret = d.start(m_baseURL.toString() + "/config.txt",cfi.absoluteFilePath());
+        bool ret = Downloader::instance()->start(m_baseURL.toString() + "/config.txt",cfi.absoluteFilePath());
         if (ret)
         {
-            GlobalConfig g(0);
+            GlobalConfig g;
             g.setBaseURL(m_baseURL);
             QStringList configFile = QStringList() << cfi.absoluteFilePath();
             if (!g.parse(configFile))
