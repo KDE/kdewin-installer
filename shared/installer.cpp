@@ -193,6 +193,8 @@ bool Installer::install(Package *pkg, const Package::Type type, const QString &f
     if(fi.fileName().startsWith("qt"))
         createQtConfigFile();
 
+    /// @TODO create start menu entries
+    // createStartMenuEntries(m_files, m_root);
     return true;
 }
 
@@ -215,6 +217,8 @@ bool Installer::handlePostInstall(const QString &postInstall)
 
 bool Installer::uninstall(const QString &pathToManifest)
 {
+    /// @TODO remove start menu entries
+    // removeStartMenuEntries(m_files, m_root);
     qDebug() << __FUNCTION__ << "pathToManifest: " << pathToManifest;
     return Uninstaller::instance()->uninstallPackage(pathToManifest, m_root);
 }
