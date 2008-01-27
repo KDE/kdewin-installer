@@ -46,6 +46,7 @@
 #ifndef QUNZIP_BUFFER
 # define QUNZIP_BUFFER (256 * 1024)
 #endif
+#include "misc.h"
 
 UPThread::UPThread ( QObject *parent )
         : QThread ( parent ), m_bCancel( false )
@@ -102,6 +103,22 @@ void UPThread::start ( Priority priority )
     QThread::start ( priority );
 }
 
+bool UPThread::openNewFile( QFile &file, const QString &fileName )
+{
+    if( !deleteFile( m_destdir.path(), fileName ) ) {
+        emit error( QString( "Can't remove %1" ).arg( fileName ) );
+        return false;
+    }
+    file.setFileName ( fileName );
+    if ( !file.open ( QIODevice::WriteOnly ) ) {
+        emit error ( tr ( "Can not creating file %1" ).arg ( fileName ) );
+        return false;
+    }
+
+    emit progress ( fileName );
+    return true;
+}
+
 bool UPThread::unzipFile()
 {
     QuaZip z ( m_filename );
@@ -151,13 +168,8 @@ bool UPThread::unzipFile()
         }
 
         // create new file
-        newFile.setFileName ( fi.absoluteFilePath() );
-        if ( !newFile.open ( QIODevice::WriteOnly ) ) {
-            emit error ( tr ( "Can not creating file %1" ).arg ( fi.absoluteFilePath() ) );
+        if ( !openNewFile ( newFile, fi.absoluteFilePath() ) )
             return false;
-        }
-
-        emit progress ( tr ( "Installing %1" ).arg ( newFile.fileName() ) );
 
         // copy data
         // FIXME: check for not that huge filesize ?
@@ -222,13 +234,8 @@ bool UPThread::unbz2File()
         }
 
         // create new file
-        newFile.setFileName ( fi.absoluteFilePath() );
-        if ( !newFile.open ( QIODevice::WriteOnly ) ) {
-            emit error ( tr ( "Can not creating file %1" ).arg ( fi.absoluteFilePath() ) );
+        if ( !openNewFile ( newFile, fi.absoluteFilePath() ) )
             return false;
-        }
-
-        emit progress ( newFile.fileName() );
 
         if ( !tf.getData ( &newFile ) ) {
             emit error ( tr ( "Can't write to file %1 (%2)" ).arg ( fi.absoluteFilePath() ).arg ( newFile.errorString() ) );
@@ -269,6 +276,7 @@ bool UPThread::un7zipFile()
     Qua7zipFile file ( &z );
     Qua7zipFileInfo info;
     QFileInfo fi;
+    QFile newFile;
     QString name;
     QByteArray ba;
     ba.resize ( QUNZIP_BUFFER );
@@ -304,13 +312,8 @@ bool UPThread::un7zipFile()
         }
 
         // create new file
-        QFile newFile ( fi.absoluteFilePath() );
-        if ( !newFile.open ( QIODevice::WriteOnly ) ) {
-            emit error ( tr ( "Can not creating file %1" ).arg ( fi.absoluteFilePath() ) );
+        if ( !openNewFile ( newFile, fi.absoluteFilePath() ) )
             return false;
-        }
-
-        emit progress ( tr ( "Installing %1" ).arg ( newFile.fileName() ) );
 
         // copy data
         // FIXME: check for not that huge filesize ?

@@ -39,6 +39,7 @@
 #include <QFile>
 #include <QDateTime>
 #include <QBuffer>
+#include <qplatformdefs.h>
 
 #include "misc.h"
 #include "settings.h"
@@ -778,6 +779,28 @@ void myMessageOutput(QtMsgType type, const char *msg)
     log->close();
 }
 
+/*
+  tries to delete a file named filename
+  if it's not possible, move them to root/tmp/removeme
+*/
+bool deleteFile( const QString &root, const QString &filename )
+{
+    QT_STATBUF statBuf;
+    if (QT_STAT( filename.toLocal8Bit(), &statBuf ) != -1) {
+        if( QFile::remove( filename ) )
+            return true;
+        // file already exists - rename old one
+        if( !QDir().mkpath( root + QLatin1String ( "/tmp/removeme" ) ) )
+            return false;
+        QString fn = filename;
+        fn = fn.replace( '\\', '/' ); 
+        fn = fn.mid( fn.lastIndexOf( '/' ) );
+        fn = root + QLatin1String ( "/tmp/removeme" ) + fn;
+        if( !QFile::rename( filename, fn ) )
+            return false;
+    }
+    return true;
+}
 
 /**
  redirect all Qt debug, warning and error messages to a file

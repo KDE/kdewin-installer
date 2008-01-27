@@ -81,6 +81,8 @@ typedef enum RegType { qt_unknown = -1, qt_String, qt_ExpandedString, qt_DWORD, 
 QVariant getWin32RegistryValue(RegKey akey, const QString& subKey, const QString& item, bool *ok = false);
 bool setWin32RegistryValue(const RegKey& akey, const QString& subKey, const QString& item, const QVariant& value, RegType pqvType = qt_unknown);
 bool delWin32RegistryValue(const RegKey& akey, const QString& subKey);
+// try to delete a file, if not possible, move to root/tmp/deleteme
+bool deleteFile(const QString &root, const QString &fn);
 
 void setMessageHandler();
 

@@ -31,6 +31,7 @@
 
 #include "uninstaller.h"
 #include "uninstaller_p.h"
+#include "misc.h"
 #include "md5.h"
 
 #include "installerprogress.h"
@@ -95,7 +96,7 @@ void UIThread::run()
 
         emit progress(fileItem.fileName);
 
-        if(!QFile::remove(fileItem.fileName)) {
+        if ( !deleteFile( m_root, fileItem.fileName ) ) {
             emit warning(QString("Can't remove %1").arg(fileItem.fileName));
             continue;
         }

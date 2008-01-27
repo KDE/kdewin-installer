@@ -55,6 +55,7 @@ protected:
     bool unpackMsi();
     void relocateFileName ( const QString &in, QString &out );
     bool makeSurePathExists ( const QFileInfo &fi, bool bIsDir );
+    bool openNewFile( QFile &fi, const QString &newFileName );
 protected:
     QString m_filename;
     QDir    m_destdir;
