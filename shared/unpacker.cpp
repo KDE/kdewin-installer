@@ -501,7 +501,7 @@ void Unpacker::threadFinished ( bool bOk )
 void Unpacker::progressCallback ( const QString &file )
 {
     if ( m_progress )
-        m_progress->setTitle ( tr ( "Installing %1" ).arg ( file ) );
+        m_progress->setTitle ( tr ( "Installing %1" ).arg ( QDir::toNativeSeparators ( file ) ) );
 }
 
 void Unpacker::setError ( const QString &errStr )

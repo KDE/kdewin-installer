@@ -253,7 +253,7 @@ void Uninstaller::threadFinished ( bool bOk )
 void Uninstaller::progressCallback ( const QString &file )
 {
     if ( m_progress )
-        m_progress->setTitle ( tr ( "Removing %1" ).arg ( file ) );
+        m_progress->setTitle ( tr ( "Removing %1" ).arg ( QDir::toNativeSeparators ( file ) ) );
 }
 
 void Uninstaller::setError ( const QString &errStr )

@@ -32,9 +32,7 @@
 
 class PackageList;
 class Downloader;
-class DownloaderProgress;
 class Installer;
-class InstallerProgress;
 class GlobalConfig;
 class Settings;
 class Package;
