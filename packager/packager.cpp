@@ -189,6 +189,7 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 generateFileList(fileList, dir, "bin", "*.dll assistant.exe qdbus.exe qdbusviewer.exe", "*d.dll *d4.dll");
                 generateFileList(fileList, dir, "plugins", "*.dll","*d.dll *d4.dll *d1.dll");
                 generateFileList(fileList, dir, "translations", "*.qm");
+                generateFileList(fileList, dir, "manifest", "*-bin.cmd" );
                 return true;
             case LIB:
                 if (m_debugLibs)
@@ -200,6 +201,7 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 generateFileList(fileList, dir, "", ".qmake.cache");
                 // trolltech installs whole mkspecs folder too
                 generateFileList(fileList, dir, "mkspecs", "*.*", ".svn CVS");
+                generateFileList(fileList, dir, "manifest", "*-lib.cmd" );
                 // add phrase books
                 generateFileList(fileList, dir, "tools/linguist/phrasebooks", "*.qph");
                 generateFileList(fileList, dir, "phrasebooks", "*.qph");
@@ -221,10 +223,12 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
             case DOC:
                 generateFileList(fileList, dir, "bin", "qtdemo.exe");
                 generateFileList(fileList, dir, "doc", "*.*", ".svn CVS");
+                generateFileList(fileList, dir, "manifest", "*-doc.cmd" );               
                 return true;
             case SRC:
                 // TODO: not implemented, exclude temporay files and svn/cvs dirs
                 //generateFileList(fileList, dir, "src", "*.*");
+                generateFileList(fileList, dir, "manifest", "*-src.cmd" );               
                 return true;
             case NONE:
                 generateFileList(fileList, dir, ".", "*.*", "manifest .svn CVS");
@@ -249,6 +253,7 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 generateFileList(fileList, dir, "lib",  "*.dll");
                 generateFileList(fileList, dir, "lib",  "*.exe *.bat");
 #endif
+                generateFileList(fileList, dir, "manifest", "*-bin.cmd" );
                 generateFileList(fileList, dir, "share", "*.*");
                 generateFileList(fileList, dir, "data", "*.*");
                 generateFileList(fileList, dir, "etc",  "*.*");
@@ -259,11 +264,13 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 generateFileList(fileList, dir, "lib",      "*d.dll");
 #else
 #endif
+                generateFileList(fileList, dir, "manifest", "*-lib.cmd" );
                 generateFileList(fileList, dir, "lib",      "*.lib");   // msvc libs (static & import libs)
                 generateFileList(fileList, dir, "lib",      "*.a");          // gcc (static) libs
                 generateFileList(fileList, dir, "include", "*.*");
                 return true;
             case DOC:
+                generateFileList(fileList, dir, "manifest", "*-doc.cmd" );
                 generateFileList(fileList, dir, "doc", "*.*");
                 generateFileList(fileList, dir, "man", "*.*");
                 return true;
@@ -274,6 +281,7 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                     generateFileList(fileList, dir, "src", "*",exclude);
                 else
                     generateFileList(fileList, m_srcRoot, ".", "*",exclude);
+                generateFileList(fileList, dir, "manifest", "*-src.cmd" );                   
                 return true;
             case NONE:
                 generateFileList(fileList, dir, ".", "*.*", "manifest");
