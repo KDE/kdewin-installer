@@ -20,6 +20,7 @@
 **
 ****************************************************************************/
 
+#include <QtCore/QBuffer>
 #include <QtCore/QDebug>
 #include <QtCore/QDir>
 #include <QtCore/QFileInfo>
@@ -175,13 +176,18 @@ bool Installer::install(Package *pkg, const Package::Type type, const QString &f
 {
     m_packageToInstall = pkg;
     m_installType = type;
+    qDebug() << __FUNCTION__ << "filename: " << fileName << "type: " << type;
 
     if(!Unpacker::instance()->unpackFile(fileName, m_root, pkg->pathRelocations())) {
         return false;
     }
     
     m_files = Unpacker::instance()->getUnpackedFiles();
+    qSort(m_files);
     createManifestFile();
+    QString postInstall = QString("manifest/post-install-%1.cmd").arg(pkg->getFileName(type));
+    if(m_files.contains(postInstall))
+      handlePostInstall(root() + '/' + postInstall);
 
     QFileInfo fi(fileName);
     if(fi.fileName().startsWith("qt"))
@@ -190,8 +196,26 @@ bool Installer::install(Package *pkg, const Package::Type type, const QString &f
     return true;
 }
 
+bool Installer::handlePostInstall(const QString &postInstall)
+{
+    qDebug() << __FUNCTION__ << "postInstall: " << postInstall;
+
+    QStringList args;
+    args << "/C" << postInstall;
+    QProcess p(this);
+    p.setWorkingDirectory(m_root);
+    p.start("cmd.exe", args);
+    if(!p.waitForStarted())
+        return false;
+    do {
+        qApp->processEvents();
+    } while(!p.waitForFinished(100));
+    return true;
+}
+
 bool Installer::uninstall(const QString &pathToManifest)
 {
+    qDebug() << __FUNCTION__ << "pathToManifest: " << pathToManifest;
     return Uninstaller::instance()->uninstallPackage(pathToManifest, m_root);
 }
 

@@ -64,6 +64,7 @@ public:
     const QString root() const { return m_root; }
     void cancel();
 
+    bool handlePostInstall(const QString &postInstallFile);
 public Q_SLOTS:
     void updatePackageList();
 protected:
