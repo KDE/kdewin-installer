@@ -5,6 +5,7 @@ ChangeLog
 - common:         - added ftp downloading support by using the curl library 
                   - added support for using sourceforge mirrors as download source 
                      (use http://xxxx.dl.sourceforge.net/sourceforge/kde-windows as mirror url) 
+                  - added support for post-install scripts
 - installer-gui:  - used QWizard for the gui 
  
 0.8.5

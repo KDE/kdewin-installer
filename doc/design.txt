@@ -49,12 +49,13 @@ detailed operation mode
  
 7. download selected packages  -> InstallerEngine::downloadPackages()
     1. for all selected packages 
-        check if already downloaded and perform the download if not so  -> check for broken downloads 
-         
+        check if already downloaded and perform the download if not so  -> check for broken downloads
+
 8. install/remove selected packages  -> InstallerEngine::installPackages()
     1. for all selected packages 
         1. check if already downloaded and install package
-        2. mark installed state 
-    2. update local package file list 
+        2. mark installed state
+    2. execute post-install script -> manifest/post-install-<pkg-name>.cmd
+    3. update local package file list
     TODO: version update handling        
    
