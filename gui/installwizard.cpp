@@ -163,7 +163,6 @@ void InstallWizard::aboutButtonClicked()
 
 void InstallWizard::settingsButtonClicked()
 {
-    _settingsPage->setGlobalConfig(engine->globalConfig());
     _settingsPage->init();
     _settingsPage->exec();
 }
