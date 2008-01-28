@@ -185,7 +185,7 @@ Settings &Settings::getInstance()
 #ifdef Q_OS_WIN
 bool Settings::getIEProxySettings(const QString &url, proxySettings &proxy)
 {
-    // @TODO how to retrieve user and passwort 
+    // @TODO how to retrieve user and passwort
     bool ok;
     quint32 enable = getWin32RegistryValue(hKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings","ProxyEnable",&ok).toUInt();
     if (!ok)
@@ -212,9 +212,9 @@ bool Settings::getIEProxySettings(const QString &url, proxySettings &proxy)
 
 bool Settings::getEnvironmentProxySettings(const QString &_url, proxySettings &proxy)
 {
-    QUrl url(qgetenv("http_proxy"));   
+    QUrl url(qgetenv("http_proxy"));
 
-    if(url.isValid()) 
+    if(url.isValid())
     {
         proxy.hostname = url.host();
         proxy.port = url.port(8080);
@@ -279,7 +279,7 @@ bool Settings::getFireFoxProxySettings(const QString &url, proxySettings &proxy)
                 proxy.user = proxyUser();
                 proxy.password = proxyPassword();
             }
-            else 
+            else
             {
                 proxy.hostname = prefs["network.proxy.ftp"];
                 proxy.port = prefs["network.proxy.ftp_port"].toInt();
@@ -311,10 +311,10 @@ bool Settings::proxy(const QString &url, proxySettings &proxy)
             proxy.user = proxyUser();
             proxy.password = proxyPassword();
             return true;
-
+#ifndef Q_WS_WIN
         case Environment:
             return getEnvironmentProxySettings(url, proxy);
-
+#endif
         case None:
         default:
             return false;

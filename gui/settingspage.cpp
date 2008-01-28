@@ -60,7 +60,7 @@ void SettingsMirrorPage::reset()
         qDebug() << m.toString();
         ui.downloadMirror->addItem(m.toString(), m.url);
     }
-    if (!currentMirror.isEmpty()) 
+    if (!currentMirror.isEmpty())
     {
         qDebug() << currentMirror;
         int index = ui.downloadMirror->findData(currentMirror);
@@ -109,10 +109,10 @@ void SettingsMirrorPage::addNewMirrorClicked()
                                          tr("Mirror address:"), QLineEdit::Normal,
                                          QString("http://"), &ok);
     if (ok && !text.isEmpty())
-	{
+    {
         ui.downloadMirror->addItem(text,QUrl(text));
-		ui.downloadMirror->setCurrentIndex(ui.downloadMirror->count()-1);
-	}
+        ui.downloadMirror->setCurrentIndex(ui.downloadMirror->count()-1);
+    }
 }
 
 QWidget *SettingsInstallPage::widget()
@@ -210,10 +210,14 @@ QWidget *SettingsProxyPage::widget()
 
 void SettingsProxyPage::reset()
 {
+#ifndef Q_WS_WIN
+    ui.proxyIE->setText(tr("Environment settings"));
+#endif
     switch (s.proxyMode()) {
         case Settings::InternetExplorer: ui.proxyIE->setChecked(true); break;
         case Settings::Manual: ui.proxyManual->setChecked(true); break;
         case Settings::FireFox: ui.proxyFireFox->setChecked(true); break;
+        case Settings::Environment: ui.proxyIE->setChecked(true); break;
         case Settings::None:
         default: ui.proxyOff->setChecked(true); break;
     }
@@ -236,7 +240,11 @@ void SettingsProxyPage::accept()
 {
     Settings::ProxyMode m = Settings::None;
     if(ui.proxyIE->isChecked())
-        m = Settings::InternetExplorer;
+#ifdef Q_WS_WIN
+      m = Settings::InternetExplorer;
+#else
+      m = Settings::Environment;
+#endif
     if(ui.proxyFireFox->isChecked())
         m = Settings::FireFox;
     if(ui.proxyManual->isChecked())
@@ -263,16 +271,17 @@ bool SettingsProxyPage::isComplete()
 }
 
 SettingsPage::SettingsPage(QWidget *parent)
-: QDialog(parent), s(Settings::getInstance()),
+: QDialog(parent),
   m_downloadPage(ui,parent),
   m_installPage(ui,parent),
   m_proxyPage(ui,parent),
-  m_mirrorPage(ui,parent)
+  m_mirrorPage(ui,parent),
+  s(Settings::getInstance())
 {
     ui.setupUi(this);
     connect( ui.rootPathSelect,SIGNAL(clicked()),this,SLOT(rootPathSelectClicked()) );
-	connect( ui.tempPathSelect,SIGNAL(clicked()),this,SLOT(tempPathSelectClicked()) );
-    
+    connect( ui.tempPathSelect,SIGNAL(clicked()),this,SLOT(tempPathSelectClicked()) );
+
     connect( ui.proxyManual,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
     connect( ui.proxyFireFox,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
     connect( ui.proxyIE,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
@@ -364,14 +373,13 @@ void SettingsPage::switchProxyFields(bool mode)
 #if test
 int main(int argc, char **argv)
 {
-    QApplication app(arc, argv);
+    QApplication app(argc, argv);
 
     SettingsPage settingsPage;
 
     settingsPage.show();
-    app->exec();
+    app.exec();
 }
-
 #endif
 
 #include "settingspage.moc"
