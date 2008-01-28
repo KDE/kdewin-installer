@@ -35,8 +35,8 @@ public:
 
     void uninstallPackage(const QString &manifest, const QString &root);
     void cancel();
+    bool retCode() const;
 Q_SIGNALS:
-    void done ( bool bOk );
     void progress ( const QString &filename );
     void warning ( const QString &warning );
     void error ( const QString &error );
@@ -54,6 +54,7 @@ protected:
     QString m_manifest;
     QString m_root;
     bool m_bCancel;
+    bool m_bRet;
 private:
     void start ( Priority priority = InheritPriority );
 };

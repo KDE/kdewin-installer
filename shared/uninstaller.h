@@ -50,13 +50,13 @@ Q_SIGNALS:
 protected Q_SLOTS:
     void setError ( const QString &error );
     void setWarning ( const QString &warning );
-    void threadFinished ( bool bOk );
+    void threadFinished ();
     void progressCallback ( const QString &s );
 protected:
     InstallerProgress *m_progress;
     UIThread *m_thread;
-    bool m_bFinished;
     bool m_bRet;
+    bool m_bFinished;
 private:
     Uninstaller();
 

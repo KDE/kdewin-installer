@@ -37,7 +37,7 @@
 #include "installerprogress.h"
 
 UIThread::UIThread ( QObject *parent )
-        : QThread ( parent ), m_bCancel( false )
+        : QThread ( parent ), m_bCancel( false ), m_bRet( false )
 {}
 
 UIThread::~UIThread()
@@ -45,6 +45,7 @@ UIThread::~UIThread()
 
 void UIThread::uninstallPackage(const QString &manifest, const QString &root)
 {
+    m_bRet = false;
     m_bCancel = false;
     m_manifest = manifest;
     m_root = root;
@@ -56,6 +57,12 @@ void UIThread::cancel()
     m_bCancel = true;
 }
 
+
+bool UIThread::retCode() const
+{
+  return m_bRet;
+}
+
 void UIThread::run()
 {
     QList<FileItem> files;
@@ -63,13 +70,13 @@ void UIThread::run()
     QFile f;
 
     if(!readManifestFile(files)) {
-        emit done(false);
+        m_bRet = false;
         return;
     }
 
     Q_FOREACH( const FileItem &fileItem, files) {
         if(m_bCancel) {
-            emit done(false);
+            m_bRet = false;
             return;
         }
 
@@ -101,7 +108,7 @@ void UIThread::run()
             continue;
         }
     }
-    emit done(true);
+    m_bRet = true;
 }
 
 bool isHash(const QByteArray &str)
@@ -185,7 +192,7 @@ public:
 Q_GLOBAL_STATIC(UninstallerSingleton, sUninstaller);
 
 Uninstaller::Uninstaller()
-  : m_thread(NULL), m_bFinished(true), m_bRet(false)
+  : m_thread(NULL), m_bRet(false)
 {}
 
 Uninstaller::~Uninstaller()
@@ -205,31 +212,30 @@ void Uninstaller::setProgress(InstallerProgress *progress)
 bool Uninstaller::uninstallPackage(const QString &pathToManifest, const QString &root)
 {
     qDebug() << __FUNCTION__ << "path: " << pathToManifest << "root: " << root;
-    m_bFinished = true;
     m_bRet = false;
+    m_bFinished = false;
 
     if ( !QFile::exists ( pathToManifest ) ) {
         setError ( tr ( "Manifest %1 not found - can't uninstall package!" ).arg ( pathToManifest ) );
         return false;
     }
 
-    m_bFinished = false;
     if ( !m_thread ) {
         m_thread = new UIThread ( this );
-        connect ( m_thread, SIGNAL ( done ( bool ) ), this, SLOT ( threadFinished ( bool ) ) );
+        connect ( m_thread, SIGNAL ( finished () ), this, SLOT ( threadFinished () ) );
         connect ( m_thread, SIGNAL ( progress ( QString ) ), this, SLOT ( progressCallback ( QString ) ) );
         connect ( m_thread, SIGNAL ( error ( QString ) ), this, SLOT ( setError ( QString ) ) );
         connect ( m_thread, SIGNAL ( warning ( QString ) ), this, SLOT ( setWarning ( QString ) ) );
     }
     if ( m_progress ) {
         m_progress->show();
-        m_progress->setTitle ( tr ( "Uninstalling %1" ).arg ( pathToManifest ) );
+        m_progress->setTitle ( tr ( "Uninstalling %1" ).arg ( QDir::toNativeSeparators ( pathToManifest ) ) );
     }
     m_thread->uninstallPackage(pathToManifest, root);
     QEventLoop *loop = new QEventLoop ( this );
     do {
-        loop->processEvents ( QEventLoop::AllEvents, 50 );
-    } while ( !m_bFinished );
+        loop->processEvents ( QEventLoop::WaitForMoreEvents );
+    } while ( !m_thread->isFinished() || !m_bFinished );
     delete loop;
     if ( m_progress )
         m_progress->hide();
@@ -244,11 +250,11 @@ void Uninstaller::cancel()
     m_thread->cancel();
 }
 
-void Uninstaller::threadFinished ( bool bOk )
+void Uninstaller::threadFinished ()
 {
+    m_bRet = m_thread->retCode();
     m_bFinished = true;
-    m_bRet = bOk;
-    emit done ( bOk );
+    emit done ( m_bRet );
 }
 
 void Uninstaller::progressCallback ( const QString &file )

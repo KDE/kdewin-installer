@@ -37,6 +37,7 @@ InstallerProgress::InstallerProgress(QWidget *parent)
     QVBoxLayout *mainLayout = new QVBoxLayout;
 
     m_titleLabel = new QLabel;
+    m_titleLabel->setTextFormat( Qt::PlainText );
     mainLayout->addWidget(m_titleLabel);
 
     QHBoxLayout *statusLayout = new QHBoxLayout;

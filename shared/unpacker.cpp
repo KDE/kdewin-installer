@@ -49,7 +49,7 @@
 #include "misc.h"
 
 UPThread::UPThread ( QObject *parent )
-        : QThread ( parent ), m_bCancel( false )
+        : QThread ( parent ), m_bCancel( false ), m_bRet( false )
 {}
 
 UPThread::~UPThread()
@@ -57,25 +57,25 @@ UPThread::~UPThread()
 
 void UPThread::run()
 {
-    bool bOk = false;
+    m_bRet = false;
+    m_bCancel = false;
     if ( m_filename.endsWith ( ".zip" ) ) {
-        bOk = unzipFile();
+        m_bRet = unzipFile();
     } else
     if ( m_filename.endsWith ( ".tar.bz2" ) || m_filename.endsWith ( ".tbz" ) ) {
-        bOk = unbz2File();
+        m_bRet = unbz2File();
     } else
     if ( m_filename.endsWith ( ".7z" ) ) {
-        bOk = un7zipFile();
+        m_bRet = un7zipFile();
     } else
     if ( m_filename.endsWith ( ".exe" ) ) {
-        bOk = unpackExe();
+        m_bRet = unpackExe();
     } else 
     if ( m_filename.endsWith ( ".msi" ) ) {
-        bOk = unpackMsi();
+        m_bRet = unpackMsi();
     } else {
         emit error ( tr ( "Don't know what to do with %1" ).arg ( m_filename ) );
     }
-    emit done( bOk );
 }
 
 void UPThread::unpackFile ( const QString &fn, const QString &destdir, const StringHash &pathRelocations )
@@ -91,6 +91,11 @@ void UPThread::unpackFile ( const QString &fn, const QString &destdir, const Str
 void UPThread::cancel()
 {
   m_bCancel = true;
+}
+
+bool UPThread::retCode() const
+{
+  return m_bRet;
 }
 
 QStringList UPThread::getUnpackedFiles() const
@@ -427,7 +432,7 @@ public:
 Q_GLOBAL_STATIC(UnpackerSingleton, sUnpacker);
 
 Unpacker::Unpacker ()
-        : m_progress ( NULL ), m_thread ( NULL ), m_bFinished ( true ), m_bRet ( false )
+        : m_progress ( NULL ), m_thread ( NULL ), m_bRet ( false ), m_bFinished ( false )
 {}
 
 Unpacker::~Unpacker()
@@ -446,8 +451,8 @@ void Unpacker::setProgress(InstallerProgress *progress)
 bool Unpacker::unpackFile ( const QString &fn, const QString &destpath, const StringHash &pathRelocations )
 {
     qDebug() << __FUNCTION__ << "filename: " << fn << "root: " << destpath;
-    m_bFinished = true;
     m_bRet = false;
+    m_bFinished = false;
 
     QDir path ( destpath );
     if ( !path.exists() ) {
@@ -459,22 +464,21 @@ bool Unpacker::unpackFile ( const QString &fn, const QString &destpath, const St
         return false;
     }
 
-    m_bFinished = false;
     if ( !m_thread ) {
         m_thread = new UPThread ( this );
-        connect ( m_thread, SIGNAL ( done ( bool ) ), this, SLOT ( threadFinished ( bool ) ) );
+        connect ( m_thread, SIGNAL ( finished () ), this, SLOT ( threadFinished () ) );
         connect ( m_thread, SIGNAL ( progress ( QString ) ), this, SLOT ( progressCallback ( QString ) ) );
         connect ( m_thread, SIGNAL ( error ( QString ) ), this, SLOT ( setError ( QString ) ) );
     }
     if ( m_progress ) {
         m_progress->show();
-        m_progress->setTitle ( tr ( "Unpacking %1" ).arg ( fn ) );
+        m_progress->setTitle ( tr ( "Unpacking %1" ).arg ( QDir::toNativeSeparators ( fn ) ) );
     }
     m_thread->unpackFile ( fn, destpath, pathRelocations );
     QEventLoop *loop = new QEventLoop ( this );
     do {
-        loop->processEvents ( QEventLoop::AllEvents, 50 );
-    } while ( !m_bFinished );
+        loop->processEvents ( QEventLoop::WaitForMoreEvents );
+    } while ( !m_thread->isFinished() || !m_bFinished );
     delete loop;
     if ( m_progress )
         m_progress->hide();
@@ -494,11 +498,11 @@ QStringList Unpacker::getUnpackedFiles() const
   return m_thread ? m_thread->getUnpackedFiles() : QStringList();
 }
 
-void Unpacker::threadFinished ( bool bOk )
+void Unpacker::threadFinished ()
 {
+    m_bRet = m_thread->retCode();
     m_bFinished = true;
-    m_bRet = bOk;
-    emit done ( bOk );
+    emit done ( m_bRet );
 }
 
 void Unpacker::progressCallback ( const QString &file )

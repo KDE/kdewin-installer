@@ -64,7 +64,7 @@ Q_SIGNALS:
   void done ( bool error );
   void error ( const QString &error );
 protected Q_SLOTS:
-  void threadFinished ( int ret ); // ret == CURLcode (enum)
+  void threadFinished ();
   int progressCallback ( double ultotal, double ulnow );
 protected:
   void setError ( const QString &errStr );

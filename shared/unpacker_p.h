@@ -41,9 +41,9 @@ public:
 
     void unpackFile ( const QString &fn, const QString &destdir, const StringHash &pathRelocations );
     void cancel();
+    bool retCode() const;
     QStringList getUnpackedFiles() const;
 Q_SIGNALS:
-    void done ( bool bOk );
     void progress ( const QString &filename );
     void error ( const QString &error );
 protected:
@@ -62,6 +62,7 @@ protected:
     StringHash m_pathRelocations;
     QStringList m_unpackedFiles;
     bool m_bCancel;
+    bool m_bRet;
 private:
     void start ( Priority priority = InheritPriority );
 };

@@ -51,13 +51,13 @@ Q_SIGNALS:
     void error ( const QString &error );
 protected Q_SLOTS:
     void setError ( const QString &error );
-    void threadFinished ( bool bOk );
+    void threadFinished ();
     void progressCallback ( const QString &s );
 protected:
     InstallerProgress *m_progress;
     UPThread *m_thread;
-    bool m_bFinished;
     bool m_bRet;
+    bool m_bFinished;
 private:
     Unpacker ();
 

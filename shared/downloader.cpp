@@ -45,7 +45,7 @@
 
 
 MyThread::MyThread ( CURL *handle, QObject *parent )
-    : QThread ( parent ), curlHandle ( handle ), bCancel ( false )
+    : QThread ( parent ), curlHandle ( handle ), m_bCancel ( false ), m_ret( CURLE_OK )
 {
   curl_easy_setopt ( curlHandle, CURLOPT_PROGRESSFUNCTION, MyThread::curlProgressCallback );
   curl_easy_setopt ( curlHandle, CURLOPT_PROGRESSDATA, this );
@@ -53,22 +53,26 @@ MyThread::MyThread ( CURL *handle, QObject *parent )
 
 void MyThread::run()
 {
-  bCancel = false;
-  CURLcode ret = curl_easy_perform ( curlHandle );
-  emit done ( ret );
+  m_bCancel = false;
+  m_ret = curl_easy_perform ( curlHandle );
 }
 
 void MyThread::cancel()
 {
-  bCancel = true;
+  m_bCancel = true;
+}
+
+CURLcode MyThread::retCode() const
+{
+  return m_ret;
 }
 
 int MyThread::progressCallback ( double dltotal, double dlnow )
 {
-  if ( bCancel )
+  if ( m_bCancel )
     return 1;
   emit progress ( dltotal, dlnow );
-  return bCancel;
+  return 0;
 }
 
 int MyThread::curlProgressCallback ( void *clientp, double dltotal, double dlnow,
@@ -93,7 +97,7 @@ class Downloader::Private
 {
 public:
   Private ()
-      : curlHandle ( 0 ), thread ( NULL ), cancel ( false ), finished ( false ), ret ( CURLE_OK ),
+      : curlHandle ( 0 ), thread ( NULL ), cancel ( false ), ret ( CURLE_OK ),
       progress ( 0 ), ioDevice ( NULL ) {}
   ~Private() {
     if ( thread )
@@ -104,7 +108,6 @@ public:
   CURL     *curlHandle;
   MyThread *thread;
   bool      cancel;
-  bool      finished;
   CURLcode  ret;
   DownloaderProgress *progress;
   QIODevice  *ioDevice;
@@ -177,7 +180,7 @@ bool Downloader::start ( const QUrl &url, QByteArray &ba )
 
 bool Downloader::startInternal ( const QUrl &url )
 {
-  qDebug() << __FUNCTION__ << "url: " << url.toString();
+  qDebug() << this << __FUNCTION__ << "url: " << url.toString();
 
   m_usedURL = url;
   m_result = Undefined;
@@ -210,7 +213,7 @@ bool Downloader::startInternal ( const QUrl &url )
   }
   if ( !d->thread ) {
     d->thread = new MyThread ( d->curlHandle, this );
-    connect ( d->thread, SIGNAL ( done ( int ) ), this, SLOT ( threadFinished ( int ) ) );
+    connect ( d->thread, SIGNAL ( finished () ), this, SLOT ( threadFinished () ) );
     connect ( d->thread, SIGNAL ( progress ( double, double ) ), this, SLOT ( progressCallback ( double, double ) ) );
   }
   if ( d->progress ) {
@@ -218,23 +221,23 @@ bool Downloader::startInternal ( const QUrl &url )
     d->progress->show();
     d->progress->setTitle ( tr ( "Downloading %1" ).arg ( m_usedURL.toString() ) );
   }
-  d->finished = false;
   d->thread->start();
   QEventLoop *loop = new QEventLoop ( this );
   do {
-    loop->processEvents ( QEventLoop::AllEvents, 50 );
-  } while ( !d->finished );
+    loop->processEvents ( QEventLoop::WaitForMoreEvents );
+  } while ( !d->thread->isFinished() || m_result == Undefined );
+  delete loop;
+
   if ( d->progress )
     d->progress->hide();
-  delete loop;
   qDebug() << __FUNCTION__ << "ret: " << (d->ret == 0);
   return ( d->ret == 0 );
 }
 
-void Downloader::threadFinished ( int _ret )
+void Downloader::threadFinished ()
 {
-  d->ret = static_cast<CURLcode> ( _ret );
-  d->finished = true;
+  qDebug() << this << __FUNCTION__;
+  d->ret = d->thread->retCode();
   bool bRet = ( d->ret == CURLE_OK );
   m_result = d->cancel ? Aborted : bRet ? Finished : Failed;
 
@@ -297,7 +300,6 @@ void Downloader::cancel()
   d->cancel = true;
   if ( d->thread )
     d->thread->cancel();
-  setError( tr( "Canceled by user" ) );
 }
 
 void Downloader::setError ( const QString &errStr )
