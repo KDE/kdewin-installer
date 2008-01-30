@@ -92,7 +92,7 @@ cmake support
 
 kdewin-installer allows to add binary packaging suppport to cmake based projects by providing a cmake module named KDEWIN_Packager. 
 
-1. copy share/apps/cmake/modules/FindKDEWIN_Packager.cmake into cmake/modules of your proejct
+1. copy share/apps/cmake/modules/FindKDEWIN_Packager.cmake into cmake/modules of your project
 
 2. add the following lines to the top level cmake 
 
