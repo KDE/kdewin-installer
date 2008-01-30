@@ -51,9 +51,9 @@ static void printHelp(const QString &addInfo)
        << "\n\t\t"      << "-complete also create all-in-one package with all files"
        << "\n\t\t"      << "-verbose display verbose processing informations"
        << "\n\t\t"      << "-compression <1|2> - set compression mode to"
-       << "\n\t\t"      << "-hashfirst print hashes in manifest file lists before file (default: no)"
        << "\n\t\t\t"    << "1 - zip, default"
        << "\n\t\t\t"    << "2 - tar.bz2"
+       << "\n\t\t"      << "-hashfirst print hashes in manifest file lists before file (default: no)"
        << "\n";
 
     ts.flush();
