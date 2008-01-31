@@ -1,0 +1,234 @@
+<ui version="4.0" >
+ <class>InstallTypePage</class>
+ <widget class="QWidget" name="InstallTypePage" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>787</width>
+    <height>598</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Install Mode</string>
+  </property>
+  <property name="statusTip" >
+   <string>Select in which mode the installer should work and which compiler should be used</string>
+  </property>
+  <widget class="QRadioButton" name="compilerUnspecified" >
+   <property name="enabled" >
+    <bool>true</bool>
+   </property>
+   <property name="geometry" >
+    <rect>
+     <x>141</x>
+     <y>311</y>
+     <width>101</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>unspecified</string>
+   </property>
+   <property name="checked" >
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="installModeDeveloper" >
+   <property name="geometry" >
+    <rect>
+     <x>140</x>
+     <y>120</y>
+     <width>111</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Developer</string>
+   </property>
+   <property name="checked" >
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="compilerMSVC" >
+   <property name="geometry" >
+    <rect>
+     <x>141</x>
+     <y>291</y>
+     <width>81</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>MSVC</string>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="compilerMinGW" >
+   <property name="geometry" >
+    <rect>
+     <x>141</x>
+     <y>272</y>
+     <width>81</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>MinGW</string>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="installModeEndUser" >
+   <property name="geometry" >
+    <rect>
+     <x>140</x>
+     <y>100</y>
+     <width>101</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>End User</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2" >
+   <property name="geometry" >
+    <rect>
+     <x>20</x>
+     <y>10</y>
+     <width>700</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">The install mode determines which paket components are installable. &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">In &lt;span style=" font-weight:600;">End User mode&lt;/span> only components required for running application are installable,&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">In &lt;span style=" font-weight:600;">Developer mode&lt;/span> development files and sources are installable too.&lt;/p>&lt;/body>&lt;/html></string>
+   </property>
+   <property name="scaledContents" >
+    <bool>true</bool>
+   </property>
+   <property name="alignment" >
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+   </property>
+   <property name="wordWrap" >
+    <bool>true</bool>
+   </property>
+   <property name="openExternalLinks" >
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3" >
+   <property name="geometry" >
+    <rect>
+     <x>20</x>
+     <y>180</y>
+     <width>700</width>
+     <height>68</height>
+    </rect>
+   </property>
+   <property name="sizePolicy" >
+    <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+     <horstretch>1</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text" >
+    <string>KDE on windows supports mingw and msvc compiler. Because packages containing c++ code are binary incompatible between compilers, this option let you preselect the type of compiler. If a specific compiler is selected, packages build for other compiler are invisible. 
+</string>
+   </property>
+   <property name="alignment" >
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+   </property>
+   <property name="wordWrap" >
+    <bool>true</bool>
+   </property>
+   <property name="indent" >
+    <number>0</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4" >
+   <property name="geometry" >
+    <rect>
+     <x>59</x>
+     <y>100</y>
+     <width>80</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Install Mode</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5" >
+   <property name="geometry" >
+    <rect>
+     <x>41</x>
+     <y>271</y>
+     <width>111</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Compiler Mode</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_6" >
+   <property name="geometry" >
+    <rect>
+     <x>391</x>
+     <y>271</y>
+     <width>321</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Using the &lt;span style=" font-weight:600;">unspecified&lt;/span> type you should really know which packages are intended for which compiler, otherwise you may corrupt your installation. &lt;/p>&lt;/body>&lt;/html></string>
+   </property>
+   <property name="alignment" >
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+   </property>
+   <property name="wordWrap" >
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_7" >
+   <property name="geometry" >
+    <rect>
+     <x>330</x>
+     <y>270</y>
+     <width>53</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Warning:</string>
+   </property>
+   <property name="alignment" >
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label" >
+   <property name="geometry" >
+    <rect>
+     <x>330</x>
+     <y>80</y>
+     <width>400</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Warning: Changing the install mode after packages are already installed may result in a non usable installation</string>
+   </property>
+   <property name="wordWrap" >
+    <bool>true</bool>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
