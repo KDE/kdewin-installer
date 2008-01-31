@@ -34,6 +34,11 @@ InternetSettingsPage::InternetSettingsPage() : InstallWizardPage(0)
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(statusLabel,1,Qt::AlignBottom);
     setLayout(layout);
+    connect( ui.proxyManual,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
+    connect( ui.proxyFireFox,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
+    connect( ui.proxyIE,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
+    connect( ui.proxyOff,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
+    
 }
 
 void InternetSettingsPage::initializePage()
@@ -63,6 +68,7 @@ void InternetSettingsPage::initializePage()
         ui.proxyUserName->setEnabled(ui.proxyManual->isChecked());
         ui.proxyPassword->setEnabled(ui.proxyManual->isChecked());
     }
+    switchProxyFields(false);
 }
 
 int InternetSettingsPage::nextId() const
@@ -101,5 +107,16 @@ bool InternetSettingsPage::isComplete()
 {
     return true;
 }
+
+void InternetSettingsPage::switchProxyFields(bool mode)
+{
+    mode = ui.proxyManual->isChecked() ? true : false;
+       
+    ui.proxyHost->setEnabled(mode);
+    ui.proxyPort->setEnabled(mode);
+    ui.proxyUserName->setEnabled(mode);
+    ui.proxyPassword->setEnabled(mode);
+}
+
 
 #include "internetsettingspage.moc"

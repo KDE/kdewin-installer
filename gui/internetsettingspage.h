@@ -42,6 +42,9 @@ public:
 
 protected: 
     Ui::InternetSettingsPage ui;
+
+protected slots:
+    void switchProxyFields(bool mode);
 };
 
 
