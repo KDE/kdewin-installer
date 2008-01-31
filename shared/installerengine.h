@@ -50,9 +50,12 @@ public:
 
     // read in global config 
     void initGlobalConfig();
+
     // add packages from global config or sites (requires proxy settings)
     bool initPackages();
 
+    // check installer version 
+    bool isInstallerVersionOutdated();
 
     void stop();
 

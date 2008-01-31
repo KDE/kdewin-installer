@@ -446,29 +446,10 @@ InstallerEngineGui::InstallerEngineGui (QWidget *parent)
     }
 }
 
-int versionToInt(QString version)
-{
-    QStringList v = version.replace('-','.').split('.');
-    int n = 0;
-    foreach(const QString &a,v)
-    {
-        bool ok;
-        int b = a.toInt(&ok);
-        if (ok)
-        {
-            n += b;
-            n *= 100;
-        }
-    }
-    return n;
-}
-
 bool InstallerEngineGui::init()
 {
     initGlobalConfig();
-    int minVersion = versionToInt(m_globalConfig->minimalInstallerVersion());
-    int currentVersion = versionToInt(VERSION);
-    if (minVersion != 0 && currentVersion < minVersion)
+    if (isInstallerVersionOutdated())
         InstallerDialogs::getInstance().installerOutdated();
     return initPackages();
 

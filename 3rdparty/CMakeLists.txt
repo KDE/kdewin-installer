@@ -1,6 +1,6 @@
-#
+#-------------------------------------------------------------------
 # BZIP2
-#
+#-------------------------------------------------------------------
 if (BZIP2_UNPACK_SUPPORT)
     set(filters_SOURCES
         ${CMAKE_SOURCE_DIR}/3rdparty/filters/tarfilter.cpp
@@ -28,9 +28,10 @@ if (BZIP2_UNPACK_SUPPORT)
     set(bzip2_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/bzip2-1.0.4)
 endif (BZIP2_UNPACK_SUPPORT)
 
-#
+
+#-------------------------------------------------------------------
 # LIBCURL
-#
+#-------------------------------------------------------------------
 set(curl_SOURCES
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/base64.c
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/connect.c
@@ -123,9 +124,9 @@ else(WIN32)
   include_directories( ${CURL_INCLUDE_DIR})
 endif(WIN32)
 
-#
-# QUAZIP
-#
+#-------------------------------------------------------------------
+# QUAZIP library
+#-------------------------------------------------------------------
 set(quazip_SOURCES
     ${CMAKE_SOURCE_DIR}/3rdparty/quazip/quazip/ioapi.c
     ${CMAKE_SOURCE_DIR}/3rdparty/quazip/quazip/unzip.c
@@ -144,6 +145,9 @@ set(quazip_HEADERS
 )
 set(quazip_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/quazip/quazip)
 
+#-------------------------------------------------------------------
+# 7zip library
+#-------------------------------------------------------------------
 if(SEVENZIP_UNPACK_SUPPORT)
   set(qua7zip_SOURCES
     ${CMAKE_SOURCE_DIR}/3rdparty/qua7zip/qua7zip.cpp
@@ -177,6 +181,10 @@ if(SEVENZIP_UNPACK_SUPPORT)
 
   set(qua7zip_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/qua7zip)
 endif(SEVENZIP_UNPACK_SUPPORT)
+
+#-------------------------------------------------------------------
+# md5 library
+#-------------------------------------------------------------------
 
 set(md5_SOURCES
     ${CMAKE_SOURCE_DIR}/3rdparty/md5/md5.cpp

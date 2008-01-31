@@ -25,6 +25,7 @@
 #include <QTreeWidget>
 #include <QFlags>
 
+#include "config.h"
 #include "installerengine.h"
 
 #include "downloader.h"
@@ -109,6 +110,30 @@ bool InstallerEngine::init()
 {
     initGlobalConfig();
     return initPackages();
+}
+
+int versionToInt(QString version)
+{
+    QStringList v = version.replace('-','.').split('.');
+    int n = 0;
+    foreach(const QString &a,v)
+    {
+        bool ok;
+        int b = a.toInt(&ok);
+        if (ok)
+        {
+            n += b;
+            n *= 100;
+        }
+    }
+    return n;
+}
+
+bool InstallerEngine::isInstallerVersionOutdated()
+{
+    int minVersion = versionToInt(m_globalConfig->minimalInstallerVersion());
+    int currentVersion = versionToInt(VERSION);
+    return minVersion != 0 && currentVersion < minVersion;
 }
 
 void InstallerEngine::reload()
