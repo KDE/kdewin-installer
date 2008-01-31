@@ -52,12 +52,12 @@ static void usage()
     qDebug() << "... [options] <packagename> [<packagename>]"
     << "\nRelease: " << VERSION
     << "\nOptions: "
-    << "\n -l list packages"
-    << "\n -q <packagename> query packages"
-    << "\n -q <packagename> -l list package files"
-    << "\n -i <packagename> download and install package"
-    << "\n -d <packagename> download package"
-    << "\n -D dump internal data"
+    << "\n -l or --list list packages"
+    << "\n -q or --query <packagename> query packages"
+    << "\n -q or --query <packagename> -l list package files"
+    << "\n -i or --install <packagename> download and install package"
+    << "\n -d or --download <packagename> download package"
+    << "\n -D or --dump dump internal data"
     ;
 }
 //#define CYGWIN_INSTALLER
@@ -73,31 +73,31 @@ int main(int argc, char *argv[])
         if (app.arguments().at(i).startsWith('-'))
         {
             QString option = app.arguments().at(i);
-            if (option == "-h")
+            if (option == "-h" || option == "--help")
             {
                 usage();
                 exit(0);
             }
-            if (option == "-l")
+            if (option == "-l" || option == "--list")
                 options.list = true;
-            if (option == "-a")
+            if (option == "-a" || option == "--all")
                 options.all = true;
-            else if (option == "-v")
+            else if (option == "-v" || option == "--verbose")
                 options.verbose = true;
-            else if (option == "-q")
+            else if (option == "-q" || option == "--quiet")
                 options.query = true;
-            else if (option == "-d")
+            else if (option == "-d" || option == "--download")
                 options.download = true;
-            else if (option == "-D")
+            else if (option == "-D" || option == "--dump")
                 options.dump = true;
-            else if (option == "-i")
+            else if (option == "-i" || option == "--install")
             {
                 options.download = true;
                 options.install = true;
             }
-            else if (option == "-m")
+            else if (option == "-m" || option == "--mmm")
             {}
-            else if (option == "-r")
+            else if (option == "-r" || option == "-root")
             {
                 options.rootdir = app.arguments().at(++i);
             }
@@ -110,8 +110,9 @@ int main(int argc, char *argv[])
         setMessageHandler();
 
 #if 1
-    InstallerEngineConsole engine(0,0);
-    engine.readGlobalConfig();
+    InstallerEngineConsole engine;
+    InstallerEngine::defaultConfigURL = "http://82.149.170.66/kde-windows";
+    engine.init();
     if (!options.rootdir.isEmpty())
         Settings::getInstance().setInstallDir(options.rootdir);
 
@@ -129,8 +130,6 @@ int main(int argc, char *argv[])
         engine.listPackages("Package List");
         return 0;
     }
-    if(options.download || options.install)
-        engine.downloadPackageLists();
 
     if((options.download || options.install) && packages.size() > 0)
             engine.downloadPackages(packages);
@@ -141,8 +140,7 @@ int main(int argc, char *argv[])
     Downloader downloader(/*blocking=*/ true);
     PackageList packageList(&downloader);
     Installer installer(&packageList);
-    // FIXME: set according type of used site
-    installer.setType(Installer::GNUWIN32);
+
     // installer.setVerbose(options.verbose);
     installer.setRoot(options.rootdir.isEmpty() ? "packages" : options.rootdir);
 

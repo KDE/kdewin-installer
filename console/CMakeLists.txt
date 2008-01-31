@@ -23,6 +23,10 @@ set(all_sources ${installer_CONSOLE_SOURCES}
                 ${quazip_SOURCES}
                 ${qua7zip_SOURCES}
                 ${qua7zip_HEADERS}
+                ${filters_SOURCES}
+                ${filters_HEADERS}
+                ${bzip2_SOURCES}
+                ${bzip2_HEADERS}
 		        ${md5_SOURCES}
 				${md5_HEADERS}
         )

@@ -100,7 +100,7 @@ Package *PackageList::getPackage(const QString &name, const QByteArray &version)
     return NULL;
 }
 
-void PackageList::listPackages(const QString &title)
+void PackageList::dumpPackages(const QString &title)
 {
 #ifdef DEBUG
     qDebug() << __FUNCTION__;
@@ -110,6 +110,15 @@ void PackageList::listPackages(const QString &title)
     QList<Package*>::iterator it;
     for (it = m_packageList.begin(); it != m_packageList.end(); ++it)
         qDebug() << (*it)->toString(true," - ");
+}
+
+QStringList PackageList::listPackages()
+{
+    QStringList list;
+    QList<Package*>::iterator it;
+    for (it = m_packageList.begin(); it != m_packageList.end(); ++it)
+        list << (*it)->toString(true," - ");
+    return list;
 }
 
 bool PackageList::writeToFile(const QString &_fileName)

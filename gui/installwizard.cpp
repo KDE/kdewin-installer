@@ -298,10 +298,6 @@ TitlePage::TitlePage() : InstallWizardPage()
 {
     setTitle(tr("KDE for Windows Installer"));
     setSubTitle(tr("Release " VERSION));
-/*
-    QLabel* version = new QLabel(tr("<h3>Release " VERSION "</h3>"));
-    version->setAlignment(Qt::AlignRight);
-*/
     QLabel* description = new QLabel(tr(
                           "<p>This setup program is used for the installation of KDE for Windows application.</p>"
                           "<p>The pages that follow will guide you through the installation.</p>"
@@ -325,8 +321,10 @@ TitlePage::TitlePage() : InstallWizardPage()
                           "<small><sup>1</sup> Qt and the Qt logo are trademarks of Trolltech in Norway, the United States and other countries.</small>"
                           ));
 
-
     description->setWordWrap(true);
+    QCheckBox* wizardMode = new QCheckBox();
+    QLabel* wizardMode = new QLabel(tr("Run Installer in Wizard Mode");
+
     //    downloadPackagesRadioButton = new QRadioButton(tr("download packages"));
     //    downloadAndInstallRadioButton = new QRadioButton(tr("&download and install packages"));
     //    setFocusProxy(downloadPackagesRadioButton);
@@ -335,7 +333,7 @@ TitlePage::TitlePage() : InstallWizardPage()
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(description);
-  //  layout->addWidget(version);
+    layout->addWidget(wizardMode);
     layout->addSpacing(10);
     //    layout->addWidget(downloadPackagesRadioButton);
     //    layout->addWidget(downloadAndInstallRadioButton);

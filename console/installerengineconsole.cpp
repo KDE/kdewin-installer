@@ -35,9 +35,17 @@
 #include "globalconfig.h"
 #include "database.h"
 
-InstallerEngineConsole::InstallerEngineConsole(DownloaderProgress *progressBar,InstallerProgress *instProgressBar)
-: InstallerEngine(progressBar,instProgressBar)
+InstallerEngineConsole::InstallerEngineConsole()
+: InstallerEngine(0)
 {
+}
+
+bool InstallerEngineConsole::init()
+{
+    initGlobalConfig();
+    if (isInstallerVersionOutdated())   
+        qWarning() << "Installer version outdated";
+    return initPackages();
 }
 
 /**
@@ -63,62 +71,37 @@ void InstallerEngineConsole::queryPackages(const QString &pkgName, bool listFile
 
 void InstallerEngineConsole::listPackages(const QString &title)
 {
-    QList <PackageList *>::iterator k;
-    for (k = m_packageListList.begin(); k != m_packageListList.end(); ++k)
-    {
-       qDebug() << (*k)->Name();
-       (*k)->listPackages(title);
-   }
+    QStringList list = m_packageResources->listPackages();
+    foreach(QString package, list)
+        printf("%s\n",package.toLatin1().data()); 
 }
 
 bool InstallerEngineConsole::downloadPackages(const QStringList &packages, const QString &category)
 {
-    QList<Site*>::ConstIterator s = m_globalConfig->sites()->constBegin();
-    for ( ; s != m_globalConfig->sites()->constEnd(); s++)
-    {
-       qDebug() << (*s)->name();
-       PackageList *packageList = getPackageListByName((*s)->name());
-       if (!packageList)
-       {
-           qDebug() << __FUNCTION__ << " packagelist for " << (*s)->name() << " not found";
-           continue;
-       }
-       foreach(QString pkgName, packages)
-       {
-            Package *pkg = packageList->getPackage(pkgName);
-            if (!pkg)
-                continue;
-            pkg->downloadItem(m_downloader, Package::BIN);
-            pkg->downloadItem(m_downloader, Package::LIB);
-            pkg->downloadItem(m_downloader, Package::DOC);
-            pkg->downloadItem(m_downloader, Package::SRC);
-       }
+   foreach(QString pkgName, packages)
+   {
+        Package *pkg = m_packageResources->getPackage(pkgName);
+        if (!pkg)
+            continue;
+        pkg->downloadItem(Package::BIN);
+        pkg->downloadItem(Package::LIB);
+        pkg->downloadItem(Package::DOC);
+        pkg->downloadItem(Package::SRC);
    }
    return true;
 }
 
 bool InstallerEngineConsole::installPackages(const QStringList &packages,const QString &category)
 {
-    QList<Site*>::ConstIterator s = m_globalConfig->sites()->constBegin();
-    for ( ; s != m_globalConfig->sites()->constEnd(); s++)
-    {
-       qDebug() << (*s)->name();
-       PackageList *packageList = getPackageListByName((*s)->name());
-       if (!packageList)
-       {
-           qDebug() << __FUNCTION__ << " packagelist for " << (*s)->name() << " not found";
-           continue;
-       }
-       foreach(QString pkgName, packages)
-       {
-            Package *pkg = packageList->getPackage(pkgName);
-            if (!pkg)
-                continue;
-            pkg->installItem(m_installer, Package::BIN);
-            pkg->installItem(m_installer, Package::LIB);
-            pkg->installItem(m_installer, Package::DOC);
-            pkg->installItem(m_installer, Package::SRC);
-       }
+   foreach(QString pkgName, packages)
+   {
+        Package *pkg = m_packageResources->getPackage(pkgName);
+        if (!pkg)
+            continue;
+        pkg->installItem(m_installer,Package::BIN);
+        pkg->installItem(m_installer,Package::LIB);
+        pkg->installItem(m_installer,Package::DOC);
+        pkg->installItem(m_installer,Package::SRC);
    }
    return true;
 }

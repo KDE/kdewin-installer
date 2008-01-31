@@ -28,7 +28,8 @@
 class InstallerEngineConsole : public InstallerEngine
 {
 public:
-    InstallerEngineConsole(DownloaderProgress *progressBar,InstallerProgress *instProgressBar);
+    InstallerEngineConsole();
+    bool init();
     void queryPackages(const QString &pkgName=QString(), bool listFiles=false);
     void listPackages(const QString &title);
     bool downloadPackages(const QStringList &packages, const QString &category=QString());
