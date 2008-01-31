@@ -22,26 +22,26 @@
 **
 ****************************************************************************/
 
-#ifndef PATHSETTINGSPAGE_H
-#define PATHSETTINGSPAGE_H
+#ifndef InstallDirectoryPage_H
+#define InstallDirectoryPage_H
 
 #include "installwizard.h"
 
-#include "ui_pathsettingspage.h"
+#include "ui_installdirectorypage.h"
 
-class PathSettingsPage : public InstallWizardPage
+class InstallDirectoryPage : public InstallWizardPage
 {
     Q_OBJECT
 
 public:
-    PathSettingsPage();
+    InstallDirectoryPage();
 
     void initializePage();
     bool isComplete();
     int nextId() const;
     bool validatePage();
 protected:
-    Ui::PathSettingsPage ui;
+    Ui::InstallDirectoryPage ui;
     
 protected slots:
     void rootPathSelectClicked();

@@ -55,7 +55,8 @@
 #include "uninstaller.h"
 #include "unpacker.h"
 
-#include "pathsettingspage.h"
+#include "installtypepage.h"
+#include "installdirectorypage.h"
 #include "internetsettingspage.h"
 
 // must be global
@@ -124,7 +125,8 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     setButtonLayout(layout);
 */
     setPage(titlePage, new TitlePage()); 
-    setPage(pathSettingsPage, new PathSettingsPage); 
+    setPage(installTypePage, new InstallTypePage); 
+    setPage(installDirectoryPage, new InstallDirectoryPage); 
     setPage(internetSettingsPage, new InternetSettingsPage); 
     setPage(downloadSettingsPage, new DownloadSettingsPage(_settingsPage->downloadPage())); 
     setPage(mirrorSettingsPage, new MirrorSettingsPage(_settingsPage->mirrorPage())); 
@@ -353,7 +355,7 @@ int TitlePage::nextId() const
 {
     Settings &s = Settings::getInstance();
     if (s.isFirstRun() || s.showTitlePage())
-        return InstallWizard::pathSettingsPage;
+        return InstallWizard::installTypePage;
     else
         return InstallWizard::packageSelectorPage;
 }

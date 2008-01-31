@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>PathSettingsPage</class>
- <widget class="QWidget" name="PathSettingsPage" >
+ <class>InstallDirectoryPage</class>
+ <widget class="QWidget" name="InstallDirectoryPage" >
   <property name="geometry" >
    <rect>
     <x>0</x>

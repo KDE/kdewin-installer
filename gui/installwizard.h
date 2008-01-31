@@ -41,8 +41,9 @@ class QTextEdit;
 class QTreeWidget;
 class QTreeWidgetItem;
 class TitlePage;
+class InstallTypePage;
 class DownloadSettingsPage;
-class PathSettingsPage;
+class InstallDirectoryPage;
 class InternetSettingsPage;
 class MirrorSettingsPage;
 class PackageSelectorPage;
@@ -60,7 +61,8 @@ class InstallWizard : public QWizard
 public:
     enum {
         titlePage,
-        pathSettingsPage,
+        installTypePage,
+        installDirectoryPage,
         downloadSettingsPage,
         internetSettingsPage,
         mirrorSettingsPage,

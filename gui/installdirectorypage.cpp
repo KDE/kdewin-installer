@@ -27,9 +27,9 @@
 #include <QFileDialog>
 
 #include "database.h"
-#include "pathsettingspage.h"
+#include "installdirectorypage.h"
 
-PathSettingsPage::PathSettingsPage() : InstallWizardPage(0)
+InstallDirectoryPage::InstallDirectoryPage() : InstallWizardPage(0)
 {
     ui.setupUi(this);
     setTitle(windowTitle());
@@ -41,33 +41,31 @@ PathSettingsPage::PathSettingsPage() : InstallWizardPage(0)
     connect( ui.rootPathSelect,SIGNAL(clicked()),this,SLOT(rootPathSelectClicked()) );
 }
 
-void PathSettingsPage::initializePage()
+void InstallDirectoryPage::initializePage()
 {
     Settings &s = Settings::getInstance();
-    //ui.createStartMenuEntries->setEnabled(false);
     ui.rootPathEdit->setText(QDir::convertSeparators(s.installDir()));
 }
 
-bool PathSettingsPage::isComplete()
+bool InstallDirectoryPage::isComplete()
 {
     return !ui.rootPathEdit->text().isEmpty();
 }
 
-int PathSettingsPage::nextId() const
+int InstallDirectoryPage::nextId() const
 {
     return InstallWizard::internetSettingsPage;
 }
 
-bool PathSettingsPage::validatePage()
+bool InstallDirectoryPage::validatePage()
 {
     Settings &s = Settings::getInstance();
-    //s.setCreateStartMenuEntries(ui.createStartMenuEntries->checkState() == Qt::Checked ? true : false);
     s.setInstallDir(ui.rootPathEdit->text());
 
     return true;
 }
 
-void PathSettingsPage::rootPathSelectClicked()
+void InstallDirectoryPage::rootPathSelectClicked()
 {
     QString fileName = QFileDialog::getExistingDirectory(this,
                        tr("Select Root Installation Directory"),
@@ -78,4 +76,4 @@ void PathSettingsPage::rootPathSelectClicked()
 }
 
 
-#include "pathsettingspage.moc"
+#include "installdirectorypage.moc"

@@ -32,7 +32,9 @@ ENDMACRO (QT4_ADD_RESOURCES2)
 
 set(installer_GUI_SOURCES
    installwizard.cpp
-   pathsettingspage.cpp
+   installtypepage.cpp
+   installdirectorypage.cpp
+   internetsettingspage.cpp
    settingspage.cpp
    installerenginegui.cpp
    packagestates.cpp
@@ -42,11 +44,20 @@ set(installer_GUI_SOURCES
 
 set(installer_GUI_HEADERS
    installwizard.h
-   pathsettingspage.h
+   installtypepage.h
+   installdirectorypage.h
+   internetsettingspage.h
    settingspage.h
    installerenginegui.h
    packagestates.h
    installerdialogs.h
+)
+
+set (UI_SOURCES 
+    settingspage.ui
+    installtypepage.ui
+    installdirectorypage.ui
+    internetsettingspage.ui
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
@@ -57,8 +68,8 @@ if(CMAKE_COMPILER_2005)
      add_definitions( -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE )
 endif(CMAKE_COMPILER_2005)
 
-QT4_WRAP_UI(installer_GUI_SOURCES settingspage.ui)
-QT4_WRAP_UI(installer_GUI_SOURCES pathsettingspage.ui)
+QT4_WRAP_UI(installer_GUI_SOURCES ${UI_SOURCES})
+
 QT4_ADD_RESOURCES(installer_GUI_SOURCES gui.qrc)
 if(WIN32)
  if(MINGW)
