@@ -322,8 +322,6 @@ TitlePage::TitlePage() : InstallWizardPage()
                           ));
 
     description->setWordWrap(true);
-    QCheckBox* wizardMode = new QCheckBox();
-    QLabel* wizardMode = new QLabel(tr("Run Installer in Wizard Mode");
 
     //    downloadPackagesRadioButton = new QRadioButton(tr("download packages"));
     //    downloadAndInstallRadioButton = new QRadioButton(tr("&download and install packages"));
@@ -333,7 +331,6 @@ TitlePage::TitlePage() : InstallWizardPage()
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(description);
-    layout->addWidget(wizardMode);
     layout->addSpacing(10);
     //    layout->addWidget(downloadPackagesRadioButton);
     //    layout->addWidget(downloadAndInstallRadioButton);
