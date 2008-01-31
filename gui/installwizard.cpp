@@ -56,6 +56,7 @@
 #include "unpacker.h"
 
 #include "pathsettingspage.h"
+#include "internetsettingspage.h"
 
 // must be global
 QTreeWidget *tree;
@@ -123,8 +124,8 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     setButtonLayout(layout);
 */
     setPage(titlePage, new TitlePage()); 
-    setPage(pathSettingsPage, new PathSettingsPage(_settingsPage->installPage())); 
-    setPage(proxySettingsPage, new ProxySettingsPage(_settingsPage->proxyPage())); 
+    setPage(pathSettingsPage, new PathSettingsPage); 
+    setPage(internetSettingsPage, new InternetSettingsPage); 
     setPage(downloadSettingsPage, new DownloadSettingsPage(_settingsPage->downloadPage())); 
     setPage(mirrorSettingsPage, new MirrorSettingsPage(_settingsPage->mirrorPage())); 
     setPage(packageSelectorPage, new PackageSelectorPage()); 
@@ -357,37 +358,6 @@ int TitlePage::nextId() const
         return InstallWizard::packageSelectorPage;
 }
 
-ProxySettingsPage::ProxySettingsPage(SettingsSubPage *s) : InstallWizardPage(s)
-{
-    setTitle(tr("Proxy Settings"));
-    setSubTitle(tr("Choose the proxy type and enter proxy host and port if required."));
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(page->widget(),10);
-    layout->addWidget(statusLabel,1,Qt::AlignBottom);
-    setLayout(layout);
-}
-
-void ProxySettingsPage::initializePage()
-{
-    page->reset();
-}
-
-int ProxySettingsPage::nextId() const
-{
-    page->accept();
-    return InstallWizard::downloadSettingsPage;
-}
-
-bool ProxySettingsPage::validatePage()
-{
-    page->accept();
-    return true;
-}
-
-bool ProxySettingsPage::isComplete()
-{
-    return page->isComplete();
-}
 
 DownloadSettingsPage::DownloadSettingsPage(SettingsSubPage *s) : InstallWizardPage(s)
 {

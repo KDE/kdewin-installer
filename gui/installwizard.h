@@ -43,7 +43,7 @@ class QTreeWidgetItem;
 class TitlePage;
 class DownloadSettingsPage;
 class PathSettingsPage;
-class ProxySettingsPage;
+class InternetSettingsPage;
 class MirrorSettingsPage;
 class PackageSelectorPage;
 class DependenciesPage;
@@ -62,7 +62,7 @@ public:
         titlePage,
         pathSettingsPage,
         downloadSettingsPage,
-        proxySettingsPage,
+        internetSettingsPage,
         mirrorSettingsPage,
         packageSelectorPage,
         dependenciesPage,
@@ -131,19 +131,6 @@ public:
     bool validatePage();
 };
 
-
-class ProxySettingsPage : public InstallWizardPage
-{
-    Q_OBJECT
-
-public:
-    ProxySettingsPage(SettingsSubPage *s);
-
-    void initializePage();
-    bool isComplete();
-    int nextId() const;
-    bool validatePage();
-};
 
 class MirrorSettingsPage : public InstallWizardPage
 {
