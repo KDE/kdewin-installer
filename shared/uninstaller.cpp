@@ -192,11 +192,14 @@ public:
 Q_GLOBAL_STATIC(UninstallerSingleton, sUninstaller);
 
 Uninstaller::Uninstaller()
-  : m_thread(NULL), m_bRet(false)
+  : m_thread(NULL), m_bRet(false), m_loop(NULL)
 {}
 
 Uninstaller::~Uninstaller()
-{}
+{
+  delete m_loop;
+  delete m_thread;
+}
 
 Uninstaller *Uninstaller::instance()
 {
@@ -232,11 +235,11 @@ bool Uninstaller::uninstallPackage(const QString &pathToManifest, const QString 
         m_progress->setTitle ( tr ( "Uninstalling %1" ).arg ( QDir::toNativeSeparators ( pathToManifest ) ) );
     }
     m_thread->uninstallPackage(pathToManifest, root);
-    QEventLoop *loop = new QEventLoop ( this );
+    if( !m_loop )
+        m_loop = new QEventLoop ( this );
     do {
-        loop->processEvents ( QEventLoop::WaitForMoreEvents );
+        m_loop->processEvents ( QEventLoop::WaitForMoreEvents );
     } while ( !m_thread->isFinished() || !m_bFinished );
-    delete loop;
     if ( m_progress )
         m_progress->hide();
 
@@ -255,6 +258,7 @@ void Uninstaller::threadFinished ()
     m_bRet = m_thread->retCode();
     m_bFinished = true;
     emit done ( m_bRet );
+    m_loop->quit();
 }
 
 void Uninstaller::progressCallback ( const QString &file )

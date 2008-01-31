@@ -28,6 +28,7 @@
 
 #include "package.h"  // StringHash
 
+class QEventLoop;
 class UPThread;
 class InstallerProgress;
 class Unpacker : public QObject
@@ -58,6 +59,7 @@ protected:
     UPThread *m_thread;
     bool m_bRet;
     bool m_bFinished;
+    QEventLoop *m_loop;
 private:
     Unpacker ();
 

@@ -115,13 +115,14 @@ public:
 };
 
 Downloader::Downloader ()
-    : m_result ( Undefined ), d ( new Private () )
+    : m_result ( Undefined ), m_loop( 0 ), d ( new Private () )
 {
   curl_global_init ( CURL_GLOBAL_ALL );
 }
 
 Downloader::~Downloader()
 {
+  delete m_loop;
   delete d;
   curl_global_cleanup();
 }
@@ -222,11 +223,11 @@ bool Downloader::startInternal ( const QUrl &url )
     d->progress->setTitle ( tr ( "Downloading %1" ).arg ( m_usedURL.toString() ) );
   }
   d->thread->start();
-  QEventLoop *loop = new QEventLoop ( this );
+  if( !m_loop )
+    m_loop = new QEventLoop ( this );
   do {
-    loop->processEvents ( QEventLoop::WaitForMoreEvents );
+    m_loop->processEvents ( QEventLoop::WaitForMoreEvents );
   } while ( !d->thread->isFinished() || m_result == Undefined );
-  delete loop;
 
   if ( d->progress )
     d->progress->hide();
@@ -264,6 +265,7 @@ void Downloader::threadFinished ()
   if ( d->ret )
     setError ( m_resultString );
   emit done ( bRet );
+  m_loop->quit();
 }
 
 size_t Downloader::curlWrite ( const char * data, size_t size )

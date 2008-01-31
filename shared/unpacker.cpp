@@ -432,11 +432,14 @@ public:
 Q_GLOBAL_STATIC(UnpackerSingleton, sUnpacker);
 
 Unpacker::Unpacker ()
-        : m_progress ( NULL ), m_thread ( NULL ), m_bRet ( false ), m_bFinished ( false )
+        : m_progress ( NULL ), m_thread ( NULL ), m_bRet ( false ), m_bFinished ( false ), m_loop( NULL )
 {}
 
 Unpacker::~Unpacker()
-{}
+{
+  delete m_thread;
+  delete m_loop;
+}
 
 Unpacker *Unpacker::instance()
 {
@@ -475,11 +478,11 @@ bool Unpacker::unpackFile ( const QString &fn, const QString &destpath, const St
         m_progress->setTitle ( tr ( "Unpacking %1" ).arg ( QDir::toNativeSeparators ( fn ) ) );
     }
     m_thread->unpackFile ( fn, destpath, pathRelocations );
-    QEventLoop *loop = new QEventLoop ( this );
+    if( !m_loop )
+      m_loop = new QEventLoop ( this );
     do {
-        loop->processEvents ( QEventLoop::WaitForMoreEvents );
+        m_loop->processEvents ( QEventLoop::WaitForMoreEvents );
     } while ( !m_thread->isFinished() || !m_bFinished );
-    delete loop;
     if ( m_progress )
         m_progress->hide();
 
@@ -503,6 +506,7 @@ void Unpacker::threadFinished ()
     m_bRet = m_thread->retCode();
     m_bFinished = true;
     emit done ( m_bRet );
+    m_loop->quit();
 }
 
 void Unpacker::progressCallback ( const QString &file )

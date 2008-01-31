@@ -27,6 +27,7 @@
 #include <QObject>
 
 /* Uninstall class to uninstall a complete package defined by a manifest file */
+class QEventLoop;
 class UIThread;
 class InstallerProgress;
 class Uninstaller : public QObject
@@ -57,6 +58,7 @@ protected:
     UIThread *m_thread;
     bool m_bRet;
     bool m_bFinished;
+    QEventLoop *m_loop;
 private:
     Uninstaller();
 

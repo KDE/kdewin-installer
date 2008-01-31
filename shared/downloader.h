@@ -28,7 +28,7 @@
 #include <QtCore/QString>
 #include <QtCore/QUrl>
 
-
+class QEventLoop;
 class DownloaderProgress;
 class Downloader : public QObject
 {
@@ -77,6 +77,7 @@ protected:
   ResultType  m_result;
   QString     m_resultString;
   QUrl        m_usedURL;
+  QEventLoop *m_loop;
   class Private;
   Private * const d;
 
