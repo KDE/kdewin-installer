@@ -31,18 +31,11 @@
 
 PathSettingsPage::PathSettingsPage() : InstallWizardPage(0)
 {
-//    setTitle(tr("Basic Setup"));
-//    setSubTitle(tr("Select the directory where you want to install the KDE packages, "
-//       "for which compiler this installation should be and which installation mode you prefer."
-//    ));
-    
     ui.setupUi(this);
     setTitle(windowTitle());
     setSubTitle(statusTip());
 
     QVBoxLayout *layout = new QVBoxLayout;
-    // @TODO: remove top level line from widget
-//    layout->addWidget(page->widget(),10);
     layout->addWidget(statusLabel,1,Qt::AlignBottom);
     setLayout(layout);
     connect( ui.rootPathSelect,SIGNAL(clicked()),this,SLOT(rootPathSelectClicked()) );
