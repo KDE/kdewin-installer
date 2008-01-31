@@ -32,6 +32,7 @@ ENDMACRO (QT4_ADD_RESOURCES2)
 
 set(installer_GUI_SOURCES
    installwizard.cpp
+   pathsettingspage.cpp
    settingspage.cpp
    installerenginegui.cpp
    packagestates.cpp
@@ -41,6 +42,7 @@ set(installer_GUI_SOURCES
 
 set(installer_GUI_HEADERS
    installwizard.h
+   pathsettingspage.h
    settingspage.h
    installerenginegui.h
    packagestates.h
@@ -56,6 +58,7 @@ if(CMAKE_COMPILER_2005)
 endif(CMAKE_COMPILER_2005)
 
 QT4_WRAP_UI(installer_GUI_SOURCES settingspage.ui)
+QT4_WRAP_UI(installer_GUI_SOURCES pathsettingspage.ui)
 QT4_ADD_RESOURCES(installer_GUI_SOURCES gui.qrc)
 if(WIN32)
  if(MINGW)
