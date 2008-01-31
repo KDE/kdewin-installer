@@ -174,7 +174,13 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 m_minimalInstallerVersion = cmd[1];
             else if (cmd[0] == "@timestamp")
             {
-                m_timestamp = QDateTime::fromString(cmd[1],"yyyyMMddHHmm");
+                QStringList patterns = QStringList() << "yyyyMMddHHmm" << "yyyyMMddHHmmss";
+                foreach(QString pattern, patterns) {
+                    if (cmd[1].size() == pattern.size()) {
+                        m_timestamp = QDateTime::fromString(cmd[1],pattern);
+                        break;
+                    }
+                }
                 qDebug() << m_timestamp;
             }
             else if (cmd[0] == "@mirror")
