@@ -220,8 +220,11 @@ bool createConfigTxt(QTextStream &out, const QString &root, const QStringList &h
                 else
 */
             postfix = " ";
-            out << "@url-" + pkgType + postfix + fi.absoluteFilePath().toLower().replace(_root,"")
-                    + " " + QString::number(fi.size()) + " " + createMD5Hash(fi.absoluteFilePath()) + "\n";
+            out << "@url-" + pkgType + postfix 
+                    + " " + createMD5Hash(fi.absoluteFilePath()) 
+                    + " " + QString::number(fi.size()) 
+                    + " " + fi.absoluteFilePath().toLower().replace(_root,"")
+                    + "\n";
         }
     }
     return true;
