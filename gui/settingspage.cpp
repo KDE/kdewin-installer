@@ -115,166 +115,9 @@ void SettingsMirrorPage::addNewMirrorClicked()
     }
 }
 
-QWidget *SettingsInstallPage::widget()
-{
-    ui.installGroupBox->setFlat(true);
-    ui.installGroupBox->setTitle("");
-    return ui.installGroupBox;
-}
-
-void SettingsInstallPage::reset()
-{
-    ui.createStartMenuEntries->setEnabled(false);
-    ui.installModeEndUser->setChecked(!s.isDeveloperMode() ? Qt::Checked : Qt::Unchecked);
-    ui.installModeDeveloper->setChecked(s.isDeveloperMode() ? Qt::Checked : Qt::Unchecked);
-    ui.rootPathEdit->setText(QDir::convertSeparators(s.installDir()));
-    ui.tempPathEdit->setText(QDir::convertSeparators(s.downloadDir()));
-
-    // logical grouping isn't available in the designer yet :-P
-    QButtonGroup *groupA = new QButtonGroup(this);
-    groupA->addButton(ui.compilerUnspecified);
-    groupA->addButton(ui.compilerMinGW);
-    groupA->addButton(ui.compilerMSVC);
-
-    if (Database::isAnyPackageInstalled(s.installDir()))
-    {
-        ui.compilerUnspecified->setEnabled(false);
-        ui.compilerMinGW->setEnabled(false);
-        ui.compilerMSVC->setEnabled(false);
-    }
-    else
-    {
-        ui.compilerUnspecified->setEnabled(true);
-        ui.compilerMinGW->setEnabled(true);
-        ui.compilerMSVC->setEnabled(true);
-    }
-
-    switch (s.compilerType()) {
-        case Settings::unspecified: ui.compilerUnspecified->setChecked(true); break;
-        case Settings::MinGW: ui.compilerMinGW->setChecked(true); break;
-        case Settings::MSVC: ui.compilerMSVC->setChecked(true); break;
-        default: ui.compilerMinGW->setChecked(true); break;
-    }
-
-    QButtonGroup *groupB = new QButtonGroup(this);
-    groupB->addButton(ui.installModeDeveloper);
-    groupB->addButton(ui.installModeEndUser);
-
-    if (Database::isAnyPackageInstalled(s.installDir()))
-    {
-        ui.installModeDeveloper->setEnabled(false);
-        ui.installModeEndUser->setEnabled(false);
-    }
-    else
-    {
-        ui.installModeDeveloper->setEnabled(true);
-        ui.installModeEndUser->setEnabled(true);
-    }
-
-    if (s.isDeveloperMode())
-        ui.installModeDeveloper->setChecked(true);
-    else
-        ui.installModeEndUser->setChecked(true);
-}
-
-void SettingsInstallPage::accept()
-{
-    s.setCreateStartMenuEntries(ui.createStartMenuEntries->checkState() == Qt::Checked ? true : false);
-    s.setInstallDir(ui.rootPathEdit->text());
-
-    s.setDeveloperMode(ui.installModeDeveloper->isChecked());
-
-    if (ui.compilerUnspecified->isChecked())
-        s.setCompilerType(Settings::unspecified);
-    if (ui.compilerMinGW->isChecked())
-        s.setCompilerType(Settings::MinGW);
-    if (ui.compilerMSVC->isChecked())
-        s.setCompilerType(Settings::MSVC);
-}
-
-void SettingsInstallPage::reject()
-{
-}
-
-bool SettingsInstallPage::isComplete()
-{
-    return !ui.rootPathEdit->text().isEmpty();
-}
-
-QWidget *SettingsProxyPage::widget()
-{
-    ui.proxyGroupBox->setFlat(true);
-    ui.proxyGroupBox->setTitle("");
-    return ui.proxyGroupBox;
-}
-
-void SettingsProxyPage::reset()
-{
-#ifndef Q_WS_WIN
-    ui.proxyIE->setText(tr("Environment settings"));
-#endif
-    switch (s.proxyMode()) {
-        case Settings::InternetExplorer: ui.proxyIE->setChecked(true); break;
-        case Settings::Manual: ui.proxyManual->setChecked(true); break;
-        case Settings::FireFox: ui.proxyFireFox->setChecked(true); break;
-        case Settings::Environment: ui.proxyIE->setChecked(true); break;
-        case Settings::None:
-        default: ui.proxyOff->setChecked(true); break;
-    }
-
-    Settings::proxySettings proxy;
-    if (s.proxy("",proxy))
-    {
-        ui.proxyHost->setText(proxy.hostname);
-        ui.proxyPort->setText(QString("%1").arg(proxy.port));
-        ui.proxyUserName->setText(proxy.user);
-        ui.proxyPassword->setText(proxy.password);
-        ui.proxyHost->setEnabled(ui.proxyManual->isChecked());
-        ui.proxyPort->setEnabled(ui.proxyManual->isChecked());
-        ui.proxyUserName->setEnabled(ui.proxyManual->isChecked());
-        ui.proxyPassword->setEnabled(ui.proxyManual->isChecked());
-    }
-}
-
-void SettingsProxyPage::accept()
-{
-    Settings::ProxyMode m = Settings::None;
-    if(ui.proxyIE->isChecked())
-#ifdef Q_WS_WIN
-      m = Settings::InternetExplorer;
-#else
-      m = Settings::Environment;
-#endif
-    if(ui.proxyFireFox->isChecked())
-        m = Settings::FireFox;
-    if(ui.proxyManual->isChecked())
-        m = Settings::Manual;
-    s.setProxyMode(m);
-    if (ui.proxyManual->isChecked())
-    {
-        Settings::proxySettings proxy;
-        proxy.hostname = ui.proxyHost->text();
-        proxy.port = ui.proxyPort->text().toInt();
-        proxy.user = ui.proxyUserName->text();
-        proxy.password = ui.proxyPassword->text();
-        s.setProxy(proxy);
-    }
-}
-
-void SettingsProxyPage::reject()
-{
-}
-
-bool SettingsProxyPage::isComplete()
-{
-    return true;
-}
-
 SettingsPage::SettingsPage(QWidget *parent)
 : QDialog(parent),
   m_downloadPage(ui,parent),
-  m_installPage(ui,parent),
-  m_proxyPage(ui,parent),
   m_mirrorPage(ui,parent),
   s(Settings::getInstance())
 {
@@ -295,8 +138,6 @@ void SettingsPage::init()
     ui.setupUi(this);
 
     m_downloadPage.reset();
-    m_installPage.reset();
-    m_proxyPage.reset();
     m_mirrorPage.reset();
 
     ui.displayTitlePage->setCheckState(s.showTitlePage() ? Qt::Checked : Qt::Unchecked);
@@ -311,8 +152,6 @@ void SettingsPage::accept()
 {
     hide();
     m_downloadPage.accept();
-    m_installPage.accept();
-    m_proxyPage.accept();
     m_mirrorPage.accept();
 
     s.setShowTitlePage(ui.displayTitlePage->checkState() == Qt::Checked ? true : false);
@@ -325,8 +164,6 @@ void SettingsPage::reject()
 {
     hide();
     m_downloadPage.reject();
-    m_installPage.reject();
-    m_proxyPage.reject();
     m_mirrorPage.reject();
     init(); // reinit page to restore old settings, is this really required ?
 }
@@ -368,6 +205,10 @@ void SettingsPage::switchProxyFields(bool mode)
     ui.proxyUserName->setEnabled(mode);
     ui.proxyPassword->setEnabled(mode);
 }
+
+
+
+
 
 
 #if test

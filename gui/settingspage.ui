@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>591</width>
-    <height>554</height>
+    <height>587</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -20,7 +20,7 @@
     <rect>
      <x>200</x>
      <y>10</y>
-     <width>141</width>
+     <width>301</width>
      <height>43</height>
     </rect>
    </property>
@@ -41,7 +41,7 @@ p, li { white-space: pre-wrap; }
    <property name="geometry" >
     <rect>
      <x>350</x>
-     <y>360</y>
+     <y>390</y>
      <width>231</width>
      <height>151</height>
     </rect>
@@ -104,7 +104,7 @@ p, li { white-space: pre-wrap; }
    <property name="geometry" >
     <rect>
      <x>10</x>
-     <y>360</y>
+     <y>390</y>
      <width>331</width>
      <height>151</height>
     </rect>
@@ -264,7 +264,7 @@ p, li { white-space: pre-wrap; }
    <property name="geometry" >
     <rect>
      <x>390</x>
-     <y>520</y>
+     <y>550</y>
      <width>191</width>
      <height>25</height>
     </rect>
@@ -282,7 +282,7 @@ p, li { white-space: pre-wrap; }
      <x>10</x>
      <y>40</y>
      <width>571</width>
-     <height>151</height>
+     <height>181</height>
     </rect>
    </property>
    <property name="toolTip" >
@@ -297,9 +297,9 @@ p, li { white-space: pre-wrap; }
    <widget class="QLabel" name="label" >
     <property name="geometry" >
      <rect>
-      <x>10</x>
+      <x>0</x>
       <y>30</y>
-      <width>104</width>
+      <width>121</width>
       <height>20</height>
      </rect>
     </property>
@@ -310,7 +310,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">In this directory KDE applications will be installed. &lt;/p>&lt;/body>&lt;/html></string>
     </property>
     <property name="text" >
-     <string>Installation Root Path</string>
+     <string>Installation Directory</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="rootPathEdit" >
@@ -333,16 +333,16 @@ p, li { white-space: pre-wrap; }
      </rect>
     </property>
     <property name="text" >
-     <string>...</string>
+     <string>Browse ...</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_6" >
     <property name="geometry" >
      <rect>
-      <x>44</x>
-      <y>62</y>
-      <width>70</width>
-      <height>14</height>
+      <x>30</x>
+      <y>60</y>
+      <width>91</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="toolTip" >
@@ -365,7 +365,7 @@ p, li { white-space: pre-wrap; }
      <rect>
       <x>130</x>
       <y>61</y>
-      <width>57</width>
+      <width>81</width>
       <height>18</height>
      </rect>
     </property>
@@ -376,9 +376,9 @@ p, li { white-space: pre-wrap; }
    <widget class="QRadioButton" name="compilerMSVC" >
     <property name="geometry" >
      <rect>
-      <x>187</x>
-      <y>61</y>
-      <width>51</width>
+      <x>130</x>
+      <y>90</y>
+      <width>81</width>
       <height>18</height>
      </rect>
     </property>
@@ -392,9 +392,9 @@ p, li { white-space: pre-wrap; }
     </property>
     <property name="geometry" >
      <rect>
-      <x>244</x>
-      <y>61</y>
-      <width>78</width>
+      <x>130</x>
+      <y>120</y>
+      <width>101</width>
       <height>18</height>
      </rect>
     </property>
@@ -412,7 +412,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry" >
      <rect>
       <x>130</x>
-      <y>120</y>
+      <y>150</y>
       <width>340</width>
       <height>18</height>
      </rect>
@@ -424,10 +424,10 @@ p, li { white-space: pre-wrap; }
    <widget class="QRadioButton" name="installModeEndUser" >
     <property name="geometry" >
      <rect>
-      <x>130</x>
-      <y>90</y>
-      <width>67</width>
-      <height>18</height>
+      <x>380</x>
+      <y>60</y>
+      <width>101</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="text" >
@@ -437,9 +437,9 @@ p, li { white-space: pre-wrap; }
    <widget class="QRadioButton" name="installModeDeveloper" >
     <property name="geometry" >
      <rect>
-      <x>197</x>
+      <x>380</x>
       <y>90</y>
-      <width>73</width>
+      <width>111</width>
       <height>18</height>
      </rect>
     </property>
@@ -453,10 +453,10 @@ p, li { white-space: pre-wrap; }
    <widget class="QLabel" name="label_11" >
     <property name="geometry" >
      <rect>
-      <x>56</x>
-      <y>91</y>
-      <width>58</width>
-      <height>14</height>
+      <x>290</x>
+      <y>60</y>
+      <width>81</width>
+      <height>18</height>
      </rect>
     </property>
     <property name="toolTip" >
@@ -477,7 +477,7 @@ p, li { white-space: pre-wrap; }
    <property name="geometry" >
     <rect>
      <x>10</x>
-     <y>200</y>
+     <y>230</y>
      <width>571</width>
      <height>81</height>
     </rect>
@@ -536,7 +536,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">In this location all downloaded files and archives are temporary saved&lt;/p>&lt;/body>&lt;/html></string>
     </property>
     <property name="text" >
-     <string>Package Download Path</string>
+     <string>Download Path</string>
     </property>
    </widget>
    <widget class="QPushButton" name="tempPathSelect" >
@@ -552,7 +552,7 @@ p, li { white-space: pre-wrap; }
      </rect>
     </property>
     <property name="text" >
-     <string>...</string>
+     <string>Browse ...</string>
     </property>
    </widget>
   </widget>
@@ -560,7 +560,7 @@ p, li { white-space: pre-wrap; }
    <property name="geometry" >
     <rect>
      <x>10</x>
-     <y>290</y>
+     <y>320</y>
      <width>571</width>
      <height>61</height>
     </rect>

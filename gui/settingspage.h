@@ -62,30 +62,6 @@ private slots:
 	void addNewMirrorClicked();
 };
 
-class SettingsInstallPage : public SettingsSubPage
-{
-public:
-    SettingsInstallPage(Ui::SettingsDialog &ui, QWidget *parent)
-        : SettingsSubPage(ui, parent) {}
-    virtual QWidget *widget();
-    virtual void reset();
-    virtual void accept();
-    virtual void reject();
-    virtual bool isComplete();
-};
-
-class SettingsProxyPage : public SettingsSubPage
-{
-public:
-    SettingsProxyPage(Ui::SettingsDialog &ui, QWidget *parent)
-        : SettingsSubPage(ui, parent) {}
-    virtual QWidget *widget();
-    virtual void reset();
-    virtual void accept();
-    virtual void reject();
-    virtual bool isComplete();
-};
-
 class SettingsPage : public QDialog
 {
     Q_OBJECT
@@ -94,14 +70,10 @@ public:
     SettingsPage(QWidget *parent = 0);
     void init();
     SettingsDownloadPage *downloadPage() { return &m_downloadPage; }
-    SettingsInstallPage *installPage() { return &m_installPage; }
-    SettingsProxyPage *proxyPage() {return &m_proxyPage; }
     SettingsMirrorPage *mirrorPage() {return &m_mirrorPage; }
 
 protected:
     SettingsDownloadPage m_downloadPage;
-    SettingsInstallPage m_installPage;
-    SettingsProxyPage m_proxyPage;
     SettingsMirrorPage m_mirrorPage;
 
 private slots:
