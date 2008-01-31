@@ -11,7 +11,7 @@ class PathSettingsPage : public InstallWizardPage
     Q_OBJECT
 
 public:
-    PathSettingsPage(SettingsSubPage *s);
+    PathSettingsPage();
 
     void initializePage();
     bool isComplete();

@@ -6,7 +6,7 @@
 #include "database.h"
 #include "pathsettingspage.h"
 
-PathSettingsPage::PathSettingsPage(SettingsSubPage *s) : InstallWizardPage(s)
+PathSettingsPage::PathSettingsPage() : InstallWizardPage(0)
 {
 //    setTitle(tr("Basic Setup"));
 //    setSubTitle(tr("Select the directory where you want to install the KDE packages, "
@@ -90,7 +90,7 @@ bool PathSettingsPage::isComplete()
 
 int PathSettingsPage::nextId() const
 {
-    return InstallWizard::proxySettingsPage;
+    return InstallWizard::internetSettingsPage;
 }
 
 bool PathSettingsPage::validatePage()
