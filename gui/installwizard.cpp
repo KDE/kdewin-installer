@@ -55,6 +55,8 @@
 #include "uninstaller.h"
 #include "unpacker.h"
 
+#include "pathsettingspage.h"
+
 // must be global
 QTreeWidget *tree;
 QTreeWidget *leftTree;
@@ -102,6 +104,8 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     setOption(QWizard::HaveCustomButton2, true);
     connect(settingsButton, SIGNAL(clicked()), this, SLOT(settingsButtonClicked()) );
     settingsButton->hide();
+
+    setOption(QWizard::NoBackButtonOnStartPage,true);
 
 #ifdef HAVE_RETRY_BUTTON
     QPushButton *retryButton = new QPushButton(tr("Retry"));
@@ -198,7 +202,7 @@ void InstallWizard::readSettings()
     Settings &settings = Settings::getInstance();
 
     settings.beginGroup("Geometry");
-    setGeometry(settings.value("normalGeometry", QRect(200,200, 400, 400)).toRect());
+    setGeometry(settings.value("normalGeometry", QRect(200,200, 800, 500)).toRect());
     if (settings.value("maximized", false).toBool()) {
       setWindowState(Qt::WindowMaximized);
     }
@@ -351,41 +355,6 @@ int TitlePage::nextId() const
         return InstallWizard::pathSettingsPage;
     else
         return InstallWizard::packageSelectorPage;
-}
-
-PathSettingsPage::PathSettingsPage(SettingsSubPage *s) : InstallWizardPage(s)
-{
-    setTitle(tr("Basic Setup"));
-    setSubTitle(tr("Select the directory where you want to install the KDE packages, "
-       "for which compiler this installation should be and which installation mode you prefer."
-    ));
-    QVBoxLayout *layout = new QVBoxLayout;
-    // @TODO: remove top level line from widget
-    layout->addWidget(page->widget(),10);
-    layout->addWidget(statusLabel,1,Qt::AlignBottom);
-    setLayout(layout);
-}
-
-void PathSettingsPage::initializePage()
-{
-    page->reset();
-    setPixmap(QWizard::WatermarkPixmap, QPixmap());
-}
-
-bool PathSettingsPage::isComplete()
-{
-    return page->isComplete();
-}
-
-int PathSettingsPage::nextId() const
-{
-    return InstallWizard::proxySettingsPage;
-}
-
-bool PathSettingsPage::validatePage()
-{
-    page->accept();
-    return true;
 }
 
 ProxySettingsPage::ProxySettingsPage(SettingsSubPage *s) : InstallWizardPage(s)

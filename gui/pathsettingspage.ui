@@ -1,0 +1,277 @@
+<ui version="4.0" >
+ <class>PathSettingsPage</class>
+ <widget class="QWidget" name="PathSettingsPage" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>787</width>
+    <height>394</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Basic Setup</string>
+  </property>
+  <property name="statusTip" >
+   <string>Select the directory where you want to install the KDE packages, for which compiler this installation should be and which installation mode you prefer.</string>
+  </property>
+  <widget class="QLineEdit" name="rootPathEdit" >
+   <property name="geometry" >
+    <rect>
+     <x>150</x>
+     <y>20</y>
+     <width>441</width>
+     <height>23</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="compilerUnspecified" >
+   <property name="enabled" >
+    <bool>true</bool>
+   </property>
+   <property name="geometry" >
+    <rect>
+     <x>150</x>
+     <y>170</y>
+     <width>101</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>unspecified</string>
+   </property>
+   <property name="checked" >
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="createStartMenuEntries" >
+   <property name="enabled" >
+    <bool>false</bool>
+   </property>
+   <property name="geometry" >
+    <rect>
+     <x>140</x>
+     <y>360</y>
+     <width>340</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Create startmenu entries for desktop files</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="rootPathSelect" >
+   <property name="geometry" >
+    <rect>
+     <x>610</x>
+     <y>19</y>
+     <width>77</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Browse ...</string>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="installModeDeveloper" >
+   <property name="geometry" >
+    <rect>
+     <x>150</x>
+     <y>310</y>
+     <width>111</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Developer</string>
+   </property>
+   <property name="checked" >
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="compilerMSVC" >
+   <property name="geometry" >
+    <rect>
+     <x>150</x>
+     <y>150</y>
+     <width>81</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>MSVC</string>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="compilerMinGW" >
+   <property name="geometry" >
+    <rect>
+     <x>150</x>
+     <y>131</y>
+     <width>81</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>MinGW</string>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="installModeEndUser" >
+   <property name="geometry" >
+    <rect>
+     <x>150</x>
+     <y>290</y>
+     <width>101</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>End User</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label" >
+   <property name="geometry" >
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>121</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="toolTip" >
+    <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">In this directory KDE applications will be installed. &lt;/p>&lt;/body>&lt;/html></string>
+   </property>
+   <property name="text" >
+    <string>Installation Directory</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2" >
+   <property name="geometry" >
+    <rect>
+     <x>20</x>
+     <y>210</y>
+     <width>700</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">The install mode determines which paket components are installable. &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">In &lt;span style=" font-weight:600;">End User mode&lt;/span> only components required for running application are installable,&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">In &lt;span style=" font-weight:600;">Developer mode&lt;/span> development files and sources are installable too.&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;span style=" font-weight:600;">Warning: &lt;/span>Changing the install mode after packages are already installed may result in a non usable installation&lt;/p>&lt;/body>&lt;/html></string>
+   </property>
+   <property name="scaledContents" >
+    <bool>true</bool>
+   </property>
+   <property name="alignment" >
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+   </property>
+   <property name="wordWrap" >
+    <bool>true</bool>
+   </property>
+   <property name="openExternalLinks" >
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3" >
+   <property name="geometry" >
+    <rect>
+     <x>20</x>
+     <y>60</y>
+     <width>700</width>
+     <height>68</height>
+    </rect>
+   </property>
+   <property name="sizePolicy" >
+    <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+     <horstretch>1</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text" >
+    <string>KDE on windows supports mingw and msvc compiler. Because packages containing c++ code are binary incompatible between compilers, this option let you preselect the type of compiler. If a specific compiler is selected, packages build for other compiler are invisible. 
+</string>
+   </property>
+   <property name="alignment" >
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+   </property>
+   <property name="wordWrap" >
+    <bool>true</bool>
+   </property>
+   <property name="indent" >
+    <number>0</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4" >
+   <property name="geometry" >
+    <rect>
+     <x>69</x>
+     <y>290</y>
+     <width>80</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Install Mode</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5" >
+   <property name="geometry" >
+    <rect>
+     <x>50</x>
+     <y>130</y>
+     <width>111</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Compiler Mode</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_6" >
+   <property name="geometry" >
+    <rect>
+     <x>400</x>
+     <y>130</y>
+     <width>321</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Using the &lt;span style=" font-weight:600;">unspecified&lt;/span> type you should really know which packages are intended for which compiler, otherwise you may corrupt your installation. &lt;/p>&lt;/body>&lt;/html></string>
+   </property>
+   <property name="alignment" >
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+   </property>
+   <property name="wordWrap" >
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_7" >
+   <property name="geometry" >
+    <rect>
+     <x>339</x>
+     <y>129</y>
+     <width>53</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Warning:</string>
+   </property>
+   <property name="alignment" >
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
