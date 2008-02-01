@@ -31,42 +31,44 @@ ENDMACRO (QT4_ADD_RESOURCES2)
 
 
 set(installer_GUI_SOURCES
-   installwizard.cpp
-   titlepage.cpp
-   installtypepage.cpp
-   installdirectorypage.cpp
-   internetsettingspage.cpp
    downloadsettingspage.cpp
-   mirrorsettingspage.cpp
-   settingspage.cpp
-   installerenginegui.cpp
-   packagestates.cpp
-   main.cpp
+   installdirectorypage.cpp
    installerdialogs.cpp
+   installerenginegui.cpp
+   installtypepage.cpp
+   installwizard.cpp
+   internetsettingspage.cpp
+   mirrorsettingspage.cpp
+   packageselectorpage.cpp
+   settingspage.cpp
+   packagestates.cpp
+   titlepage.cpp
+   main.cpp
 )
 
 set(installer_GUI_HEADERS
-   installwizard.h
-   titlepage.h
-   installtypepage.h
-   installdirectorypage.h
-   internetsettingspage.h
    downloadsettingspage.h
-   mirrorsettingspage.h
-   settingspage.h
-   installerenginegui.h
-   packagestates.h
+   installdirectorypage.h
    installerdialogs.h
+   installerenginegui.h
+   installtypepage.h
+   installwizard.h
+   internetsettingspage.h
+   mirrorsettingspage.h
+   packageselectorpage.h
+   settingspage.h
+   packagestates.h
+   titlepage.h
 )
 
 set (UI_SOURCES 
+   downloadsettingspage.ui
+   installdirectorypage.ui
+   installtypepage.ui
+   internetsettingspage.ui
+   mirrorsettingspage.ui
    settingspage.ui
    titlepage.ui
-   installtypepage.ui
-   installdirectorypage.ui
-   internetsettingspage.ui
-   downloadsettingspage.ui
-   mirrorsettingspage.ui
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})

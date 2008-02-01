@@ -29,31 +29,10 @@
 
 #include <QObject>
 #include <QWizard>
+class QLabel;
+class QListWidget;
 #include "settingspage.h"
 
-
-class QCheckBox;
-class QLabel;
-class QLineEdit;
-class QRadioButton;
-class QListWidget;
-class QTextEdit;
-class QTreeWidget;
-class QTreeWidgetItem;
-class TitlePage;
-class InstallTypePage;
-class DownloadSettingsPage;
-class InstallDirectoryPage;
-class InternetSettingsPage;
-class MirrorSettingsPage;
-class PackageSelectorPage;
-class DependenciesPage;
-class InstallPage;
-class UninstallPage;
-class DownloadPage;
-class FinishPage;
-
-extern QListWidget *g_dependenciesList;
 
 class InstallWizard : public QWizard
 {
@@ -113,30 +92,6 @@ protected:
 
 protected slots:
     void clearStatus();
-};
-
-class PackageSelectorPage : public InstallWizardPage
-{
-    Q_OBJECT
-
-public:
-    PackageSelectorPage();
-
-    void initializePage();
-    bool isComplete();
-    int nextId() const;
-    bool validatePage();
-
-public slots:
-    void itemClicked(QTreeWidgetItem *item, int column);
-    void on_leftTree_itemClicked(QTreeWidgetItem *item, int column);
-
-    void installDirChanged(const QString &dir);
-    void slotCompilerTypeChanged(void);
-
-private:
-    QTabWidget *packageInfo;
-    QTextEdit *categoryInfo;
 };
 
 class DependenciesPage: public InstallWizardPage
@@ -206,10 +161,6 @@ public:
 
     void initializePage();
     bool isComplete();
-
-private:
-    QLabel *bottomLabel;
-    QCheckBox *agreeCheckBox;
 };
 
 #endif

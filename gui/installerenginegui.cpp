@@ -53,6 +53,8 @@
 
 /// holds the package selection and icon states
 PackageStates packageStates;
+extern QListWidget *g_dependenciesList;
+
 
 // Column definitions in package list tree widget
 const int NameColumn = 0;
