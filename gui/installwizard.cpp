@@ -39,6 +39,7 @@
 #include <QInputDialog>
 #include <QApplication>
 #include <QTextEdit>
+#include <QTimer>
 
 #include "installwizard.h"
 #include "downloader.h"
@@ -60,6 +61,7 @@
 #include "installdirectorypage.h"
 #include "internetsettingspage.h"
 #include "downloadsettingspage.h"
+#include "mirrorsettingspage.h"
 
 // must be global
 QTreeWidget *tree;
@@ -113,9 +115,9 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     setPage(installDirectoryPage, new InstallDirectoryPage); 
     setPage(internetSettingsPage, new InternetSettingsPage); 
     setPage(downloadSettingsPage, new DownloadSettingsPage); 
-    setPage(mirrorSettingsPage, new MirrorSettingsPage(_settingsPage->mirrorPage())); 
-    setPage(packageSelectorPage, new PackageSelectorPage()); 
-    setPage(dependenciesPage, new DependenciesPage()); 
+    setPage(mirrorSettingsPage, new MirrorSettingsPage); 
+    setPage(packageSelectorPage, new PackageSelectorPage); 
+    setPage(dependenciesPage, new DependenciesPage); 
     setPage(downloadPage, new DownloadPage()); 
     setPage(uninstallPage, new UninstallPage()); 
     setPage(installPage, new InstallPage()); 
@@ -255,6 +257,34 @@ void InstallWizard::slotEngineError(const QString &msg)
     );
 }
 
+
+/*
+ int InstallWizard::nextId() const
+ {
+     switch (currentId()) {
+     case Page_Intro:
+         if (field("intro.evaluate").toBool()) {
+             return Page_Evaluate;
+         } else {
+             return Page_Register;
+         }
+     case Page_Evaluate:
+         return Page_Conclusion;
+     case Page_Register:
+         if (field("register.upgradeKey").toString().isEmpty()) {
+             return Page_Details;
+         } else {
+             return Page_Conclusion;
+         }
+     case Page_Details:
+         return Page_Conclusion;
+     case Page_Conclusion:
+     default:
+         return -1;
+     }
+ }
+
+*/
 InstallWizardPage::InstallWizardPage(SettingsSubPage *s) : page(s)
 {
 #if 1
@@ -285,40 +315,17 @@ void InstallWizardPage::cancel()
 {
 }
 
-MirrorSettingsPage::MirrorSettingsPage(SettingsSubPage *s) : InstallWizardPage(s)
+void InstallWizardPage::setStatus(const QString &text)
 {
-    setTitle(tr("Mirror settings"));
-    setSubTitle(tr("Select the download mirror from where you want to download KDE packages."));
-
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(page->widget(),10);
-    layout->addWidget(statusLabel,1,Qt::AlignBottom);
-    setLayout(layout);
+    statusLabel->setText(text);
+    QTimer::singleShot(5000, this, SLOT(clearStatus()));
 }
 
-void MirrorSettingsPage::initializePage()
+void InstallWizardPage::clearStatus()
 {
-    page->reset();
+    statusLabel->setText(QString());
 }
 
-int MirrorSettingsPage::nextId() const
-{
-    return InstallWizard::packageSelectorPage;
-}
-
-bool MirrorSettingsPage::validatePage()
-{
-    page->accept();
-    Settings &s = Settings::getInstance();
-    s.setFirstRun(false);
-    wizard()->button(QWizard::CustomButton2)->show();
-    return true;
-}
-
-bool MirrorSettingsPage::isComplete()
-{
-    return page->isComplete();
-}
 
 PackageSelectorPage::PackageSelectorPage()  : InstallWizardPage(0)
 {

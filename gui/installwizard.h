@@ -28,7 +28,6 @@
 //#define ENABLE_STYLE
 
 #include <QObject>
-
 #include <QWizard>
 #include "settingspage.h"
 
@@ -96,6 +95,8 @@ private:
 
 class InstallWizardPage : public QWizardPage
 {
+    Q_OBJECT 
+    
 public:
     InstallWizardPage(SettingsSubPage *s=0);
 
@@ -103,24 +104,15 @@ public:
     virtual int nextId() const;
     virtual bool isComplete();
     virtual void cancel();
+    void setStatus(const QString &text);
 
 protected:
     SettingsSubPage *page;
     QLabel *topLabel;
     QLabel *statusLabel;
-};
 
-class MirrorSettingsPage : public InstallWizardPage
-{
-    Q_OBJECT
-
-public:
-    MirrorSettingsPage(SettingsSubPage *s);
-
-    void initializePage();
-    bool isComplete();
-    int nextId() const;
-    bool validatePage();
+protected slots:
+    void clearStatus();
 };
 
 class PackageSelectorPage : public InstallWizardPage

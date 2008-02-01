@@ -37,6 +37,7 @@ set(installer_GUI_SOURCES
    installdirectorypage.cpp
    internetsettingspage.cpp
    downloadsettingspage.cpp
+   mirrorsettingspage.cpp
    settingspage.cpp
    installerenginegui.cpp
    packagestates.cpp
@@ -51,6 +52,7 @@ set(installer_GUI_HEADERS
    installdirectorypage.h
    internetsettingspage.h
    downloadsettingspage.h
+   mirrorsettingspage.h
    settingspage.h
    installerenginegui.h
    packagestates.h
@@ -64,6 +66,7 @@ set (UI_SOURCES
    installdirectorypage.ui
    internetsettingspage.ui
    downloadsettingspage.ui
+   mirrorsettingspage.ui
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
