@@ -22,32 +22,48 @@
 **
 ****************************************************************************/
 
-#include "config.h"
-#include "titlepage.h"
+#include "downloadpage.h"
+#include "downloaderprogress.h"
+#include "downloader.h"
 
-TitlePage::TitlePage()
+DownloadPage::DownloadPage() : InstallWizardPage(0)
 {
-    setTitle(tr("KDE for Windows Installer"));
-    setSubTitle(tr("Release " VERSION));
-    ui.setupUi(this);
+    setTitle(tr("Downloading packages"));
+    setSubTitle(tr(" "));
+
+    DownloaderProgress *progress = new DownloaderProgress(this);
     QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(statusLabel,1,Qt::AlignBottom);
+    layout->addWidget(progress);
+    layout->addStretch(1);
     setLayout(layout);
+
+    Downloader::instance()->setProgress(progress);
 }
 
-void TitlePage::initializePage()
+void DownloadPage::initializePage()
 {
-    setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/watermark.png"));
+    wizard()->setOption(QWizard::HaveCustomButton2,false);
 }
 
-int TitlePage::nextId() const
+int DownloadPage::nextId() const
 {
-    Settings &s = Settings::getInstance();
-    /// @TODO 
-//    if (s.isFirstRun() || s.showTitlePage())
-        return InstallWizard::installDirectoryPage;
-//    else
-//        return InstallWizard::packageSelectorPage;
+    return InstallWizard::uninstallPage;
 }
 
-#include "titlepage.moc"
+bool DownloadPage::isComplete()
+{
+    return true;
+}
+
+void DownloadPage::cancel()
+{
+    //@ TODO 
+    engine->stop();
+}
+
+bool DownloadPage::validatePage()
+{
+    return true;
+}
+
+#include "downloadpage.moc"

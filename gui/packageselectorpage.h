@@ -31,6 +31,9 @@ class QTextEdit;
 #include "installwizard.h"
 //#include "ui_packageselectorpage.h"
 
+// must be global
+extern QTreeWidget *tree;
+extern QTreeWidget *leftTree;
 
 class PackageSelectorPage : public InstallWizardPage
 {

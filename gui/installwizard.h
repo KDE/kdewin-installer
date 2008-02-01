@@ -24,15 +24,12 @@
 #ifndef InstallWizard_H
 #define InstallWizard_H
 
-// define to enable different style
-//#define ENABLE_STYLE
-
 #include <QObject>
 #include <QWizard>
-class QLabel;
-class QListWidget;
-#include "settingspage.h"
 
+class QLabel;
+
+#include "settingspage.h"
 
 class InstallWizard : public QWizard
 {
@@ -77,7 +74,7 @@ class InstallWizardPage : public QWizardPage
     Q_OBJECT 
     
 public:
-    InstallWizardPage(SettingsSubPage *s=0);
+    InstallWizardPage(QWidget *parent = 0);
 
     virtual void initializePage();
     virtual int nextId() const;
@@ -86,7 +83,6 @@ public:
     void setStatus(const QString &text);
 
 protected:
-    SettingsSubPage *page;
     QLabel *topLabel;
     QLabel *statusLabel;
 
@@ -94,73 +90,9 @@ protected slots:
     void clearStatus();
 };
 
-class DependenciesPage: public InstallWizardPage
-{
-    Q_OBJECT
+#include "installerenginegui.h"
 
-public:
-    DependenciesPage();
+extern InstallerEngineGui *engine;
 
-    void initializePage();
-    int nextId() const;
-    bool validatePage();
-
-private:
-    QListWidget *dependenciesList;
-    friend class PackageSelectorPage;
-};
-
-class DownloadPage : public InstallWizardPage
-{
-    Q_OBJECT
-
-public:
-    DownloadPage();
-
-    void cancel();
-    void initializePage();
-    bool isComplete();
-    int nextId() const;
-    bool validatePage();
-};
-
-class UninstallPage : public InstallWizardPage
-{
-    Q_OBJECT
-
-public:
-    UninstallPage();
-
-    void cancel();
-    void initializePage();
-    bool isComplete();
-    int nextId() const;
-    bool validatePage();
-};
-
-class InstallPage : public InstallWizardPage
-{
-    Q_OBJECT
-
-public:
-    InstallPage();
-
-    void cancel();
-    void initializePage();
-    bool isComplete();
-    int nextId() const;
-    bool validatePage();
-};
-
-class FinishPage : public InstallWizardPage
-{
-    Q_OBJECT
-
-public:
-    FinishPage();
-
-    void initializePage();
-    bool isComplete();
-};
 
 #endif

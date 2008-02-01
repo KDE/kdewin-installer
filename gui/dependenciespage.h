@@ -22,32 +22,31 @@
 **
 ****************************************************************************/
 
-#include "config.h"
-#include "titlepage.h"
+#ifndef DEPENDENCIESPAGE_H
+#define DEPENDENCIESPAGE_H
 
-TitlePage::TitlePage()
+
+#include "installwizard.h"
+class QListWidget;
+
+class PackageSelectorPage;
+
+extern QListWidget *g_dependenciesList;
+
+class DependenciesPage: public InstallWizardPage
 {
-    setTitle(tr("KDE for Windows Installer"));
-    setSubTitle(tr("Release " VERSION));
-    ui.setupUi(this);
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(statusLabel,1,Qt::AlignBottom);
-    setLayout(layout);
-}
+    Q_OBJECT
 
-void TitlePage::initializePage()
-{
-    setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/watermark.png"));
-}
+public:
+    DependenciesPage();
 
-int TitlePage::nextId() const
-{
-    Settings &s = Settings::getInstance();
-    /// @TODO 
-//    if (s.isFirstRun() || s.showTitlePage())
-        return InstallWizard::installDirectoryPage;
-//    else
-//        return InstallWizard::packageSelectorPage;
-}
+    void initializePage();
+    int nextId() const;
+    bool validatePage();
 
-#include "titlepage.moc"
+private:
+    QListWidget *dependenciesList;
+    friend class PackageSelectorPage;
+};
+
+#endif

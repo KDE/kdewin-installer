@@ -61,14 +61,13 @@
 #include "downloadsettingspage.h"
 #include "mirrorsettingspage.h"
 #include "packageselectorpage.h"
-
-// must be global
-extern QTreeWidget *tree;
-extern QTreeWidget *leftTree;
+#include "dependenciespage.h"
+#include "downloadpage.h"
+#include "uninstallpage.h"
+#include "installpage.h"
+#include "finishpage.h"
 
 InstallerEngineGui *engine;
-
-QListWidget *g_dependenciesList = 0;
 
 InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     engine = new InstallerEngineGui(this);
@@ -284,16 +283,9 @@ void InstallWizard::slotEngineError(const QString &msg)
  }
 
 */
-InstallWizardPage::InstallWizardPage(SettingsSubPage *s) : page(s)
+InstallWizardPage::InstallWizardPage(QWidget *parent) : QWizardPage(parent)
 {
-#if 1
     statusLabel = new QLabel("", this);
-#else
-    statusLabel = new QLabel(tr(
-    "<hr><br>Note: Move the mouse over one of the labels on the left side and wait some seconds to see "
-    " detailed informations about this topic"
-    ), this);
-#endif
 }
 
 void InstallWizardPage::initializePage()
@@ -323,203 +315,6 @@ void InstallWizardPage::setStatus(const QString &text)
 void InstallWizardPage::clearStatus()
 {
     statusLabel->setText(QString());
-}
-
-
-
-DependenciesPage::DependenciesPage() : InstallWizardPage(0)
-{
-    setTitle(tr("Additional Packages"));
-    setSubTitle(tr("The following packages are selected for installing too because selected packages depends on them"));
-    dependenciesList = new QListWidget;
-
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(dependenciesList);
-    g_dependenciesList = dependenciesList;
-    layout->addStretch(1);
-    setLayout(layout);
-}
-
-void DependenciesPage::initializePage()
-{
-    wizard()->setOption(QWizard::HaveCustomButton2,false);
-}
-
-int DependenciesPage::nextId() const
-{
-    return InstallWizard::downloadPage;
-}
-
-bool DependenciesPage::validatePage()
-{
-    return true;
-}
-
-DownloadPage::DownloadPage() : InstallWizardPage(0)
-{
-    setTitle(tr("Downloading packages"));
-    setSubTitle(tr(" "));
-
-    DownloaderProgress *progress = new DownloaderProgress(this);
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(progress);
-    layout->addStretch(1);
-    setLayout(layout);
-
-    Downloader::instance()->setProgress(progress);
-}
-
-void DownloadPage::initializePage()
-{
-    wizard()->setOption(QWizard::HaveCustomButton2,false);
-}
-
-int DownloadPage::nextId() const
-{
-    return InstallWizard::uninstallPage;
-}
-
-bool DownloadPage::isComplete()
-{
-    return true;
-}
-
-void DownloadPage::cancel()
-{
-    //@ TODO 
-    engine->stop();
-}
-
-bool DownloadPage::validatePage()
-{
-    return true;
-}
-
-UninstallPage::UninstallPage() : InstallWizardPage(0)
-{
-    setTitle(tr("Uninstalling packages"));
-    setSubTitle(tr(" "));
-
-    InstallerProgress *progress = new InstallerProgress(this);
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(progress);
-    layout->addStretch(1);
-    setLayout(layout);
-    Uninstaller::instance()->setProgress(progress);
-}
-
-void UninstallPage::initializePage()
-{
-}
-
-int UninstallPage::nextId() const
-{
-    return InstallWizard::installPage;
-}
-
-bool UninstallPage::isComplete()
-{
-    return true;
-}
-
-void UninstallPage::cancel()
-{
-    engine->stop();
-}
-
-bool UninstallPage::validatePage()
-{
-    return true;
-}
-
-InstallPage::InstallPage() : InstallWizardPage(0)
-{
-    setTitle(tr("Installing packages"));
-    setSubTitle(tr(" "));
-
-    InstallerProgress *progress = new InstallerProgress(this);
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(progress);
-    layout->addStretch(1);
-    setLayout(layout);
-    Unpacker::instance()->setProgress(progress);
-}
-
-void InstallPage::initializePage()
-{
-}
-
-int InstallPage::nextId() const
-{
-    return InstallWizard::finishPage;
-}
-
-bool InstallPage::isComplete()
-{
-    return true;
-}
-
-void InstallPage::cancel()
-{
-    engine->stop();
-}
-
-bool InstallPage::validatePage()
-{
-    return true;
-}
-
-FinishPage::FinishPage() : InstallWizardPage(0)
-{
-    setTitle(tr("Installation finished"));
-    setSubTitle(tr(" "));
-
-    QLabel* label = new QLabel(tr(
-         "<p>Now you should be able to run kde applications. "
-         "Please open an explorer window and navigate to the bin folder of the kde installation root. "
-         "There you will find several applications which can be started by a simple click on the executable.</p>"
-         "<p>In further versions of this installer it will be also possible "
-         "to start kde applications from the windows start menu.</p>"
-         "<p>If you <ul>"
-         "<li>like to see the KDE on windows project web site see <a href=\"http://windows.kde.org\">http://windows.kde.org</a></li>"
-         "<li>like to get community support for this installer and/or running kde applications please contact "
-            "the <a href=\"http://mail.kde.org/mailman/listinfo/kde-windows\">kde-windows@kde.org</a> mailing list.</li>"
-         "<li>like to contribute time and/or money to this project contact also the above mentioned list."
-            "There are always interesting projects where you can join.</li>"
-         "</ul></p>"
-         "<p>Have fun using KDE on windows.</p>" 
-         "<p> </p>"
-         "<p><b>The KDE on Windows team</b></p>"
-         "<p>&nbsp;</p>"
-         "<p>&nbsp;</p>"
-         "<p>This software is designed to provide powerfull and flexible network based install systems using a modern gui toolkit. "
-         "If you need assistance or have specific needs for such a services, please contact <a href=\"mailto:ralf@habacker.de\">Ralf Habacker</a></p>"
-         ));
-
-    label->setOpenExternalLinks (true);
-    label->setWordWrap(true);
-    
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(label);
-    layout->addStretch(1);
-    setLayout(layout);
-}
-
-void FinishPage::initializePage()
-{
-    setFinalPage(true);
-    //wizard()->setOption(QWizard::NoCancelButton,true);
-    wizard()->button(QWizard::CancelButton)->setEnabled(false);
-#ifdef HAVE_RETRY_BUTTON
-    wizard()->setOption(QWizard::HaveCustomButton3, false);
-    wizard()->button(QWizard::CustomButton3)->show();
-#endif
-    wizard()->setOption(QWizard::NoBackButtonOnLastPage,true);
-}
-
-bool FinishPage::isComplete()
-{
-    return true;
 }
 
 #include "installwizard.moc"

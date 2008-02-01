@@ -22,32 +22,39 @@
 **
 ****************************************************************************/
 
-#include "config.h"
-#include "titlepage.h"
+#include <QListWidget>
 
-TitlePage::TitlePage()
+
+#include "dependenciespage.h"
+
+QListWidget *g_dependenciesList;
+
+DependenciesPage::DependenciesPage() : InstallWizardPage(0)
 {
-    setTitle(tr("KDE for Windows Installer"));
-    setSubTitle(tr("Release " VERSION));
-    ui.setupUi(this);
+    setTitle(tr("Additional Packages"));
+    setSubTitle(tr("The following packages are selected for installing too because selected packages depends on them"));
+    dependenciesList = new QListWidget;
+
     QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(statusLabel,1,Qt::AlignBottom);
+    layout->addWidget(dependenciesList);
+    g_dependenciesList = dependenciesList;
+    layout->addStretch(1);
     setLayout(layout);
 }
 
-void TitlePage::initializePage()
+void DependenciesPage::initializePage()
 {
-    setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/watermark.png"));
+    wizard()->setOption(QWizard::HaveCustomButton2,false);
 }
 
-int TitlePage::nextId() const
+int DependenciesPage::nextId() const
 {
-    Settings &s = Settings::getInstance();
-    /// @TODO 
-//    if (s.isFirstRun() || s.showTitlePage())
-        return InstallWizard::installDirectoryPage;
-//    else
-//        return InstallWizard::packageSelectorPage;
+    return InstallWizard::downloadPage;
 }
 
-#include "titlepage.moc"
+bool DependenciesPage::validatePage()
+{
+    return true;
+}
+
+#include "dependenciespage.moc"

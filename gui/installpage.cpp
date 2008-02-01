@@ -22,32 +22,45 @@
 **
 ****************************************************************************/
 
-#include "config.h"
-#include "titlepage.h"
+#include "installpage.h"
+#include "installerprogress.h"
+#include "unpacker.h"
 
-TitlePage::TitlePage()
+InstallPage::InstallPage() : InstallWizardPage(0)
 {
-    setTitle(tr("KDE for Windows Installer"));
-    setSubTitle(tr("Release " VERSION));
-    ui.setupUi(this);
+    setTitle(tr("Installing packages"));
+    setSubTitle(tr(" "));
+
+    InstallerProgress *progress = new InstallerProgress(this);
     QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(statusLabel,1,Qt::AlignBottom);
+    layout->addWidget(progress);
+    layout->addStretch(1);
     setLayout(layout);
+    Unpacker::instance()->setProgress(progress);
 }
 
-void TitlePage::initializePage()
+void InstallPage::initializePage()
 {
-    setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/watermark.png"));
 }
 
-int TitlePage::nextId() const
+int InstallPage::nextId() const
 {
-    Settings &s = Settings::getInstance();
-    /// @TODO 
-//    if (s.isFirstRun() || s.showTitlePage())
-        return InstallWizard::installDirectoryPage;
-//    else
-//        return InstallWizard::packageSelectorPage;
+    return InstallWizard::finishPage;
 }
 
-#include "titlepage.moc"
+bool InstallPage::isComplete()
+{
+    return true;
+}
+
+void InstallPage::cancel()
+{
+    engine->stop();
+}
+
+bool InstallPage::validatePage()
+{
+    return true;
+}
+
+#include "installpage.moc"

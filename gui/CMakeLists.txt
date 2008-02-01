@@ -31,34 +31,44 @@ ENDMACRO (QT4_ADD_RESOURCES2)
 
 
 set(installer_GUI_SOURCES
+   dependenciespage.cpp
+   downloadpage.cpp
    downloadsettingspage.cpp
+   finishpage.cpp
    installdirectorypage.cpp
    installerdialogs.cpp
    installerenginegui.cpp
+   installpage.cpp
    installtypepage.cpp
    installwizard.cpp
    internetsettingspage.cpp
    mirrorsettingspage.cpp
    packageselectorpage.cpp
-   settingspage.cpp
    packagestates.cpp
+   settingspage.cpp
    titlepage.cpp
+   uninstallpage.cpp
    main.cpp
 )
 
 set(installer_GUI_HEADERS
+   dependenciespage.h
+   downloadpage.h
    downloadsettingspage.h
+   finishpage.h
    installdirectorypage.h
    installerdialogs.h
    installerenginegui.h
+   installpage.h
    installtypepage.h
    installwizard.h
    internetsettingspage.h
    mirrorsettingspage.h
    packageselectorpage.h
-   settingspage.h
    packagestates.h
+   settingspage.h
    titlepage.h
+   uninstallpage.h
 )
 
 set (UI_SOURCES 

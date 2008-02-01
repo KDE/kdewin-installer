@@ -22,32 +22,23 @@
 **
 ****************************************************************************/
 
-#include "config.h"
-#include "titlepage.h"
+#ifndef DOWNLOADPAGE_H
+#define DOWNLOADPAGE_H
 
-TitlePage::TitlePage()
+#include "installwizard.h"
+
+class DownloadPage : public InstallWizardPage
 {
-    setTitle(tr("KDE for Windows Installer"));
-    setSubTitle(tr("Release " VERSION));
-    ui.setupUi(this);
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(statusLabel,1,Qt::AlignBottom);
-    setLayout(layout);
-}
+    Q_OBJECT
 
-void TitlePage::initializePage()
-{
-    setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/watermark.png"));
-}
+public:
+    DownloadPage();
 
-int TitlePage::nextId() const
-{
-    Settings &s = Settings::getInstance();
-    /// @TODO 
-//    if (s.isFirstRun() || s.showTitlePage())
-        return InstallWizard::installDirectoryPage;
-//    else
-//        return InstallWizard::packageSelectorPage;
-}
+    void cancel();
+    void initializePage();
+    bool isComplete();
+    int nextId() const;
+    bool validatePage();
+};
 
-#include "titlepage.moc"
+#endif

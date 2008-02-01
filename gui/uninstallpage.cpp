@@ -22,32 +22,45 @@
 **
 ****************************************************************************/
 
-#include "config.h"
-#include "titlepage.h"
+#include "uninstallpage.h"
+#include "installerprogress.h"
+#include "uninstaller.h"
 
-TitlePage::TitlePage()
+UninstallPage::UninstallPage()
 {
-    setTitle(tr("KDE for Windows Installer"));
-    setSubTitle(tr("Release " VERSION));
-    ui.setupUi(this);
+    setTitle(tr("Uninstalling packages"));
+    setSubTitle(tr(" "));
+
+    InstallerProgress *progress = new InstallerProgress(this);
     QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(statusLabel,1,Qt::AlignBottom);
+    layout->addWidget(progress);
+    layout->addStretch(1);
     setLayout(layout);
+    Uninstaller::instance()->setProgress(progress);
 }
 
-void TitlePage::initializePage()
+void UninstallPage::initializePage()
 {
-    setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/watermark.png"));
 }
 
-int TitlePage::nextId() const
+int UninstallPage::nextId() const
 {
-    Settings &s = Settings::getInstance();
-    /// @TODO 
-//    if (s.isFirstRun() || s.showTitlePage())
-        return InstallWizard::installDirectoryPage;
-//    else
-//        return InstallWizard::packageSelectorPage;
+    return InstallWizard::installPage;
 }
 
-#include "titlepage.moc"
+bool UninstallPage::isComplete()
+{
+    return true;
+}
+
+void UninstallPage::cancel()
+{
+    engine->stop();
+}
+
+bool UninstallPage::validatePage()
+{
+    return true;
+}
+
+#include "uninstallpage.moc"
