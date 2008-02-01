@@ -65,12 +65,12 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>30</x>
      <y>230</y>
-     <width>531</width>
+     <width>601</width>
      <height>31</height>
     </rect>
    </property>
    <property name="text" >
-    <string>Enter an internet url and click Add to add the url to the list of available servers</string>
+    <string>Enter an http:, ftp: or file: url and click on the right button to add the url to the list of available servers. This url will be selected by default</string>
    </property>
    <property name="alignment" >
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
