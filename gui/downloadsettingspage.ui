@@ -10,10 +10,10 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Temporary Storage Settings</string>
+   <string>Local Storage Settings</string>
   </property>
   <property name="statusTip" >
-   <string>Select the directory where downloaded packages are stored for later reuse.</string>
+   <string>Select the directory where downloaded packages are stored for this and further installations.</string>
   </property>
   <widget class="QCheckBox" name="nestedDownloadTree" >
    <property name="geometry" >
