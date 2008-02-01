@@ -51,6 +51,7 @@ void MirrorSettingsPage::initializePage()
             // display warning box
         }
     }
+    ui.downloadMirror->clear();
 
     QUrl currentMirror = QUrl(s.mirror());
 
