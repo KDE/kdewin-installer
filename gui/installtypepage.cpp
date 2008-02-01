@@ -103,7 +103,7 @@ bool InstallTypePage::isComplete()
 
 int InstallTypePage::nextId() const
 {
-    return InstallWizard::installDirectoryPage;
+    return InstallWizard::downloadSettingsPage;
 }
 
 bool InstallTypePage::validatePage()

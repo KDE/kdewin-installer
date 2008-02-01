@@ -32,9 +32,11 @@ ENDMACRO (QT4_ADD_RESOURCES2)
 
 set(installer_GUI_SOURCES
    installwizard.cpp
+   titlepage.cpp
    installtypepage.cpp
    installdirectorypage.cpp
    internetsettingspage.cpp
+   downloadsettingspage.cpp
    settingspage.cpp
    installerenginegui.cpp
    packagestates.cpp
@@ -44,9 +46,11 @@ set(installer_GUI_SOURCES
 
 set(installer_GUI_HEADERS
    installwizard.h
+   titlepage.h
    installtypepage.h
    installdirectorypage.h
    internetsettingspage.h
+   downloadsettingspage.h
    settingspage.h
    installerenginegui.h
    packagestates.h
@@ -54,10 +58,12 @@ set(installer_GUI_HEADERS
 )
 
 set (UI_SOURCES 
-    settingspage.ui
-    installtypepage.ui
-    installdirectorypage.ui
-    internetsettingspage.ui
+   settingspage.ui
+   titlepage.ui
+   installtypepage.ui
+   installdirectorypage.ui
+   internetsettingspage.ui
+   downloadsettingspage.ui
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})

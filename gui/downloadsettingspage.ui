@@ -1,0 +1,91 @@
+<ui version="4.0" >
+ <class>DownloadSettingsPage</class>
+ <widget class="QWidget" name="DownloadSettingsPage" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>609</width>
+    <height>242</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Temporary Storage Settings</string>
+  </property>
+  <property name="statusTip" >
+   <string>Select the directory where downloaded packages are stored for later reuse.</string>
+  </property>
+  <widget class="QCheckBox" name="nestedDownloadTree" >
+   <property name="geometry" >
+    <rect>
+     <x>140</x>
+     <y>61</y>
+     <width>316</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <property name="toolTip" >
+    <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">nested directory tree means to place every downloaded file into a separate sub directory. &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">If checked the file dbus-1.2.3-bin.zip for example would be placed into the subdirectory dbus/dbus-1.2.3. &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">If this option is not ckecked all downloaded files are placed directly into the package download path. &lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>&lt;/body>&lt;/html></string>
+   </property>
+   <property name="text" >
+    <string>use nested directory tree (cygwin like)</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="tempPathEdit" >
+   <property name="enabled" >
+    <bool>true</bool>
+   </property>
+   <property name="geometry" >
+    <rect>
+     <x>140</x>
+     <y>33</y>
+     <width>330</width>
+     <height>20</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3" >
+   <property name="geometry" >
+    <rect>
+     <x>21</x>
+     <y>30</y>
+     <width>114</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="toolTip" >
+    <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">In this location all downloaded files and archives are temporary saved&lt;/p>&lt;/body>&lt;/html></string>
+   </property>
+   <property name="text" >
+    <string>Download Path</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="tempPathSelect" >
+   <property name="enabled" >
+    <bool>true</bool>
+   </property>
+   <property name="geometry" >
+    <rect>
+     <x>490</x>
+     <y>30</y>
+     <width>77</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Browse ...</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

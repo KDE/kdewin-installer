@@ -22,14 +22,11 @@
 **
 ****************************************************************************/
 
-#include <QDir>
-#include <QString>
 #include <QFileDialog>
 
-#include "database.h"
-#include "installdirectorypage.h"
+#include "downloadsettingspage.h"
 
-InstallDirectoryPage::InstallDirectoryPage() : InstallWizardPage(0)
+DownloadSettingsPage::DownloadSettingsPage() : InstallWizardPage(0)
 {
     ui.setupUi(this);
     setTitle(windowTitle());
@@ -38,42 +35,40 @@ InstallDirectoryPage::InstallDirectoryPage() : InstallWizardPage(0)
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(statusLabel,1,Qt::AlignBottom);
     setLayout(layout);
-    connect( ui.rootPathSelect,SIGNAL(clicked()),this,SLOT(rootPathSelectClicked()) );
+    connect( ui.tempPathSelect,SIGNAL(clicked()),this,SLOT(tempPathSelectClicked()) );
 }
 
-void InstallDirectoryPage::initializePage()
+void DownloadSettingsPage::initializePage()
 {
     Settings &s = Settings::getInstance();
-    ui.rootPathEdit->setText(QDir::convertSeparators(s.installDir()));
+    ui.tempPathEdit->setText(s.downloadDir());
 }
 
-bool InstallDirectoryPage::isComplete()
+int DownloadSettingsPage::nextId() const
 {
-    return !ui.rootPathEdit->text().isEmpty();
+    return InstallWizard::mirrorSettingsPage;
 }
 
-int InstallDirectoryPage::nextId() const
-{
-    return InstallWizard::installTypePage;
-}
-
-bool InstallDirectoryPage::validatePage()
+bool DownloadSettingsPage::validatePage()
 {
     Settings &s = Settings::getInstance();
-    s.setInstallDir(ui.rootPathEdit->text());
-
+    s.setDownloadDir(ui.tempPathEdit->text());
     return true;
 }
 
-void InstallDirectoryPage::rootPathSelectClicked()
+bool DownloadSettingsPage::isComplete()
+{
+    return !ui.tempPathEdit->text().isEmpty();
+}
+
+void DownloadSettingsPage::tempPathSelectClicked()
 {
     QString fileName = QFileDialog::getExistingDirectory(this,
-                       tr("Select Root Installation Directory"),
+                       tr("Select Package Download Directory"),
                        "",
                        QFileDialog::ShowDirsOnly| QFileDialog::DontResolveSymlinks);
     if(!fileName.isEmpty())
-        ui.rootPathEdit->setText(QDir::toNativeSeparators(fileName));
+        ui.tempPathEdit->setText(QDir::toNativeSeparators(fileName));
 }
 
-
-#include "installdirectorypage.moc"
+#include "downloadsettingspage.moc"

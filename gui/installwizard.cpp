@@ -55,9 +55,11 @@
 #include "uninstaller.h"
 #include "unpacker.h"
 
+#include "titlepage.h"
 #include "installtypepage.h"
 #include "installdirectorypage.h"
 #include "internetsettingspage.h"
+#include "downloadsettingspage.h"
 
 // must be global
 QTreeWidget *tree;
@@ -66,24 +68,6 @@ QTreeWidget *leftTree;
 InstallerEngineGui *engine;
 
 QListWidget *g_dependenciesList = 0;
-
-/*
-static
-QLabel* createTopLabel(const QString& str)
-{
-    QLabel* label =  new QLabel(str);
-    label->setObjectName("topLabel");
-#ifdef ENABLE_STYLE
-    label->setFrameStyle(QFrame::StyledPanel);
-    label->setStyleSheet("QLabel#topLabel {font-size: 14px;}");
-#else
-    label->setFrameStyle(QFrame::StyledPanel);
-#endif
-    label->setMinimumHeight(40);
-    label->setMaximumHeight(40);
-    return label;
-}
-*/
 
 InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     engine = new InstallerEngineGui(this);
@@ -128,7 +112,7 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     setPage(installTypePage, new InstallTypePage); 
     setPage(installDirectoryPage, new InstallDirectoryPage); 
     setPage(internetSettingsPage, new InternetSettingsPage); 
-    setPage(downloadSettingsPage, new DownloadSettingsPage(_settingsPage->downloadPage())); 
+    setPage(downloadSettingsPage, new DownloadSettingsPage); 
     setPage(mirrorSettingsPage, new MirrorSettingsPage(_settingsPage->mirrorPage())); 
     setPage(packageSelectorPage, new PackageSelectorPage()); 
     setPage(dependenciesPage, new DependenciesPage()); 
@@ -299,99 +283,6 @@ bool InstallWizardPage::isComplete()
 
 void InstallWizardPage::cancel()
 {
-}
-
-TitlePage::TitlePage() : InstallWizardPage()
-{
-    setTitle(tr("KDE for Windows Installer"));
-    setSubTitle(tr("Release " VERSION));
-    QLabel* description = new QLabel(tr(
-                          "<p>This setup program is used for the installation of KDE for Windows application.</p>"
-                          "<p>The pages that follow will guide you through the installation.</p>"
-                          "<p>Please note that by default this installer will install "
-                          "only a basic set of applications by default. You can always "
-                          "run this program at any time in the future to add, remove or "
-                          "upgrade packages if necessary.</p>"
-                          "<p>This software is licensed under an open source license and build with Qt<sup>1</sup> version " QTVERSION "</p>"
-                          "<p>Contributors: <ul>"
-                          "<li>Ralf Habacker - main application, design, maintainer"
-                          "<li>Christian Ehrlicher - curl and uncompress support, bug fixing"
-                          "<li>Patrick Spendrin - start menu support"
-                          "</ul></p>"
-                          "<p> </p>"
-                          "<p> </p>"
-                          "<p> </p>"
-                          "<p> </p>"
-                          "<p> </p>"
-                          "<p> </p>"
-                          "<p> </p>"
-                          "<small><sup>1</sup> Qt and the Qt logo are trademarks of Trolltech in Norway, the United States and other countries.</small>"
-                          ));
-
-    description->setWordWrap(true);
-
-    //    downloadPackagesRadioButton = new QRadioButton(tr("download packages"));
-    //    downloadAndInstallRadioButton = new QRadioButton(tr("&download and install packages"));
-    //    setFocusProxy(downloadPackagesRadioButton);
-
-    // @TODO add select box for experts mode 
-
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(description);
-    layout->addSpacing(10);
-    //    layout->addWidget(downloadPackagesRadioButton);
-    //    layout->addWidget(downloadAndInstallRadioButton);
-    layout->addStretch(1);
-    setLayout(layout);
-}
-
-void TitlePage::initializePage()
-{
-    //    downloadPackagesRadioButton->setChecked(true);
-    setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/watermark.png"));
-}
-
-int TitlePage::nextId() const
-{
-    Settings &s = Settings::getInstance();
-    if (s.isFirstRun() || s.showTitlePage())
-        return InstallWizard::installTypePage;
-    else
-        return InstallWizard::packageSelectorPage;
-}
-
-
-DownloadSettingsPage::DownloadSettingsPage(SettingsSubPage *s) : InstallWizardPage(s)
-{
-    setTitle(tr("Download Settings"));
-    setSubTitle(tr("Select the directory where downloaded files are finishPaged into."));
-
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(page->widget(),10);
-    layout->addWidget(statusLabel,1,Qt::AlignBottom);
-    setLayout(layout);
-}
-
-void DownloadSettingsPage::initializePage()
-{
-    page->reset();
-}
-
-int DownloadSettingsPage::nextId() const
-{
-    page->accept();
-    return InstallWizard::mirrorSettingsPage;
-}
-
-bool DownloadSettingsPage::validatePage()
-{
-    page->accept();
-    return true;
-}
-
-bool DownloadSettingsPage::isComplete()
-{
-    return page->isComplete();
 }
 
 MirrorSettingsPage::MirrorSettingsPage(SettingsSubPage *s) : InstallWizardPage(s)

@@ -22,58 +22,32 @@
 **
 ****************************************************************************/
 
-#include <QDir>
-#include <QString>
-#include <QFileDialog>
+#include "config.h"
+#include "titlepage.h"
 
-#include "database.h"
-#include "installdirectorypage.h"
-
-InstallDirectoryPage::InstallDirectoryPage() : InstallWizardPage(0)
+TitlePage::TitlePage() : InstallWizardPage()
 {
+    setTitle(tr("KDE for Windows Installer"));
+    setSubTitle(tr("Release " VERSION));
     ui.setupUi(this);
-    setTitle(windowTitle());
-    setSubTitle(statusTip());
-
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(statusLabel,1,Qt::AlignBottom);
     setLayout(layout);
-    connect( ui.rootPathSelect,SIGNAL(clicked()),this,SLOT(rootPathSelectClicked()) );
 }
 
-void InstallDirectoryPage::initializePage()
+void TitlePage::initializePage()
+{
+    setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/watermark.png"));
+}
+
+int TitlePage::nextId() const
 {
     Settings &s = Settings::getInstance();
-    ui.rootPathEdit->setText(QDir::convertSeparators(s.installDir()));
+    /// @TODO 
+//    if (s.isFirstRun() || s.showTitlePage())
+        return InstallWizard::installDirectoryPage;
+//    else
+//        return InstallWizard::packageSelectorPage;
 }
 
-bool InstallDirectoryPage::isComplete()
-{
-    return !ui.rootPathEdit->text().isEmpty();
-}
-
-int InstallDirectoryPage::nextId() const
-{
-    return InstallWizard::installTypePage;
-}
-
-bool InstallDirectoryPage::validatePage()
-{
-    Settings &s = Settings::getInstance();
-    s.setInstallDir(ui.rootPathEdit->text());
-
-    return true;
-}
-
-void InstallDirectoryPage::rootPathSelectClicked()
-{
-    QString fileName = QFileDialog::getExistingDirectory(this,
-                       tr("Select Root Installation Directory"),
-                       "",
-                       QFileDialog::ShowDirsOnly| QFileDialog::DontResolveSymlinks);
-    if(!fileName.isEmpty())
-        ui.rootPathEdit->setText(QDir::toNativeSeparators(fileName));
-}
-
-
-#include "installdirectorypage.moc"
+#include "titlepage.moc"

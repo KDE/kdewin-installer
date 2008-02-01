@@ -32,6 +32,7 @@
 #include <QWizard>
 #include "settingspage.h"
 
+
 class QCheckBox;
 class QLabel;
 class QLineEdit;
@@ -108,31 +109,6 @@ protected:
     QLabel *topLabel;
     QLabel *statusLabel;
 };
-
-class TitlePage : public InstallWizardPage
-{
-    Q_OBJECT
-
-public:
-    TitlePage();
-
-    void initializePage();
-    int nextId() const;
-};
-
-class DownloadSettingsPage : public InstallWizardPage
-{
-    Q_OBJECT
-
-public:
-    DownloadSettingsPage(SettingsSubPage *s);
-
-    void initializePage();
-    bool isComplete();
-    int nextId() const;
-    bool validatePage();
-};
-
 
 class MirrorSettingsPage : public InstallWizardPage
 {
