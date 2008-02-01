@@ -74,6 +74,7 @@ void MirrorSettingsPage::initializePage()
     else
         ui.downloadMirror->setCurrentRow(mirrorIndex);
 
+    ui.downloadMirror->sortItems();
     connect(ui.addMirrorButton,SIGNAL(clicked()), this, SLOT(addNewMirrorClicked()));
 }
 
