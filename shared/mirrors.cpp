@@ -23,11 +23,14 @@
 #include "mirrors.h"
 #include "downloader.h"
 #include "downloaderprogress.h"
+#include "settings.h"
+
 #include <QtDebug>
 #include <QBuffer>
 #include <QFile>
 #include <QUrl>
 #include <QStringList>
+#include <QFileInfo>
 
 /**
 @TODO add  region to mirror list (<TH COLSPAN=5 BGCOLOR="YELLOW">...)
@@ -51,12 +54,32 @@ bool Mirrors::fetch(Type type, QUrl url)
 {
     m_type = type;
 #ifdef DEBUG
-
     QString out = "mirrors.html";
 #else
     QByteArray out;
 #endif
-    if (!Downloader::instance()->start(url,out))
+    QFileInfo cfr(Settings::getInstance().downloadDir()+"/mirrors-remote.lst");
+    if (Settings::hasDebug("Mirrors"))
+        qDebug() << "Check if a copy of the remote config file is available at" << cfr.absoluteFilePath() << (cfr.exists() ? "... found" : "... not found");
+    if (cfr.exists())
+    {
+#ifdef DEBUG
+        out = cfr.absolutePath();
+#else
+        QFile f(cfr.absoluteFilePath());
+        if (f.open(QFile::ReadOnly)) 
+        {
+            out = f.readAll();
+            f.close();
+        }
+        else 
+        {
+          qCritical() << "could not open" << cfr.absoluteFilePath() << "with error" << f.errorString();
+          return false;
+        }
+#endif
+     }   
+     else if (!Downloader::instance()->start(url,out))
         return false;
     return parse(out);
 }

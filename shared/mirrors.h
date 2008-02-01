@@ -43,7 +43,7 @@ class MirrorType
         friend QDebug &operator<<(QDebug &,const MirrorType &);
         QString toString() const
         {
-            return name + " (" + continent + "," + country + ")";
+            return continent + "," + country + " (" + name + ")";
         }
 };
 
