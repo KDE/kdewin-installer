@@ -87,7 +87,7 @@ protected:
     QLabel *statusLabel;
 
 protected slots:
-    void clearStatus();
+    void slotClearStatus();
 };
 
 #include "installerenginegui.h"

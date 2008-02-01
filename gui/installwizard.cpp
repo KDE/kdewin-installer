@@ -310,10 +310,10 @@ void InstallWizardPage::cancel()
 void InstallWizardPage::setStatus(const QString &text)
 {
     statusLabel->setText(text);
-    QTimer::singleShot(5000, this, SLOT(clearStatus()));
+    QTimer::singleShot(5000, this, SLOT(slotClearStatus()));
 }
 
-void InstallWizardPage::clearStatus()
+void InstallWizardPage::slotClearStatus()
 {
     statusLabel->setText(QString());
 }
