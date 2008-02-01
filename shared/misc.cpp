@@ -746,37 +746,37 @@ bool delWin32RegistryValue(const RegKey& akey, const QString& subKey)
 
 void myMessageOutput(QtMsgType type, const char *msg)
 {
-    QFile *log = new QFile(Settings::getInstance().downloadDir()+"/kdewin-installer.log");
-    log->open(QIODevice::Append);
+    QFile log(Settings::getInstance().downloadDir()+"/kdewin-installer.log");
+    log.open(QIODevice::Append);
 
-    log->write(QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ").toLocal8Bit().data());
+    log.write(QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ").toLocal8Bit().data());
     switch (type) {
      case QtDebugMsg:
-         log->write("Debug:");
-         log->write(msg);
-         log->write("\n");
-         log->flush();
+         log.write("Debug:");
+         log.write(msg);
+         log.write("\n");
+         log.flush();
          break;
      case QtWarningMsg:
-         log->write("Warning:");
-         log->write(msg);
-         log->write("\n");
-         log->flush();
+         log.write("Warning:");
+         log.write(msg);
+         log.write("\n");
+         log.flush();
          break;
      case QtCriticalMsg:
-         log->write("Critical:");
-         log->write(msg);
-         log->write("\n");
-         log->flush();
+         log.write("Critical:");
+         log.write(msg);
+         log.write("\n");
+         log.flush();
          break;
      case QtFatalMsg:
-         log->write("Fatal:");
-         log->write(msg);
-         log->write("\n");
-         log->flush();
+         log.write("Fatal:");
+         log.write(msg);
+         log.write("\n");
+         log.flush();
          abort();
     }
-    log->close();
+    log.close();
 }
 
 /*
@@ -793,7 +793,7 @@ bool deleteFile( const QString &root, const QString &filename )
         if( !QDir().mkpath( root + QLatin1String ( "/tmp/removeme" ) ) )
             return false;
         QString fn = filename;
-        fn = fn.replace( '\\', '/' ); 
+        fn = fn.replace( '\\', '/' );
         fn = fn.mid( fn.lastIndexOf( '/' ) );
         fn = root + QLatin1String ( "/tmp/removeme" ) + fn;
         if( !QFile::rename( filename, fn ) )
