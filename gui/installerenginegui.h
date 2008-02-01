@@ -43,7 +43,7 @@ public:
     void setPageSelectorWidgetData(QTreeWidget *tree, QString categoryName=QString());
     void itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column, QTabWidget *info);
     void setLeftTreeData(QTreeWidget *tree=0);
-    void on_leftTree_itemClicked(QTreeWidgetItem *item, int column, QTextEdit *info);
+    void on_leftTree_itemClicked(QTreeWidgetItem *item, int column, QLabel *info);
     void checkUpdateDependencies();
     bool checkRemoveDependencies();
 

@@ -469,7 +469,7 @@ void InstallerEngineGui::setLeftTreeData ( QTreeWidget *tree )
     tree->setColumnCount ( 1 );
     // header
     QTreeWidgetItem *headerItem = new QTreeWidgetItem();
-    headerItem->setText(0,tr ( "Paket Groups" ));
+    headerItem->setText(0,tr ( "Package Categories" ));
     headerItem->setToolTip(0,
         "Url:  "+ m_usedDownloadSource.toString() + 
         "\nDate: " + m_globalConfig->timeStamp().toString("dd.MM.yyyy hh:mm"));
@@ -505,7 +505,7 @@ void InstallerEngineGui::setLeftTreeData ( QTreeWidget *tree )
 // @TODO
 extern QTreeWidget *tree;
 
-void InstallerEngineGui::on_leftTree_itemClicked ( QTreeWidgetItem *item, int column, QTextEdit *info )
+void InstallerEngineGui::on_leftTree_itemClicked ( QTreeWidgetItem *item, int column, QLabel *info )
 {
     if (!item || !info)
         return;

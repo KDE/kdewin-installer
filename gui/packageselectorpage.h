@@ -56,7 +56,7 @@ public slots:
 
 private:
     QTabWidget *packageInfo;
-    QTextEdit *categoryInfo;
+    QLabel *categoryInfo;
 };
 
 #endif

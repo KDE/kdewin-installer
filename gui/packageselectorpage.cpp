@@ -51,8 +51,8 @@ extern QListWidget *g_dependenciesList;
 
 PackageSelectorPage::PackageSelectorPage()  : InstallWizardPage(0)
 {
-    setTitle(tr("Package selection"));
-    setSubTitle(tr("Please select the required packages"));
+    setTitle(tr("Package Selection"));
+    setSubTitle(tr("Please select the packages you like to install"));
 
 #ifdef ENABLE_STYLE
     QSplitter *splitter = new QSplitter(wizard);
@@ -101,9 +101,10 @@ PackageSelectorPage::PackageSelectorPage()  : InstallWizardPage(0)
     // left side of splitter 
     leftTree  = new QTreeWidget(splitter);
 
-    categoryInfo = new QTextEdit();
-    categoryInfo->setReadOnly(true);
-
+    categoryInfo = new QLabel();
+    //categoryInfo->setReadOnly(true);
+    categoryInfo->setWordWrap(true);
+    
     QWidget *gridLayoutLeft = new QWidget(splitter);
     gridLayoutLeft->setContentsMargins(0, 0, 0, 0);
     QVBoxLayout *vboxLayoutLeft = new QVBoxLayout(gridLayoutLeft);
