@@ -95,7 +95,7 @@ bool MirrorSettingsPage::validatePage()
         s.setMirror(data.toString());
 
     s.setFirstRun(false);
-    wizard()->button(QWizard::CustomButton2)->show();
+    setSettingsButtonVisible(true);
     return true;
 }
 

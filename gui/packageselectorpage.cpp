@@ -167,8 +167,7 @@ void PackageSelectorPage::initializePage()
     engine->setLeftTreeData(leftTree);
     engine->setPageSelectorWidgetData(tree);
     on_leftTree_itemClicked(leftTree->currentItem(), 0);
-    wizard()->button(QWizard::CustomButton2)->show();
-    wizard()->button(QWizard::CustomButton3)->hide();
+    setSettingsButtonVisible(true);
 }
 
 void PackageSelectorPage::on_leftTree_itemClicked(QTreeWidgetItem *item, int column)
@@ -221,7 +220,7 @@ bool PackageSelectorPage::validatePage()
     disconnect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString &)),0,0);
     disconnect(&Settings::getInstance(),SIGNAL(compilerTypeChanged()),0,0);
     engine->checkUpdateDependencies();
-    wizard()->button(QWizard::CustomButton2)->hide();
+    setSettingsButtonVisible(false);
     return true;
 }
 

@@ -44,7 +44,7 @@ DependenciesPage::DependenciesPage() : InstallWizardPage(0)
 
 void DependenciesPage::initializePage()
 {
-    wizard()->setOption(QWizard::HaveCustomButton2,false);
+    setSettingsButtonVisible(false);
 }
 
 int DependenciesPage::nextId() const

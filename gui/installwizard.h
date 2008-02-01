@@ -81,6 +81,8 @@ public:
     virtual bool isComplete();
     virtual void cancel();
     void setStatus(const QString &text);
+    void setSettingsButtonVisible(bool mode);
+
 
 protected:
     QLabel *topLabel;

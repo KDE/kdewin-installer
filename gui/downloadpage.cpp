@@ -42,7 +42,7 @@ DownloadPage::DownloadPage() : InstallWizardPage(0)
 
 void DownloadPage::initializePage()
 {
-    wizard()->setOption(QWizard::HaveCustomButton2,false);
+    setSettingsButtonVisible(false);
 }
 
 int DownloadPage::nextId() const

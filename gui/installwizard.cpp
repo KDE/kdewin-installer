@@ -318,4 +318,15 @@ void InstallWizardPage::slotClearStatus()
     statusLabel->setText(QString());
 }
 
+void InstallWizardPage::setSettingsButtonVisible(bool mode)
+{
+#if 0
+    if (mode)
+        wizard()->button(QWizard::CustomButton2)->show();
+    else
+        wizard()->button(QWizard::CustomButton2)->hide();
+#endif
+}
+
+
 #include "installwizard.moc"
