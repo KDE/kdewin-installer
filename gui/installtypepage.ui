@@ -166,7 +166,7 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text" >
     <string>You cannot change this mode for a given install directory if you have installed any packages into.
-To change this mode please o go back one page and choose a different installation directory or uninstall all packages and start over the installer.</string>
+To change this mode please go back one page and choose a different installation directory or uninstall all packages and start over the installer.</string>
    </property>
    <property name="alignment" >
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
