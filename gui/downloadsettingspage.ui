@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>609</width>
-    <height>242</height>
+    <width>652</width>
+    <height>326</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -18,8 +18,8 @@
   <widget class="QCheckBox" name="nestedDownloadTree" >
    <property name="geometry" >
     <rect>
-     <x>140</x>
-     <y>61</y>
+     <x>120</x>
+     <y>160</y>
      <width>316</width>
      <height>19</height>
     </rect>
@@ -34,7 +34,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>&lt;/body>&lt;/html></string>
    </property>
    <property name="text" >
-    <string>use nested directory tree (cygwin like)</string>
+    <string>Use nested directory tree (Cygwin Style)</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="tempPathEdit" >
@@ -43,10 +43,10 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="geometry" >
     <rect>
-     <x>140</x>
+     <x>119</x>
      <y>33</y>
-     <width>330</width>
-     <height>20</height>
+     <width>351</width>
+     <height>23</height>
     </rect>
    </property>
   </widget>
@@ -83,6 +83,27 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text" >
     <string>Browse ...</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label" >
+   <property name="geometry" >
+    <rect>
+     <x>20</x>
+     <y>80</y>
+     <width>581</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Nested directory tree means to place every downloaded file into a separate subdirectory. 
+If checked the file dbus-1.2.3-bin.zip for example would be placed into the subdirectory dbus/dbus-1.2.3. 
+If this option is not ckecked all downloaded files are placed directly in to the package download path.</string>
+   </property>
+   <property name="alignment" >
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+   </property>
+   <property name="wordWrap" >
+    <bool>true</bool>
    </property>
   </widget>
  </widget>
