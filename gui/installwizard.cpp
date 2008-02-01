@@ -84,13 +84,14 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     setOption(QWizard::HaveCustomButton1, true);
     connect(aboutButton, SIGNAL(clicked()), this, SLOT(aboutButtonClicked()) );
 */
+/*
     _settingsPage = new SettingsPage(this);
     QPushButton *settingsButton = new QPushButton(tr("Settings"));
     setButton(QWizard::CustomButton2, settingsButton);
     setOption(QWizard::HaveCustomButton2, true);
     connect(settingsButton, SIGNAL(clicked()), this, SLOT(settingsButtonClicked()) );
     settingsButton->hide();
-
+*/
     setOption(QWizard::NoBackButtonOnStartPage,true);
 
 #ifdef HAVE_RETRY_BUTTON
