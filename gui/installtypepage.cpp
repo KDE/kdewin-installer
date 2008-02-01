@@ -43,31 +43,26 @@ InstallTypePage::InstallTypePage() : InstallWizardPage(0)
 void InstallTypePage::initializePage()
 {
     Settings &s = Settings::getInstance();
-//    ui.createStartMenuEntries->setEnabled(false);
     ui.installModeEndUser->setChecked(!s.isDeveloperMode() ? Qt::Checked : Qt::Unchecked);
     ui.installModeDeveloper->setChecked(s.isDeveloperMode() ? Qt::Checked : Qt::Unchecked);
     
     // logical grouping isn't available in the designer yet :-P
     QButtonGroup *groupA = new QButtonGroup(this);
-    groupA->addButton(ui.compilerUnspecified);
     groupA->addButton(ui.compilerMinGW);
     groupA->addButton(ui.compilerMSVC);
 
     if (Database::isAnyPackageInstalled(s.installDir()))
     {
-        ui.compilerUnspecified->setEnabled(false);
         ui.compilerMinGW->setEnabled(false);
         ui.compilerMSVC->setEnabled(false);
     }
     else
     {
-        ui.compilerUnspecified->setEnabled(true);
         ui.compilerMinGW->setEnabled(true);
         ui.compilerMSVC->setEnabled(true);
     }
 
     switch (s.compilerType()) {
-        case Settings::unspecified: ui.compilerUnspecified->setChecked(true); break;
         case Settings::MinGW: ui.compilerMinGW->setChecked(true); break;
         case Settings::MSVC: ui.compilerMSVC->setChecked(true); break;
         default: ui.compilerMinGW->setChecked(true); break;
@@ -111,8 +106,6 @@ bool InstallTypePage::validatePage()
     Settings &s = Settings::getInstance();
     s.setDeveloperMode(ui.installModeDeveloper->isChecked());
 
-    if (ui.compilerUnspecified->isChecked())
-        s.setCompilerType(Settings::unspecified);
     if (ui.compilerMinGW->isChecked())
         s.setCompilerType(Settings::MinGW);
     if (ui.compilerMSVC->isChecked())
