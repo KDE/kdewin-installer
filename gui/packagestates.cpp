@@ -28,15 +28,17 @@ void PackageStates::setState(QString pkgName, QString pkgVersion, Package::Type 
 {
     QString key = getKey(pkgName,pkgVersion);
     PackageFlags value;
-    if (m_states.contains(key)) 
+    if (m_states.contains(key))
         value = m_states[key];
-    
+
     switch(type) {
         case Package::BIN: value.bin = state; break;
         case Package::LIB: value.lib = state; break;
         case Package::DOC: value.doc = state; break;
         case Package::SRC: value.src = state; break;
         case Package::ALL: value.all = state; break;
+        case Package::ANY: value.bin = value.lib = value.doc = value.src = value.all = state;
+        default: break;
     }
     m_states[key] = value;
 }
@@ -50,7 +52,7 @@ void PackageStates::setState(Package *pkg, Package::Type type, stateType state)
 bool PackageStates::setStates(const QList <Package *>&list, stateType state)
 {
     QList<Package*>::ConstIterator it = list.constBegin();
-    for (; it != list.constEnd(); ++it) 
+    for (; it != list.constEnd(); ++it)
     {
         Package *p = *it;
         if (p->isInstalled(Package::BIN))
@@ -70,7 +72,7 @@ bool PackageStates::setStates(const QList <Package *>&list, stateType state)
 bool PackageStates::setPresentState(const QList <Package *>&list)
 {
     QList<Package*>::ConstIterator it = list.constBegin();
-    for (; it != list.constEnd(); ++it) 
+    for (; it != list.constEnd(); ++it)
     {
         Package *p = *it;
         if (p->isInstalled(Package::BIN))
@@ -90,7 +92,7 @@ bool PackageStates::setPresentState(const QList <Package *>&list)
 stateType PackageStates::getState(QString pkgName, QString pkgVersion, Package::Type type)
 {
     QString key = getKey(pkgName,pkgVersion);
-    
+
     if (!m_states.contains(key))
         return _Nothing;
     PackageFlags value = m_states[key];
@@ -118,7 +120,7 @@ QList <Package *>PackageStates::packages(PackageList *list)
 {
     QList <Package *> packages;
     PackageStatesType::iterator i = m_states.begin();
-    for (;i != m_states.end(); ++i) 
+    for (;i != m_states.end(); ++i)
     {
         Package *p = list->getPackage(i.key());
         if (p)
@@ -130,12 +132,12 @@ QList <Package *>PackageStates::packages(PackageList *list)
 QDebug &operator<<(QDebug &out, const PackageStates &c)
 {
     PackageStatesType::const_iterator i = c.m_states.begin();
-    for (;i != c.m_states.end(); ++i) 
+    for (;i != c.m_states.end(); ++i)
     {
         if (i.key().isEmpty())
             continue;
-        out << i.key() + ":" 
-            << "all" << c.m_states[i.key()].all 
+        out << i.key() + ":"
+            << "all" << c.m_states[i.key()].all
             << "bin" << c.m_states[i.key()].bin
             << "lib" << c.m_states[i.key()].lib
             << "doc" << c.m_states[i.key()].doc

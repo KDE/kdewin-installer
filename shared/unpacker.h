@@ -40,7 +40,7 @@ public:
     // singleton
     static Unpacker *instance();
     // for user interaction
-    void setProgress(InstallerProgress *progress);
+    void setProgress ( InstallerProgress *progress );
     // unpack file
     bool unpackFile ( const QString &fn, const QString &destpath, const StringHash &pathRelocations );
     /// cancel file unpack

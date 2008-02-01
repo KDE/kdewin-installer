@@ -32,60 +32,60 @@ class QEventLoop;
 class DownloaderProgress;
 class Downloader : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  typedef enum { Undefined, Finished, Failed, Aborted } ResultType;
+    typedef enum { Undefined, Finished, Failed, Aborted } ResultType;
 public:
-  // dtor
-  virtual ~Downloader();
-  // singleton
-  static Downloader *instance();
-  // for user interaction
-  void setProgress(DownloaderProgress *progress);
-  // start download
-  bool start ( const QUrl &url, const QString &fileName = QString() );
-  bool start ( const QUrl &url, QByteArray &ba );
-  /// cancel started download
-  void cancel();
-  /// return result string
-  QString resultString() const {
-    return m_resultString;
-  }
-  /// return download result
-  ResultType result()    const {
-    return m_result;
-  }
-  /// return real used url for downloading
-  QUrl       usedURL()   const {
-    return m_usedURL;
-  }
+    // dtor
+    virtual ~Downloader();
+    // singleton
+    static Downloader *instance();
+    // for user interaction
+    void setProgress ( DownloaderProgress *progress );
+    // start download
+    bool start ( const QUrl &url, const QString &fileName = QString() );
+    bool start ( const QUrl &url, QByteArray &ba );
+    /// cancel started download
+    void cancel();
+    /// return result string
+    QString resultString() const {
+        return m_resultString;
+    }
+    /// return download result
+    ResultType result()    const {
+        return m_result;
+    }
+    /// return real used url for downloading
+    QUrl       usedURL()   const {
+        return m_usedURL;
+    }
 
 Q_SIGNALS:
-  void done ( bool error );
-  void error ( const QString &error );
+    void done ( bool error );
+    void error ( const QString &error );
 protected Q_SLOTS:
-  void threadFinished ();
-  int progressCallback ( double ultotal, double ulnow );
+    void threadFinished ();
+    int progressCallback ( double ultotal, double ulnow );
 protected:
-  void setError ( const QString &errStr );
-  bool startInternal ( const QUrl &url );
-  size_t curlWrite ( const char * data, size_t  size );
-  static size_t curlWriteCallback ( void *ptr, size_t size, size_t nmemb, void *stream );
-  static int curlProgressCallback ( void *clientp, double dltotal, double dlnow,
-                                    double ultotal, double ulnow );
+    void setError ( const QString &errStr );
+    bool startInternal ( const QUrl &url );
+    size_t curlWrite ( const char * data, size_t  size );
+    static size_t curlWriteCallback ( void *ptr, size_t size, size_t nmemb, void *stream );
+    static int curlProgressCallback ( void *clientp, double dltotal, double dlnow,
+                                      double ultotal, double ulnow );
 protected:
-  ResultType  m_result;
-  QString     m_resultString;
-  QUrl        m_usedURL;
-  QEventLoop *m_loop;
-  class Private;
-  Private * const d;
+    ResultType  m_result;
+    QString     m_resultString;
+    QUrl        m_usedURL;
+    QEventLoop *m_loop;
+    class Private;
+    Private * const d;
 
-  friend QDebug &operator<< ( QDebug &, const Downloader & );
+    friend QDebug &operator<< ( QDebug &, const Downloader & );
 private:
-  Downloader ();
+    Downloader ();
 
-  friend class DownloaderSingleton;
+    friend class DownloaderSingleton;
 };
 
 #endif

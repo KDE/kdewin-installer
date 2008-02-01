@@ -39,9 +39,9 @@ public:
     // singleton
     static Uninstaller *instance();
     // for user interaction
-    void setProgress(InstallerProgress *progress);
+    void setProgress ( InstallerProgress *progress );
     // uninstall a package
-    bool uninstallPackage(const QString &pathToManifest, const QString &root);
+    bool uninstallPackage ( const QString &pathToManifest, const QString &root );
     // cancel uninstalling
     void cancel();
 Q_SIGNALS:

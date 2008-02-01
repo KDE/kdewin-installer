@@ -41,8 +41,8 @@ QString InstallerEngine::fallBackURL = "http://82.149.170.66/kde-windows";
 
 InstallerEngine::InstallerEngine(QObject *parent)
     : QObject(parent),
-      m_globalConfigReaded(false),
       m_initFinished(false),
+      m_globalConfigReaded(false),
       m_addedPackages(false),
       m_canceled(false)
 {
@@ -72,7 +72,7 @@ void InstallerEngine::initGlobalConfig()
         m_globalConfig->clear();
     readGlobalConfig();
     QHash<QString, QString>::const_iterator i = m_globalConfig->categoryNotes().constBegin();
-    for (; i != m_globalConfig->categoryNotes().constEnd(); i++) 
+    for (; i != m_globalConfig->categoryNotes().constEnd(); i++)
         categoryCache.setNote(i.key(),i.value());
 
     m_globalConfigReaded = true;
@@ -89,7 +89,7 @@ bool InstallerEngine::initPackages()
 
     // add site independend package category relations
     QHash<QString, QStringList>::const_iterator i = m_globalConfig->categoryPackages().constBegin();
-    for (; i != m_globalConfig->categoryPackages().constEnd(); i++) 
+    for (; i != m_globalConfig->categoryPackages().constEnd(); i++)
     {
         foreach (const QString &name,i.value())
         {
@@ -258,7 +258,7 @@ bool InstallerEngine::addPackagesFromSites()
             if (pkg->name().contains("msvc"))
                 pkg->addCategories("msvc");
 
-            // add categories defined in the config 
+            // add categories defined in the config
             pkg->addCategories(site->packageCategories(pkg->name()));
 
             m_packageResources->addPackage(*pkg);
