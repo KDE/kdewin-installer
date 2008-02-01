@@ -215,17 +215,36 @@ p, li { white-space: pre-wrap; }
   <widget class="QLabel" name="label" >
    <property name="geometry" >
     <rect>
-     <x>330</x>
-     <y>80</y>
-     <width>400</width>
-     <height>61</height>
+     <x>390</x>
+     <y>100</y>
+     <width>291</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="text" >
-    <string>Warning: Changing the install mode after packages are already installed may result in a non usable installation</string>
+    <string>You cannot change this mode for a given install directory if you have installed any packages into.</string>
+   </property>
+   <property name="alignment" >
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
    </property>
    <property name="wordWrap" >
     <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_8" >
+   <property name="geometry" >
+    <rect>
+     <x>350</x>
+     <y>100</y>
+     <width>53</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Note:</string>
+   </property>
+   <property name="alignment" >
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
    </property>
   </widget>
  </widget>
