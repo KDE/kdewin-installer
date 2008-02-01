@@ -38,16 +38,24 @@ TitlePage::TitlePage()
 void TitlePage::initializePage()
 {
     setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/watermark.png"));
+    Settings &s = Settings::getInstance();
+    ui.runInPackagerMode->setCheckState(s.isPackageManagerMode() ? Qt::Checked : Qt::Unchecked);
 }
 
 int TitlePage::nextId() const
 {
     Settings &s = Settings::getInstance();
-    /// @TODO 
-//    if (s.isFirstRun() || s.showTitlePage())
+    if (ui.runInPackagerMode->checkState() == Qt::Checked)
+        return InstallWizard::mirrorSettingsPage;
+    else
         return InstallWizard::installDirectoryPage;
-//    else
-//        return InstallWizard::packageSelectorPage;
+}
+
+bool TitlePage::validatePage()
+{
+    Settings &s = Settings::getInstance();
+    s.setPackageManagerMode(ui.runInPackagerMode->checkState() == Qt::Checked ? true : false);
+    return true;
 }
 
 #include "titlepage.moc"

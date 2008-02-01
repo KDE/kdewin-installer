@@ -73,6 +73,10 @@ public:
     bool isFirstRun() { return m_settings.value("FirstRun", true).toBool(); }
     void setFirstRun(bool bFirstRun) { m_settings.setValue("FirstRun", bFirstRun); sync(); }
 
+    // package Manager mode 
+    bool isPackageManagerMode() { return m_settings.value("PackageManagerMode", true).toBool(); }
+    void setPackageManagerMode(bool mode) { m_settings.setValue("PackageManagerMode", mode); sync(); }
+
     bool isDeveloperMode() { return m_settings.value("DeveloperMode", true).toBool(); }
     void setDeveloperMode(bool bMode) { m_settings.setValue("DeveloperMode", bMode); sync(); }
 

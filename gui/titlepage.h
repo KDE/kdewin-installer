@@ -37,6 +37,7 @@ public:
 
     void initializePage();
     int nextId() const;
+    bool validatePage();
 
 protected: 
     Ui::TitlePage ui;

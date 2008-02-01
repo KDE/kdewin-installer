@@ -79,6 +79,8 @@ void Settings::setInstallDir(const QString &dir)
 QString Settings::downloadDir()
 {
     QString dir = m_settings.value("tempdir", QDir::currentPath()).toString();
+    if (dir.isEmpty())
+        dir = qgetenv("TEMP");
     QFileInfo fi(dir);
     if(!fi.exists()) {
         if(!QDir().mkdir(dir))
