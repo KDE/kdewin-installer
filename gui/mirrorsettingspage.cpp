@@ -76,7 +76,10 @@ void MirrorSettingsPage::initializePage()
     else
         ui.downloadMirror->setCurrentRow(mirrorIndex);
 
+    QListWidgetItem *item = ui.downloadMirror->currentItem();
     ui.downloadMirror->sortItems();
+    ui.downloadMirror->setCurrentItem(item);
+
     connect(ui.addMirrorButton,SIGNAL(clicked()), this, SLOT(addNewMirrorClicked()));
 }
 
