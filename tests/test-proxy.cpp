@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     QString ftp("ftp://www.heise.de");
     QString host; 
     bool ret;
-    Settings &s = Settings::getInstance();
+    Settings &s = Settings::instance();
     Settings::proxySettings ps;
 
     s.setProxyMode(Settings::InternetExplorer);

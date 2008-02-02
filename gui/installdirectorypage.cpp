@@ -43,7 +43,7 @@ InstallDirectoryPage::InstallDirectoryPage() : InstallWizardPage(0)
 
 void InstallDirectoryPage::initializePage()
 {
-    Settings &s = Settings::getInstance();
+    Settings &s = Settings::instance();
     ui.rootPathEdit->setText(QDir::convertSeparators(s.installDir()));
 }
 
@@ -59,7 +59,7 @@ int InstallDirectoryPage::nextId() const
 
 bool InstallDirectoryPage::validatePage()
 {
-    Settings &s = Settings::getInstance();
+    Settings &s = Settings::instance();
     s.setInstallDir(ui.rootPathEdit->text());
 
     return true;

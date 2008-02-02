@@ -10,7 +10,7 @@
 
 SettingsPage::SettingsPage(QWidget *parent)
 : QDialog(parent),
-  s(Settings::getInstance())
+  s(Settings::instance())
 {
 //    init();
 }

@@ -40,7 +40,7 @@ DownloadSettingsPage::DownloadSettingsPage() : InstallWizardPage(0)
 
 void DownloadSettingsPage::initializePage()
 {
-    Settings &s = Settings::getInstance();
+    Settings &s = Settings::instance();
     ui.tempPathEdit->setText(s.downloadDir());
 }
 
@@ -51,7 +51,7 @@ int DownloadSettingsPage::nextId() const
 
 bool DownloadSettingsPage::validatePage()
 {
-    Settings &s = Settings::getInstance();
+    Settings &s = Settings::instance();
     s.setDownloadDir(ui.tempPathEdit->text());
     return true;
 }

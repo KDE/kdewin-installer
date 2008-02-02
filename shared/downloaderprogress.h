@@ -70,7 +70,7 @@ public:
     void setMaximum(int value);
     void setValue(int value);
     void show();
-    DownloaderProgress &getInstance();
+    DownloaderProgress &instance();
 
 private:
     int oldunit;

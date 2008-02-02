@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
     qDebug() << "using url" << InstallerEngine::defaultConfigURL;
     
     if (!options.rootdir.isEmpty())
-        Settings::getInstance().setInstallDir(options.rootdir);
+        Settings::instance().setInstallDir(options.rootdir);
 
     if (options.query && packages.size() > 0) {
         for(int i = 0; i < packages.size(); i++)

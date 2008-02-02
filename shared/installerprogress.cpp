@@ -58,7 +58,7 @@ InstallerProgress::~InstallerProgress()
 
 void InstallerProgress::setTitle(const QString &label)
 {
-    if (!Settings::getInstance().installDetails())
+    if (!Settings::instance().installDetails())
     {
         m_titleLabel->setText(label);
     }
@@ -74,7 +74,7 @@ void InstallerProgress::setTitle(const QString &label)
 
 void InstallerProgress::show()
 {
-    if (Settings::getInstance().installDetails())
+    if (Settings::instance().installDetails())
     {
         m_statusLabel->show();
         m_progress->show();

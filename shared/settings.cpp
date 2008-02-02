@@ -176,7 +176,7 @@ void Settings::sync()
 }
 
 
-Settings &Settings::getInstance()
+Settings &Settings::instance()
 {
     static Settings settings;
     return settings;
@@ -337,7 +337,7 @@ bool Settings::proxy(const QString &url, proxySettings &proxy)
 */
 bool Settings::hasDebug(const QString area)
 {
-    Settings &s = Settings::getInstance();
+    Settings &s = Settings::instance();
     return area.isEmpty() && !s.debug().isEmpty()
         || !area.isEmpty() &&
             (s.debug().toLower() == "all"

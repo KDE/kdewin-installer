@@ -40,9 +40,9 @@ MirrorSettingsPage::MirrorSettingsPage() : InstallWizardPage(0)
 
 void MirrorSettingsPage::initializePage()
 {
-    Settings &s = Settings::getInstance();
+    Settings &s = Settings::instance();
     s.setSkipBasicSettings(true);
-    Mirrors &mirrors = Mirrors::getInstance();
+    Mirrors &mirrors = Mirrors::instance();
     if (mirrors.mirrors().size() == 0)
     {
         /// @TODO add vivible progress bar
@@ -87,7 +87,7 @@ int MirrorSettingsPage::nextId() const
 
 bool MirrorSettingsPage::validatePage()
 {
-    Settings &s = Settings::getInstance();
+    Settings &s = Settings::instance();
     QUrl data; 
     if (ui.downloadMirror->currentItem())
         data = ui.downloadMirror->currentItem()->data(Qt::UserRole).toUrl();

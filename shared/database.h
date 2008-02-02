@@ -61,7 +61,7 @@ class Database: public QObject
 
         void dump(const QString &title=QString());
 
-        static Database &getInstance();
+        static Database &instance();
 
         void setRoot(const QString &root)
         {

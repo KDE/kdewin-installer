@@ -43,7 +43,7 @@ InternetSettingsPage::InternetSettingsPage() : InstallWizardPage(0)
 
 void InternetSettingsPage::initializePage()
 {
-    Settings &s = Settings::getInstance();
+    Settings &s = Settings::instance();
 #ifndef Q_WS_WIN
     ui.proxyIE->setText(tr("Environment settings"));
 #endif
@@ -78,7 +78,7 @@ int InternetSettingsPage::nextId() const
 
 bool InternetSettingsPage::validatePage()
 {
-    Settings &s = Settings::getInstance();
+    Settings &s = Settings::instance();
     Settings::ProxyMode m = Settings::None;
     if(ui.proxyIE->isChecked())
 #ifdef Q_WS_WIN

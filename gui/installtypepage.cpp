@@ -42,7 +42,7 @@ InstallTypePage::InstallTypePage() : InstallWizardPage(0)
 
 void InstallTypePage::initializePage()
 {
-    Settings &s = Settings::getInstance();
+    Settings &s = Settings::instance();
     ui.installModeEndUser->setChecked(!s.isDeveloperMode() ? Qt::Checked : Qt::Unchecked);
     ui.installModeDeveloper->setChecked(s.isDeveloperMode() ? Qt::Checked : Qt::Unchecked);
     
@@ -103,7 +103,7 @@ int InstallTypePage::nextId() const
 
 bool InstallTypePage::validatePage()
 {
-    Settings &s = Settings::getInstance();
+    Settings &s = Settings::instance();
     s.setDeveloperMode(ui.installModeDeveloper->isChecked());
 
     if (ui.compilerMinGW->isChecked())

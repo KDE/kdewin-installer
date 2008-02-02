@@ -47,15 +47,15 @@ InstallerEngine::InstallerEngine(QObject *parent)
       m_canceled(false)
 {
     m_database = new Database();
-    m_database->setRoot(Settings::getInstance().installDir());
+    m_database->setRoot(Settings::instance().installDir());
     m_installer = new Installer( );
-    m_installer->setRoot(Settings::getInstance().installDir());
+    m_installer->setRoot(Settings::instance().installDir());
     m_installer->setDatabase(m_database);
     m_globalConfig = new GlobalConfig();
     m_packageResources = new PackageList();
 
-    connect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString&)),this,SLOT(installDirChanged(const QString&)));
-    connect(&Settings::getInstance(),SIGNAL(mirrorChanged(const QString&)),this,SLOT(mirrorChanged(const QString&)));
+    connect(&Settings::instance(),SIGNAL(installDirChanged(const QString&)),this,SLOT(installDirChanged(const QString&)));
+    connect(&Settings::instance(),SIGNAL(mirrorChanged(const QString&)),this,SLOT(mirrorChanged(const QString&)));
     connect(m_installer,SIGNAL(error(const QString &)),this,SLOT(slotError(const QString &)));
 
 }
@@ -141,7 +141,7 @@ bool InstallerEngine::isInstallerVersionOutdated()
 void InstallerEngine::reload()
 {
     m_database->clear();
-    m_database->setRoot(Settings::getInstance().installDir());
+    m_database->setRoot(Settings::instance().installDir());
     categoryCache.clear();
     init();
 }
@@ -158,7 +158,7 @@ bool InstallerEngine::readGlobalConfig()
     }
     if (configFiles.isEmpty())
     {
-        hostURL = Settings::getInstance().mirror();
+        hostURL = Settings::instance().mirror();
         if (!hostURL.isEmpty())
         {
             configFiles = m_globalConfig->fetch(hostURL);

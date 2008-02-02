@@ -38,13 +38,13 @@ TitlePage::TitlePage()
 void TitlePage::initializePage()
 {
     setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/watermark.png"));
-    Settings &s = Settings::getInstance();
+    Settings &s = Settings::instance();
     ui.skipBasicSettings->setCheckState(s.isSkipBasicSettings() ? Qt::Checked : Qt::Unchecked);
 }
 
 int TitlePage::nextId() const
 {
-    Settings &s = Settings::getInstance();
+    Settings &s = Settings::instance();
     if (ui.skipBasicSettings->checkState() == Qt::Checked)
         return InstallWizard::mirrorSettingsPage;
     else
@@ -53,7 +53,7 @@ int TitlePage::nextId() const
 
 bool TitlePage::validatePage()
 {
-    Settings &s = Settings::getInstance();
+    Settings &s = Settings::instance();
     s.setSkipBasicSettings(ui.skipBasicSettings->checkState() == Qt::Checked ? true : false);
     return true;
 }

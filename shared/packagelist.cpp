@@ -467,7 +467,7 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
     if (!ignoreConfigTxt && files.contains("config.txt"))
     {
         // fetch config file
-        QFileInfo cfi(Settings::getInstance().downloadDir()+"/config-temp.txt");
+        QFileInfo cfi(Settings::instance().downloadDir()+"/config-temp.txt");
         bool ret = Downloader::instance()->start(m_baseURL.toString() + "/config.txt",cfi.absoluteFilePath());
         if (ret)
         {

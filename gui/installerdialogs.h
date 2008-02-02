@@ -33,7 +33,7 @@ class InstallerDialogs : public QObject
 
         bool installerOutdated();
         QMessageBox::StandardButton downloadFailed(const QString &url, const QString &error=QString());
-        static InstallerDialogs &getInstance();
+        static InstallerDialogs &instance();
 
     protected:
         QWidget *m_parent;

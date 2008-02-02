@@ -385,8 +385,8 @@ static bool makeDir(const QDir &dir)
 
 QString Package::makeFileName(Package::Type type, bool bCreateDir)
 {
-    QString dir = Settings::getInstance().downloadDir();
-    if (Settings::getInstance().nestedDownloadTree())
+    QString dir = Settings::instance().downloadDir();
+    if (Settings::instance().nestedDownloadTree())
         dir += '/' + m_name + '/' + m_name + '-' + m_version + '/';
     /* uncomment if downloads should be stored in category sub dirs
     else

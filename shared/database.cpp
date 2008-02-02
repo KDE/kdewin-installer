@@ -206,7 +206,7 @@ bool Database::readFromDirectory(const QString &_dir)
     return true;
 }
 
-Database &Database::getInstance()
+Database &Database::instance()
 {
     static Database database;
     return database;

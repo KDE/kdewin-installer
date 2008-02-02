@@ -49,7 +49,7 @@ QMessageBox::StandardButton InstallerDialogs::downloadFailed(const QString &url,
             );
 }
 
-InstallerDialogs &InstallerDialogs::getInstance()
+InstallerDialogs &InstallerDialogs::instance()
 {
     static InstallerDialogs instance;
     return instance;

@@ -162,8 +162,8 @@ void PackageSelectorPage::initializePage()
     engine->init();
     connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
     connect(leftTree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(on_leftTree_itemClicked(QTreeWidgetItem *, int)));
-    connect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
-    connect(&Settings::getInstance(),SIGNAL(compilerTypeChanged()),this,SLOT(slotCompilerTypeChanged()));
+    connect(&Settings::instance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
+    connect(&Settings::instance(),SIGNAL(compilerTypeChanged()),this,SLOT(slotCompilerTypeChanged()));
     engine->setLeftTreeData(leftTree);
     engine->setPageSelectorWidgetData(tree);
     on_leftTree_itemClicked(leftTree->currentItem(), 0);
@@ -217,8 +217,8 @@ bool PackageSelectorPage::validatePage()
 {
     disconnect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),0,0);
     disconnect(leftTree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),0,0);
-    disconnect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString &)),0,0);
-    disconnect(&Settings::getInstance(),SIGNAL(compilerTypeChanged()),0,0);
+    disconnect(&Settings::instance(),SIGNAL(installDirChanged(const QString &)),0,0);
+    disconnect(&Settings::instance(),SIGNAL(compilerTypeChanged()),0,0);
     engine->checkUpdateDependencies();
     setSettingsButtonVisible(false);
     return true;

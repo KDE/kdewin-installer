@@ -58,7 +58,7 @@ class Mirrors /* : public QObject */
         Mirrors();
         bool fetch(Type type, QUrl url);
         MirrorTypeList &mirrors() { return m_mirrors; }
-        static Mirrors &getInstance();
+        static Mirrors &instance();
 
     protected:
         bool parse(const QString &fileName);

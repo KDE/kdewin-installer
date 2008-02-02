@@ -199,7 +199,7 @@ bool Downloader::startInternal ( const QUrl &url )
         curl_easy_setopt ( d->curlHandle, CURLOPT_FOLLOWLOCATION, 1 );
     }
 
-    Settings &s = Settings::getInstance();
+    Settings &s = Settings::instance();
     Settings::proxySettings ps;
     s.proxy ( m_usedURL.scheme(), ps );
 

@@ -746,7 +746,7 @@ bool delWin32RegistryValue(const RegKey& akey, const QString& subKey)
 
 void myMessageOutput(QtMsgType type, const char *msg)
 {
-    QFile log(Settings::getInstance().downloadDir()+"/kdewin-installer.log");
+    QFile log(Settings::instance().downloadDir()+"/kdewin-installer.log");
     log.open(QIODevice::Append);
 
     log.write(QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ").toLocal8Bit().data());

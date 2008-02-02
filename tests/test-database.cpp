@@ -178,7 +178,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
-    Settings &s = Settings::getInstance();
+    Settings &s = Settings::instance();
     
     Database db; 
     db.setRoot(s.installDir());

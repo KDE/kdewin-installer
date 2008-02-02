@@ -416,7 +416,7 @@ bool isMarkedForRemoval ( Package *pkg,Package::Type type )
 InstallerEngineGui::InstallerEngineGui (QWidget *parent)
         : InstallerEngine ( parent ), m_parent(parent)
 {
-    Settings &s = Settings::getInstance();
+    Settings &s = Settings::instance();
     m_installMode = s.isDeveloperMode() ? Developer : EndUser;
     if (m_installMode == Single)
     {
@@ -449,10 +449,10 @@ InstallerEngineGui::InstallerEngineGui (QWidget *parent)
 
 bool InstallerEngineGui::init()
 {
-    m_installMode = Settings::getInstance().isDeveloperMode() ? Developer : EndUser;
+    m_installMode = Settings::instance().isDeveloperMode() ? Developer : EndUser;
     initGlobalConfig();
     if (isInstallerVersionOutdated())
-        InstallerDialogs::getInstance().installerOutdated();
+        InstallerDialogs::instance().installerOutdated();
     return initPackages();
 
     /// @TODO add updates to category cache
@@ -460,7 +460,7 @@ bool InstallerEngineGui::init()
 
 void InstallerEngineGui::reload()
 {
-    m_installMode = Settings::getInstance().isDeveloperMode() ? Developer : EndUser;
+    m_installMode = Settings::instance().isDeveloperMode() ? Developer : EndUser;
     packageStates.clear();
     InstallerEngine::reload();
 }
@@ -481,7 +481,7 @@ void InstallerEngineGui::setLeftTreeData ( QTreeWidget *tree )
     QList<QTreeWidgetItem *> items;
 
     qDebug() << categoryCache.categories();
-    Settings &s = Settings::getInstance();
+    Settings &s = Settings::instance();
     foreach (const QString &category,categoryCache.categories())
     {
         QStringList names = category.split(":");
@@ -567,7 +567,7 @@ void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString 
     // adding top level items
     QList<QTreeWidgetItem *> categoryList;
 
-    Settings &s = Settings::getInstance();
+    Settings &s = Settings::instance();
 
     foreach(Package *availablePackage,categoryCache.packages(categoryName,*m_packageResources))
     {

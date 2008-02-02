@@ -127,7 +127,7 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     setSizeGripEnabled(true);
     setWindowFlags(windowFlags()|Qt::WindowMaximizeButtonHint);
 
-    InstallerDialogs &d = InstallerDialogs::getInstance();
+    InstallerDialogs &d = InstallerDialogs::instance();
     d.setTitle(windowTitle);
     d.setParent(this);
 
@@ -177,7 +177,7 @@ void InstallWizard::reject()
 
 void InstallWizard::writeSettings()
 {
-    Settings &settings = Settings::getInstance();
+    Settings &settings = Settings::instance();
 
     settings.beginGroup("Geometry");
     settings.setValue("normalGeometry", normalGeometry());
@@ -187,7 +187,7 @@ void InstallWizard::writeSettings()
 
 void InstallWizard::readSettings()
 {
-    Settings &settings = Settings::getInstance();
+    Settings &settings = Settings::instance();
 
     settings.beginGroup("Geometry");
     setGeometry(settings.value("normalGeometry", QRect(200,200, 800, 500)).toRect());
@@ -216,7 +216,7 @@ void InstallWizard::slotCurrentIdChanged(int id)
         }
         button(QWizard::BackButton)->setEnabled(true);
         button(QWizard::NextButton)->setEnabled(true);
-        if (Settings::getInstance().autoNextStep())
+        if (Settings::instance().autoNextStep())
             next();
     }
     else if (id == uninstallPage) {
@@ -228,7 +228,7 @@ void InstallWizard::slotCurrentIdChanged(int id)
         }
         button(QWizard::BackButton)->setEnabled(true);
         button(QWizard::NextButton)->setEnabled(true);
-        if (Settings::getInstance().autoNextStep())
+        if (Settings::instance().autoNextStep())
             next();
     }
     else if (id == installPage) {
@@ -240,7 +240,7 @@ void InstallWizard::slotCurrentIdChanged(int id)
         }
         button(QWizard::BackButton)->setEnabled(true);
         button(QWizard::NextButton)->setEnabled(true);
-        if (Settings::getInstance().autoNextStep())
+        if (Settings::instance().autoNextStep())
             next();
     }
     m_lastId = id;

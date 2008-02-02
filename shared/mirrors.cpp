@@ -58,7 +58,7 @@ bool Mirrors::fetch(Type type, QUrl url)
 #else
     QByteArray out;
 #endif
-    QFileInfo cfr(Settings::getInstance().downloadDir()+"/mirrors-remote.lst");
+    QFileInfo cfr(Settings::instance().downloadDir()+"/mirrors-remote.lst");
     if (Settings::hasDebug("Mirrors"))
         qDebug() << "Check if a copy of the remote config file is available at" << cfr.absoluteFilePath() << (cfr.exists() ? "... found" : "... not found");
     if (cfr.exists())
@@ -162,7 +162,7 @@ bool Mirrors::parse(QIODevice *ioDev)
     return true;
 }
 
-Mirrors &Mirrors::getInstance()
+Mirrors &Mirrors::instance()
 {
     static Mirrors mirrors;
     return mirrors;

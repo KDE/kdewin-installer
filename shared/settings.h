@@ -133,7 +133,7 @@ public:
     void sync();
 
     // static methods
-    static Settings &getInstance();
+    static Settings &instance();
     static bool hasDebug(const QString area="");
 
 Q_SIGNALS:
