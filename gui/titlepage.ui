@@ -45,14 +45,14 @@ p, li { white-space: pre-wrap; }
   <widget class="QCheckBox" name="runInPackagerMode" >
    <property name="geometry" >
     <rect>
-     <x>20</x>
-     <y>300</y>
-     <width>271</width>
+     <x>50</x>
+     <y>280</y>
+     <width>551</width>
      <height>21</height>
     </rect>
    </property>
    <property name="text" >
-    <string>run Installer in Package Manager Mode</string>
+    <string>go directly to the download server page, skip basic settings</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_3" >
@@ -89,12 +89,12 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>10</x>
      <y>230</y>
-     <width>581</width>
-     <height>61</height>
+     <width>641</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="text" >
-    <string>The installer is able to run in a Wizard Mode and a Package Manager Mode. By default the installer runs in the Wizard Mode. If you like to run the installer in the Package Manager Mode select the box below.</string>
+    <string>If you have already entered basic settings you can skip those wizard pages and go directly to the download server page. If this is the first run of the wizard you should not skip the basic settings.</string>
    </property>
    <property name="alignment" >
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
