@@ -248,6 +248,13 @@ void InstallWizard::slotCurrentIdChanged(int id)
 
 void InstallWizard::slotEngineError(const QString &msg)
 {
+    // in some cases tar.bz2 unpacker raises an error when 
+    // uncompressing the last file from the archive
+    // the file seems to be unpackaged complety so this error 
+    // can be supressed at least as a workaroung 
+    if (msg.startsWith("Error reading from file") && msg.contains(".ver"))
+        return; 
+
     QMessageBox::StandardButton result = QMessageBox::critical(
         this,
         tr("Error"),
