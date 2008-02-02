@@ -46,6 +46,7 @@ public:
     bool isComplete();
     int nextId() const;
     bool validatePage();
+    void cleanupPage();
 
 public slots:
     void itemClicked(QTreeWidgetItem *item, int column);

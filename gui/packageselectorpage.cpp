@@ -215,13 +215,17 @@ int PackageSelectorPage::nextId() const
 
 bool PackageSelectorPage::validatePage()
 {
-    disconnect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),0,0);
-    disconnect(leftTree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),0,0);
-    disconnect(&Settings::instance(),SIGNAL(installDirChanged(const QString &)),0,0);
-    disconnect(&Settings::instance(),SIGNAL(compilerTypeChanged()),0,0);
     engine->checkUpdateDependencies();
     setSettingsButtonVisible(false);
     return true;
+}
+
+void PackageSelectorPage::cleanupPage()
+{
+    disconnect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
+    disconnect(leftTree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(on_leftTree_itemClicked(QTreeWidgetItem *, int)));
+    disconnect(&Settings::instance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
+    disconnect(&Settings::instance(),SIGNAL(compilerTypeChanged()),this,SLOT(slotCompilerTypeChanged()));
 }
 
 bool PackageSelectorPage::isComplete()
