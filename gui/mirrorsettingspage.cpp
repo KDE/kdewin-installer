@@ -41,6 +41,7 @@ MirrorSettingsPage::MirrorSettingsPage() : InstallWizardPage(0)
 void MirrorSettingsPage::initializePage()
 {
     Settings &s = Settings::getInstance();
+    s.setSkipBasicSettings(true);
     Mirrors &mirrors = Mirrors::getInstance();
     if (mirrors.mirrors().size() == 0)
     {

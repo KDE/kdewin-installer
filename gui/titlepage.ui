@@ -42,7 +42,7 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QCheckBox" name="runInPackagerMode" >
+  <widget class="QCheckBox" name="skipBasicSettings" >
    <property name="geometry" >
     <rect>
      <x>50</x>

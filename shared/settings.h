@@ -65,6 +65,9 @@ public:
     bool showTitlePage();
     void setShowTitlePage(bool bShow);
 
+    bool isSkipBasicSettings() { return m_settings.value("SkipBasicSettings", false).toBool(); }
+    void setSkipBasicSettings(bool mode) { m_settings.setValue("SkipBasicSettings", mode); sync(); }
+
     // create start menu entries fomr .desktop files
     bool createStartMenuEntries();
     void setCreateStartMenuEntries(bool bCreate);
