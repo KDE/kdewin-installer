@@ -449,6 +449,7 @@ InstallerEngineGui::InstallerEngineGui (QWidget *parent)
 
 bool InstallerEngineGui::init()
 {
+    m_installMode = Settings::getInstance().isDeveloperMode() ? Developer : EndUser;
     initGlobalConfig();
     if (isInstallerVersionOutdated())
         InstallerDialogs::getInstance().installerOutdated();
@@ -459,6 +460,7 @@ bool InstallerEngineGui::init()
 
 void InstallerEngineGui::reload()
 {
+    m_installMode = Settings::getInstance().isDeveloperMode() ? Developer : EndUser;
     packageStates.clear();
     InstallerEngine::reload();
 }
