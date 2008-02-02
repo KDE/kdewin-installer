@@ -109,9 +109,9 @@ int main(int argc, char *argv[])
     if (!options.verbose)
         setMessageHandler();
 
-#if 1
     InstallerEngineConsole engine;
     InstallerEngine::defaultConfigURL = "http://82.149.170.66/kde-windows";
+
     if (!options.rootdir.isEmpty())
         Settings::getInstance().setInstallDir(options.rootdir);
 
@@ -147,86 +147,5 @@ int main(int argc, char *argv[])
     if(options.install && packages.size() > 0)
         engine.installPackages(packages);
     return 0;
-#else
-    Downloader downloader(/*blocking=*/ true);
-    PackageList packageList(&downloader);
-    Installer installer(&packageList);
 
-    // installer.setVerbose(options.verbose);
-    installer.setRoot(options.rootdir.isEmpty() ? "packages" : options.rootdir);
-
-    if ( !packageList.hasConfig() )
-    {
-        // download package list
-        downloader.start("http://sourceforge.net/project/showfiles.php?group_id=23617","packages.html");
-
-        // load and parse
-        if (!packageList.readHTMLFromFile("packages.html"))
-            return 1;
-
-        // save into file
-        if (!packageList.writeToFile())
-            return 1;
-
-        // remove temporay files
-        QFile::remove
-            ("packages.html");
-
-#ifdef USE_EXTERNAL_ZIP
-
-        if ( !installer.isEnabled() )
-        {
-            packageList.downloadPackage("unzip");
-            qDebug()  << "Please unpack "
-            << packageList.getPackage("unzip")->getFileName(Package::BIN)
-            << " into the current dir"
-            << "\n then restart installer to download and install additional packages."
-            << "\n\n" << app.arguments().at(0)  << "[options] <package-name> <package-name>";
-            return 0;
-        }
-#endif
-
-    }
-    else
-    {
-        // read list from file
-        if (!packageList.readFromFile())
-            return 1;
-    }
-
-    if (options.dump)
-        packageList.dump();
-        
-    if (options.list)
-        packageList.listPackages("Package List");
-
-    else if(options.download && packages.size() > 0)
-    {
-        qDebug() << "the following packages are considered for downloading: " << packages;
-
-        Package *pkg;
-        for (int i = 0; i < packages.size(); ++i)
-        {
-            if ((pkg = packageList.getPackage(packages.at(i))))
-                packageList.downloadPackage(packages.at(i));
-            else
-                qDebug() << "package '" << packages.at(i) << " not found: ";
-
-        }
-    }
-    // install packages
-    if (options.install && packages.size() > 0 && installer.isEnabled())
-    {
-        qDebug() << "prelimary installer found, now installing";
-        Package *pkg;
-        for (int i = 0; i < packages.size(); ++i)
-        {
-            if ((pkg = packageList.getPackage(packages.at(i))))
-                if (!packageList.installPackage(packages.at(i)))
-                    qDebug() << "error installing package " << packages.at(i);
-        }
-    }
-#endif
-
-    return 0;
 }
