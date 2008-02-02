@@ -103,6 +103,11 @@ bool MirrorSettingsPage::validatePage()
     return true;
 }
 
+bool MirrorSettingsPage::cleanupPage()
+{
+    disconnect(ui.addMirrorButton,SIGNAL(clicked()), this, SLOT(addNewMirrorClicked()));
+}
+
 bool MirrorSettingsPage::isComplete()
 {
     return ui.downloadMirror->currentItem();

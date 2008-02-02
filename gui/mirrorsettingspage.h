@@ -39,6 +39,7 @@ public:
     bool isComplete();
     int nextId() const;
     bool validatePage();
+    void cleanupPage();
 
 protected:
     Ui::MirrorSettingsPage ui;
