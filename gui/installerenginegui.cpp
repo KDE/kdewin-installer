@@ -487,6 +487,9 @@ void InstallerEngineGui::setLeftTreeData ( QTreeWidget *tree )
             && (names[0] == "msvc" || names[0] == "mingw") )
             continue;
 
+        if (m_installMode == EndUser && !names[0].contains("KDE"))
+            continue;
+
         QTreeWidgetItem *categoryItem = new QTreeWidgetItem ( ( QTreeWidget* ) 0, names );
         categoryItem->setToolTip ( 0, names[1] );
         categoryList.append ( categoryItem );
