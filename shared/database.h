@@ -42,12 +42,11 @@ class Database: public QObject
         virtual ~Database();
         bool readFromDirectory(const QString &dirPath=QString());
         void addPackage(const Package &package);
+
         void listPackageFiles(const QString &pkgName, Package::Type pkgType=Package::BIN);
         void listPackages(const QString &title=QString());
         QStringList getPackageFiles(const QString &pkgName, Package::Type pkgType=Package::BIN);
         Package *getPackage(const QString &pkgName, const QByteArray &version=QByteArray());
-        bool addUnhandledPackages(PackageList *packageList);
-        void resetHandledState(); 
         void clear() { m_database.clear(); }
 
         int size() const
@@ -79,6 +78,9 @@ class Database: public QObject
 
     signals:
         void configLoaded();
+
+protected:
+        void addFromRegistry();
 
     private:
         QList<Package*> m_database;

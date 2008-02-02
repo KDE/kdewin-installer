@@ -28,13 +28,16 @@
 #include "database.h"
 #include "package.h"
 #include "packagelist.h"
+#include "misc.h"
+
+QMap<QString,QString> installKeys;
+
 
 Database::Database()
         : QObject()
 {
-#ifdef DEBUG
-    qDebug() << __FUNCTION__;
-#endif
+    installKeys["vcredist"] = "HKEY_CLASSES_ROOT\\Installer\\Products\\b25099274a207264182f8181add555d0";
+    addFromRegistry();
 }
 
 Database::~Database()
@@ -55,6 +58,34 @@ void Database::addPackage(const Package &package)
     m_database.append(new Package(package));
 }
 
+/// add package if install state is read from registry 
+void Database::addFromRegistry()
+{
+    QStringList keys;
+    QMap<QString, QString>::ConstIterator i = installKeys.begin();
+    for (;i != installKeys.end(); ++i) 
+    {
+        if (!i.key().isEmpty()) 
+        {
+            bool ok;
+            QString packageCode = getWin32RegistryValue(hKEY_CLASSES_ROOT, installKeys[i.key()].replace("HKEY_CLASSES_ROOT\\",""), "PackageCode", &ok).toString();
+            if (!ok)
+                continue;
+
+            Package *pkg =  new Package;
+            pkg->setName(i.key());
+            pkg->setInstalledVersion("");
+            Package::PackageItem pi;
+            pi.bInstalled = true;
+            pi.setContentType("BIN");
+            pkg->add(pi);
+            m_database.append(pkg);
+
+        }
+    }
+}
+
+
 Package *Database::getPackage(const QString &pkgName, const QByteArray &version)
 {
 #ifdef DEBUG
@@ -70,26 +101,6 @@ Package *Database::getPackage(const QString &pkgName, const QByteArray &version)
         }
     }
     return NULL;
-}
-
-bool Database::addUnhandledPackages(PackageList *packageList)
-{
-    QList<Package*>::iterator it = m_database.begin();
-    for ( ; it != m_database.end(); ++it)
-    {
-        if (!(*it)->handled())
-            packageList->addPackage(*(*it));
-    }
-    return true;
-}
-
-void Database::resetHandledState()
-{
-    QList<Package*>::iterator it = m_database.begin();
-    for ( ; it != m_database.end(); ++it)
-    {
-        (*it)->setHandled(false);
-    }
 }
 
 void Database::listPackages(const QString &title)
