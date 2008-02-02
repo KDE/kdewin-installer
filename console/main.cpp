@@ -112,9 +112,20 @@ int main(int argc, char *argv[])
 #if 1
     InstallerEngineConsole engine;
     InstallerEngine::defaultConfigURL = "http://82.149.170.66/kde-windows";
-    engine.init();
     if (!options.rootdir.isEmpty())
         Settings::getInstance().setInstallDir(options.rootdir);
+
+    if (options.query && packages.size() > 0) {
+        for(int i = 0; i < packages.size(); i++)
+            engine.queryPackages(packages[i],options.list);
+        return 0;
+    }   
+    else if (options.query && options.all) {
+        engine.queryPackages();
+        return 0;
+    }
+
+    engine.init();
 
     if (options.query && packages.size() > 0) {
         for(int i = 0; i < packages.size(); i++)

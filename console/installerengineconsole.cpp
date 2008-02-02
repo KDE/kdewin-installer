@@ -58,8 +58,16 @@ void InstallerEngineConsole::queryPackages(const QString &pkgName, bool listFile
         m_database->listPackages();
         return;
     }
-    if (listFiles)
-        m_database->listPackageFiles(pkgName);
+    if (listFiles) {
+        foreach(QString file, m_database->getPackageFiles(pkgName,Package::BIN))
+            printf("BIN: %s\n", file.toLatin1().data());
+        foreach(QString file, m_database->getPackageFiles(pkgName,Package::LIB))
+            printf("LIB: %s\n", file.toLatin1().data());
+        foreach(QString file, m_database->getPackageFiles(pkgName,Package::DOC))
+            printf("DOC: %s\n", file.toLatin1().data());
+        foreach(QString file, m_database->getPackageFiles(pkgName,Package::SRC))
+            printf("SRC: %s\n", file.toLatin1().data());
+    }        
     else {
         Package *pkg = m_database->getPackage(pkgName);
         if (!pkg)
