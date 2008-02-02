@@ -37,6 +37,9 @@ Database::Database()
         : QObject()
 {
     installKeys["vcredist"] = "HKEY_CLASSES_ROOT\\Installer\\Products\\b25099274a207264182f8181add555d0";
+    installKeys["psdk-msvc"] = "HKEY_CLASSES_ROOT\\Installer\\Products\\E10DE0A981DFA754BAC98053CDBD71BB";
+    installKeys["vcexpress-en-msvc"] = "HKEY_CLASSES_ROOT\\Installer\\Products\\9BA4F6BA58CA200489926BEE5AA53E5A";
+    installKeys["perl"] = "HKEY_CLASSES_ROOT\\Installer\\Products\\0052C8C86573FFC4C8DA8E043AA6BA48";
     addFromRegistry();
 }
 
@@ -69,9 +72,11 @@ void Database::addFromRegistry()
         {
             bool ok;
             QString packageCode = getWin32RegistryValue(hKEY_CLASSES_ROOT, installKeys[i.key()].replace("HKEY_CLASSES_ROOT\\",""), "PackageCode", &ok).toString();
-            if (!ok)
+            if (!ok) {
+                qDebug() << i.key() << installKeys[i.key()] << "not found.";
                 continue;
-
+            }
+            qDebug() << i.key() << installKeys[i.key()] << packageCode << "found.";
             Package *pkg =  new Package;
             pkg->setName(i.key());
             pkg->setInstalledVersion("");
