@@ -103,7 +103,7 @@ bool MirrorSettingsPage::validatePage()
     return true;
 }
 
-bool MirrorSettingsPage::cleanupPage()
+void MirrorSettingsPage::cleanupPage()
 {
     disconnect(ui.addMirrorButton,SIGNAL(clicked()), this, SLOT(addNewMirrorClicked()));
 }
