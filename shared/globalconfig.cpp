@@ -274,8 +274,6 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 }
                 else if(cmd[0] == "@relocate")
                     pkg->addPathRelocation(cmd[1],col2);
-                else if(cmd[0] == "@installkey")
-                    pkg->setInstallKey(cmd[1]);
             }
             else if (inSite)
             {

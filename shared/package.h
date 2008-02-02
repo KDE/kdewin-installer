@@ -171,9 +171,6 @@ public:
     bool handled() const { return m_handled; }
     void setHandled(bool state) { m_handled = state; }
 
-    bool installKey() const { return m_installKey; }
-    void setInstallKey(const QString &key) { m_installKey = key; }
-
     /// generate manifest file name
     QString manifestFileName(const Package::Type type);
 
@@ -209,7 +206,6 @@ protected:
     QStringList m_deps;
     StringHash m_pathRelocs;
     bool       m_handled;      // marker for several operations
-    QString m_installKey;      // install key in registry
 
     friend QDebug &operator<<(QDebug &, const Package &);
 };
