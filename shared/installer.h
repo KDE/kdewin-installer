@@ -65,8 +65,16 @@ public:
     void cancel();
 
     bool handlePostInstall(const QString &postInstallFile);
+
+Q_SIGNALS:
+    void error(const QString &);
+    
 public Q_SLOTS:
     void updatePackageList();
+
+protected slots:
+    void slotError(const QString &);
+
 protected:
     bool createManifestFile();
     bool createManifestFileForExecutable();

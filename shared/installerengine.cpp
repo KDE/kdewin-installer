@@ -56,6 +56,8 @@ InstallerEngine::InstallerEngine(QObject *parent)
 
     connect(&Settings::getInstance(),SIGNAL(installDirChanged(const QString&)),this,SLOT(installDirChanged(const QString&)));
     connect(&Settings::getInstance(),SIGNAL(mirrorChanged(const QString&)),this,SLOT(mirrorChanged(const QString&)));
+    connect(m_installer,SIGNAL(error(const QString &)),this,SLOT(slotError(const QString &)));
+
 }
 
 InstallerEngine::~InstallerEngine()
@@ -308,5 +310,9 @@ QDebug &operator<<(QDebug &out, const InstallerEngine &c)
     return out;
 }
 
+void InstallerEngine::slotError(const QString &msg)
+{
+    emit error(msg);
+}
 
 #include "installerengine.moc"

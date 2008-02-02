@@ -78,6 +78,7 @@ protected slots:
     //@ TODO using this slots make thing much complicater as necessary 
     void installDirChanged(const QString &newdir);
     void mirrorChanged(const QString &mirror);
+    void slotError ( const QString &error );
 
 protected:
     PackageList*         m_packageResources;

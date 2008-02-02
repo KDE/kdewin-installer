@@ -48,6 +48,7 @@ Installer::Installer()
         : m_type(Installer::Standard)
 {
     m_root = ".";
+    connect(Unpacker::instance(),SIGNAL(error(const QString &)),this,SLOT(slotError(const QString &)));
 }
 
 Installer::~Installer()
@@ -227,6 +228,11 @@ void Installer::cancel()
 {
     Unpacker::instance()->cancel();
     Uninstaller::instance()->cancel();
+}
+
+void Installer::slotError(const QString &msg)
+{
+    emit error(msg);
 }
 
 #include "installer.moc"
