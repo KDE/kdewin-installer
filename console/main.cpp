@@ -34,6 +34,10 @@
 #include "installerengineconsole.h"
 #include "misc.h"
 
+#include <iostream>
+
+using namespace std;
+
 static struct Options
 {
     bool verbose;
@@ -41,23 +45,25 @@ static struct Options
     bool download;
     bool install;
     bool list;
-    bool dump;
     bool all;
+    QString url;
     QString rootdir;
 }
 options;
 
 static void usage()
 {
-    qDebug() << "... [options] <packagename> [<packagename>]"
+    cout << "... [options] <packagename> [<packagename>]"
     << "\nRelease: " << VERSION
     << "\nOptions: "
     << "\n -l or --list list packages"
-    << "\n -q or --query <packagename> query packages"
-    << "\n -q or --query <packagename> -l list package files"
-    << "\n -i or --install <packagename> download and install package"
-    << "\n -d or --download <packagename> download package"
-    << "\n -D or --dump dump internal data"
+    << "\n -q|--query -a|-all  query all packages"
+    << "\n -q|--query <packagename> query packages"
+    << "\n -q|--query -l <packagename> list package files"
+    << "\n -i|--install <packagename> download and install package"
+    << "\n -d|--download <packagename> download package"
+    << "\n -u|--url download server url"
+    << "\n -v|--verbose print detailed process informations "
     ;
 }
 //#define CYGWIN_INSTALLER
@@ -88,8 +94,10 @@ int main(int argc, char *argv[])
                 options.query = true;
             else if (option == "-d" || option == "--download")
                 options.download = true;
-            else if (option == "-D" || option == "--dump")
-                options.dump = true;
+            else if (option.startsWith("--url"))
+                options.url = option.replace("--url=","");
+            else if (option == "-u")
+                options.url = app.arguments().at(++i);                
             else if (option == "-i" || option == "--install")
             {
                 options.download = true;
@@ -110,8 +118,13 @@ int main(int argc, char *argv[])
         setMessageHandler();
 
     InstallerEngineConsole engine;
-    InstallerEngine::defaultConfigURL = "http://82.149.170.66/kde-windows";
+//    if (!options.url.isEmpty())
+        InstallerEngine::defaultConfigURL = options.url;
+//    else
+//        InstallerEngine::defaultConfigURL = "http://82.149.170.66/kde-windows";
 
+    qDebug() << "using url" << InstallerEngine::defaultConfigURL;
+    
     if (!options.rootdir.isEmpty())
         Settings::getInstance().setInstallDir(options.rootdir);
 
@@ -125,25 +138,17 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    engine.init();
-
-    if (options.query && packages.size() > 0) {
-        for(int i = 0; i < packages.size(); i++)
-            engine.queryPackages(packages[i],options.list);
-        return 0;
-    }   
-    else if (options.query && options.all) {
-        engine.queryPackages();
-        return 0;
-    }
-
+    // the following operations need remote configuration
+    if (options.list || (options.download || options.install) && packages.size() > 0)
+        engine.init();
+    
     if (options.list) {
         engine.listPackages("Package List");
         return 0;
     }
 
     if((options.download || options.install) && packages.size() > 0)
-            engine.downloadPackages(packages);
+        engine.downloadPackages(packages);
     if(options.install && packages.size() > 0)
         engine.installPackages(packages);
     return 0;
