@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>787</width>
-    <height>598</height>
+    <width>659</width>
+    <height>350</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -15,218 +15,247 @@
   <property name="statusTip" >
    <string>Select in which mode the installer should work and which compiler should be used</string>
   </property>
-  <widget class="QRadioButton" name="installModeDeveloper" >
-   <property name="geometry" >
-    <rect>
-     <x>140</x>
-     <y>100</y>
-     <width>111</width>
-     <height>18</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>Developer</string>
-   </property>
-   <property name="checked" >
-    <bool>false</bool>
-   </property>
-  </widget>
-  <widget class="QRadioButton" name="compilerMSVC" >
-   <property name="geometry" >
-    <rect>
-     <x>141</x>
-     <y>280</y>
-     <width>81</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>MSVC</string>
-   </property>
-  </widget>
-  <widget class="QRadioButton" name="compilerMinGW" >
-   <property name="geometry" >
-    <rect>
-     <x>141</x>
-     <y>261</y>
-     <width>81</width>
-     <height>18</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>MinGW</string>
-   </property>
-  </widget>
-  <widget class="QRadioButton" name="installModeEndUser" >
-   <property name="geometry" >
-    <rect>
-     <x>140</x>
-     <y>80</y>
-     <width>101</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>End User</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_2" >
-   <property name="geometry" >
-    <rect>
-     <x>20</x>
-     <y>10</y>
-     <width>700</width>
-     <height>71</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+  <layout class="QVBoxLayout" >
+   <item>
+    <widget class="QLabel" name="label_2" >
+     <property name="text" >
+      <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
 &lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;">
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">The install mode determines which paket components are installable. &lt;/p>
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">In &lt;span style=" font-weight:600;">End User mode&lt;/span> only components required for running application are installable,&lt;/p>
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">In &lt;span style=" font-weight:600;">Developer mode&lt;/span> development files and sources are installable too.&lt;/p>&lt;/body>&lt;/html></string>
-   </property>
-   <property name="scaledContents" >
-    <bool>true</bool>
-   </property>
-   <property name="alignment" >
-    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-   </property>
-   <property name="wordWrap" >
-    <bool>true</bool>
-   </property>
-   <property name="openExternalLinks" >
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_3" >
-   <property name="geometry" >
-    <rect>
-     <x>20</x>
-     <y>190</y>
-     <width>700</width>
-     <height>68</height>
-    </rect>
-   </property>
-   <property name="sizePolicy" >
-    <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-     <horstretch>1</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="text" >
-    <string>KDE on windows supports mingw and msvc compiler. Because packages containing c++ code are binary incompatible between compilers, this option let you preselect the type of compiler. If a specific compiler is selected, packages build for other compiler are invisible. 
-</string>
-   </property>
-   <property name="alignment" >
-    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-   </property>
-   <property name="wordWrap" >
-    <bool>true</bool>
-   </property>
-   <property name="indent" >
-    <number>0</number>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_4" >
-   <property name="geometry" >
-    <rect>
-     <x>59</x>
-     <y>80</y>
-     <width>80</width>
-     <height>18</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>Install Mode</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_5" >
-   <property name="geometry" >
-    <rect>
-     <x>41</x>
-     <y>260</y>
-     <width>111</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>Compiler Mode</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label" >
-   <property name="geometry" >
-    <rect>
-     <x>350</x>
-     <y>80</y>
-     <width>331</width>
-     <height>81</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>You cannot change this mode for a given install directory if you have installed any packages into.
+     </property>
+     <property name="scaledContents" >
+      <bool>true</bool>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <property name="wordWrap" >
+      <bool>true</bool>
+     </property>
+     <property name="openExternalLinks" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QGridLayout" >
+     <item row="0" column="0" >
+      <widget class="QLabel" name="label_4" >
+       <property name="text" >
+        <string>Install Mode</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <widget class="QRadioButton" name="installModeEndUser" >
+       <property name="text" >
+        <string>End User</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2" >
+      <widget class="QLabel" name="label_8" >
+       <property name="text" >
+        <string>Note:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+      </widget>
+     </item>
+     <item rowspan="3" row="0" column="3" >
+      <widget class="QLabel" name="label" >
+       <property name="text" >
+        <string>You cannot change this mode for a given install directory if you have installed any packages into.
 To change this mode please go back one page and choose a different installation directory or uninstall all packages and start over the installer.</string>
-   </property>
-   <property name="alignment" >
-    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-   </property>
-   <property name="wordWrap" >
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_8" >
-   <property name="geometry" >
-    <rect>
-     <x>310</x>
-     <y>80</y>
-     <width>53</width>
-     <height>18</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>Note:</string>
-   </property>
-   <property name="alignment" >
-    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_6" >
-   <property name="geometry" >
-    <rect>
-     <x>350</x>
-     <y>260</y>
-     <width>341</width>
-     <height>121</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>You cannot change the compiler mode for a given install directory if you have installed any packages into.
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+       <property name="wordWrap" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item rowspan="2" row="1" column="0" >
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="1" >
+      <widget class="QRadioButton" name="installModeDeveloper" >
+       <property name="text" >
+        <string>Developer</string>
+       </property>
+       <property name="checked" >
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item rowspan="2" row="1" column="2" >
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="2" column="1" >
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>20</width>
+         <height>21</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_3" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text" >
+      <string>KDE on windows supports mingw and msvc compiler. Because packages containing c++ code are binary incompatible between compilers, this option let you preselect the type of compiler. If a specific compiler is selected, packages build for other compiler are invisible. 
+</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <property name="wordWrap" >
+      <bool>true</bool>
+     </property>
+     <property name="indent" >
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QGridLayout" >
+     <item row="0" column="0" >
+      <widget class="QLabel" name="label_5" >
+       <property name="text" >
+        <string>Compiler Mode</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <widget class="QRadioButton" name="compilerMinGW" >
+       <property name="text" >
+        <string>MinGW</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2" >
+      <widget class="QLabel" name="label_9" >
+       <property name="text" >
+        <string>Note:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+      </widget>
+     </item>
+     <item rowspan="3" row="0" column="3" >
+      <widget class="QLabel" name="label_6" >
+       <property name="text" >
+        <string>You cannot change the compiler mode for a given install directory if you have installed any packages into.
 To install packages for a different compiler please go back one page and choose a different installation directory or uninstall all packages and start over the installer.</string>
-   </property>
-   <property name="alignment" >
-    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-   </property>
-   <property name="wordWrap" >
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_9" >
-   <property name="geometry" >
-    <rect>
-     <x>310</x>
-     <y>260</y>
-     <width>53</width>
-     <height>18</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>Note:</string>
-   </property>
-   <property name="alignment" >
-    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-   </property>
-  </widget>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+       <property name="wordWrap" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item rowspan="2" row="1" column="0" >
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="1" >
+      <widget class="QRadioButton" name="compilerMSVC" >
+       <property name="text" >
+        <string>MSVC</string>
+       </property>
+      </widget>
+     </item>
+     <item rowspan="2" row="1" column="2" >
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="2" column="1" >
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>20</width>
+         <height>16</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>

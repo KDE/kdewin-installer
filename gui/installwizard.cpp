@@ -162,7 +162,6 @@ void InstallWizard::settingsButtonClicked()
 void InstallWizard::reject()
 {
     //there is no page set for this signal 
-    int i = currentId();
     InstallWizardPage *aPage = static_cast<InstallWizardPage*>(currentPage());
     if (aPage)
         aPage->cancel();

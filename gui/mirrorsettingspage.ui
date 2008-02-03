@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>748</width>
+    <width>611</width>
     <height>341</height>
    </rect>
   </property>
@@ -15,80 +15,70 @@
   <property name="statusTip" >
    <string>Select the download server from where you want to download KDE packages.</string>
   </property>
-  <widget class="QLabel" name="downloadMirrorLabel" >
-   <property name="geometry" >
-    <rect>
-     <x>30</x>
-     <y>10</y>
-     <width>101</width>
-     <height>26</height>
-    </rect>
-   </property>
-   <property name="toolTip" >
-    <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <widget class="QLabel" name="downloadMirrorLabel" >
+     <property name="toolTip" >
+      <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
 &lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">There are several download mirrors available. You can select one of them. &lt;/p>&lt;/body>&lt;/html></string>
-   </property>
-   <property name="text" >
-    <string>Download Server</string>
-   </property>
-   <property name="alignment" >
-    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="addMirrorButton" >
-   <property name="geometry" >
-    <rect>
-     <x>610</x>
-     <y>270</y>
-     <width>75</width>
-     <height>24</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>Add &amp;Url</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="addServerURL" >
-   <property name="geometry" >
-    <rect>
-     <x>140</x>
-     <y>270</y>
-     <width>461</width>
-     <height>23</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label" >
-   <property name="geometry" >
-    <rect>
-     <x>30</x>
-     <y>230</y>
-     <width>601</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>Enter an http:, ftp: or file: url and click on the right button to add the url to the list of available servers. This url will be selected by default</string>
-   </property>
-   <property name="alignment" >
-    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-   </property>
-   <property name="wordWrap" >
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QListWidget" name="downloadMirror" >
-   <property name="geometry" >
-    <rect>
-     <x>140</x>
-     <y>20</y>
-     <width>461</width>
-     <height>192</height>
-    </rect>
-   </property>
-  </widget>
+     </property>
+     <property name="text" >
+      <string>Download Server</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item rowspan="2" row="0" column="1" >
+    <widget class="QListWidget" name="downloadMirror" />
+   </item>
+   <item row="1" column="0" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="0" colspan="3" >
+    <widget class="QLabel" name="label" >
+     <property name="text" >
+      <string>Enter an http:, ftp: or file: url and click on the right button to add the url to the list of available servers. This url will be selected by default</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <property name="wordWrap" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" >
+    <widget class="QLineEdit" name="addServerURL" >
+     <property name="minimumSize" >
+      <size>
+       <width>300</width>
+       <height>0</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2" >
+    <widget class="QPushButton" name="addMirrorButton" >
+     <property name="text" >
+      <string>Add &amp;Url</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>

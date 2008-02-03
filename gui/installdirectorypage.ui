@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>787</width>
-    <height>394</height>
+    <width>551</width>
+    <height>163</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -15,67 +15,61 @@
   <property name="statusTip" >
    <string>Select the directory where you want to install KDE applications.</string>
   </property>
-  <widget class="QLineEdit" name="rootPathEdit" >
-   <property name="geometry" >
-    <rect>
-     <x>150</x>
-     <y>30</y>
-     <width>441</width>
-     <height>23</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="rootPathSelect" >
-   <property name="geometry" >
-    <rect>
-     <x>610</x>
-     <y>29</y>
-     <width>77</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>Browse ...</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label" >
-   <property name="geometry" >
-    <rect>
-     <x>20</x>
-     <y>30</y>
-     <width>121</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="toolTip" >
-    <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+  <layout class="QVBoxLayout" >
+   <item>
+    <layout class="QHBoxLayout" >
+     <item>
+      <widget class="QLabel" name="label" >
+       <property name="toolTip" >
+        <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
 &lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">In this directory KDE applications will be installed. &lt;/p>&lt;/body>&lt;/html></string>
-   </property>
-   <property name="text" >
-    <string>Installation Directory</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_2" >
-   <property name="geometry" >
-    <rect>
-     <x>20</x>
-     <y>90</y>
-     <width>611</width>
-     <height>71</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>The installer will create this directory and additional sub directories if required and will install all files for KDE applications into this path. No files are stored outsite this directory except some working files in the user profile path.</string>
-   </property>
-   <property name="alignment" >
-    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-   </property>
-   <property name="wordWrap" >
-    <bool>true</bool>
-   </property>
-  </widget>
+       </property>
+       <property name="text" >
+        <string>Installation Directory</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="rootPathEdit" />
+     </item>
+     <item>
+      <widget class="QPushButton" name="rootPathSelect" >
+       <property name="text" >
+        <string>Browse ...</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_2" >
+     <property name="text" >
+      <string>The installer will create this directory and additional sub directories if required and will install all files for KDE applications into this path. No files are stored outsite this directory except some working files in the user profile path.</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <property name="wordWrap" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>
