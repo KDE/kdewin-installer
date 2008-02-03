@@ -31,9 +31,6 @@ InternetSettingsPage::InternetSettingsPage() : InstallWizardPage(0)
     setTitle(windowTitle());
     setSubTitle(statusTip());
 
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(statusLabel,1,Qt::AlignBottom);
-    setLayout(layout);
     connect( ui.proxyManual,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
     connect( ui.proxyFireFox,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );
     connect( ui.proxyIE,SIGNAL(clicked(bool)),this,SLOT(switchProxyFields(bool)) );

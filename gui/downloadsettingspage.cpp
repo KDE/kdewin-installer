@@ -32,9 +32,6 @@ DownloadSettingsPage::DownloadSettingsPage() : InstallWizardPage(0)
     setTitle(windowTitle());
     setSubTitle(statusTip());
 
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(statusLabel,1,Qt::AlignBottom);
-    setLayout(layout);
     connect( ui.tempPathSelect,SIGNAL(clicked()),this,SLOT(tempPathSelectClicked()) );
 }
 

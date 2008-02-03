@@ -35,9 +35,6 @@ InstallDirectoryPage::InstallDirectoryPage() : InstallWizardPage(0)
     setTitle(windowTitle());
     setSubTitle(statusTip());
 
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(statusLabel,1,Qt::AlignBottom);
-    setLayout(layout);
     connect( ui.rootPathSelect,SIGNAL(clicked()),this,SLOT(rootPathSelectClicked()) );
 }
 

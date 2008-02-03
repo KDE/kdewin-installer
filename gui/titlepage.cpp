@@ -30,9 +30,6 @@ TitlePage::TitlePage()
     setTitle(tr("KDE for Windows Installer"));
     setSubTitle(tr("Version " VERSION));
     ui.setupUi(this);
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(statusLabel,1,Qt::AlignBottom);
-    setLayout(layout);
 }
 
 void TitlePage::initializePage()

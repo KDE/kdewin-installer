@@ -34,10 +34,6 @@ InstallTypePage::InstallTypePage() : InstallWizardPage(0)
     ui.setupUi(this);
     setTitle(windowTitle());
     setSubTitle(statusTip());
-
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(statusLabel,1,Qt::AlignBottom);
-    setLayout(layout);
 }
 
 void InstallTypePage::initializePage()
