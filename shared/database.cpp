@@ -62,14 +62,15 @@ void Database::addPackage(const Package &package)
     m_database.append(new Package(package));
 }
 
-/// add package if install state is read from registry 
+/// add package if install state is read from registry
 void Database::addFromRegistry()
 {
+#ifdef Q_OS_WIN
     QStringList keys;
     QMap<QString, QString>::ConstIterator i = installKeys.begin();
-    for (;i != installKeys.end(); ++i) 
+    for (;i != installKeys.end(); ++i)
     {
-        if (!i.key().isEmpty()) 
+        if (!i.key().isEmpty())
         {
             bool ok;
             QString packageCode = getWin32RegistryValue(hKEY_CLASSES_ROOT, installKeys[i.key()].replace("HKEY_CLASSES_ROOT\\",""), "PackageCode", &ok).toString();
@@ -89,6 +90,7 @@ void Database::addFromRegistry()
 
         }
     }
+#endif
 }
 
 
