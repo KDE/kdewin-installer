@@ -49,6 +49,7 @@ class BZip2IODevice : public QIODevice
     virtual bool isSequential() const;
     virtual bool open(OpenMode mode);
     virtual void close();
+    virtual bool atEnd() const;
   protected:
     virtual qint64 readData(char * data, qint64 maxSize);
     virtual qint64 writeData(const char * data, qint64 maxSize);
