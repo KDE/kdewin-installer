@@ -41,7 +41,6 @@ void TitlePage::initializePage()
 
 int TitlePage::nextId() const
 {
-    Settings &s = Settings::instance();
     if (ui.skipBasicSettings->checkState() == Qt::Checked)
         return InstallWizard::mirrorSettingsPage;
     else
@@ -51,7 +50,7 @@ int TitlePage::nextId() const
 bool TitlePage::validatePage()
 {
     Settings &s = Settings::instance();
-    s.setSkipBasicSettings(ui.skipBasicSettings->checkState() == Qt::Checked ? true : false);
+    s.setSkipBasicSettings(ui.skipBasicSettings->checkState() == Qt::Checked);
     return true;
 }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2008 Ralf Habacker <ralf.habacker@freenet.de> 
+** Copyright (C) 2008 Ralf Habacker <ralf.habacker@freenet.de>
 ** All rights reserved.
 **
 ** This file is part of the KDE installer for windows
@@ -40,7 +40,7 @@ public:
     int nextId() const;
     bool validatePage();
 
-protected: 
+protected:
     Ui::InternetSettingsPage ui;
 
 protected slots:
