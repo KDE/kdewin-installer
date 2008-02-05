@@ -60,6 +60,10 @@ void GenericProgress::hide()
   QWidget::hide();
 }
 
+void GenericProgress::updateDisplay()
+{
+}
+
 /*
   DownloaderProgress
 */
@@ -68,17 +72,18 @@ DownloaderProgress::DownloaderProgress(QWidget *parent)
 {    
     QVBoxLayout *mainLayout = new QVBoxLayout;
 
+    m_titleLabel = new QLabel;
+    mainLayout->addWidget(m_titleLabel);
+ 
     QHBoxLayout *statusLayout = new QHBoxLayout;
-    mainLayout->addLayout(statusLayout);
-
+ 
     m_statusLabel = new QLabel;
     statusLayout->addWidget(m_statusLabel);
 
     m_progress = new QProgressBar(parent);
     statusLayout->addWidget(m_progress);
 
-    m_titleLabel = new QLabel;
-    mainLayout->addWidget(m_titleLabel);
+    mainLayout->addLayout(statusLayout);
 
     m_speedLabel = new QLabel;
     mainLayout->addWidget(m_speedLabel);
@@ -101,13 +106,21 @@ void DownloaderProgress::setMaximum(int value)
     if (m_progress->maximum() == value)
         return;
     m_progress->setMaximum(value);
-    m_titleLabel->setText(m_titleLabel->text() + tr(" (%1 KBytes)").arg(value/1024));
+
+    updateDisplay();
 }
 
 void DownloaderProgress::setValue(int value)
 {
     m_progress->setValue(value);
+    updateDisplay();
+}
+
+void DownloaderProgress::updateDisplay()
+{
+    // calculate speed 
     int range = m_progress->maximum() - m_progress->minimum();
+    int value = m_progress->value();
     if (value == 0 || range == 0)
         return;
     // only update rate when difference >= 1% 
@@ -119,7 +132,7 @@ void DownloaderProgress::setValue(int value)
     if (seconds == 0)
         return;
     int speed = value/seconds;
-    m_speedLabel->setText(tr("Download rate: %1 KBytes/s").arg(speed/1024));
+    m_speedLabel->setText(tr("%1 KB of %2 KB at %3 KB/s").arg(value/1024).arg(range/1024).arg(speed/1024));
     m_lastValue = value;
 }
 

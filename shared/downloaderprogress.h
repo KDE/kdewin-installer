@@ -40,6 +40,7 @@ public:
     virtual void show();
     virtual void hide();
 protected:
+    virtual void updateDisplay();
     QLabel *m_titleLabel;
     QLabel *m_statusLabel;
 };
@@ -52,6 +53,9 @@ public:
     void setMaximum(int value);
     void setValue(int value);
     void show();
+protected:
+    void updateDisplay();
+
 private:
     time_t m_initTime; 
     QLabel *m_speedLabel;
