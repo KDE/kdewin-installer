@@ -144,7 +144,7 @@ bool Downloader::start ( const QUrl &url, const QString &fileName )
     if ( url.isEmpty() )
         return false;
     if ( d->progress )
-        d->progress->setTitle ( tr ( "Downloading %1 to %2" ).arg ( url.toString() ).arg ( fileName ) );
+        d->progress->setTitle ( url, fileName );
 
     QTemporaryFile *file = new QTemporaryFile ( fileName + ".part" );
     if ( !file->open () ) {
@@ -167,7 +167,7 @@ bool Downloader::start ( const QUrl &url, QByteArray &ba )
     if ( url.isEmpty() )
         return true;
     if ( d->progress )
-        d->progress->setTitle ( tr ( "Downloading %1" ).arg ( url.toString() ) );
+        d->progress->setTitle ( url );
 
     d->ioDevice = new QBuffer ( &ba );
     if ( !d->ioDevice->open ( QIODevice::WriteOnly ) ) {
@@ -220,10 +220,11 @@ bool Downloader::startInternal ( const QUrl &url )
         connect ( d->thread, SIGNAL ( finished () ), this, SLOT ( threadFinished () ) );
         connect ( d->thread, SIGNAL ( progress ( double, double ) ), this, SLOT ( progressCallback ( double, double ) ) );
     }
-    if ( d->progress ) {
+    if ( d->progress ) 
+    {    
         d->progress->setValue ( 0 );
         d->progress->show();
-        d->progress->setTitle ( tr ( "Downloading %1" ).arg ( m_usedURL.toString() ) );
+        d->progress->setTitle ( m_usedURL );
     }
     d->thread->start();
     if ( !m_loop )

@@ -23,11 +23,13 @@
 #ifndef DOWNLOADERPROGRESS_H
 #define DOWNLOADERPROGRESS_H
 
+class QUrl;
+class QString;
+
 #ifdef USE_GUI
 
 #include <QtGui/QWidget>
 
-class QString;
 class QLabel;
 class QProgressBar;
 class GenericProgress : public QWidget
@@ -50,8 +52,11 @@ class DownloaderProgress : public GenericProgress
 public:
     DownloaderProgress(QWidget *parent);
     virtual ~DownloaderProgress();
+    void setTitle(const QUrl &url, const QString &localFile=QString());
     void setMaximum(int value);
     void setValue(int value);
+    void setFileCount(int count);
+    void setFileNumber(int number);
     void show();
 protected:
     void updateDisplay();
@@ -60,6 +65,8 @@ private:
     time_t m_initTime; 
     QLabel *m_speedLabel;
     int m_lastValue;
+    int m_fileNumber;
+    int m_fileCount;
     QProgressBar *m_progress;
 };
 
@@ -69,6 +76,7 @@ class DownloaderProgress
 public:
     DownloaderProgress(QObject *parent=0);
     void hide();
+    void setTitle(const QUrl &url, const QString &fileName=QString());
     void setTitle(const QString &title);
     void setStatus(const QString &status);
     void setMaximum(int value);

@@ -26,6 +26,7 @@
 #include <QProgressBar>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QUrl>
 #include <time.h>
 
 #include "downloaderprogress.h"
@@ -68,7 +69,7 @@ void GenericProgress::updateDisplay()
   DownloaderProgress
 */
 DownloaderProgress::DownloaderProgress(QWidget *parent)
-  : GenericProgress(parent), m_lastValue(0)
+  : GenericProgress(parent), m_lastValue(0), m_fileCount(0), m_fileNumber(0)
 {    
     QVBoxLayout *mainLayout = new QVBoxLayout;
 
@@ -95,6 +96,22 @@ DownloaderProgress::DownloaderProgress(QWidget *parent)
 DownloaderProgress::~DownloaderProgress()
 {}
 
+void DownloaderProgress::setTitle(const QUrl &url, const QString &file)
+{
+    if (m_fileCount && m_titleLabel) 
+    {
+        if (!file.isEmpty())
+            m_titleLabel->setText( tr("Downloading %1 to %2 as %3 of %4 files").arg(url.toString()).arg(file).arg(m_fileNumber).arg(m_fileCount) );
+        else 
+            m_titleLabel->setText( tr("Downloading %1  as %2 of %3 files").arg(url.toString()).arg(m_fileNumber).arg(m_fileCount) );
+    }
+    else 
+        if (!file.isEmpty())
+            m_titleLabel->setText( tr("Downloading %1 to %2").arg(url.toString()).arg(file) );
+        else 
+            m_titleLabel->setText( tr("Downloading %1").arg(url.toString()) );
+}    
+
 void DownloaderProgress::show()
 {
     m_initTime = time(NULL);
@@ -114,6 +131,16 @@ void DownloaderProgress::setValue(int value)
 {
     m_progress->setValue(value);
     updateDisplay();
+}
+
+void DownloaderProgress::setFileCount(int count)
+{
+    m_fileCount = count;
+}
+
+void DownloaderProgress::setFileNumber(int number)
+{
+    m_fileNumber = number;
 }
 
 void DownloaderProgress::updateDisplay()
