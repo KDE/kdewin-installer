@@ -235,4 +235,9 @@ void Installer::slotError(const QString &msg)
     emit error(msg);
 }
 
+InstallerProgress *Installer::progress()
+{
+    return Unpacker::instance()->progress();
+}
+
 #include "installer.moc"

@@ -27,16 +27,20 @@
 
 #ifdef USE_GUI
 
-class QListWidget;
 class InstallerProgress : public GenericProgress
 {
 public:
     InstallerProgress(QWidget *parent);
     virtual ~InstallerProgress();
     void setTitle(const QString &title);
+    void setPackageName(const QString &packageName);
+    void setFileName(const QString &fileName);
+    void setPackageCount(int value);
+    void setPackageNumber(int value);
     void show();
 private:
-    QListWidget *m_progress;
+    QProgressBar *m_progress;
+    QLabel  *m_fileNameLabel;
 };
 
 #else
@@ -46,6 +50,7 @@ public:
     InstallerProgress(QObject *parent);
     void hide();
     void setTitle(const QString &title);
+    void setFileName(const QString &fileName);
     void setStatus(const QString &status);
     void setMaximum(int value);
     void setValue(int value);

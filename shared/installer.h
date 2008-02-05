@@ -25,6 +25,7 @@
 
 #include <QtCore/QProcess>
 #include "package.h"
+#include "installerprogress.h"
 
 class Database;
 class PackageList;
@@ -53,10 +54,9 @@ public:
     /// @TODO pathRelocations are obsolated, they can be retrieved from the pkg parameter
     bool install(Package *pkg, const Package::Type type, const QString &fileName);
     bool uninstall(const QString &pathToManifest);
-    // installPackage(Package *pkg)
-    //  bool readFromFile(QString const &fileName);
-    //  bool writeToFile(QString const &fileName);
-    //bool loadConfig(const QString &destdir=QString());
+
+    InstallerProgress *progress();
+
     bool loadConfig();
 
     bool isEnabled();

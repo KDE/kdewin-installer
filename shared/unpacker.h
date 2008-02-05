@@ -41,6 +41,7 @@ public:
     static Unpacker *instance();
     // for user interaction
     void setProgress ( InstallerProgress *progress );
+    InstallerProgress *progress();
     // unpack file
     bool unpackFile ( const QString &fn, const QString &destpath, const StringHash &pathRelocations );
     /// cancel file unpack

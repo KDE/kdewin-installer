@@ -40,8 +40,7 @@
 #endif
 
 //#include "downloader.h"
-//#include "installer.h"
-//#include "installerprogress.h"
+#include "installer.h"
 #include "downloaderprogress.h"
 #include "package.h"
 #include "packagelist.h"
@@ -261,8 +260,8 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
     }
     else if (type == Package::BIN && m_installMode == EndUser)
     {
-        isAvailable = available && (available->hasType(type) || available->hasType(Package::DOC));
-        isInstalled = installed && (installed->isInstalled(type) || installed->hasType(Package::DOC));
+        isAvailable = available && (available->hasType(type) /*|| available->hasType(Package::DOC)*/);
+        isInstalled = installed && (installed->isInstalled(type) /*|| installed->hasType(Package::DOC)*/);
     }
     else
     {
@@ -337,8 +336,8 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
     }
     else if (type == Package::BIN && m_installMode == EndUser)
     {
-        if (available->hasType(Package::DOC))
-            packageStates.setState(available,Package::DOC,newState);
+        ;//if (available->hasType(Package::DOC))
+         //   packageStates.setState(available,Package::DOC,newState);
     }
 }
 
@@ -377,8 +376,8 @@ bool InstallerEngineGui::setDependencyState(Package *_package)
             }
             else if (m_installMode == EndUser)
             {
-                if (package->hasType(Package::DOC))
-                    packageStates.setState(package,Package::DOC,_Install);
+                ;//if (package->hasType(Package::DOC))
+                 //   packageStates.setState(package,Package::DOC,_Install);
             }
         }
         setDependencyState(package);
@@ -542,8 +541,8 @@ void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString 
         break;
 
     case EndUser:
-        labels << tr ( "bin/doc" );
-        binToolTip = "select this checkbox to install/remove/update the binary and doc part of this package";
+        labels << tr ( "bin" );
+        binToolTip = "select this checkbox to install/remove/update the binary part of this package";
         break;
 
     case Single:
@@ -601,7 +600,7 @@ void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString 
             item->setToolTip ( SRCColumn, srcToolTip );
         else if (m_installMode == EndUser)
         {
-            item->setToolTip ( DOCColumn, docToolTip );
+            ;//item->setToolTip ( DOCColumn, docToolTip );
         }
         else if (m_installMode == Single)
         {
@@ -804,12 +803,15 @@ bool InstallerEngineGui::installPackages ( QTreeWidget *tree, const QString &_ca
 {
     qDebug() << __FUNCTION__ << packageStates;
     QList<Package*> list = packageStates.packages(m_packageResources);
+    int i = 0; 
+    m_installer->progress()->setPackageCount(list.size());
     Q_FOREACH ( Package *pkg, list ) {
         if ( !pkg )
             continue;
         if (m_canceled)
             return false;
 
+        m_installer->progress()->setPackageNumber(i++);
         bool all = false;//isMarkedForInstall(pkg,Package::ALL);
         if ( all || isMarkedForInstall ( pkg,Package::BIN ) )
             pkg->installItem ( m_installer, Package::BIN );

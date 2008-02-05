@@ -40,14 +40,19 @@ InstallerProgress::InstallerProgress(QWidget *parent)
     m_titleLabel->setTextFormat( Qt::PlainText );
     mainLayout->addWidget(m_titleLabel);
 
+    m_fileNameLabel = new QLabel;
+    m_fileNameLabel->setTextFormat( Qt::PlainText );
+    mainLayout->addWidget(m_fileNameLabel);
+
     QHBoxLayout *statusLayout = new QHBoxLayout;
     mainLayout->addLayout(statusLayout);
 
     m_statusLabel = new QLabel;
     statusLayout->addWidget(m_statusLabel);
 
-    m_progress = new QListWidget;
+    m_progress = new QProgressBar;
     statusLayout->addWidget(m_progress);
+
 
     setLayout(mainLayout);
     hide();
@@ -58,30 +63,35 @@ InstallerProgress::~InstallerProgress()
 
 void InstallerProgress::setTitle(const QString &label)
 {
-    if (!Settings::instance().installDetails())
-    {
-        m_titleLabel->setText(label);
-    }
-    else 
-    {
-        static int i = 0;
-        m_progress->addItem(label);
-        if (i++ % 10 == 0) {
-            m_progress->scrollToBottom();
-        }
-    }
+    m_titleLabel->setText(label);
+}
+
+void InstallerProgress::setPackageName(const QString &packageName)
+{
+    m_titleLabel->setText(tr("Unpacking %1").arg(packageName));
+}
+
+void InstallerProgress::setFileName(const QString &fileName)
+{
+    m_fileNameLabel->setText(tr("File %1").arg(fileName));
+}
+
+void InstallerProgress::setPackageCount(int value)
+{
+    m_progress->setMaximum(value);    
+    setPackageNumber(0);    
+}
+
+void InstallerProgress::setPackageNumber(int value)
+{
+    m_progress->setValue(value);    
+    m_statusLabel->setText( tr("%1 of %2").arg(value+1).arg(m_progress->maximum()) );
 }
 
 void InstallerProgress::show()
 {
-    if (Settings::instance().installDetails())
-    {
-        m_statusLabel->show();
-        m_progress->show();
-    } else {
-        m_statusLabel->hide();
-        m_progress->hide();
-    }
+    m_statusLabel->show();
+    m_progress->show();
     GenericProgress::show();
 }
 

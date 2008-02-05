@@ -455,6 +455,11 @@ void Unpacker::setProgress ( InstallerProgress *progress )
     m_progress = progress;
 }
 
+InstallerProgress *Unpacker::progress()
+{
+    return m_progress;
+}
+
 bool Unpacker::unpackFile ( const QString &fn, const QString &destpath, const StringHash &pathRelocations )
 {
     qDebug() << __FUNCTION__ << "filename: " << fn << "root: " << destpath;
@@ -479,7 +484,7 @@ bool Unpacker::unpackFile ( const QString &fn, const QString &destpath, const St
     }
     if ( m_progress ) {
         m_progress->show();
-        m_progress->setTitle ( tr ( "Unpacking %1" ).arg ( QDir::toNativeSeparators ( fn ) ) );
+        m_progress->setPackageName( QDir::toNativeSeparators ( fn ) );
     }
     m_thread->unpackFile ( fn, destpath, pathRelocations );
     if ( !m_loop )
@@ -516,7 +521,7 @@ void Unpacker::threadFinished ()
 void Unpacker::progressCallback ( const QString &file )
 {
     if ( m_progress )
-        m_progress->setTitle ( tr ( "Installing %1" ).arg ( QDir::toNativeSeparators ( file ) ) );
+        m_progress->setFileName( QDir::toNativeSeparators ( file ) );
 }
 
 void Unpacker::setError ( const QString &errStr )
