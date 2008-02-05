@@ -42,6 +42,7 @@ public:
     static Downloader *instance();
     // for user interaction
     void setProgress ( DownloaderProgress *progress );
+    DownloaderProgress *progress();
     // start download
     bool start ( const QUrl &url, const QString &fileName = QString() );
     bool start ( const QUrl &url, QByteArray &ba );

@@ -748,12 +748,17 @@ bool InstallerEngineGui::downloadPackages ( QTreeWidget *tree, const QString &ca
 {
     qDebug() << __FUNCTION__ << packageStates;
     QList<Package*> list = packageStates.packages(m_packageResources);
+    Downloader::instance()->progress()->setFileCount(list.size());
+    int i = 0;
     Q_FOREACH ( Package *pkg, list ) {
-        if ( !pkg )
+        if ( !pkg ) {
+            i++;
             continue;
+        }
         if (m_canceled)
             return false;
 
+        Downloader::instance()->progress()->setFileNumber(i);
         if (!downloadPackageItem(pkg,Package::BIN))
             return false;
         if (!downloadPackageItem(pkg,Package::LIB))

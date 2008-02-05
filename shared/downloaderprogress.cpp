@@ -101,9 +101,9 @@ void DownloaderProgress::setTitle(const QUrl &url, const QString &file)
     if (m_fileCount && m_titleLabel) 
     {
         if (!file.isEmpty())
-            m_titleLabel->setText( tr("Downloading %1 to %2 as %3 of %4 files").arg(url.toString()).arg(file).arg(m_fileNumber).arg(m_fileCount) );
+            m_titleLabel->setText( tr("Downloading %1 to %2 as %3 of %4 files").arg(url.toString()).arg(file).arg(m_fileNumber+1).arg(m_fileCount) );
         else 
-            m_titleLabel->setText( tr("Downloading %1  as %2 of %3 files").arg(url.toString()).arg(m_fileNumber).arg(m_fileCount) );
+            m_titleLabel->setText( tr("Downloading %1  as %2 of %3 files").arg(url.toString()).arg(m_fileNumber+1).arg(m_fileCount) );
     }
     else 
         if (!file.isEmpty())

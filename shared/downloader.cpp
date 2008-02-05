@@ -139,6 +139,11 @@ void Downloader::setProgress ( DownloaderProgress *progress )
     d->progress = progress;
 }
 
+DownloaderProgress *Downloader::progress()
+{
+ return d->progress;
+}
+
 bool Downloader::start ( const QUrl &url, const QString &fileName )
 {
     if ( url.isEmpty() )
