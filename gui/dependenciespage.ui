@@ -1,0 +1,30 @@
+<ui version="4.0" >
+ <class>DependenciesPage</class>
+ <widget class="QWidget" name="DependenciesPage" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>652</width>
+    <height>326</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Additional Packages</string>
+  </property>
+  <property name="statusTip" >
+   <string>The following packages will be installed too because selected packages depends on them.</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <item>
+    <layout class="QHBoxLayout" >
+     <item>
+      <widget class="QListWidget" name="dependenciesList" />
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

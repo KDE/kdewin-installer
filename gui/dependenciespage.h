@@ -27,7 +27,8 @@
 
 
 #include "installwizard.h"
-class QListWidget;
+
+#include "ui_dependenciespage.h"
 
 class PackageSelectorPage;
 
@@ -44,8 +45,10 @@ public:
     int nextId() const;
     bool validatePage();
 
+protected:
+    Ui::DependenciesPage ui;
+
 private:
-    QListWidget *dependenciesList;
     friend class PackageSelectorPage;
 };
 

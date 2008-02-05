@@ -31,15 +31,14 @@ QListWidget *g_dependenciesList;
 
 DependenciesPage::DependenciesPage() : InstallWizardPage(0)
 {
+    ui.setupUi(this);
+    setTitle(windowTitle());
+    setSubTitle(statusTip());
+
     setTitle(tr("Additional Packages"));
     setSubTitle(tr("The following packages are selected for installing too because selected packages depends on them"));
-    dependenciesList = new QListWidget;
 
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(dependenciesList);
-    g_dependenciesList = dependenciesList;
-    layout->addStretch(1);
-    setLayout(layout);
+    g_dependenciesList = ui.dependenciesList;
 }
 
 void DependenciesPage::initializePage()
