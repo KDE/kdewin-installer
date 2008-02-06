@@ -52,7 +52,7 @@ void MirrorSettingsPage::initializePage()
     QUrl currentMirror = QUrl(s.mirror());
 
     int mirrorIndex = -1;
-    foreach(MirrorType m, mirrors.mirrors())
+    Q_FOREACH(const MirrorType &m, mirrors.mirrors())
     {
         qDebug() << m.toString();
         QListWidgetItem *item = new QListWidgetItem(m.toString());

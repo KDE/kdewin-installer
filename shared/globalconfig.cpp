@@ -81,7 +81,7 @@ QStringList GlobalConfig::fetch(const QString &baseURL)
 bool GlobalConfig::parse(const QStringList &configFiles)
 {
     bool ret = true;
-    foreach(const QString &configFile, configFiles) {
+    Q_FOREACH(const QString &configFile, configFiles) {
         ret = parseFromFile(configFile);
         if (Settings::hasDebug("GlobalConfig"))
             qDebug() << "parse config file " << configFile << (ret ? "okay" : "failure") ;
@@ -175,7 +175,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
             else if (cmd[0] == "@timestamp")
             {
                 QStringList patterns = QStringList() << "yyyyMMddHHmm" << "yyyyMMddHHmmss";
-                foreach(QString pattern, patterns) {
+                Q_FOREACH(const QString &pattern, patterns) {
                     if (cmd[1].size() == pattern.size()) {
                         m_timestamp = QDateTime::fromString(cmd[1],pattern);
                         break;
@@ -381,15 +381,15 @@ QDebug &operator<<(QDebug &out,GlobalConfig &c)
     out << "GlobalConfig ("
         << "m_baseURL" << c.m_baseURL
         << "m_sites";
-    foreach(const Site* s, c.m_sites)
+    Q_FOREACH(const Site* s, c.m_sites)
         out << *s;
 
     out << "m_packages";
-    foreach(const Package* p, c.m_packages)
+    Q_FOREACH(const Package* p, c.m_packages)
         out << *p;
 
     out << "m_mirrors";
-    foreach(const GlobalConfig::Mirror* m, c.m_mirrors)
+    Q_FOREACH(const GlobalConfig::Mirror* m, c.m_mirrors)
         out << *m;
 
     return out;

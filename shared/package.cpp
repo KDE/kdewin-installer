@@ -280,7 +280,7 @@ bool Package::isInstalled(Package::Type contentType) const
 {
     if (contentType == ANY)
     {
-        foreach (PackageItem item, m_packages)
+        Q_FOREACH (const PackageItem &item, m_packages)
         {
             if (item.bInstalled)
                 return true;
@@ -454,9 +454,9 @@ void Package::logOutput()
 
 void Package::addCategories(const QString &cat)
 {
-    if (cat.contains(" "))
+    if (cat.contains(QLatin1Char(' ')))
     {
-        foreach(const QString &acat, cat.split(" "))
+        Q_FOREACH(const QString &acat, cat.split(QLatin1Char(' ')))
             m_categories << acat;
     }
     else
@@ -465,17 +465,17 @@ void Package::addCategories(const QString &cat)
 
 void Package::addCategories(const QStringList &cats)
 {
-    foreach(const QString &cat, cats)
+    Q_FOREACH(const QString &cat, cats)
         addCategories(cat);
 }
 
 void Package::addDeps(const QStringList &deps)
 {
-    foreach(const QString &dep, deps)
+    Q_FOREACH(const QString &dep, deps)
     {
-        if (dep.contains(" "))
+        if (dep.contains(QLatin1Char(' ')))
         {
-            foreach(const QString &adep, dep.split(" ",QString::SkipEmptyParts))
+            Q_FOREACH(const QString &adep, dep.split(QLatin1Char(' '), QString::SkipEmptyParts))
             {
                 if (!m_deps.contains(adep))
                     m_deps << adep;
@@ -684,7 +684,7 @@ QDebug &operator<<(QDebug &out, const QList<Package*> &c)
 {
     out << "QList<Package *> ("
         << "size:" << c.size();
-    foreach(Package *p, c)
+    Q_FOREACH(Package *p, c)
         out << *p;
     out << ")";
     return out;

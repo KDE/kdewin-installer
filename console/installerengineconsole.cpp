@@ -59,34 +59,34 @@ void InstallerEngineConsole::queryPackages(const QString &pkgName, bool listFile
         return;
     }
     if (listFiles) {
-        foreach(QString file, m_database->getPackageFiles(pkgName,Package::BIN))
-            printf("BIN: %s\n", file.toLatin1().data());
-        foreach(QString file, m_database->getPackageFiles(pkgName,Package::LIB))
-            printf("LIB: %s\n", file.toLatin1().data());
-        foreach(QString file, m_database->getPackageFiles(pkgName,Package::DOC))
-            printf("DOC: %s\n", file.toLatin1().data());
-        foreach(QString file, m_database->getPackageFiles(pkgName,Package::SRC))
-            printf("SRC: %s\n", file.toLatin1().data());
+        Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::BIN))
+            printf("BIN: %s\n", qPrintable(file));
+        Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::LIB))
+            printf("LIB: %s\n", qPrintable(file));
+        Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::DOC))
+            printf("DOC: %s\n", qPrintable(file));
+        Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::SRC))
+            printf("SRC: %s\n", qPrintable(file));
     }        
     else {
         Package *pkg = m_database->getPackage(pkgName);
         if (!pkg)
             return; 
 
-        printf("%s\n", pkg->toString(true).toAscii().data());
+        printf("%s\n", qPrintable(pkg->toString(true)));
     }
 }
 
 void InstallerEngineConsole::listPackages(const QString &title)
 {
     QStringList list = m_packageResources->listPackages();
-    foreach(QString package, list)
-        printf("%s\n",package.toLatin1().data()); 
+    Q_FOREACH(const QString &package, list)
+        printf("%s\n",qPrintable(package)); 
 }
 
 bool InstallerEngineConsole::downloadPackages(const QStringList &packages, const QString &category)
 {
-   foreach(QString pkgName, packages)
+   Q_FOREACH(const QString &pkgName, packages)
    {
         Package *pkg = m_packageResources->getPackage(pkgName);
         if (!pkg)
@@ -101,7 +101,7 @@ bool InstallerEngineConsole::downloadPackages(const QStringList &packages, const
 
 bool InstallerEngineConsole::installPackages(const QStringList &packages,const QString &category)
 {
-   foreach(QString pkgName, packages)
+   Q_FOREACH(const QString &pkgName, packages)
    {
         Package *pkg = m_packageResources->getPackage(pkgName);
         if (!pkg)

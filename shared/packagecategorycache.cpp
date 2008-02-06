@@ -33,7 +33,7 @@ void PackageCategoryCache::setNote(const QString &category, const QString &notes
 
 void PackageCategoryCache::addPackage(Package *pkg)
 {
-    foreach(const QString &category, pkg->categories())
+    Q_FOREACH(const QString &category, pkg->categories())
     {
         if (!m_data[category].packages.contains(pkg->name()))
             m_data[category].packages.append(pkg->name());
@@ -63,7 +63,7 @@ QList <Package *>PackageCategoryCache::packages(const QString &category, Package
     QList <Package *> packages;
     if (!m_data.contains(category))
         return packages;
-    foreach(const QString &pkgName, m_data[category].packages) 
+    Q_FOREACH(const QString &pkgName, m_data[category].packages) 
     {
         Package *p = list.getPackage(pkgName);
         if (p)

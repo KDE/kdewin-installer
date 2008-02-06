@@ -111,7 +111,7 @@ bool createCygwinLikeSetupIni(QTextStream &out, const QString &root, const QStri
     out << "setup-timestamp: 1191928206\n";
     out << "setup-version: 2.573.2.2\n";
 
-    foreach(QFileInfo hintFile, hintFiles) {
+    Q_FOREACH(const QFileInfo &hintFile, hintFiles) {
 
         QFile file(hintFile.absoluteFilePath());
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -178,7 +178,7 @@ bool createConfigTxt(QTextStream &out, const QString &root, const QStringList &h
         << ";If you edit it, your edits will be discarded next time the file is generated.\n"
         << "\n\n";
 
-    foreach(QFileInfo hintFile, hintFiles) {
+    Q_FOREACH(const QFileInfo &hintFile, hintFiles) {
 
         HintFileType hint;
         if (!HintFile::parseHintFile(hintFile.absoluteFilePath(),hint))
@@ -232,11 +232,11 @@ bool createConfigTxt(QTextStream &out, const QString &root, const QStringList &h
 
 QStringList &addDeps(QStringList &deps, const QStringList &add)
 {
-    foreach(const QString &dep, add)
+    Q_FOREACH(const QString &dep, add)
     {
-        if (dep.contains(" "))
+        if (dep.contains(QLatin1Char(' ')))
         {
-            foreach(const QString &adep, dep.split(" "))
+            Q_FOREACH(const QString &adep, dep.split(QLatin1Char(' ')))
             {
                 if (!deps.contains(adep))
                     deps << adep;
@@ -255,7 +255,7 @@ bool printDependencies(const QString &root)
     findHintFiles(root,hintFiles);
     QHash<QString,QStringList> deps;
 
-    foreach(QFileInfo hintFile, hintFiles)
+    Q_FOREACH(const QFileInfo &hintFile, hintFiles)
     {
         QString pkgName = hintFile.baseName();
         qDebug() << "parsing" << pkgName;
@@ -268,15 +268,15 @@ bool printDependencies(const QString &root)
             continue;
         }
         if (deps.contains(pkgName))
-            addDeps(deps[pkgName],hint.requires.split(" "));
+            addDeps(deps[pkgName],hint.requires.split(QLatin1Char(' ')));
         else
-            deps[pkgName] = hint.requires.split(" ");
+            deps[pkgName] = hint.requires.split(QLatin1Char(' '));
     }
      QHashIterator<QString, QStringList> i(deps);
      while (i.hasNext()) {
         i.next();
         QString x = QString("%1 : %2").arg(i.key()).arg(i.value().join(" "));
-        cout << x.toAscii().data() << endl;
+        cout << qPrintable(x) << endl;
     }
     return true;
 }

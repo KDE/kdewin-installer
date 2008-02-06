@@ -301,7 +301,7 @@ QStringList filterFileName(QStringList & files)
     QStringList filteredFiles;
 
     QMap<QString,FileType*> packages;
-    foreach(const QString &fileName, files)
+    Q_FOREACH(const QString &fileName, files)
     {
         if (isPackageFileName(fileName) )
         {
@@ -329,7 +329,7 @@ QStringList filterFileName(QStringList & files)
             }
         }
     }
-    foreach(FileType *p,packages)
+    Q_FOREACH(FileType *p,packages)
         filteredFiles << p->fileName;
     qDeleteAll(packages);
 
@@ -416,9 +416,8 @@ bool PackageList::readInternal(QIODevice *ioDev, PackageList::Type type, bool ap
         int startKeyLength = strlen(startKey1);
         int endKeyLength = strlen(endKey);
         QUrl baseURL(m_baseURL);
-        int a;
-        int b,i;
-        for (a = 0 ; a < data.size(); a = b + endKeyLength)
+        int b = 0 , i;
+        for (int a = 0 ; a < data.size(); a = b + endKeyLength)
         {
             if ((i = data.indexOf(startKey1,a)) == -1 && (i = data.indexOf(startKey2,a)) == -1)
                 break;
@@ -473,13 +472,13 @@ bool PackageList::addPackageFromHintFile(const QString &fileName)
         p.setNotes(hd.shortDesc);
         p.setLongNotes(hd.longDesc);
         p.addCategories(hd.categories);
-        p.addDeps(hd.requires.split(" "));
+        p.addDeps(hd.requires.split(QLatin1Char(' ')));
         addPackage(p);
     } else {
         pkg->setNotes(hd.shortDesc);
         pkg->setLongNotes(hd.longDesc);
         pkg->addCategories(hd.categories);
-        pkg->addDeps(hd.requires.split(" "));
+        pkg->addDeps(hd.requires.split(QLatin1Char(' ')));
     }
     return true;
 }
@@ -513,7 +512,7 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
         }
     }
 
-    foreach(const QString &fileName, files)
+    Q_FOREACH(const QString &fileName, files)
     {
 #ifdef ENABLE_HINTFILE_SUPPORT
         // @TODO using hint files results into duplicated package entries

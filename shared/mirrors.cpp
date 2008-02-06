@@ -171,7 +171,7 @@ Mirrors &Mirrors::instance()
 QDebug &operator<<(QDebug &out, const MirrorTypeList &c)
 {
     out << "QList<MirrorType> (";
-    foreach(MirrorType m,c)
+    Q_FOREACH(const MirrorType &m,c)
         out << m;
     out << ")";
     return out;

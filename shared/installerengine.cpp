@@ -93,7 +93,7 @@ bool InstallerEngine::initPackages()
     QHash<QString, QStringList>::const_iterator i = m_globalConfig->categoryPackages().constBegin();
     for (; i != m_globalConfig->categoryPackages().constEnd(); i++)
     {
-        foreach (const QString &name,i.value())
+        Q_FOREACH (const QString &name,i.value())
         {
             Package *pkg = m_packageResources->getPackage(name);
             if (pkg)
@@ -118,7 +118,7 @@ int versionToInt(QString version)
 {
     QStringList v = version.replace('-','.').split('.');
     int n = 0;
-    foreach(const QString &a,v)
+    Q_FOREACH(const QString &a,v)
     {
         bool ok;
         int b = a.toInt(&ok);
@@ -255,7 +255,7 @@ bool InstallerEngine::addPackagesFromSites()
         if (Settings::hasDebug("InstallerEngine"))
             qDebug() << __FUNCTION__ << packageList;
 
-        foreach(Package *pkg, packageList.packages())
+        Q_FOREACH(Package *pkg, packageList.packages())
         {
             // add some generic categories
             pkg->addCategories("all");
