@@ -36,7 +36,8 @@ class Site
 {
 
 public:
-    enum SiteType {SourceForge, SourceForgeMirror, ApacheModIndex};
+    /// @deprecated we use the autoparser 
+    enum SiteType {ApacheModIndex, Ftp, SourceForge, SourceForgeMirror };
 
     QString name() const { return m_name; }
     void setName(const QString &name)

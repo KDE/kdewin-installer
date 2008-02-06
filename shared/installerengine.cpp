@@ -232,17 +232,22 @@ bool InstallerEngine::addPackagesFromSites()
         }
         PackageList::Type type;
 
-        switch(site->Type()) {
-        case Site::SourceForge:    type = PackageList::SourceForge; break;
-        case Site::SourceForgeMirror: type = PackageList::SourceForgeMirror; break;
-        case Site::ApacheModIndex: type = PackageList::ApacheModIndex; break;
-        default:
-            emit error("unknown Site type "  + site->Type());
-            type = PackageList::ApacheModIndex;
-            break;
-        }
+        if (listURL.scheme() == "ftp")
+            type = PackageList::Ftp; 
+        else 
+            switch(site->Type()) {
+            case Site::SourceForge:    type = PackageList::SourceForge; break;
+            case Site::SourceForgeMirror: type = PackageList::SourceForgeMirror; break;
+            case Site::ApacheModIndex: type = PackageList::ApacheModIndex; break;
+            case Site::Ftp: type = PackageList::Ftp; break;
+            default:
+                emit error("unknown Site type "  + site->Type());
+                type = PackageList::ApacheModIndex;
+                break;
+            }
+        qDebug() << "error parsing file list" << ba;
 
-        if (!packageList.readHTMLFromByteArray(ba, type, true ))
+        if (!packageList.readFromByteArray(ba, type, true ))
         {
             emit error("error reading package list from download html file");
             continue;

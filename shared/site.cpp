@@ -65,6 +65,8 @@ bool Site::setType(const QString &type)
         setType(Site::SourceForge);
     else if (type == "sourceforge-mirror")
         setType(Site::SourceForgeMirror);
+    else if (type == "ftp")
+        setType(Site::Ftp);
     else 
     {
         setType(Site::ApacheModIndex);

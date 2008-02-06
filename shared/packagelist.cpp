@@ -336,15 +336,37 @@ QStringList filterFileName(QStringList & files)
     return filteredFiles;
 }
 
-bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, bool append)
+bool PackageList::readInternal(QIODevice *ioDev, PackageList::Type type, bool append)
 {
     if (!append)
         m_packageList.clear();
 
     m_parserConfigFileFound = false;
+    QStringList files;
 
     switch (type)
     {
+    
+    case PackageList::Ftp:
+        // -rw-r--r--    1 10004    10004      385455 Feb 04 23:00 amarok-mingw-1.80.20080121-lib.tar.bz2
+        while (!ioDev->atEnd())
+        {
+            QString line = ioDev->readLine().replace("\n","");
+            QStringList parts = line.split(" ",QString::SkipEmptyParts);
+            int size = parts.size();
+            if (size != 9)
+                continue;
+            // size could be used for download estimation 
+            //QString size = parts[4];
+            QString file = parts[8];
+            if (!isPackageFileName(file))
+                continue;
+            files << file;
+        }
+        files = filterFileName(files);
+        addPackagesFromFileNames(files);
+        break;
+
     case PackageList::SourceForge:
         while (!ioDev->atEnd())
         {
@@ -386,6 +408,7 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
     // for example http://www.mirrorservice.org/sites/download.sourceforge.net/pub/sourceforge/k/kd/kde-cygwin/
     case PackageList::SourceForgeMirror:
     case PackageList::ApacheModIndex:
+    case PackageList::Default:
         const char *startKey1 = "<a href=\"";
         const char *startKey2 = "<A HREF=\"";
         const char *endKey = "\">";
@@ -393,7 +416,6 @@ bool PackageList::readHTMLInternal(QIODevice *ioDev, PackageList::Type type, boo
         int startKeyLength = strlen(startKey1);
         int endKeyLength = strlen(endKey);
         QUrl baseURL(m_baseURL);
-        QStringList files;
         int a;
         int b,i;
         for (a = 0 ; a < data.size(); a = b + endKeyLength)
@@ -547,7 +569,7 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
     return true;
 }
 
-bool PackageList::readHTMLFromByteArray(const QByteArray &_ba, PackageList::Type type, bool append)
+bool PackageList::readFromByteArray(const QByteArray &_ba, PackageList::Type type, bool append)
 {
 #ifdef DEBUG
     qDebug() << __FUNCTION__;
@@ -559,10 +581,10 @@ bool PackageList::readHTMLFromByteArray(const QByteArray &_ba, PackageList::Type
     if (!buf.open(QIODevice::ReadOnly| QIODevice::Text))
         return false;
 
-    return readHTMLInternal(&buf, type, append);
+    return readInternal(&buf, type, append);
 }
 
-bool PackageList::readHTMLFromFile(const QString &fileName, PackageList::Type type, bool append)
+bool PackageList::readFromFile(const QString &fileName, PackageList::Type type, bool append)
 {
 #ifdef DEBUG
     qDebug() << __FUNCTION__;
@@ -574,7 +596,7 @@ bool PackageList::readHTMLFromFile(const QString &fileName, PackageList::Type ty
 
     pkglist.open(QIODevice::ReadOnly);
 
-    return readHTMLInternal(&pkglist, type, append);
+    return readInternal(&pkglist, type, append);
 }
 
 bool PackageList::setInstalledPackage(const Package &apkg)

@@ -40,7 +40,7 @@ class PackageList : public QObject
     Q_OBJECT
 
 public:
-    enum Type {SourceForge, SourceForgeMirror, ApacheModIndex};
+    enum Type {ApacheModIndex, Default, Ftp, SourceForge, SourceForgeMirror };
 
     PackageList();
     virtual ~PackageList();
@@ -51,8 +51,9 @@ public:
     bool readFromFile(const QString &_fileName=QString());
     bool syncWithFile(const QString &_fileName=QString());
     bool syncWithDatabase(Database &database);
-    bool readHTMLFromFile(const QString &fileName, PackageList::Type type=PackageList::SourceForge, bool append=false);
-    bool readHTMLFromByteArray(const QByteArray &ba, PackageList::Type type=PackageList::SourceForge, bool append=false);
+    bool readFromFile(const QString &fileName, PackageList::Type type=PackageList::Default, bool append=false);
+    bool readFromByteArray(const QByteArray &_ba, PackageList::Type type=PackageList::Default, bool append=false);
+
     bool writeToFile(QString const &fileName=QString::null);
     Package *getPackage(QString const &pkgName, const QByteArray &version = QByteArray());
     bool setInstalledPackage(const Package &pkg);
@@ -115,7 +116,7 @@ protected:
     bool addPackagesFromFileNames(const QStringList &files, bool ignoreConfigTxt=false);
 
     bool addPackageFromHintFile(const QString &file);
-    bool readHTMLInternal(QIODevice *ioDev, PackageList::Type type, bool append=false);
+    bool readInternal(QIODevice *ioDev, PackageList::Type type, bool append=false);
 private:
     QList<Package*> m_packageList;
     QString m_root;
