@@ -70,7 +70,7 @@ public:
     {
         m_configFile = '/' + file;
     }
-    const QString &Name() const
+    QString Name() const
     {
         return m_name;
     }
@@ -78,7 +78,7 @@ public:
     {
         m_name = name;
     }
-    const QString &notes() const
+    QString notes() const
     {
         return m_notes;
     }

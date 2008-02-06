@@ -74,28 +74,28 @@ public:
     // base package related methods 
 
     /// return name 
-    const QString &name() const { return m_name; }
+    QString name() const { return m_name; }
     /// set name 
     void setName(QString const &name) { m_name = name; }
 
     /// return version
-    const QString &version() const { return m_version.isEmpty() ? m_installedversion : m_version; }
+    QString version() const { return m_version.isEmpty() ? m_installedversion : m_version; }
     /// set version
     void setVersion(const QString &version) { m_version = version; }
 
     /// return installed version
-    const QString &installedVersion() const { return m_installedversion; }
+    QString installedVersion() const { return m_installedversion; }
     /// set version
     void setInstalledVersion(const QString &version) { m_installedversion = version; }
 
     /// return notes 
-    const QString &notes() const { return m_notes; }
+    QString notes() const { return m_notes; }
    
     /// return long notes 
     void setNotes(const QString &notes) { m_notes = notes; }
 
     /// return long notes 
-    const QString &longNotes() const { return m_longNotes; }
+    QString longNotes() const { return m_longNotes; }
     /// set long notes 
     void setLongNotes(const QString &notes) { m_longNotes = notes; }
 
