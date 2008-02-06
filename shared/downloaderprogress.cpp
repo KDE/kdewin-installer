@@ -180,6 +180,11 @@ void DownloaderProgress::setTitle(const QString &title)
     qDebug() << title;
 }
 
+void DownloaderProgress::setTitle(const QUrl &url, const QString &file)
+{
+    qDebug() << url << "to" << file;
+}
+
 void DownloaderProgress::setStatus(const QString &status)
 {
     qDebug() << status;

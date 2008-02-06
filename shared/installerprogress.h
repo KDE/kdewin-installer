@@ -50,6 +50,7 @@ public:
     InstallerProgress(QObject *parent);
     void hide();
     void setTitle(const QString &title);
+    void setPackageName(const QString &packageName);
     void setFileName(const QString &fileName);
     void setStatus(const QString &status);
     void setMaximum(int value);

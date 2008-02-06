@@ -115,6 +115,18 @@ void InstallerProgress::setTitle(const QString &title)
 #endif
 }
 
+void InstallerProgress::setPackageName(const QString &packageName)
+{
+    QString a = QObject::tr("Unpacking %1").arg(packageName);
+    printf(a.toLatin1().data());
+}
+
+void InstallerProgress::setFileName(const QString &fileName)
+{
+    QString a = QObject::tr("File %1").arg(fileName);
+    printf(a.toLatin1().data());
+}
+
 void InstallerProgress::setStatus(const QString &status)
 {
 #ifdef DEBUG
