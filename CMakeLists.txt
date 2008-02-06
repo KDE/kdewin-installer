@@ -194,7 +194,7 @@ endif(WIN32)
 
 if (WIN32)
     include(Win32Macros)
-    addExplorerWrapper(${NAME})
+    addExplorerWrapper()
 endif(WIN32)
 
 install( FILES cmake/modules/FINDKDEWIN_Packager.cmake  DESTINATION  share/apps/cmake/modules )
