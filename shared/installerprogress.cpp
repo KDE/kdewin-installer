@@ -90,8 +90,16 @@ void InstallerProgress::setPackageNumber(int value)
 
 void InstallerProgress::show()
 {
-    m_statusLabel->show();
-    m_progress->show();
+    if (m_progress->maximum() > 1) 
+    {
+        m_statusLabel->show();
+        m_progress->show();
+    }
+    else
+    {
+        m_statusLabel->hide();
+        m_progress->hide();
+    }
     GenericProgress::show();
 }
 
