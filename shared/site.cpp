@@ -35,10 +35,8 @@ void Site::addDependencies(const QString &_package, const QStringList &deps)
     if(m_dependencies.contains(package))
         sl = m_dependencies.find(package).value();
 
-    QStringList::ConstIterator it = deps.constBegin();
-    for( ; it != deps.constEnd(); ++it) {
-        QString s = (*it).toLower();
-        if(!sl.contains(s))
+    Q_FOREACH( const QString &s, deps ) {
+        if(!sl.contains(s.toLower()))
             sl += s;
     }
     m_dependencies.insert(package, sl);
@@ -102,10 +100,8 @@ QStringList &Site::packageCategories(const QString &package)
 
 void Site::addExcludes(const QStringList &excludes)
 {
-    QStringList::ConstIterator it = excludes.constBegin();
-    for( ; it != excludes.constEnd(); ++it) {
-        QString s = (*it).toLower();
-        if(!m_excludes.contains(s))
+    Q_FOREACH( const QString &s, excludes ) {
+        if(!m_excludes.contains(s.toLower()))
             m_excludes += s;
     }
 }

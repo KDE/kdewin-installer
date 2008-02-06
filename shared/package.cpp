@@ -200,7 +200,7 @@ QString Package::getFileName(Package::Type contentType)
     return QString();
 }
 
-QUrl Package::getUrl(Package::Type contentType)
+QUrl Package::getUrl(Package::Type contentType) const
 {
     if(m_packages.contains(contentType))
         return m_packages[contentType].url;
@@ -236,7 +236,7 @@ bool Package::hasType(Package::Type contentType) const
     return m_packages.contains(contentType);
 }
 
-QString Package::toString(bool installed, const QString &delim)
+QString Package::toString(bool installed, const QString &delim) const
 {
     QString result = m_name + delim + m_version;
     QString availableTypes = getTypeAsString(installed);
@@ -247,7 +247,7 @@ QString Package::toString(bool installed, const QString &delim)
     return result;
 }
 
-QString Package::getTypeAsString(bool requiredIsInstalled, const QString &delim)
+QString Package::getTypeAsString(bool requiredIsInstalled, const QString &delim) const
 {
     QString types;
 
@@ -299,7 +299,7 @@ void Package::setInstalled(Package::Type contentType)
 }
 
 // deprecated?
-bool Package::write(QTextStream &out)
+bool Package::write(QTextStream &out) const
 {
 #ifdef DEBUG
     qDebug() << __FUNCTION__ << m_name << "\t" << m_version << "\t" << getTypeAsString(true,"\t") << "\n";

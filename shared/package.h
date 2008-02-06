@@ -111,8 +111,8 @@ public:
     /// add package dependencies 
     void addDeps(const QStringList &addDeps);
 
-    QString toString(bool installed=false, const QString &delim = "-");
-    QString getTypeAsString(bool requiredIsInstalled=false, const QString &delim = " ");
+    QString toString(bool installed=false, const QString &delim = "-") const;
+    QString getTypeAsString(bool requiredIsInstalled=false, const QString &delim = " ") const;
 
     /**
      return path relocations - path relocations are used to install files from an archive into 
@@ -143,7 +143,7 @@ public:
     QString getFileName(Package::Type contentType);
 
     /// returns complete url of package item e.g. http://host/path.../fileName
-    QUrl getUrl(Package::Type type);
+    QUrl getUrl(Package::Type type) const;
     /// set url of package item e.g. http://host/path.../fileName
     bool setUrl(Package::Type type, const QUrl &url);
 
@@ -161,7 +161,7 @@ public:
     QT_DEPRECATED void setInstalled(const Package &other);
 
     /// save package to stream
-    bool write(QTextStream &out);
+    bool write(QTextStream &out) const;
     /// load package from stream
     bool read(QTextStream &in);
 

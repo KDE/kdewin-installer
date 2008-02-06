@@ -72,10 +72,8 @@ bool parseQtIncludeFiles(QList<InstallFile> &fileList, const QString &root, cons
   QFileInfo fi;
   QChar Q('Q');
   QString r = root + '/';
-  QList<InstallFile>::ConstIterator it = files.constBegin();
-  QList<InstallFile>::ConstIterator end = files.constEnd();
-  for( ; it != end; ++it) {
-    QString f = it->inputFile;
+  Q_FOREACH( const InstallFile &instFile, files ) {
+    QString f = instFile.inputFile;
     file.setFileName(r + f);
     fi.setFile(file);
     // camel case incudes are fine
@@ -114,10 +112,8 @@ bool findExecutables(QList<InstallFile> &fileList, const QString &root, const QS
   QFile file;
   QFileInfo fi;
   QString r = root + '/';
-  QList<InstallFile>::ConstIterator it = files.constBegin();
-  QList<InstallFile>::ConstIterator end = files.constEnd();
-  for( ; it != end; ++it) {
-    QString f = it->inputFile;
+  Q_FOREACH( const InstallFile &instFile, files ) {
+    QString f = instFile.inputFile;
     // camel case incudes are fine
     if(f.startsWith('Q')) {
       fileList += InstallFile(f, f);
@@ -150,12 +146,11 @@ bool generateFileList(QList<InstallFile> &fileList, const QString &root, const Q
    QStringList sl = exclude.split(' ');
    QList<QRegExp> rxList;
 
-   if(!sl.contains("*.bak"))
+   if(!sl.contains(QLatin1String("*.bak")))
        sl += "*.bak";
 
-   QStringList::ConstIterator it = sl.constBegin();
-   for( ; it != sl.constEnd(); ++it) {
-       QRegExp rx(*it);
+   Q_FOREACH( const QString &srx, sl ) {
+       QRegExp rx(srx);
        rx.setPatternSyntax(QRegExp::Wildcard);
 
        rxList += rx;
@@ -191,16 +186,12 @@ bool generateFileList(QList<InstallFile> &fileList, const QString &root, const Q
    QStringList manifestList;
    QStringList executableList;
 
-   QFileInfoList::ConstIterator it = list.constBegin();
-   QFileInfoList::ConstIterator end = list.constEnd();
-   for ( ; it != end; ++it) {
-       const QFileInfo &fi = *it;
+   Q_FOREACH( const QFileInfo &fi, list ) {
        QString fn = fi.fileName();
 
        bool bFound = false;
-       QList<QRegExp>::ConstIterator it = excludeList.constBegin();
-       for( ; it != excludeList.constEnd(); ++it) {
-           if((*it).exactMatch(fn)) {
+       Q_FOREACH( const QRegExp &rx, excludeList) {
+           if(rx.exactMatch(fn)) {
                bFound = true;
                break;
            }
@@ -471,9 +462,9 @@ bool removeStartMenuEntries(const QString &dir, const QString &category)
     registry.beginGroup(category);
     QStringList keys = registry.allKeys();
 
-    for(int i = 0; i < keys.size(); i++) {
-        registry.remove(keys[i]);
-        QFile::remove(registry.value(keys[i]).toString());
+    Q_FOREACH(const QString &key, keys) {
+        registry.remove(key);
+        QFile::remove(registry.value(key).toString());
     }
     return true;
 }

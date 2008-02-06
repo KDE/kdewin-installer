@@ -87,10 +87,8 @@ Package *PackageList::getPackage(const QString &name, const QByteArray &version)
             pkgVersion = _pkgVersion;
         }
     }
-    QList<Package*>::iterator it = m_packageList.begin();
-    for ( ; it != m_packageList.end(); ++it)
+    Q_FOREACH( Package *p, m_packageList )
     {
-        Package *p = *it;
         if (p->name() == pkgName) {
             if(!pkgVersion.isEmpty() && p->version() != pkgVersion)
                 continue;
@@ -107,17 +105,15 @@ void PackageList::dumpPackages(const QString &title)
 #endif
 
     qDebug() << title;
-    QList<Package*>::iterator it;
-    for (it = m_packageList.begin(); it != m_packageList.end(); ++it)
-        qDebug() << (*it)->toString(true," - ");
+    Q_FOREACH (const Package *p, m_packageList )
+        qDebug() << p->toString(true," - ");
 }
 
 QStringList PackageList::listPackages()
 {
     QStringList list;
-    QList<Package*>::iterator it;
-    for (it = m_packageList.begin(); it != m_packageList.end(); ++it)
-        list << (*it)->toString(true," - ");
+    Q_FOREACH (const Package *p, m_packageList )
+        list << p->toString(true," - ");
     return list;
 }
 
@@ -143,9 +139,8 @@ bool PackageList::writeToFile(const QString &_fileName)
     QTextStream out(&file);
     out << "# package list" << "\n";
     out << "@format 1.0" << "\n";
-    QList<Package*>::iterator it;
-    for (it = m_packageList.begin(); it != m_packageList.end(); ++it)
-        (*it)->write(out);
+    Q_FOREACH ( const Package *p, m_packageList )
+        p->write(out);
     return true;
 }
 
@@ -180,13 +175,10 @@ bool PackageList::readFromFile(const QString &_fileName)
     return true;
 }
 
-bool PackageList::append(PackageList &src)
+bool PackageList::append(const PackageList &src)
 {
-    QList<Package*>::iterator it;
-    for (it = src.m_packageList.begin(); it != src.m_packageList.end(); ++it)
-    {
-        Package *pkg = (*it);
-        addPackage(*pkg);
+    Q_FOREACH (const Package *p, src.m_packageList ) {
+        addPackage(*p);
     }
     return true;
 }
@@ -242,10 +234,8 @@ bool PackageList::syncWithDatabase(Database &database)
 #endif
 
     QList<Package*> newPackages;
-    QList<Package*>::ConstIterator it = m_packageList.constBegin();
-    for ( ; it != m_packageList.constEnd(); ++it)
+    Q_FOREACH ( Package *apkg, m_packageList )
     {
-        Package *apkg = (*it);
         Package *pkg = database.getPackage(apkg->name(), apkg->version().toAscii());
         if (!pkg)
         {
@@ -271,9 +261,8 @@ bool PackageList::syncWithDatabase(Database &database)
             apkg->setInstalled(Package::SRC);
         pkg->setHandled(true);
     }
-    it = newPackages.constBegin();
-    for ( ; it != newPackages.constEnd(); ++it)
-        m_packageList += *it;
+    Q_FOREACH ( Package *p, newPackages )
+        m_packageList += p;
 
     return true;
 }
@@ -417,7 +406,8 @@ bool PackageList::readInternal(QIODevice *ioDev, PackageList::Type type, bool ap
         int endKeyLength = strlen(endKey);
         QUrl baseURL(m_baseURL);
         int b = 0 , i;
-        for (int a = 0 ; a < data.size(); a = b + endKeyLength)
+        const int ds = data.size();
+        for (int a = 0 ; a < ds; a = b + endKeyLength)
         {
             if ((i = data.indexOf(startKey1,a)) == -1 && (i = data.indexOf(startKey2,a)) == -1)
                 break;
@@ -499,10 +489,8 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
                 return false;
 
             // add package from globalconfig
-            QList<Package*>::iterator p;
-            for (p = g.packages()->begin(); p != g.packages()->end(); p++)
+            Q_FOREACH( const Package *pkg, *g.packages() )
             {
-                Package *pkg = *p;
                 addPackage(*pkg);
             }
             // sites are not supported here
@@ -624,9 +612,8 @@ QDebug & operator<<(QDebug &out, PackageList &c)
         << "m_configFile:" << c.m_configFile
         << "m_baseURL:" << c.m_baseURL
         << "packages: (size:" << c.m_packageList.size();
-    QList<Package*>::ConstIterator it = c.m_packageList.constBegin();
-    for ( ; it != c.m_packageList.constEnd(); ++it)
-        out << *(*it);
+    Q_FOREACH( const Package *pkg, c.m_packageList )
+        out << *pkg;
     out << ") )";
     return out;
 }
