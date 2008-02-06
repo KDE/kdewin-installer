@@ -336,7 +336,7 @@ bool BZip2IODevice::atEnd() const
 {
   if(!d->device)
     return true;
-  return d->device->atEnd() && d->decomressStreamEnd;
+  return d->device->atEnd() && d->decomressStreamEnd && QIODevice::atEnd();
 }
 
 qint64 BZip2IODevice::readData(char * data, qint64 maxSize)
