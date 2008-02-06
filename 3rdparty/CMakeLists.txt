@@ -110,7 +110,7 @@ set(curl_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/curl/include)
 
 if(WIN32)
   include_directories(${curl_INCLUDE_DIR})
-  add_definitions(-DCURL_STATICLIB -DWITHOUT_MM_LIB)
+  add_definitions(-DCURL_STATICLIB -DWITHOUT_MM_LIB -DCURL_DISABLE_TELNET -DCURL_DISABLE_LDAP)
   add_library(curl STATIC ${curl_SOURCES} ${curl_HEADERS})
   if(MINGW)
     target_link_libraries( curl ws2_32 )
