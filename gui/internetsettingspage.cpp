@@ -70,7 +70,7 @@ void InternetSettingsPage::initializePage()
 
 int InternetSettingsPage::nextId() const
 {
-    return InstallWizard::downloadSettingsPage;
+    return InstallWizard::mirrorSettingsPage;
 }
 
 bool InternetSettingsPage::validatePage()

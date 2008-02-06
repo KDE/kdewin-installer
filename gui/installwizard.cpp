@@ -110,10 +110,10 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     setButtonLayout(layout);
 */
     setPage(titlePage, new TitlePage()); 
-    setPage(installTypePage, new InstallTypePage); 
     setPage(installDirectoryPage, new InstallDirectoryPage); 
-    setPage(internetSettingsPage, new InternetSettingsPage); 
+    setPage(installTypePage, new InstallTypePage); 
     setPage(downloadSettingsPage, new DownloadSettingsPage); 
+    setPage(internetSettingsPage, new InternetSettingsPage); 
     setPage(mirrorSettingsPage, new MirrorSettingsPage); 
     setPage(packageSelectorPage, new PackageSelectorPage); 
     setPage(dependenciesPage, new DependenciesPage); 

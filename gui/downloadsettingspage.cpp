@@ -43,7 +43,7 @@ void DownloadSettingsPage::initializePage()
 
 int DownloadSettingsPage::nextId() const
 {
-    return InstallWizard::mirrorSettingsPage;
+    return InstallWizard::internetSettingsPage;
 }
 
 bool DownloadSettingsPage::validatePage()
