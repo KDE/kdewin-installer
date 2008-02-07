@@ -39,8 +39,11 @@ public:
     void setPackageNumber(int value);
     void show();
 private:
+    void updateDisplay();
     QProgressBar *m_progress;
     QLabel  *m_fileNameLabel;
+    QString m_packageName;
+    QString m_fileName;
 };
 
 #else

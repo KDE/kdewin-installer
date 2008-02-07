@@ -68,12 +68,14 @@ void InstallerProgress::setTitle(const QString &label)
 
 void InstallerProgress::setPackageName(const QString &packageName)
 {
-    m_titleLabel->setText(tr("Unpacking %1").arg(packageName));
+    m_packageName = packageName;
+    updateDisplay();
 }
 
 void InstallerProgress::setFileName(const QString &fileName)
 {
-    m_fileNameLabel->setText(tr("File %1").arg(fileName));
+    m_fileName = fileName;
+    updateDisplay();
 }
 
 void InstallerProgress::setPackageCount(int value)
@@ -85,19 +87,25 @@ void InstallerProgress::setPackageCount(int value)
 void InstallerProgress::setPackageNumber(int value)
 {
     m_progress->setValue(value);    
-    m_statusLabel->setText( tr("%1 of %2").arg(value+1).arg(m_progress->maximum()) );
+    updateDisplay();
+}
+
+void InstallerProgress::updateDisplay()
+{
+    m_titleLabel->setText(tr("Unpacking package %1 of %2 : %3").arg(m_progress->value()+1).arg(m_progress->maximum()).arg(m_packageName));
+    m_fileNameLabel->setText(tr("File %1").arg(m_fileName));
 }
 
 void InstallerProgress::show()
 {
+    m_statusLabel->hide();
     if (m_progress->maximum() > 1) 
     {
-        m_statusLabel->show();
+    //    m_statusLabel->show();
         m_progress->show();
     }
     else
     {
-        m_statusLabel->hide();
         m_progress->hide();
     }
     GenericProgress::show();
