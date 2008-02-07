@@ -21,9 +21,9 @@
      <property name="text" >
       <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">The install mode determines which paket components are installable. &lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">In &lt;span style=" font-weight:600;">End User mode&lt;/span> only components required for running application are installable,&lt;/p>
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">The install mode determines which package components are installable. &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">In &lt;span style=" font-weight:600;">End User mode&lt;/span> only components required for running applications are installable,&lt;/p>
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">In &lt;span style=" font-weight:600;">Developer mode&lt;/span> development files and sources are installable too.&lt;/p>&lt;/body>&lt;/html></string>
      </property>
      <property name="scaledContents" >
@@ -69,8 +69,8 @@ p, li { white-space: pre-wrap; }
      <item rowspan="3" row="0" column="3" >
       <widget class="QLabel" name="label" >
        <property name="text" >
-        <string>You cannot change this mode for a given install directory if you have installed any packages into.
-To change this mode please go back one page and choose a different installation directory or uninstall all packages and start over the installer.</string>
+        <string>You cannot change this mode for a given install directory if you have installed any packages into it.
+To change this mode please go back one page and choose a different installation directory or uninstall all packages and start the installer over.</string>
        </property>
        <property name="alignment" >
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -140,7 +140,7 @@ To change this mode please go back one page and choose a different installation 
       </sizepolicy>
      </property>
      <property name="text" >
-      <string>KDE on windows supports mingw and msvc compiler. Because packages containing c++ code are binary incompatible between compilers, this option let you preselect the type of compiler. If a specific compiler is selected, packages build for other compiler are invisible. 
+      <string>KDE on Windows supports the MinGW and MSVC compilers. Because packages containing c++ code are binary incompatible between compilers, this option lets you preselect the file for the type of compiler you want to use. If a specific compiler is selected, packages built for the other compiler are invisible. 
 </string>
      </property>
      <property name="alignment" >
@@ -183,8 +183,8 @@ To change this mode please go back one page and choose a different installation 
      <item rowspan="3" row="0" column="3" >
       <widget class="QLabel" name="label_6" >
        <property name="text" >
-        <string>You cannot change the compiler mode for a given install directory if you have installed any packages into.
-To install packages for a different compiler please go back one page and choose a different installation directory or uninstall all packages and start over the installer.</string>
+        <string>You cannot change the compiler mode for a given install directory if you have installed any packages into it.
+To install packages for a different compiler please go back one page and choose a different installation directory or uninstall all packages and start the installer over.</string>
        </property>
        <property name="alignment" >
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>

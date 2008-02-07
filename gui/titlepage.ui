@@ -21,10 +21,10 @@
      <property name="text" >
       <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">This setup program is used for the installation of KDE for Windows application.&lt;/p>
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">This setup program is used for the installation of KDE for Windows applications.&lt;/p>
 &lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">The pages that follow will guide you through the installation.&lt;/p>
-&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Please note that by default this installer will install only a basic set of applications by default. You can always run this program at any time in the future to add, remove or upgrade packages if necessary.&lt;/p>&lt;/body>&lt;/html></string>
+&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Please note that this installer will install only a basic set of applications by default. You can always run this program at any time in the future to add, remove or upgrade packages if necessary.&lt;/p>&lt;/body>&lt;/html></string>
      </property>
      <property name="textFormat" >
       <enum>Qt::RichText</enum>
