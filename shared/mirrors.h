@@ -55,7 +55,7 @@ class Mirrors /* : public QObject */
     public:
         enum Type { KDE = 1 ,Cygwin= 2 };
 
-        Mirrors();
+        Mirrors(const QString &releasePath="unstable/4.0.60/win32");
         bool fetch(Type type, QUrl url);
         MirrorTypeList &mirrors() { return m_mirrors; }
         static Mirrors &instance();
@@ -64,9 +64,13 @@ class Mirrors /* : public QObject */
         bool parse(const QString &fileName);
         bool parse(const QByteArray &data);
         bool parse(QIODevice *ioDev);
+        void initCountries();
 
         Type m_type;
         QList<MirrorType> m_mirrors;
+        QString m_releasePath;
+        static QHash<QString,QString> m_countries;
+        static QHash<QString,QString> m_continents;
 };
 
 QDebug &operator<<(QDebug &,const MirrorTypeList &);
