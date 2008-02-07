@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: setup.h,v 1.135 2007-08-23 14:30:24 patrickm Exp $
+ * $Id: setup.h,v 1.136 2007-11-08 18:13:55 yangtse Exp $
  ***************************************************************************/
 
 #ifdef HTTP_ONLY
@@ -32,13 +32,11 @@
 #define CURL_DISABLE_FILE
 #endif /* HTTP_ONLY */
 
-#if !defined(WIN32) && defined(__WIN32__)
-/* Borland fix */
-#define WIN32
-#endif
+/*
+ * Define WIN32 when build target is Win32 API
+ */
 
-#if !defined(WIN32) && defined(_WIN32)
-/* VS2005 on x64 fix */
+#if (defined(_WIN32) || defined(__WIN32__)) && !defined(WIN32)
 #define WIN32
 #endif
 

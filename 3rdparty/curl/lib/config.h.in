@@ -372,6 +372,9 @@
 /* If you have a fine poll */
 #undef HAVE_POLL_FINE
 
+/* Define to 1 if you have the <poll.h> header file. */
+#undef HAVE_POLL_H
+
 /* we have a POSIX-style strerror_r() */
 #undef HAVE_POSIX_STRERROR_R
 
@@ -692,6 +695,9 @@
 
 /* The size of `long', as computed by sizeof. */
 #undef SIZEOF_LONG
+
+/* The size of `off_t', as computed by sizeof. */
+#undef SIZEOF_OFF_T
 
 /* The size of `size_t', as computed by sizeof. */
 #undef SIZEOF_SIZE_T

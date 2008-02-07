@@ -1,21 +1,32 @@
 #
 #  Watcom / OpenWatcom / Win32 makefile for libcurl.
-#  G. Vanem <giva@bgnett.no>
+#  G. Vanem <gvanem@broadpark.no>
 #
-# $Id: Makefile.Watcom,v 1.13 2007-10-28 12:02:20 giva Exp $
+# $Id: Makefile.Watcom,v 1.16 2007-12-09 09:44:05 giva Exp $
 
-TARGETS = ca-bundle.h libcurl_wc.lib libcurl_wc.dll libcurl_wc_imp.lib
+TARGETS = ca-bundle.h libcurl_wc.dll libcurl_wc_imp.lib
 
 CC = wcc386
 
-CFLAGS = -3r -mf -d3 -hc -zff -zgf -zq -zm -zc -s -fr=con -w2 -fpi -oilrtfm -bt=nt -bd &
-         -d+ -dWIN32 -dCURL_CA_BUNDLE=getenv("CURL_CA_BUNDLE")                     &
+CFLAGS = -3r -mf -d3 -hc -zff -zgf -zq -zm -zc -s -fr=con -w2 -fpi -oilrtfm -bt=nt &
+         -bd -d+ -dWIN32 -dCURL_CA_BUNDLE=getenv("CURL_CA_BUNDLE")                 &
          -dBUILDING_LIBCURL -dWITHOUT_MM_LIB -dHAVE_SPNEGO=1 -dENABLE_IPV6         &
          -dDEBUG_THREADING_GETADDRINFO -dDEBUG=1 -dCURLDEBUG -d_WIN32_WINNT=0x0501 &
-         -I. -I..\include -dCURL_DISABLE_LDAP
+         -dWINBERAPI=__declspec(cdecl) -dWINLDAPAPI=__declspec(cdecl)              &
+         -I. -I..\include
 
-OBJ_DIR  = Watcom_obj
-LIB_ARG  = $(OBJ_DIR)\wlib.arg
+#
+# Change to suite.
+#
+ZLIB_ROOT = ..\..\..\zlib-1.2.3
+USE_ZLIB  = 0
+
+!ifeq USE_ZLIB 1
+CFLAGS += -dHAVE_ZLIB_H -dHAVE_LIBZ -I$(ZLIB_ROOT)
+!endif
+
+OBJ_DIR  = WC_Win32.obj
+C_ARG    = $(OBJ_DIR)\wcc386.arg
 LINK_ARG = $(OBJ_DIR)\wlink.arg
 
 OBJS = $(OBJ_DIR)\base64.obj           $(OBJ_DIR)\connect.obj     &
@@ -50,7 +61,7 @@ OBJS = $(OBJ_DIR)\base64.obj           $(OBJ_DIR)\connect.obj     &
 
 RESOURCE = $(OBJ_DIR)\libcurl.res
 
-all: $(OBJ_DIR) $(TARGETS) .SYMBOLIC
+all: $(OBJ_DIR) $(C_ARG) $(TARGETS) .SYMBOLIC
 	@echo Welcome to libcurl
 
 $(OBJ_DIR):
@@ -59,17 +70,14 @@ $(OBJ_DIR):
 ca-bundle.h:
 	@echo /* dummy ca-bundle.h. Not used */ > $@
 
-libcurl_wc.lib: $(OBJS) $(LIB_ARG)
-	wlib -q -b -c $@ @$(LIB_ARG)
-
-libcurl_wc.dll: $(OBJS) $(RESOURCE) $(LINK_ARG)
+libcurl_wc.dll libcurl_wc_imp.lib: $(OBJS) $(RESOURCE) $(LINK_ARG)
 	wlink name libcurl_wc.dll @$(LINK_ARG)
 
 clean: .SYMBOLIC
 	- rm -f $(OBJS) $(RESOURCE)
 
 vclean realclean: clean .SYMBOLIC
-	- rm -f $(TARGETS) $(LIB_ARG) $(LINK_ARG) libcurl_wc.map
+	- rm -f $(TARGETS) $(C_ARG) $(LINK_ARG) libcurl_wc.map
 	- rmdir $(OBJ_DIR)
 
 .ERASE
@@ -78,12 +86,11 @@ $(RESOURCE): libcurl.rc
 
 .ERASE
 .c{$(OBJ_DIR)}.obj:
-	$(CC) $[@ $(CFLAGS) -fo=$@
-	@echo .
+	$(CC) $[@ @$(C_ARG) -fo=$@
 
-$(LIB_ARG): $(__MAKEFILES__)
+$(C_ARG): $(__MAKEFILES__)
 	%create $^@
-	for %f in ($(OBJS)) do @%append $^@ +- %f
+	%append $^@ $(CFLAGS)
 
 $(LINK_ARG): $(__MAKEFILES__)
 	%create $^@
@@ -91,7 +98,10 @@ $(LINK_ARG): $(__MAKEFILES__)
 	@%append $^@ file { $(OBJS) }
 	@%append $^@ option quiet, map, caseexact, eliminate, implib=libcurl_wc_imp.lib,
 	@%append $^@ res=$(RESOURCE) libpath $(%watcom)\lib386;$(%watcom)\lib386\nt
-	@%append $^@ library clib3r.lib, ws2_32.lib
+	@%append $^@ library clib3r.lib, wldap32.lib, ws2_32.lib
+!ifeq USE_ZLIB 1
+	@%append $^@ library $(ZLIB_ROOT)\zlib.lib
+!endif
 
 #
 # Dependencies based on "gcc -MM .."

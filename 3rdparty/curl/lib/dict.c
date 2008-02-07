@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: dict.c,v 1.52 2007-10-17 16:58:32 yangtse Exp $
+ * $Id: dict.c,v 1.55 2007-12-08 22:50:55 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -87,7 +87,7 @@
  * Forward declarations.
  */
 
-static CURLcode Curl_dict(struct connectdata *conn, bool *done);
+static CURLcode dict_do(struct connectdata *conn, bool *done);
 
 /*
  * DICT protocol handler.
@@ -96,7 +96,7 @@ static CURLcode Curl_dict(struct connectdata *conn, bool *done);
 const struct Curl_handler Curl_handler_dict = {
   "DICT",                               /* scheme */
   ZERO_NULL,                            /* setup_connection */
-  Curl_dict,                            /* do_it */
+  dict_do,                              /* do_it */
   ZERO_NULL,                            /* done */
   ZERO_NULL,                            /* do_more */
   ZERO_NULL,                            /* connect_it */
@@ -129,7 +129,7 @@ static char *unescape_word(struct SessionHandle *data, const char *inp)
     for(ptr = newp;
         (byte = *ptr) != 0;
         ptr++) {
-      if ((byte <= 32) || (byte == 127) ||
+      if((byte <= 32) || (byte == 127) ||
           (byte == '\'') || (byte == '\"') || (byte == '\\')) {
         dictp[olen++] = '\\';
       }
@@ -142,7 +142,7 @@ static char *unescape_word(struct SessionHandle *data, const char *inp)
   return dictp;
 }
 
-static CURLcode Curl_dict(struct connectdata *conn, bool *done)
+static CURLcode dict_do(struct connectdata *conn, bool *done)
 {
   char *word;
   char *eword;
@@ -155,8 +155,8 @@ static CURLcode Curl_dict(struct connectdata *conn, bool *done)
   struct SessionHandle *data=conn->data;
   curl_socket_t sockfd = conn->sock[FIRSTSOCKET];
 
-  char *path = data->reqdata.path;
-  curl_off_t *bytecount = &data->reqdata.keep.bytecount;
+  char *path = data->state.path;
+  curl_off_t *bytecount = &data->req.bytecount;
 
   *done = TRUE; /* unconditionally */
 
@@ -164,35 +164,35 @@ static CURLcode Curl_dict(struct connectdata *conn, bool *done)
     /* AUTH is missing */
   }
 
-  if (strnequal(path, DICT_MATCH, sizeof(DICT_MATCH)-1) ||
+  if(strnequal(path, DICT_MATCH, sizeof(DICT_MATCH)-1) ||
       strnequal(path, DICT_MATCH2, sizeof(DICT_MATCH2)-1) ||
       strnequal(path, DICT_MATCH3, sizeof(DICT_MATCH3)-1)) {
 
     word = strchr(path, ':');
-    if (word) {
+    if(word) {
       word++;
       database = strchr(word, ':');
-      if (database) {
+      if(database) {
         *database++ = (char)0;
         strategy = strchr(database, ':');
-        if (strategy) {
+        if(strategy) {
           *strategy++ = (char)0;
           nthdef = strchr(strategy, ':');
-          if (nthdef) {
+          if(nthdef) {
             *nthdef++ = (char)0;
           }
         }
       }
     }
 
-    if ((word == NULL) || (*word == (char)0)) {
+    if((word == NULL) || (*word == (char)0)) {
       infof(data, "lookup word is missing");
       word=(char *)"default";
     }
-    if ((database == NULL) || (*database == (char)0)) {
+    if((database == NULL) || (*database == (char)0)) {
       database = (char *)"!";
     }
-    if ((strategy == NULL) || (*strategy == (char)0)) {
+    if((strategy == NULL) || (*strategy == (char)0)) {
       strategy = (char *)".";
     }
 
@@ -223,28 +223,28 @@ static CURLcode Curl_dict(struct connectdata *conn, bool *done)
     if(result)
       return result;
   }
-  else if (strnequal(path, DICT_DEFINE, sizeof(DICT_DEFINE)-1) ||
+  else if(strnequal(path, DICT_DEFINE, sizeof(DICT_DEFINE)-1) ||
            strnequal(path, DICT_DEFINE2, sizeof(DICT_DEFINE2)-1) ||
            strnequal(path, DICT_DEFINE3, sizeof(DICT_DEFINE3)-1)) {
 
     word = strchr(path, ':');
-    if (word) {
+    if(word) {
       word++;
       database = strchr(word, ':');
-      if (database) {
+      if(database) {
         *database++ = (char)0;
         nthdef = strchr(database, ':');
-        if (nthdef) {
+        if(nthdef) {
           *nthdef++ = (char)0;
         }
       }
     }
 
-    if ((word == NULL) || (*word == (char)0)) {
+    if((word == NULL) || (*word == (char)0)) {
       infof(data, "lookup word is missing");
       word=(char *)"default";
     }
-    if ((database == NULL) || (*database == (char)0)) {
+    if((database == NULL) || (*database == (char)0)) {
       database = (char *)"!";
     }
 
@@ -276,12 +276,12 @@ static CURLcode Curl_dict(struct connectdata *conn, bool *done)
   else {
 
     ppath = strchr(path, '/');
-    if (ppath) {
+    if(ppath) {
       int i;
 
       ppath++;
       for (i = 0; ppath[i]; i++) {
-        if (ppath[i] == ':')
+        if(ppath[i] == ':')
           ppath[i] = ' ';
       }
       result = Curl_sendf(sockfd, conn,

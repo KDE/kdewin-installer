@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: url.h,v 1.36 2007-10-22 15:05:35 bagder Exp $
+ * $Id: url.h,v 1.37 2008-01-16 12:24:00 bagder Exp $
  ***************************************************************************/
 
 #include <stdarg.h> /* to make sure we have ap_list */
@@ -64,12 +64,11 @@ int Curl_doing_getsock(struct connectdata *conn,
                        curl_socket_t *socks,
                        int numsocks);
 
+bool Curl_isPipeliningEnabled(const struct SessionHandle *handle);
 CURLcode Curl_addHandleToPipeline(struct SessionHandle *handle,
                                   struct curl_llist *pipeline);
 int Curl_removeHandleFromPipeline(struct SessionHandle *handle,
                                   struct curl_llist *pipeline);
-bool Curl_isHandleAtHead(struct SessionHandle *handle,
-                         struct curl_llist *pipeline);
 
 void Curl_close_connections(struct SessionHandle *data);
 

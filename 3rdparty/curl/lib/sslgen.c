@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: sslgen.c,v 1.29 2007-09-25 06:45:05 danf Exp $
+ * $Id: sslgen.c,v 1.35 2007-12-25 13:26:01 gknauf Exp $
  ***************************************************************************/
 
 /* This file is for "generic" SSL functions that all libcurl internals should
@@ -96,6 +96,7 @@ bool
 Curl_clone_ssl_config(struct ssl_config_data *source,
                       struct ssl_config_data *dest)
 {
+  dest->sessionid = source->sessionid;
   dest->verifyhost = source->verifyhost;
   dest->verifypeer = source->verifypeer;
   dest->version = source->version;
@@ -243,15 +244,18 @@ Curl_ssl_connect_nonblocking(struct connectdata *conn, int sockindex,
 #else
 #ifdef USE_NSS
   *done = TRUE; /* fallback to BLOCKING */
+  conn->ssl[sockindex].use = TRUE;
   return Curl_nss_connect(conn, sockindex);
 #else
 #ifdef USE_QSOSSL
   *done = TRUE; /* fallback to BLOCKING */
+  conn->ssl[sockindex].use = TRUE;
   return Curl_qsossl_connect(conn, sockindex);
 #else
   /* not implemented!
      fallback to BLOCKING call. */
   *done = TRUE;
+  conn->ssl[sockindex].use = TRUE;
   return Curl_ssl_connect(conn, sockindex);
 #endif /* USE_QSOSSL */
 #endif /* USE_NSS */
@@ -380,10 +384,13 @@ CURLcode Curl_ssl_addsessionid(struct connectdata *conn,
   store->sessionid = ssl_sessionid;
   store->idsize = idsize;
   store->age = data->state.sessionage;    /* set current age */
+  if (store->name)
+    /* free it if there's one already present */
+    free(store->name);
   store->name = clone_host;               /* clone host name */
   store->remote_port = conn->remote_port; /* port number */
 
-  if (!Curl_clone_ssl_config(&conn->ssl_config, &store->ssl_config))
+  if(!Curl_clone_ssl_config(&conn->ssl_config, &store->ssl_config))
     return CURLE_OUT_OF_MEMORY;
 
   return CURLE_OK;

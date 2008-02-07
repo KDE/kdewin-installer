@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: escape.c,v 1.41 2007-09-30 22:40:24 bagder Exp $
+ * $Id: escape.c,v 1.42 2007-11-07 09:21:35 bagder Exp $
  ***************************************************************************/
 
 /* Escape and unescape URL encoding in strings. The functions return a new
@@ -112,7 +112,7 @@ char *curl_easy_escape(CURL *handle, const char *string, int inlength)
 
 #ifdef CURL_DOES_CONVERSIONS
 /* escape sequences are always in ASCII so convert them on non-ASCII hosts */
-      if (!handle ||
+      if(!handle ||
           (Curl_convert_to_network(handle, &in, 1) != CURLE_OK)) {
         /* Curl_convert_to_network calls failf if unsuccessful */
         free(ns);
@@ -163,7 +163,7 @@ char *curl_easy_unescape(CURL *handle, const char *string, int length,
 
 #ifdef CURL_DOES_CONVERSIONS
 /* escape sequences are always in ASCII so convert them on non-ASCII hosts */
-      if (!handle ||
+      if(!handle ||
           (Curl_convert_from_network(handle, &in, 1) != CURLE_OK)) {
         /* Curl_convert_from_network calls failf if unsuccessful */
         free(ns);

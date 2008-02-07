@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: base64.c,v 1.44 2007-08-30 20:34:57 danf Exp $
+ * $Id: base64.c,v 1.45 2007-11-05 09:45:09 bagder Exp $
  ***************************************************************************/
 
 /* Base64 encoding/decoding
@@ -101,7 +101,7 @@ size_t Curl_base64_decode(const char *src, unsigned char **outptr)
   numQuantums = (length + equalsTerm) / 4;
 
   /* Don't allocate a buffer if the decoded length is 0 */
-  if (numQuantums <= 0)
+  if(numQuantums <= 0)
     return 0;
 
   rawlen = (numQuantums * 3) - equalsTerm;

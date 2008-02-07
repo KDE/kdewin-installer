@@ -6,6 +6,436 @@
 
                                   Changelog
 
+Version 7.18.0 (28 January 2008)
+
+Daniel S (27 Jan 2008)
+- Dmitry Kurochkin: In "real world" testing I found more bugs in
+  pipelining. Broken connection is not restored and we get into infinite
+  loop. It happens because of wrong is_in_pipeline values.
+
+Daniel S (26 Jan 2008)
+- Kevin Reed filed bug report #1879375
+  (http://curl.haxx.se/bug/view.cgi?id=1879375) which describes how libcurl
+  got lost in this scenario: proxy tunnel (or HTTPS over proxy), ask to do any
+  proxy authentication and the proxy replies with an auth (like NTLM) and then
+  closes the connection after that initial informational response.
+
+  libcurl would not properly re-initialize the connection to the proxy and
+  continue the auth negotiation like supposed. It does now however, as it will
+  now detect if one or more authentication methods were available and asked
+  for, and will thus retry the connection and continue from there.
+
+- I made the progress callback get called properly during proxy CONNECT.
+
+Daniel S (23 Jan 2008)
+- Igor Franchuk pointed out that CURLOPT_COOKIELIST set to "ALL" leaked
+  memory, and so did "SESS". Fixed now.
+
+Yang Tse (22 Jan 2008)
+- Check poll.h at configuration time, and use it when sys/poll.h unavailable
+
+Daniel S (22 Jan 2008)
+- Dmitry Kurochkin removed the cancelled state for pipelining, as we agreed
+  that it is bad anyway. Starting now, removing a handle that is in used in a
+  pipeline will break the pipeline - it'll be set back up again but still...
+
+Yang Tse (21 Jan 2008)
+- Disable ldap support for cygwin builds, since it breaks whole build process.
+  Fixing it will affect other platforms, so it is postponed for another release.
+
+Daniel S (18 Jan 2008)
+- Lau Hang Kin found and fixed a problem with the multi interface when doing
+  CONNECT over a proxy. curl_multi_fdset() didn't report back the socket
+  properly during that state, due to a missing case in the switch in the
+  multi_getsock() function.
+
+Yang Tse (17 Jan 2008)
+- Don't abort tests 518 and 537 when unable to raise the open-file soft limit.
+
+Daniel S (16 Jan 2008)
+- Nathan Coulter's patch that makes runtests.pl respect the PATH when figuring
+  out what valgrind to run.
+
+Yang Tse (16 Jan 2008)
+- Improved handling of out of memory in the command line tool that afected
+  data url encoded HTTP POSTs when reading it from a file.
+
+Daniel S (16 Jan 2008)
+- Dmitry Kurochkin worked a lot on improving the HTTP Pipelining support that
+  previously had a number of flaws, perhaps most notably when an application
+  fired up N transfers at once as then they wouldn't pipeline at all that
+  nicely as anyone would think... Test case 530 was also updated to take the
+  improved functionality into account.
+
+- Calls to Curl_failf() are not supposed to provide a trailing newline as the
+  function itself adds that. Fixed on 50 or something strings!
+
+Daniel S (15 Jan 2008)
+- I made the torture test on test 530 go through. This was actually due to
+  silly code left from when we switched to let the multi handle "hold" the dns
+  cache when using the multi interface... Of course this only triggered when a
+  certain function call returned error at the correct moment.
+
+Daniel S (14 Jan 2008)
+- Joe Malicki filed bug report #1871269
+  (http://curl.haxx.se/bug/view.cgi?id=1871269) and we could fix his hang-
+  problem that occurred when doing a large HTTP POST request with the
+  response-body read from a callback.
+
+Daniel S (12 Jan 2008)
+- I re-arranged the curl --help output. All the options are now sorted on
+  their long option names and all descriptions are one-liners.
+
+- Eric Landes provided the patch (edited by me) that introduces the
+  --keepalive-time to curl to set the keepalive probe interval. I also took
+  the opportunity to rename the recently added no-keep-alive option to
+  no-keepalive to keep a consistent naming and to avoid getting two dashes in
+  these option names. Eric also provided an update to the man page for the new
+  option.
+
+Daniel S (11 Jan 2008)
+- Daniel Egger made CURLOPT_RANGE work on file:// URLs the very same way it
+  already worked for FTP:// URLs.
+
+- I made the curl tool switch from using CURLOPT_IOCTLFUNCTION to now use the
+  spanking new CURLOPT_SEEKFUNCTION simply to take advantage of the improved
+  performance for the upload resume cases where you want to upload the last
+  few bytes of a very large file. To implement this decently, I had to switch
+  the client code for uploading from fopen()/fread() to plain open()/read() so
+  that we can use lseek() to do >32bit seeks (as fseek() doesn't allow that)
+  on systems that offer support for that.
+
+Daniel S (10 Jan 2008)
+- Michal Marek made curl-config --libs not include /usr/lib64 in the output
+  (it already before skipped /usr/lib).  /usr/lib64 is the default library
+  directory on many 64bit systems and it's unlikely that anyone would use the
+  path privately on systems where it's not.
+
+- Georg Lippitsch brought CURLOPT_SEEKFUNCTION and CURLOPT_SEEKDATA to allow
+  libcurl to seek in a given input stream. This is particularly important when
+  doing upload resumes when there's already a huge part of the file present
+  remotely. Before, and still if this callback isn't used, libcurl will read
+  and through away the entire file up to the point to where the resuming
+  begins (which of course can be a slow opereration depending on file size,
+  I/O bandwidth and more). This new function will also be preferred to get
+  used instead of the CURLOPT_IOCTLFUNCTION for seeking back in a stream when
+  doing multi-stage HTTP auth with POST/PUT.
+
+- Nikitinskit Dmitriy filed bug report #1868255
+  (http://curl.haxx.se/bug/view.cgi?id=1868255) with a patch. It identifies
+  and fixes a problem with parsing WWW-Authenticate: headers with additional
+  spaces in the line that the parser wasn't written to deal with.
+
+Daniel S (8 Jan 2008)
+- Introducing curl_easy_pause() and new magic return codes for both the read
+  and the write callbacks that now can make a connection's reading and/or
+  writing get paused.
+
+Daniel S (6 Jan 2008)
+- Jeff Johnson filed bug report #1863171
+  (http://curl.haxx.se/bug/view.cgi?id=1863171) where he pointed out that
+  libcurl's date parser didn't accept a +1300 time zone which actually is used
+  fairly often (like New Zealand's Dailight Savings Time), so I modified the
+  parser to now accept up to and including -1400 to +1400.
+
+Daniel S (5 Jan 2008)
+- Based on further discussion on curl-library, I reverted yesterday's SOCKS5
+  code to instead introduce support for a new proxy type called
+  CURLPROXY_SOCKS5_HOSTNAME that is used to send the host name to the proxy
+  instead of IP address and there's thus no longer any need for a new
+  curl_easy_setopt() option.
+
+  The default SOCKS5 proxy is again back to sending the IP address to the
+  proxy.  The new curl command line option for enabling sending host name to a
+  SOCKS5 proxy is now --socks5-hostname.
+
+Daniel S (4 Jan 2008)
+- Based on Maxim Perenesenko's patch, we now do SOCKS5 operations and let the
+  proxy do the host name resolving and only if --socks5ip (or
+  CURLOPT_SOCKS5_RESOLVE_LOCAL) is used we resolve the host name locally and
+  pass on the IP address only to the proxy.
+
+Yang Tse (3 Jan 2008)
+- Modified test harness to allow SCP, SFTP and SOCKS4 tests to run with
+  OpenSSH 2.9.9, SunSSH 1.0 or later versions. SOCKS5 tests need OpenSSH
+  3.7, SunSSH 1.0 or later.
+
+Daniel S (2 Jan 2008)
+- I fixed two cases of missing return code checks when handling chunked
+  decoding where a write error (or abort return from a callback) didn't stop
+  libcurl's processing.
+
+- I removed the socklen_t use from the public curl/curl.h header and instead
+  made it an unsigned int. The type was only used in the curl_sockaddr struct
+  definition (only used by the curl_opensocket_callback). On all platforms I
+  could find information about, socklen_t is 32 unsigned bits large so I don't
+  think this will break the API or ABI. The main reason for this change is of
+  course for all the platforms that don't have a socklen_t definition in their
+  headers to build fine again. Providing our own configure magic and custom
+  definition of socklen_t on those systems proved to work but was a lot of
+  cruft, code and extra magic needed - when this very small change of type
+  seems harmless and still solves the missing socklen_t problem.
+
+- Richard Atterer brought a patch that added support for SOCKS4a proxies,
+  which is an inofficial PROXY4 variant that sends the hostname to the proxy
+  instead of the resolved address (which is already supported by SOCKS5).
+  --socks4a is the curl command line option for it and CURLOPT_PROXYTYPE can
+  now be set to CURLPROXY_SOCKS4A as well.
+
+Daniel S (1 Jan 2008)
+- Mohun Biswas pointed out that --libcurl generated a source code with an int
+  function but without a return statement. While fixing that, I also took care
+  about adding some better comments for the generated code.
+
+Daniel S (27 Dec 2007)
+- Dmitry Kurochkin mentioned a flaw
+  (http://curl.haxx.se/mail/lib-2007-12/0252.html) in detect_proxy() which
+  failed to set the bits.proxy variable properly when an environment variable
+  told libcurl to use a http proxy.
+
+Daniel S (26 Dec 2007)
+- In an attempt to repeat the problem in bug report #1850730
+  (http://curl.haxx.se/bug/view.cgi?id=1850730) I wrote up test case 552. The
+  test is doing a 70K POST with a read callback and an ioctl callback over a
+  proxy requiring Digest auth. The test case code is more or less identical to
+  the test recipe code provided by Spacen Jasset (who submitted the bug
+  report).
+
+Daniel S (25 Dec 2007)
+- Gary Maxwell filed bug report #1856628
+  (http://curl.haxx.se/bug/view.cgi?id=1856628) and provided a fix for the
+  (small) memory leak in the SSL session ID caching code. It happened when a
+  previous entry in the cache was re-used.
+
+Daniel Fandrich (19 Dec 2007)
+- Ensure that nroff doesn't put anything but ASCII characters into the
+  --manual text.
+
+Yang Tse (18 Dec 2007)
+- MSVC 9.0 (VS2008) does not support Windows build targets prior to WinXP,
+  and makes wrong asumptions of build target when it isn't specified. So,
+  if no build target has been defined we will target WinXP when building
+  curl/libcurl with MSVC 9.0 (VS2008).
+
+- (http://curl.haxx.se/mail/archive-2007-12/0039.html) reported and fixed
+  a file truncation problem on Windows build targets triggered when retrying
+  a download with curl.
+
+Daniel S (17 Dec 2007)
+- Mateusz Loskot pointed out that MSVC 9.0 (VS2008) has the pollfd struct and
+  defines in winsock2.h somehow differently than previous versions and that
+  curl 7.17.1 would fail to compile out of the box.
+
+Daniel S (13 Dec 2007)
+- David Wright filed bug report #1849764
+  (http://curl.haxx.se/bug/view.cgi?id=1849764) with an included fix. He
+  identified a problem for re-used connections that previously had sent
+  Expect: 100-continue and in some situations the subsequent POST (that didn't
+  use Expect:) still had the internal flag set for its use. David's fix (that
+  makes the setting of the flag in every single request unconditionally) is
+  fine and is now used!
+
+Daniel S (12 Dec 2007)
+- Gilles Blanc made the curl tool enable SO_KEEPALIVE for the connections and
+  added the --no-keep-alive option that can disable that on demand.
+
+Daniel S (9 Dec 2007)
+- Andrew Moise filed bug report #1847501
+  (http://curl.haxx.se/bug/view.cgi?id=1847501) and pointed out a memcpy()
+  that should be memmove() in the convert_lineends() function.
+
+Daniel S (8 Dec 2007)
+- Renamed all internal static functions that had Curl_ prefixes to no longer
+  have them. The Curl_ prefix is exclusively used for library internal global
+  symbols. Static functions can be named anything, except for using Curl_ or
+  curl_ prefixes. This is for consistency and for easier maintainance and
+  overview.
+
+- Cleaned up and reformatted the TODO document to look like the FAQ and
+  CONTRIBUTE, which makes nicer web pages
+
+- Added test cases 549 and 550 that test CURLOPT_PROXY_TRANSFER_MODE.
+
+- Added keywords on a bunch of test cases
+
+- Fixed an OOM problem in the curl code that would lead to fclose on a bad
+  handle and crash
+
+Daniel S (5 Dec 2007)
+- Spacen Jasset reported a problem with doing POST (with data read with a
+  callback) over a proxy when NTLM is used as auth with the proxy. The bug
+  also concerned Digest and was limited to using callback only. Spacen worked
+  with us to provide a useful patch. I added the test case 547 and 548 to
+  verify two variations of POST over proxy with NTLM.
+
+Daniel S (3 Dec 2007)
+- Ray Pekowski filed bug report #1842029
+  (http://curl.haxx.se/bug/view.cgi?id=1842029) in which he identified a
+  problem with SSL session caching that prevent it from working, and provided
+  the associated fix!
+
+- Now libcurl (built with OpenSSL) doesn't return error anymore if the remote
+  SSL-based server doesn't present a certificate when the request is told to
+  ignore certificate verification anyway.
+
+- Michal Marek introduced CURLOPT_PROXY_TRANSFER_MODE which is used to control
+  the appending of the "type=" thing on FTP URLs when they are passed to a
+  HTTP proxy. Some proxies just don't like that appending (which is done
+  unconditionally in 7.17.1), and some proxies treat binary/ascii transfers
+  better with the appending done!
+
+Daniel S (29 Nov 2007)
+- A bug report on the curl-library list showed a HTTP Digest session going on
+  with a 700+ letter nonce. Previously libcurl only support 127 letter ones
+  and now I bumped it to 1023.
+
+- Fixed the resumed FTP upload loop to not require that the read callback
+  returns a full buffer on each invoke.
+
+Daniel S (25 Nov 2007)
+- Added test case 1015 that tests --data-urlencode in multiple ways
+
+- Fixed --data-urlencode for when no @ or = are used
+
+- Extended the user-agent buffer curl uses, since we can hit the 128 byte
+  border with plenty development libraries used. Like my current set: "curl
+  7.17.2-CVS (i686-pc-linux-gnu) libcurl/7.17.2-CVS OpenSSL/0.9.8g
+  zlib/1.2.3.3 c-ares/1.5.2-CVS libidn/1.1 libssh2/0.19.0-CVS"
+
+Daniel S (24 Nov 2007)
+- Internal rearrangements, so that the previous struct HandleData is no more.
+  It is now known as SingleRequest and the Curl_transfer_keeper struct within
+  that was remove entirely. This has the upside that there are less duplicate
+  struct members that made it hard to see and remember what struct that was
+  used to store what data. The transfer_keeper thing was once stored on a
+  per-connection basis and then it made sense to have the duplicate info but
+  since it was moved to the SessionHandle (in 7.16.0) it just added weirdness.
+  The SingleRequest struct is used by data that only is valid for this single
+  request.
+
+Yang Tse (22 Nov 2007)
+- Provide a socklen_t definition in curl.h for Win32 API build targets
+  which don't have one.
+
+Daniel S (22 Nov 2007)
+- Alessandro Vesely helped me improve the --data-urlencode's syntax, parser
+  and documentation.
+
+Daniel S (21 Nov 2007)
+- While inspecting the Negotiate code, I noticed how the proxy auth was using
+  the same state struct as the host auth, so both could never be used at the
+  same time! I fixed it (without being able to check) to use two separate
+  structs to allow authentication using Negotiate on host and proxy
+  simultaneously.
+
+Daniel S (20 Nov 2007)
+- Emil Romanus pointed out a bug that made an easy handle get the cookie
+  engine activated when set to use a share (even if the share doesn't share
+  cookies). I fixed it.
+
+- Fixed a very long-lasting mprintf() bug that occurred when we did "%.*s%s",
+  since the second %s would then wrongly used the numerical precision argument
+  instead and crash.
+
+- Introduced --data-urlencode to the curl tool for easier url encoding of the
+  data sent in a post.
+
+Daniel S (18 Nov 2007)
+- Rob Crittenden fixed SSL connections with NSS done with the multi-interface
+
+Daniel S (17 Nov 2007)
+- Michal Marek made the test suite remember what test servers that fail to
+  start so that subsequent tries are simply skipped.
+
+- Andres Garcia made the examples build fine on Windows (mingw + msys) when
+  the lib was built staticly.
+
+Daniel S (16 Nov 2007)
+- Ates Goral identified a problem in http.c:add_buffer_send() when a debug
+  callback was used, as it could wrongly pass on a bad size for the outgoing
+  HTTP header. The bad size would be a very large value as it was a wrapped
+  size_t content. This happened when the whole HTTP request failed to get sent
+  in one single send.  http://curl.haxx.se/mail/lib-2007-11/0165.html
+
+Daniel S (15 Nov 2007)
+- Fixed yet another remaining problem with doing SFTP directory listings on a
+  re-used persistent connection. Mentioned by Immanuel Gregoire on the mailing
+  list.
+
+- Michal Marek fixed the test suite to better deal with the case when the HTTP
+  ipv6 server can't run.
+
+Yang Tse (14 Nov 2007)
+- Fix a variable potential wrapping in add_buffer() when using absolutely
+  huge send buffer sizes.
+
+Daniel S (13 Nov 2007)
+- Fixed a remaining problem with doing SFTP directory listings on a re-used
+  persistent connection. Mentioned by Immanuel Gregoire on the mailing list.
+
+Daniel S (12 Nov 2007)
+- Bug report #1830637 (http://curl.haxx.se/bug/view.cgi?id=1830637), which was
+  forwarded from the Gentoo bug tracker by Daniel Black and was originally
+  submitted by Robin Johnson, pointed out that libcurl would do bad memory
+  references when it failed and bailed out before the handler thing was
+  setup. My fix is not done like the provided patch does it, but instead I
+  make sure that there's never any chance for a NULL pointer in that struct
+  member.
+
+Yang Tse (10 Nov 2007)
+- Vikram Saxena (http://curl.haxx.se/mail/lib-2007-11/0096.html) pointed out
+  that the pollfd struct was being multi defined when using VS2008. This is
+  now fixed in /curl/lib/select.h
+
+Daniel S (8 Nov 2007)
+- Bug report #1823487 (http://curl.haxx.se/bug/view.cgi?id=1823487) pointed
+  out that SFTP requests didn't use persistent connections. Neither did SCP
+  ones.  I gave the SSH code a good beating and now both SCP and SFTP should
+  use persistent connections fine. I also did a bunch of indent changes as
+  well as a bug fix for the "keyboard interactive" auth.
+
+Dan F (6 Nov 2007)
+- Improved telnet support by drastically reducing the number of write
+  callbacks needed to pass a buffer to the user.  Instead one per byte it
+  is now as little as one per segment.
+
+Yang Tse (6 Nov 2007)
+- Bug report #1824894 (http://curl.haxx.se/bug/view.cgi?id=1824894) pointed
+  out a problem in curl.h when building C++ apps with MSVC. To fix it, the
+  inclusion of header files in curl.h is moved outside of the C++ extern "C"
+  linkage block.
+
+Daniel S (1 Nov 2007)
+- Toby Peterson patched a memory problem in the command line tool that
+  happened when a user had a home dir as an empty string. curl would then do
+  free() on a wrong area.
+
+Dan F (1 Nov 2007)
+- Fixed curl-config --features to not display libz when it wasn't used
+  due to a missing header file.
+
+Dan F (31 October 2007)
+- Fixed the output of curl-config --protocols which showed SCP and SFTP
+  always, except when --without-libssh2 was given
+
+- Added test cases 1013 and 1014 to check that curl-config --protocols and
+  curl-config --features matches the output of curl --version
+
+Dan F (30 October 2007)
+- Fixed an OOM problem with file: URLs
+
+- Moved Curl_file_connect into the protocol handler struct
+
+Dan F (29 October 2007)
+- Added test case 546 to check that subsequent FTP transfers work after a
+  failed one using the multi interface
+
+Daniel S (29 October 2007)
+- Based on one of those bug reports that are intercepted by a distro's bug
+  tracker (https://bugzilla.redhat.com/show_bug.cgi?id=316191), I now made
+  curl-config --features and --protocols show the correct output when built
+  with NSS.
+
 Version 7.17.1 (29 October 2007)
 
 Dan F (25 October 2007)

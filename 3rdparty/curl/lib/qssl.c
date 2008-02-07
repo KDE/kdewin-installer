@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: qssl.c,v 1.5 2007-10-03 08:07:50 bagder Exp $
+ * $Id: qssl.c,v 1.7 2008-01-15 23:19:02 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -80,10 +80,10 @@ static CURLcode Curl_qsossl_init_session(struct SessionHandle * data)
 
   certname = data->set.str[STRING_CERT];
 
-  if (!certname) {
+  if(!certname) {
     certname = data->set.str[STRING_SSL_CAFILE];
 
-    if (!certname)
+    if(!certname)
       return CURLE_OK;          /* Use previous setup. */
     }
 
@@ -94,7 +94,7 @@ static CURLcode Curl_qsossl_init_session(struct SessionHandle * data)
   initappstr.sessionType = SSL_REGISTERED_AS_CLIENT;
   rc = SSL_Init_Application(&initappstr);
 
-  if (rc == SSL_ERROR_NOT_REGISTERED) {
+  if(rc == SSL_ERROR_NOT_REGISTERED) {
     initstr.keyringFileName = certname;
     initstr.keyringPassword = data->set.str[STRING_KEY];
     initstr.cipherSuiteList = NULL;    /* Use default. */
@@ -108,7 +108,7 @@ static CURLcode Curl_qsossl_init_session(struct SessionHandle * data)
     break;
 
   case SSL_ERROR_IO:
-    failf(data, "SSL_Init() I/O error: %s\n", strerror(errno));
+    failf(data, "SSL_Init() I/O error: %s", strerror(errno));
     return CURLE_SSL_CONNECT_ERROR;
 
   case SSL_ERROR_BAD_CIPHER_SUITE:
@@ -125,7 +125,7 @@ static CURLcode Curl_qsossl_init_session(struct SessionHandle * data)
     return CURLE_SSL_CERTPROBLEM;
 
   default:
-    failf(data, "SSL_Init(): %s\n", SSL_Strerror(rc, NULL));
+    failf(data, "SSL_Init(): %s", SSL_Strerror(rc, NULL));
     return CURLE_SSL_CONNECT_ERROR;
   }
 
@@ -141,10 +141,10 @@ static CURLcode Curl_qsossl_create(struct connectdata * conn, int sockindex)
 
   h = SSL_Create(conn->sock[sockindex], SSL_ENCRYPT);
 
-  if (!h) {
-    failf(conn->data, "SSL_Create() I/O error: %s\n", strerror(errno));
+  if(!h) {
+    failf(conn->data, "SSL_Create() I/O error: %s", strerror(errno));
     return CURLE_SSL_CONNECT_ERROR;
-    }
+  }
 
   connssl->handle = h;
   return CURLE_OK;
@@ -169,17 +169,17 @@ static CURLcode Curl_qsossl_handshake(struct connectdata * conn, int sockindex)
 
   h->exitPgm = NULL;
 
-  if (!data->set.ssl.verifyhost)
+  if(!data->set.ssl.verifyhost)
     h->exitPgm = Curl_qsossl_trap_cert;
 
-  if (data->set.connecttimeout) {
+  if(data->set.connecttimeout) {
     timeout_ms = data->set.connecttimeout;
 
-    if (data->set.timeout)
-      if (timeout_ms > data->set.timeout)
+    if(data->set.timeout)
+      if(timeout_ms > data->set.timeout)
         timeout_ms = data->set.timeout;
     }
-  else if (data->set.timeout)
+  else if(data->set.timeout)
     timeout_ms = data->set.timeout;
   else
     timeout_ms = DEFAULT_CONNECT_TIMEOUT;
@@ -232,11 +232,11 @@ static CURLcode Curl_qsossl_handshake(struct connectdata * conn, int sockindex)
     return CURLE_SSL_CERTPROBLEM;
 
   case SSL_ERROR_IO:
-    failf(data, "SSL_Handshake(): %s\n", SSL_Strerror(rc, NULL));
+    failf(data, "SSL_Handshake(): %s", SSL_Strerror(rc, NULL));
     return CURLE_SSL_CONNECT_ERROR;
 
   default:
-    failf(data, "SSL_Init(): %s\n", SSL_Strerror(rc, NULL));
+    failf(data, "SSL_Init(): %s", SSL_Strerror(rc, NULL));
     return CURLE_SSL_CONNECT_ERROR;
   }
 
@@ -253,10 +253,10 @@ CURLcode Curl_qsossl_connect(struct connectdata * conn, int sockindex)
 
   rc = Curl_qsossl_init_session(data);
 
-  if (rc == CURLE_OK) {
+  if(rc == CURLE_OK) {
     rc = Curl_qsossl_create(conn, sockindex);
 
-    if (rc == CURLE_OK)
+    if(rc == CURLE_OK)
       rc = Curl_qsossl_handshake(conn, sockindex);
     else {
       SSL_Destroy(connssl->handle);
@@ -281,13 +281,13 @@ static int Curl_qsossl_close_one(struct ssl_connect_data * conn,
   rc = SSL_Destroy(conn->handle);
 
   if(rc) {
-    if (rc == SSL_ERROR_IO) {
-      failf(data, "SSL_Destroy() I/O error: %s\n", strerror(errno));
+    if(rc == SSL_ERROR_IO) {
+      failf(data, "SSL_Destroy() I/O error: %s", strerror(errno));
       return -1;
     }
 
     /* An SSL error. */
-    failf(data, "SSL_Destroy() returned error %d\n", SSL_Strerror(rc, NULL));
+    failf(data, "SSL_Destroy() returned error %d", SSL_Strerror(rc, NULL));
     return -1;
   }
 
@@ -326,13 +326,13 @@ int Curl_qsossl_shutdown(struct connectdata * conn, int sockindex)
   int rc;
   char buf[120];
 
-  if (!connssl->handle)
+  if(!connssl->handle)
     return 0;
 
-  if (data->set.ftp_ccc != CURLFTPSSL_CCC_ACTIVE)
+  if(data->set.ftp_ccc != CURLFTPSSL_CCC_ACTIVE)
     return 0;
 
-  if (Curl_qsossl_close_one(connssl, data))
+  if(Curl_qsossl_close_one(connssl, data))
     return -1;
 
   rc = 0;
@@ -341,14 +341,14 @@ int Curl_qsossl_shutdown(struct connectdata * conn, int sockindex)
                            CURL_SOCKET_BAD, SSL_SHUTDOWN_TIMEOUT);
 
   for (;;) {
-    if (what < 0) {
+    if(what < 0) {
       /* anything that gets here is fatally bad */
       failf(data, "select/poll on SSL socket, errno: %d", SOCKERRNO);
       rc = -1;
       break;
     }
 
-    if (!what) {                                /* timeout */
+    if(!what) {                                /* timeout */
       failf(data, "SSL shutdown timeout");
       break;
     }
@@ -358,12 +358,12 @@ int Curl_qsossl_shutdown(struct connectdata * conn, int sockindex)
 
     nread = read(conn->sock[sockindex], buf, sizeof(buf));
 
-    if (nread < 0) {
-      failf(data, "read: %s\n", strerror(errno));
+    if(nread < 0) {
+      failf(data, "read: %s", strerror(errno));
       rc = -1;
     }
 
-    if (nread <= 0)
+    if(nread <= 0)
       break;
 
     what = Curl_socket_ready(conn->sock[sockindex], CURL_SOCKET_BAD, 0);
@@ -399,12 +399,12 @@ ssize_t Curl_qsossl_send(struct connectdata * conn, int sockindex, void * mem,
         return 0;
         }
 
-      failf(conn->data, "SSL_Write() I/O error: %s\n", strerror(errno));
+      failf(conn->data, "SSL_Write() I/O error: %s", strerror(errno));
       return -1;
     }
 
     /* An SSL error. */
-    failf(conn->data, "SSL_Write() returned error %d\n",
+    failf(conn->data, "SSL_Write() returned error %d",
           SSL_Strerror(rc, NULL));
     return -1;
   }
@@ -442,11 +442,11 @@ ssize_t Curl_qsossl_recv(struct connectdata * conn, int num, char * buf,
         return -1;
         }
 
-      failf(conn->data, "SSL_Read() I/O error: %s\n", strerror(errno));
+      failf(conn->data, "SSL_Read() I/O error: %s", strerror(errno));
       return -1;
 
     default:
-      failf(conn->data, "SSL read error: %s\n", SSL_Strerror(nread, NULL));
+      failf(conn->data, "SSL read error: %s", SSL_Strerror(nread, NULL));
       return -1;
     }
   }
@@ -470,13 +470,13 @@ int Curl_qsossl_check_cxn(struct connectdata * cxn)
 
   /* The only thing that can be tested here is at the socket level. */
 
-  if (!cxn->ssl[FIRSTSOCKET].handle)
+  if(!cxn->ssl[FIRSTSOCKET].handle)
     return 0; /* connection has been closed */
 
   err = 0;
   errlen = sizeof err;
 
-  if (getsockopt(cxn->sock[FIRSTSOCKET], SOL_SOCKET, SO_ERROR,
+  if(getsockopt(cxn->sock[FIRSTSOCKET], SOL_SOCKET, SO_ERROR,
                  (unsigned char *) &err, &errlen) ||
       errlen != sizeof err || err)
     return 0; /* connection has been closed */

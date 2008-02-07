@@ -347,6 +347,26 @@
 #define HAVE_LONGLONG 1
 #endif
 
+/* Define to avoid VS2005 complaining about portable C functions */
+#if defined(_MSC_VER) && (_MSC_VER >= 1400)
+#define _CRT_SECURE_NO_DEPRECATE 1
+#define _CRT_NONSTDC_NO_DEPRECATE 1
+#endif
+
+/* VS2008 does not support Windows build targets prior to WinXP, */
+/* so, if no build target has been defined we will target WinXP. */
+#if defined(_MSC_VER) && (_MSC_VER >= 1500)
+#  ifndef _WIN32_WINNT
+#    define _WIN32_WINNT 0x0501
+#  endif
+#  ifndef WINVER
+#    define WINVER 0x0501
+#  endif
+#  if (_WIN32_WINNT < 0x0501) || (WINVER < 0x0501)
+#    error VS2008 does not support Windows build targets prior to WinXP
+#  endif
+#endif
+
 /* ---------------------------------------------------------------- */
 /*                           LDAP SUPPORT                           */
 /* ---------------------------------------------------------------- */
@@ -369,10 +389,6 @@
 /* ---------------------------------------------------------------- */
 /*                       ADDITIONAL DEFINITIONS                     */
 /* ---------------------------------------------------------------- */
-
-/* Defines set for VS2005 to _not_ deprecate a few functions we use. */
-#define _CRT_SECURE_NO_DEPRECATE 1
-#define _CRT_NONSTDC_NO_DEPRECATE 1
 
 /* Define cpu-machine-OS */
 #undef OS

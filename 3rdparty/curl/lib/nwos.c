@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: nwos.c,v 1.3 2007-08-09 22:33:49 gknauf Exp $
+ * $Id: nwos.c,v 1.4 2007-11-07 09:21:35 bagder Exp $
  ***************************************************************************/
 
 #ifdef NETWARE /* Novell NetWare */
@@ -57,17 +57,17 @@ int netware_init ( void )
     /* import UseAccurateCaseForPaths dynamically for NW3.x compatibility */
     void (*pUseAccurateCaseForPaths)(int) = (void(*)(int))
             ImportSymbol(myHandle, "UseAccurateCaseForPaths");
-    if (pUnAugmentAsterisk)
+    if(pUnAugmentAsterisk)
         pUnAugmentAsterisk(1);
-    if (pUseAccurateCaseForPaths)
+    if(pUseAccurateCaseForPaths)
         pUseAccurateCaseForPaths(1);
     UnimportSymbol(myHandle, "UnAugmentAsterisk");
     UnimportSymbol(myHandle, "UseAccurateCaseForPaths");
     /* set long name space */
-    if ((SetCurrentNameSpace(4) == 255)) {
+    if((SetCurrentNameSpace(4) == 255)) {
         rc = 1;
     }
-    if ((SetTargetNameSpace(4) == 255)) {
+    if((SetTargetNameSpace(4) == 255)) {
         rc = rc + 2;
     }
     return rc;

@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hostares.c,v 1.35 2007-10-20 15:11:51 yangtse Exp $
+ * $Id: hostares.c,v 1.36 2007-11-07 09:21:35 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -244,7 +244,7 @@ CURLcode Curl_wait_for_resolv(struct connectdata *conn,
     timeout = CURL_TIMEOUT_RESOLVE * 1000; /* default name resolve timeout */
 
   /* Wait for the name resolve query to complete. */
-  while (1) {
+  while(1) {
     struct timeval *tvp, tv, store;
     struct timeval now = Curl_tvnow();
     long timediff;
@@ -262,7 +262,7 @@ CURLcode Curl_wait_for_resolv(struct connectdata *conn,
 
     timediff = Curl_tvdiff(Curl_tvnow(), now); /* spent time */
     timeout -= timediff?timediff:1; /* always deduct at least 1 */
-    if (timeout < 0) {
+    if(timeout < 0) {
       /* our timeout, so we cancel the ares operation */
       ares_cancel(data->state.areschannel);
       break;
@@ -316,7 +316,7 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
 
   *waitp = FALSE;
 
-  if (in != CURL_INADDR_NONE) {
+  if(in != CURL_INADDR_NONE) {
     /* This is a dotted IP address 123.123.123.123-style */
     return Curl_ip2addr(in, hostname, port);
   }

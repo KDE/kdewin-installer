@@ -1,5 +1,5 @@
 #################################################################
-# $Id: Makefile.netware,v 1.69 2007-10-09 20:15:27 gknauf Exp $
+# $Id: Makefile.netware,v 1.73 2008-01-24 15:28:47 gknauf Exp $
 #
 ## Makefile for building libcurl.nlm (NetWare version - gnu make)
 ## Use: make -f Makefile.netware
@@ -20,12 +20,12 @@ endif
 
 # Edit the path below to point to the base of your OpenSSL package.
 ifndef OPENSSL_PATH
-OPENSSL_PATH = ../../openssl-0.9.8e
+OPENSSL_PATH = ../../openssl-0.9.8g
 endif
 
 # Edit the path below to point to the base of your LibSSH2 package.
 ifndef LIBSSH2_PATH
-LIBSSH2_PATH = ../../libssh2-0.16
+LIBSSH2_PATH = ../../libssh2-0.18
 endif
 
 ifndef INSTDIR
@@ -35,7 +35,7 @@ endif
 # Edit the vars below to change NLM target settings.
 TARGET  = libcurl
 VERSION	= $(LIBCURL_VERSION)
-COPYR	= Copyright (C) 1996 - 2007, Daniel Stenberg, <daniel@haxx.se>
+COPYR	= Copyright (C) $(LIBCURL_COPYRIGHT_STR)
 DESCR	= cURL libcurl $(LIBCURL_VERSION_STR) ($(LIBARCH)) - http://curl.haxx.se
 MTSAFE	= YES
 STACK	= 64000
@@ -72,7 +72,7 @@ else
 	CC = gcc
 endif
 # a native win32 awk can be downloaded from here:
-# http://www.gknw.net/development/prgtools/awk-20050424.zip
+# http://www.gknw.net/development/prgtools/awk-20070501.zip
 AWK	= awk
 YACC	= bison -y
 CP	= cp -afv
@@ -336,9 +336,9 @@ endif
 ifdef IMPORTS
 	@echo $(DL)import $(IMPORTS)$(DL) >> $@
 endif
-ifeq ($(LD),nlmconv)
-	@echo $(DL)input $(OBJL)$(DL) >> $@
+ifeq ($(findstring nlmconv,$(LD)),nlmconv)
 	@echo $(DL)input $(PRELUDE)$(DL) >> $@
+	@echo $(DL)input $(OBJL)$(DL) >> $@
 #ifdef LDLIBS
 #	@echo $(DL)input $(LDLIBS)$(DL) >> $@
 #endif
@@ -372,7 +372,6 @@ ifeq ($(LIBARCH),CLIB)
 	@echo $(DL)#define SEND_TYPE_ARG4 int$(DL) >> $@
 	@echo $(DL)#define SEND_TYPE_RETV int$(DL) >> $@
 	@echo $(DL)#define socklen_t int$(DL) >> $@
-	@echo $(DL)#define DL_LDAP_FILE "ldapsdk.nlm"$(DL) >> $@
 else
 	@echo $(DL)#define OS "i586-pc-libc-NetWare"$(DL) >> $@
 	@echo $(DL)#define HAVE_FTRUNCATE 1$(DL) >> $@
@@ -405,7 +404,6 @@ else
 	@echo $(DL)#define SEND_TYPE_ARG4 int$(DL) >> $@
 	@echo $(DL)#define SEND_TYPE_RETV ssize_t$(DL) >> $@
 	@echo $(DL)#define SIZEOF_STRUCT_IN6_ADDR 16$(DL) >> $@
-	@echo $(DL)#define DL_LDAP_FILE "lldapsdk.nlm"$(DL) >> $@
 ifdef ENABLE_IPV6
 	@echo $(DL)#define ENABLE_IPV6 1$(DL) >> $@
 endif

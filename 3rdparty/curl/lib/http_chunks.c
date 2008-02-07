@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: http_chunks.c,v 1.38 2007-10-02 10:21:36 bagder Exp $
+ * $Id: http_chunks.c,v 1.42 2008-01-02 22:30:34 bagder Exp $
  ***************************************************************************/
 #include "setup.h"
 
@@ -109,7 +109,7 @@ CHUNKcode Curl_httpchunk_read(struct connectdata *conn,
   CURLcode result=CURLE_OK;
   struct SessionHandle *data = conn->data;
   struct Curl_chunker *ch = &conn->chunk;
-  struct Curl_transfer_keeper *k = &data->reqdata.keep;
+  struct SingleRequest *k = &data->req;
   size_t piece;
   size_t length = (size_t)datalen;
   size_t *wrote = (size_t *)wrotep;
@@ -118,8 +118,11 @@ CHUNKcode Curl_httpchunk_read(struct connectdata *conn,
 
   /* the original data is written to the client, but we go on with the
      chunk read process, to properly calculate the content length*/
-  if (data->set.http_te_skip && !k->ignorebody)
-    Curl_client_write(conn, CLIENTWRITE_BODY, datap,datalen);
+  if(data->set.http_te_skip && !k->ignorebody) {
+    result = Curl_client_write(conn, CLIENTWRITE_BODY, datap, datalen);
+    if(result)
+      return CHUNKE_WRITE_ERROR;
+  }
 
   while(length) {
     switch(ch->state) {
@@ -178,7 +181,7 @@ CHUNKcode Curl_httpchunk_read(struct connectdata *conn,
       if(*datap == 0x0a) {
         /* we're now expecting data to come, unless size was zero! */
         if(0 == ch->datasize) {
-          if (conn->bits.trailerHdrPresent!=TRUE) {
+          if(conn->bits.trailerhdrpresent!=TRUE) {
             /* No Trailer: header found - revert to original Curl processing */
             ch->state = CHUNK_STOPCR;
 
@@ -217,11 +220,11 @@ CHUNKcode Curl_httpchunk_read(struct connectdata *conn,
       /* Write the data portion available */
 #ifdef HAVE_LIBZ
       switch (conn->data->set.http_ce_skip?
-              IDENTITY : data->reqdata.keep.content_encoding) {
+              IDENTITY : data->req.content_encoding) {
       case IDENTITY:
 #endif
         if(!k->ignorebody) {
-          if ( !data->set.http_te_skip )
+          if( !data->set.http_te_skip )
             result = Curl_client_write(conn, CLIENTWRITE_BODY, datap,
                                        piece);
           else
@@ -231,16 +234,16 @@ CHUNKcode Curl_httpchunk_read(struct connectdata *conn,
         break;
 
       case DEFLATE:
-        /* update data->reqdata.keep.str to point to the chunk data. */
-        data->reqdata.keep.str = datap;
-        result = Curl_unencode_deflate_write(conn, &data->reqdata.keep,
+        /* update data->req.keep.str to point to the chunk data. */
+        data->req.str = datap;
+        result = Curl_unencode_deflate_write(conn, &data->req,
                                              (ssize_t)piece);
         break;
 
       case GZIP:
-        /* update data->reqdata.keep.str to point to the chunk data. */
-        data->reqdata.keep.str = datap;
-        result = Curl_unencode_gzip_write(conn, &data->reqdata.keep,
+        /* update data->req.keep.str to point to the chunk data. */
+        data->req.str = datap;
+        result = Curl_unencode_gzip_write(conn, &data->req,
                                           (ssize_t)piece);
         break;
 
@@ -298,7 +301,7 @@ CHUNKcode Curl_httpchunk_read(struct connectdata *conn,
     case CHUNK_TRAILER:
       /* conn->trailer is assumed to be freed in url.c on a
          connection basis */
-      if (conn->trlPos >= conn->trlMax) {
+      if(conn->trlPos >= conn->trlMax) {
         char *ptr;
         if(conn->trlMax) {
           conn->trlMax *= 2;
@@ -333,10 +336,10 @@ CHUNKcode Curl_httpchunk_read(struct connectdata *conn,
       break;
 
     case CHUNK_TRAILER_POSTCR:
-      if (*datap == 0x0a) {
+      if(*datap == 0x0a) {
         conn->trailer[conn->trlPos++]=0x0a;
         conn->trailer[conn->trlPos]=0;
-        if (conn->trlPos==2) {
+        if(conn->trlPos==2) {
           ch->state = CHUNK_STOP;
           datap++;
           length--;
@@ -362,9 +365,12 @@ CHUNKcode Curl_httpchunk_read(struct connectdata *conn,
             return(CHUNKE_BAD_CHUNK);
           }
 #endif /* CURL_DOES_CONVERSIONS */
-          if ( !data->set.http_te_skip )
-            Curl_client_write(conn, CLIENTWRITE_HEADER,
-                              conn->trailer, conn->trlPos);
+          if(!data->set.http_te_skip) {
+            result = Curl_client_write(conn, CLIENTWRITE_HEADER,
+                                       conn->trailer, conn->trlPos);
+            if(result)
+              return CHUNKE_WRITE_ERROR;
+          }
         }
         ch->state = CHUNK_TRAILER;
         conn->trlPos=0;
@@ -389,7 +395,7 @@ CHUNKcode Curl_httpchunk_read(struct connectdata *conn,
       break;
 
     case CHUNK_STOP:
-      if (*datap == 0x0a) {
+      if(*datap == 0x0a) {
         datap++;
         length--;
 

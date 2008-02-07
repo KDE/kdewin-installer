@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: getenv.c,v 1.30 2007-09-27 18:39:10 danf Exp $
+ * $Id: getenv.c,v 1.31 2007-11-07 09:21:35 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -46,13 +46,13 @@ char *GetEnv(const char *variable)
   char env[MAX_PATH]; /* MAX_PATH is from windef.h */
   char *temp = getenv(variable);
   env[0] = '\0';
-  if (temp != NULL)
+  if(temp != NULL)
     ExpandEnvironmentStrings(temp, env, sizeof(env));
   return (env[0] != '\0')?strdup(env):NULL;
 #else
   char *env = getenv(variable);
 #ifdef VMS
-  if (env && strcmp("HOME",variable) == 0)
+  if(env && strcmp("HOME",variable) == 0)
     env = decc$translate_vms(env);
 #endif
   return (env && env[0])?strdup(env):NULL;
