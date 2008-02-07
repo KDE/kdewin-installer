@@ -43,6 +43,7 @@ public:
   };
 public:
     Settings();
+    ~Settings();
 
     // Place where the packages should be installed to
     QString installDir();
@@ -65,70 +66,70 @@ public:
     bool showTitlePage();
     void setShowTitlePage(bool bShow);
 
-    bool isSkipBasicSettings() { return m_settings.value("SkipBasicSettings", false).toBool(); }
-    void setSkipBasicSettings(bool mode) { m_settings.setValue("SkipBasicSettings", mode); sync(); }
+    bool isSkipBasicSettings() { return m_settings->value("SkipBasicSettings", false).toBool(); }
+    void setSkipBasicSettings(bool mode) { m_settings->setValue("SkipBasicSettings", mode); sync(); }
 
     // create start menu entries fomr .desktop files
     bool createStartMenuEntries();
     void setCreateStartMenuEntries(bool bCreate);
 
     // true on first run
-    bool isFirstRun() { return m_settings.value("FirstRun", true).toBool(); }
-    void setFirstRun(bool bFirstRun) { m_settings.setValue("FirstRun", bFirstRun); sync(); }
+    bool isFirstRun() { return m_settingsMain->value("FirstRun", true).toBool(); }
+    void setFirstRun(bool bFirstRun) { m_settingsMain->setValue("FirstRun", bFirstRun); sync(); }
 
     // package Manager mode 
-    bool isPackageManagerMode() { return m_settings.value("PackageManagerMode", true).toBool(); }
-    void setPackageManagerMode(bool mode) { m_settings.setValue("PackageManagerMode", mode); sync(); }
+    bool isPackageManagerMode() { return m_settings->value("PackageManagerMode", true).toBool(); }
+    void setPackageManagerMode(bool mode) { m_settings->setValue("PackageManagerMode", mode); sync(); }
 
-    bool isDeveloperMode() { return m_settings.value("DeveloperMode", true).toBool(); }
-    void setDeveloperMode(bool bMode) { m_settings.setValue("DeveloperMode", bMode); sync(); }
+    bool isDeveloperMode() { return m_settings->value("DeveloperMode", m_settingsMain->value("DeveloperMode",true).toBool()).toBool(); }
+    void setDeveloperMode(bool bMode) { m_settings->setValue("DeveloperMode", bMode); sync(); }
 
     // use nested download directory tree 
-    bool nestedDownloadTree() { return m_settings.value("nestedDownloadTree", false).toBool(); }
-    void setNestedDownloadTree(bool value) { m_settings.setValue("nestedDownloadTree", value); sync(); }
+    bool nestedDownloadTree() { return m_settingsMain->value("nestedDownloadTree", false).toBool(); }
+    void setNestedDownloadTree(bool value) { m_settingsMain->setValue("nestedDownloadTree", value); sync(); }
 
     enum ProxyMode { None = 0, InternetExplorer, FireFox, Environment, Manual };
-    ProxyMode proxyMode() { return (ProxyMode)m_settings.value("proxyMode",0).toInt(); }
+    ProxyMode proxyMode() { return (ProxyMode)m_settings->value("proxyMode",0).toInt(); }
     void setProxyMode(ProxyMode mode) 
     {
-        m_settings.setValue("proxyMode", mode);
+        m_settingsMain->setValue("proxyMode", mode);
     }
-    const QString proxyHost() { return m_settings.value("proxyHost").toString(); }
-    int proxyPort() { return m_settings.value("proxyPort").toInt(); }
-    const QString proxyUser() { return m_settings.value("proxyUser").toString(); }
-    const QString proxyPassword() { return m_settings.value("proxyPassword").toString(); }
+    const QString proxyHost() { return m_settingsMain->value("proxyHost").toString(); }
+    int proxyPort() { return m_settingsMain->value("proxyPort").toInt(); }
+    const QString proxyUser() { return m_settingsMain->value("proxyUser").toString(); }
+    const QString proxyPassword() { return m_settingsMain->value("proxyPassword").toString(); }
 
     bool proxy(const QString &url, proxySettings &proxy);
     void setProxy(const QString &host, const QString &port) 
     {
-        m_settings.setValue("proxyHost",host);
-        m_settings.setValue("proxyPort",port);
+        m_settingsMain->setValue("proxyHost",host);
+        m_settingsMain->setValue("proxyPort",port);
         sync();
     }
     void setProxy(const proxySettings &proxy)
     {
-        m_settings.setValue("proxyHost",proxy.hostname);
-        m_settings.setValue("proxyPort",proxy.port);
-        m_settings.setValue("proxyUser",proxy.user);
-        m_settings.setValue("proxyPassword",proxy.password);
+        m_settingsMain->setValue("proxyHost",proxy.hostname);
+        m_settingsMain->setValue("proxyPort",proxy.port);
+        m_settingsMain->setValue("proxyUser",proxy.user);
+        m_settingsMain->setValue("proxyPassword",proxy.password);
         sync();
     }
 
-    bool installDetails() { return m_settings.value("installDetails", false).toBool(); }
-    void setInstallDetails(bool state) { m_settings.setValue("installDetails", state); sync(); }
+    bool installDetails() { return m_settings->value("installDetails", false).toBool(); }
+    void setInstallDetails(bool state) { m_settings->setValue("installDetails", state); sync(); }
     
-    bool autoNextStep() { return m_settings.value("autoNextStep", true).toBool(); }
-    void setAutoNextStep(bool state) { m_settings.setValue("autoNextStep", state); sync(); }
+    bool autoNextStep() { return m_settingsMain->value("autoNextStep", true).toBool(); }
+    void setAutoNextStep(bool state) { m_settingsMain->setValue("autoNextStep", state); sync(); }
 
     typedef enum { unspecified=0, MinGW=1, MSVC=2 } CompilerType;
-    CompilerType compilerType() { return (CompilerType) (m_settings.value("compilerType",0).toInt()); }
+    CompilerType compilerType() { return (CompilerType) (m_settings->value("compilerType",m_settingsMain->value("compilerType",0).toInt()).toInt()); }
     void setCompilerType(CompilerType type);
 
     // QSettings compatible interface
-    void beginGroup(const QString &prefix) { m_settings.beginGroup(prefix); }
-    void endGroup() { m_settings.endGroup(); }
-    QVariant value(const QString &key, const QVariant &defaultValue = QVariant()) const { return m_settings.value(key,defaultValue); }
-    void setValue(const QString &key, const QVariant &value) { m_settings.setValue(key,value); }
+    void beginGroup(const QString &prefix) { m_settings->beginGroup(prefix); }
+    void endGroup() { m_settings->endGroup(); }
+    QVariant value(const QString &key, const QVariant &defaultValue = QVariant()) const { return m_settings->value(key,defaultValue); }
+    void setValue(const QString &key, const QVariant &value) { m_settings->setValue(key,value); }
     // sync database 
     void sync();
 
@@ -145,14 +146,17 @@ Q_SIGNALS:
 
 protected:
 private:
-    QSettings m_settings;
+    // stored in user profile
+    QSettings *m_settingsMain;
+    // stored in installroot 
+    QSettings *m_settings;
     proxySettings m_proxy;
 #ifdef Q_WS_WIN
     bool getIEProxySettings(const QString &url, proxySettings &proxy);
 #endif
     bool getFireFoxProxySettings(const QString &url, proxySettings &proxy);
     bool getEnvironmentProxySettings(const QString &url, proxySettings &proxy);
-    QString debug(void) { return m_settings.value("debug", "").toString(); }
+    QString debug(void) { return m_settings->value("debug", "").toString(); }
     friend QDebug &operator<<(QDebug &, Settings &);
 };
 

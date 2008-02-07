@@ -28,7 +28,9 @@
 #include "misc.h"
 
 Settings::Settings()
- : m_settings(QSettings::IniFormat, QSettings::UserScope, "KDE", "Installer")
+ : m_settingsMain( new QSettings(QSettings::IniFormat, QSettings::UserScope, "KDE", "Installer") ), 
+   m_settings( new QSettings(installDir()+"/etc/installer.ini",QSettings::IniFormat) )
+
 {
 #ifdef DEBUG
     qDebug() << "installDir:" << installDir();
@@ -44,10 +46,16 @@ Settings::Settings()
     setProxyMode(Environment);
 #endif
 }
+Settings::~Settings()
+{
+    sync();
+    delete m_settings;
+    delete m_settingsMain;
+}
 
 QString Settings::installDir()
 {
-    QString dir = m_settings.value("rootdir", QDir::currentPath () ).toString();
+    QString dir = m_settingsMain->value("rootdir", QDir::currentPath () ).toString();
     QFileInfo fi(dir);
     if(!fi.exists())
     {
@@ -70,15 +78,18 @@ void Settings::setInstallDir(const QString &dir)
 {
     if (dir != installDir())
     {
-        m_settings.setValue("rootdir", dir);
-        m_settings.sync();
+        m_settingsMain->setValue("rootdir", dir);
+        m_settingsMain->sync();
+        m_settings->sync();
+        delete m_settings;
+        m_settings = new QSettings(dir+"/etc/installer.ini",QSettings::IniFormat);
         emit installDirChanged(dir);
     }
     }
 
 QString Settings::downloadDir()
 {
-    QString dir = m_settings.value("tempdir", QDir::currentPath()).toString();
+    QString dir = m_settingsMain->value("tempdir", QDir::currentPath()).toString();
     if (dir.isEmpty())
         dir = qgetenv("TEMP");
     QFileInfo fi(dir);
@@ -102,7 +113,7 @@ void Settings::setDownloadDir(const QString &dir)
 {
     if (dir != downloadDir())
     {
-        m_settings.setValue("tempdir", dir);
+        m_settingsMain->setValue("tempdir", dir);
         sync();
         emit downloadDirChanged(dir);
     }
@@ -111,78 +122,76 @@ void Settings::setDownloadDir(const QString &dir)
 void Settings::setCompilerType(CompilerType ctype)
 {
     if (compilerType() != ctype) {
-        m_settings.setValue("compilerType", (int)ctype);
-        m_settings.sync();
+        m_settings->setValue("compilerType", (int)ctype);
+        m_settings->sync();
         emit compilerTypeChanged();
     }
 }
 
 QString Settings::mirror()
 {
-    return m_settings.value("mirror", "").toString();
+    return m_settingsMain->value("mirror", "").toString();
 }
 
 void Settings::setMirror(const QString &mirror)
 {
-    m_settings.setValue("mirror", mirror);
-    m_settings.sync();
+    m_settingsMain->setValue("mirror", mirror);
+    m_settingsMain->sync();
     emit mirrorChanged(mirror);
 }
 
 QStringList Settings::localMirrors()
 {
-    return m_settings.value("localMirrors").toStringList();
+    return m_settingsMain->value("localMirrors").toStringList();
 }
 
 void Settings::addLocalMirror(const QString &locMirror)
 {
-    m_settings.setValue("localMirrors", m_settings.value("localMirrors").toStringList() << locMirror);
-    m_settings.sync();
+    m_settingsMain->setValue("localMirrors", m_settings->value("localMirrors").toStringList() << locMirror);
+    m_settingsMain->sync();
 }
 
 void Settings::setLocalMirrors(const QStringList &locMirrors)
 {
-    m_settings.setValue("localMirrors", locMirrors);
-    m_settings.sync();
+    m_settingsMain->setValue("localMirrors", locMirrors);
+    m_settingsMain->sync();
 //    emit mirrorChanged(mirror);
 }
 
 bool Settings::showTitlePage()
 {
-    return m_settings.value("displayTitlePage").toBool();
+    return m_settingsMain->value("displayTitlePage").toBool();
 }
 
 void Settings::setShowTitlePage(bool bShow)
 {
-    m_settings.setValue("displayTitlePage", bShow);
-    m_settings.sync();
+    m_settingsMain->setValue("displayTitlePage", bShow);
+    m_settingsMain->sync();
 }
 
 bool Settings::createStartMenuEntries()
 {
-    return m_settings.value("createStartMenuEntries").toBool();
+    return m_settings->value("createStartMenuEntries").toBool();
 }
 
 void Settings::setCreateStartMenuEntries(bool bCreate)
 {
-    m_settings.setValue("createStartMenuEntries", bCreate);
-    m_settings.sync();
+    m_settings->setValue("createStartMenuEntries", bCreate);
+    m_settings->sync();
 }
 
 void Settings::sync()
 {
-    m_settings.sync();
+    m_settings->sync();
+    m_settingsMain->sync();
     emit settingsChanged();
 }
-
 
 Settings &Settings::instance()
 {
     static Settings settings;
     return settings;
 }
-
-
 
 #ifdef Q_OS_WIN
 bool Settings::getIEProxySettings(const QString &url, proxySettings &proxy)
