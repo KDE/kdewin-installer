@@ -25,6 +25,7 @@
 #include "config.h"
 #include "mirrors.h"
 #include "mirrorsettingspage.h"
+#include "installerdialogs.h"
 
 MirrorSettingsPage::MirrorSettingsPage() : InstallWizardPage(0)
 {
@@ -38,6 +39,8 @@ void MirrorSettingsPage::initializePage()
     Settings &s = Settings::instance();
     s.setSkipBasicSettings(true);
     Mirrors &mirrors = Mirrors::instance();
+    InstallerDialogs::instance().downloadProgressDialog(this,true);
+
     if (mirrors.mirrors().size() == 0)
     {
         /// @TODO add vivible progress bar
@@ -53,6 +56,7 @@ void MirrorSettingsPage::initializePage()
         }
     }
     ui.downloadMirror->clear();
+    InstallerDialogs::instance().downloadProgressDialog(this,false);
 
     QUrl currentMirror = QUrl(s.mirror());
 

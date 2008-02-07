@@ -20,6 +20,7 @@
 **
 ****************************************************************************/
 
+#include <QVBoxLayout>
 #include "installerdialogs.h"
 
 bool InstallerDialogs::installerOutdated()
@@ -47,6 +48,26 @@ QMessageBox::StandardButton InstallerDialogs::downloadFailed(const QString &url,
                 QMessageBox::Cancel | QMessageBox::Ignore | QMessageBox::Retry,
                 QMessageBox::Retry
             );
+}
+
+void InstallerDialogs::downloadProgressDialog(QWidget *parent,bool show)
+{
+    if (show) 
+    {
+        progress = new DownloaderProgress(0);
+        d = new QDialog(parent);
+        QVBoxLayout *layout = new QVBoxLayout(d); 
+        layout->addWidget(progress);
+        d->setLayout(layout);
+        d->show();
+        Downloader::instance()->setProgress(progress);
+    }
+    else 
+    {
+        Downloader::instance()->setProgress(0);
+        d->hide();
+        delete d;
+    }
 }
 
 InstallerDialogs &InstallerDialogs::instance()

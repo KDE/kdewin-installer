@@ -159,7 +159,9 @@ PackageSelectorPage::PackageSelectorPage()  : InstallWizardPage(0)
 void PackageSelectorPage::initializePage()
 {
     /// @TODO display separate window
+    InstallerDialogs::instance().downloadProgressDialog(this,true);
     engine->init();
+    InstallerDialogs::instance().downloadProgressDialog(this,false);
     connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
     connect(leftTree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(on_leftTree_itemClicked(QTreeWidgetItem *, int)));
     connect(&Settings::instance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));

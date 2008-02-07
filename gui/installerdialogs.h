@@ -25,6 +25,9 @@
 #include <QMessageBox>
 #include <QString>
 
+#include "downloaderprogress.h"
+#include "downloader.h"
+
 class InstallerDialogs : public QObject
 {
     public:
@@ -33,11 +36,15 @@ class InstallerDialogs : public QObject
 
         bool installerOutdated();
         QMessageBox::StandardButton downloadFailed(const QString &url, const QString &error=QString());
+        void downloadProgressDialog(QWidget *parent,bool show);
+
         static InstallerDialogs &instance();
 
     protected:
         QWidget *m_parent;
         QString m_title;
+        DownloaderProgress *progress;
+        QDialog *d;
 };
 
 #endif
