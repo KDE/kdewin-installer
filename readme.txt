@@ -50,7 +50,6 @@ TODO
 1 installer 
 
   1 common 
-    1 check for file in use when removing files from packages
     2 add source documentation (when api is mostly stable)
     2 complete package descriptor format (separate build/runtime requirements) 
     3 add mode for installing from local package directory
@@ -59,12 +58,8 @@ TODO
     4 remove empty directories when removing packages 
     5 test creating start menu entries support
     6 add support to create/remove start menu entries for a specific package, which is required for the installer 
-	7 check installed state for external packages like vc_redist from the registry to be independent from the current 
-	  installation dir. 
 	
   2 command line installer 
-    1 add long command line options like operation mode --install, --erase, --list --query, ... 
-    2 implement basic functionality 
     3 test
   
   3 gui 
