@@ -41,10 +41,15 @@ void MirrorSettingsPage::initializePage()
     if (mirrors.mirrors().size() == 0)
     {
         /// @TODO add vivible progress bar
-        if ( !mirrors.fetch(Mirrors::Cygwin, QUrl("http://download.cegit.de/kde-windows/mirrors.lst")) )
+        if ( !mirrors.fetch(Mirrors::KDE, QUrl("http://www.kde.org/mirrors/kdemirrors.list")) ) 
         {
-            qCritical() << "could not load mirrors";
-            // display warning box
+            qCritical() << "could not load mirrors from www.kde.org";
+            /// @TODO add vivible progress bar
+            if ( !mirrors.fetch(Mirrors::Cygwin, QUrl("http://download.cegit.de/kde-windows/mirrors.lst")) )
+            {
+                qCritical() << "could not load fallback mirrors";
+                // display warning box
+            }
         }
     }
     ui.downloadMirror->clear();

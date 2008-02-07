@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
 
     Mirrors m0;
-    if (m0.fetch(Mirrors::KDE, QUrl("http://download.kde.org/mirrorstatus.html")) )
+    if (m0.fetch(Mirrors::KDE, QUrl("http://www.kde.org/mirrors/kdemirrors.list")) )
         qDebug() << m0.mirrors();
 
     Mirrors m;
