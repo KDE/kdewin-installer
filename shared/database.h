@@ -82,6 +82,9 @@ class Database: public QObject
 protected:
         void addFromRegistry();
 
+protected slots:
+        void slotInstallDirChanged(const QString &);
+
     private:
         QList<Package*> m_database;
         QString m_root;

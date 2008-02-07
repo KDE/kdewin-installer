@@ -24,7 +24,6 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QtCore/QTextCodec>
-
 #include "database.h"
 #include "package.h"
 #include "packagelist.h"
@@ -42,6 +41,7 @@ Database::Database()
     installKeys["perl"] = "HKEY_CLASSES_ROOT\\Installer\\Products\\0052C8C86573FFC4C8DA8E043AA6BA48";
     installKeys["tortoisesvn"] = "HKEY_CLASSES_ROOT\\Installer\\Products\\059ABB4F0F655334D839EE46FB5F390A";
     addFromRegistry();
+    connect( &Settings::instance(),SIGNAL(installDirChanged(const QString &)),this, SLOT(slotInstallDirChanged(const QString &)) );
 }
 
 Database::~Database()
@@ -224,6 +224,13 @@ bool Database::isAnyPackageInstalled(const QString &installRoot)
 {
     QDir d(installRoot+ "/manifest");
     return d.exists();
+}
+
+void Database::slotInstallDirChanged(const QString &dir)
+{
+    clear();
+    readFromDirectory(dir);
+    addFromRegistry();
 }
 
 QDebug & operator<<(QDebug &out, const Database &c)
