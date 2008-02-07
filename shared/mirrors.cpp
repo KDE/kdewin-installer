@@ -1,6 +1,7 @@
 /****************************************************************************
 **
-** Copyright (C) 2006-2007 Ralf Habacker. All rights reserved.
+** Copyright (C) 2006-2008 Ralf Habacker <ralf.habacker@freenet.de>. 
+** All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
@@ -208,7 +209,6 @@ QDebug &operator<<(QDebug &out, const MirrorType &c)
         << ")";
     return out;
 }
-
 
 void Mirrors::initCountries()
 {
@@ -455,14 +455,8 @@ void Mirrors::initCountries()
     m_countries["zm"] = "Zambia";
     m_countries["zw"] = "Zimbabwe";
 
-    // Country grouping (should be equal to the one in kcontrol)
-    // each entry contains a list of colon-separated country codes
-    // add more entries as necessary
-    //
-    // Note: groups here will be shown in the resulting page, even if the
-    // countries listed contain no site entries
+    // setup countryGroups hash table 
     QHash<QString,QString> countryGroups;
-
     countryGroups["Africa"] = "na:za";
     countryGroups["Northern America"] = "ca:mx:us";
     countryGroups["Central America"] = "cr";
@@ -474,6 +468,8 @@ void Mirrors::initCountries()
     countryGroups["Southern Europe"] = "ba:cy:gr:hr:it:mk:mt:va:yu:tr";
     countryGroups["Western Europe"] = "be:es:fr:ie:lu:nl:pt:uk";
 
+    // setup m_continents hash table 
+    // which is accessable by using QString continent = m_continents[<countrycode>];
     QHash<QString, QString>::ConstIterator it = countryGroups.constBegin();
     for( ; it != countryGroups.constEnd(); ++it) {
         QStringList countries = it.value().split(":");
