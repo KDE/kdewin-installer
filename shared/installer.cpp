@@ -65,23 +65,6 @@ bool Installer::isEnabled()
     return true;
 }
 
-bool Installer::loadConfig()
-{
-#ifdef DEBUG
-    qDebug() << __PRETTY_FUNCTION__;
-#endif
-    return true;
-}
-
-void Installer::updatePackageList()
-{
-#ifdef DEBUG
-    qDebug() << __PRETTY_FUNCTION__;
-#endif
-
-    loadConfig();
-}
-
 bool Installer::createManifestFile()
 {
     QString destpath = m_root;

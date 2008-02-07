@@ -57,8 +57,6 @@ public:
 
     InstallerProgress *progress();
 
-    bool loadConfig();
-
     bool isEnabled();
     void setRoot(const QString &root);
     const QString root() const { return m_root; }
@@ -69,9 +67,6 @@ public:
 Q_SIGNALS:
     void error(const QString &);
     
-public Q_SLOTS:
-    void updatePackageList();
-
 protected slots:
     void slotError(const QString &);
 
