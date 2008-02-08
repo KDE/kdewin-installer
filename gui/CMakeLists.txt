@@ -74,6 +74,7 @@ set(installer_GUI_HEADERS
 set (UI_SOURCES 
    dependenciespage.ui
    downloadsettingspage.ui
+   finishpage.ui
    installdirectorypage.ui
    installtypepage.ui
    internetsettingspage.ui
