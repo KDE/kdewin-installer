@@ -70,7 +70,10 @@ void MirrorSettingsPage::initializePage()
         if (!currentMirror.isEmpty() && m.url == currentMirror)
             mirrorIndex = ui.downloadMirror->count()-1;
     }
-    if (mirrorIndex == -1)
+    if (currentMirror.isEmpty())
+        ui.downloadMirror->setCurrentRow(0);
+    // current mirror not empty and not found in list 
+    else if (mirrorIndex == -1)
     {
         QListWidgetItem *item = new QListWidgetItem(currentMirror.toString());
         item->setData(Qt::UserRole, currentMirror);
