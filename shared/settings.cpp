@@ -97,16 +97,16 @@ QString Settings::downloadDir()
         if(!QDir().mkdir(dir))
         {
             qWarning() << "could not create directory" << dir;
-            return QDir::currentPath();
+            return QDir::toNativeSeparators(QDir::currentPath());
         }
-        return dir;
+        return QDir::toNativeSeparators(dir);
     }
     if(!fi.isDir())
     {
         qWarning() << "tempdir is no directory " << dir;
-        return QDir::currentPath();
+        return QDir::toNativeSeparators(QDir::currentPath());
     }
-    return dir;
+    return QDir::toNativeSeparators(dir);
 }
 
 void Settings::setDownloadDir(const QString &dir)
