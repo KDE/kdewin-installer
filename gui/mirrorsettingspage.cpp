@@ -39,7 +39,7 @@ void MirrorSettingsPage::initializePage()
     Settings &s = Settings::instance();
     s.setSkipBasicSettings(true);
     Mirrors &mirrors = Mirrors::instance();
-    InstallerDialogs::instance().downloadProgressDialog(this,true,tr("downloading mirror list"));
+    InstallerDialogs::instance().downloadProgressDialog(this,true,tr("Downloading Mirror List"));
 
     if (mirrors.mirrors().size() == 0)
     {
@@ -48,7 +48,7 @@ void MirrorSettingsPage::initializePage()
         {
             qCritical() << "could not load mirrors from www.kde.org";
             /// @TODO add vivible progress bar
-            if ( !mirrors.fetch(Mirrors::Cygwin, QUrl("http://download.cegit.de/kde-windows/mirrors.lst")) )
+            if ( !mirrors.fetch(Mirrors::Cygwin, QUrl("http://webdev.cegit.de/kde-windows/mirrors.lst")) )
             {
                 qCritical() << "could not load fallback mirrors";
                 // display warning box

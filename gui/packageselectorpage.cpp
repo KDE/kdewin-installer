@@ -159,7 +159,7 @@ PackageSelectorPage::PackageSelectorPage()  : InstallWizardPage(0)
 void PackageSelectorPage::initializePage()
 {
     /// @TODO display separate window
-    InstallerDialogs::instance().downloadProgressDialog(this,true,tr("downloading package lists"));
+    InstallerDialogs::instance().downloadProgressDialog(this,true,tr("Downloading Package Lists"));
     engine->init();
     InstallerDialogs::instance().downloadProgressDialog(this,false);
     connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
