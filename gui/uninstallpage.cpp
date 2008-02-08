@@ -31,7 +31,7 @@ UninstallPage::UninstallPage()
     setTitle(tr("Uninstalling packages"));
     setSubTitle(tr(" "));
 
-    InstallerProgress *progress = new InstallerProgress(this);
+    InstallerProgress *progress = new InstallerProgress(this,false);
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(progress);
     layout->addStretch(1);

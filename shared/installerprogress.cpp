@@ -31,8 +31,8 @@
 #include "settings.h"
 
 #ifdef USE_GUI
-InstallerProgress::InstallerProgress(QWidget *parent)
-: GenericProgress(parent)
+InstallerProgress::InstallerProgress(QWidget *parent,bool showProgress)
+: GenericProgress(parent), m_progress(0)
 {
     QVBoxLayout *mainLayout = new QVBoxLayout;
 
@@ -40,19 +40,22 @@ InstallerProgress::InstallerProgress(QWidget *parent)
     m_titleLabel->setTextFormat( Qt::PlainText );
     mainLayout->addWidget(m_titleLabel);
 
+    QHBoxLayout *statusLayout = new QHBoxLayout;
+
+    if (showProgress) 
+    {
+        m_statusLabel = new QLabel;
+        statusLayout->addWidget(m_statusLabel);
+
+        m_progress = new QProgressBar;
+        statusLayout->addWidget(m_progress);
+
+        mainLayout->addLayout(statusLayout);
+    }
+
     m_fileNameLabel = new QLabel;
     m_fileNameLabel->setTextFormat( Qt::PlainText );
     mainLayout->addWidget(m_fileNameLabel);
-
-    QHBoxLayout *statusLayout = new QHBoxLayout;
-    mainLayout->addLayout(statusLayout);
-
-    m_statusLabel = new QLabel;
-    statusLayout->addWidget(m_statusLabel);
-
-    m_progress = new QProgressBar;
-    statusLayout->addWidget(m_progress);
-
 
     setLayout(mainLayout);
     hide();
@@ -80,33 +83,43 @@ void InstallerProgress::setFileName(const QString &fileName)
 
 void InstallerProgress::setPackageCount(int value)
 {
+    if (!m_progress)
+        return;
     m_progress->setMaximum(value);    
     setPackageNumber(0);    
 }
 
 void InstallerProgress::setPackageNumber(int value)
 {
+    if (!m_progress)
+        return;
     m_progress->setValue(value);    
     updateDisplay();
 }
 
 void InstallerProgress::updateDisplay()
 {
-    m_titleLabel->setText(tr("Unpacking package %1 of %2 : %3").arg(m_progress->value()+1).arg(m_progress->maximum()).arg(m_packageName));
+    if (!m_progress)
+        return;
+    m_titleLabel->setText(tr("Installing package %1 of %2 : %3").arg(m_progress->value()+1).arg(m_progress->maximum()).arg(m_packageName));
     m_fileNameLabel->setText(tr("File %1").arg(m_fileName));
 }
 
 void InstallerProgress::show()
 {
-    m_statusLabel->hide();
-    if (m_progress->maximum() > 1) 
+    if (m_progress) 
     {
-    //    m_statusLabel->show();
-        m_progress->show();
-    }
-    else
-    {
-        m_progress->hide();
+        /// @TODO fix me
+        m_statusLabel->hide();
+        if (m_progress->maximum() > 1) 
+        {
+        //    m_statusLabel->show();
+            m_progress->show();
+        }
+        else
+        {
+            m_progress->hide();
+        }
     }
     GenericProgress::show();
 }

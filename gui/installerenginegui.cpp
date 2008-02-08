@@ -774,12 +774,15 @@ bool InstallerEngineGui::removePackages ( QTreeWidget *tree, const QString &cate
 {
     qDebug() << __FUNCTION__ << packageStates;
     QList<Package*> list = packageStates.packages(m_packageResources);
+    m_installer->progress()->setPackageCount(list.size());
+    int i = 0;
     Q_FOREACH ( Package *pkg, list ) {
         if ( !pkg )
             continue;
         if (m_canceled)
             return false;
 
+        m_installer->progress()->setPackageNumber(i++);
         bool all = false; //isMarkedForRemoval(pkg,Package::ALL);
         if ( all || isMarkedForRemoval ( pkg,Package::BIN ) )
             pkg->removeItem ( m_installer, Package::BIN );

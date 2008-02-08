@@ -50,23 +50,26 @@ QMessageBox::StandardButton InstallerDialogs::downloadFailed(const QString &url,
             );
 }
 
-void InstallerDialogs::downloadProgressDialog(QWidget *parent,bool show)
+void InstallerDialogs::downloadProgressDialog(QWidget *parent,bool show, const QString &title)
 {
     if (show) 
     {
-        progress = new DownloaderProgress(0);
-        d = new QDialog(parent);
-        QVBoxLayout *layout = new QVBoxLayout(d); 
-        layout->addWidget(progress);
-        d->setLayout(layout);
-        d->show();
-        Downloader::instance()->setProgress(progress);
+        m_progress = new DownloaderProgress(0);
+        m_d = new QDialog(parent);
+        if (!title.isEmpty())
+            m_d->setWindowTitle(title);
+        QVBoxLayout *layout = new QVBoxLayout(m_d); 
+        layout->addWidget(m_progress);
+        m_d->setLayout(layout);
+        m_d->show();
+        m_oldProgress = Downloader::instance()->progress();
+        Downloader::instance()->setProgress(m_progress);
     }
     else 
     {
-        Downloader::instance()->setProgress(0);
-        d->hide();
-        delete d;
+        Downloader::instance()->setProgress(m_oldProgress);
+        m_d->hide();
+        delete m_d;
     }
 }
 

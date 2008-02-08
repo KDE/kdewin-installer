@@ -30,7 +30,7 @@
 class InstallerProgress : public GenericProgress
 {
 public:
-    InstallerProgress(QWidget *parent);
+    InstallerProgress(QWidget *parent, bool showProgress=true);
     virtual ~InstallerProgress();
     void setTitle(const QString &title);
     void setPackageName(const QString &packageName);

@@ -39,7 +39,7 @@ void MirrorSettingsPage::initializePage()
     Settings &s = Settings::instance();
     s.setSkipBasicSettings(true);
     Mirrors &mirrors = Mirrors::instance();
-    InstallerDialogs::instance().downloadProgressDialog(this,true);
+    InstallerDialogs::instance().downloadProgressDialog(this,true,tr("downloading mirror list"));
 
     if (mirrors.mirrors().size() == 0)
     {
