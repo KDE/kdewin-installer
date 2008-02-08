@@ -26,6 +26,7 @@
 #define FINISHPAGE_H
 
 #include "installwizard.h"
+#include "ui_finishpage.h"
 
 class FinishPage : public InstallWizardPage
 {
@@ -36,6 +37,9 @@ public:
 
     void initializePage();
     bool isComplete();
+
+protected:
+    Ui::FinishPage ui;
 };
 
 #endif

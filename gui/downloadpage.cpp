@@ -28,7 +28,7 @@
 
 DownloadPage::DownloadPage() : InstallWizardPage(0)
 {
-    setTitle(tr("Downloading packages"));
+    setTitle(tr("Downloading Packages"));
     setSubTitle(tr(" "));
 
     DownloaderProgress *progress = new DownloaderProgress(this);

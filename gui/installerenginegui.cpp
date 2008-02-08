@@ -531,22 +531,22 @@ void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString 
 
     labels
     << tr ( "Package" )
-    << tr ( "available" )
-    << tr ( "installed" );
+    << tr ( "Available" )
+    << tr ( "Installed" );
     switch ( m_installMode ) {
     case Developer:
-        labels << tr ( "bin/lib/doc" ) << tr ( "src" );
+        labels << tr ( "Bin/Devel/Doc" ) << tr ( "Src" );
         binToolTip = "select this checkbox to install/remove/update the binary, development and doc part of this package";
         srcToolTip = "select this checkbox to install/remove/update the source of this package";
         break;
 
     case EndUser:
-        labels << tr ( "bin" );
+        labels << tr ( "Bin" );
         binToolTip = "select this checkbox to install/remove/update the binary part of this package";
         break;
 
     case Single:
-        labels << tr ( "all" )<< tr ( "bin" ) << tr ( "lib" ) << tr ( "doc" ) << tr ( "src" );
+        labels << tr ( "All" )<< tr ( "Bin" ) << tr ( "Lib" ) << tr ( "Doc" ) << tr ( "Src" );
         binToolTip = "select this checkbox to install/remove/update the binaries of this package";
         libToolTip = "select this checkbox to install/remove/update header and import libraries of this package";
         docToolTip = "select this checkbox to install/remove/update the documentation of this package";
@@ -554,7 +554,7 @@ void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString 
         break;
     }
     labels
-    << tr ( "package notes" )
+    << tr ( "Package notes" )
     ;
 
     tree->setColumnCount ( ColumnCount );

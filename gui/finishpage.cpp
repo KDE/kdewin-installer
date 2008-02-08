@@ -26,17 +26,16 @@
 
 FinishPage::FinishPage()
 {
-    setTitle(tr("Installation finished"));
+    setTitle(tr("Installation Finished"));
     setSubTitle(tr(" "));
 
     QLabel* label = new QLabel(tr(
-         "<p>Now you should be able to run kde applications. "
-         "Please open an explorer window and navigate to the bin folder of the kde installation root. "
-         "There you will find several applications which can be started by a simple click on the executable.</p>"
-         "<p>In further versions of this installer it will be also possible "
-         "to start kde applications from the windows start menu.</p>"
+         "<p>Now you should be able to run KDE applications. "
+         "Please open an explorer window and navigate to the bin folder of the KDE installation root. "
+         "There you will find several applications which can be started by a simply double clicking on the executable.</p>"
+         "<p>In future versions of this installer it will also be possible to start KDE applications from the Windows Start menu.</p>"
          "<p>If you <ul>"
-         "<li>like to see the KDE on windows project web site see <a href=\"http://windows.kde.org\">http://windows.kde.org</a></li>"
+         "<li>like to see the KDE on Windows project web site see <a href=\"http://windows.kde.org\">http://windows.kde.org</a></li>"
          "<li>like to get community support for this installer and/or running kde applications please contact "
             "the <a href=\"http://mail.kde.org/mailman/listinfo/kde-windows\">kde-windows@kde.org</a> mailing list.</li>"
          "<li>like to contribute time and/or money to this project contact also the above mentioned list."
@@ -47,7 +46,7 @@ FinishPage::FinishPage()
          "<p><b>The KDE on Windows team</b></p>"
          "<p>&nbsp;</p>"
          "<p>&nbsp;</p>"
-         "<p>This software is designed to provide powerfull and flexible network based install systems using a modern gui toolkit. "
+         "<p>This software is designed to provide a powerfull and flexible network based install system using a modern gui toolkit."
          "If you need assistance or have specific needs for such a services, please contact <a href=\"mailto:ralf@habacker.de\">Ralf Habacker</a></p>"
          ));
 

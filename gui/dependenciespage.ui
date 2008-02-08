@@ -13,7 +13,7 @@
    <string>Additional Packages</string>
   </property>
   <property name="statusTip" >
-   <string>The following packages will be installed too because selected packages depends on them.</string>
+   <string>The following packages have also been selected for installed because the&#xd; previously selected packages depend on them.</string>
   </property>
   <layout class="QVBoxLayout" >
    <item>
