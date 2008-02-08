@@ -757,7 +757,7 @@ bool InstallerEngineGui::downloadPackages ( QTreeWidget *tree, const QString &ca
         if (m_canceled)
             return false;
 
-        Downloader::instance()->progress()->setFileNumber(i);
+        Downloader::instance()->progress()->setFileNumber(i++);
         if (!downloadPackageItem(pkg,Package::BIN))
             return false;
         if (!downloadPackageItem(pkg,Package::LIB))
