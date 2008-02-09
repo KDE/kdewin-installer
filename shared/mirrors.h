@@ -55,11 +55,11 @@ class Mirrors /* : public QObject */
     public:
         enum Type { KDE = 1 ,Cygwin= 2 };
 
-        Mirrors(const QString &releasePath="unstable/4.0.60/win32");
-        bool fetch(Type type, QUrl url);
+        Mirrors();
+        // fetch mirror list; releasePath will be appended to each mirror url 
+        bool fetch(Type type, QUrl url, const QString &releasePath=QString());
         MirrorTypeList &mirrors() { return m_mirrors; }
         static Mirrors &instance();
-
     protected:
         bool parse(const QString &fileName);
         bool parse(const QByteArray &data);

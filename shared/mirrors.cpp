@@ -33,23 +33,14 @@
 #include <QStringList>
 #include <QFileInfo>
 
-/**
-@TODO add  region to mirror list (<TH COLSPAN=5 BGCOLOR="YELLOW">...)
-*/
-
-//#define DEBUG
-
-#define MIRROR_BASE_URL_KDE "http://download.kde.org/mirrorstatus.html"
-#define MIRROR_BASE_URL_CYGWIN "http://www.cygwin.com/mirrors.lst"
-
 QHash<QString,QString> Mirrors::m_countries;
 QHash<QString,QString> Mirrors::m_continents;
 
 
-Mirrors::Mirrors(const QString &releasePath)
+Mirrors::Mirrors()
 : m_type(Cygwin)
 {
-    m_releasePath=releasePath;
+    m_releasePath="";
     initCountries();
 }
 
@@ -57,8 +48,9 @@ Mirrors::Mirrors(const QString &releasePath)
  get the list of mirrors
  @return list of mirrors
 */
-bool Mirrors::fetch(Type type, QUrl url)
+bool Mirrors::fetch(Type type, QUrl url, const QString &releasePath)
 {
+    m_releasePath = releasePath;
     m_type = type;
 #ifdef DEBUG
     QString out = "mirrors.html";
