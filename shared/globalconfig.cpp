@@ -32,6 +32,12 @@
 GlobalConfig::GlobalConfig()
 {}
 
+bool GlobalConfig::isRemoteConfigAvailable()
+{
+    QFileInfo cfr(Settings::instance().downloadDir()+"/config-remote.txt");
+    return cfr.exists();
+}
+
 QStringList GlobalConfig::fetch(const QString &baseURL)
 {
     bool ret;

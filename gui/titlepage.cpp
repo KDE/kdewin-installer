@@ -42,7 +42,12 @@ void TitlePage::initializePage()
 int TitlePage::nextId() const
 {
     if (ui.skipBasicSettings->checkState() == Qt::Checked)
-        return InstallWizard::mirrorSettingsPage;
+    {
+        if (GlobalConfig::isRemoteConfigAvailable())
+            return InstallWizard::packageSelectorPage;
+        else        
+            return InstallWizard::mirrorSettingsPage;
+    }
     else
         return InstallWizard::installDirectoryPage;
 }

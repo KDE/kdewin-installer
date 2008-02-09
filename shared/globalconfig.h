@@ -69,6 +69,8 @@ class GlobalConfig {
         /// return version of required installer
         const QString &minimalInstallerVersion() { return m_minimalInstallerVersion; }
         void setBaseURL(const QUrl &url) { m_baseURL = url.toString(); }
+        /// check if a config-remote.txt is located in download directory
+        static bool isRemoteConfigAvailable();
 
     protected:
         bool parseFromFile(const QString &fileName);
