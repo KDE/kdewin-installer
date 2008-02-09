@@ -46,7 +46,7 @@ p, li { white-space: pre-wrap; }
    <item>
     <widget class="QLabel" name="label_2" >
      <property name="text" >
-      <string>The installer will create this directory and additional sub directories if required and will install all files for KDE applications into this path. No files are stored outsite of this directory, except for a config files in the user profile path.</string>
+      <string>The installer will create this directory and additional sub directories if required and will install all files for KDE applications into this path. No files are stored outside of this directory, except for a config file in the user profile path.</string>
      </property>
      <property name="alignment" >
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>

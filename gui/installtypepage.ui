@@ -13,7 +13,7 @@
    <string>Install Mode</string>
   </property>
   <property name="statusTip" >
-   <string>Select in which mode the installer should work and which compiler should be used</string>
+   <string>Select in which mode the installer should work and which compiler should be used.</string>
   </property>
   <layout class="QVBoxLayout" >
    <item>

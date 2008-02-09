@@ -55,7 +55,7 @@ p, li { white-space: pre-wrap; }
      <property name="text" >
       <string>Nested directory tree means to place every downloaded file into a separate subdirectory. 
 If checked the file dbus-1.2.3-bin.zip for example would be placed into the subdirectory dbus/dbus-1.2.3. 
-If this option is not ckecked all downloaded files are placed directly in to the package download path.</string>
+If this option is not checked all downloaded files are placed directly into the package download path.</string>
      </property>
      <property name="alignment" >
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>

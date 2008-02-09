@@ -32,13 +32,13 @@ FinishPage::FinishPage()
     QLabel* label = new QLabel(tr(
          "<p>Now you should be able to run KDE applications. "
          "Please open an explorer window and navigate to the bin folder of the KDE installation root. "
-         "There you will find several applications which can be started by a simply double clicking on the executable.</p>"
+         "There you will find several applications which can be started by simply double clicking on the executable.</p>"
          "<p>In future versions of this installer it will also be possible to start KDE applications from the Windows Start menu.</p>"
          "<p>If you <ul>"
          "<li>like to see the KDE on Windows project web site see <a href=\"http://windows.kde.org\">http://windows.kde.org</a></li>"
-         "<li>like to get community support for this installer and/or running kde applications please contact "
+         "<li>like to get community support for this installer and/or running KDE applications please contact "
             "the <a href=\"http://mail.kde.org/mailman/listinfo/kde-windows\">kde-windows@kde.org</a> mailing list.</li>"
-         "<li>like to contribute time and/or money to this project contact also the above mentioned list."
+         "<li>like to contribute time and/or money to this project contact the above mentioned list."
             "There are always interesting projects where you can join.</li>"
          "</ul></p>"
          "<p>Have fun using KDE on windows.</p>" 
@@ -47,7 +47,7 @@ FinishPage::FinishPage()
          "<p>&nbsp;</p>"
          "<p>&nbsp;</p>"
          "<p>This software is designed to provide a powerfull and flexible network based install system using a modern gui toolkit."
-         "If you need assistance or have specific needs for such a services, please contact <a href=\"mailto:ralf@habacker.de\">Ralf Habacker</a></p>"
+         "If you need assistance or have specific needs for such services, please contact <a href=\"mailto:ralf.habacker@freenet.de\">Ralf Habacker</a>.</p>"
          ));
 
     label->setOpenExternalLinks (true);
