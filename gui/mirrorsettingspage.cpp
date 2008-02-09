@@ -48,7 +48,7 @@ void MirrorSettingsPage::initializePage()
         {
             qCritical() << "could not load mirrors from www.kde.org";
             /// @TODO add vivible progress bar
-            if ( !mirrors.fetch(Mirrors::Cygwin, QUrl("http://webdev.cegit.de/kde-windows/mirrors.lst")) )
+            if ( !mirrors.fetch(Mirrors::Cygwin, QUrl("http://webdev.cegit.de/snapshots/kde-windows/mirrors.lst")) )
             {
                 qCritical() << "could not load fallback mirrors";
                 // display warning box
