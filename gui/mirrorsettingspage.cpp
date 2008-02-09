@@ -27,6 +27,20 @@
 #include "mirrorsettingspage.h"
 #include "installerdialogs.h"
 
+#if 0
+QUrl mirrorListURL("http://www.kde.org/mirrors/kdemirrors.list");
+Mirrors::Type mirrorListType = Mirrors::KDE;
+QString mirrorReleasePath = "unstable/4.0.61/win32";
+#else
+QUrl mirrorListURL("http://downloads.sourceforge.net/kde-windows/mirrors.lst");
+Mirrors::Type mirrorListType = Mirrors::Cygwin;
+QString mirrorReleasePath = "";
+#endif
+
+QUrl fallBackMirrorURL("http://webdev.cegit.de/snapshots/kde-windows/mirrors.lst");
+Mirrors::Type fallBackMirrorType = Mirrors::Cygwin;
+QString fallBackMirrorReleasePath = "";
+
 MirrorSettingsPage::MirrorSettingsPage() : InstallWizardPage(0)
 {
     ui.setupUi(this);
@@ -44,13 +58,13 @@ void MirrorSettingsPage::initializePage()
     if (mirrors.mirrors().size() == 0)
     {
         /// @TODO add vivible progress bar
-        if ( !mirrors.fetch(Mirrors::KDE, QUrl("http://www.kde.org/mirrors/kdemirrors.list")) ) 
+        if ( !mirrors.fetch(mirrorListType, mirrorListURL, mirrorReleasePath) ) 
         {
-            qCritical() << "could not load mirrors from www.kde.org";
+            qCritical() << "could not load mirrors from" << mirrorListURL;
             /// @TODO add vivible progress bar
-            if ( !mirrors.fetch(Mirrors::Cygwin, QUrl("http://webdev.cegit.de/snapshots/kde-windows/mirrors.lst")) )
+            if ( !mirrors.fetch(fallBackMirrorType, fallBackMirrorURL, fallBackMirrorReleasePath) )
             {
-                qCritical() << "could not load fallback mirrors";
+                qCritical() << "could not load fallback mirror list from" << fallBackMirrorURL;
                 // display warning box
             }
         }
