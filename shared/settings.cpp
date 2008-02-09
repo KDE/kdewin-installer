@@ -56,6 +56,8 @@ Settings::~Settings()
 QString Settings::installDir()
 {
     QString dir = m_settingsMain->value("rootdir", QDir::currentPath () ).toString();
+    if(dir.isEmpty())
+        dir = QString::fromLocal8Bit( qgetenv( "ProgramFiles" ) ) + "/KDE";
     QFileInfo fi(dir);
     if(!fi.exists())
     {

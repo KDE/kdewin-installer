@@ -64,9 +64,12 @@ bool InstallDirectoryPage::validatePage()
 
 void InstallDirectoryPage::rootPathSelectClicked()
 {
-    QString fileName = QFileDialog::getExistingDirectory(this,
+    QString fileName = ui.rootPathEdit->text();
+    if( fileName.isEmpty() )
+      fileName = QString::fromLocal8Bit( qgetenv( "ProgramFiles" ) );
+    fileName = QFileDialog::getExistingDirectory(this,
                        tr("Select Root Installation Directory"),
-                       "",
+                       fileName,
                        QFileDialog::ShowDirsOnly| QFileDialog::DontResolveSymlinks);
     if(!fileName.isEmpty())
         ui.rootPathEdit->setText(QDir::toNativeSeparators(fileName));
