@@ -5,7 +5,7 @@
 ** This file is part of the KDE installer for windows
 **
 ** This library is free software; you can redistribute it and/or
-** modify it under the terms of the GNU Library General Public
+** modify it under the terms of the GNU Library General Publi
 ** License version 2 as published by the Free Software Foundation.
 **
 ** This library is distributed in the hope that it will be useful,
@@ -89,33 +89,30 @@ void Settings::setInstallDir(const QString &dir)
 
 QString Settings::downloadDir()
 {
-    QString dir = m_settingsMain->value("tempdir", QDir::currentPath()).toString();
-    if (dir.isEmpty())
-        dir = qgetenv("TEMP");
-    QFileInfo fi(dir);
-    if(!fi.exists()) {
-        if(!QDir().mkdir(dir))
-        {
-            qWarning() << "could not create directory" << dir;
-            return QDir::toNativeSeparators(QDir::currentPath());
-        }
-        return QDir::toNativeSeparators(dir);
-    }
-    if(!fi.isDir())
-    {
-        qWarning() << "tempdir is no directory " << dir;
-        return QDir::toNativeSeparators(QDir::currentPath());
-    }
-    return QDir::toNativeSeparators(dir);
+    QString result;
+    QDir d(m_settingsMain->value("tempdir", QDir::currentPath()).toString());
+    if (d.exists())
+        return QDir::toNativeSeparators(d.absolutePath());
+
+    d.setPath(qgetenv("TEMP"));
+    if (d.exists())
+        return QDir::toNativeSeparators(d.absolutePath());
+            
+    if (d.mkdir(d.absolutePath()))
+        return QDir::toNativeSeparators(d.absolutePath());
+
+    qWarning() << "could not setup temporay directory" << d.absolutePath();
+    return QDir::toNativeSeparators(QDir::currentPath());
 }
 
 void Settings::setDownloadDir(const QString &dir)
 {
     if (dir != downloadDir())
     {
-        m_settingsMain->setValue("tempdir", dir);
+        QDir d(dir);
+        m_settingsMain->setValue("tempdir", QDir::toNativeSeparators(d.absolutePath()));
         sync();
-        emit downloadDirChanged(dir);
+        emit downloadDirChanged(QDir::toNativeSeparators(d.absolutePath()));
     }
 }
 
