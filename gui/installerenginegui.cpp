@@ -565,9 +565,17 @@ void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString 
 
     // adding top level items
     QList<QTreeWidgetItem *> categoryList;
+    QList <Package*> packageList;
+
+    // add packages which are installed but for which no config entry is there 
+    foreach(Package *instPackage, categoryCache.packages(categoryName,*m_database)) 
+    {
+        Package *p = m_packageResources->getPackage(instPackage->name());
+        if (!p)
+            packageList << instPackage;
+    }
 
     Settings &s = Settings::instance();
-
     foreach(Package *availablePackage,categoryCache.packages(categoryName,*m_packageResources))
     {
         QString name = availablePackage->name();
@@ -577,7 +585,12 @@ void InstallerEngineGui::setPageSelectorWidgetData ( QTreeWidget *tree, QString 
         else if ( ( categoryName == "msvc"  || s.compilerType() == Settings::MSVC )
                   && ( name.endsWith ( QLatin1String ( "-mingw" ) ) ) )
             continue;
+        packageList << availablePackage;
+    }
 
+    foreach(Package *availablePackage,packageList)
+    {
+        QString name = availablePackage->name();
         QStringList data;
         Package *installedPackage = m_database->getPackage(availablePackage->name());
         QString installedVersion = installedPackage ? installedPackage->installedVersion() : "";
@@ -624,22 +637,25 @@ void InstallerEngineGui::updatePackageInfo(QTabWidget *packageInfo, const Packag
         return;
     }
     packageInfo->setEnabled ( true );
-    QTextEdit *e = ( QTextEdit* ) packageInfo->widget ( 0 );
-    if ( !availablePackage->longNotes().isEmpty() ) {
-        packageInfo->setTabEnabled ( 0,true );
-        e->setText ( availablePackage->longNotes() );
-    } else {
-        packageInfo->setTabEnabled ( 0,false );
-        e->setText ( "" );
-    }
-    e = ( QTextEdit* ) packageInfo->widget ( 1 );
-    QString deps = availablePackage->deps().join ( "\n" );
-    if ( !deps.isEmpty() ) {
-        packageInfo->setTabEnabled ( 1,true );
-        e->setText ( availablePackage->deps().join ( "\n" ) );
-    } else {
-        packageInfo->setTabEnabled ( 1,false );
-        e->setText ( "" );
+    QTextEdit *e;
+    if (availablePackage) {
+        e = ( QTextEdit* ) packageInfo->widget ( 0 );
+        if ( !availablePackage->longNotes().isEmpty() ) {
+            packageInfo->setTabEnabled ( 0,true );
+            e->setText ( availablePackage->longNotes() );
+        } else {
+            packageInfo->setTabEnabled ( 0,false );
+            e->setText ( "" );
+        }
+        e = ( QTextEdit* ) packageInfo->widget ( 1 );
+        QString deps = availablePackage->deps().join ( "\n" );
+        if ( !deps.isEmpty() ) {
+            packageInfo->setTabEnabled ( 1,true );
+            e->setText ( availablePackage->deps().join ( "\n" ) );
+        } else {
+            packageInfo->setTabEnabled ( 1,false );
+            e->setText ( "" );
+        }
     }
 
     e = ( QTextEdit* ) packageInfo->widget ( 2 );
