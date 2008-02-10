@@ -27,22 +27,26 @@
 #include <QList>
 
 #include "package.h"
-#include "packagelist.h"
+class PackageList;
+class Database;
+
 
 class PackageCategoryCache 
 {
     public:
-        // @TODO save category notes too from sites            
+        // @TODO save category notes too from sites
         typedef struct {
             QString notes;
             QList<QString> packages;
         } CategoryListType;
         PackageCategoryCache();
         void addPackage(Package *pkg);
+        void addPackage(const QString &category, const QString &pkgName);
         void setNote(const QString &category, const QString &notes);
         QStringList categories();
         QList <QString>packages(const QString &category) { return m_data[category].packages; }
         QList <Package *>packages(const QString &category, PackageList &list);
+        QList <Package *>packages(const QString &category, Database &list);
         /// clear all values
         void clear();
 

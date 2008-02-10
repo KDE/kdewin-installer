@@ -95,12 +95,11 @@ bool InstallerEngine::initPackages()
     {
         Q_FOREACH (const QString &name,i.value())
         {
+            categoryCache.addPackage(i.key(), name);
+            // is this really required ? 
             Package *pkg = m_packageResources->getPackage(name);
             if (pkg)
-            {
                 pkg->addCategories(i.key());
-                categoryCache.addPackage(pkg);
-            }
         }
     }
     m_addedPackages = true;

@@ -21,6 +21,8 @@
 ****************************************************************************/
 
 #include "packagecategorycache.h"
+#include "packagelist.h"
+#include "database.h"
 
 PackageCategoryCache::PackageCategoryCache()
 {
@@ -38,6 +40,12 @@ void PackageCategoryCache::addPackage(Package *pkg)
         if (!m_data[category].packages.contains(pkg->name()))
             m_data[category].packages.append(pkg->name());
     }
+}
+
+void PackageCategoryCache::addPackage(const QString &category, const QString &pkgName)
+{
+    if ( !m_data[category].packages.contains(pkgName) )
+        m_data[category].packages.append(pkgName);
 }
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2)
@@ -59,6 +67,20 @@ QStringList PackageCategoryCache::categories()
 }
 
 QList <Package *>PackageCategoryCache::packages(const QString &category, PackageList &list)
+{
+    QList <Package *> packages;
+    if (!m_data.contains(category))
+        return packages;
+    Q_FOREACH(const QString &pkgName, m_data[category].packages) 
+    {
+        Package *p = list.getPackage(pkgName);
+        if (p)
+            packages.append(p);
+    }
+    return packages;
+}
+
+QList <Package *>PackageCategoryCache::packages(const QString &category, Database &list)
 {
     QList <Package *> packages;
     if (!m_data.contains(category))
