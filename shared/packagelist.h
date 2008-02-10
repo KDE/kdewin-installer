@@ -49,12 +49,13 @@ public:
     void dumpPackages(const QString &title=QString());
     QStringList listPackages();
     bool readFromFile(const QString &_fileName=QString());
-    bool syncWithFile(const QString &_fileName=QString());
-    bool syncWithDatabase(Database &database);
     bool readFromFile(const QString &fileName, PackageList::Type type=PackageList::Default, bool append=false);
     bool readFromByteArray(const QByteArray &_ba, PackageList::Type type=PackageList::Default, bool append=false);
 
     bool writeToFile(QString const &fileName=QString::null);
+    bool syncWithFile(const QString &_fileName=QString());
+    bool syncWithDatabase(Database &database);
+
     Package *getPackage(QString const &pkgName, const QByteArray &version = QByteArray());
     bool setInstalledPackage(const Package &pkg);
 
