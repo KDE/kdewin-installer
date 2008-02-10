@@ -84,10 +84,6 @@ public:
     bool isDeveloperMode() { return m_settings->value("DeveloperMode", m_settingsMain->value("DeveloperMode",true).toBool()).toBool(); }
     void setDeveloperMode(bool bMode) { m_settings->setValue("DeveloperMode", bMode); sync(); }
 
-    // use nested download directory tree 
-    bool nestedDownloadTree() { return m_settingsMain->value("nestedDownloadTree", false).toBool(); }
-    void setNestedDownloadTree(bool value) { m_settingsMain->setValue("nestedDownloadTree", value); sync(); }
-
     enum ProxyMode { None = 0, InternetExplorer, FireFox, Environment, Manual };
     ProxyMode proxyMode() { return (ProxyMode)m_settings->value("proxyMode",0).toInt(); }
     void setProxyMode(ProxyMode mode) 
