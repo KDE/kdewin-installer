@@ -34,40 +34,26 @@ InstallTypePage::InstallTypePage() : InstallWizardPage(0)
     ui.setupUi(this);
     setTitle(windowTitle());
     setSubTitle(statusTip());
-}
 
-void InstallTypePage::initializePage()
-{
-    Settings &s = Settings::instance();
-    ui.installModeEndUser->setChecked(!s.isDeveloperMode() ? Qt::Checked : Qt::Unchecked);
-    ui.installModeDeveloper->setChecked(s.isDeveloperMode() ? Qt::Checked : Qt::Unchecked);
-    
     // logical grouping isn't available in the designer yet :-P
     QButtonGroup *groupA = new QButtonGroup(this);
     groupA->addButton(ui.compilerMinGW);
     groupA->addButton(ui.compilerMSVC);
 
-    if (Database::isAnyPackageInstalled(s.installDir()))
-    {
-        ui.compilerMinGW->setEnabled(false);
-        ui.compilerMSVC->setEnabled(false);
-    }
-    else
-    {
-        ui.compilerMinGW->setEnabled(true);
-        ui.compilerMSVC->setEnabled(true);
-    }
-
-    switch (s.compilerType()) {
-        case Settings::MinGW: ui.compilerMinGW->setChecked(true); break;
-        case Settings::MSVC: ui.compilerMSVC->setChecked(true); break;
-        default: ui.compilerMinGW->setChecked(true); break;
-    }
-
     QButtonGroup *groupB = new QButtonGroup(this);
-    groupB->addButton(ui.installModeDeveloper);
     groupB->addButton(ui.installModeEndUser);
+    groupB->addButton(ui.installModeDeveloper);
+    connect( groupB,SIGNAL(buttonClicked (int)),this,SLOT(slotModeButtonClicked(int)) );
+}
 
+void InstallTypePage::initializePage()
+{
+    Settings &s = Settings::instance();
+    setCompilerMode(!s.isDeveloperMode());
+
+    ui.installModeEndUser->setChecked(!s.isDeveloperMode() ? Qt::Checked : Qt::Unchecked);
+    ui.installModeDeveloper->setChecked(s.isDeveloperMode() ? Qt::Checked : Qt::Unchecked);
+    
     if (Database::isAnyPackageInstalled(s.installDir()))
     {
         ui.installModeDeveloper->setEnabled(false);
@@ -108,5 +94,41 @@ bool InstallTypePage::validatePage()
         s.setCompilerType(Settings::MSVC);
     return true;
 }
+
+void InstallTypePage::setCompilerMode(bool EndUserMode)
+{
+    Settings &s = Settings::instance();
+    if (EndUserMode)
+    {
+        ui.compilerMSVC->setChecked(true);        
+        ui.compilerMinGW->setEnabled(false);
+        ui.compilerMSVC->setEnabled(false);
+    }
+    else 
+    {
+        switch (s.compilerType()) 
+        {
+            case Settings::MinGW: ui.compilerMinGW->setChecked(true); break;
+            case Settings::MSVC: ui.compilerMSVC->setChecked(true); break;
+            default: ui.compilerMinGW->setChecked(true); break;
+        }
+        if (Database::isAnyPackageInstalled(s.installDir()))
+        {
+            ui.compilerMinGW->setEnabled(false);
+            ui.compilerMSVC->setEnabled(false);
+        }
+        else
+        {
+            ui.compilerMinGW->setEnabled(true);
+            ui.compilerMSVC->setEnabled(true);
+        }
+    }
+}
+
+void InstallTypePage::slotModeButtonClicked(int id)
+{
+    setCompilerMode(ui.installModeDeveloper->isChecked() ? 0 : 1);
+}
+
 
 #include "installtypepage.moc"

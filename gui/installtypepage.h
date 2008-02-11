@@ -40,7 +40,12 @@ public:
     bool isComplete();
     int nextId() const;
     bool validatePage();
+    
+protected slots:
+    void slotModeButtonClicked(int id);
+
 protected:
+    void setCompilerMode(bool);
     Ui::InstallTypePage ui;
 };
 
