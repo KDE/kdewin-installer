@@ -168,7 +168,7 @@ if (UNIX)
 # does not work with cmake provided find_packages
 #    find_package(Fontconfig)
 #    find_package(png)
-     set (GUI_LIBS ${GUI_LIBS} ${X11_LIBRARIES} ${FREETYPE_LIBRARIES} crypto ssl fontconfig png Xrandr Xfixes)
+     set (GUI_LIBS ${GUI_LIBS} ${QT_QTCORE_LIBRARY} ${X11_LIBRARIES} ${FREETYPE_LIBRARIES} crypto ssl fontconfig png Xrandr Xfixes)
   endif(STATIC_BUILD)
 
 else(UNIX)
