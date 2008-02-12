@@ -100,10 +100,11 @@ QString Settings::downloadDir()
     if (d.exists())
         return QDir::toNativeSeparators(d.absolutePath());
             
-    if (d.mkdir(d.absolutePath()))
+    if (d.mkpath(d.absolutePath()))
         return QDir::toNativeSeparators(d.absolutePath());
 
-    qWarning() << "could not setup temporay directory" << d.absolutePath();
+    // this results in an endless loop !
+    //qWarning() << "could not setup temporay directory" << d.absolutePath();
     return QDir::toNativeSeparators(QDir::currentPath());
 }
 

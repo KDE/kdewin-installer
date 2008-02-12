@@ -600,6 +600,7 @@ bool PackageList::setInstalledPackage(const Package &apkg)
 
 void PackageList::clear()
 {
+    qDeleteAll(m_packageList);
     m_packageList.clear();
     m_curSite = 0;
 }

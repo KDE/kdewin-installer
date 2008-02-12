@@ -183,10 +183,8 @@ bool InstallerEngine::readGlobalConfig()
 
 bool InstallerEngine::addPackagesFromGlobalConfig()
 {
-    QList<Package*>::iterator p;
-    for (p = m_globalConfig->packages()->begin(); p != m_globalConfig->packages()->end(); p++)
+    Q_FOREACH ( Package *pkg, *m_globalConfig->packages() )
     {
-        Package *pkg = *p;
         pkg->addCategories("all");
         if (pkg->name().contains("mingw"))
             pkg->addCategories("mingw");
@@ -204,10 +202,8 @@ bool InstallerEngine::addPackagesFromGlobalConfig()
 /// download all packagelists, which are available on the configured sites
 bool InstallerEngine::addPackagesFromSites()
 {
-    QList<Site*>::iterator s;
-    for (s = m_globalConfig->sites()->begin(); s != m_globalConfig->sites()->end(); s++)
+    Q_FOREACH ( Site *site, *m_globalConfig->sites() )
     {
-        Site *site = (*s);
         PackageList packageList;
         QString category = site->name();
         qDebug() << "download package file list for site: " << category << "from" << site->url();
