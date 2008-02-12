@@ -125,7 +125,7 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     QString windowTitle = tr("KDE Installer - Version " VERSION);
     setWindowTitle(windowTitle);
     setSizeGripEnabled(true);
-    setWindowFlags(windowFlags()|Qt::WindowMaximizeButtonHint);
+    setWindowFlags(windowFlags()|Qt::WindowMaximizeButtonHint|Qt::WindowMinimizeButtonHint);
 
     InstallerDialogs &d = InstallerDialogs::instance();
     d.setTitle(windowTitle);
