@@ -85,11 +85,9 @@ public:
     void setDeveloperMode(bool bMode) { m_settings->setValue("DeveloperMode", bMode); sync(); }
 
     enum ProxyMode { None = 0, InternetExplorer, FireFox, Environment, Manual };
-    ProxyMode proxyMode() { return (ProxyMode)m_settings->value("proxyMode",0).toInt(); }
-    void setProxyMode(ProxyMode mode) 
-    {
-        m_settingsMain->setValue("proxyMode", mode);
-    }
+    ProxyMode proxyMode() { return (ProxyMode)m_settingsMain->value("proxyMode",0).toInt(); }
+    void setProxyMode(ProxyMode mode) { m_settingsMain->setValue("proxyMode", mode); }
+
     const QString proxyHost() { return m_settingsMain->value("proxyHost").toString(); }
     int proxyPort() { return m_settingsMain->value("proxyPort").toInt(); }
     const QString proxyUser() { return m_settingsMain->value("proxyUser").toString(); }
