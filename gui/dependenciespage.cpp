@@ -43,6 +43,7 @@ DependenciesPage::DependenciesPage() : InstallWizardPage(0)
 
 void DependenciesPage::initializePage()
 {
+    ui.dependenciesList->sortItems();
     setSettingsButtonVisible(false);
 }
 
