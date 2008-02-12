@@ -42,17 +42,10 @@ target_link_libraries(kdewin-packager ${QT_QTMAIN_LIBRARY} ${QT_QTNETWORK_LIBRAR
 install_targets(/bin kdewin-packager )
 
 if (PACK_EXECUTABLE)
-    if(WIN32)
-        add_custom_command(
-            TARGET kdewin-packager
-            POST_BUILD
-            COMMAND ${UPX_EXECUTABLE} --lzma -9 "${EXECUTABLE_OUTPUT_PATH}/kdewin-packager.exe"
-        )
-    else(WIN32)
-        add_custom_command(
-            TARGET kdewin-packager
-            POST_BUILD
-            COMMAND ${UPX_EXECUTABLE} --lzma -9 "${EXECUTABLE_OUTPUT_PATH}/kdewin-packager"
-        )
-    endif(WIN32)
+    get_target_property( packager_filename kdewin-packager LOCATION )
+    add_custom_command(
+        TARGET kdewin-packager
+        POST_BUILD
+        COMMAND ${UPX_EXECUTABLE} --lzma -9 "${packager_filename}"
+    )
 endif (PACK_EXECUTABLE)

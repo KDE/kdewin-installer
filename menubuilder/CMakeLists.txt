@@ -28,17 +28,10 @@ target_link_libraries(kdewin-menubuilder ${QT_QTMAIN_LIBRARY} ${QT_QTNETWORK_LIB
 install_targets(/bin kdewin-menubuilder )
 
 if (PACK_EXECUTABLE)
-    if(WIN32)
-        add_custom_command(
-            TARGET kdewin-menubuilder
-            POST_BUILD
-            COMMAND ${UPX_EXECUTABLE} --lzma -9 "${EXECUTABLE_OUTPUT_PATH}/kdewin-menubuilder.exe"
-        )
-    else(WIN32)
-        add_custom_command(
-            TARGET kdewin-menubuilder
-            POST_BUILD
-            COMMAND ${UPX_EXECUTABLE} --lzma -9 "${EXECUTABLE_OUTPUT_PATH}/kdewin-menubuilder"
-        )
-    endif(WIN32)
+    get_target_property( menubuilder_filename kdewin-menubuilder LOCATION )
+    add_custom_command(
+        TARGET kdewin-menubuilder
+        POST_BUILD
+        COMMAND ${UPX_EXECUTABLE} --lzma -9 "${menubuilder_filename}"
+    )
 endif (PACK_EXECUTABLE)

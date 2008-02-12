@@ -5,6 +5,7 @@
 
 MACRO (QT4_ADD_RESOURCES2 outfiles )
 
+FIND_EXECUTABLE(WINDRES_EXECUTABLE windres)
 FOREACH (it ${ARGN})
   GET_FILENAME_COMPONENT(outfilename ${it} NAME_WE)
   GET_FILENAME_COMPONENT(infile ${it} ABSOLUTE)
@@ -19,7 +20,7 @@ FOREACH (it ${ARGN})
     SET(_RC_DEPENDS ${_RC_DEPENDS} "${rc_path}/${_RC_FILE}")
   ENDFOREACH(_RC_FILE)
   ADD_CUSTOM_COMMAND(OUTPUT ${outfile}
-    COMMAND windres
+    COMMAND ${WINDRES_EXECUTABLE}
     ARGS -i ${infile} -o ${outfile} --include-dir=${CMAKE_CURRENT_SOURCE_DIR}
     MAIN_DEPENDENCY ${infile}
     DEPENDS ${_RC_DEPENDS})
@@ -131,23 +132,17 @@ target_link_libraries(kdewin-installer-gui-${VERSION}
                       ${GUI_LIBS}
 )
 
-write_file(${EXECUTABLE_OUTPUT_PATH}/kdewin-installer-gui.bat "start kdewin-installer-gui-${VERSION}.exe")
+get_target_property( installer_filename kdewin-installer-gui-${VERSION} LOCATION )
+get_filename_component( installer_filename_only ${installer_filename} NAME )
+write_file(${EXECUTABLE_OUTPUT_PATH}/kdewin-installer-gui.bat "start ${installer_filename_only}")
 
 install_targets(/bin kdewin-installer-gui-${VERSION} )
 install(FILES ${EXECUTABLE_OUTPUT_PATH}/kdewin-installer-gui.bat DESTINATION bin)
 
 if (PACK_EXECUTABLE)
-    if(WIN32)
-        add_custom_command(
-            TARGET kdewin-installer-gui-${VERSION}
-            POST_BUILD
-            COMMAND ${UPX_EXECUTABLE} --lzma -9 "${EXECUTABLE_OUTPUT_PATH}/kdewin-installer-gui-${VERSION}.exe"
-        )
-    else(WIN32)
-        add_custom_command(
-            TARGET kdewin-installer-gui-${VERSION}
-            POST_BUILD
-            COMMAND ${UPX_EXECUTABLE} --lzma -9 "${EXECUTABLE_OUTPUT_PATH}/kdewin-installer-gui-${VERSION}"
-        )
-    endif(WIN32)
+    add_custom_command(
+        TARGET kdewin-installer-gui-${VERSION}
+        POST_BUILD
+        COMMAND ${UPX_EXECUTABLE} --lzma -9 "${installer_filename}"
+    )
 endif (PACK_EXECUTABLE)

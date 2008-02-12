@@ -26,9 +26,10 @@ target_link_libraries(kdewin-configer ${QT_QTMAIN_LIBRARY} ${QT_QTNETWORK_LIBRAR
 install_targets(/bin kdewin-configer )
 
 if (PACK_EXECUTABLE)
+    get_target_property( configer_filename kdewin-configer LOCATION )
     add_custom_command(
         TARGET kdewin-configer
         POST_BUILD 
-        COMMAND ${UPX_EXECUTABLE} --lzma -9 "${EXECUTABLE_OUTPUT_PATH}/kdewin-configer.exe" 
+        COMMAND ${UPX_EXECUTABLE} --lzma -9 "${configer_filename}" 
     )
 endif (PACK_EXECUTABLE)
