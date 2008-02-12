@@ -362,7 +362,3 @@ qint64 QuaZipFile::writeData(const char* data, qint64 maxSize)
     return maxSize;
   }
 }
-
-#ifndef QT_NO_MOC_INCLUDES
-#include "quazipfile.moc"
-#endif

@@ -30,8 +30,6 @@
 
 class FinishPage : public InstallWizardPage
 {
-    Q_OBJECT
-
 public:
     FinishPage();
 

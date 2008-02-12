@@ -69,7 +69,7 @@ void GenericProgress::updateDisplay()
   DownloaderProgress
 */
 DownloaderProgress::DownloaderProgress(QWidget *parent)
-  : GenericProgress(parent), m_lastValue(0), m_fileCount(0), m_fileNumber(0)
+  : GenericProgress(parent), m_lastValue(0), m_fileNumber(0), m_fileCount(0)
 {    
     QVBoxLayout *mainLayout = new QVBoxLayout;
 

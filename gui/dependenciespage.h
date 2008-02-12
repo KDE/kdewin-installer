@@ -34,8 +34,6 @@ class PackageSelectorPage;
 
 class DependenciesPage: public InstallWizardPage
 {
-    Q_OBJECT
-
 public:
     DependenciesPage();
 

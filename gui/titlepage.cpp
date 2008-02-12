@@ -58,5 +58,3 @@ bool TitlePage::validatePage()
     s.setSkipBasicSettings(ui.skipBasicSettings->checkState() == Qt::Checked);
     return true;
 }
-
-#include "titlepage.moc"

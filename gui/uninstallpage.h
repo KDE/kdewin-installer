@@ -29,8 +29,6 @@
 
 class UninstallPage : public InstallWizardPage
 {
-    Q_OBJECT
-
 public:
     UninstallPage();
 

@@ -51,5 +51,3 @@ bool DependenciesPage::validatePage()
 {
     return true;
 }
-
-#include "dependenciespage.moc"

@@ -56,7 +56,6 @@
  *
  **/
 class QuaZipFile: public QIODevice {
-  Q_OBJECT
   private:
     QuaZip *zip;
     QString fileName;

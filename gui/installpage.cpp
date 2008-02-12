@@ -62,5 +62,3 @@ bool InstallPage::validatePage()
 {
     return true;
 }
-
-#include "installpage.moc"

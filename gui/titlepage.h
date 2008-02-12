@@ -30,8 +30,6 @@
 
 class TitlePage : public InstallWizardPage
 {
-    Q_OBJECT
-
 public:
     TitlePage();
 

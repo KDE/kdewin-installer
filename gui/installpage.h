@@ -29,8 +29,6 @@
 
 class InstallPage : public InstallWizardPage
 {
-    Q_OBJECT
-
 public:
     InstallPage();
 

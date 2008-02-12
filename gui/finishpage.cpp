@@ -75,5 +75,3 @@ bool FinishPage::isComplete()
 {
     return true;
 }
-
-#include "finishpage.moc"

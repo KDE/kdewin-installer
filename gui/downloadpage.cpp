@@ -65,5 +65,3 @@ bool DownloadPage::validatePage()
 {
     return true;
 }
-
-#include "downloadpage.moc"

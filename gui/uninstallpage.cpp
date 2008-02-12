@@ -62,5 +62,3 @@ bool UninstallPage::validatePage()
 {
     return true;
 }
-
-#include "uninstallpage.moc"
