@@ -186,6 +186,33 @@ bool Downloader::start ( const QUrl &url, QByteArray &ba )
     return startInternal ( url );
 }
 
+#ifdef _DEBUG
+static int my_curl_debug_callback (CURL *, curl_infotype type, char *data, size_t size, void *)
+{
+  QByteArray ba(data, size);
+  switch( type ) {
+    case CURLINFO_TEXT:
+      qDebug() << "Text: " << ba.data();
+      break;
+    case CURLINFO_HEADER_IN:
+      qDebug() << "HeaderIn: " << ba.data();
+      break;
+    case CURLINFO_HEADER_OUT:
+      qDebug() << "HeaderOut: " << ba.data();
+      break;
+    case CURLINFO_DATA_IN:
+      qDebug() << "DataIn: " << ba.data();
+      break;
+    case CURLINFO_DATA_OUT:
+      qDebug() << "DataOut: " << ba.data();
+      break;
+    default:
+      qDebug() << "Unknown: " << ba.data();
+  }
+  return 0;
+}
+#endif
+
 bool Downloader::startInternal ( const QUrl &url )
 {
     qDebug() << this << __FUNCTION__ << "url: " << url.toString();
@@ -202,6 +229,10 @@ bool Downloader::startInternal ( const QUrl &url )
         curl_easy_setopt ( d->curlHandle, CURLOPT_WRITEDATA, this );
         curl_easy_setopt ( d->curlHandle, CURLOPT_NOPROGRESS, 0 );
         curl_easy_setopt ( d->curlHandle, CURLOPT_FOLLOWLOCATION, 1 );
+#ifdef _DEBUG
+        curl_easy_setopt( d->curlHandle, CURLOPT_VERBOSE, 1 );
+        curl_easy_setopt( d->curlHandle, CURLOPT_DEBUGFUNCTION, my_curl_debug_callback );
+#endif
     }
 
     Settings &s = Settings::instance();
@@ -214,8 +245,9 @@ bool Downloader::startInternal ( const QUrl &url )
     if ( !ps.hostname.isEmpty() && s.proxyMode() != Settings::Environment ) {
         curl_easy_setopt ( d->curlHandle, CURLOPT_PROXY, ps.hostname.toLocal8Bit().constData() );
         curl_easy_setopt ( d->curlHandle, CURLOPT_PROXYPORT, ps.port );
-        QString user =  ps.user + ":" +  ps.password;
+        QString user =  ps.user.isEmpty() ? QString() : ps.user + ":" +  ps.password;
         curl_easy_setopt ( d->curlHandle, CURLOPT_PROXYUSERPWD, user.toLocal8Bit().constData() );
+        //curl_easy_setopt ( d->curlHandle, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS4 );
     }
     if ( m_usedURL.port() != -1 ) {
         curl_easy_setopt ( d->curlHandle, CURLOPT_FTPPORT, m_usedURL.port() );
