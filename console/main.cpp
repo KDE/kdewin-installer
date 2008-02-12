@@ -45,6 +45,7 @@ static struct Options
     bool download;
     bool install;
     bool list;
+    bool listURL;
     bool all;
     QString url;
     QString rootdir;
@@ -56,6 +57,7 @@ static void usage()
     cout << "... [options] <packagename> [<packagename>]"
     << "\nRelease: " << VERSION
     << "\nOptions: "
+    << "\n -l|--list -u|--url list package items url"
     << "\n -l or --list list packages"
     << "\n -q|--query -a|-all  query all packages"
     << "\n -q|--query <packagename> query packages"
@@ -84,8 +86,15 @@ int main(int argc, char *argv[])
                 usage();
                 exit(0);
             }
-            if (option == "-l" || option == "--list")
+            if (option == "-l" || option == "--list") 
+            {
                 options.list = true;
+                if (app.arguments().at(i+1) == "-u" || app.arguments().at(i+1) == "--url")
+                {
+                    options.listURL = true;
+                    i++;
+                }
+            }
             if (option == "-a" || option == "--all")
                 options.all = true;
             else if (option == "-v" || option == "--verbose")
@@ -141,6 +150,11 @@ int main(int argc, char *argv[])
     // the following operations need remote configuration
     if (options.list || (options.download || options.install) && packages.size() > 0)
         engine.init();
+
+    if (options.listURL) {
+        engine.listURL("Package List");
+        return 0;
+    }
     
     if (options.list) {
         engine.listPackages("Package List");

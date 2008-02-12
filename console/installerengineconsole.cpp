@@ -84,6 +84,28 @@ void InstallerEngineConsole::listPackages(const QString &title)
         printf("%s\n",qPrintable(package)); 
 }
 
+void InstallerEngineConsole::listURL(const QString &title)
+{
+    QList <Package*> list = m_packageResources->packages(); 
+    Q_FOREACH(Package *package, list)
+    {
+        QUrl url;
+        url = package->getUrl(Package::BIN);
+        if (!url.isEmpty())
+            printf("%s\n",qPrintable(url.toString())); 
+        url = package->getUrl(Package::LIB);
+        if (!url.isEmpty())
+            printf("%s\n",qPrintable(url.toString())); 
+        url = package->getUrl(Package::DOC);
+        if (!url.isEmpty())
+            printf("%s\n",qPrintable(url.toString())); 
+        url = package->getUrl(Package::SRC);
+        if (!url.isEmpty())
+            printf("%s\n",qPrintable(url.toString())); 
+    }
+}
+
+
 bool InstallerEngineConsole::downloadPackages(const QStringList &packages, const QString &category)
 {
    Q_FOREACH(const QString &pkgName, packages)
