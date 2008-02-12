@@ -22,28 +22,23 @@
 **
 ****************************************************************************/
 
-#include <QListWidget>
+#include <QTreeWidget>
 
 
 #include "dependenciespage.h"
-
-QListWidget *g_dependenciesList;
 
 DependenciesPage::DependenciesPage() : InstallWizardPage(0)
 {
     ui.setupUi(this);
     setTitle(windowTitle());
     setSubTitle(statusTip());
-
-    setTitle(tr("Additional Packages"));
-    setSubTitle(tr("The following packages are selected for installing too because selected packages depends on them"));
-
-    g_dependenciesList = ui.dependenciesList;
 }
 
 void DependenciesPage::initializePage()
 {
-    ui.dependenciesList->sortItems();
+    engine->checkUpdateDependencies(ui.dependenciesList);
+//    if (ui.dependenciesList->topLevelItemCount() == 0)
+//        wizard()->next();
     setSettingsButtonVisible(false);
 }
 

@@ -201,12 +201,7 @@ void InstallWizard::readSettings()
 // all id change handling is done in slotCurrentIdChanged()
 void InstallWizard::slotCurrentIdChanged(int id)
 {
-    if (id == dependenciesPage) {
-        engine->checkUpdateDependencies();
-        if (g_dependenciesList->count() == 0)
-            next();
-    }
-    else if (id == downloadPage) {
+    if (id == downloadPage) {
         button(QWizard::BackButton)->setEnabled(false);
         button(QWizard::NextButton)->setEnabled(false);
         if (!engine->downloadPackages(tree)) {

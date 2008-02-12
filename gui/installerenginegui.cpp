@@ -52,7 +52,9 @@
 
 /// holds the package selection and icon states
 PackageStates packageStates;
-extern QListWidget *g_dependenciesList;
+
+/// holds the package dependency state
+PackageStates dependencyStates;
 
 // Column definitions in package list tree widget
 const int NameColumn = 0;
@@ -341,11 +343,38 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
     }
 }
 
-bool InstallerEngineGui::setDependencyState(Package *_package)
+bool InstallerEngineGui::checkRemoveDependencies(QTreeWidget *uilist)
+{
+    return true;
+}
+
+void InstallerEngineGui::checkUpdateDependencies(QTreeWidget *uilist)
+{
+    dependencyStates.clear();
+    if (uilist)
+        uilist->clear();
+    
+    uilist->setHeaderLabels(QStringList() << "Package" << "Description");
+    QList<Package*> list = packageStates.packages(m_packageResources);
+    QList<Package*>::ConstIterator i = list.constBegin();
+    for ( ; i != list.constEnd(); ++i ) {
+        Package *pkg = *i;
+        if (!setDependencyState(pkg,uilist))
+            break;
+    }
+    if (uilist)
+        uilist->sortItems(0,Qt::AscendingOrder);
+    qDebug() << packageStates;    
+    qDebug() << dependencyStates;    
+}
+
+
+bool InstallerEngineGui::setDependencyState(Package *_package, QTreeWidget *list)
 {
     stateType state = packageStates.getState(_package,Package::BIN);
+    stateType depState = dependencyStates.getState(_package,Package::BIN);
     // @TODO check reverse dependency when deleting
-    if (state == _Remove || state == _Nothing)
+    if ((state == _Nothing || state == _Remove) && (depState == _Nothing || depState == _Remove))
         return true;
 
     foreach(const QString &dep, _package->deps())
@@ -359,28 +388,33 @@ bool InstallerEngineGui::setDependencyState(Package *_package)
             continue;
 
         stateType state = packageStates.getState(package,Package::BIN);
-        if (state == _Nothing || state == _Remove)
+        stateType depState = dependencyStates.getState(package,Package::BIN);
+        // only add package if is neither selected in main states or dep states
+        if ((state == _Nothing || state == _Remove) && (depState == _Nothing || depState == _Remove))
         {
             qDebug() << __FUNCTION__ << "selected package" << package->name() << "in previous state" << state << "for installation";
-            if (g_dependenciesList)
-                g_dependenciesList->addItem(package->name());
-            packageStates.setState(package,Package::BIN,_Install);
+            if (list) 
+            {   
+                QTreeWidgetItem * item = new QTreeWidgetItem(QStringList() << package->name() << package->notes());
+                list->addTopLevelItem(item);
+            }
+            dependencyStates.setState(package,Package::BIN,_Install);
 
             // set additional package types for download/install/remove
             if (m_installMode == Developer)
             {
                 if (package->hasType(Package::LIB))
-                    packageStates.setState(package,Package::LIB,_Install);
+                    dependencyStates.setState(package,Package::LIB,_Install);
                 if (package->hasType(Package::DOC))
-                    packageStates.setState(package,Package::DOC,_Install);
+                    dependencyStates.setState(package,Package::DOC,_Install);
             }
             else if (m_installMode == EndUser)
             {
                 ;//if (package->hasType(Package::DOC))
-                 //   packageStates.setState(package,Package::DOC,_Install);
+                 //   dependenciesStates.setState(package,Package::DOC,_Install);
             }
         }
-        setDependencyState(package);
+        setDependencyState(package, list);
     }
     return true;
 }
@@ -388,7 +422,8 @@ bool InstallerEngineGui::setDependencyState(Package *_package)
 bool isMarkedForDownload ( Package *pkg,Package::Type type )
 {
     stateType state = packageStates.getState ( pkg, type );
-    bool result = state == _Install || state == _Update;
+    stateType depState = dependencyStates.getState ( pkg, type );
+    bool result = state == _Install || state == _Update || depState == _Install || depState == _Update;
     if (Settings::hasDebug ( "InstallerEngineGui" ) && result)
         qDebug() << __FUNCTION__ << "select package for download" << pkg->name() << type;
     return result;
@@ -397,7 +432,8 @@ bool isMarkedForDownload ( Package *pkg,Package::Type type )
 bool isMarkedForInstall ( Package *pkg,Package::Type type )
 {
     stateType state = packageStates.getState ( pkg, type );
-    bool result = state == _Install || state == _Update;
+    stateType depState = dependencyStates.getState ( pkg, type );
+    bool result = state == _Install || state == _Update || depState == _Install || depState == _Update;
     if (Settings::hasDebug ( "InstallerEngineGui" ) && result)
         qDebug() << __FUNCTION__ << "select package for installation" << pkg->name() << type;
     return result;
@@ -406,7 +442,8 @@ bool isMarkedForInstall ( Package *pkg,Package::Type type )
 bool isMarkedForRemoval ( Package *pkg,Package::Type type )
 {
     stateType state = packageStates.getState ( pkg, type );
-    bool result = state == _Remove || state == _Update;
+    stateType depState = dependencyStates.getState ( pkg, type );
+    bool result = state == _Remove || state == _Update || depState == _Remove || depState == _Update;;
     if (Settings::hasDebug ( "InstallerEngineGui" ) && result)
         qDebug() << __FUNCTION__ << "select package for removal" << pkg->name() << type;
     return result;
@@ -461,6 +498,7 @@ void InstallerEngineGui::reload()
 {
     m_installMode = Settings::instance().isDeveloperMode() ? Developer : EndUser;
     packageStates.clear();
+    dependencyStates.clear();
     InstallerEngine::reload();
 }
 
@@ -713,22 +751,6 @@ void InstallerEngineGui::itemClickedPackageSelectorPage ( QTreeWidgetItem *item,
     // dependencies are selected later
 }
 
-bool InstallerEngineGui::checkRemoveDependencies()
-{
-    return true;
-}
-
-void InstallerEngineGui::checkUpdateDependencies()
-{
-    QList<Package*> list = packageStates.packages(m_packageResources);
-    QList<Package*>::ConstIterator i = list.constBegin();
-    for ( ; i != list.constEnd(); ++i ) {
-        Package *pkg = *i;
-        if (!setDependencyState(pkg))
-            break;
-    }
-}
-
 bool InstallerEngineGui::downloadPackageItem(Package *pkg, Package::Type type )
 {
     bool all = false; //isMarkedForInstall(pkg,Package::ALL);
@@ -761,8 +783,9 @@ bool InstallerEngineGui::downloadPackageItem(Package *pkg, Package::Type type )
 
 bool InstallerEngineGui::downloadPackages ( QTreeWidget *tree, const QString &category )
 {
-    qDebug() << __FUNCTION__ << packageStates;
     QList<Package*> list = packageStates.packages(m_packageResources);
+    Q_FOREACH ( Package *pkg, dependencyStates.packages(m_packageResources) ) 
+        list.append(pkg);
     Downloader::instance()->progress()->setFileCount(list.size());
     int i = 0;
     Q_FOREACH ( Package *pkg, list ) {
@@ -788,8 +811,9 @@ bool InstallerEngineGui::downloadPackages ( QTreeWidget *tree, const QString &ca
 
 bool InstallerEngineGui::removePackages ( QTreeWidget *tree, const QString &category )
 {
-    qDebug() << __FUNCTION__ << packageStates;
     QList<Package*> list = packageStates.packages(m_packageResources);
+    Q_FOREACH ( Package *pkg, dependencyStates.packages(m_packageResources) )
+        list.append(pkg);
     m_installer->progress()->setPackageCount(list.size());
     int i = 0;
     Q_FOREACH ( Package *pkg, list ) {
@@ -820,10 +844,11 @@ bool InstallerEngineGui::removePackages ( QTreeWidget *tree, const QString &cate
 
 bool InstallerEngineGui::installPackages ( QTreeWidget *tree, const QString &_category )
 {
-    qDebug() << __FUNCTION__ << packageStates;
     QList<Package*> list = packageStates.packages(m_packageResources);
-    int i = 0; 
+    Q_FOREACH ( Package *pkg, dependencyStates.packages(m_packageResources) )
+        list.append(pkg);
     m_installer->progress()->setPackageCount(list.size());
+    int i = 0; 
     Q_FOREACH ( Package *pkg, list ) {
         if ( !pkg )
             continue;

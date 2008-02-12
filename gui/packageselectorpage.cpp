@@ -209,15 +209,11 @@ void PackageSelectorPage::slotCompilerTypeChanged()
 
 int PackageSelectorPage::nextId() const
 {
-    if (g_dependenciesList->count() > 0)
-        return InstallWizard::dependenciesPage;
-    else
-       return InstallWizard::downloadPage;
+    return InstallWizard::dependenciesPage;
 }
 
 bool PackageSelectorPage::validatePage()
 {
-    engine->checkUpdateDependencies();
     setSettingsButtonVisible(false);
     return true;
 }

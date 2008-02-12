@@ -32,8 +32,6 @@
 
 class PackageSelectorPage;
 
-extern QListWidget *g_dependenciesList;
-
 class DependenciesPage: public InstallWizardPage
 {
     Q_OBJECT
