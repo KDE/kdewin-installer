@@ -81,7 +81,7 @@ public:
     bool isPackageManagerMode() { return m_settings->value("PackageManagerMode", true).toBool(); }
     void setPackageManagerMode(bool mode) { m_settings->setValue("PackageManagerMode", mode); sync(); }
 
-    bool isDeveloperMode() { return m_settings->value("DeveloperMode", m_settingsMain->value("DeveloperMode",true).toBool()).toBool(); }
+    bool isDeveloperMode() { return m_settings->value("DeveloperMode", m_settingsMain->value("DeveloperMode",false).toBool()).toBool(); }
     void setDeveloperMode(bool bMode) { m_settings->setValue("DeveloperMode", bMode); sync(); }
 
     enum ProxyMode { None = 0, InternetExplorer, FireFox, Environment, Manual };
