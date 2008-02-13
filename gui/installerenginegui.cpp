@@ -298,6 +298,11 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
             iconState = _install;
             newState = _Install;
         }
+        else if (!isAvailable && !isInstalled)
+        {
+            iconState = _disable;
+            newState = _Nothing;
+        }
     }
     else if (currentState == _Update)
     {
