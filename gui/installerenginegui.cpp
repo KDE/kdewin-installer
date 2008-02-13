@@ -449,8 +449,11 @@ bool isMarkedForRemoval ( Package *pkg,Package::Type type )
 InstallerEngineGui::InstallerEngineGui (QWidget *parent)
         : InstallerEngine ( parent ), m_parent(parent)
 {
-    Settings &s = Settings::instance();
-    m_installMode = s.isDeveloperMode() ? Developer : EndUser;
+}
+
+bool InstallerEngineGui::init()
+{
+    m_installMode = Settings::instance().isDeveloperMode() ? Developer : EndUser;
     if (m_installMode == Single)
     {
         BINColumn = 3;
@@ -478,11 +481,7 @@ InstallerEngineGui::InstallerEngineGui (QWidget *parent)
         DOCColumn = 0;
         SRCColumn = 0;
     }
-}
 
-bool InstallerEngineGui::init()
-{
-    m_installMode = Settings::instance().isDeveloperMode() ? Developer : EndUser;
     initGlobalConfig();
     if (isInstallerVersionOutdated())
         InstallerDialogs::instance().installerOutdated();
