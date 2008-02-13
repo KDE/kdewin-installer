@@ -1,6 +1,6 @@
 ChangeLog
 =========
-0.8.6
+0.9.0
 -----
 - common:         - added ftp downloading support by using the curl library 
                   - added support for using sourceforge mirrors as download source 

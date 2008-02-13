@@ -328,7 +328,10 @@ bool Settings::proxy(const QString &url, proxySettings &proxy)
 #endif
         case None:
         default:
-            return false;
+            proxy.hostname = QString();
+            proxy.port = 0;
+            proxy.user = QString();
+            proxy.password = QString();
             break;
     }
     return false;
