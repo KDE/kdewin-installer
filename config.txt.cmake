@@ -22,19 +22,12 @@
 @categorypackages qt qt-msvc qt-mingw qt-static-msvc
 
 ;------------------------------------------------------
-; all packages located on the mirror
-; uncomment required settings
+; all packages on the mirror
 ;------------------------------------------------------
 @site all
 @type apachemodindex
-;-- download.cegit.de 
-;@url releases/unstable/kde-4.0.61
-;-- sourceforge 
-@url-list http://sourceforge.net/project/showfiles.php?group_id=214730
-@url http://downloads.sourceforge.net/kde-windows
-;-- kde mirror
-;@url
-;--
+@SITE_URL@
+@SITE_URL_LIST@
 @exclude config.txt
 ; compiler independent deps 
 @deps findutils libintl

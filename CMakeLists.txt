@@ -155,8 +155,22 @@ include_directories(
   ${QT_INCLUDES}
   $ENV{QMAKESPEC}
 )
-configure_file(${CMAKE_SOURCE_DIR}/config.txt ${CMAKE_BINARY_DIR}/config.txt)
 configure_file(${CMAKE_SOURCE_DIR}/config.h.cmake ${CMAKE_BINARY_DIR}/config.h)
+
+#
+# create mirror config files 
+# 
+set (SITE_URL "@url releases/unstable/kde-4.0.61")
+set (SITE_URL_LIST ";")
+configure_file(${CMAKE_SOURCE_DIR}/config.txt.cmake ${CMAKE_BINARY_DIR}/config/download.cegit.de/config.txt)
+
+set (SITE_URL "@url http://downloads.sourceforge.net/kde-windows")
+set (SITE_URL_LIST "@url-list http://sourceforge.net/project/showfiles.php?group_id=214730")
+configure_file(${CMAKE_SOURCE_DIR}/config.txt.cmake ${CMAKE_BINARY_DIR}/config/sourceforge.net/config.txt)
+
+set (SITE_URL ";")
+set (SITE_URL_LIST ";")
+configure_file(${CMAKE_SOURCE_DIR}/config.txt.cmake ${CMAKE_BINARY_DIR}/config/ktown.kde.org/config.txt)
 
 #FIXME: ${BZIP2_LIBRARIES} -> 3rdparty
 if (UNIX)
