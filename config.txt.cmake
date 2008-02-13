@@ -82,6 +82,7 @@
 @pkgnotes kdepimlibs-mingw KDE PIM library
 @pkgnotes kdenetwork-mingw KDE Networking applications
 @pkgnotes kdetoys-mingw collection of several programs in KDE
+@pkgnotes kdewebdev-mingw KDE Web Development applications
 @pkgnotes kdewin32-mingw kde supplementary package for win32
 @pkgnotes qca-mingw Qt Cryptographic Architecture (QCA)
 @pkgnotes qimageblitz-mingw KDE image effect library
@@ -100,6 +101,7 @@
 @pkgnotes kdepimlibs-msvc KDE PIM library
 @pkgnotes kdenetwork-msvc KDE Networking applications
 @pkgnotes kdetoys-msvc collection of several programs in KDE
+@pkgnotes kdewebdev-msvc KDE Web Development applications
 @pkgnotes kdewin32-msvc kde supplementary package for win32
 @pkgnotes qca-msvc Qt Cryptographic Architecture (QCA)
 @pkgnotes qimageblitz-msvc KDE image effect library
