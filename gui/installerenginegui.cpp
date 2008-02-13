@@ -355,10 +355,7 @@ void InstallerEngineGui::checkUpdateDependencies(QTreeWidget *uilist)
         uilist->clear();
     
     uilist->setHeaderLabels(QStringList() << "Package" << "Description");
-    QList<Package*> list = packageStates.packages(m_packageResources);
-    QList<Package*>::ConstIterator i = list.constBegin();
-    for ( ; i != list.constEnd(); ++i ) {
-        Package *pkg = *i;
+    Q_FOREACH(Package *pkg, packageStates.packages(m_packageResources)) {
         if (!setDependencyState(pkg,uilist))
             break;
     }
