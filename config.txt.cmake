@@ -2,7 +2,7 @@
 @format 1.3
 ; this format is *prelimary* and may be changed without prior notice
 @minversion 0.8.6
-@timestamp 200802131100
+@timestamp 200802181100
 
 ; category notes 
 @categorynotes qt Qt related packages 
