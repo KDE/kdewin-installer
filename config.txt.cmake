@@ -47,6 +47,7 @@
 @deps kdenetwork-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps kdesdk-mingw kdebase-runtime-mingw kdelibs-mingw kdepimlibs-mingw
 @deps kdetoys-mingw kdebase-runtime-mingw kdelibs-mingw
+@deps kdewebdev-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps kdewin-installer-mingw qt-mingw
 @deps kdewin32-mingw qt-mingw
 @deps qt-mingw dbus-mingw runtime-mingw
@@ -64,6 +65,7 @@
 @deps kdenetwork-msvc kdebase-runtime-msvc kdelibs-msvc
 @deps kdepimlibs-msvc kdelibs-msvc
 @deps kdesdk-msvc kdebase-runtime-msvc kdelibs-msvc
+@deps kdewebdev-msvc kdebase-runtime-msvc kdelibs-msvc
 @deps kdewin-installer-msvc qt-msvc
 @deps kdewin32-msvc qt-msvc
 @deps kdetoys-msvc kdebase-runtime-msvc kdelibs-msvc
