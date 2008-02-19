@@ -2,7 +2,7 @@
 @format 1.3
 ; this format is *prelimary* and may be changed without prior notice
 @minversion 0.8.6
-@timestamp 200802181100
+@timestamp 200802190830
 
 ; category notes 
 @categorynotes qt Qt related packages 
@@ -42,7 +42,7 @@
 @deps kdebase-runtime-mingw kdepimlibs-mingw kdelibs-mingw
 @deps kdebase-apps-mingw kdebase-runtime-mingw
 @deps kdeedu-mingw kdebase-runtime-mingw kdelibs-mingw
-@deps kdegames-mingw kdebase-runtime-mingw kdelibs-mingw
+@deps kdegames-mingw kdebase-runtime-mingw kdelibs-mingw phonon-mingw
 @deps kdegraphics-mingw kdebase-runtime-mingw kdelibs-mingw fontconfig freetype
 @deps kdenetwork-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps kdesdk-mingw kdebase-runtime-mingw kdelibs-mingw kdepimlibs-mingw
@@ -59,7 +59,7 @@
 @deps kdebase-runtime-msvc kdepimlibs-msvc kdelibs-msvc
 @deps kdebase-apps-msvc kdebase-runtime-msvc
 @deps kdeedu-msvc kdebase-runtime-msvc kdelibs-msvc
-@deps kdegames-msvc kdebase-runtime-msvc kdelibs-msvc
+@deps kdegames-msvc kdebase-runtime-msvc kdelibs-msvc phonon-msvc
 @deps kdegraphics-msvc kdebase-runtime-msvc kdelibs-msvc fontconfig freetype
 @deps kdelibs-msvc pcre-msvc vcredist qt-msvc dbus-msvc kdewin32-msvc qimageblitz-msvc qca-msvc strigi-msvc soprano-msvc taglib-msvc aspell libbzip2 expat giflib iconv jasper jpeg libintl libpng libxml2 libxslt openssl tiff zlib shared-mime-info
 @deps kdenetwork-msvc kdebase-runtime-msvc kdelibs-msvc
