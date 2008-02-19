@@ -172,6 +172,10 @@ set (SITE_URL "@url")
 set (SITE_URL_LIST ";")
 configure_file(${CMAKE_SOURCE_DIR}/config.txt.cmake ${CMAKE_BINARY_DIR}/config/ktown.kde.org/config.txt)
 
+set (RELEASE_PATH "/unstable/4.0.61/win32")
+set (RELEASE "4.0.61")
+configure_file(${CMAKE_SOURCE_DIR}/mirrors.lst.cmake ${CMAKE_BINARY_DIR}/config/mirrors.lst)
+
 #FIXME: ${BZIP2_LIBRARIES} -> 3rdparty
 if (UNIX)
   set (LIBS pthread dl z rt ${BZIP2_LIBRARIES} ${CURL_LIBRARIES})
