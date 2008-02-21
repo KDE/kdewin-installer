@@ -168,7 +168,7 @@ set (SITE_URL "@url http://downloads.sourceforge.net/kde-windows")
 set (SITE_URL_LIST "@url-list http://sourceforge.net/project/showfiles.php?group_id=214730")
 configure_file(${CMAKE_SOURCE_DIR}/config.txt.cmake ${CMAKE_BINARY_DIR}/config/sourceforge.net/config.txt)
 
-set (SITE_URL "@url")
+set (SITE_URL "@url .")
 set (SITE_URL_LIST ";")
 configure_file(${CMAKE_SOURCE_DIR}/config.txt.cmake ${CMAKE_BINARY_DIR}/config/ktown.kde.org/config.txt)
 
