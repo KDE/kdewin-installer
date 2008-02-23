@@ -366,8 +366,8 @@ void InstallerEngineGui::checkUpdateDependencies(QTreeWidget *uilist)
     }
     if (uilist)
         uilist->sortItems(0,Qt::AscendingOrder);
-    qDebug() << packageStates;    
-    qDebug() << dependencyStates;    
+//    qDebug() << (int) packageStates;
+//    qDebug() << (int) dependencyStates;
 }
 
 
