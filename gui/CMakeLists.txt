@@ -3,10 +3,10 @@
 # QT4_ADD_RESOURCE2(outfiles inputfile ... )
 # TODO  perhaps consider adding support for compression and root options to rcc
 
-MACRO (QT4_ADD_RESOURCES2 outfiles )
+MACRO(QT4_ADD_RESOURCES2 outfiles )
 
-FIND_EXECUTABLE(WINDRES_EXECUTABLE windres)
-FOREACH (it ${ARGN})
+FIND_PROGRAM(WINDRES_EXECUTABLE windres)
+FOREACH(it ${ARGN})
   GET_FILENAME_COMPONENT(outfilename ${it} NAME_WE)
   GET_FILENAME_COMPONENT(infile ${it} ABSOLUTE)
   GET_FILENAME_COMPONENT(rc_path ${infile} PATH)
@@ -25,9 +25,9 @@ FOREACH (it ${ARGN})
     MAIN_DEPENDENCY ${infile}
     DEPENDS ${_RC_DEPENDS})
   SET(${outfiles} ${${outfiles}} ${outfile})
-ENDFOREACH (it)
+ENDFOREACH(it)
 
-ENDMACRO (QT4_ADD_RESOURCES2)
+ENDMACRO(QT4_ADD_RESOURCES2)
 
 
 
