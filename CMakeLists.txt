@@ -202,7 +202,7 @@ endif (UNIX)
 # our targets
 add_subdirectory(console)
 add_subdirectory(gui)
-add_subdirectory(enduser)
+#add_subdirectory(enduser)
 add_subdirectory(tests)
 add_subdirectory(packager)
 add_subdirectory(doc)
