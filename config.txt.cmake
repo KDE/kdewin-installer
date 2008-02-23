@@ -1,8 +1,8 @@
 ;kdewin installer configuration file 
 @format 1.3
 ; this format is *prelimary* and may be changed without prior notice
-@minversion 0.8.6
-@timestamp 200802190830
+@minversion 0.9.0
+@timestamp 200802232350
 
 ; category notes 
 @categorynotes qt Qt related packages 
@@ -15,8 +15,8 @@
 @categorypackages win32libs pcre-msvc  dbus-msvc 
 @categorypackages win32libs pcre-mingw dbus-mingw
 @categorypackages tools findutils grep mingw-utils
-@categorypackages kdesupport kdewin32-msvc  kdewin-installer-msvc  vcredist      qimageblitz-msvc  qca-msvc  strigi-msvc  soprano-msvc  taglib-msvc  qt-msvc  phonon-msvc  fontconfig freetype
-@categorypackages kdesupport kdewin32-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw qt-mingw phonon-mingw fontconfig freetype
+@categorypackages kdesupport kdewin32-msvc  kdewin-installer-msvc  vcredist      qimageblitz-msvc  qca-msvc  strigi-msvc  soprano-msvc  taglib-msvc  qt-msvc  phonon-msvc  fontconfig-msvc  freetype-msvc  poppler-msvc
+@categorypackages kdesupport kdewin32-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw qt-mingw phonon-mingw fontconfig-mingw freetype-mingw poppler-mingw
 @categorypackages KDE amarok-msvc  kdelibs-msvc  kdepimlibs-msvc  kdebase-apps-msvc  kdebase-runtime-msvc  kdeedu-msvc  kdegames-msvc  kdegraphics-msvc  kdenetwork-msvc  kdesdk-msvc  kdewebdev-msvc
 @categorypackages KDE amarok-mingw kdelibs-mingw kdepimlibs-mingw kdebase-apps-mingw kdebase-runtime-mingw kdeedu-mingw kdegames-mingw kdegraphics-mingw kdenetwork-mingw kdesdk-mingw kdewebdev-mingw 
 @categorypackages qt qt-msvc qt-mingw qt-static-msvc
@@ -43,7 +43,7 @@
 @deps kdebase-apps-mingw kdebase-runtime-mingw
 @deps kdeedu-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps kdegames-mingw kdebase-runtime-mingw kdelibs-mingw phonon-mingw
-@deps kdegraphics-mingw kdebase-runtime-mingw kdelibs-mingw fontconfig freetype
+@deps kdegraphics-mingw kdebase-runtime-mingw kdelibs-mingw fontconfig-mingw freetype-mingw poppler-mingw
 @deps kdenetwork-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps kdesdk-mingw kdebase-runtime-mingw kdelibs-mingw kdepimlibs-mingw
 @deps kdetoys-mingw kdebase-runtime-mingw kdelibs-mingw
@@ -60,7 +60,7 @@
 @deps kdebase-apps-msvc kdebase-runtime-msvc
 @deps kdeedu-msvc kdebase-runtime-msvc kdelibs-msvc
 @deps kdegames-msvc kdebase-runtime-msvc kdelibs-msvc phonon-msvc
-@deps kdegraphics-msvc kdebase-runtime-msvc kdelibs-msvc fontconfig freetype
+@deps kdegraphics-msvc kdebase-runtime-msvc kdelibs-msvc fontconfig-msvc freetype-msvc poppler-msvc
 @deps kdelibs-msvc pcre-msvc vcredist qt-msvc dbus-msvc kdewin32-msvc qimageblitz-msvc qca-msvc strigi-msvc soprano-msvc taglib-msvc aspell libbzip2 expat giflib iconv jasper jpeg libintl libpng libxml2 libxslt openssl tiff zlib shared-mime-info
 @deps kdenetwork-msvc kdebase-runtime-msvc kdelibs-msvc
 @deps kdepimlibs-msvc kdelibs-msvc
@@ -75,6 +75,8 @@
 @pkgnotes clucene high-performance, full-featured text search engine (required for compiling strigi) 
 ; mingw
 @pkgnotes amarok-mingw media player 
+@pkgnotes fontconfig-mingw library for font customization and configuration
+@pkgnotes freetype-mingw A Free, High-Quality, and Portable Font Engine
 @pkgnotes kdelibs-mingw KDE libraries (support applications)
 @pkgnotes kdebase-runtime-mingw KDE runtime package 
 @pkgnotes kdebase-apps-mingw KDE base applicaton package 
@@ -86,6 +88,7 @@
 @pkgnotes kdetoys-mingw collection of several programs in KDE
 @pkgnotes kdewebdev-mingw KDE Web Development applications
 @pkgnotes kdewin32-mingw kde supplementary package for win32
+@pkgnotes poppler-mingw PDF rendering library based on the xpdf-3.0
 @pkgnotes qca-mingw Qt Cryptographic Architecture (QCA)
 @pkgnotes qimageblitz-mingw KDE image effect library
 @pkgnotes qt-mingw C++ GUI application framework
@@ -94,6 +97,8 @@
 @pkgnotes taglib-mingw audio meda-data library
 ; msvc 
 @pkgnotes amarok-msvc media player 
+@pkgnotes fontconfig-msvc library for font customization and configuration
+@pkgnotes freetype-msvc A Free, High-Quality, and Portable Font Engine
 @pkgnotes kdelibs-msvc KDE libraries (support applications)
 @pkgnotes kdebase-runtime-msvc KDE runtime package
 @pkgnotes kdebase-apps-msvc KDE base applicaton package 
@@ -105,6 +110,7 @@
 @pkgnotes kdetoys-msvc collection of several programs in KDE
 @pkgnotes kdewebdev-msvc KDE Web Development applications
 @pkgnotes kdewin32-msvc kde supplementary package for win32
+@pkgnotes poppler-msvc PDF rendering library based on the xpdf-3.0
 @pkgnotes qca-msvc Qt Cryptographic Architecture (QCA)
 @pkgnotes qimageblitz-msvc KDE image effect library
 @pkgnotes qt-msvc C++ GUI application framework
@@ -119,8 +125,6 @@
 @pkgnotes dbus-mingw Freedesktop message bus system (daemon and clients)
 @pkgnotes dbus-msvc Freedesktop message bus system (daemon and clients)
 @pkgnotes expat XML parser library written in C (development/documentation package)
-@pkgnotes fontconfig library for font customization and configuration
-@pkgnotes freetype A Free, High-Quality, and Portable Font Engine
 @pkgnotes giflib GIF file manipulation library (utilities and docs)
 @pkgnotes gpgme GnuPG cryptography support library (runtime)
 @pkgnotes iconv GNU character set conversion library and utilities
