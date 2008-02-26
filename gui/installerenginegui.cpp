@@ -502,6 +502,22 @@ void InstallerEngineGui::reload()
     dependencyStates.clear();
     InstallerEngine::reload();
 }
+void InstallerEngineGui::setLeftTreeStatus( QTreeWidget *tree )
+{
+    QTreeWidgetItem *headerItem = tree->headerItem();
+    QString config;
+    QString date = tr("configuration timestamp: %1").arg(m_globalConfig->timeStamp().toString(tr("dd.MM.yyyy hh:mm")));
+    if (GlobalConfig::isRemoteConfigAvailable()) 
+    {
+        config = tr("note: no configuration downloaded because local file overrides it\nconfiguration read from %1\n").arg(GlobalConfig::remoteConfigFile().absoluteFilePath());
+    }
+    else 
+    {
+        config = tr("configuration downloaded from %1\n").arg(m_usedDownloadSource.toString());
+    }
+
+    headerItem->setToolTip(0,config + date);
+}
 
 void InstallerEngineGui::setLeftTreeData ( QTreeWidget *tree )
 {
@@ -510,11 +526,8 @@ void InstallerEngineGui::setLeftTreeData ( QTreeWidget *tree )
     // header
     QTreeWidgetItem *headerItem = new QTreeWidgetItem();
     headerItem->setText(0,tr ( "Package Categories" ));
-    headerItem->setToolTip(0,
-        "Url:  "+ m_usedDownloadSource.toString() + 
-        "\nDate: " + m_globalConfig->timeStamp().toString("dd.MM.yyyy hh:mm"));
     tree->setHeaderItem(headerItem);
-
+    setLeftTreeStatus(tree);
     QList<QTreeWidgetItem *> categoryList;
     QList<QTreeWidgetItem *> items;
 
