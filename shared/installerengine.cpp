@@ -37,7 +37,7 @@
 #include "database.h"
 
 QString InstallerEngine::defaultConfigURL;
-QString InstallerEngine::fallBackURL = "http://82.149.170.66/kde-windows";
+QString InstallerEngine::fallBackURL = "http://downloads.sourceforge.net/kde-windows";
 
 InstallerEngine::InstallerEngine(QObject *parent)
     : QObject(parent),
