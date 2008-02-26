@@ -69,15 +69,8 @@ QStringList GlobalConfig::fetch(const QString &baseURL)
                 qDebug() << "download remote config file from" <<  url << "to" << cfi.absoluteFilePath() << "..." << (ret == true ? "okay" : "failure") ;
             if (ret)
                 configFiles << cfi.absoluteFilePath();
-            else
-            {
-                QUrl url(baseURL + "/installer/config.txt");
-                ret = Downloader::instance()->start(url,cfi.absoluteFilePath());
-                if (Settings::hasDebug("GlobalConfig"))
-                    qDebug() << "download remote config file from" <<  url << "to" << cfi.absoluteFilePath() << "..." << (ret == true ? "okay" : "failure") ;
-                if (ret)
-                    configFiles << cfi.absoluteFilePath();
-            }
+            else 
+                return configFiles;
         }
 
         QFileInfo fi(Settings::instance().downloadDir()+"/config-local.txt");
