@@ -160,7 +160,7 @@ configure_file(${CMAKE_SOURCE_DIR}/config.h.cmake ${CMAKE_BINARY_DIR}/config.h)
 #
 # create mirror config files 
 # 
-set (SITE_URL "@url releases/unstable/kde-4.0.61")
+set (SITE_URL "@url releases/unstable/kde-4.0.63")
 set (SITE_URL_LIST ";")
 configure_file(${CMAKE_SOURCE_DIR}/config.txt.cmake ${CMAKE_BINARY_DIR}/config/download.cegit.de/config.txt)
 
@@ -172,8 +172,8 @@ set (SITE_URL "@url .")
 set (SITE_URL_LIST ";")
 configure_file(${CMAKE_SOURCE_DIR}/config.txt.cmake ${CMAKE_BINARY_DIR}/config/ktown.kde.org/config.txt)
 
-set (RELEASE_PATH "/unstable/4.0.61/win32")
-set (RELEASE "4.0.61")
+set (RELEASE_PATH "/unstable/4.0.63/win32")
+set (RELEASE "4.0.63")
 configure_file(${CMAKE_SOURCE_DIR}/mirrors.lst.cmake ${CMAKE_BINARY_DIR}/config/mirrors.lst)
 
 #FIXME: ${BZIP2_LIBRARIES} -> 3rdparty
