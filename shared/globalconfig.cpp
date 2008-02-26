@@ -23,7 +23,6 @@
 #include "config.h"
 #include "globalconfig.h"
 #include "downloader.h"
-#include "debug.h"
 
 #include <QFileInfo>
 #include <QBuffer>
