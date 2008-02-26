@@ -27,6 +27,7 @@
 #include "package.h"
 
 #include <QDateTime>
+#include <QFileInfo>
 
 class Downloader;
 
@@ -71,6 +72,8 @@ class GlobalConfig {
         void setBaseURL(const QUrl &url) { m_baseURL = url.toString(); }
         /// check if a config-remote.txt is located in download directory
         static bool isRemoteConfigAvailable();
+        /// return path of remote config file
+        static const QFileInfo remoteConfigFile();
 
     protected:
         bool parseFromFile(const QString &fileName);

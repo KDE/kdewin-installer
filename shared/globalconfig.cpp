@@ -23,6 +23,7 @@
 #include "config.h"
 #include "globalconfig.h"
 #include "downloader.h"
+#include "debug.h"
 
 #include <QFileInfo>
 #include <QBuffer>
@@ -36,6 +37,11 @@ bool GlobalConfig::isRemoteConfigAvailable()
 {
     QFileInfo cfr(Settings::instance().downloadDir()+"/config-remote.txt");
     return cfr.exists();
+}
+
+const QFileInfo GlobalConfig::remoteConfigFile()
+{
+    return QFileInfo(Settings::instance().downloadDir()+"/config-remote.txt");
 }
 
 QStringList GlobalConfig::fetch(const QString &baseURL)
