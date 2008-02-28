@@ -44,8 +44,8 @@
 # define __PRETTY_FUNCTION__ __FUNCTION__
 #endif
 
-Installer::Installer()
-        : m_type(Installer::Standard)
+Installer::Installer(QObject *parent)
+        : QObject(parent), m_type(Installer::Standard)
 {
     m_root = ".";
     connect(Unpacker::instance(),SIGNAL(error(const QString &)),this,SLOT(slotError(const QString &)));
@@ -58,11 +58,6 @@ Installer::~Installer()
 void Installer::setRoot(const QString &root)
 {
     m_root = root;
-}
-
-bool Installer::isEnabled()
-{
-    return true;
 }
 
 bool Installer::createManifestFile()

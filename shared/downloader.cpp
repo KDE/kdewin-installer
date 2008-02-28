@@ -20,7 +20,6 @@
 ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
-#define _DEBUG
 
 #include <qnamespace.h>
 #ifdef Q_OS_WIN

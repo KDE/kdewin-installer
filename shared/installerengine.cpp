@@ -46,9 +46,9 @@ InstallerEngine::InstallerEngine(QObject *parent)
       m_addedPackages(false),
       m_canceled(false)
 {
-    m_database = new Database();
+    m_database = new Database(this);
     m_database->setRoot(Settings::instance().installDir());
-    m_installer = new Installer( );
+    m_installer = new Installer(this);
     m_installer->setRoot(Settings::instance().installDir());
     m_installer->setDatabase(m_database);
     m_globalConfig = new GlobalConfig();

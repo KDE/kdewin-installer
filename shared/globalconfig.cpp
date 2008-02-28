@@ -26,8 +26,10 @@
 
 #include <QFileInfo>
 #include <QBuffer>
-#include <QMessageBox>
 #include <QUrl>
+#ifdef USE_GUI
+#include <QMessageBox>
+#endif
 
 GlobalConfig::GlobalConfig()
 {}
@@ -45,7 +47,6 @@ const QFileInfo GlobalConfig::remoteConfigFile()
 
 QStringList GlobalConfig::fetch(const QString &baseURL)
 {
-    bool ret;
     m_baseURL = baseURL;
 
     QStringList configFiles;
@@ -63,9 +64,9 @@ QStringList GlobalConfig::fetch(const QString &baseURL)
         {
             QUrl url(baseURL + "/config.txt");
             QFileInfo cfi(Settings::instance().downloadDir()+"/config.txt");
-            ret = Downloader::instance()->start(url,cfi.absoluteFilePath());
+            bool ret = Downloader::instance()->start(url,cfi.absoluteFilePath());
             if (Settings::hasDebug("GlobalConfig"))
-                qDebug() << "download remote config file from" <<  url << "to" << cfi.absoluteFilePath() << "..." << (ret == true ? "okay" : "failure") ;
+                qDebug() << "download remote config file from" <<  url << "to" << cfi.absoluteFilePath() << "..." << (ret ? "okay" : "failure") ;
             if (ret)
                 configFiles << cfi.absoluteFilePath();
             else 
@@ -86,7 +87,8 @@ bool GlobalConfig::parse(const QStringList &configFiles)
 {
     bool ret = true;
     Q_FOREACH(const QString &configFile, configFiles) {
-        ret = parseFromFile(configFile);
+        if( !parseFromFile(configFile) )
+           ret = false;
         if (Settings::hasDebug("GlobalConfig"))
             qDebug() << "parse config file " << configFile << (ret ? "okay" : "failure") ;
     }
@@ -95,9 +97,7 @@ bool GlobalConfig::parse(const QStringList &configFiles)
 
 GlobalConfig::~GlobalConfig()
 {
-    qDeleteAll(m_sites);
-    qDeleteAll(m_mirrors);
-    qDeleteAll(m_packages);
+    clear();
 }
 
 bool GlobalConfig::parseFromFile(const QString &_fileName)
@@ -221,40 +221,23 @@ bool GlobalConfig::parse(QIODevice *ioDev)
             {
                 if(cmd[0] == "@version")
                     pkg->setVersion(cmd[1]);
-                else if(cmd[0] == "@url-bin")
-                {
+                else if(cmd[0].startsWith("@url-")) {
+                  Package::Type typ;
+                  if(cmd[0] == "@url-bin")
+                    typ = Package::BIN;
+                  else if(cmd[0] == "@url-lib")
+                    typ = Package::LIB;
+                  else if(cmd[0] == "@url-doc")
+                    typ = Package::DOC;
+                  else if(cmd[0] == "@url-src")
+                    typ = Package::SRC;
+                  else
+                    continue;
                   QUrl url(cmd[1]);
                   if (url.scheme().isEmpty())
                     url = QUrl(m_baseURL + '/' + cmd[1]);
                   Package::PackageItem item;
-                  if (item.set(url,col2,Package::BIN))
-                    pkg->add(item);
-                }
-                else if(cmd[0] == "@url-lib")
-                {
-                  QUrl url(cmd[1]);
-                  if (url.scheme().isEmpty())
-                    url = QUrl(m_baseURL + '/' + cmd[1]);
-                  Package::PackageItem item;
-                  if (item.set(url,col2,Package::LIB))
-                    pkg->add(item);
-                }
-                else if(cmd[0] == "@url-doc")
-                {
-                  QUrl url(cmd[1]);
-                  if (url.scheme().isEmpty())
-                    url = QUrl(m_baseURL + '/' + cmd[1]);
-                  Package::PackageItem item;
-                  if (item.set(url,col2,Package::DOC))
-                    pkg->add(item);
-                }
-                else if(cmd[0] == "@url-src")
-                {
-                  QUrl url(cmd[1]);
-                  if (url.scheme().isEmpty())
-                    url = QUrl(m_baseURL + '/' + cmd[1]);
-                  Package::PackageItem item;
-                  if (item.set(url,col2,Package::SRC))
+                  if (item.set(url,col2,typ))
                     pkg->add(item);
                 }
                 else if(cmd[0] == "@require")

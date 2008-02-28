@@ -38,8 +38,8 @@ class Installer : public QObject
 
 public:
     enum InstallerType { Standard, GNUWIN32 };
-    Installer();
-    ~Installer();
+    Installer(QObject *parent = 0);
+    virtual ~Installer();
     InstallerType Type() const
     {
         return m_type;
@@ -57,7 +57,6 @@ public:
 
     InstallerProgress *progress();
 
-    bool isEnabled();
     void setRoot(const QString &root);
     const QString root() const { return m_root; }
     void cancel();
