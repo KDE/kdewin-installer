@@ -20,15 +20,15 @@
 **
 ****************************************************************************/
 
+#include "installerprogress.h"
+#include "settings.h"
+
 #include <QDebug>
 #include <QLabel>
 #include <QProgressBar>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QListWidget>
-
-#include "installerprogress.h"
-#include "settings.h"
 
 #ifdef USE_GUI
 InstallerProgress::InstallerProgress(QWidget *parent,bool showProgress)

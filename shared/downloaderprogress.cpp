@@ -21,15 +21,16 @@
 **
 ****************************************************************************/
 
+#include "downloaderprogress.h"
+
+#include <time.h>
+
 #include <QDebug>
 #include <QLabel>
 #include <QProgressBar>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QUrl>
-#include <time.h>
-
-#include "downloaderprogress.h"
 
 #ifdef USE_GUI
 GenericProgress::GenericProgress(QWidget *parent)

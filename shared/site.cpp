@@ -22,10 +22,10 @@
 **
 ****************************************************************************/
 
-#include <QDebug>
-
 #include "config.h"
 #include "site.h"
+
+#include <QDebug>
 
 void Site::addDependencies(const QString &_package, const QStringList &deps)
 {

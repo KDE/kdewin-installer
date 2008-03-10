@@ -20,14 +20,8 @@
 **
 ****************************************************************************/
 
-#include <QtDebug>
-#include <QDir>
-#include <QTreeWidget>
-#include <QFlags>
-
 #include "config.h"
 #include "installerengine.h"
-
 #include "downloader.h"
 #include "installer.h"
 #include "installerprogress.h"
@@ -35,6 +29,11 @@
 #include "packagelist.h"
 #include "globalconfig.h"
 #include "database.h"
+
+#include <QtDebug>
+#include <QDir>
+#include <QTreeWidget>
+#include <QFlags>
 
 QString InstallerEngine::defaultConfigURL;
 QString InstallerEngine::fallBackURL = "http://downloads.sourceforge.net/kde-windows";

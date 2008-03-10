@@ -21,6 +21,9 @@
 **
 ****************************************************************************/
 
+#include "misc.h"
+#include "settings.h"
+
 #include <qglobal.h>
 
 #ifdef Q_WS_WIN
@@ -40,9 +43,6 @@
 #include <QDateTime>
 #include <QBuffer>
 #include <qplatformdefs.h>
-
-#include "misc.h"
-#include "settings.h"
 
 #ifndef MISC_SMALL_VERSION
 #ifdef Q_WS_WIN

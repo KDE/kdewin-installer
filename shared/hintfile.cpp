@@ -20,9 +20,10 @@
 **
 ****************************************************************************/
 
+#include "hintfile.h"
+
 #include <QFile>
 #include <QBuffer>
-#include "hintfile.h"
 
 bool HintFile::parse(QIODevice *ioDev, HintFileType &hf)
 {

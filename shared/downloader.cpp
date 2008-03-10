@@ -21,15 +21,18 @@
 **
 ****************************************************************************/
 
-#include <qnamespace.h>
+#include "downloader.h"
+#include "downloader_p.h"
+#include "downloaderprogress.h"
+#include "settings.h"
+
 #ifdef Q_OS_WIN
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #endif
 #include <curl/curl.h>
-#include "downloader.h"
-#include "downloader_p.h"
 
+#include <qnamespace.h>
 #include <QtCore/QBuffer>
 #include <QtCore/QByteArray>
 #include <QtCore/QDebug>
@@ -38,11 +41,6 @@
 #include <QtCore/QTemporaryFile>
 #include <QtCore/QThread>
 #include <QtNetwork/QNetworkProxy>
-
-#include "downloaderprogress.h"
-#include "settings.h"
-
-
 
 MyThread::MyThread ( CURL *handle, QObject *parent )
         : QThread ( parent ), curlHandle ( handle ), m_bCancel ( false ), m_ret ( CURLE_OK )

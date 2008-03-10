@@ -21,17 +21,16 @@
 ****************************************************************************/
 
 #include "config.h"
-
-#include <QtDebug>
-#include <QStringList>
-#include <QFile>
-#include <QDir>
-
 #include "package.h"
 #include "downloader.h"
 #include "installer.h"
 #include "database.h"
 #include "uninstaller.h"
+
+#include <QtDebug>
+#include <QStringList>
+#include <QFile>
+#include <QDir>
 
 #ifndef PACKAGE_SMALL_VERSION
 /**

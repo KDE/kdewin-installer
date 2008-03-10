@@ -21,16 +21,6 @@
 **
 ****************************************************************************/
 
-#include "unpacker.h"
-#include "unpacker_p.h"
-
-#include <QtCore/QDebug>
-#include <QtCore/QDir>
-#include <QtCore/QEventLoop>
-#include <QtCore/QFile>
-#include <QtCore/QFileInfo>
-#include <QtCore/QProcess>
-
 #include "config.h"
 #include "installerprogress.h"
 #include "quazip.h"
@@ -47,6 +37,15 @@ using namespace qua7zip;
 # define QUNZIP_BUFFER (256 * 1024)
 #endif
 #include "misc.h"
+#include "unpacker.h"
+#include "unpacker_p.h"
+
+#include <QtCore/QDebug>
+#include <QtCore/QDir>
+#include <QtCore/QEventLoop>
+#include <QtCore/QFile>
+#include <QtCore/QFileInfo>
+#include <QtCore/QProcess>
 
 UPThread::UPThread ( QObject *parent )
         : QThread ( parent ), m_bCancel ( false ), m_bRet ( false )

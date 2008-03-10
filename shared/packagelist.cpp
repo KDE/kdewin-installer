@@ -20,6 +20,13 @@
 **
 ****************************************************************************/
 
+#include "packagelist.h"
+#include "globalconfig.h"
+#include "database.h"
+#include "downloader.h"
+#include "misc.h"
+#include "hintfile.h"
+
 #include <QBuffer>
 #include <QDebug>
 #include <QFile>
@@ -27,13 +34,6 @@
 #include <QStandardItemModel>
 #include <QUrl>
 #include <QTreeWidget>
-
-#include "packagelist.h"
-#include "globalconfig.h"
-#include "database.h"
-#include "downloader.h"
-#include "misc.h"
-#include "hintfile.h"
 
 PackageList::PackageList()
         : QObject()

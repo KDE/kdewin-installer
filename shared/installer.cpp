@@ -20,6 +20,13 @@
 **
 ****************************************************************************/
 
+#include "config.h"
+#include "installer.h"
+#include "installerprogress.h"
+#include "packagelist.h"
+#include "unpacker.h"
+#include "uninstaller.h"
+
 #include <QtCore/QBuffer>
 #include <QtCore/QDebug>
 #include <QtCore/QDir>
@@ -31,13 +38,6 @@
 #ifdef Q_OS_WIN
 #include <windows.h>
 #endif
-
-#include "config.h"
-#include "installer.h"
-#include "installerprogress.h"
-#include "packagelist.h"
-#include "unpacker.h"
-#include "uninstaller.h"
 
 //#define DEBUG
 #ifdef Q_CC_MSVC

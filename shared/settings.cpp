@@ -20,12 +20,12 @@
 **
 ****************************************************************************/
 
+#include "settings.h"
+#include "misc.h"
+
 #include <QDir>
 #include <QUrl>
 #include <QtDebug>
-
-#include "settings.h"
-#include "misc.h"
 
 Settings::Settings()
  : m_settingsMain( new QSettings(QSettings::IniFormat, QSettings::UserScope, "KDE", "Installer") ), 

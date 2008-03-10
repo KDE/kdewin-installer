@@ -21,6 +21,12 @@
 **
 ****************************************************************************/
 
+#include "installerprogress.h"
+#include "md5.h"
+#include "misc.h"
+#include "uninstaller.h"
+#include "uninstaller_p.h"
+
 #include <QtCore/QDebug>
 #include <QtCore/QDir>
 #include <QtCore/QFile>
@@ -28,13 +34,6 @@
 #include <QtCore/QList>
 #include <QtCore/QEventLoop>
 #include <qplatformdefs.h>
-
-#include "uninstaller.h"
-#include "uninstaller_p.h"
-#include "misc.h"
-#include "md5.h"
-
-#include "installerprogress.h"
 
 UIThread::UIThread ( QObject *parent )
         : QThread ( parent ), m_bCancel ( false ), m_bRet ( false )
