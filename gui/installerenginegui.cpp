@@ -24,17 +24,10 @@
 //#define DISABLE_ICONS
 #include "config.h"
 
-#include <QtDebug>
-#include <QDir>
-#include <QTreeWidget>
-#include <QListWidget>
-#include <QTextEdit>
-#include <QFlags>
-#include <QMessageBox>
-
 #include "installerenginegui.h"
 #include "downloader.h"
 #include "installwizard.h"
+
 #ifdef ENABLE_STYLE
 #define DISABLE_ICONS
 #endif
@@ -46,9 +39,16 @@
 #include "packagelist.h"
 #include "globalconfig.h"
 #include "database.h"
-
 #include "packagestates.h"
 #include "installerdialogs.h"
+
+#include <QtDebug>
+#include <QDir>
+#include <QTreeWidget>
+#include <QListWidget>
+#include <QTextEdit>
+#include <QFlags>
+#include <QMessageBox>
 
 /// holds the package selection and icon states
 PackageStates packageStates;

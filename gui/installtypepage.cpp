@@ -22,12 +22,12 @@
 **
 ****************************************************************************/
 
+#include "database.h"
+#include "installtypepage.h"
+
 #include <QDir>
 #include <QString>
 #include <QFileDialog>
-
-#include "database.h"
-#include "installtypepage.h"
 
 InstallTypePage::InstallTypePage() : InstallWizardPage(0)
 {

@@ -22,11 +22,6 @@
 **
 ****************************************************************************/
 
-#include <QListWidget>
-#include <QSplitter>
-#include <QTextEdit>
-#include <QTreeWidget>
-
 #include "config.h"
 #include "downloader.h"
 #include "installer.h"
@@ -39,8 +34,12 @@
 #include "settings.h"
 #include "uninstaller.h"
 #include "unpacker.h"
-
 #include "packageselectorpage.h"
+
+#include <QListWidget>
+#include <QSplitter>
+#include <QTextEdit>
+#include <QTreeWidget>
 
 // must be global
 QTreeWidget *tree;

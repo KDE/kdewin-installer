@@ -22,10 +22,9 @@
 **
 ****************************************************************************/
 
-#include <QTreeWidget>
-
-
 #include "dependenciespage.h"
+
+#include <QTreeWidget>
 
 DependenciesPage::DependenciesPage() : InstallWizardPage(0)
 {

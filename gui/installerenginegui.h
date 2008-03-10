@@ -28,6 +28,7 @@
 
 class QTabWidget;
 class QTextEdit;
+class QLabel;
 
 class InstallerEngineGui : public InstallerEngine
 {

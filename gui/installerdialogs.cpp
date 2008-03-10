@@ -20,8 +20,8 @@
 **
 ****************************************************************************/
 
-#include <QVBoxLayout>
 #include "installerdialogs.h"
+#include <QVBoxLayout>
 
 bool InstallerDialogs::installerOutdated()
 {

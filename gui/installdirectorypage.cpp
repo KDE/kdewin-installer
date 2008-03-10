@@ -22,12 +22,12 @@
 **
 ****************************************************************************/
 
+#include "database.h"
+#include "installdirectorypage.h"
+
 #include <QDir>
 #include <QString>
 #include <QFileDialog>
-
-#include "database.h"
-#include "installdirectorypage.h"
 
 InstallDirectoryPage::InstallDirectoryPage() : InstallWizardPage(0)
 {

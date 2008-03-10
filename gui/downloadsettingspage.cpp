@@ -22,9 +22,9 @@
 **
 ****************************************************************************/
 
-#include <QFileDialog>
-
 #include "downloadsettingspage.h"
+
+#include <QFileDialog>
 
 DownloadSettingsPage::DownloadSettingsPage() : InstallWizardPage(0)
 {

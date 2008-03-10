@@ -21,12 +21,12 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-#include <QPlastiqueStyle>
-
 #include "installwizard.h"
 #include "installerengine.h"
 #include "misc.h"
+
+#include <QApplication>
+#include <QPlastiqueStyle>
 
 int main(int argc, char *argv[])
 {
