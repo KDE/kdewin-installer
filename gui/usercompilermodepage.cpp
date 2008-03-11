@@ -23,13 +23,13 @@
 ****************************************************************************/
 
 #include "database.h"
-#include "installtypepage.h"
+#include "usercompilermodepage.h"
 
 #include <QDir>
 #include <QString>
 #include <QFileDialog>
 
-InstallTypePage::InstallTypePage() : InstallWizardPage(0)
+UserCompilerModePage::UserCompilerModePage() : InstallWizardPage(0)
 {
     ui.setupUi(this);
     setTitle(windowTitle());
@@ -46,7 +46,7 @@ InstallTypePage::InstallTypePage() : InstallWizardPage(0)
     connect( groupB,SIGNAL(buttonClicked (int)),this,SLOT(slotModeButtonClicked(int)) );
 }
 
-void InstallTypePage::initializePage()
+void UserCompilerModePage::initializePage()
 {
     Settings &s = Settings::instance();
     setCompilerMode(!s.isDeveloperMode());
@@ -73,17 +73,17 @@ void InstallTypePage::initializePage()
     setPixmap(QWizard::WatermarkPixmap, QPixmap());
 }
 
-bool InstallTypePage::isComplete()
+bool UserCompilerModePage::isComplete()
 {
     return true;
 }
 
-int InstallTypePage::nextId() const
+int UserCompilerModePage::nextId() const
 {
     return InstallWizard::downloadSettingsPage;
 }
 
-bool InstallTypePage::validatePage()
+bool UserCompilerModePage::validatePage()
 {
     Settings &s = Settings::instance();
     s.setDeveloperMode(ui.installModeDeveloper->isChecked());
@@ -95,7 +95,7 @@ bool InstallTypePage::validatePage()
     return true;
 }
 
-void InstallTypePage::setCompilerMode(bool EndUserMode)
+void UserCompilerModePage::setCompilerMode(bool EndUserMode)
 {
     Settings &s = Settings::instance();
     if (EndUserMode)
@@ -125,10 +125,10 @@ void InstallTypePage::setCompilerMode(bool EndUserMode)
     }
 }
 
-void InstallTypePage::slotModeButtonClicked(int id)
+void UserCompilerModePage::slotModeButtonClicked(int id)
 {
     setCompilerMode(ui.installModeDeveloper->isChecked() ? 0 : 1);
 }
 
 
-#include "installtypepage.moc"
+#include "usercompilermodepage.moc"

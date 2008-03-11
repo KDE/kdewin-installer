@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>InstallTypePage</class>
- <widget class="QWidget" name="InstallTypePage" >
+ <class>UserCompilerModePage</class>
+ <widget class="QWidget" name="UserCompilerModePage" >
   <property name="geometry" >
    <rect>
     <x>0</x>

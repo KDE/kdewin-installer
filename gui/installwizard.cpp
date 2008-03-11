@@ -55,7 +55,7 @@
 #include "settingspage.h"
 
 #include "titlepage.h"
-#include "installtypepage.h"
+#include "usercompilermodepage.h"
 #include "installdirectorypage.h"
 #include "internetsettingspage.h"
 #include "downloadsettingspage.h"
@@ -111,7 +111,7 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
 */
     setPage(titlePage, new TitlePage()); 
     setPage(installDirectoryPage, new InstallDirectoryPage); 
-    setPage(installTypePage, new InstallTypePage); 
+    setPage(userCompilerModePage, new UserCompilerModePage); 
     setPage(downloadSettingsPage, new DownloadSettingsPage); 
     setPage(internetSettingsPage, new InternetSettingsPage); 
     setPage(mirrorSettingsPage, new MirrorSettingsPage); 

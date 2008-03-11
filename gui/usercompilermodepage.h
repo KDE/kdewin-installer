@@ -22,19 +22,19 @@
 **
 ****************************************************************************/
 
-#ifndef INSTALLTYPEPAGE_H
-#define INSTALLTYPEPAGE_H
+#ifndef USERCOMPILERMODEPAGE_H
+#define USERCOMPILERMODEPAGE_H
 
 #include "installwizard.h"
 
-#include "ui_installtypepage.h"
+#include "ui_usercompilermodepage.h"
 
-class InstallTypePage : public InstallWizardPage
+class UserCompilerModePage : public InstallWizardPage
 {
     Q_OBJECT
 
 public:
-    InstallTypePage();
+    UserCompilerModePage();
 
     void initializePage();
     bool isComplete();
@@ -46,7 +46,7 @@ protected slots:
 
 protected:
     void setCompilerMode(bool);
-    Ui::InstallTypePage ui;
+    Ui::UserCompilerModePage ui;
 };
 
 #endif

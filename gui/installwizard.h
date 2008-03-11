@@ -37,7 +37,7 @@ class InstallWizard : public QWizard
 public:
     enum {
         titlePage,
-        installTypePage,
+        userCompilerModePage,
         installDirectoryPage,
         downloadSettingsPage,
         internetSettingsPage,

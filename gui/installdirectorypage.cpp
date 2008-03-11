@@ -51,7 +51,7 @@ bool InstallDirectoryPage::isComplete()
 
 int InstallDirectoryPage::nextId() const
 {
-    return InstallWizard::installTypePage;
+    return InstallWizard::userCompilerModePage;
 }
 
 bool InstallDirectoryPage::validatePage()
