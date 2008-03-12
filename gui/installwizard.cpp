@@ -22,6 +22,8 @@
 **
 ****************************************************************************/
 
+//#define USE_ENDUSERPAGES
+
 #include "config.h"
 #include "installwizard.h"
 #include "installerenginegui.h"
@@ -256,8 +258,6 @@ void InstallWizard::slotEngineError(const QString &msg)
     );
 }
 
-
-
 int InstallWizard::nextId() const
 {
     switch (currentId()) {
@@ -271,10 +271,12 @@ int InstallWizard::nextId() const
                 else
                     return mirrorSettingsPage;
             }
+#ifdef USE_ENDUSERPAGES
             else if (Database::isAnyPackageInstalled(Settings::instance().installDir()))
                 return endUserInstallModePage;
             else
-                return installDirectoryPage;
+#endif
+                return mirrorSettingsPage;
         }
         else
             return installDirectoryPage;
@@ -283,10 +285,12 @@ int InstallWizard::nextId() const
     case userCompilerModePage: return downloadSettingsPage;
     case downloadSettingsPage: return internetSettingsPage;
     case internetSettingsPage: 
-        if (Settings::instance().isDeveloperMode())
-            return mirrorSettingsPage;
-        else
+#ifdef USE_ENDUSERPAGES
+        if (!Settings::instance().isDeveloperMode())
             return endUserInstallModePage;
+        else
+#endif
+            return mirrorSettingsPage;
         
     case endUserInstallModePage:
     { 
