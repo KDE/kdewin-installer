@@ -6,4 +6,6 @@
 #cmakedefine SEVENZIP_UNPACK_SUPPORT 1
 #cmakedefine BZIP2_UNPACK_SUPPORT 1
 
+#include "debug.h"
+
 #endif

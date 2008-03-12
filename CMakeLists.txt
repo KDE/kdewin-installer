@@ -103,6 +103,7 @@ include(3rdparty/CMakeLists.txt)
 
 # set installer_shared_SOURCES/installer_shared_HEADERS
 set(installer_shared_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/debug.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/downloader.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/downloaderprogress.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/installerprogress.cpp
@@ -124,6 +125,7 @@ set(installer_shared_SOURCES
 )
 
 set(installer_shared_HEADERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/debug.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/downloader.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/downloader_p.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/downloaderprogress.h
