@@ -271,11 +271,10 @@ int InstallWizard::nextId() const
                 else
                     return mirrorSettingsPage;
             }
-            return mirrorSettingsPage;
-//            else if (Database::isAnyPackageInstalled(Settings::instance().installDir()))
-//                return endUserInstallModePage;
-//            else
-//                return installDirectoryPage;
+            else if (Database::isAnyPackageInstalled(Settings::instance().installDir()))
+                return endUserInstallModePage;
+            else
+                return installDirectoryPage;
         }
         else
             return installDirectoryPage;

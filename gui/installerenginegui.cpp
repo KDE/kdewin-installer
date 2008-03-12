@@ -359,13 +359,18 @@ void InstallerEngineGui::checkUpdateDependencies(QTreeWidget *uilist)
     if (uilist)
         uilist->clear();
     
-    uilist->setHeaderLabels(QStringList() << "Package" << "Description");
+    uilist->setHeaderLabels(QStringList() << "Package" << "Version" << "Description");
     Q_FOREACH(Package *pkg, packageStates.packages(m_packageResources)) {
         if (!setDependencyState(pkg,uilist))
             break;
     }
     if (uilist)
+    {
         uilist->sortItems(0,Qt::AscendingOrder);
+        uilist->resizeColumnToContents(0);
+        uilist->resizeColumnToContents(1);
+        uilist->resizeColumnToContents(2);
+    }
 //    qDebug() << (int) packageStates;
 //    qDebug() << (int) dependencyStates;
 }
@@ -386,7 +391,8 @@ bool InstallerEngineGui::setDependencyState(Package *_package, QTreeWidget *list
             continue;
 
         // if package is already installed, don't install it again
-        if (m_database->getPackage(dep))
+        Package *dp = m_database->getPackage(dep);
+        if (dp && dp->version() == package->version())
             continue;
 
         stateType state = packageStates.getState(package,Package::BIN);
@@ -397,7 +403,7 @@ bool InstallerEngineGui::setDependencyState(Package *_package, QTreeWidget *list
             qDebug() << __FUNCTION__ << "selected package" << package->name() << "in previous state" << state << "for installation";
             if (list) 
             {   
-                QTreeWidgetItem * item = new QTreeWidgetItem(QStringList() << package->name() << package->notes());
+                QTreeWidgetItem * item = new QTreeWidgetItem(QStringList() << package->name() << package->version() << package->notes());
                 list->addTopLevelItem(item);
             }
             dependencyStates.setState(package,Package::BIN,_Install);

@@ -13,7 +13,7 @@
    <string>Additional Packages</string>
   </property>
   <property name="statusTip" >
-   <string>The following packages have also been selected for installing because the packages you previously selected depend on them.</string>
+   <string>The following packages have also been selected for installing or updating because the packages you previously selected depend on them.</string>
   </property>
   <layout class="QVBoxLayout" >
    <item>
@@ -21,7 +21,7 @@
      <item>
       <widget class="QTreeWidget" name="dependenciesList" >
        <property name="columnCount" >
-        <number>2</number>
+        <number>3</number>
        </property>
        <column>
         <property name="text" >
@@ -31,6 +31,11 @@
        <column>
         <property name="text" >
          <string>2</string>
+        </property>
+       </column>
+       <column>
+        <property name="text" >
+         <string>3</string>
         </property>
        </column>
       </widget>
