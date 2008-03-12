@@ -10,49 +10,50 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Installation Options</string>
+   <string>Installation Action</string>
   </property>
   <property name="statusTip" >
    <string>Select one of the available options.</string>
   </property>
-  <widget class="QRadioButton" name="updateInstallationButton" >
+  <widget class="QWidget" name="" >
    <property name="geometry" >
     <rect>
-     <x>40</x>
-     <y>40</y>
-     <width>251</width>
-     <height>21</height>
+     <x>30</x>
+     <y>10</y>
+     <width>176</width>
+     <height>101</height>
     </rect>
    </property>
-   <property name="text" >
-    <string>update installed packages</string>
-   </property>
-  </widget>
-  <widget class="QRadioButton" name="repairInstallationButton" >
-   <property name="geometry" >
-    <rect>
-     <x>40</x>
-     <y>80</y>
-     <width>251</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>repair current installation</string>
-   </property>
-  </widget>
-  <widget class="QRadioButton" name="removeInstallationButton" >
-   <property name="geometry" >
-    <rect>
-     <x>40</x>
-     <y>120</y>
-     <width>250</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>remove installation</string>
-   </property>
+   <layout class="QGridLayout" >
+    <item row="0" column="0" >
+     <widget class="QLabel" name="label" >
+      <property name="text" >
+       <string>TextLabel</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" >
+     <widget class="QRadioButton" name="updateInstallationButton" >
+      <property name="text" >
+       <string>update installed packages</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" >
+     <widget class="QRadioButton" name="repairInstallationButton" >
+      <property name="text" >
+       <string>repair current installation</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0" >
+     <widget class="QRadioButton" name="removeInstallationButton" >
+      <property name="text" >
+       <string>remove installation</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

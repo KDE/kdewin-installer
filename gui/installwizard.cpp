@@ -26,6 +26,7 @@
 #include "installwizard.h"
 #include "installerenginegui.h"
 #include "installerdialogs.h"
+#include "database.h"
 #include "downloader.h"
 #include "downloaderprogress.h"
 #include "uninstaller.h"
@@ -263,13 +264,21 @@ int InstallWizard::nextId() const
     case titlePage:
         if (Settings::instance().isSkipBasicSettings())
         {
-            if (GlobalConfig::isRemoteConfigAvailable())
-                return packageSelectorPage;
-            else        
-                return mirrorSettingsPage;
+            if (Settings::instance().isDeveloperMode()) 
+            {
+                if (GlobalConfig::isRemoteConfigAvailable())
+                    return packageSelectorPage;
+                else
+                    return mirrorSettingsPage;
+            }
+            return mirrorSettingsPage;
+//            else if (Database::isAnyPackageInstalled(Settings::instance().installDir()))
+//                return endUserInstallModePage;
+//            else
+//                return installDirectoryPage;
         }
         else
-            return InstallWizard::installDirectoryPage;
+            return installDirectoryPage;
 
     case installDirectoryPage: return userCompilerModePage;
     case userCompilerModePage: return downloadSettingsPage;

@@ -25,7 +25,7 @@
 #include "config.h"
 #include "enduserinstallmodepage.h"
 
-EndUserInstallModePage::EndUserInstallModePage()
+EndUserInstallModePage::EndUserInstallModePage() : InstallWizardPage(0)
 {
     ui.setupUi(this);
     setTitle(windowTitle());
@@ -36,6 +36,7 @@ EndUserInstallModePage::EndUserInstallModePage()
     groupA->addButton(ui.updateInstallationButton);
     groupA->addButton(ui.repairInstallationButton);
     groupA->addButton(ui.removeInstallationButton);
+
 }
 
 void EndUserInstallModePage::initializePage()
