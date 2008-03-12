@@ -371,18 +371,14 @@ void InstallerEngineGui::checkUpdateDependencies(QTreeWidget *uilist)
         uilist->resizeColumnToContents(1);
         uilist->resizeColumnToContents(2);
     }
-//    qDebug() << (int) packageStates;
-//    qDebug() << (int) dependencyStates;
+    qDebug() <<  packageStates;
+    qDebug() << dependencyStates;
 }
 
 
 bool InstallerEngineGui::setDependencyState(Package *_package, QTreeWidget *list)
 {
-    stateType state = packageStates.getState(_package,Package::BIN);
-    stateType depState = dependencyStates.getState(_package,Package::BIN);
-    // @TODO check reverse dependency when deleting
-    if ((state == _Nothing || state == _Remove) && (depState == _Nothing || depState == _Remove))
-        return true;
+    qDebug() << __FUNCTION__ << _package->name();
 
     foreach(const QString &dep, _package->deps())
     {
@@ -390,31 +386,39 @@ bool InstallerEngineGui::setDependencyState(Package *_package, QTreeWidget *list
         if (!package)
             continue;
 
-        // if package is already installed, don't install it again
-        Package *dp = m_database->getPackage(dep);
-        if (dp && dp->version() == package->version())
-            continue;
+        // check dependencies first
+        setDependencyState(package, list);
 
         stateType state = packageStates.getState(package,Package::BIN);
         stateType depState = dependencyStates.getState(package,Package::BIN);
-        // only add package if is neither selected in main states or dep states
+
+        Package *installedPackage = m_database->getPackage(dep);
+
+        // if package is already installed, ignore it
+        if (installedPackage && installedPackage->version() == package->version()) 
+            continue;
+
+        // the package is installed with a different version 
+        stateType newState = installedPackage ? _Update : _Install;
+
+        // only add package if is neither selected in main or dependency states
         if ((state == _Nothing || state == _Remove) && (depState == _Nothing || depState == _Remove))
         {
-            qDebug() << __FUNCTION__ << "selected package" << package->name() << "in previous state" << state << "for installation";
+            qDebug() << __FUNCTION__ << "selected package" << package->name() << "in previous state" << state << "for" << newState;
             if (list) 
             {   
                 QTreeWidgetItem * item = new QTreeWidgetItem(QStringList() << package->name() << package->version() << package->notes());
                 list->addTopLevelItem(item);
             }
-            dependencyStates.setState(package,Package::BIN,_Install);
+            dependencyStates.setState(package,Package::BIN,newState);
 
             // set additional package types for download/install/remove
             if (m_installMode == Developer)
             {
                 if (package->hasType(Package::LIB))
-                    dependencyStates.setState(package,Package::LIB,_Install);
+                    dependencyStates.setState(package,Package::LIB,newState);
                 if (package->hasType(Package::DOC))
-                    dependencyStates.setState(package,Package::DOC,_Install);
+                    dependencyStates.setState(package,Package::DOC,newState);
             }
             else if (m_installMode == EndUser)
             {
@@ -422,7 +426,6 @@ bool InstallerEngineGui::setDependencyState(Package *_package, QTreeWidget *list
                  //   dependenciesStates.setState(package,Package::DOC,_Install);
             }
         }
-        setDependencyState(package, list);
     }
     return true;
 }
