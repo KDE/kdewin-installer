@@ -39,19 +39,6 @@ void TitlePage::initializePage()
     ui.skipBasicSettings->setCheckState(s.isSkipBasicSettings() ? Qt::Checked : Qt::Unchecked);
 }
 
-int TitlePage::nextId() const
-{
-    if (ui.skipBasicSettings->checkState() == Qt::Checked)
-    {
-        if (GlobalConfig::isRemoteConfigAvailable())
-            return InstallWizard::packageSelectorPage;
-        else        
-            return InstallWizard::mirrorSettingsPage;
-    }
-    else
-        return InstallWizard::installDirectoryPage;
-}
-
 bool TitlePage::validatePage()
 {
     Settings &s = Settings::instance();

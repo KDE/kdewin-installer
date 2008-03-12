@@ -49,11 +49,6 @@ bool InstallDirectoryPage::isComplete()
     return !ui.rootPathEdit->text().isEmpty();
 }
 
-int InstallDirectoryPage::nextId() const
-{
-    return InstallWizard::userCompilerModePage;
-}
-
 bool InstallDirectoryPage::validatePage()
 {
     Settings &s = Settings::instance();

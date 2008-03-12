@@ -37,7 +37,6 @@ public:
 
     void initializePage();
     bool isComplete();
-    int nextId() const;
     bool validatePage();
 
 protected: 

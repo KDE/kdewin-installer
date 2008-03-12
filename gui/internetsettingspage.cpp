@@ -68,11 +68,6 @@ void InternetSettingsPage::initializePage()
     switchProxyFields(false);
 }
 
-int InternetSettingsPage::nextId() const
-{
-    return InstallWizard::mirrorSettingsPage;
-}
-
 bool InternetSettingsPage::validatePage()
 {
     Settings &s = Settings::instance();

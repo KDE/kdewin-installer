@@ -1,0 +1,60 @@
+<ui version="4.0" >
+ <class>EndUserInstallModePage</class>
+ <widget class="QWidget" name="EndUserInstallModePage" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>700</width>
+    <height>330</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Installation Options</string>
+  </property>
+  <property name="statusTip" >
+   <string>Select one of the available options.</string>
+  </property>
+  <widget class="QRadioButton" name="updateInstallationButton" >
+   <property name="geometry" >
+    <rect>
+     <x>40</x>
+     <y>40</y>
+     <width>251</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>update installed packages</string>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="repairInstallationButton" >
+   <property name="geometry" >
+    <rect>
+     <x>40</x>
+     <y>80</y>
+     <width>251</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>repair current installation</string>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="removeInstallationButton" >
+   <property name="geometry" >
+    <rect>
+     <x>40</x>
+     <y>120</y>
+     <width>250</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>remove installation</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

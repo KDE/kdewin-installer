@@ -104,11 +104,6 @@ void MirrorSettingsPage::initializePage()
     connect(ui.addMirrorButton,SIGNAL(clicked()), this, SLOT(addNewMirrorClicked()));
 }
 
-int MirrorSettingsPage::nextId() const
-{
-    return InstallWizard::packageSelectorPage;
-}
-
 bool MirrorSettingsPage::validatePage()
 {
     Settings &s = Settings::instance();

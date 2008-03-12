@@ -43,11 +43,6 @@ void UninstallPage::initializePage()
 {
 }
 
-int UninstallPage::nextId() const
-{
-    return InstallWizard::installPage;
-}
-
 bool UninstallPage::isComplete()
 {
     return true;

@@ -41,11 +41,6 @@ void DependenciesPage::initializePage()
     setSettingsButtonVisible(false);
 }
 
-int DependenciesPage::nextId() const
-{
-    return InstallWizard::downloadPage;
-}
-
 bool DependenciesPage::validatePage()
 {
     return true;

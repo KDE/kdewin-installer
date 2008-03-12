@@ -22,30 +22,43 @@
 **
 ****************************************************************************/
 
-#ifndef MIRRORSETTINGSPAGE_H
-#define MIRRORSETTINGSPAGE_H
+#include "config.h"
+#include "enduserinstallmodepage.h"
 
-#include "installwizard.h"
-#include "ui_mirrorsettingspage.h"
-
-class MirrorSettingsPage : public InstallWizardPage
+EndUserInstallModePage::EndUserInstallModePage()
 {
-    Q_OBJECT
+    ui.setupUi(this);
+    setTitle(windowTitle());
+    setSubTitle(statusTip());
 
-public:
-    MirrorSettingsPage();
+    // logical grouping isn't available in the designer yet :-P
+    QButtonGroup *groupA = new QButtonGroup(this);
+    groupA->addButton(ui.updateInstallationButton);
+    groupA->addButton(ui.repairInstallationButton);
+    groupA->addButton(ui.removeInstallationButton);
+}
 
-    void initializePage();
-    bool isComplete();
-    bool validatePage();
-    void cleanupPage();
+void EndUserInstallModePage::initializePage()
+{
+}
 
-protected:
-    Ui::MirrorSettingsPage ui;
+int EndUserInstallModePage::nextId() const
+{
+    if (ui.updateInstallationButton->isChecked())
+        return InstallWizard::endUserUpdatePage;
+    else if (ui.repairInstallationButton->isChecked())
+        return InstallWizard::endUserRepairPage;
+    else if (ui.removeInstallationButton->isChecked())
+        return InstallWizard::endUserRemovePage;
+    else 
+        return InstallWizard::endUserInstallModePage;
+}
 
-protected slots:
-    void addNewMirrorClicked();
-};
+bool EndUserInstallModePage::validatePage()
+{
+    return true;
+}
 
 
-#endif
+#include "enduserinstallmodepage.moc"
+

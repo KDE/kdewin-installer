@@ -38,6 +38,10 @@ public:
     enum {
         titlePage,
         userCompilerModePage,
+        endUserInstallModePage,
+        endUserUpdatePage,
+        endUserRepairPage,
+        endUserRemovePage,
         installDirectoryPage,
         downloadSettingsPage,
         internetSettingsPage,
@@ -56,6 +60,7 @@ public:
 protected:
     void writeSettings();
     void readSettings();
+    virtual int nextId() const;
 
 private slots:
     void aboutButtonClicked();

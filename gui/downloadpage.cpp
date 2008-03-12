@@ -45,11 +45,6 @@ void DownloadPage::initializePage()
     setSettingsButtonVisible(false);
 }
 
-int DownloadPage::nextId() const
-{
-    return InstallWizard::uninstallPage;
-}
-
 bool DownloadPage::isComplete()
 {
     return true;

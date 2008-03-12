@@ -78,11 +78,6 @@ bool UserCompilerModePage::isComplete()
     return true;
 }
 
-int UserCompilerModePage::nextId() const
-{
-    return InstallWizard::downloadSettingsPage;
-}
-
 bool UserCompilerModePage::validatePage()
 {
     Settings &s = Settings::instance();

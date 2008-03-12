@@ -22,30 +22,23 @@
 **
 ****************************************************************************/
 
-#ifndef MIRRORSETTINGSPAGE_H
-#define MIRRORSETTINGSPAGE_H
+#ifndef ENDUSERINSTALLMODEPAGE_H
+#define ENDUSERINSTALLMODEPAGE_H
 
 #include "installwizard.h"
-#include "ui_mirrorsettingspage.h"
+#include "ui_enduserinstallmodepage.h"
 
-class MirrorSettingsPage : public InstallWizardPage
+class EndUserInstallModePage : public InstallWizardPage
 {
-    Q_OBJECT
-
 public:
-    MirrorSettingsPage();
+    EndUserInstallModePage();
 
     void initializePage();
-    bool isComplete();
     bool validatePage();
-    void cleanupPage();
+    int nextId() const;
 
-protected:
-    Ui::MirrorSettingsPage ui;
-
-protected slots:
-    void addNewMirrorClicked();
+protected: 
+    Ui::EndUserInstallModePage ui;
 };
-
 
 #endif

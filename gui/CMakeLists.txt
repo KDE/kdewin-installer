@@ -41,6 +41,7 @@ set(installer_GUI_SOURCES
    installerenginegui.cpp
    installpage.cpp
    usercompilermodepage.cpp
+   enduserinstallmodepage.cpp
    installwizard.cpp
    internetsettingspage.cpp
    mirrorsettingspage.cpp
@@ -62,6 +63,7 @@ set(installer_GUI_HEADERS
    installerenginegui.h
    installpage.h
    usercompilermodepage.h
+   enduserinstallmodepage.h
    installwizard.h
    internetsettingspage.h
    mirrorsettingspage.h
@@ -78,6 +80,7 @@ set (UI_SOURCES
    finishpage.ui
    installdirectorypage.ui
    usercompilermodepage.ui
+   enduserinstallmodepage.ui
    internetsettingspage.ui
    mirrorsettingspage.ui
    settingspage.ui

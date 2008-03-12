@@ -43,11 +43,6 @@ void InstallPage::initializePage()
 {
 }
 
-int InstallPage::nextId() const
-{
-    return InstallWizard::finishPage;
-}
-
 bool InstallPage::isComplete()
 {
     return true;

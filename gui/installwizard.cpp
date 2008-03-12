@@ -23,6 +23,33 @@
 ****************************************************************************/
 
 #include "config.h"
+#include "installwizard.h"
+#include "installerenginegui.h"
+#include "installerdialogs.h"
+#include "downloader.h"
+#include "downloaderprogress.h"
+#include "uninstaller.h"
+#include "unpacker.h"
+#include "installerprogress.h"
+#include "settings.h"
+#include "settingspage.h"
+#include "titlepage.h"
+#include "usercompilermodepage.h"
+#include "installdirectorypage.h"
+#include "internetsettingspage.h"
+#include "downloadsettingspage.h"
+#include "enduserinstallmodepage.h"
+//#include "enduserupdatepage.h"
+//#include "enduserrepairpage.h"
+//#include "enduserremovepage.h"
+#include "mirrorsettingspage.h"
+#include "packageselectorpage.h"
+#include "dependenciespage.h"
+#include "downloadpage.h"
+#include "uninstallpage.h"
+#include "installpage.h"
+#include "finishpage.h"
+
 #include <QCheckBox>
 #include <QDebug>
 #include <QFile>
@@ -40,32 +67,6 @@
 #include <QApplication>
 #include <QTextEdit>
 #include <QTimer>
-
-#include "installwizard.h"
-
-#include "installerenginegui.h"
-#include "installerdialogs.h"
-#include "downloader.h"
-#include "downloaderprogress.h"
-#include "uninstaller.h"
-#include "unpacker.h"
-#include "installerprogress.h"
-
-#include "settings.h"
-#include "settingspage.h"
-
-#include "titlepage.h"
-#include "usercompilermodepage.h"
-#include "installdirectorypage.h"
-#include "internetsettingspage.h"
-#include "downloadsettingspage.h"
-#include "mirrorsettingspage.h"
-#include "packageselectorpage.h"
-#include "dependenciespage.h"
-#include "downloadpage.h"
-#include "uninstallpage.h"
-#include "installpage.h"
-#include "finishpage.h"
 
 InstallerEngineGui *engine;
 
@@ -114,6 +115,10 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     setPage(userCompilerModePage, new UserCompilerModePage); 
     setPage(downloadSettingsPage, new DownloadSettingsPage); 
     setPage(internetSettingsPage, new InternetSettingsPage); 
+    setPage(endUserInstallModePage,new EndUserInstallModePage);
+//    setPage(endUserUpdatePage,     new EndUserUpdatePage);     
+//    setPage(endUserRepairPage,     new EndUserRepairPage);    
+//    setPage(endUserRemovePage,     new EndUserRemovePage);    
     setPage(mirrorSettingsPage, new MirrorSettingsPage); 
     setPage(packageSelectorPage, new PackageSelectorPage); 
     setPage(dependenciesPage, new DependenciesPage); 
@@ -251,33 +256,57 @@ void InstallWizard::slotEngineError(const QString &msg)
 }
 
 
-/*
- int InstallWizard::nextId() const
- {
-     switch (currentId()) {
-     case Page_Intro:
-         if (field("intro.evaluate").toBool()) {
-             return Page_Evaluate;
-         } else {
-             return Page_Register;
-         }
-     case Page_Evaluate:
-         return Page_Conclusion;
-     case Page_Register:
-         if (field("register.upgradeKey").toString().isEmpty()) {
-             return Page_Details;
-         } else {
-             return Page_Conclusion;
-         }
-     case Page_Details:
-         return Page_Conclusion;
-     case Page_Conclusion:
-     default:
-         return -1;
-     }
- }
 
-*/
+int InstallWizard::nextId() const
+{
+    switch (currentId()) {
+    case titlePage:
+        if (Settings::instance().isSkipBasicSettings())
+        {
+            if (GlobalConfig::isRemoteConfigAvailable())
+                return packageSelectorPage;
+            else        
+                return mirrorSettingsPage;
+        }
+        else
+            return InstallWizard::installDirectoryPage;
+
+    case installDirectoryPage: return userCompilerModePage;
+    case userCompilerModePage: return downloadSettingsPage;
+    case downloadSettingsPage: return internetSettingsPage;
+    case internetSettingsPage: 
+        if (Settings::instance().isDeveloperMode())
+            return mirrorSettingsPage;
+        else
+            return endUserInstallModePage;
+        
+    case endUserInstallModePage:
+    { 
+        EndUserInstallModePage *_page = static_cast<EndUserInstallModePage*>(page(endUserInstallModePage));
+        return _page->nextId();
+    }
+    case mirrorSettingsPage: 
+        return packageSelectorPage;
+        
+//    case endUserUpdatePage: 
+//    case endUserRepairPage: 
+//    case endUserRemovePage: 
+    case packageSelectorPage: 
+        return dependenciesPage;
+    case dependenciesPage: 
+        return downloadPage;
+    case downloadPage: 
+        return uninstallPage;
+    case uninstallPage: 
+        return installPage;
+    case installPage: 
+        return finishPage;
+    case finishPage: 
+    default:
+     return -1;
+    }
+}
+
 InstallWizardPage::InstallWizardPage(QWidget *parent) : QWizardPage(parent)
 {
     statusLabel = new QLabel("", this);

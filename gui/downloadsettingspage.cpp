@@ -41,11 +41,6 @@ void DownloadSettingsPage::initializePage()
     ui.tempPathEdit->setText(s.downloadDir());
 }
 
-int DownloadSettingsPage::nextId() const
-{
-    return InstallWizard::internetSettingsPage;
-}
-
 bool DownloadSettingsPage::validatePage()
 {
     Settings &s = Settings::instance();

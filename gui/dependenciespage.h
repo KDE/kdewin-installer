@@ -38,7 +38,6 @@ public:
     DependenciesPage();
 
     void initializePage();
-    int nextId() const;
     bool validatePage();
 
 protected:

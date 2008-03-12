@@ -206,11 +206,6 @@ void PackageSelectorPage::slotCompilerTypeChanged()
     engine->setPageSelectorWidgetData(tree);
 }
 
-int PackageSelectorPage::nextId() const
-{
-    return InstallWizard::dependenciesPage;
-}
-
 bool PackageSelectorPage::validatePage()
 {
     setSettingsButtonVisible(false);

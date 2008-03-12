@@ -34,7 +34,6 @@ public:
     TitlePage();
 
     void initializePage();
-    int nextId() const;
     bool validatePage();
 
 protected: 
