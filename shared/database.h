@@ -82,6 +82,7 @@ protected Q_SLOTS:
 
 private:
     QMap<QString,QString> m_installKeys;
+    QMap<QString,QString> m_versionKeys;
     QList<Package*> m_database;
     QString m_root;
 

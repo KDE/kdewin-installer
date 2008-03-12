@@ -34,10 +34,26 @@ Database::Database ( QObject *parent )
         : QObject ( parent )
 {
     m_installKeys["vcredist"] = "HKEY_CLASSES_ROOT\\Installer\\Products\\b25099274a207264182f8181add555d0";
+// hex would be more natural, implement in the future
+//    m_versionKeys["vcredist-800dc10"] = "8.0.50727.762";
+    m_versionKeys["vcredist-134274064"] = "8.0.50727.762";
+
     m_installKeys["psdk-msvc"] = "HKEY_CLASSES_ROOT\\Installer\\Products\\E10DE0A981DFA754BAC98053CDBD71BB";
+//    m_versionKeys["psdk-msvc-5020ece"] = "r2";
+    m_versionKeys["psdk-msvc-84020942"] = "r2";
+
     m_installKeys["vcexpress-en-msvc"] = "HKEY_CLASSES_ROOT\\Installer\\Products\\9BA4F6BA58CA200489926BEE5AA53E5A";
+//    m_versionKeys["vcexpress-en-msvc-800c628"] = "2005";
+    m_versionKeys["vcexpress-en-msvc-134268456"] = "2005";
+
     m_installKeys["perl"] = "HKEY_CLASSES_ROOT\\Installer\\Products\\0052C8C86573FFC4C8DA8E043AA6BA48";
+//    m_versionKeys["perl-5080333"] = "5.8.8";
+    m_versionKeys["perl-84411187"] = "5.8.8";
+
     m_installKeys["tortoisesvn"] = "HKEY_CLASSES_ROOT\\Installer\\Products\\059ABB4F0F655334D839EE46FB5F390A";
+//    m_versionKeys["tortoisesvn-10428b9"] = "1.4.3";
+    m_versionKeys["tortoisesvn-17049785"] = "1.4.3";
+    
     addFromRegistry();
     connect ( &Settings::instance(),SIGNAL ( installDirChanged ( const QString & ) ),
               this, SLOT ( slotInstallDirChanged ( const QString & ) ) );
@@ -50,7 +66,6 @@ Database::~Database()
 #endif
     clear();
 }
-
 
 void Database::addPackage ( const Package &package )
 {
@@ -74,9 +89,19 @@ void Database::addFromRegistry()
                 continue;
             }
             qDebug() << i.key() << m_installKeys[i.key() ] << packageCode << "found.";
+            QString versionKey = getWin32RegistryValue ( hKEY_CLASSES_ROOT, m_installKeys[i.key() ].replace ( "HKEY_CLASSES_ROOT\\","" ), "Version", &ok ).toString();
+            if ( !ok ) {
+                qWarning() << i.key() << "version key not found.";
+            }
+            QString version;
+            if (m_versionKeys.contains(i.key() + '-' + versionKey))
+                version = m_versionKeys[i.key() + '-' + versionKey];
+            else
+                qWarning() << "unknown version key" << versionKey << "found";
+
             Package *pkg =  new Package;
             pkg->setName ( i.key() );
-            pkg->setInstalledVersion ( "" );
+            pkg->setInstalledVersion ( version );
             Package::PackageItem pi;
             pi.bInstalled = true;
             pi.setContentType ( "BIN" );
