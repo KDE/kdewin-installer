@@ -398,6 +398,10 @@ bool InstallerEngineGui::setDependencyState(Package *_package, QTreeWidget *list
         if (installedPackage && installedPackage->version() == package->version()) 
             continue;
 
+        // set installed version for uninstaller - this should be set in a more central places
+        if (installedPackage && package->installedVersion().isEmpty())
+            package->setInstalledVersion(installedPackage->version());
+
         // the package is installed with a different version 
         stateType newState = installedPackage ? _Update : _Install;
 
@@ -456,7 +460,7 @@ bool isMarkedForRemoval ( Package *pkg,Package::Type type )
     stateType depState = dependencyStates.getState ( pkg, type );
     bool result = state == _Remove || state == _Update || depState == _Remove || depState == _Update;;
     if (Settings::hasDebug ( "InstallerEngineGui" ) && result)
-        qDebug() << __FUNCTION__ << "select package for removal" << pkg->name() << type;
+        kDebug() << __FUNCTION__ << "select package for removal" << pkg->name() << type;
     return result;
 }
 
