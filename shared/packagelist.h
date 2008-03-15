@@ -46,7 +46,6 @@ public:
     virtual ~PackageList();
     void addPackage(const Package &package);
     bool append(const PackageList &packageList);
-    void dumpPackages(const QString &title=QString());
     QStringList listPackages();
     bool readFromFile(const QString &_fileName=QString());
     bool readFromFile(const QString &fileName, PackageList::Type type=PackageList::Default, bool append=false);

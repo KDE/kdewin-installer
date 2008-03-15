@@ -98,17 +98,6 @@ Package *PackageList::getPackage(const QString &name, const QByteArray &version)
     return NULL;
 }
 
-void PackageList::dumpPackages(const QString &title)
-{
-#ifdef DEBUG
-    qDebug() << __FUNCTION__;
-#endif
-
-    qDebug() << title;
-    Q_FOREACH (const Package *p, m_packageList )
-        qDebug() << p->toString(true," - ");
-}
-
 QStringList PackageList::listPackages()
 {
     QStringList list;
