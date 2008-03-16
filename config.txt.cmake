@@ -1,8 +1,8 @@
 ;kdewin installer configuration file 
 @format 1.3
 ; this format is *prelimary* and may be changed without prior notice
-@minversion 0.9.0
-@timestamp 200802232350
+@minversion 0.9.1
+@timestamp 200803160830
 
 ; category notes 
 @categorynotes qt Qt related packages 
@@ -20,6 +20,12 @@
 @categorypackages KDE amarok-msvc  kdelibs-msvc  kdepimlibs-msvc  kdebase-apps-msvc  kdebase-runtime-msvc  kdeedu-msvc  kdegames-msvc  kdegraphics-msvc  kdenetwork-msvc  kdesdk-msvc  kdewebdev-msvc
 @categorypackages KDE amarok-mingw kdelibs-mingw kdepimlibs-mingw kdebase-apps-mingw kdebase-runtime-mingw kdeedu-mingw kdegames-mingw kdegraphics-mingw kdenetwork-mingw kdesdk-mingw kdewebdev-mingw 
 @categorypackages qt qt-msvc qt-mingw qt-static-msvc
+@categorypackages KDE kde-i18n-af kde-i18n-ar kde-i18n-be kde-i18n-bg kde-i18n-bn kde-i18n-bn_IN kde-i18n-br kde-i18n-ca kde-i18n-cs kde-i18n-csb kde-i18n-cy kde-i18n-da kde-i18n-de kde-i18n-el kde-i18n-en_GB 
+@categorypackages KDE kde-i18n-eo kde-i18n-es kde-i18n-et kde-i18n-eu kde-i18n-fa kde-i18n-fi kde-i18n-fr kde-i18n-fy kde-i18n-ga kde-i18n-gl kde-i18n-gu kde-i18n-ha kde-i18n-he kde-i18n-hi kde-i18n-hr kde-i18n-hsb 
+@categorypackages KDE kde-i18n-hu kde-i18n-hy kde-i18n-is kde-i18n-it kde-i18n-ja kde-i18n-ka kde-i18n-kk kde-i18n-km kde-i18n-kn kde-i18n-ko kde-i18n-ku kde-i18n-lb kde-i18n-lt kde-i18n-lv kde-i18n-ml kde-i18n-mk 
+@categorypackages KDE kde-i18n-ms kde-i18n-mt kde-i18n-nb kde-i18n-nds kde-i18n-ne kde-i18n-nl kde-i18n-nn kde-i18n-nso kde-i18n-oc kde-i18n-pa kde-i18n-pl kde-i18n-pt kde-i18n-pt_BR kde-i18n-ro kde-i18n-ru 
+@categorypackages KDE kde-i18n-rw kde-i18n-se kde-i18n-sk kde-i18n-sl kde-i18n-sr kde-i18n-sr@latin kde-i18n-sv kde-i18n-ta kde-i18n-te kde-i18n-tg kde-i18n-th kde-i18n-tr kde-i18n-uk kde-i18n-uz kde-i18n-vi 
+@categorypackages KDE kde-i18n-wa kde-i18n-xh kde-i18n-x-test kde-i18n-zh_CN kde-i18n-zh_HK kde-i18n-zh_TW
 
 ;------------------------------------------------------
 ; all packages on the mirror
@@ -145,6 +151,102 @@
 @pkgnotes shared-mime-info common mimetype library
 @pkgnotes tiff TIFF image library (utilities)
 @pkgnotes zlib The zlib compression and decompression library
+; language packages
+@pkgnotes kde-i18n-af Afrikaans language package
+@pkgnotes kde-i18n-ar Arabic language package
+@pkgnotes kde-i18n-az Azerbaijani language package
+@pkgnotes kde-i18n-be Belarusian language package
+@pkgnotes kde-i18n-bg Bulgarian language package
+@pkgnotes kde-i18n-bn Bengali language package
+@pkgnotes kde-i18n-bn_IN Bengali (India) language package
+@pkgnotes kde-i18n-bo Tibetan language package
+@pkgnotes kde-i18n-br Breton language package
+@pkgnotes kde-i18n-bs Bosnian language package
+@pkgnotes kde-i18n-ca Catalan language package
+@pkgnotes kde-i18n-cs Czech language package
+@pkgnotes kde-i18n-csb Kashubian language package
+@pkgnotes kde-i18n-cy Welsh language package
+@pkgnotes kde-i18n-da Danish language package
+@pkgnotes kde-i18n-de German language package
+@pkgnotes kde-i18n-el Greek language package
+@pkgnotes kde-i18n-en_GB British English language package
+@pkgnotes kde-i18n-eo Esperanto language package
+@pkgnotes kde-i18n-es Spanish language package
+@pkgnotes kde-i18n-et Estonian language package
+@pkgnotes kde-i18n-eu Basque language package
+@pkgnotes kde-i18n-fa Farsi language package
+@pkgnotes kde-i18n-fi Finnish language package
+@pkgnotes kde-i18n-fo Faroese language package
+@pkgnotes kde-i18n-fr French language package
+@pkgnotes kde-i18n-fy Frisian language package
+@pkgnotes kde-i18n-ga Irish Gaelic language package
+@pkgnotes kde-i18n-gl Galician language package
+@pkgnotes kde-i18n-gu Gujarati language package
+@pkgnotes kde-i18n-ha Hausa language package
+@pkgnotes kde-i18n-he Hebrew language package
+@pkgnotes kde-i18n-hi Hindi language package
+@pkgnotes kde-i18n-hr Croatian language package
+@pkgnotes kde-i18n-hsb Upper Sorbian language package
+@pkgnotes kde-i18n-hu Hungarian language package
+@pkgnotes kde-i18n-hy Armenian language package
+@pkgnotes kde-i18n-id Indonesian language package
+@pkgnotes kde-i18n-is Icelandic language package
+@pkgnotes kde-i18n-it Italian language package
+@pkgnotes kde-i18n-ja Japanese language package
+@pkgnotes kde-i18n-ka Georgian language package
+@pkgnotes kde-i18n-kk Kazakh language package
+@pkgnotes kde-i18n-km Khmer language package
+@pkgnotes kde-i18n-kn Kannada language package
+@pkgnotes kde-i18n-ko Korean language package
+@pkgnotes kde-i18n-ku Kurdish language package
+@pkgnotes kde-i18n-lb Luxembourgish language package
+@pkgnotes kde-i18n-lo Lao language package
+@pkgnotes kde-i18n-lt Lithuanian language package
+@pkgnotes kde-i18n-lv Latvian language package
+@pkgnotes kde-i18n-mi Maori language package
+@pkgnotes kde-i18n-ml Malayalam language package
+@pkgnotes kde-i18n-mk Macedonian language package
+@pkgnotes kde-i18n-mn Mongolian language package
+@pkgnotes kde-i18n-ms Malay language package
+@pkgnotes kde-i18n-mt Maltese language package
+@pkgnotes kde-i18n-ne Nepali language package
+@pkgnotes kde-i18n-nl Dutch language package
+@pkgnotes kde-i18n-nb Norwegian Bokmal language package
+@pkgnotes kde-i18n-nds Low Saxon language package
+@pkgnotes kde-i18n-nso Northern Sotho language package
+@pkgnotes kde-i18n-nn Norwegian Nynorsk language package
+@pkgnotes kde-i18n-oc Occitan language package
+@pkgnotes kde-i18n-pa Panjabi/Punjabi language package
+@pkgnotes kde-i18n-pl Polish language package
+@pkgnotes kde-i18n-pt Portuguese language package
+@pkgnotes kde-i18n-pt_BR Brazilian Portuguese language package
+@pkgnotes kde-i18n-ro Romanian language package
+@pkgnotes kde-i18n-ru Russian language package
+@pkgnotes kde-i18n-rw Kinyarwanda language package
+@pkgnotes kde-i18n-se Northern Sami language package
+@pkgnotes kde-i18n-sk Slovak language package
+@pkgnotes kde-i18n-sl Slovenian language package
+@pkgnotes kde-i18n-sq Albanian language package
+@pkgnotes kde-i18n-sr Serbian language package
+@pkgnotes kde-i18n-sr@latin Serbian Latin language package
+@pkgnotes kde-i18n-ss Swati language package
+@pkgnotes kde-i18n-sv Swedish language package
+@pkgnotes kde-i18n-ta Tamil language package
+@pkgnotes kde-i18n-te Telugu language package
+@pkgnotes kde-i18n-tg Tajik language package
+@pkgnotes kde-i18n-th Thai language package
+@pkgnotes kde-i18n-tr Turkish language package
+@pkgnotes kde-i18n-tt Tatar language package
+@pkgnotes kde-i18n-uk Ukrainian language package
+@pkgnotes kde-i18n-uz Uzbek language package
+@pkgnotes kde-i18n-ven Venda language package
+@pkgnotes kde-i18n-vi Vietnamese language package
+@pkgnotes kde-i18n-wa Walloon language package
+@pkgnotes kde-i18n-xh Xhosa language package
+@pkgnotes kde-i18n-zh_CN Chinese Simplified language package
+@pkgnotes kde-i18n-zh_HK Chinese (Hong Kong) language package
+@pkgnotes kde-i18n-zh_TW Chinese Traditional language package
+@pkgnotes kde-i18n-zu Zulu language package
 
 ;------------------------------------------------------
 ; debugging tools
