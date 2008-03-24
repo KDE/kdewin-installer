@@ -38,34 +38,6 @@ int main(int argc, char *argv[])
     if (param.startsWith("file:") || param.startsWith("http:") || param.startsWith("ftp:"))
         InstallerEngine::defaultConfigURL = param;
 
-#ifdef ENABLE_STYLE
-    QApplication::setStyle(new QPlastiqueStyle);
-    QApplication::setPalette(QApplication::style()->standardPalette());
-
-    qApp->setStyleSheet(
-        "QDialog {"
-            "background: #afafaf;"
-            //"background: #2f2f2f;"
-            "color: white"
-        "}"
-        "QLabel#topLabel {"
-            "color: white;"
-            "font-size: 20px;"
-            "font-family: arial;"
-            //"background-color: #92847b;"
-            "background-image: url(:/images/brown.png);"
-        "}"
-        "QTreeView {"
-            "background-image: url(:/images/gray.png);"
-            "border: 2px solid gray;"
-            "selection-background-color: #92847b;"
-        "}"
-        "QHeadView {"
-            "background-color: #92847b;"
-        "}"
-        );
-#endif
-
     InstallWizard *wizard = new InstallWizard();
     int ret = wizard->exec();
     delete wizard;

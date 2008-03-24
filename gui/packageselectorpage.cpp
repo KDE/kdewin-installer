@@ -53,47 +53,6 @@ PackageSelectorPage::PackageSelectorPage()  : InstallWizardPage(0)
     setTitle(tr("Package Selection"));
     setSubTitle(tr("Please select the packages you would like to install."));
 
-#ifdef ENABLE_STYLE
-    QSplitter *splitter = new QSplitter(wizard);
-    splitter->setOrientation(Qt::Vertical);
-
-    leftTree  = new QTreeWidget;
-    //engine->setLeftTreeData(leftTree);
-
-    QHBoxLayout* hl = new QHBoxLayout;
-    hl->addWidget(leftTree);
-    hl->addStretch(2);
-    hl->setMargin(0);
-    leftTree->setMinimumWidth(300);
-    leftTree->setMinimumHeight(100);
-    leftTree->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-
-    QWidget* top = new QWidget;
-    top->setLayout(hl);
-
-    tree = new QTreeWidget;
-    //engine->setPageSelectorWidgetData(tree);
-
-    splitter->addWidget(top);
-    splitter->addWidget(tree);
-
-    QWidget *widget = splitter->widget(0);
-    QSizePolicy policy = widget->sizePolicy();
-    policy.setVerticalStretch(2);
-    widget->setSizePolicy(policy);
-
-    widget = splitter->widget(1);
-    policy = widget->sizePolicy();
-    policy.setVerticalStretch(5);
-    widget->setSizePolicy(policy);
-
-
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(splitter);
-    setLayout(layout);
-
-#else
-
     QSplitter *splitter = new QSplitter(wizard());
     splitter->setOrientation(Qt::Horizontal);
 
@@ -152,7 +111,6 @@ PackageSelectorPage::PackageSelectorPage()  : InstallWizardPage(0)
     layout->setRowStretch(1,10);
     setLayout(layout);
     packageInfo->hide();
-#endif
 }
 
 void PackageSelectorPage::initializePage()
