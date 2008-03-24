@@ -191,7 +191,7 @@ bool Database::readFromDirectory ( const QString &_dir )
     qDebug() << __FUNCTION__;
 #endif
 
-    QString dir = ( _dir.isEmpty() ) ? m_root + "/manifest" : dir;
+    QString dir = ( _dir.isEmpty() ) ? m_root + "/manifest" : _dir;
     QDir d ( dir );
     d.setFilter ( QDir::NoDotAndDotDot | QDir::AllEntries );
     d.setNameFilters ( QStringList ( "*.ver" ) );
