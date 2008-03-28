@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>735</width>
-    <height>294</height>
+    <width>734</width>
+    <height>394</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -19,22 +19,21 @@
    <item>
     <widget class="QLabel" name="label" >
      <property name="text" >
-      <string>You should now be able to run KDE applications.  Please open an explorer window and navigate to the bin folder of the KDE installation root. There you will find several applications which can be started by simply double clicking on the executable.&#xd;
-In furture versions of this installer it will also be possible to start kde applications from the Windows Start menu.&#xd;
-If you &lt;ul>&#xd;
-&lt;li>like to see the KDE on windows project web site see &lt;a href=http://windows.kde.org>http://windows.kde.org&lt;/a>&lt;/li>&#xd;
-&lt;li>like to get community support for this installer and/or running kde applications please contact &#xd;
-the &lt;a href=http://mail.kde.org/mailman/listinfo/kde-windows>kde-windows@kde.org&lt;/a> mailing list.&lt;/li>&#xd;
-&lt;li>like to contribute time and/or money to this project contact also the above mentioned list.&#xd;
-There are always interesting projects where you can join.&lt;/li>&#xd;
-&lt;/ul>&#xd;
-&#xd;
-Have fun using KDE on windows.&#xd;
-&#xd;
-&lt;b>The KDE on Windows team&lt;/b>&#xd;
-&#xd;
-This software is designed to provide a powerfull and flexible network based install system using a modern gui toolkit. &#xd;
-If you need assistance or have specific needs for such a services, please contact &lt;a href=mailto:ralf@habacker.de>Ralf Habacker&lt;/a>&#xd;
+      <string>You should now be able to run KDE applications.  Please open an explorer window and navigate to the bin folder of the KDE installation root. There you will find several applications which can be started by simply double clicking on the executable.
+In future versions of this installer it will also be possible to start kde applications from the Windows Start menu.
+If you &lt;ul>
+&lt;li>like to see the KDE on windows project web site see &lt;a href=http://windows.kde.org>http://windows.kde.org&lt;/a>&lt;/li>
+&lt;li>like to get community support for this installer and/or running kde applications please contact 
+the &lt;a href=http://mail.kde.org/mailman/listinfo/kde-windows>kde-windows@kde.org&lt;/a> mailing list.&lt;/li>
+&lt;li>like to contribute time and/or money to this project contact also the above mentioned list.
+There are always interesting projects where you can join.&lt;/li>
+&lt;/ul>
+
+Have fun using KDE on windows.
+
+&lt;b>The KDE on Windows team&lt;/b>
+
+This software is designed to provide a powerfull and flexible network based install system using a modern gui toolkit. 
 </string>
      </property>
      <property name="alignment" >
