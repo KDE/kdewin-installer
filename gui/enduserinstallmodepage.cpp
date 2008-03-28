@@ -30,13 +30,11 @@ EndUserInstallModePage::EndUserInstallModePage() : InstallWizardPage(0)
     ui.setupUi(this);
     setTitle(windowTitle());
     setSubTitle(statusTip());
-
     // logical grouping isn't available in the designer yet :-P
     QButtonGroup *groupA = new QButtonGroup(this);
-    groupA->addButton(ui.updateInstallationButton);
-    groupA->addButton(ui.repairInstallationButton);
-    groupA->addButton(ui.removeInstallationButton);
-
+    groupA->addButton(ui.updateInstallButton);
+    groupA->addButton(ui.repairInstallButton);
+    groupA->addButton(ui.removeInstallButton);
 }
 
 void EndUserInstallModePage::initializePage()
@@ -45,11 +43,11 @@ void EndUserInstallModePage::initializePage()
 
 int EndUserInstallModePage::nextId() const
 {
-    if (ui.updateInstallationButton->isChecked())
+    if (ui.updateInstallButton->isChecked())
         return InstallWizard::endUserUpdatePage;
-    else if (ui.repairInstallationButton->isChecked())
+    else if (ui.repairInstallButton->isChecked())
         return InstallWizard::endUserRepairPage;
-    else if (ui.removeInstallationButton->isChecked())
+    else if (ui.removeInstallButton->isChecked())
         return InstallWizard::endUserRemovePage;
     else 
         return InstallWizard::endUserInstallModePage;

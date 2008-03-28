@@ -38,7 +38,7 @@ public:
     int nextId() const;
 
 protected: 
-    Ui::EndUserInstallModePage ui;
+      Ui::EndUserInstallModePage ui;
 };
 
 #endif
