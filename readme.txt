@@ -62,8 +62,8 @@ TODO
     3 if remote config is not available only display installed packages
     4 only display firefox proxy option is firefox is installed 
     5 center checkboxes in package selector page -> not possible yet, see comment in source
-    5 implement end user package selector page 
-    5 make specialized installers complete 
+    6 implement end user package selector page 
+    7 create a msi package which installs the kde installer and adds an entry in the software control panel 
 
 2 packager
     1 exlude *d.exe in strip 
