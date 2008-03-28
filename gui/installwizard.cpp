@@ -113,7 +113,12 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
             << QWizard::NextButton << QWizard::FinishButton;
     setButtonLayout(layout);
 */
-    setPage(titlePage, new TitlePage()); 
+    TitlePage *titlePageP = new TitlePage();
+    
+    QString windowTitle = titlePageP->windowTitle() + QLatin1String(" - Version " VERSION);
+    setWindowTitle(windowTitle);
+
+    setPage(titlePage, titlePageP); 
     setPage(installDirectoryPage, new InstallDirectoryPage); 
     setPage(userCompilerModePage, new UserCompilerModePage); 
     setPage(downloadSettingsPage, new DownloadSettingsPage); 
@@ -130,8 +135,6 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     setPage(installPage, new InstallPage()); 
     setPage(finishPage, new FinishPage()); 
 
-    QString windowTitle = tr("KDE Installer - Version " VERSION);
-    setWindowTitle(windowTitle);
     setSizeGripEnabled(true);
     setWindowFlags(windowFlags()|Qt::WindowMaximizeButtonHint|Qt::WindowMinimizeButtonHint);
 
