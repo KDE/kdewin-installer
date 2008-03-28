@@ -22,7 +22,7 @@
 **
 ****************************************************************************/
 
-//#define USE_ENDUSERPAGES
+#define ENABLE_ENDUSER_PAGES
 
 #include "config.h"
 #include "installwizard.h"
@@ -42,6 +42,7 @@
 #include "internetsettingspage.h"
 #include "downloadsettingspage.h"
 #include "enduserinstallmodepage.h"
+#include "enduserpackageselectorpage.h"
 //#include "enduserupdatepage.h"
 //#include "enduserrepairpage.h"
 //#include "enduserremovepage.h"
@@ -118,6 +119,7 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     setPage(downloadSettingsPage, new DownloadSettingsPage); 
     setPage(internetSettingsPage, new InternetSettingsPage); 
     setPage(endUserInstallModePage,new EndUserInstallModePage);
+    setPage(endUserPackageSelectorPage, new EndUserPackageSelectorPage); 
 //    setPage(endUserUpdatePage,     new EndUserUpdatePage);     
 //    setPage(endUserRepairPage,     new EndUserRepairPage);    
 //    setPage(endUserRemovePage,     new EndUserRemovePage);    
@@ -242,24 +244,19 @@ void InstallWizard::slotEngineError(const QString &msg)
     );
 }
 
-int InstallWizard::nextId() const
+int InstallWizard::nextIdEndUser() const
 {
     switch (currentId()) {
     case titlePage:
         if (Settings::instance().isSkipBasicSettings())
         {
-            if (Settings::instance().isDeveloperMode()) 
-            {
-                if (GlobalConfig::isRemoteConfigAvailable())
-                    return packageSelectorPage;
-                else
-                    return mirrorSettingsPage;
-            }
-#ifdef USE_ENDUSERPAGES
-            else if (Database::isAnyPackageInstalled(Settings::instance().installDir()))
+            if (Database::isAnyPackageInstalled(Settings::instance().installDir()))
+#if 0
                 return endUserInstallModePage;
-            else
+#else
+                return endUserPackageSelectorPage;
 #endif
+            else
                 return mirrorSettingsPage;
         }
         else
@@ -269,11 +266,9 @@ int InstallWizard::nextId() const
     case userCompilerModePage: return downloadSettingsPage;
     case downloadSettingsPage: return internetSettingsPage;
     case internetSettingsPage: 
-#ifdef USE_ENDUSERPAGES
-        if (!Settings::instance().isDeveloperMode())
+        if (!Settings::instance().isDeveloperMode() && Database::isAnyPackageInstalled(Settings::instance().installDir()) )
             return endUserInstallModePage;
         else
-#endif
             return mirrorSettingsPage;
         
     case endUserInstallModePage:
@@ -281,26 +276,59 @@ int InstallWizard::nextId() const
         EndUserInstallModePage *_page = static_cast<EndUserInstallModePage*>(page(endUserInstallModePage));
         return _page->nextId();
     }
-    case mirrorSettingsPage: 
-        return packageSelectorPage;
-        
-//    case endUserUpdatePage: 
-//    case endUserRepairPage: 
-//    case endUserRemovePage: 
-    case packageSelectorPage: 
-        return dependenciesPage;
-    case dependenciesPage: 
-        return downloadPage;
-    case downloadPage: 
-        return uninstallPage;
-    case uninstallPage: 
-        return installPage;
-    case installPage: 
-        return finishPage;
+    case mirrorSettingsPage: return endUserPackageSelectorPage;
+//    case endUserUpdatePage:        return dependenciesPage;
+//    case endUserRepairPage:        return uninstallPage;
+//    case endUserRemovePage:        return uninstallPage;
+    case endUserPackageSelectorPage: return dependenciesPage;
+    case dependenciesPage:           return downloadPage;
+    case downloadPage:               return uninstallPage;
+    case uninstallPage:              return installPage;
+    case installPage:                return finishPage;
     case finishPage: 
     default:
      return -1;
     }
+}
+
+int InstallWizard::nextIdDeveloper() const
+{
+    switch (currentId()) {
+    case titlePage:
+        if (Settings::instance().isSkipBasicSettings())
+        {
+            if (GlobalConfig::isRemoteConfigAvailable())
+                return packageSelectorPage;
+            else
+                return mirrorSettingsPage;
+        }
+        else
+            return installDirectoryPage;
+
+    case installDirectoryPage: return userCompilerModePage;
+    case userCompilerModePage: return downloadSettingsPage;
+    case downloadSettingsPage: return internetSettingsPage;
+    case internetSettingsPage: return mirrorSettingsPage;
+    case mirrorSettingsPage:   return packageSelectorPage;
+    case packageSelectorPage:  return dependenciesPage;
+    case dependenciesPage:     return downloadPage;
+    case downloadPage:         return uninstallPage;
+    case uninstallPage:        return installPage;
+    case installPage:          return finishPage;
+    case finishPage: 
+    default:
+     return -1;
+    }
+}
+
+int InstallWizard::nextId() const
+{
+#ifdef ENABLE_ENDUSER_PAGES
+    if (!Settings::instance().isDeveloperMode())
+        return nextIdEndUser();
+    else
+#endif
+        return nextIdDeveloper();
 }
 
 InstallWizardPage::InstallWizardPage(QWidget *parent) : QWizardPage(parent)

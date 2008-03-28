@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2005-2007 Ralf Habacker. All rights reserved.
+** Copyright (C) 2005-2008 Ralf Habacker. All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
@@ -26,10 +26,6 @@
 #include "installerengine.h"
 #include "package.h"
 
-class QTabWidget;
-class QTextEdit;
-class QLabel;
-
 class InstallerEngineGui : public InstallerEngine
 {
 public:
@@ -41,30 +37,25 @@ public:
     /// reload all package definitions
     virtual void reload();
 
-    void setPageSelectorWidgetData(QTreeWidget *tree, QString categoryName=QString());
-    void itemClickedPackageSelectorPage(QTreeWidgetItem *item, int column, QTabWidget *info);
-    void setLeftTreeData(QTreeWidget *tree=0);
-    void setLeftTreeStatus( QTreeWidget *tree );
-
-    void on_leftTree_itemClicked(QTreeWidgetItem *item, int column, QLabel *info);
     void checkUpdateDependencies(QTreeWidget *list);
     bool checkRemoveDependencies(QTreeWidget *list);
 
     bool downloadPackages(QTreeWidget *tree, const QString &category=QString());
     bool installPackages(QTreeWidget *tree, const QString &category=QString());
     bool removePackages(QTreeWidget *tree, const QString &category=QString());
+	/// @TODO: cleanup
+    void setEndUserInitialState ( QTreeWidgetItem &item, Package *available, Package *installed, int column=0 );
+
+    void setInitialState(QTreeWidgetItem &item, Package *available, Package *installed,int column=0);
+    void setNextState(QTreeWidgetItem &item, Package *available, Package *installed, Package::Type type, int column);
 
 protected:
-    void setInitialState(QTreeWidgetItem &item, Package *available, Package *installed,int column=0);
-    void setNextState(QTreeWidgetItem &item, Package *available, Package *installed, int column);
     bool setDependencyState(Package *pkg, QTreeWidget *list);
-
 
 private:
     Type    m_installMode;
     QWidget *m_parent;
     bool downloadPackageItem(Package *pkg, Package::Type type );
-    void updatePackageInfo(QTabWidget *packageInfo, const Package *availablePackage, const Package *installedPackage);
 };
 
 #endif

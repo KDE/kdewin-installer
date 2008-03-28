@@ -41,12 +41,53 @@
 #include <QTextEdit>
 #include <QTreeWidget>
 
+const int NameColumn = 0;
+const int availableVersionColumn = 1;
+const int installedVersionColumn = 2;
+const int VersionColumn = 2;
+
+static int BINColumn = 3;
+static int SRCColumn = 4;
+static int NotesColumn = 5;
+static int LIBColumn = 6;
+static int DOCColumn = 7;
+static int ColumnCount = 8;
+
+Package::Type columnToType ( int column )
+{
+    if (column == BINColumn)
+        return Package::BIN;
+    else if (column == LIBColumn)
+        return Package::LIB;
+    else if (column == DOCColumn)
+        return Package::DOC;
+    else if (column == SRCColumn)
+        return Package::SRC;
+    else
+        return Package::NONE;
+}
+
+int typeToColumn ( Package::Type type )
+{
+    switch ( type ) {
+    case Package::BIN :
+        return BINColumn;
+    case Package::LIB :
+        return LIBColumn;
+    case Package::DOC :
+        return DOCColumn;
+    case Package::SRC :
+        return SRCColumn;
+    default:
+        return 0;
+    }
+}
+
 // must be global
 QTreeWidget *tree;
 QTreeWidget *leftTree;
 
 extern InstallerEngineGui *engine;
-extern QListWidget *g_dependenciesList;
 
 PackageSelectorPage::PackageSelectorPage()  : InstallWizardPage(0)
 {
@@ -111,6 +152,215 @@ PackageSelectorPage::PackageSelectorPage()  : InstallWizardPage(0)
     layout->setRowStretch(1,10);
     setLayout(layout);
     packageInfo->hide();
+    bool installMode = Settings::instance().isDeveloperMode() ? InstallerEngineGui::Developer : InstallerEngineGui::EndUser;
+    if (installMode == InstallerEngineGui::Single)
+    {
+        BINColumn = 3;
+        LIBColumn = 4;
+        DOCColumn = 5;
+        SRCColumn = 6;
+        NotesColumn = 7;
+        ColumnCount = 8;
+    }
+    else if (installMode == InstallerEngineGui::Developer)
+    {
+        BINColumn = 3;
+        SRCColumn = 4;
+        NotesColumn = 5;
+        ColumnCount = 6;
+        LIBColumn = 0;
+        DOCColumn = 0;
+    }
+}
+
+void PackageSelectorPage::setLeftTreeStatus()
+{
+    QTreeWidgetItem *headerItem = leftTree->headerItem();
+    QString config;
+    QString date = tr("configuration timestamp: %1").arg(engine->globalConfig()->timeStamp().toString(tr("dd.MM.yyyy hh:mm")));
+    if (GlobalConfig::isRemoteConfigAvailable()) 
+    {
+        config = tr("note: no configuration downloaded because local file overrides it\nconfiguration read from %1\n").arg(GlobalConfig::remoteConfigFile().absoluteFilePath());
+    }
+    else 
+    {
+        config = tr("configuration downloaded from %1\n").arg(engine->usedDownloadSource().toString());
+    }
+
+    headerItem->setToolTip(0,config + date);
+}
+
+void PackageSelectorPage::setLeftTreeData()
+{
+    leftTree->clear();
+    leftTree->setColumnCount ( 1 );
+    // header
+    QTreeWidgetItem *headerItem = new QTreeWidgetItem();
+    headerItem->setText(0,tr ( "Package Categories" ));
+    leftTree->setHeaderItem(headerItem);
+    setLeftTreeStatus();
+    QList<QTreeWidgetItem *> categoryList;
+    QList<QTreeWidgetItem *> items;
+
+    qDebug() << categoryCache.categories();
+    Settings &s = Settings::instance();
+    foreach (const QString &category,categoryCache.categories())
+    {
+        QStringList names = category.split(":");
+        if ( (s.compilerType() == Settings::MinGW ||s.compilerType() == Settings::MSVC)
+            && (names[0] == "msvc" || names[0] == "mingw") )
+            continue;
+
+        QTreeWidgetItem *categoryItem = new QTreeWidgetItem ( ( QTreeWidget* ) 0, names );
+        categoryItem->setToolTip ( 0, names[1] );
+        categoryList.append ( categoryItem );
+    }
+    leftTree->insertTopLevelItems ( 0,categoryList );
+    leftTree->expandAll();
+    for ( int i = 0; i < tree->columnCount(); i++ )
+        leftTree->resizeColumnToContents ( i );
+
+    if (categoryList.size() > 0)
+    {
+        leftTree->setCurrentItem ( categoryList.first() );
+        categoryList.first()->setSelected ( true );
+    }
+    /// @TODO initial set displayed package list category
+}
+
+void PackageSelectorPage::setWidgetData( QString categoryName )
+{
+    tree->clear();
+    QStringList labels;
+    QList<QTreeWidgetItem *> items;
+    // QTreeWidgetItem *item;
+    QString binToolTip;
+    QString libToolTip;
+    QString docToolTip;
+    QString srcToolTip;
+
+    labels
+    << tr ( "Package" )
+    << tr ( "Available" )
+    << tr ( "Installed" )
+    << tr ( "Bin/Devel/Doc" ) 
+    << tr ( "Src" )
+    << tr ( "Package notes" )
+    ;
+    binToolTip = "select this checkbox to install/remove/update the binary, development and doc part of this package";
+    srcToolTip = "select this checkbox to install/remove/update the source of this package";
+
+    tree->setColumnCount ( ColumnCount );
+    tree->setHeaderLabels ( labels );
+    // see http://lists.trolltech.com/qt-interest/2006-06/thread00441-0.html
+    // and Task Tracker Entry 106731
+    //tree->setAlignment(Center);
+
+    // adding top level items
+    QList<QTreeWidgetItem *> categoryList;
+    QList <Package*> packageList;
+
+    // add packages which are installed but for which no config entry is there 
+    foreach(Package *instPackage, categoryCache.packages(categoryName,*engine->database())) 
+    {
+        Package *p = engine->packageResources()->getPackage(instPackage->name());
+        if (!p)
+            packageList << instPackage;
+    }
+
+    Settings &s = Settings::instance();
+    foreach(Package *availablePackage,categoryCache.packages(categoryName,*engine->packageResources()))
+    {
+        QString name = availablePackage->name();
+        if ( ( categoryName == "mingw"  || s.compilerType() == Settings::MinGW )
+                && ( name.endsWith ( QLatin1String( "-msvc" ) ) ) )
+            continue;
+        else if ( ( categoryName == "msvc"  || s.compilerType() == Settings::MSVC )
+                  && ( name.endsWith ( QLatin1String ( "-mingw" ) ) ) )
+            continue;
+        packageList << availablePackage;
+    }
+
+    foreach(Package *availablePackage,packageList)
+    {
+        QString name = availablePackage->name();
+        QStringList data;
+        Package *installedPackage = engine->database()->getPackage(availablePackage->name());
+        QString installedVersion = installedPackage ? installedPackage->installedVersion() : "";
+        QString availableVersion = availablePackage->version();
+        availablePackage->setInstalledVersion(installedVersion);
+
+        /// @TODO add version format check to be sure available package is really newer
+        data << availablePackage->name()
+            << (availableVersion != installedVersion ? availablePackage->version() : "")
+            << installedVersion
+            << QString();
+        QTreeWidgetItem *item = new QTreeWidgetItem ( ( QTreeWidgetItem* ) 0, data );
+        engine->setInitialState ( *item,availablePackage,installedPackage,0);
+
+        /// @TODO add printing notes from ver file
+        item->setText ( NotesColumn, availablePackage->notes() );
+        item->setToolTip ( BINColumn, binToolTip );
+
+        item->setToolTip ( SRCColumn, srcToolTip );
+        categoryList.append(item);
+    }
+    tree->addTopLevelItems ( categoryList );
+    tree->expandAll();
+    tree->sortItems ( 0,Qt::AscendingOrder );
+    for ( int i = 0; i < tree->columnCount(); i++ )
+        tree->resizeColumnToContents ( i );
+}
+
+void PackageSelectorPage::updatePackageInfo(const Package *availablePackage, const Package *installedPackage)
+{
+    if (!packageInfo)
+        return;
+    if ( !availablePackage && !installedPackage  ) {
+        packageInfo->setEnabled ( false );
+        return;
+    }
+    packageInfo->setEnabled ( true );
+    QTextEdit *e;
+    if (availablePackage) {
+        e = ( QTextEdit* ) packageInfo->widget ( 0 );
+        if ( !availablePackage->longNotes().isEmpty() ) {
+            packageInfo->setTabEnabled ( 0,true );
+            e->setText ( availablePackage->longNotes() );
+        } else {
+            packageInfo->setTabEnabled ( 0,false );
+            e->setText ( "" );
+        }
+        e = ( QTextEdit* ) packageInfo->widget ( 1 );
+        QString deps = availablePackage->deps().join ( "\n" );
+        if ( !deps.isEmpty() ) {
+            packageInfo->setTabEnabled ( 1,true );
+            e->setText ( availablePackage->deps().join ( "\n" ) );
+        } else {
+            packageInfo->setTabEnabled ( 1,false );
+            e->setText ( "" );
+        }
+    }
+
+    e = ( QTextEdit* ) packageInfo->widget ( 2 );
+    if ( e && installedPackage) {
+        QString list;
+        if ( installedPackage->isInstalled ( Package::BIN ) )
+            list += tr ( "---- BIN package ----" ) + "\n" + engine->database()->getPackageFiles ( installedPackage->name(),Package::BIN ).join ( "\n" ) + "\n";
+        if ( installedPackage->isInstalled ( Package::LIB ) )
+            list += tr ( "---- LIB package ----" ) + "\n" + engine->database()->getPackageFiles ( installedPackage->name(),Package::LIB ).join ( "\n" ) + "\n";
+        if ( installedPackage->isInstalled ( Package::DOC ) )
+            list += tr ( "---- DOC package ----" ) + "\n" + engine->database()->getPackageFiles ( installedPackage->name(),Package::DOC ).join ( "\n" ) + "\n";
+        if ( installedPackage->isInstalled ( Package::SRC ) )
+            list += tr ( "---- SRC package ----" ) + "\n" + engine->database()->getPackageFiles ( installedPackage->name(),Package::SRC ).join ( "\n" ) + "\n";
+        if ( list.isEmpty() )
+            packageInfo->setTabEnabled ( 2,false );
+        else {
+            e->setText ( list );
+            packageInfo->setTabEnabled ( 2,true );
+        }
+    } else
+        packageInfo->setTabEnabled ( 2,false );
 }
 
 void PackageSelectorPage::initializePage()
@@ -123,15 +373,20 @@ void PackageSelectorPage::initializePage()
     connect(leftTree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(on_leftTree_itemClicked(QTreeWidgetItem *, int)));
     connect(&Settings::instance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
     connect(&Settings::instance(),SIGNAL(compilerTypeChanged()),this,SLOT(slotCompilerTypeChanged()));
-    engine->setLeftTreeData(leftTree);
-    engine->setPageSelectorWidgetData(tree);
+    setLeftTreeData();
+    setWidgetData("");
+    //engine->setPageSelectorWidgetData(tree);
     on_leftTree_itemClicked(leftTree->currentItem(), 0);
     setSettingsButtonVisible(true);
 }
 
 void PackageSelectorPage::on_leftTree_itemClicked(QTreeWidgetItem *item, int column)
 {
-    engine->on_leftTree_itemClicked(item,column,categoryInfo);
+    if (!item || !categoryInfo)
+        return;
+    categoryInfo->setText ( item->text ( 1 ) );
+    QString category = item->text ( 0 );
+    setWidgetData( category );
     packageInfo->hide();
 }
 
@@ -148,20 +403,50 @@ void PackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
     }
     else 
         packageInfo->hide();
-    engine->itemClickedPackageSelectorPage(item,column,packageInfo);
+
+    QString name = item->text ( NameColumn );
+    QString installedVersion = item->text ( installedVersionColumn );
+    QString availableVersion = item->text ( availableVersionColumn );
+
+    Package *installedPackage = engine->database()->getPackage( name,installedVersion.toAscii() );
+    Package *availablePackage = engine->getPackageByName ( name,availableVersion  );
+    updatePackageInfo(availablePackage, installedPackage);
+    if ( !availablePackage && !installedPackage ) {
+        qWarning() << __FUNCTION__ << "neither available or installed package present for package" << name;
+        return;
+    }
+
+    // end Package Info display
+    if ( column < BINColumn )
+        return;
+
+    if ( column == BINColumn || column == SRCColumn )
+    {
+#if 0
+        if (!checkRemoveDependencies(installedPackage))
+            if (QMessageBox::warning(this,
+                    "Remove failure",
+                    "This package is selected for removal but used by other packages. Should this package really be removed ?",
+                    QMessageBox::Cancel | QMessageBox::Ignore,QMessageBox::Cancel
+                    ) == QMessageBox::Cancel)
+                return;
+#endif
+        engine->setNextState ( *item, availablePackage, installedPackage, columnToType(column), column);
+    }
+    // dependencies are selected later
 }
 
 void PackageSelectorPage::installDirChanged(const QString &dir)
 {
     engine->reload();
-    engine->setLeftTreeData(leftTree);
-    engine->setPageSelectorWidgetData(tree);
+    setLeftTreeData();
+    setWidgetData();
 }
 
 void PackageSelectorPage::slotCompilerTypeChanged()
 {
-    engine->setLeftTreeData(leftTree);
-    engine->setPageSelectorWidgetData(tree);
+    setLeftTreeData();
+    setWidgetData();
 }
 
 bool PackageSelectorPage::validatePage()

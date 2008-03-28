@@ -1,0 +1,38 @@
+<ui version="4.0" >
+ <class>EndUserPackageSelectorPage</class>
+ <widget class="QWidget" name="EndUserPackageSelectorPage" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1236</width>
+    <height>327</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Package Selection</string>
+  </property>
+  <property name="statusTip" >
+   <string>Please select the packages you would like to install.</string>
+  </property>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <widget class="QTreeWidget" name="packageList" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+       <horstretch>4</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <column>
+      <property name="text" >
+       <string>1</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

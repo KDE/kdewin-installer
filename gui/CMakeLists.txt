@@ -49,6 +49,7 @@ set(installer_GUI_SOURCES
    ${CMAKE_CURRENT_SOURCE_DIR}/installpage.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/usercompilermodepage.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/enduserinstallmodepage.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/enduserpackageselectorpage.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/installwizard.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/internetsettingspage.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/mirrorsettingspage.cpp
@@ -71,6 +72,7 @@ set(installer_GUI_HEADERS
    ${CMAKE_CURRENT_SOURCE_DIR}/installpage.h
    ${CMAKE_CURRENT_SOURCE_DIR}/usercompilermodepage.h
    ${CMAKE_CURRENT_SOURCE_DIR}/enduserinstallmodepage.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/enduserpackageselectorpage.h
    ${CMAKE_CURRENT_SOURCE_DIR}/installwizard.h
    ${CMAKE_CURRENT_SOURCE_DIR}/internetsettingspage.h
    ${CMAKE_CURRENT_SOURCE_DIR}/mirrorsettingspage.h
@@ -88,6 +90,7 @@ set (main_UI_SOURCES
    ${CMAKE_CURRENT_SOURCE_DIR}/installdirectorypage.ui
    ${CMAKE_CURRENT_SOURCE_DIR}/usercompilermodepage.ui
    ${CMAKE_CURRENT_SOURCE_DIR}/enduserinstallmodepage.ui
+   ${CMAKE_CURRENT_SOURCE_DIR}/enduserpackageselectorpage.ui
    ${CMAKE_CURRENT_SOURCE_DIR}/internetsettingspage.ui
    ${CMAKE_CURRENT_SOURCE_DIR}/mirrorsettingspage.ui
    ${CMAKE_CURRENT_SOURCE_DIR}/settingspage.ui

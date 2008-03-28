@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2006 Ralf Habacker. All rights reserved.
+** Copyright (C) 2005-2008 Ralf Habacker. All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
@@ -38,6 +38,7 @@ public:
     enum {
         titlePage,
         userCompilerModePage,
+        endUserPackageSelectorPage,
         endUserInstallModePage,
         endUserUpdatePage,
         endUserRepairPage,
@@ -69,6 +70,9 @@ private slots:
     void slotEngineError(const QString &);
 
 private:
+    int nextIdEndUser() const;
+    int nextIdDeveloper() const;
+
     SettingsPage *_settingsPage;
     int m_lastId;
 };

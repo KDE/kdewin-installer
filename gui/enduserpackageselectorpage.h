@@ -22,47 +22,37 @@
 **
 ****************************************************************************/
 
-#ifndef PACKAGESELECTORPAGE_H
-#define PACKAGESELECTORPAGE_H
+#ifndef ENDUSERPACKAGESELECTORPAGE_H
+#define ENDUSERPACKAGESELECTORPAGE_H
 
-class QTabWidget;
-class QTextEdit;
 
 #include "installwizard.h"
-//#include "ui_packageselectorpage.h"
+#include "ui_enduserpackageselectorpage.h"
 
-// must be global
-extern QTreeWidget *tree;
-extern QTreeWidget *leftTree;
-
-class PackageSelectorPage : public InstallWizardPage
+class EndUserPackageSelectorPage : public InstallWizardPage
 {
     Q_OBJECT
 
 public:
-    PackageSelectorPage();
+    EndUserPackageSelectorPage();
 
     void initializePage();
     bool isComplete();
     bool validatePage();
     void cleanupPage();
 
+protected:
+    void setWidgetData(QString categoryName=QString());
+
 public slots:
     void itemClicked(QTreeWidgetItem *item, int column);
-    void on_leftTree_itemClicked(QTreeWidgetItem *item, int column);
 
     void installDirChanged(const QString &dir);
     void slotCompilerTypeChanged(void);
 
-protected: 
-    void updatePackageInfo(const Package *availablePackage, const Package *installedPackage);
-    void setLeftTreeStatus();
-    void setLeftTreeData();
-    void setWidgetData( QString categoryName=QString());
-
 private:
-    QTabWidget *packageInfo;
-    QLabel *categoryInfo;
+    Ui::EndUserPackageSelectorPage ui;
+    QString categories;
 };
 
 #endif

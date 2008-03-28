@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2005-2007 Ralf Habacker. All rights reserved.
+** Copyright (C) 2005-2008 Ralf Habacker. All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
@@ -29,6 +29,7 @@
 #include "settings.h"
 #include "globalconfig.h"
 #include "packagecategorycache.h"
+#include "database.h"
 
 class PackageList;
 class Downloader;
@@ -70,6 +71,9 @@ public:
     /// download url 
     static QString defaultConfigURL;
     static QString fallBackURL;
+    Database *database() { return m_database; }
+    PackageList* packageResources() { return m_packageResources; }
+    QUrl &usedDownloadSource() { return m_usedDownloadSource; }
 
 Q_SIGNALS:
     void error ( const QString &error );
