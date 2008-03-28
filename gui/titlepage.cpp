@@ -27,14 +27,14 @@
 
 TitlePage::TitlePage()
 {
-    setTitle(tr("KDE for Windows Installer"));
-    setSubTitle(tr("Version " VERSION));
     ui.setupUi(this);
+    setTitle(windowTitle());
+    setSubTitle(tr("Version " VERSION));
 }
 
 void TitlePage::initializePage()
 {
-    setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/watermark.png"));
+    setPixmap(QWizard::WatermarkPixmap, QPixmap(":/watermark.png"));
     Settings &s = Settings::instance();
     ui.skipBasicSettings->setCheckState(s.isSkipBasicSettings() ? Qt::Checked : Qt::Unchecked);
 }

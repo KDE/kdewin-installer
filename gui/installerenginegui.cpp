@@ -110,13 +110,13 @@ static void setIcon ( QTreeWidgetItem &item, Package::Type type, iconType action
     static QIcon up;
 
     if ( ii.isNull() ) {
-        ai = QIcon ( ":/images/autoinstall.xpm" );
-        ii = QIcon ( ":/images/install.xpm" );
-        ki = QIcon ( ":/images/keepinstalled.xpm" );
-        ni = QIcon ( ":/images/noinst.xpm" );
-        id = QIcon ( ":/images/install_disabled.xpm" );
-        dl = QIcon ( ":/images/del.xpm" );
-        up = QIcon ( ":/images/update.xpm" );
+        ai = QIcon ( ":/autoinstall.xpm" );
+        ii = QIcon ( ":/install.xpm" );
+        ki = QIcon ( ":/keepinstalled.xpm" );
+        ni = QIcon ( ":/noinst.xpm" );
+        id = QIcon ( ":/install_disabled.xpm" );
+        dl = QIcon ( ":/del.xpm" );
+        up = QIcon ( ":/update.xpm" );
     }
 #endif
     int column = typeToColumn ( type );

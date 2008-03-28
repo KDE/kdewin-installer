@@ -29,64 +29,6 @@ ENDFOREACH(it)
 
 ENDMACRO(QT4_ADD_RESOURCES2)
 
-
-
-set(installer_GUI_SOURCES
-   dependenciespage.cpp
-   downloadpage.cpp
-   downloadsettingspage.cpp
-   finishpage.cpp
-   installdirectorypage.cpp
-   installerdialogs.cpp
-   installerenginegui.cpp
-   installpage.cpp
-   usercompilermodepage.cpp
-   enduserinstallmodepage.cpp
-   installwizard.cpp
-   internetsettingspage.cpp
-   mirrorsettingspage.cpp
-   packageselectorpage.cpp
-   packagestates.cpp
-   settingspage.cpp
-   titlepage.cpp
-   uninstallpage.cpp
-   main.cpp
-)
-
-set(installer_GUI_HEADERS
-   dependenciespage.h
-   downloadpage.h
-   downloadsettingspage.h
-   finishpage.h
-   installdirectorypage.h
-   installerdialogs.h
-   installerenginegui.h
-   installpage.h
-   usercompilermodepage.h
-   enduserinstallmodepage.h
-   installwizard.h
-   internetsettingspage.h
-   mirrorsettingspage.h
-   packageselectorpage.h
-   packagestates.h
-   settingspage.h
-   titlepage.h
-   uninstallpage.h
-)
-
-set (UI_SOURCES 
-   dependenciespage.ui
-   downloadsettingspage.ui
-   finishpage.ui
-   installdirectorypage.ui
-   usercompilermodepage.ui
-   enduserinstallmodepage.ui
-   internetsettingspage.ui
-   mirrorsettingspage.ui
-   settingspage.ui
-   titlepage.ui
-)
-
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
 add_definitions(-DUSE_GUI)
@@ -95,57 +37,84 @@ if(CMAKE_COMPILER_2005)
      add_definitions( -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE )
 endif(CMAKE_COMPILER_2005)
 
-QT4_WRAP_UI(installer_GUI_SOURCES ${UI_SOURCES})
 
-QT4_ADD_RESOURCES(installer_GUI_SOURCES gui.qrc)
-if(WIN32)
- if(MINGW)
-   QT4_ADD_RESOURCES2(installer_GUI_SOURCES gui.rc)
- else(MINGW)
-   set(installer_GUI_SOURCES ${installer_GUI_SOURCES} gui.rc)
- endif(MINGW)
-endif(WIN32)
+set(installer_GUI_SOURCES
+   ${CMAKE_CURRENT_SOURCE_DIR}/dependenciespage.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/downloadpage.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/downloadsettingspage.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/finishpage.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/installdirectorypage.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/installerdialogs.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/installerenginegui.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/installpage.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/usercompilermodepage.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/enduserinstallmodepage.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/installwizard.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/internetsettingspage.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/mirrorsettingspage.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/packageselectorpage.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/packagestates.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/settingspage.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/titlepage.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/uninstallpage.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+)
 
-set(all_sources ${installer_GUI_SOURCES}
-                ${installer_GUI_HEADERS}
-                ${installer_shared_SOURCES}
-                ${installer_shared_HEADERS}
-                ${quazip_SOURCES}
-                ${quazip_HEADERS}
-                ${qua7zip_SOURCES}
-                ${qua7zip_HEADERS}
-                ${md5_SOURCES}
-                ${md5_HEADERS}
-                ${filters_SOURCES}
-                ${filters_HEADERS}
-                ${bzip2_SOURCES}
-                ${bzip2_HEADERS}
-        )
+set(installer_GUI_HEADERS
+   ${CMAKE_CURRENT_SOURCE_DIR}/dependenciespage.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/downloadpage.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/downloadsettingspage.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/finishpage.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/installdirectorypage.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/installerdialogs.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/installerenginegui.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/installpage.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/usercompilermodepage.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/enduserinstallmodepage.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/installwizard.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/internetsettingspage.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/mirrorsettingspage.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/packageselectorpage.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/packagestates.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/settingspage.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/titlepage.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/uninstallpage.h
+)
+
+set (main_UI_SOURCES 
+   ${CMAKE_CURRENT_SOURCE_DIR}/dependenciespage.ui
+   ${CMAKE_CURRENT_SOURCE_DIR}/downloadsettingspage.ui
+   ${CMAKE_CURRENT_SOURCE_DIR}/finishpage.ui
+   ${CMAKE_CURRENT_SOURCE_DIR}/installdirectorypage.ui
+   ${CMAKE_CURRENT_SOURCE_DIR}/usercompilermodepage.ui
+   ${CMAKE_CURRENT_SOURCE_DIR}/enduserinstallmodepage.ui
+   ${CMAKE_CURRENT_SOURCE_DIR}/internetsettingspage.ui
+   ${CMAKE_CURRENT_SOURCE_DIR}/mirrorsettingspage.ui
+   ${CMAKE_CURRENT_SOURCE_DIR}/settingspage.ui
+)
+
+set(main_all_sources 
+    ${installer_GUI_SOURCES}
+    ${installer_GUI_HEADERS}
+    ${installer_shared_SOURCES}
+    ${installer_shared_HEADERS}
+    ${quazip_SOURCES}
+    ${quazip_HEADERS}
+    ${qua7zip_SOURCES}
+    ${qua7zip_HEADERS}
+    ${md5_SOURCES}
+    ${md5_HEADERS}
+    ${filters_SOURCES}
+    ${filters_HEADERS}
+    ${bzip2_SOURCES}
+    ${bzip2_HEADERS}
+)
 
 source_group(bzip2   FILES ${bzip2_SOURCES}   ${bzip2_HEADERS})
 source_group(filters FILES ${filters_SOURCES} ${filters_HEADERS})
 source_group(quazip  FILES ${quazip_SOURCES}  ${quazip_HEADERS})
 source_group(qua7zip FILES ${qua7zip_SOURCES} ${qua7zip_HEADERS})
 
-qt4_automoc(${all_sources})
-add_executable(kdewin-installer-gui-${VERSION} WIN32 ${all_sources})
 
-target_link_libraries(kdewin-installer-gui-${VERSION}
-                      ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY}  ${QT_QTGUI_LIBRARY}
-                      ${GUI_LIBS}
-)
-
-get_target_property( installer_filename kdewin-installer-gui-${VERSION} LOCATION )
-get_filename_component( installer_filename_only ${installer_filename} NAME )
-write_file(${EXECUTABLE_OUTPUT_PATH}/kdewin-installer-gui.bat "start ${installer_filename_only}")
-
-install_targets(/bin kdewin-installer-gui-${VERSION} )
-install(FILES ${EXECUTABLE_OUTPUT_PATH}/kdewin-installer-gui.bat DESTINATION bin)
-
-if (PACK_EXECUTABLE)
-    add_custom_command(
-        TARGET kdewin-installer-gui-${VERSION}
-        POST_BUILD
-        COMMAND ${UPX_EXECUTABLE} --lzma -9 "${installer_filename}"
-    )
-endif (PACK_EXECUTABLE)
+add_subdirectory(themes/amarok)
+add_subdirectory(themes/main)

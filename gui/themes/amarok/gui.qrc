@@ -1,0 +1,14 @@
+ <!DOCTYPE RCC><RCC version="1.0">
+ <qresource>
+     <file alias="autoinstall.xpm">autoinstall.xpm</file>
+     <file alias="del.xpm">del.xpm</file>
+     <file alias="install.xpm">install.xpm</file>
+     <file alias="keepinstalled.xpm">keepinstalled.xpm</file>
+     <file alias="noinst.xpm">noinst.xpm</file>
+     <file alias="update.xpm">update.xpm</file>
+     <file alias="watermark.png">watermark.png</file>
+     <file alias="banner.png">banner.png</file>
+     <file alias="logo.png">hi64-app-amarok.png</file>
+ </qresource>
+ </RCC>
+

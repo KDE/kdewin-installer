@@ -79,7 +79,7 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
 
     // must be first
     setWizardStyle(QWizard::ModernStyle);
-    setPixmap(QWizard::LogoPixmap,QPixmap(":/images/logo.png"));
+    setPixmap(QWizard::LogoPixmap,QPixmap(":/logo.png"));
     // setting a banner limit the installer width 
     // setPixmap(QWizard::BannerPixmap, QPixmap(":/images/banner.png"));
 /*
