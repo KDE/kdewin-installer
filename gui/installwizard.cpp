@@ -83,12 +83,6 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     // setting a banner limit the installer width 
     // setPixmap(QWizard::BannerPixmap, QPixmap(":/images/banner.png"));
 /*
-    QPushButton *aboutButton = new QPushButton(tr("About"));
-    setButton(QWizard::CustomButton1, aboutButton );
-    setOption(QWizard::HaveCustomButton1, true);
-    connect(aboutButton, SIGNAL(clicked()), this, SLOT(aboutButtonClicked()) );
-*/
-/*
     _settingsPage = new SettingsPage(this);
     QPushButton *settingsButton = new QPushButton(tr("Settings"));
     setButton(QWizard::CustomButton2, settingsButton);
@@ -149,19 +143,6 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
 
 InstallWizard::~InstallWizard()
 {
-}
-
-void InstallWizard::aboutButtonClicked()
-{
-    QMessageBox::information(this,
-        tr("KDE-Installer"),
-        tr("The KDEWIN Installer is an open source application, "
-           "which makes it able to install KDE applications on windows.\n"
-           "\nAuthors: \n\n\tRalf Habacker\n\tChristian Ehrlicher\n\tPatrick Spendrin\n"
-           "\n\n\nbuild with Qt version " QTVERSION
-          ),
-          QMessageBox::Ok
-    );
 }
 
 void InstallWizard::settingsButtonClicked()

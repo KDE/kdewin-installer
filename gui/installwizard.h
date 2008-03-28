@@ -63,7 +63,6 @@ protected:
     virtual int nextId() const;
 
 private slots:
-    void aboutButtonClicked();
     void settingsButtonClicked();
     virtual void reject();
     void slotCurrentIdChanged(int id);
