@@ -33,16 +33,9 @@ Known Bugs
 -  packager: stripping of dll's which are in use results in deleting the related dll. 
    Please make sure no one uses a dll when using the -strip option
 
--  gui-installer: installing dll's which are in use cancels installing of the related package
-
--  gui-installer: switching back to the mirror setting page when in package selecting page 
-   may result in package displayed twice or more. 
-
 -  gui-installer: changing compiler type is not possible when install root is changed to 
    a location where no packages are installed 
    -> run 'del "%APPDATA%\kde\installer.ini" ' on command line and restart installer
-
--  gui-installer: is is not possible to deselect eigen and gmm package
   
 TODO
 ====
@@ -58,6 +51,7 @@ TODO
     4 remove empty directories when removing packages 
     5 test creating start menu entries support
     6 add support to create/remove start menu entries for a specific package, which is required for the installer 
+    7 how to handle packages which requires administrative access like vcredist and others (which package exactly ?)
 	
   2 command line installer 
     3 test
@@ -68,6 +62,8 @@ TODO
     3 if remote config is not available only display installed packages
     4 only display firefox proxy option is firefox is installed 
     5 center checkboxes in package selector page -> not possible yet, see comment in source
+    5 implement end user package selector page 
+    5 make specialized installers complete 
 
 2 packager
     1 exlude *d.exe in strip 
@@ -78,9 +74,7 @@ TODO
 3 configer 
     1 add support to config.txt for using flat directory structures (= only one directory), which is required for sourceforge mirrors
       this requires also extending config.txt parser 
-    
-2 mirror structure 
-    1 move config.txt and installer to top level dir of mirror 
+   
 
 cmake support
 =============
