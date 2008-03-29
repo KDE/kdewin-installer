@@ -64,7 +64,6 @@ protected:
     virtual int nextId() const;
 
 private slots:
-    void settingsButtonClicked();
     virtual void reject();
     void slotCurrentIdChanged(int id);
     void slotEngineError(const QString &);

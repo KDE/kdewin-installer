@@ -41,7 +41,7 @@
 #include "installdirectorypage.h"
 #include "internetsettingspage.h"
 #include "downloadsettingspage.h"
-#include "enduserinstallmodepage.h"
+//#include "enduserinstallmodepage.h"
 #include "enduserpackageselectorpage.h"
 //#include "enduserupdatepage.h"
 //#include "enduserrepairpage.h"
@@ -81,16 +81,7 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     // must be first
     setWizardStyle(QWizard::ModernStyle);
     setPixmap(QWizard::LogoPixmap,QPixmap(":/logo.png"));
-    // setting a banner limit the installer width 
-    // setPixmap(QWizard::BannerPixmap, QPixmap(":/images/banner.png"));
-/*
-    _settingsPage = new SettingsPage(this);
-    QPushButton *settingsButton = new QPushButton(tr("Settings"));
-    setButton(QWizard::CustomButton2, settingsButton);
-    setOption(QWizard::HaveCustomButton2, true);
-    connect(settingsButton, SIGNAL(clicked()), this, SLOT(settingsButtonClicked()) );
-    settingsButton->hide();
-*/
+
     setOption(QWizard::NoBackButtonOnStartPage,true);
 
 #ifdef HAVE_RETRY_BUTTON
@@ -100,14 +91,6 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     retryButton->hide();
     connect(retryButton, SIGNAL(clicked()), this, SLOT(restart()) );
 #endif
-/*
-    QList<QWizard::WizardButton> layout;
-    layout << QWizard::CustomButton1 << QWizard::Stretch << QWizard::CustomButton2 << QWizard::Stretch 
-            << QWizard::CancelButton << QWizard::BackButton 
-//            << QWizard::CustomButton3 
-            << QWizard::NextButton << QWizard::FinishButton;
-    setButtonLayout(layout);
-*/
     TitlePage *titlePageP = new TitlePage();
     
     QString windowTitle = titlePageP->windowTitle() + QLatin1String(" - Version " VERSION);
@@ -118,7 +101,7 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     setPage(userCompilerModePage, new UserCompilerModePage); 
     setPage(downloadSettingsPage, new DownloadSettingsPage); 
     setPage(internetSettingsPage, new InternetSettingsPage); 
-    setPage(endUserInstallModePage,new EndUserInstallModePage);
+//    setPage(endUserInstallModePage,new EndUserInstallModePage);
     setPage(endUserPackageSelectorPage, new EndUserPackageSelectorPage); 
 //    setPage(endUserUpdatePage,     new EndUserUpdatePage);     
 //    setPage(endUserRepairPage,     new EndUserRepairPage);    
@@ -145,12 +128,6 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
 
 InstallWizard::~InstallWizard()
 {
-}
-
-void InstallWizard::settingsButtonClicked()
-{
-    _settingsPage->init();
-    _settingsPage->exec();
 }
 
 void InstallWizard::reject()
@@ -271,11 +248,13 @@ int InstallWizard::nextIdEndUser() const
         else
             return mirrorSettingsPage;
         
+#if 0
     case endUserInstallModePage:
     { 
         EndUserInstallModePage *_page = static_cast<EndUserInstallModePage*>(page(endUserInstallModePage));
         return _page->nextId();
     }
+#endif
     case mirrorSettingsPage: return endUserPackageSelectorPage;
 //    case endUserUpdatePage:        return dependenciesPage;
 //    case endUserRepairPage:        return uninstallPage;
