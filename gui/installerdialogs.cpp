@@ -21,6 +21,7 @@
 ****************************************************************************/
 
 #include "installerdialogs.h"
+#include "settings.h"
 #include <QVBoxLayout>
 
 bool InstallerDialogs::installerOutdated()
@@ -71,6 +72,32 @@ void InstallerDialogs::downloadProgressDialog(QWidget *parent,bool show, const Q
         m_d->hide();
         delete m_d;
     }
+}
+
+bool InstallerDialogs::confirmRemovalDialog()
+{
+    QString text = tr("Are you sure to remove the KDE installation from %1 ? ").arg(Settings::instance().installDir());
+    QMessageBox::StandardButton result = QMessageBox::warning ( 
+            m_parent, 
+            m_title, 
+            text,
+            QMessageBox::Cancel | QMessageBox::Ok,
+            QMessageBox::Cancel
+        );
+    return result == QMessageBox::Ok;
+}
+
+bool InstallerDialogs::confirmRepairDialog()
+{
+    QString text = tr("Are you sure to reinstall all packages ? ");
+    QMessageBox::StandardButton result = QMessageBox::warning ( 
+            m_parent, 
+            m_title, 
+            text,
+            QMessageBox::Cancel | QMessageBox::Ok,
+            QMessageBox::Cancel
+        );
+    return result == QMessageBox::Ok;
 }
 
 InstallerDialogs &InstallerDialogs::instance()

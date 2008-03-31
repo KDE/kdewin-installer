@@ -19,30 +19,23 @@
    <item row="0" column="0" >
     <layout class="QVBoxLayout" >
      <item>
-      <widget class="QLabel" name="label" >
-       <property name="text" >
-        <string>TextLabel</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QRadioButton" name="updateInstallButton" >
        <property name="text" >
-        <string>update installed packages</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QRadioButton" name="repairInstallButton" >
-       <property name="text" >
-        <string>repair current installation</string>
+        <string>Update installed packages</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QRadioButton" name="removeInstallButton" >
        <property name="text" >
-        <string>remove installation</string>
+        <string>Remove installed packages</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="repairInstallButton" >
+       <property name="text" >
+        <string>Repair current installation</string>
        </property>
       </widget>
      </item>

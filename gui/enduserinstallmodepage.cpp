@@ -24,6 +24,7 @@
 
 #include "config.h"
 #include "enduserinstallmodepage.h"
+#include "installerdialogs.h"
 
 EndUserInstallModePage::EndUserInstallModePage() : InstallWizardPage(0)
 {
@@ -35,6 +36,8 @@ EndUserInstallModePage::EndUserInstallModePage() : InstallWizardPage(0)
     groupA->addButton(ui.updateInstallButton);
     groupA->addButton(ui.repairInstallButton);
     groupA->addButton(ui.removeInstallButton);
+    ui.updateInstallButton->setChecked(true);
+    ui.repairInstallButton->setVisible(false);
 }
 
 void EndUserInstallModePage::initializePage()
@@ -44,17 +47,27 @@ void EndUserInstallModePage::initializePage()
 int EndUserInstallModePage::nextId() const
 {
     if (ui.updateInstallButton->isChecked())
-        return InstallWizard::endUserUpdatePage;
+        return InstallWizard::mirrorSettingsPage;
     else if (ui.repairInstallButton->isChecked())
         return InstallWizard::endUserRepairPage;
     else if (ui.removeInstallButton->isChecked())
-        return InstallWizard::endUserRemovePage;
+        return InstallWizard::uninstallPage;
     else 
         return InstallWizard::endUserInstallModePage;
 }
 
 bool EndUserInstallModePage::validatePage()
 {
+    if (ui.removeInstallButton->isChecked())
+    {
+        if (InstallerDialogs::instance().confirmRemovalDialog())
+            engine->selectAllPackagesForRemoval();
+    }
+    else if (ui.repairInstallButton->isChecked())
+    {
+        if (InstallerDialogs::instance().confirmRepairDialog())
+            engine->selectPackagesForReinstall();
+    }
     return true;
 }
 

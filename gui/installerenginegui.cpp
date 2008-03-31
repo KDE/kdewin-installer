@@ -484,6 +484,36 @@ void InstallerEngineGui::reload()
     InstallerEngine::reload();
 }
 
+void InstallerEngineGui::selectAllPackagesForRemoval()
+{
+    Package::Type type = Package::BIN;
+    stateType newState = _Remove;
+    foreach(Package *installed,m_database->packages())
+    {
+        if (installed->hasType(type))
+            packageStates.setState(installed,type,newState);
+        // set additional package types for download/install/remove
+        if (type == Package::BIN && m_installMode == Developer)
+        {
+            if (installed->hasType(Package::LIB))
+                packageStates.setState(installed,Package::LIB,newState);
+            if (installed->hasType(Package::DOC))
+                packageStates.setState(installed,Package::DOC,newState);
+        }
+        else if (type == Package::BIN && m_installMode == EndUser)
+        {
+            ;//if (installed->hasType(Package::DOC))
+             //   packageStates.setState(available,Package::DOC,newState);
+        }
+        m_packageResources->addPackage(*installed);
+    }
+    qDebug() << packageStates;
+}
+
+void InstallerEngineGui::selectPackagesForReinstall()
+{
+    qWarning() << "has to be implemented";
+}
 
 bool InstallerEngineGui::downloadPackageItem(Package *pkg, Package::Type type )
 {
@@ -515,7 +545,7 @@ bool InstallerEngineGui::downloadPackageItem(Package *pkg, Package::Type type )
     return false;
 }
 
-bool InstallerEngineGui::downloadPackages ( QTreeWidget *tree, const QString &category )
+bool InstallerEngineGui::downloadPackages ( const QString &category )
 {
     QList<Package*> list = packageStates.packages(m_packageResources);
     Q_FOREACH ( Package *pkg, dependencyStates.packages(m_packageResources) ) 
@@ -543,7 +573,7 @@ bool InstallerEngineGui::downloadPackages ( QTreeWidget *tree, const QString &ca
     return true;
 }
 
-bool InstallerEngineGui::removePackages ( QTreeWidget *tree, const QString &category )
+bool InstallerEngineGui::removePackages ( const QString &category )
 {
     QList<Package*> list = packageStates.packages(m_packageResources);
     Q_FOREACH ( Package *pkg, dependencyStates.packages(m_packageResources) )
@@ -576,7 +606,7 @@ bool InstallerEngineGui::removePackages ( QTreeWidget *tree, const QString &cate
     return true;
 }
 
-bool InstallerEngineGui::installPackages ( QTreeWidget *tree, const QString &_category )
+bool InstallerEngineGui::installPackages ( const QString &_category )
 {
     QList<Package*> list = packageStates.packages(m_packageResources);
     Q_FOREACH ( Package *pkg, dependencyStates.packages(m_packageResources) )

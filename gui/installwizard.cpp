@@ -41,7 +41,7 @@
 #include "installdirectorypage.h"
 #include "internetsettingspage.h"
 #include "downloadsettingspage.h"
-//#include "enduserinstallmodepage.h"
+#include "enduserinstallmodepage.h"
 #include "enduserpackageselectorpage.h"
 //#include "enduserupdatepage.h"
 //#include "enduserrepairpage.h"
@@ -101,7 +101,7 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     setPage(userCompilerModePage, new UserCompilerModePage); 
     setPage(downloadSettingsPage, new DownloadSettingsPage); 
     setPage(internetSettingsPage, new InternetSettingsPage); 
-//    setPage(endUserInstallModePage,new EndUserInstallModePage);
+    setPage(endUserInstallModePage,new EndUserInstallModePage);
     setPage(endUserPackageSelectorPage, new EndUserPackageSelectorPage); 
 //    setPage(endUserUpdatePage,     new EndUserUpdatePage);     
 //    setPage(endUserRepairPage,     new EndUserRepairPage);    
@@ -175,7 +175,7 @@ void InstallWizard::slotCurrentIdChanged(int id)
     if (id == downloadPage) {
         button(QWizard::BackButton)->setEnabled(false);
         button(QWizard::NextButton)->setEnabled(false);
-        if (!engine->downloadPackages(tree)) {
+        if (!engine->downloadPackages()) {
             reject();
             return;
         }
@@ -187,7 +187,7 @@ void InstallWizard::slotCurrentIdChanged(int id)
     else if (id == uninstallPage) {
         button(QWizard::BackButton)->setEnabled(false);
         button(QWizard::NextButton)->setEnabled(false);
-        if (!engine->removePackages(tree)) {
+        if (!engine->removePackages()) {
             reject();
             return;
         }
@@ -199,7 +199,7 @@ void InstallWizard::slotCurrentIdChanged(int id)
     else if (id == installPage) {
         button(QWizard::BackButton)->setEnabled(false);
         button(QWizard::NextButton)->setEnabled(false);
-        if (!engine->installPackages(tree)) {
+        if (!engine->installPackages()) {
             reject();
             return;
         }
@@ -228,7 +228,7 @@ int InstallWizard::nextIdEndUser() const
         if (Settings::instance().isSkipBasicSettings())
         {
             if (Database::isAnyPackageInstalled(Settings::instance().installDir()))
-#if 0
+#if 1
                 return endUserInstallModePage;
 #else
                 return endUserPackageSelectorPage;
@@ -248,7 +248,7 @@ int InstallWizard::nextIdEndUser() const
         else
             return mirrorSettingsPage;
         
-#if 0
+#if 1
     case endUserInstallModePage:
     { 
         EndUserInstallModePage *_page = static_cast<EndUserInstallModePage*>(page(endUserInstallModePage));

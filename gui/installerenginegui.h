@@ -37,13 +37,16 @@ public:
     /// reload all package definitions
     virtual void reload();
 
+    void selectAllPackagesForRemoval();
+    void selectPackagesForReinstall();
+
     void checkUpdateDependencies(QTreeWidget *list);
     bool checkRemoveDependencies(QTreeWidget *list);
 
-    bool downloadPackages(QTreeWidget *tree, const QString &category=QString());
-    bool installPackages(QTreeWidget *tree, const QString &category=QString());
-    bool removePackages(QTreeWidget *tree, const QString &category=QString());
-	/// @TODO: cleanup
+    bool downloadPackages(const QString &category=QString());
+    bool installPackages(const QString &category=QString());
+    bool removePackages(const QString &category=QString());
+    /// @TODO: cleanup
     void setEndUserInitialState ( QTreeWidgetItem &item, Package *available, Package *installed, int column=0 );
 
     void setInitialState(QTreeWidgetItem &item, Package *available, Package *installed,int column=0);

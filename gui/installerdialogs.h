@@ -37,6 +37,8 @@ class InstallerDialogs : public QObject
         bool installerOutdated();
         QMessageBox::StandardButton downloadFailed(const QString &url, const QString &error=QString());
         void downloadProgressDialog(QWidget *parent,bool show, const QString &title=QString());
+        bool confirmRemovalDialog();
+        bool confirmRepairDialog();
 
         static InstallerDialogs &instance();
 
