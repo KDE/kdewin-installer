@@ -23,6 +23,7 @@
 #ifndef MISC_H
 #define MISC_H
 
+#include <QtDebug>
 #include <QRegExp>
 #include <QString>
 #include <QStringList>
@@ -51,6 +52,8 @@ struct InstallFile
   {
     return (inputFile == o.inputFile && outputFile == o.outputFile);
   }
+  friend QDebug &operator<<(QDebug &,const InstallFile &);
+  friend QDebug &operator<<(QDebug &,QList<InstallFile> &);
 };
 
 bool parseQtIncludeFiles(QList<InstallFile> &fileList, const QString &root, const QString &subdir, const QString &filter, const QString &exclude);

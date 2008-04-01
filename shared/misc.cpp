@@ -45,6 +45,28 @@
 #include <qplatformdefs.h>
 
 #ifndef MISC_SMALL_VERSION
+
+QDebug &operator<<(QDebug &out, const InstallFile &c)
+{
+    out << "InstallFile ("
+        << "inputFile" << c.inputFile
+        << "outputFile" << c.outputFile
+        << "bAbsInputPath" << c.bAbsInputPath
+        << ")";
+    return out;
+}
+
+QDebug &operator<<(QDebug &out, const QList<InstallFile> &c)
+{
+    out << "QList<InstallFile> ("
+        << "size:" << c.size();
+    Q_FOREACH(InstallFile p, c)
+        out << p;
+    out << ")";
+    return out;
+}
+
+
 #ifdef Q_WS_WIN
 /*
     add correct prefix for win32 filesystem functions
