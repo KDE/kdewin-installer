@@ -46,7 +46,7 @@
 
 #ifndef MISC_SMALL_VERSION
 
-QDebug &operator<<(QDebug &out, const InstallFile &c)
+QDebug operator<<(QDebug out, const InstallFile &c)
 {
     out << "InstallFile ("
         << "inputFile" << c.inputFile
@@ -56,7 +56,7 @@ QDebug &operator<<(QDebug &out, const InstallFile &c)
     return out;
 }
 
-QDebug &operator<<(QDebug &out, const QList<InstallFile> &c)
+QDebug operator<<(QDebug out, const QList<InstallFile> &c)
 {
     out << "QList<InstallFile> ("
         << "size:" << c.size();
