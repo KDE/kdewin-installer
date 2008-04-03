@@ -13,19 +13,19 @@ if (BZIP2_UNPACK_SUPPORT)
     set(filters_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/filters)
 
     set(bzip2_SOURCES
-        ${CMAKE_SOURCE_DIR}/3rdparty/bzip2-1.0.4/blocksort.c
-        ${CMAKE_SOURCE_DIR}/3rdparty/bzip2-1.0.4/bzlib.c
-        ${CMAKE_SOURCE_DIR}/3rdparty/bzip2-1.0.4/compress.c
-        ${CMAKE_SOURCE_DIR}/3rdparty/bzip2-1.0.4/crctable.c
-        ${CMAKE_SOURCE_DIR}/3rdparty/bzip2-1.0.4/decompress.c
-        ${CMAKE_SOURCE_DIR}/3rdparty/bzip2-1.0.4/huffman.c
-        ${CMAKE_SOURCE_DIR}/3rdparty/bzip2-1.0.4/randtable.c
+        ${CMAKE_SOURCE_DIR}/3rdparty/bzip2/blocksort.c
+        ${CMAKE_SOURCE_DIR}/3rdparty/bzip2/bzlib.c
+        ${CMAKE_SOURCE_DIR}/3rdparty/bzip2/compress.c
+        ${CMAKE_SOURCE_DIR}/3rdparty/bzip2/crctable.c
+        ${CMAKE_SOURCE_DIR}/3rdparty/bzip2/decompress.c
+        ${CMAKE_SOURCE_DIR}/3rdparty/bzip2/huffman.c
+        ${CMAKE_SOURCE_DIR}/3rdparty/bzip2/randtable.c
     )
     set(bzip2_HEADERS
-        ${CMAKE_SOURCE_DIR}/3rdparty/bzip2-1.0.4/bzlib.h
-        ${CMAKE_SOURCE_DIR}/3rdparty/bzip2-1.0.4/bzlib_private.h
+        ${CMAKE_SOURCE_DIR}/3rdparty/bzip2/bzlib.h
+        ${CMAKE_SOURCE_DIR}/3rdparty/bzip2/bzlib_private.h
     )
-    set(bzip2_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/bzip2-1.0.4)
+    set(bzip2_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/bzip2)
 endif (BZIP2_UNPACK_SUPPORT)
 
 
