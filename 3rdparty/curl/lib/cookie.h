@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: cookie.h,v 1.26 2008-01-23 22:22:12 bagder Exp $
+ * $Id: cookie.h,v 1.27 2008-01-31 12:21:57 bagder Exp $
  ***************************************************************************/
 
 #include <stdio.h>
@@ -50,6 +50,7 @@ struct Cookie {
 
   bool secure;       /* whether the 'secure' keyword was used */
   bool livecookie;   /* updated from a server, not a stored file */
+  bool httponly;     /* true if the httponly directive is present */
 };
 
 struct CookieInfo {

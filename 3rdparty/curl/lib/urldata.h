@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: urldata.h,v 1.372 2008-01-21 23:48:58 bagder Exp $
+ * $Id: urldata.h,v 1.377 2008-03-13 20:56:13 bagder Exp $
  ***************************************************************************/
 
 /* This file is for lib internal stuff */
@@ -168,11 +168,19 @@ typedef enum {
   ssl_connect_done
 } ssl_connect_state;
 
+typedef enum {
+  ssl_connection_none,
+  ssl_connection_negotiating,
+  ssl_connection_complete
+} ssl_connection_state;
+
 /* struct for data related to each SSL connection */
 struct ssl_connect_data {
-  bool use;        /* use ssl encrypted communications TRUE/FALSE, not
-                      necessarily using it atm but at least asked to or
-                      meaning to use it */
+  /* Use ssl encrypted communications TRUE/FALSE, not necessarily using it atm
+     but at least asked to or meaning to use it. See 'state' for the exact
+     current state of the connection. */
+  bool use;
+  ssl_connection_state state;
 #ifdef USE_SSLEAY
   /* these ones requires specific SSL-types */
   SSL_CTX* ctx;
@@ -552,7 +560,6 @@ struct FILEPROTO {
 struct ConnectBits {
   bool close; /* if set, we close the connection after this request */
   bool reuse; /* if set, this is a re-used connection */
-  bool chunk; /* if set, this is a chunked transfer-encoding */
   bool proxy; /* if set, this transfer is done through a proxy - any type */
   bool httpproxy;    /* if set, this transfer is done through a http proxy */
   bool user_passwd;    /* do we use user+password for this connection? */
@@ -564,14 +571,6 @@ struct ConnectBits {
   bool do_more; /* this is set TRUE if the ->curl_do_more() function is
                    supposed to be called, after ->curl_do() */
 
-  bool upload_chunky; /* set TRUE if we are doing chunked transfer-encoding
-                         on upload */
-  bool getheader;     /* TRUE if header parsing is wanted */
-
-  bool forbidchunk;   /* used only to explicitly forbid chunk-upload for
-                         specific upload buffers. See readmoredata() in
-                         http.c for details. */
-
   bool tcpconnect;    /* the TCP layer (or simimlar) is connected, this is set
                          the first time on the first connect function call */
   bool protoconnstart;/* the protocol layer has STARTED its operation after
@@ -579,7 +578,6 @@ struct ConnectBits {
 
   bool retry;         /* this connection is about to get closed and then
                          re-attempted at another connection. */
-  bool no_body;       /* CURLOPT_NO_BODY (or similar) was set */
   bool tunnel_proxy;  /* if CONNECT is used to "tunnel" through the proxy.
                          This is implicit when SSL-protocols are used through
                          proxies, but can also be enabled explicitly by
@@ -603,9 +601,6 @@ struct ConnectBits {
                          requests */
   bool netrc;         /* name+password provided by netrc */
 
-  bool trailerhdrpresent; /* Set when Trailer: header found in HTTP response.
-                             Required to determine whether to look for trailers
-                             in case of Transfer-Encoding: chunking */
   bool done;          /* set to FALSE when Curl_do() is called and set to TRUE
                          when Curl_done() is called, to prevent Curl_done() to
                          get invoked twice when the multi interface is
@@ -677,6 +672,14 @@ typedef CURLcode (*Curl_do_more_func)(struct connectdata *);
 typedef CURLcode (*Curl_done_func)(struct connectdata *, CURLcode, bool);
 
 
+enum expect100 {
+  EXP100_SEND_DATA,           /* enough waiting, just send the body now */
+  EXP100_AWAITING_CONTINUE,   /* waiting for the 100 Continue header */
+  EXP100_SENDING_REQUEST,     /* still sending the request but will wait for
+                                 the 100 header once done with the request */
+  EXP100_FAILED               /* used on 417 Expectation Failed */
+};
+
 /*
  * Request specific data in the easy handle (SessionHandle).  Previously,
  * these members were on the connectdata struct but since a conn struct may
@@ -726,12 +729,8 @@ struct SingleRequest {
   int httpcode;                 /* error code from the 'HTTP/1.? XXX' line */
   int httpversion;              /* the HTTP version*10 */
   struct timeval start100;      /* time stamp to wait for the 100 code from */
-  bool write_after_100_header;  /* TRUE = we enable the write after we
-                                   received a 100-continue/timeout or
-                                   FALSE = directly */
-  bool wait100_after_headers;   /* TRUE = after the request-headers have been
-                                   sent off properly, we go into the wait100
-                                   state, FALSE = don't */
+  enum expect100 exp100;        /* expect 100 continue state */
+
   int content_encoding;         /* What content encoding. sec 3.5, RFC2616. */
 
 #define IDENTITY 0              /* No encoding */
@@ -773,6 +772,18 @@ struct SingleRequest {
       and the 'upload_present' contains the number of bytes available at this
       position */
   char *upload_fromhere;
+
+  bool chunk; /* if set, this is a chunked transfer-encoding */
+  bool upload_chunky; /* set TRUE if we are doing chunked transfer-encoding
+                         on upload */
+  bool getheader;     /* TRUE if header parsing is wanted */
+
+  bool forbidchunk;   /* used only to explicitly forbid chunk-upload for
+                         specific upload buffers. See readmoredata() in
+                         http.c for details. */
+  bool trailerhdrpresent; /* Set when Trailer: header found in HTTP response.
+                             Required to determine whether to look for trailers
+                             in case of Transfer-Encoding: chunking */
 };
 
 /*
@@ -951,7 +962,6 @@ struct connectdata {
                               handle */
   bool writechannel_inuse; /* whether the write channel is in use by an easy
                               handle */
-  bool is_in_pipeline;     /* TRUE if this connection is in a pipeline */
   bool server_supports_pipelining; /* TRUE if server supports pipelining,
                                       set after first response */
 
@@ -1136,8 +1146,6 @@ struct UrlState {
                                 bytes / second */
   bool this_is_a_follow; /* this is a followed Location: request */
 
-  bool is_in_pipeline; /* Indicates whether this handle is part of a pipeline */
-
   char *first_host; /* if set, this should be the host name that we will
                        sent authorization to, no else. Used to make Location:
                        following not keep sending user+password... This is
@@ -1254,10 +1262,6 @@ struct UrlState {
 struct DynamicStatic {
   char *url;        /* work URL, copied from UserDefined */
   bool url_alloc;   /* URL string is malloc()'ed */
-  bool url_changed; /* set on CURL_OPT_URL, used to detect if the URL was
-                       changed after the connect phase, as we allow callback
-                       to change it and if so, we reconnect to use the new
-                       URL instead */
   char *referer;    /* referer string */
   bool referer_alloc; /* referer sting is malloc()ed */
   struct curl_slist *cookielist; /* list of cookie files set by

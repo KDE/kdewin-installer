@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: url.c,v 1.696 2008-01-21 23:48:58 bagder Exp $
+ * $Id: url.c,v 1.706 2008-03-25 19:19:49 bagder Exp $
  ***************************************************************************/
 
 /* -- WIN32 approved -- */
@@ -387,9 +387,6 @@ CURLcode Curl_close(struct SessionHandle *data)
   /* only for debugging, scan through all connections and see if there's a
      pipe reference still identifying this handle */
 
-  if(data->state.is_in_pipeline)
-    fprintf(stderr, "CLOSED when in pipeline!\n");
-
   if(data->state.connc && data->state.connc->type == CONNCACHE_MULTI) {
     struct conncache *c = data->state.connc;
     long i;
@@ -749,10 +746,12 @@ CURLcode Curl_open(struct SessionHandle **curl)
     data->set.ssl.verifypeer = TRUE;
     data->set.ssl.verifyhost = 2;
     data->set.ssl.sessionid = TRUE; /* session ID caching enabled by default */
-#ifdef CURL_CA_BUNDLE
-    /* This is our preferred CA cert bundle since install time */
+    /* This is our preferred CA cert bundle/path since install time */
+#if defined(CURL_CA_BUNDLE)
     res = setstropt(&data->set.str[STRING_SSL_CAFILE],
                          (char *) CURL_CA_BUNDLE);
+#elif defined(CURL_CA_PATH)
+    res = setstropt(&data->set.str[STRING_SSL_CAPATH], (char *) CURL_CA_PATH);
 #endif
   }
 
@@ -1484,8 +1483,6 @@ CURLcode Curl_setopt(struct SessionHandle *data, CURLoption option,
     result = setstropt(&data->set.str[STRING_SET_URL],
                             va_arg(param, char *));
     data->change.url = data->set.str[STRING_SET_URL];
-    if(data->change.url)
-      data->change.url_changed = TRUE;
     break;
   case CURLOPT_PORT:
     /*
@@ -1772,6 +1769,11 @@ CURLcode Curl_setopt(struct SessionHandle *data, CURLoption option,
      */
     data->set.ssl.verifyhost = va_arg(param, long);
     break;
+#ifdef USE_SSLEAY
+    /* since these two options are only possible to use on an OpenSSL-
+       powered libcurl we #ifdef them on this condition so that libcurls
+       built against other SSL libs will return a proper error when trying
+       to set this option! */
   case CURLOPT_SSL_CTX_FUNCTION:
     /*
      * Set a SSL_CTX callback
@@ -1784,6 +1786,7 @@ CURLcode Curl_setopt(struct SessionHandle *data, CURLoption option,
      */
     data->set.ssl.fsslctxp = va_arg(param, void *);
     break;
+#endif
   case CURLOPT_CAINFO:
     /*
      * Set CA info for SSL connection. Specify file name of the CA certificate
@@ -2444,10 +2447,17 @@ ConnectionExists(struct SessionHandle *data,
              ssl options as well */
           if(!Curl_ssl_config_matches(&needle->ssl_config,
                                       &check->ssl_config)) {
-            infof(data,
-                  "Connection #%ld has different SSL parameters, "
-                  "can't reuse\n",
-                  check->connectindex );
+            DEBUGF(infof(data,
+                         "Connection #%ld has different SSL parameters, "
+                         "can't reuse\n",
+                         check->connectindex));
+            continue;
+          }
+          else if(check->ssl[FIRSTSOCKET].state != ssl_connection_complete) {
+            DEBUGF(infof(data,
+                         "Connection #%ld has not started ssl connect, "
+                         "can't reuse\n",
+                         check->connectindex));
             continue;
           }
         }
@@ -2477,9 +2487,9 @@ ConnectionExists(struct SessionHandle *data,
     }
 
     if(match) {
-      if(!check->is_in_pipeline) {
-        /* The check for a dead socket makes sense only in the
-           non-pipelining case */
+      if(pipeLen == 0) {
+        /* The check for a dead socket makes sense only if there
+           are no handles in pipeline */
         bool dead = SocketIsDead(check->sock[FIRSTSOCKET]);
         if(dead) {
           check->data = data;
@@ -2494,10 +2504,6 @@ ConnectionExists(struct SessionHandle *data,
 
       check->inuse = TRUE; /* mark this as being in use so that no other
                               handle in a multi stack may nick it */
-      if(canPipeline) {
-        /* Mark the connection as being in a pipeline */
-        check->is_in_pipeline = TRUE;
-      }
 
       *usethis = check;
       return TRUE; /* yes, we found one to use! */
@@ -2560,8 +2566,6 @@ static void
 ConnectionDone(struct connectdata *conn)
 {
   conn->inuse = FALSE;
-  if(!conn->send_pipe && !conn->recv_pipe && !conn->pend_pipe)
-    conn->is_in_pipeline = FALSE;
 }
 
 /*
@@ -3538,7 +3542,6 @@ static CURLcode CreateConnection(struct SessionHandle *data,
 
   conn->bits.user_passwd = (bool)(NULL != data->set.str[STRING_USERPWD]);
   conn->bits.proxy_user_passwd = (bool)(NULL != data->set.str[STRING_PROXYUSERPWD]);
-  conn->bits.no_body = data->set.opt_no_body;
   conn->bits.tunnel_proxy = data->set.tunnel_thru_httpproxy;
   conn->bits.ftp_use_epsv = data->set.ftp_use_epsv;
   conn->bits.ftp_use_eprt = data->set.ftp_use_eprt;
@@ -3692,7 +3695,8 @@ static CURLcode CreateConnection(struct SessionHandle *data,
       result = setup_range(data);
       if(result) {
         DEBUGASSERT(conn->handler->done);
-        conn->handler->done(conn, result, FALSE);
+        /* we ignore the return code for the protocol-specific DONE */
+        (void)conn->handler->done(conn, result, FALSE);
         return result;
       }
 
@@ -4007,9 +4011,6 @@ static CURLcode CreateConnection(struct SessionHandle *data,
     else
       free(old_conn->host.rawalloc); /* free the newly allocated name buffer */
 
-    /* get the newly set value, not the old one */
-    conn->bits.no_body = old_conn->bits.no_body;
-
     /* re-use init */
     conn->bits.reuse = TRUE; /* yes, we're re-using here */
 
@@ -4052,18 +4053,6 @@ static CURLcode CreateConnection(struct SessionHandle *data,
   conn->fread_in = data->set.in;
   conn->seek_func = data->set.seek_func;
   conn->seek_client = data->set.seek_client;
-
-  if((conn->protocol&PROT_HTTP) &&
-      data->set.upload &&
-      (data->set.infilesize == -1) &&
-      (data->set.httpversion != CURL_HTTP_VERSION_1_0)) {
-    /* HTTP, upload, unknown file size and not HTTP 1.0 */
-    conn->bits.upload_chunky = TRUE;
-  }
-  else {
-    /* else, no chunky upload */
-    conn->bits.upload_chunky = FALSE;
-  }
 
 #ifndef USE_ARES
   /*************************************************************
@@ -4354,8 +4343,10 @@ CURLcode Curl_connect(struct SessionHandle *data,
 
   if(CURLE_OK == code) {
     /* no error */
-    if((*in_connect)->is_in_pipeline)
-      data->state.is_in_pipeline = TRUE;
+    if((*in_connect)->send_pipe->size +
+       (*in_connect)->recv_pipe->size != 0)
+      /* pipelining */
+      *protocol_done = TRUE;
     else {
       if(dns || !*asyncp)
         /* If an address is available it means that we already have the name
@@ -4409,15 +4400,15 @@ CURLcode Curl_done(struct connectdata **connp,
                    bool premature)
 {
   CURLcode result;
-  struct connectdata *conn = *connp;
-  struct SessionHandle *data = conn->data;
+  struct connectdata *conn;
+  struct SessionHandle *data;
+
+  DEBUGASSERT(*connp);
+
+  conn = *connp;
+  data = conn->data;
 
   Curl_expire(data, 0); /* stop timer */
-
-  if(conn->bits.done)
-    return CURLE_OK; /* Curl_done() has already been called */
-
-  conn->bits.done = TRUE; /* called just now! */
 
   if(Curl_removeHandleFromPipeline(data, conn->recv_pipe) &&
      conn->readchannel_inuse)
@@ -4426,6 +4417,16 @@ CURLcode Curl_done(struct connectdata **connp,
      conn->writechannel_inuse)
     conn->writechannel_inuse = FALSE;
   Curl_removeHandleFromPipeline(data, conn->pend_pipe);
+
+  if(conn->bits.done ||
+     (conn->send_pipe->size + conn->recv_pipe->size != 0 &&
+      !data->set.reuse_forbid &&
+      !conn->bits.close))
+    /* Stop if Curl_done() has already been called or pipeline
+       is not empty and we do not have to close connection. */
+    return CURLE_OK;
+
+  conn->bits.done = TRUE; /* called just now! */
 
   /* Cleanup possible redirect junk */
   if(data->req.newurl) {
@@ -4462,8 +4463,15 @@ CURLcode Curl_done(struct connectdata **connp,
 
      if conn->bits.close is TRUE, it means that the connection should be
      closed in spite of all our efforts to be nice, due to protocol
-     restrictions in our or the server's end */
-  if(data->set.reuse_forbid || conn->bits.close) {
+     restrictions in our or the server's end
+
+     if premature is TRUE, it means this connection was said to be DONE before
+     the entire request operation is complete and thus we can't know in what
+     state it is for re-using, so we're forced to close it. In a perfect world
+     we can add code that keep track of if we really must close it here or not,
+     but currently we have no such detail knowledge.
+  */
+  if(data->set.reuse_forbid || conn->bits.close || premature) {
     CURLcode res2 = Curl_disconnect(conn); /* close the connection */
 
     /* If we had an error already, make sure we return that one. But
@@ -4537,8 +4545,8 @@ static CURLcode do_init(struct connectdata *conn)
  */
 static void do_complete(struct connectdata *conn)
 {
-  conn->bits.chunk=FALSE;
-  conn->bits.trailerhdrpresent=FALSE;
+  conn->data->req.chunk=FALSE;
+  conn->data->req.trailerhdrpresent=FALSE;
 
   conn->data->req.maxfd = (conn->sockfd>conn->writesockfd?
                                conn->sockfd:conn->writesockfd)+1;

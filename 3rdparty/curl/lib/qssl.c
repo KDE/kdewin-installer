@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: qssl.c,v 1.7 2008-01-15 23:19:02 bagder Exp $
+ * $Id: qssl.c,v 1.11 2008-02-20 09:56:26 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -90,7 +90,7 @@ static CURLcode Curl_qsossl_init_session(struct SessionHandle * data)
   memset((char *) &initappstr, 0, sizeof initappstr);
   initappstr.applicationID = certname;
   initappstr.applicationIDLen = strlen(certname);
-  initappstr.protocol = SSL_VERSION_CURRENT;
+  initappstr.protocol = TLSV1_SSLV3;
   initappstr.sessionType = SSL_REGISTERED_AS_CLIENT;
   rc = SSL_Init_Application(&initappstr);
 
@@ -172,20 +172,16 @@ static CURLcode Curl_qsossl_handshake(struct connectdata * conn, int sockindex)
   if(!data->set.ssl.verifyhost)
     h->exitPgm = Curl_qsossl_trap_cert;
 
-  if(data->set.connecttimeout) {
-    timeout_ms = data->set.connecttimeout;
+  /* figure out how long time we should wait at maximum */
+  timeout_ms = Curl_timeleft(conn, NULL, TRUE);
 
-    if(data->set.timeout)
-      if(timeout_ms > data->set.timeout)
-        timeout_ms = data->set.timeout;
-    }
-  else if(data->set.timeout)
-    timeout_ms = data->set.timeout;
-  else
-    timeout_ms = DEFAULT_CONNECT_TIMEOUT;
+  if(timeout_ms < 0) {
+    /* time-out, bail out, go home */
+    failf(data, "Connection time-out");
+    return CURLE_OPERATION_TIMEDOUT;
+  }
 
   /* SSL_Handshake() timeout resolution is second, so round up. */
-
   h->timeout = (timeout_ms + 1000 - 1) / 1000;
 
   /* Set-up protocol. */
@@ -194,7 +190,7 @@ static CURLcode Curl_qsossl_handshake(struct connectdata * conn, int sockindex)
 
   default:
   case CURL_SSLVERSION_DEFAULT:
-    h->protocol = SSL_VERSION_CURRENT;
+    h->protocol = TLSV1_SSLV3;
     break;
 
   case CURL_SSLVERSION_TLSv1:
@@ -262,8 +258,11 @@ CURLcode Curl_qsossl_connect(struct connectdata * conn, int sockindex)
       SSL_Destroy(connssl->handle);
       connssl->handle = NULL;
       connssl->use = FALSE;
+      connssl->state = ssl_connection_none;
     }
   }
+  if (rc == CURLE_OK)
+    connssl->state = ssl_connection_complete;
 
   return rc;
 }
@@ -438,7 +437,7 @@ ssize_t Curl_qsossl_recv(struct connectdata * conn, int num, char * buf,
     case SSL_ERROR_IO:
       switch (errno) {
       case EWOULDBLOCK:
-	*wouldblock = TRUE;
+        *wouldblock = TRUE;
         return -1;
         }
 

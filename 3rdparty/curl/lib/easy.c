@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: easy.c,v 1.113 2008-01-15 22:44:12 bagder Exp $
+ * $Id: easy.c,v 1.116 2008-03-20 08:09:24 mmarek Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -348,6 +348,7 @@ CURL *curl_easy_init(void)
  * easy handle.
  */
 
+#undef curl_easy_setopt
 CURLcode curl_easy_setopt(CURL *curl, CURLoption tag, ...)
 {
   va_list arg;
@@ -547,6 +548,7 @@ void Curl_easy_initHandleData(struct SessionHandle *data)
  * curl_easy_getinfo() is an external interface that allows an app to retrieve
  * information from a performed transfer and similar.
  */
+#undef curl_easy_getinfo
 CURLcode curl_easy_getinfo(CURL *curl, CURLINFO info, ...)
 {
   va_list arg;
@@ -743,9 +745,11 @@ void curl_easy_reset(CURL *curl)
    */
   data->set.ssl.verifypeer = TRUE;
   data->set.ssl.verifyhost = 2;
-#ifdef CURL_CA_BUNDLE
-  /* This is our prefered CA cert bundle since install time */
+  /* This is our prefered CA cert bundle/path since install time */
+#if defined(CURL_CA_BUNDLE)
   (void) curl_easy_setopt(curl, CURLOPT_CAINFO, (char *) CURL_CA_BUNDLE);
+#elif defined(CURL_CA_PATH)
+  (void) curl_easy_setopt(curl, CURLOPT_CAPATH, (char *) CURL_CA_PATH);
 #endif
 
   data->set.ssh_auth_types = CURLSSH_AUTH_DEFAULT; /* defaults to any auth

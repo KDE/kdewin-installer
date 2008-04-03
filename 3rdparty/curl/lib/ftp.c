@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: ftp.c,v 1.464 2008-01-15 23:19:02 bagder Exp $
+ * $Id: ftp.c,v 1.466 2008-02-07 22:25:04 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -300,43 +300,14 @@ static bool isBadFtpString(const char *string)
  */
 static CURLcode AllowServerConnect(struct connectdata *conn)
 {
-  long timeout_ms;
   struct SessionHandle *data = conn->data;
   curl_socket_t sock = conn->sock[SECONDARYSOCKET];
-  int timeout_set = 0;
+  long timeout_ms = Curl_timeleft(conn, NULL, TRUE);
 
-  /* if a timeout is set, use the most restrictive one */
-
-  if(data->set.timeout > 0)
-    timeout_set += 1;
-  if(data->set.connecttimeout > 0)
-    timeout_set += 2;
-
-  switch (timeout_set) {
-  case 1:
-    timeout_ms = data->set.timeout;
-    break;
-  case 2:
-    timeout_ms = data->set.connecttimeout;
-    break;
-  case 3:
-    if(data->set.timeout < data->set.connecttimeout)
-      timeout_ms = data->set.timeout;
-    else
-      timeout_ms = data->set.connecttimeout;
-    break;
-  default:
-    timeout_ms = 60000; /* 60 seconds default timeout */
-    break;
-  }
-
-  if(timeout_set > 0) {
-    /* if a timeout was already set, substract elapsed time */
-    timeout_ms -= Curl_tvdiff(Curl_tvnow(), conn->now);
-    if(timeout_ms < 0) {
-      failf(data, "Timed out before server could connect to us");
-      return CURLE_OPERATION_TIMEDOUT;
-    }
+  if(timeout_ms < 0) {
+    /* if a timeout was already reached, bail out */
+    failf(data, "Timed out before server could connect to us");
+    return CURLE_OPERATION_TIMEDOUT;
   }
 
   switch (Curl_socket_ready(sock, CURL_SOCKET_BAD, (int)timeout_ms)) {
@@ -1473,7 +1444,7 @@ static CURLcode ftp_state_post_mdtm(struct connectdata *conn)
   /* If we have selected NOBODY and HEADER, it means that we only want file
      information. Which in FTP can't be much more than the file size and
      date. */
-  if(conn->bits.no_body && ftpc->file &&
+  if(data->set.opt_no_body && ftpc->file &&
      ftp_need_type(conn, data->set.prefer_ascii)) {
     /* The SIZE command is _not_ RFC 959 specified, and therefor many servers
        may not support it! It is however the only way we have to get a file's
@@ -2007,7 +1978,7 @@ static CURLcode ftp_state_mdtm_resp(struct connectdata *conn,
       /* If we asked for a time of the file and we actually got one as well,
          we "emulate" a HTTP-style header in our output. */
 
-      if(conn->bits.no_body &&
+      if(data->set.opt_no_body &&
          ftpc->file &&
          data->set.get_filetime &&
          (data->info.filetime>=0) ) {
@@ -3575,7 +3546,7 @@ CURLcode ftp_perform(struct connectdata *conn,
 
   DEBUGF(infof(conn->data, "DO phase starts\n"));
 
-  if(conn->bits.no_body) {
+  if(conn->data->set.opt_no_body) {
     /* requested no body means no transfer... */
     struct FTP *ftp = conn->data->state.proto.ftp;
     ftp->transfer = FTPTRANSFER_INFO;

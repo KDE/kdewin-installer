@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: share.c,v 1.23 2007-11-07 09:21:36 bagder Exp $
+ * $Id: share.c,v 1.24 2008-03-18 08:14:37 mmarek Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -46,6 +46,7 @@ curl_share_init(void)
   return share;
 }
 
+#undef curl_share_setopt
 CURLSHcode
 curl_share_setopt(CURLSH *sh, CURLSHoption option, ...)
 {

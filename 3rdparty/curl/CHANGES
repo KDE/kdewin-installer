@@ -6,6 +6,272 @@
 
                                   Changelog
 
+Version 7.18.1 (30 March 2008)
+
+Daniel Stenberg (28 Mar 2008)
+- Stephen Collyer pointed out that configure --with-libssh2 without a given
+  path didn't work properly.
+
+Daniel Stenberg (27 Mar 2008)
+- As found out and reported by Dan Petitt, libcurl didn't show progress/call
+  the progress callback for the first (potentially huge) piece of body data
+  sent together with the POST request headers in the initial send().
+
+Daniel Stenberg (25 Mar 2008)
+- Made setting the CURLOPT_SSL_CTX_FUNCTION option return a failure in case
+  libcurl wasn't built to use OpenSSL as that is a prerequisite for this
+  option to function!
+
+Daniel Stenberg (22 Mar 2008)
+- Fixed the problem with doing a zero byte SCP transfer, verified with test
+  case 617 (which was added by Daniel Fandrich 5 Mar 2008).
+
+Daniel Fandrich (20 Mar 2008)
+- Fixed a problem where curl-config --protocols could erroneously show LDAPS
+  support when curl didn't even have regular LDAP support.  It looks like
+  this could happen when the --enable-ldaps configure switch is given but
+  configure couldn't find the LDAP headers or libraries.
+
+Michal Marek (20 Mar 2008)
+- Added --with-ca-path=DIRECTORY configure option to use an openSSL CApath by
+  default instead of a ca bundle. The configure script will also look for a
+  ca path if no ca bundle is found and no option given.
+
+- Fixed detection of previously installed curl-ca-bundle.crt
+
+Daniel Fandrich (18 Mar 2008)
+- Added test 626 to reproduce an infinite loop when given an invalid
+  SFTP quote command reported by Vincent Le Normand, and fixed it.
+
+Michal Marek (18 Mar 2008)
+- Added curl_easy_getinfo typechecker.
+
+- Added macros for curl_share_setopt and curl_multi_setopt to check at least
+  the correct number of arguments.
+
+Daniel Fandrich (13 Mar 2008)
+- Added tests 622-625 to test SFTP/SCP uploads. Test 625 was an attempt to
+  reproduce the --ftp-create-dirs problem reported by Brian Ulm, but that
+  seems to need a call curl_easy_reset() which this test case doesn't do.
+
+Daniel Stenberg (13 Mar 2008)
+- Brian Ulm figured out that if you did an SFTP upload with
+  CURLOPT_FTP_CREATE_MISSING_DIRS to create a directory, and then re-used the
+  handle and uploaded another file to another directory that needed to be
+  created, the second upload would fail. Another case of a state variable that
+  wasn't properly reset between requests.
+
+- I rewrote the 100-continue code to use a single state variable instead of
+  the previous two ones. I think it made the logic somewhat clearer.
+
+Daniel Stenberg (11 Mar 2008)
+- Dmitry Popov filed bug report #1911069
+  (http://curl.haxx.se/bug/view.cgi?id=1911069) that identified a race
+  condition in the name resolver code when the DNS cache is shared between
+  multiple easy handles, each running in simultaneous threads that could cause
+  crashes.
+
+- Added a macro for curl_easy_setopt() that accepts three arguments and simply
+  does nothing with them, just to make sure libcurl users always use three
+  arguments to this function. Due to its use of ... for the third argument, it
+  is otherwise hard to detect abuse.
+
+Michal Marek (11 Mar 2008)
+- Added a type checking macro for curl_easy_setopt(), needs gcc-4.3 and only
+  works in C mode atm (http://curl.haxx.se/mail/lib-2008-02/0267.html ,
+  http://curl.haxx.se/mail/lib-2008-02/0292.html )
+
+Daniel Fandrich (10 Mar 2008)
+- Added tests 618-621 to test SFTP/SCP transfers of more than one file
+  (test 620 tests the just-fixed problem reported by Brian Ulm).
+
+Daniel Stenberg (9 Mar 2008)
+- Brian Ulm reported a crash when doing a second SFTP transfer on a re-used
+  easy handle if curl_easy_reset() was used between them. I fixed it and Brian
+  verified that it cured his problem.
+
+- Brian Ulm reported that if you first tried to download a non-existing SFTP
+  file and then fetched an existing one and re-used the handle, libcurl would
+  still report the second one as non-existing as well! I fixed it and Brian
+  verified that it cured his problem.
+
+Michal Marek (6 Mar 2008)
+- Fix the gssapi configure check to detect newer MIT Kerberos (patch by
+  Michael Calmer)
+
+Yang Tse (6 Mar 2008)
+- Fix regression on Curl_socket_ready() and Curl_poll() so that these will
+  again fail on select/poll errors different than EINTR.
+
+Daniel Fandrich (5 Mar 2008)
+- Fixed the test harness so it will write out zero-length data files.
+
+- Added tests 616 and 617 to see how SFTP and SCP cope with zero-length
+  files, as questioned by Mike Protts. SFTP does for me but SCP doesn't
+  so test 617 is disabled for now.
+
+Daniel S (4 Mar 2008)
+- Mike Protts brought a patch that makes resumed transfers work with SFTP.
+
+Daniel S (1 Mar 2008)
+- Anatoli Tubman found and fixed a crash with Negotiate authentication used on
+  a re-used connection where both requests used Negotiate.
+
+Guenter Knauf (26 Feb 2008)
+- Kaspar Brand provided a patch to support server name indication (RFC 4366).
+
+Daniel S (25 Feb 2008)
+- Kaspar Brand made GnuTLS-built libcurl properly acknowledge the option that
+  forces it to prefer SSLv3.
+
+Daniel S (23 Feb 2008)
+- Sam Listopad provided a patch in feature-request #1900014
+  http://curl.haxx.se/bug/feature.cgi?id=1900014 that makes libcurl (built to
+  use OpenSSL) support a full chain of certificates in a given PKCS12
+  certificate.
+
+Daniel S (22 Feb 2008)
+- Georg Lippitsch made the src/Makefile.vc6 makefile use the same memory model
+  options as the lib/Makefile.vc6 already did.
+
+Daniel S (21 Feb 2008)
+- Zmey Petroff found a crash when libcurl accessed a NULL pointer, which
+  happened if you set the connection cache size to 1 and for example failed to
+  login to an FTP site. Bug report #1896698
+  (http://curl.haxx.se/bug/view.cgi?id=1896698)
+
+Daniel S (20 Feb 2008)
+- Fixed test case 405 to not fail when libcurl is built with GnuTLS
+
+- Based on initial work done by Gautam Kachroo to address a bug, we now keep
+  better control at the exact state of the connection's SSL status so that we
+  know exactly when it has completed the SSL negotiation or not so that there
+  won't be accidental re-uses of connections that are wrongly believed to be
+  in SSL-completed-negotiate state.
+
+- We no longer support setting the CURLOPT_URL option from inside a callback
+  such as the CURLOPT_SSL_CTX_FUNCTION one treat that as if it was a Location:
+  following. The patch that introduced this feature was done for 7.11.0, but
+  this code and functionality has been broken since about 7.15.4 (March 2006)
+  with the introduction of non-blocking OpenSSL "connects".
+
+  It was a hack to begin with and since it doesn't work and hasn't worked
+  correctly for a long time and nobody has even noticed, I consider it a very
+  suitable subject for plain removal. And so it was done.
+
+Guenter Knauf (19 Feb 2008)
+- We do no longer support SSLv2 by default since it has known flaws.
+  Kaspar Brand provided a patch for all supported SSL toolkits.
+ 
+Daniel Fandrich (19 Feb 2008)
+- Added test309 to test HTTP redirect to HTTPS URL
+
+Daniel S (18 Feb 2008)
+- We're no longer providing a very old ca-bundle in the curl tarball. You can
+  get a fresh one downloaded and created with 'make ca-bundle' or you can get
+  one from here => http://curl.haxx.se/docs/caextract.html if you want a fresh
+  new one extracted from Mozilla's recent list of ca certs.
+
+  The configure option --with-ca-bundle now lets you specify what file to use
+  as default ca bundle for your build. If not specified, the configure script
+  will check a few known standard places for a global ca cert to use.
+
+Daniel S (17 Feb 2008)
+- Jerome Muffat-Meridol helped me fix Curl_done() to close the current
+  connection by force when it was called before the entire request is
+  completed, simply because we can't know if the connection really can be
+  re-used safely at that point.
+
+- Based on the same debugging logic, I've also made Curl_http_done() not
+  return CURLE_GOT_NOTHING if called "prematurely". This should have no real
+  effect to anything but the code makes more sense like this.
+  
+Daniel S (15 Feb 2008)
+- Made the gnutls code path not even try to get the server cert if no peer
+  verification is requested. Previously it would even return failure if gnutls
+  failed to get the server cert even though no verification was asked for.
+  Public server showing the problem: https://www.net222.caisse-epargne.fr
+
+- Fix my Curl_timeleft() leftover mistake in the gnutls code
+
+- Pooyan McSporran found and fixed a flaw where you first would do a normal
+  http request and then you'd reuse the handle and replace the Accept: header,
+  as then libcurl would send two Accept: headers!
+
+Daniel S (11 Feb 2008)
+- Yang Tse pointed out a few remaining quirks from my timeout refactoring from
+  Feb 7 that didn't abort properly on timeouts. These are actually old
+  problems but now they should be fixed.
+
+Yang Tse (10 Feb 2008)
+- Bug report #1888932 (http://curl.haxx.se/bug/view.cgi?id=1888932) points out
+  and provides test program that demonstrates that libcurl might not set error
+  description message for error CURLE_COULDNT_RESOLVE_HOST for Windows threaded
+  name resolver builds. Fixed now.
+
+Daniel Fandrich (8 Feb 2007)
+- Added key words to all SSL-using tests so they can be skipped if necessary.
+  Removed a few unnecessary requires SSL statements.
+
+Daniel S (8 Feb 2008)
+- Mike Hommey filed and fixed bug report #1889856
+  (http://curl.haxx.se/bug/view.cgi?id=1889856): When using the gnutls ssl
+  layer, cleaning-up and reinitializing curl ends up with https requests
+  failing with "ASN1 parser: Element was not found" errors. Obviously a
+  regression added in 7.16.3.
+
+Yang Tse (8 Feb 2008)
+- Improved test harness SCP/SFTP start up server verification, doing a real
+  connection to the sftp server, authenticating and running a simple sftp
+  pwd command using the test harness generated configuration and key files.
+
+Daniel S (8 Feb 2008)
+- Günter Knauf added lib/mk-ca-bundle.pl which gets the Firefox ca bundle and
+  creates a suitable ca-bundle.crt file in PEM format for use with curl. The
+  recommended way to run it is to use 'make ca-bundle' in the build tree root.
+
+Daniel Fandrich (7 Feb 2007)
+- Added tests 1022 and 1023 to validate output of curl-config --version and
+  --vernum
+
+Daniel S (7 Feb 2008)
+- Refactored a lot of timeout code into a few functions in an attempt to make
+  them all use the same (hopefully correct) logic to make it less error-prone
+  and easier to introduce library-wide where it should be used.
+
+Yang Tse (6 Feb 2008)
+- Fix an issue in strdup replacement function when dealing with absolutely
+  huge strings. Only systems without a standard strdup would be affected.
+
+Daniel S (3 Feb 2008)
+- Dmitry Kurochkin cleaned up the pipelining code and removed the need for and
+  use of the "is_in_pipeline" struct field.
+
+- I wrote up and added the threaded-ssl.c example source code that shows how
+  to do multi-threaded downloads of HTTPS files with a libcurl that is built
+  with OpenSSL. It uses pthreads for the threading.
+
+Daniel S (31 Jan 2008)
+- Niklas Angebrand made the cookie support in libcurl properly deal with the
+  "HttpOnly" feature introduced by Microsoft and apparently also supported by
+  Firefox: http://msdn2.microsoft.com/en-us/library/ms533046.aspx . HttpOnly
+  is now supported when received from servers in HTTP headers, when written to
+  cookie jars and when read from existing cookie jars.
+
+  I modified test case 31 and 46 to also do some basic HttpOnly testing.
+
+- Dmitry Kurochkin moved several struct fields from the connectdata struct to
+  the SingleRequest one to make pipelining better. It is a bit tricky to keep
+  them in the right place, to keep things related to the actual request or to
+  the actual connection in the right place.
+
+Daniel S (29 Jan 2008)
+- Dmitry Kurochkin fixed Curl_done() for pipelining, as it could previously
+  crash!
+
+- Michal Marek fixed minor mistake in test case 553 that prevented it from
+  working on other IP-addresses or port numbers.
+
 Version 7.18.0 (28 January 2008)
 
 Daniel S (27 Jan 2008)

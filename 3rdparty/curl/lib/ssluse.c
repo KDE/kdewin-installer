@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: ssluse.c,v 1.191 2008-01-15 23:19:02 bagder Exp $
+ * $Id: ssluse.c,v 1.196 2008-02-26 10:30:13 gknauf Exp $
  ***************************************************************************/
 
 /*
@@ -364,6 +364,8 @@ int cert_stuff(struct connectdata *conn,
       FILE *f;
       PKCS12 *p12;
       EVP_PKEY *pri;
+      STACK_OF(X509) *ca = NULL;
+      int i;
 
       f = fopen(cert_file,"rb");
       if(!f) {
@@ -373,10 +375,15 @@ int cert_stuff(struct connectdata *conn,
       p12 = d2i_PKCS12_fp(f, NULL);
       fclose(f);
 
+      if(!p12) {
+        failf(data, "error reading PKCS12 file '%s'", cert_file );
+        return 0;
+      }
+
       PKCS12_PBE_add();
 
       if(!PKCS12_parse(p12, data->set.str[STRING_KEY_PASSWD], &pri, &x509,
-                        NULL)) {
+                        &ca)) {
         failf(data,
               "could not parse PKCS12 file, check password, OpenSSL error %s",
               ERR_error_string(ERR_get_error(), NULL) );
@@ -399,6 +406,32 @@ int cert_stuff(struct connectdata *conn,
         EVP_PKEY_free(pri);
         X509_free(x509);
         return 0;
+      }
+
+      if (!SSL_CTX_check_private_key (ctx)) {
+        failf(data, "private key from PKCS12 file '%s' "
+              "does not match certificate in same file", cert_file);
+        EVP_PKEY_free(pri);
+        X509_free(x509);
+        return 0;
+      }
+      /* Set Certificate Verification chain */
+      if (ca && sk_num(ca)) {
+        for (i = 0; i < sk_X509_num(ca); i++) {
+          if (!SSL_CTX_add_extra_chain_cert(ctx,sk_X509_value(ca, i))) {
+            failf(data, "cannot add certificate to certificate chain");
+            EVP_PKEY_free(pri);
+            X509_free(x509);
+            return 0;
+          }
+          if (!SSL_CTX_add_client_CA(ctx, sk_X509_value(ca, i))) {
+            failf(data, "cannot add certificate to client CA list",
+                  cert_file);
+            EVP_PKEY_free(pri);
+            X509_free(x509);
+            return 0;
+          }
+        }
       }
 
       EVP_PKEY_free(pri);
@@ -1266,6 +1299,13 @@ ossl_connect_step1(struct connectdata *conn,
   void *ssl_sessionid=NULL;
   curl_socket_t sockfd = conn->sock[sockindex];
   struct ssl_connect_data *connssl = &conn->ssl[sockindex];
+#ifdef SSL_CTRL_SET_TLSEXT_HOSTNAME
+#ifdef ENABLE_IPV6
+  struct in6_addr addr;
+#else
+  struct in_addr addr;
+#endif
+#endif
 
   DEBUGASSERT(ssl_connect_1 == connssl->connecting_state);
 
@@ -1323,6 +1363,10 @@ ossl_connect_step1(struct connectdata *conn,
 
   */
   SSL_CTX_set_options(connssl->ctx, SSL_OP_ALL);
+
+  /* disable SSLv2 in the default case (i.e. allow SSLv3 and TLSv1) */
+  if(data->set.ssl.version == CURL_SSLVERSION_DEFAULT)
+    SSL_CTX_set_options(connssl->ctx, SSL_OP_NO_SSLv2);
 
 #if 0
   /*
@@ -1419,6 +1463,16 @@ ossl_connect_step1(struct connectdata *conn,
 
   connssl->server_cert = 0x0;
 
+#ifdef SSL_CTRL_SET_TLSEXT_HOSTNAME
+  if ((0 == Curl_inet_pton(AF_INET, conn->host.name, &addr)) &&
+#ifdef ENABLE_IPV6
+      (0 == Curl_inet_pton(AF_INET6, conn->host.name, &addr)) &&
+#endif
+      !SSL_set_tlsext_host_name(connssl->handle, conn->host.name))
+    infof(data, "WARNING: failed to configure server name indication (SNI) "
+          "TLS extension\n");
+#endif
+
   /* Check if there's a cached ID we can/should use here! */
   if(!Curl_ssl_getsessionid(conn, &ssl_sessionid, NULL)) {
     /* we got a session id, use it! */
@@ -1448,40 +1502,17 @@ ossl_connect_step2(struct connectdata *conn,
 {
   struct SessionHandle *data = conn->data;
   int err;
-  long has_passed;
   struct ssl_connect_data *connssl = &conn->ssl[sockindex];
 
   DEBUGASSERT(ssl_connect_2 == connssl->connecting_state
              || ssl_connect_2_reading == connssl->connecting_state
              || ssl_connect_2_writing == connssl->connecting_state);
 
-  /* Find out if any timeout is set. If not, use 300 seconds.
-     Otherwise, figure out the most strict timeout of the two possible one
-     and then how much time that has elapsed to know how much time we
-     allow for the connect call */
-  if(data->set.timeout && data->set.connecttimeout) {
-    /* get the most strict timeout of the ones converted to milliseconds */
-    if(data->set.timeout<data->set.connecttimeout)
-      *timeout_ms = data->set.timeout;
-    else
-      *timeout_ms = data->set.connecttimeout;
-  }
-  else if(data->set.timeout)
-    *timeout_ms = data->set.timeout;
-  else if(data->set.connecttimeout)
-    *timeout_ms = data->set.connecttimeout;
-  else
-    /* no particular time-out has been set */
-    *timeout_ms = DEFAULT_CONNECT_TIMEOUT;
-
-  /* Evaluate in milliseconds how much time that has passed */
-  has_passed = Curl_tvdiff(Curl_tvnow(), data->progress.t_startsingle);
-
-  /* subtract the passed time */
-  *timeout_ms -= has_passed;
+  /* Find out how much more time we're allowed */
+  *timeout_ms = Curl_timeleft(conn, NULL, TRUE);
 
   if(*timeout_ms < 0) {
-    /* a precaution, no need to continue if time already is up */
+    /* no need to continue if time already is up */
     failf(data, "SSL connection timeout");
     return CURLE_OPERATION_TIMEDOUT;
   }
@@ -1756,7 +1787,8 @@ ossl_connect_common(struct connectdata *conn,
         connssl->connecting_state?sockfd:CURL_SOCKET_BAD;
 
       while(1) {
-        int what = Curl_socket_ready(readfd, writefd, nonblocking?0:(int)timeout_ms);
+        int what = Curl_socket_ready(readfd, writefd,
+                                     nonblocking?0:(int)timeout_ms);
         if(what > 0)
           /* readable or writable, go loop in the outer loop */
           break;
@@ -1794,11 +1826,11 @@ ossl_connect_common(struct connectdata *conn,
   }
 
   if(ssl_connect_done==connssl->connecting_state) {
+    connssl->state = ssl_connection_complete;
     *done = TRUE;
   }
-  else {
+  else
     *done = FALSE;
-  }
 
   /* Reset our connect state machine */
   connssl->connecting_state = ssl_connect_1;

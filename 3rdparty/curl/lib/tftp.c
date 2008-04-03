@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: tftp.c,v 1.65 2008-01-15 23:19:02 bagder Exp $
+ * $Id: tftp.c,v 1.68 2008-02-11 22:03:31 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -114,7 +114,7 @@ typedef enum {
   TFTP_ERR_ILLEGAL,
   TFTP_ERR_UNKNOWNID,
   TFTP_ERR_EXISTS,
-  TFTP_ERR_NOSUCHUSER,	/* This will never be triggered by this code */
+  TFTP_ERR_NOSUCHUSER,  /* This will never be triggered by this code */
 
   /* The remaining error codes are internal to curl */
   TFTP_ERR_NONE = -100,
@@ -189,17 +189,25 @@ const struct Curl_handler Curl_handler_tftp = {
  *
  *
  **********************************************************/
-static void tftp_set_timeouts(tftp_state_data_t *state)
+static CURLcode tftp_set_timeouts(tftp_state_data_t *state)
 {
-
-  struct SessionHandle *data = state->conn->data;
   time_t maxtime, timeout;
+  long timeout_ms;
 
   time(&state->start_time);
+
+  /* Compute drop-dead time */
+  timeout_ms = Curl_timeleft(state->conn, NULL, TRUE);
+
+  if(timeout_ms < 0) {
+    /* time-out, bail out, go home */
+    failf(state->conn->data, "Connection time-out");
+    return CURLE_OPERATION_TIMEDOUT;
+  }
+
   if(state->state == TFTP_STATE_START) {
-    /* Compute drop-dead time */
-    maxtime = (time_t)(data->set.connecttimeout/1000L?
-                       data->set.connecttimeout/1000L:30);
+
+    maxtime = (time_t)(timeout_ms + 500) / 1000;
     state->max_time = state->start_time+maxtime;
 
     /* Set per-block timeout to total */
@@ -219,10 +227,11 @@ static void tftp_set_timeouts(tftp_state_data_t *state)
 
   }
   else {
+    if(timeout_ms > 0)
+      maxtime = (time_t)(timeout_ms + 500) / 1000;
+    else
+      maxtime = 3600;
 
-    /* Compute drop-dead time */
-    maxtime = (time_t)(data->set.timeout/1000L?
-                       data->set.timeout/1000L:3600);
     state->max_time = state->start_time+maxtime;
 
     /* Set per-block timeout to 10% of total */
@@ -243,9 +252,12 @@ static void tftp_set_timeouts(tftp_state_data_t *state)
   if(state->retry_time<1)
     state->retry_time=1;
 
-  infof(data, "set timeouts for state %d; Total %d, retry %d maxtry %d\n",
+  infof(state->conn->data,
+  	"set timeouts for state %d; Total %d, retry %d maxtry %d\n",
         state->state, (state->max_time-state->start_time),
         state->retry_time, state->retry_max);
+
+  return CURLE_OK;
 }
 
 /**********************************************************
@@ -339,13 +351,17 @@ static CURLcode tftp_send_first(tftp_state_data_t *state, tftp_event_t event)
   case TFTP_EVENT_ACK: /* Connected for transmit */
     infof(data, "%s\n", "Connected for transmit");
     state->state = TFTP_STATE_TX;
-    tftp_set_timeouts(state);
+    res = tftp_set_timeouts(state);
+    if(res)
+      break;
     return tftp_tx(state, event);
 
   case TFTP_EVENT_DATA: /* connected for receive */
     infof(data, "%s\n", "Connected for receive");
     state->state = TFTP_STATE_RX;
-    tftp_set_timeouts(state);
+    res = tftp_set_timeouts(state);
+    if(res)
+      break;
     return tftp_rx(state, event);
 
   case TFTP_EVENT_ERROR:

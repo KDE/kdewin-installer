@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: transfer.c,v 1.381 2008-01-16 12:24:00 bagder Exp $
+ * $Id: transfer.c,v 1.386 2008-03-22 22:00:21 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -119,7 +119,7 @@ CURLcode Curl_fillreadbuffer(struct connectdata *conn, int bytes, int *nreadp)
   size_t buffersize = (size_t)bytes;
   int nread;
 
-  if(conn->bits.upload_chunky) {
+  if(data->req.upload_chunky) {
     /* if chunked Transfer-Encoding */
     buffersize -= (8 + 2 + 2);   /* 32bit hex + CRLF + CRLF */
     data->req.upload_fromhere += 10; /* 32bit hex + CRLF */
@@ -143,7 +143,7 @@ CURLcode Curl_fillreadbuffer(struct connectdata *conn, int bytes, int *nreadp)
     /* the read function returned a too large value */
     return CURLE_READ_ERROR;
 
-  if(!conn->bits.forbidchunk && conn->bits.upload_chunky) {
+  if(!data->req.forbidchunk && data->req.upload_chunky) {
     /* if chunked Transfer-Encoding */
     char hexbuffer[11];
     int hexlen = snprintf(hexbuffer, sizeof(hexbuffer),
@@ -397,22 +397,30 @@ CURLcode Curl_readwrite(struct connectdata *conn,
             bytestoread = (size_t)totalleft;
         }
 
-        /* receive data from the network! */
-        readrc = Curl_read(conn, conn->sockfd, k->buf, bytestoread, &nread);
+        if(bytestoread) {
+          /* receive data from the network! */
+          readrc = Curl_read(conn, conn->sockfd, k->buf, bytestoread, &nread);
 
-        /* subzero, this would've blocked */
-        if(0 > readrc)
-          break; /* get out of loop */
+          /* subzero, this would've blocked */
+          if(0 > readrc)
+            break; /* get out of loop */
 
-        /* get the CURLcode from the int */
-        result = (CURLcode)readrc;
+          /* get the CURLcode from the int */
+          result = (CURLcode)readrc;
 
-        if(result>0)
-          return result;
+          if(result>0)
+            return result;
+        }
+        else {
+          /* read nothing but since we wanted nothing we consider this an OK
+             situation to proceed from */
+          nread = 0;
+          result = CURLE_OK;
+        }
 
         if((k->bytecount == 0) && (k->writebytecount == 0)) {
           Curl_pgrsTime(data, TIMER_STARTTRANSFER);
-          if(k->wait100_after_headers)
+          if(k->exp100 > EXP100_SEND_DATA)
             /* set time stamp to compare with when waiting for the 100 */
             k->start100 = Curl_tvnow();
         }
@@ -584,17 +592,17 @@ CURLcode Curl_readwrite(struct connectdata *conn,
                  */
                 k->header = TRUE;
                 k->headerline = 0; /* restart the header line counter */
-                /* if we did wait for this do enable write now! */
-                if(k->write_after_100_header) {
 
-                  k->write_after_100_header = FALSE;
+                /* if we did wait for this do enable write now! */
+                if(k->exp100) {
+                  k->exp100 = EXP100_SEND_DATA;
                   k->keepon |= KEEP_WRITE;
                 }
               }
               else {
                 k->header = FALSE; /* no more header to parse! */
 
-                if((k->size == -1) && !conn->bits.chunk && !conn->bits.close &&
+                if((k->size == -1) && !k->chunk && !conn->bits.close &&
                    (k->httpversion >= 11) ) {
                   /* On HTTP 1.1, when connection is not to get closed, but no
                      Content-Length nor Content-Encoding chunked have been
@@ -614,7 +622,7 @@ CURLcode Curl_readwrite(struct connectdata *conn,
                  * seems to cause a problem => abort the write operations
                  * (or prevent them from starting).
                  */
-                k->write_after_100_header = FALSE;
+                k->exp100 = EXP100_FAILED;
                 k->keepon &= ~KEEP_WRITE;
               }
 
@@ -683,7 +691,7 @@ CURLcode Curl_readwrite(struct connectdata *conn,
                  * If we requested a "no body", this is a good time to get
                  * out and return home.
                  */
-                if(conn->bits.no_body)
+                if(data->set.opt_no_body)
                   stop_reading = TRUE;
                 else {
                   /* If we know the expected size of this document, we set the
@@ -699,7 +707,7 @@ CURLcode Curl_readwrite(struct connectdata *conn,
                      Content-Length: headers if we are now receiving data
                      using chunked Transfer-Encoding.
                   */
-                  if(conn->bits.chunk)
+                  if(k->chunk)
                     k->size=-1;
 
                 }
@@ -1002,7 +1010,7 @@ CURLcode Curl_readwrite(struct connectdata *conn,
                * with the previously mentioned size. There can be any amount
                * of chunks, and a chunk-data set to zero signals the
                * end-of-chunks. */
-              conn->bits.chunk = TRUE; /* chunks coming our way */
+              k->chunk = TRUE; /* chunks coming our way */
 
               /* init our chunky engine */
               Curl_httpchunk_init(conn);
@@ -1018,7 +1026,7 @@ CURLcode Curl_readwrite(struct connectdata *conn,
                *
                * It seems both Trailer: and Trailers: occur in the wild.
                */
-              conn->bits.trailerhdrpresent = TRUE;
+              k->trailerhdrpresent = TRUE;
             }
 
             else if(checkprefix("Content-Encoding:", k->p) &&
@@ -1258,7 +1266,7 @@ CURLcode Curl_readwrite(struct connectdata *conn,
           }
 
 #ifndef CURL_DISABLE_HTTP
-          if(conn->bits.chunk) {
+          if(k->chunk) {
             /*
              * Here comes a chunked transfer flying and we need to decode this
              * properly.  While the name says read, this function both reads
@@ -1326,7 +1334,7 @@ CURLcode Curl_readwrite(struct connectdata *conn,
 
           Curl_pgrsSetDownloadCounter(data, k->bytecount);
 
-          if(!conn->bits.chunk && (nread || k->badheader || is_empty_data)) {
+          if(!k->chunk && (nread || k->badheader || is_empty_data)) {
             /* If this is chunky transfer, it was already written */
 
             if(k->badheader && !k->ignorebody) {
@@ -1429,13 +1437,12 @@ CURLcode Curl_readwrite(struct connectdata *conn,
                protocol agnostic. */
             int fillcount;
 
-            if(k->wait100_after_headers &&
+            if((k->exp100 == EXP100_SENDING_REQUEST) &&
                (data->state.proto.http->sending == HTTPSEND_BODY)) {
               /* If this call is to send body data, we must take some action:
                  We have sent off the full HTTP 1.1 request, and we shall now
                  go into the Expect: 100 state and await such a header */
-              k->wait100_after_headers = FALSE; /* headers sent */
-              k->write_after_100_header = TRUE; /* wait for the header */
+              k->exp100 = EXP100_AWAITING_CONTINUE; /* wait for the header */
               k->keepon &= ~KEEP_WRITE;         /* disable writing */
               k->start100 = Curl_tvnow();       /* timeout count starts now */
               didwhat &= ~KEEP_WRITE;  /* we didn't write anything actually */
@@ -1578,9 +1585,9 @@ CURLcode Curl_readwrite(struct connectdata *conn,
   }
   else {
     /* no read no write, this is a timeout? */
-    if(k->write_after_100_header) {
+    if(k->exp100 == EXP100_AWAITING_CONTINUE) {
       /* This should allow some time for the header to arrive, but only a
-         very short time as otherwise it'll be too much wasted times too
+         very short time as otherwise it'll be too much wasted time too
          often. */
 
       /* Quoting RFC2616, section "8.2.3 Use of the 100 (Continue) Status":
@@ -1595,7 +1602,7 @@ CURLcode Curl_readwrite(struct connectdata *conn,
       long ms = Curl_tvdiff(k->now, k->start100);
       if(ms > CURL_TIMEOUT_EXPECT_100) {
         /* we've waited long enough, continue anyway */
-        k->write_after_100_header = FALSE;
+        k->exp100 = EXP100_SEND_DATA;
         k->keepon |= KEEP_WRITE;
       }
     }
@@ -1628,7 +1635,7 @@ CURLcode Curl_readwrite(struct connectdata *conn,
      * returning.
      */
 
-    if(!(conn->bits.no_body) && (k->size != -1) &&
+    if(!(data->set.opt_no_body) && (k->size != -1) &&
        (k->bytecount != k->size) &&
 #ifdef CURL_DO_LINEEND_CONV
        /* Most FTP servers don't adjust their file SIZE response for CRLFs,
@@ -1643,8 +1650,8 @@ CURLcode Curl_readwrite(struct connectdata *conn,
             k->size - k->bytecount);
       return CURLE_PARTIAL_FILE;
     }
-    else if(!(conn->bits.no_body) &&
-            conn->bits.chunk &&
+    else if(!(data->set.opt_no_body) &&
+            k->chunk &&
             (conn->chunk.state != CHUNK_STOP)) {
       /*
        * In chunked mode, return an error if the connection is closed prior to
@@ -1747,7 +1754,7 @@ Transfer(struct connectdata *conn)
     return CURLE_OK;
 
   /* we want header and/or body, if neither then don't do this! */
-  if(!conn->bits.getheader && conn->bits.no_body)
+  if(!k->getheader && data->set.opt_no_body)
     return CURLE_OK;
 
   while(!done) {
@@ -2260,44 +2267,24 @@ connect_host(struct SessionHandle *data,
              struct connectdata **conn)
 {
   CURLcode res = CURLE_OK;
-  int urlchanged = FALSE;
 
-  do {
-    bool async;
-    bool protocol_done=TRUE; /* will be TRUE always since this is only used
+  bool async;
+  bool protocol_done=TRUE; /* will be TRUE always since this is only used
                                 within the easy interface */
-    Curl_pgrsTime(data, TIMER_STARTSINGLE);
-    data->change.url_changed = FALSE;
-    res = Curl_connect(data, conn, &async, &protocol_done);
+  Curl_pgrsTime(data, TIMER_STARTSINGLE);
+  res = Curl_connect(data, conn, &async, &protocol_done);
 
-    if((CURLE_OK == res) && async) {
-      /* Now, if async is TRUE here, we need to wait for the name
-         to resolve */
-      res = Curl_wait_for_resolv(*conn, NULL);
-      if(CURLE_OK == res)
-        /* Resolved, continue with the connection */
-        res = Curl_async_resolved(*conn, &protocol_done);
-      else
-        /* if we can't resolve, we kill this "connection" now */
-        (void)Curl_disconnect(*conn);
-    }
-    if(res)
-      break;
-
-    /* If a callback (or something) has altered the URL we should use within
-       the Curl_connect(), we detect it here and act as if we are redirected
-       to the new URL */
-    urlchanged = data->change.url_changed;
-    if((CURLE_OK == res) && urlchanged) {
-      res = Curl_done(conn, res, FALSE);
-      if(CURLE_OK == res) {
-        char *gotourl = strdup(data->change.url);
-        res = Curl_follow(data, gotourl, FALSE);
-        if(res)
-          free(gotourl);
-      }
-    }
-  } while(urlchanged && res == CURLE_OK);
+  if((CURLE_OK == res) && async) {
+    /* Now, if async is TRUE here, we need to wait for the name
+       to resolve */
+    res = Curl_wait_for_resolv(*conn, NULL);
+    if(CURLE_OK == res)
+      /* Resolved, continue with the connection */
+      res = Curl_async_resolved(*conn, &protocol_done);
+    else
+      /* if we can't resolve, we kill this "connection" now */
+      (void)Curl_disconnect(*conn);
+  }
 
   return res;
 }
@@ -2317,7 +2304,7 @@ bool Curl_retry_request(struct connectdata *conn,
   if((data->req.bytecount +
       data->req.headerbytecount == 0) &&
      conn->bits.reuse &&
-     !conn->bits.no_body) {
+     !data->set.opt_no_body) {
     /* We got no data, we attempted to re-use a connection and yet we want a
        "body". This might happen if the connection was left alive when we were
        done using it before, but that was closed when we wanted to read from
@@ -2409,8 +2396,12 @@ CURLcode Curl_perform(struct SessionHandle *data)
         if(CURLE_OK == res)
           res = res2;
       }
-      else
-        /* Curl_do() failed, clean up left-overs in the done-call */
+      else if(conn)
+        /* Curl_do() failed, clean up left-overs in the done-call, but note
+           that at some cases the conn pointer is NULL when Curl_do() failed
+           and the connection cache is very small so only call Curl_done() if
+           conn is still "alive".
+        */
         res2 = Curl_done(&conn, res, FALSE);
 
       /*
@@ -2486,7 +2477,7 @@ Curl_setup_transfer(
       CURL_SOCKET_BAD : conn->sock[sockindex];
   conn->writesockfd = writesockindex == -1 ?
       CURL_SOCKET_BAD:conn->sock[writesockindex];
-  conn->bits.getheader = getheader;
+  k->getheader = getheader;
 
   k->size = size;
   k->bytecountp = bytecountp;
@@ -2496,13 +2487,13 @@ Curl_setup_transfer(
      necessary input is not always known in do_complete() as this function may
      be called after that */
 
-  if(!conn->bits.getheader) {
+  if(!k->getheader) {
     k->header = FALSE;
     if(size > 0)
       Curl_pgrsSetDownloadSize(data, size);
   }
   /* we want header and/or body, if neither then don't do this! */
-  if(conn->bits.getheader || !conn->bits.no_body) {
+  if(k->getheader || !data->set.opt_no_body) {
 
     if(conn->sockfd != CURL_SOCKET_BAD) {
       k->keepon |= KEEP_READ;
@@ -2518,21 +2509,23 @@ Curl_setup_transfer(
          Thus, we must check if the request has been sent before we set the
          state info where we wait for the 100-return code
       */
-      if(data->state.expect100header &&
-          (data->state.proto.http->sending == HTTPSEND_BODY)) {
+      if((data->state.expect100header) &&
+         (data->state.proto.http->sending == HTTPSEND_BODY)) {
         /* wait with write until we either got 100-continue or a timeout */
-        k->write_after_100_header = TRUE;
+        k->exp100 = EXP100_AWAITING_CONTINUE;
         k->start100 = k->start;
       }
       else {
         if(data->state.expect100header)
           /* when we've sent off the rest of the headers, we must await a
-             100-continue */
-          k->wait100_after_headers = TRUE;
+             100-continue but first finish sending the request */
+          k->exp100 = EXP100_SENDING_REQUEST;
+
+        /* enable the write bit when we're not waiting for continue */
         k->keepon |= KEEP_WRITE;
       }
-    }
-  }
+    } /* if(conn->writesockfd != CURL_SOCKET_BAD) */
+  } /* if(k->getheader || !data->set.opt_no_body) */
 
   return CURLE_OK;
 }
