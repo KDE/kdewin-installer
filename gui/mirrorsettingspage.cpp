@@ -27,19 +27,44 @@
 #include "mirrorsettingspage.h"
 #include "installerdialogs.h"
 
+Mirrors::Config winkde_org_mirrorConfig(
+    "http://www.winkde.org/pub/kde/ports/win32/mirrors.lst",
+    Mirrors::KDE,
+    "",
+    ""
+);
+
+Mirrors::Config sourceforge_mirrorConfig(
+    "http://downloads.sourceforge.net/kde-windows/mirrors.lst",
+    Mirrors::Cygwin,
+    "",
+    ""
+);
+
 #if 0
-QUrl mirrorListURL("http://www.kde.org/mirrors/kdemirrors.list");
-Mirrors::Type mirrorListType = Mirrors::KDE;
-QString mirrorReleasePath = "unstable/4.0.61/win32";
-#else
-QUrl mirrorListURL("http://downloads.sourceforge.net/kde-windows/mirrors.lst");
-Mirrors::Type mirrorListType = Mirrors::Cygwin;
-QString mirrorReleasePath = "";
+// sourceforge mirror could only be added manually 
+Mirrors::Config download_kde_org_mirrorConfig(
+    "http://download.kde.org/download.php?url=unstable/4.0.67/win32",
+    Mirrors::KDE_HTML,
+    "",
+    ""
+);
 #endif
 
-QUrl fallBackMirrorURL("http://webdev.cegit.de/snapshots/kde-windows/mirrors.lst");
-Mirrors::Type fallBackMirrorType = Mirrors::Cygwin;
-QString fallBackMirrorReleasePath = "";
+
+Mirrors::Config webdev_cegit_de_mirrorConfig(
+    "http://webdev.cegit.de/snapshots/kde-windows/mirrors.lst",
+    Mirrors::Cygwin,
+    "",
+    ""
+);
+
+/// main mirror list server 
+#define mirrorConfig winkde_org_mirrorConfig
+
+/// fall back server when main mirror list server could not be contacted
+#define fallBackConfig sourceforge_mirrorConfig
+
 
 MirrorSettingsPage::MirrorSettingsPage() : InstallWizardPage(0)
 {
@@ -53,18 +78,20 @@ void MirrorSettingsPage::initializePage()
     Settings &s = Settings::instance();
     s.setSkipBasicSettings(true);
     Mirrors &mirrors = Mirrors::instance();
+    mirrors.setConfig(mirrorConfig);
     InstallerDialogs::instance().downloadProgressDialog(this,true,tr("Downloading Mirror List"));
 
     if (mirrors.mirrors().size() == 0)
     {
         /// @TODO add vivible progress bar
-        if ( !mirrors.fetch(mirrorListType, mirrorListURL, mirrorReleasePath) ) 
+        if ( !mirrors.fetch() ) 
         {
-            qCritical() << "could not load mirrors from" << mirrorListURL;
+            qCritical() << "could not load mirrors from" << mirrorConfig.url;
             /// @TODO add vivible progress bar
-            if ( !mirrors.fetch(fallBackMirrorType, fallBackMirrorURL, fallBackMirrorReleasePath) )
+            mirrors.setConfig(fallBackConfig);
+            if ( !mirrors.fetch() )
             {
-                qCritical() << "could not load fallback mirror list from" << fallBackMirrorURL;
+                qCritical() << "could not load fallback mirror list from" << fallBackConfig.url;
                 // display warning box
             }
         }

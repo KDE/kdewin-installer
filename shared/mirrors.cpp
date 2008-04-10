@@ -38,20 +38,18 @@ QHash<QString,QString> Mirrors::m_continents;
 
 
 Mirrors::Mirrors()
-: m_type(Cygwin)
 {
-    m_releasePath="";
     initCountries();
 }
 
-/**
- get the list of mirrors
- @return list of mirrors
-*/
-bool Mirrors::fetch(Type type, QUrl url, const QString &releasePath)
+Mirrors::Mirrors(const Config &config)
+: m_config(config)
 {
-    m_releasePath = releasePath;
-    m_type = type;
+    initCountries();
+}
+
+bool Mirrors::fetch()
+{
 #ifdef DEBUG
     QString out = "mirrors.html";
 #else
@@ -78,17 +76,10 @@ bool Mirrors::fetch(Type type, QUrl url, const QString &releasePath)
         }
 #endif
      }   
-     else if (!Downloader::instance()->start(url,out))
+     else if (!Downloader::instance()->start(m_config.url,out))
         return false;
     return parse(out);
 }
-
-/**
- parse mirror list from a local file
-
- @param filename
- @return true if parse was performed successfully, false otherwise
-*/
 
 bool Mirrors::parse(const QString &fileName)
 {
@@ -113,7 +104,7 @@ bool Mirrors::parse(const QByteArray &data)
 bool Mirrors::parse(QIODevice *ioDev)
 {
     m_mirrors.clear();
-    switch (m_type) {
+    switch (m_config.type) {
     case KDE:
         {
             while (!ioDev->atEnd())
@@ -125,7 +116,10 @@ bool Mirrors::parse(QIODevice *ioDev)
                 if (parts.size() >= 3) 
                 {
                     MirrorType mirror;
-                    mirror.url = QUrl(parts[2] + m_releasePath);
+                    if (parts[2].contains(m_config.excludePattern))
+                        mirror.url = QUrl(parts[2]);
+                    else
+                        mirror.url = QUrl(parts[2] + m_config.releasePath);
                     mirror.name = parts[0] + "://" + mirror.url.host();
                     if (m_countries.contains(parts[1])) 
                     {
@@ -164,7 +158,11 @@ bool Mirrors::parse(QIODevice *ioDev)
                     continue; 
                 }
                 MirrorType mirror;
-                mirror.url = a[0];
+                if (a[0].contains(m_config.excludePattern.toLatin1()))
+                    mirror.url = a[0];
+                else
+                    mirror.url = QUrl(a[2] + m_config.releasePath);
+
                 mirror.name = a[1];
                 mirror.continent = a[2];
                 mirror.country = a[3];
@@ -446,6 +444,7 @@ void Mirrors::initCountries()
     m_countries["za"] = "South Africa";
     m_countries["zm"] = "Zambia";
     m_countries["zw"] = "Zimbabwe";
+    m_countries["--"] = "";
 
     // setup countryGroups hash table 
     QHash<QString,QString> countryGroups;
@@ -459,6 +458,7 @@ void Mirrors::initCountries()
     countryGroups["Northern Europe"] = "dk:ee:is:fi:no:se";
     countryGroups["Southern Europe"] = "ba:cy:gr:hr:it:mk:mt:va:yu:tr";
     countryGroups["Western Europe"] = "be:es:fr:ie:lu:nl:pt:uk";
+    countryGroups["World Wide"] = "--";
 
     // setup m_continents hash table 
     // which is accessable by using QString continent = m_continents[<countrycode>];
