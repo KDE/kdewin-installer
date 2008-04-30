@@ -1,4 +1,4 @@
-/****************************************************************************
+/*
 **
 ** Copyright (C) 2005-2008 Ralf Habacker. All rights reserved.
 **
@@ -74,6 +74,9 @@ public:
     Database *database() { return m_database; }
     PackageList* packageResources() { return m_packageResources; }
     QUrl &usedDownloadSource() { return m_usedDownloadSource; }
+
+	// run post install commands 
+	void runPostInstallCommands();
 
 Q_SIGNALS:
     void error ( const QString &error );
