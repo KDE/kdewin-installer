@@ -162,7 +162,7 @@ bool findExecutables(QList<InstallFile> &fileList, const QString &root, const QS
   return true;
 }
 
-bool generateFileList(QList<InstallFile> &fileList, const QString &root, const QString &subdir, const QString &filter, const QString &exclude)
+bool generateFileList(QList<InstallFile> &fileList, const QString &root, const QString &subdir, const QString &filter, const QString &exclude, bool verbose)
 {
    // create a QListQRegExp
    QStringList sl = exclude.split(' ');
@@ -178,10 +178,10 @@ bool generateFileList(QList<InstallFile> &fileList, const QString &root, const Q
        rxList += rx;
    }
 
-   return ::generateFileList(fileList, root, subdir, filter, rxList);
+   return ::generateFileList(fileList, root, subdir, filter, rxList, verbose);
 }
 
-bool generateFileList(QList<InstallFile> &fileList, const QString &root, const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList)
+bool generateFileList(QList<InstallFile> &fileList, const QString &root,const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList, bool verbose)
 {
    QDir d;
    bool subdirs = true;
@@ -191,8 +191,9 @@ bool generateFileList(QList<InstallFile> &fileList, const QString &root, const Q
    } else
        d = QDir(root + '/' + subdir);
    if (!d.exists()) {
-       qDebug() << "Can't read directory" << QDir::convertSeparators(d.absolutePath());
-       return false;
+        if (verbose)
+            qDebug() << "Can't read directory" << QDir::convertSeparators(d.absolutePath());
+        return false;
    }
    QStringList filt = (filter + QLatin1String(" *.manifest")).split(' ');
    // work around a qt bug (could not convince qt-bugs that it's a bug...)

@@ -70,8 +70,8 @@ bool parseHintFile(const QByteArray &ba, HintFileDescriptor &pkg);
 
 bool findExecutables(QList<InstallFile> &fileList, const QString &root, const QString &subdir, const QString &filter, const QString &exclude, bool debugExe=false);
 
-bool generateFileList(QList<InstallFile> &result, const QString &root, const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList);
-bool generateFileList(QList<InstallFile> &result, const QString &root, const QString &subdir, const QString &filter, const QString &exclude = QString());
+bool generateFileList(QList<InstallFile> &result, const QString &root, const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList, bool verbose=false);
+bool generateFileList(QList<InstallFile> &result, const QString &root, const QString &subdir, const QString &filter, const QString &exclude = QString(), bool verbose=false);
 
 bool readDesktopFile(QIODevice &device, QSettings::SettingsMap &map);
 bool writeDesktopFile(QIODevice &device, const QSettings::SettingsMap &map);
