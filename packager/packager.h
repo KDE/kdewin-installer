@@ -44,6 +44,7 @@ class Packager {
       void setCompressionMode(unsigned int mode) { m_compMode = (mode < 1 || mode > 2) ? 1 : mode; }
 
       bool generatePackageFileList(QList<InstallFile> &result, Packager::Type type, const QString &dir=QString());
+      bool createHashFile(const QString &packageFileName);
 
       bool makePackage(const QString &dir, const QString &destdir=QString(), bool bComplete=false);
       void setVerbose(bool state) { m_verbose = state; }
@@ -61,6 +62,7 @@ class Packager {
       bool createQtConfig(QList<InstallFile> &fileList, QList<MemFile> &manifestFiles);
 
       QString getBaseName(Packager::Type type);
+      QString getCompressedExtension(Packager::Type type);
 
     private:
       QString m_name;

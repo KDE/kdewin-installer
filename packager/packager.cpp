@@ -21,12 +21,13 @@
 ****************************************************************************/
 
 
+#include <QBuffer>
+#include <QCryptographicHash>
 #include <QDebug>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QProcess>
-#include <QBuffer>
 #include <QTextStream>
 
 #include "packager.h"
@@ -55,10 +56,6 @@ Packager::Packager(const QString &packageName, const QString &packageVersion, co
     m_compMode(1),
     m_hashEntriesFirst(0)
 {
-    qDebug() << m_name;
-    qDebug() << m_version;
-    qDebug() << m_notes;
-    m_verbose = true;
 }
 
 bool Packager::compressFiles(const QString &zipFile, const QString &filesRootDir,
@@ -369,6 +366,33 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
     return true;
 }
 
+bool Packager::createHashFile(const QString &packageFileName)
+{
+    QFile packageFile(packageFileName);
+    if (!packageFile.exists() || !packageFile.open(QIODevice::ReadOnly)) 
+    {
+        qCritical() << "could not open packageFile" << packageFileName;
+        return false;
+    }
+    
+    QString hashFileName = packageFileName.mid(0,packageFileName.lastIndexOf('.')) + ".md5";
+    QFile hashFile(hashFileName);
+    if (!hashFile.open(QIODevice::WriteOnly)) 
+    {
+        qCritical() << "could not create hash file" << hashFileName;
+        return false;
+    }
+
+    QFileInfo packageFileInfo(packageFileName);
+    QByteArray data = packageFile.readAll();
+    QByteArray hash = QCryptographicHash::hash (data, QCryptographicHash::Md5);
+    QByteArray hashFileContent = hash.toHex() + QByteArray("  ") + packageFileInfo.fileName().toLatin1() + QByteArray("\n");
+    hashFile.write(hashFileContent); 
+    hashFile.close();
+
+    return true;
+}
+
 bool Packager::makePackage(const QString &root, const QString &destdir, bool bComplete)
 {
     // generate file lists
@@ -380,31 +404,39 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
     QString _destdir = destdir;
     if (!destdir.isEmpty() && !destdir.endsWith("/") && !destdir.endsWith("\\"))
         _destdir += "/";
-    if (m_verbose)
-        qDebug() << "creating bin package" << destdir + getBaseName(Packager::BIN);
+
     generatePackageFileList(fileList, Packager::BIN);
-    createManifestFiles(m_rootDir, fileList, Packager::BIN, manifestFiles);
     if (fileList.size() > 0)
-      compressFiles(_destdir + getBaseName(Packager::BIN), m_rootDir, fileList, manifestFiles);
+    {
+        if (m_verbose)
+            qDebug() << "creating bin package" << destdir + getBaseName(Packager::BIN);
+        createManifestFiles(m_rootDir, fileList, Packager::BIN, manifestFiles);
+        compressFiles(_destdir + getBaseName(Packager::BIN), m_rootDir, fileList, manifestFiles);
+        createHashFile(_destdir + getBaseName(Packager::BIN) + getCompressedExtension(Packager::BIN) );
+    }
     else
         qDebug() << "no binary files found!";
 
-    if (m_verbose)
-        qDebug() << "creating lib package" << destdir + getBaseName(Packager::LIB);
     generatePackageFileList(fileList, Packager::LIB);
-    createManifestFiles(m_rootDir, fileList, Packager::LIB, manifestFiles);
-    if (fileList.size() > 0)
-      compressFiles(_destdir + getBaseName(Packager::LIB), m_rootDir, fileList, manifestFiles);
+    if (fileList.size() > 0) 
+    {
+        if (m_verbose)
+            qDebug() << "creating lib package" << destdir + getBaseName(Packager::LIB);
+        createManifestFiles(m_rootDir, fileList, Packager::LIB, manifestFiles);
+        compressFiles(_destdir + getBaseName(Packager::LIB), m_rootDir, fileList, manifestFiles);
+        createHashFile(_destdir + getBaseName(Packager::LIB) + getCompressedExtension(Packager::LIB));
+    }
 
-    if (m_verbose)
-        qDebug() << "creating doc package" << destdir + getBaseName(Packager::DOC);
     generatePackageFileList(fileList, Packager::DOC);
-    createManifestFiles(m_rootDir, fileList, Packager::DOC, manifestFiles);
     if (fileList.size() > 0)
-      compressFiles(_destdir + getBaseName(Packager::DOC), m_rootDir, fileList, manifestFiles);
-
-    if (m_verbose)
-        qDebug() << "creating src package" << destdir + getBaseName(Packager::SRC);
+    {
+        if (m_verbose)
+            qDebug() << "creating doc package" << destdir + getBaseName(Packager::DOC);
+        createManifestFiles(m_rootDir, fileList, Packager::DOC, manifestFiles);
+        compressFiles(_destdir + getBaseName(Packager::DOC), m_rootDir, fileList, manifestFiles);
+        createHashFile(_destdir + getBaseName(Packager::DOC) + getCompressedExtension(Packager::DOC));
+    }
+    
     generatePackageFileList(fileList, Packager::SRC);
     QString s = m_srcRoot.isEmpty() ? m_rootDir : m_srcRoot;
     // FIXME fix manifest file creating if src root is given
@@ -413,18 +445,37 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
         createManifestFiles(s, fileList, Packager::SRC, manifestFiles);
     else
         manifestFiles.clear();
-    if (fileList.size() > 0)
-      compressFiles(_destdir + getBaseName(Packager::SRC), s, fileList, manifestFiles, "src/" + m_name + "-" + m_version + "/");
-
-    if(bComplete) {
+    if (fileList.size() > 0) 
+    {
         if (m_verbose)
-            qDebug() << "creating complete package" << getBaseName(Packager::NONE);
-        generatePackageFileList(fileList, Packager::NONE);
-        createManifestFiles(m_rootDir, fileList, Packager::NONE, manifestFiles);
-        if (fileList.size() > 0)
-            compressFiles(_destdir + getBaseName(Packager::NONE), m_rootDir, fileList, manifestFiles);
+            qDebug() << "creating src package" << destdir + getBaseName(Packager::SRC);
+        compressFiles(_destdir + getBaseName(Packager::SRC), s, fileList, manifestFiles, "src/" + m_name + "-" + m_version + "/");
+        createHashFile(_destdir + getBaseName(Packager::SRC) + getCompressedExtension(Packager::SRC));
     }
+    if(bComplete) {
+        generatePackageFileList(fileList, Packager::NONE);
+        if (fileList.size() > 0) 
+        {
+            if (m_verbose)
+                qDebug() << "creating complete package" << getBaseName(Packager::NONE);
+            createManifestFiles(m_rootDir, fileList, Packager::NONE, manifestFiles);
+            compressFiles(_destdir + getBaseName(Packager::NONE), m_rootDir, fileList, manifestFiles);
+            createHashFile(_destdir + getBaseName(Packager::NONE) + getCompressedExtension(Packager::NONE));
+        }
+    }
+
     return true;
+}
+
+QString Packager::getCompressedExtension(Packager::Type type)
+{
+    switch(m_compMode) {
+        default:
+        case 1:
+            return ".zip";
+        case 2:
+            return ".tar.bz2";
+    }
 }
 
 QString Packager::getBaseName(Packager::Type type)
