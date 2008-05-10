@@ -182,24 +182,10 @@ if(SEVENZIP_UNPACK_SUPPORT)
   set(qua7zip_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/qua7zip)
 endif(SEVENZIP_UNPACK_SUPPORT)
 
-#-------------------------------------------------------------------
-# md5 library
-#-------------------------------------------------------------------
-
-set(md5_SOURCES
-    ${CMAKE_SOURCE_DIR}/3rdparty/md5/md5.cpp
-    )
-
-set(md5_HEADERS
-    ${CMAKE_SOURCE_DIR}/3rdparty/md5/md5.h
-    )
-set(md5_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/md5)
-
 include_directories(
   ${CMAKE_SOURCE_DIR}/3rdparty/zlib
   ${bzip2_INCLUDE_DIR}
   ${filters_INCLUDE_DIR}
   ${quazip_INCLUDE_DIR}
   ${qua7zip_INCLUDE_DIR}
-  ${md5_INCLUDE_DIR}
 )

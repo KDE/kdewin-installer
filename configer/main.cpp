@@ -28,13 +28,13 @@
 #include <QCoreApplication>
 #include <QFileInfo>
 #include <QDir>
-#include <QCryptographicHash>
 #include <QDateTime>
 #include <iostream>
 using namespace std;
 
 #include "package.h"
 #include "hintfile.h"
+#include "misc.h"
 
 
 static const QStringList g_fileFilter = QString("*.zip *.tbz *.tar.bz2").split(' ');
@@ -65,8 +65,7 @@ QByteArray createMD5Hash(const QString &fileName)
     QFile file(fileName);
     if (!file.open(QIODevice::ReadOnly))
          return QByteArray();
-    QByteArray content = file.readAll();
-    return QCryptographicHash::hash(content, QCryptographicHash::Md5).toHex();
+    return md5Hash(file).toHex();
 }
 
 bool createMD5Sums(const QStringList &hintFiles )

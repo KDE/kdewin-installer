@@ -27,8 +27,6 @@ set(all_sources ${installer_CONSOLE_SOURCES}
                 ${filters_HEADERS}
                 ${bzip2_SOURCES}
                 ${bzip2_HEADERS}
-		        ${md5_SOURCES}
-				${md5_HEADERS}
         )
 
 source_group(quazip FILES ${quazip_SOURCES} ${quazip_HEADERS})

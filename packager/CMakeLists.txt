@@ -8,7 +8,6 @@ set (packager_SOURCES
   ../shared/misc.cpp
   ../shared/settings.cpp
   ${quazip_SOURCES}
-  ${md5_SOURCES}
   ${filters_SOURCES}
   ${bzip2_SOURCES}
 )
@@ -18,7 +17,6 @@ set (packager_HEADERS
   ../shared/misc.h
   ../shared/settings.h
   ${quazip_HEADERS}
-  ${md5_HEADERS}
   ${filters_HEADERS}
   ${bzip2_HEADERS}
 )

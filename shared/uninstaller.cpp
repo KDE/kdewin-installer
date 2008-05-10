@@ -22,7 +22,6 @@
 ****************************************************************************/
 
 #include "installerprogress.h"
-#include "md5.h"
 #include "misc.h"
 #include "uninstaller.h"
 #include "uninstaller_p.h"
@@ -91,10 +90,10 @@ void UIThread::run()
                 emit warning ( QString ( "Can't open %1 - not removing this file!" ).arg ( fileItem.fileName ) );
                 continue;
             }
-            QByteArray ba = f.readAll();
+            QByteArray hash = md5Hash( f );
             f.close();
 
-            if ( QString::fromLatin1 ( fileItem.hash ) != qtMD5 ( ba ) ) {
+            if ( fileItem.hash != hash ) {
                 emit warning ( QString ( "Not removing %1 because hash does not match (locally modified)!" ).arg ( fileItem.fileName ) );
                 continue;
             }

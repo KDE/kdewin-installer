@@ -24,6 +24,7 @@
 #define MISC_H
 
 #include <QtDebug>
+#include <QFile>
 #include <QRegExp>
 #include <QString>
 #include <QStringList>
@@ -86,6 +87,8 @@ bool setWin32RegistryValue(const RegKey& akey, const QString& subKey, const QStr
 bool delWin32RegistryValue(const RegKey& akey, const QString& subKey);
 // try to delete a file, if not possible, move to root/tmp/deleteme
 bool deleteFile(const QString &root, const QString &fn);
+// create a md5 hash from file contents
+QByteArray md5Hash(QFile &f);
 
 void setMessageHandler();
 

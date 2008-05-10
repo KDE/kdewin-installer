@@ -22,7 +22,6 @@
 
 
 #include <QBuffer>
-#include <QCryptographicHash>
 #include <QDebug>
 #include <QDir>
 #include <QFile>
@@ -34,7 +33,6 @@
 #include "quazip.h"
 #include "quazipfile.h"
 #include "misc.h"
-#include "md5.h"
 
 #include "tarfilter.h"
 #include "bzip2iodevice.h"
@@ -328,14 +326,13 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
             qWarning("Can't open %s!", qPrintable(fn));
             continue;
         }
-        QByteArray ba = f.readAll();         // mmmmh
-        QString md5Hash = qtMD5(ba);
+        QByteArray md5 = md5Hash ( f );
         QByteArray fnUtf8 = file.outputFile.isEmpty() ? file.inputFile.toUtf8() : file.outputFile.toUtf8();
         fnUtf8.replace(' ', "\\ "); // escape ' '
         if (m_hashEntriesFirst)
-            out << md5Hash << ' ' << fnUtf8 << '\n';
+            out << md5 << ' ' << fnUtf8 << '\n';
         else
-            out << fnUtf8 << ' ' << md5Hash << '\n';
+            out << fnUtf8 << ' ' << md5 << '\n';
     }
     // qt needs a specific config file
     if ((m_name.startsWith("qt") || m_name.startsWith("q++") || m_name.startsWith("q.."))
@@ -384,8 +381,7 @@ bool Packager::createHashFile(const QString &packageFileName)
     }
 
     QFileInfo packageFileInfo(packageFileName);
-    QByteArray data = packageFile.readAll();
-    QByteArray hash = QCryptographicHash::hash (data, QCryptographicHash::Md5);
+    QByteArray hash = md5Hash(packageFile);
     QByteArray hashFileContent = hash.toHex() + QByteArray("  ") + packageFileInfo.fileName().toLatin1() + QByteArray("\n");
     hashFile.write(hashFileContent); 
     hashFile.close();

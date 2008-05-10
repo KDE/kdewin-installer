@@ -464,8 +464,8 @@ void Mirrors::initCountries()
     // which is accessable by using QString continent = m_continents[<countrycode>];
     QHash<QString, QString>::ConstIterator it = countryGroups.constBegin();
     for( ; it != countryGroups.constEnd(); ++it) {
-        QStringList countries = it.value().split(":");
-        Q_FOREACH(QString country, countries) 
+        QStringList countries = it.value().split(':');
+        Q_FOREACH(const QString &country, countries) 
             m_continents[country] = it.key();
     }
     qDebug() << m_continents;

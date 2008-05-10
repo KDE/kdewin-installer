@@ -35,6 +35,7 @@
 #include <initguid.h>
 #endif
 
+#include <QtCore/QCryptographicHash>
 #include <QDebug>
 #include <QDir>
 #include <QFileInfo>
@@ -60,7 +61,7 @@ QDebug operator<<(QDebug out, const QList<InstallFile> &c)
 {
     out << "QList<InstallFile> ("
         << "size:" << c.size();
-    Q_FOREACH(InstallFile p, c)
+    Q_FOREACH(const InstallFile &p, c)
         out << p;
     out << ")";
     return out;
@@ -756,7 +757,7 @@ bool delWin32RegistryValue(const RegKey& akey, const QString& subKey)
 
     return true;
 }
-#endif
+#endif  // Q_WS_WIN
 
 void myMessageOutput(QtMsgType type, const char *msg)
 {
@@ -823,4 +824,16 @@ void setMessageHandler()
 {
     qInstallMsgHandler(myMessageOutput);
 }
-#endif
+#endif  // MISC_SMALL_VERSION
+
+QByteArray md5Hash(QFile &file)
+{
+    static const int bufSize = 1024*1024;
+    QCryptographicHash md5( QCryptographicHash::Md5 );
+    QByteArray ba;
+    ba.resize ( bufSize );
+    qint64 iBytesRead;
+    while ( ( iBytesRead = file.read ( ba.data(), bufSize ) ) > 0 )
+        md5.addData ( ba.data(), iBytesRead );
+    return md5.result();
+}
