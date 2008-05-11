@@ -2,7 +2,7 @@ set (NAME kdewin-installer)
 project(${NAME})
 set (VERSION_MAJOR 0)
 set (VERSION_MINOR 9)
-set (VERSION_PATCH 1)
+set (VERSION_PATCH 2)
 set (VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
