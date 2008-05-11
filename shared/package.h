@@ -51,6 +51,23 @@ public:
     enum Type { NONE = 0, BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8, ALL = 15, ANY = 16};
     Q_DECLARE_FLAGS(Types,Type);
 
+    class PackageVersion {
+		public:
+			PackageVersion(const QString &version=QString());
+			PackageVersion &operator=(const PackageVersion &other);
+			bool operator==(PackageVersion &other);
+			bool operator!=(PackageVersion &other);
+			bool operator<(PackageVersion &other);
+			bool operator>(PackageVersion &other);
+			bool operator==(const QString &other);
+			bool operator!=(const QString &other);
+			bool isEmpty();
+			QString toString() const;
+			friend QDebug &operator<<(QDebug &, const PackageVersion &);
+		private:
+			QString m_version; 
+ 	};
+
     class PackageItem {
         public:
             bool set(const QUrl &url, const QString &fn, Package::Type contentType, bool bInstalled = false);
@@ -62,7 +79,7 @@ public:
             QString packageType;    // zip / msi / ...
             Type    contentType;    // BIN / LIB / DOC / SRC
             bool    bInstalled;     // true if already installed
-            QString version;        // package item version
+            PackageVersion version; // package item version
     friend QDebug &operator<<(QDebug &, const Package::PackageItem &);
     };
 public:
@@ -79,14 +96,15 @@ public:
     void setName(QString const &name) { m_name = name; }
 
     /// return version
-    QString version() const { return m_version.isEmpty() ? m_installedversion : m_version; }
+    PackageVersion &version()  { return m_version.isEmpty() ? m_installedversion : m_version; }
     /// set version
-    void setVersion(const QString &version) { m_version = version; }
+    void setVersion(const QString &version) { m_version = PackageVersion(version); }
 
     /// return installed version
-    QString installedVersion() const { return m_installedversion; }
+    PackageVersion installedVersion() const { return m_installedversion; }
     /// set version
-    void setInstalledVersion(const QString &version) { m_installedversion = version; }
+    void setInstalledVersion(const QString &version) { m_installedversion = PackageVersion(version); }
+    void setInstalledVersion(PackageVersion version) { m_installedversion = version; }
 
     /// return notes 
     QString notes() const { return m_notes; }
@@ -198,8 +216,8 @@ protected:
 
     PackageItemType m_packages;
     QString m_name;     // base name (a2ps)
-    QString m_version;  // base version (4.13b-1)
-    QString m_installedversion;
+    PackageVersion m_version;  // base version (4.13b-1)
+    PackageVersion m_installedversion;
     QString m_notes;    // notes from package.notes
     QString m_longNotes;// notes from package.notes
     QStringList m_categories;

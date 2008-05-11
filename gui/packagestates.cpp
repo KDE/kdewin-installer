@@ -45,7 +45,7 @@ void PackageStates::setState(QString pkgName, QString pkgVersion, Package::Type 
 
 void PackageStates::setState(Package *pkg, Package::Type type, stateType state)
 {
-    setState(pkg->name(),pkg->version(),type,state);
+    setState(pkg->name(),pkg->version().toString(),type,state);
 }
 
 #if 0
@@ -108,7 +108,7 @@ stateType PackageStates::getState(QString pkgName, QString pkgVersion, Package::
 }
 stateType PackageStates::getState(Package* pkg, Package::Type type)
 {
-    return getState(pkg->name(),pkg->version(),type);
+    return getState(pkg->name(),pkg->version().toString(),type);
 }
 
 void PackageStates::clear()

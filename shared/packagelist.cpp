@@ -225,7 +225,7 @@ bool PackageList::syncWithDatabase(Database &database)
     QList<Package*> newPackages;
     Q_FOREACH ( Package *apkg, m_packageList )
     {
-        Package *pkg = database.getPackage(apkg->name(), apkg->version().toAscii());
+        Package *pkg = database.getPackage(apkg->name(), apkg->version().toString().toAscii());
         if (!pkg)
         {
             pkg = database.getPackage(apkg->name());
@@ -233,7 +233,7 @@ bool PackageList::syncWithDatabase(Database &database)
                 continue;
             // if this installed package is already in the package list
             // may be it comes later in the list, don't add it twice
-            Package *p = getPackage(pkg->name(),pkg->version().toAscii());
+            Package *p = getPackage(pkg->name(),pkg->version().toString().toAscii());
             if (p)
                 continue;
             newPackages += pkg;

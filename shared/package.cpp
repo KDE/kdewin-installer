@@ -32,6 +32,65 @@
 #include <QFile>
 #include <QDir>
 
+Package::PackageVersion::PackageVersion(const QString &version)
+{
+	m_version = version;
+}
+
+Package::PackageVersion &Package::PackageVersion::operator=(const Package::PackageVersion &other)
+{
+	m_version = other.m_version;
+	return *this; 
+}
+
+bool Package::PackageVersion::operator<(Package::PackageVersion &other) 
+{
+	return m_version < other.m_version; 
+}
+
+bool Package::PackageVersion::operator>(Package::PackageVersion &other) 
+{
+	return m_version > other.m_version; 
+}
+
+bool Package::PackageVersion::operator==(Package::PackageVersion &other) 
+{
+	return m_version == other.m_version; 
+}
+
+bool Package::PackageVersion::operator!=(Package::PackageVersion &other) 
+{
+	return m_version != other.m_version; 
+}
+
+bool Package::PackageVersion::operator==(const QString &other) 
+{
+	return m_version == other; 
+}
+
+bool Package::PackageVersion::operator!=(const QString &other) 
+{
+	return m_version != other; 
+}
+
+bool Package::PackageVersion::isEmpty()
+{
+	return m_version.isEmpty();
+}
+
+QString Package::PackageVersion::toString()  const
+{
+	return m_version;
+}
+
+QDebug &operator<<(QDebug &out, const Package::PackageVersion &c)
+{
+    out << "PackageVersion ("
+		<< "m_version" << c.m_version
+		<< ")";
+    return out;
+}
+
 #ifndef PACKAGE_SMALL_VERSION
 /**
   initiate package item
@@ -237,7 +296,7 @@ bool Package::hasType(Package::Type contentType) const
 
 QString Package::toString(bool installed, const QString &delim) const
 {
-    QString result = m_name + delim + m_version;
+    QString result = m_name + delim + m_version.toString();
     QString availableTypes = getTypeAsString(installed);
     if (!availableTypes.isEmpty() && !installed )
         result += "   ( found =" + getTypeAsString() + ")";
@@ -303,7 +362,7 @@ bool Package::write(QTextStream &out) const
 #ifdef DEBUG
     qDebug() << __FUNCTION__ << m_name << "\t" << m_version << "\t" << getTypeAsString(true,"\t") << "\n";
 #endif
-    out << m_name << "\t" << m_version
+    out << m_name << "\t" << m_version.toString()
 // FIXME store path relocation information for removing too
     << "\t"
     << (isInstalled(BIN) ? "bin:" : ":")
@@ -437,7 +496,7 @@ bool Package::installItem(Installer *installer, Package::Type type)
 
 bool Package::removeItem(Installer *installer, Package::Type type)
 {
-    QString manifestFile = installer->root()+"/manifest/"+Package::manifestFileName(name(),installedVersion(),type);
+    QString manifestFile = installer->root()+"/manifest/"+Package::manifestFileName(name(),installedVersion().toString(),type);
     installer->uninstall(manifestFile);
     return true;
 }
@@ -630,12 +689,12 @@ bool Package::fromString(const QString &name, QString &pkgName, QString &pkgVers
 
 QString Package::manifestFileName(const Package::Type type)
 {
-    return Package::manifestFileName(m_name,m_version,type);
+    return Package::manifestFileName(m_name,m_version.toString(),type);
 }
 
 QString Package::versionFileName(const Package::Type type)
 {
-    return Package::versionFileName(m_name,m_version,type);
+    return Package::versionFileName(m_name,m_version.toString(),type);
 }
 
 // returns version file name of package item e.g. xyz-1.2.3-bin.ver
@@ -654,7 +713,7 @@ QDebug &operator<<(QDebug &out, const Package &c)
 {
     out << "Package ("
         << "name:" << c.name()
-        << "version:" << c.version()
+        << "version:" << c.m_version.toString()
         << "categories:" << c.categories()
         << "notes:" << c.notes()
         << "longNotes:" << c.longNotes()

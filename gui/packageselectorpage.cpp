@@ -286,14 +286,14 @@ void PackageSelectorPage::setWidgetData( QString categoryName )
         QString name = availablePackage->name();
         QStringList data;
         Package *installedPackage = engine->database()->getPackage(availablePackage->name());
-        QString installedVersion = installedPackage ? installedPackage->installedVersion() : "";
-        QString availableVersion = availablePackage->version();
+        Package::PackageVersion installedVersion = installedPackage ? installedPackage->installedVersion() : Package::PackageVersion();
+        Package::PackageVersion availableVersion = availablePackage->version();
         availablePackage->setInstalledVersion(installedVersion);
 
         /// @TODO add version format check to be sure available package is really newer
         data << availablePackage->name()
-            << (availableVersion != installedVersion ? availablePackage->version() : "")
-            << installedVersion
+            << (availableVersion != installedVersion ? availablePackage->version().toString() : "")
+            << installedVersion.toString()
             << QString();
         QTreeWidgetItem *item = new QTreeWidgetItem ( ( QTreeWidgetItem* ) 0, data );
         engine->setInitialState ( *item,availablePackage,installedPackage,0);

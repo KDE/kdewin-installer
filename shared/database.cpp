@@ -160,7 +160,7 @@ QStringList Database::getPackageFiles ( const QString &pkgName, Package::Type pk
     if ( !pkg )
         return files;
     QString manifestFile = m_root + "/manifest/" +
-                           PackageInfo::manifestFileName ( pkg->name(),pkg->version(),pkgType );
+                           PackageInfo::manifestFileName ( pkg->name(),pkg->version().toString(),pkgType );
     QFile file ( manifestFile );
     if ( !file.open ( QIODevice::ReadOnly| QIODevice::Text ) )
         return files;

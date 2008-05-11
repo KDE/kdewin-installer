@@ -406,7 +406,7 @@ bool InstallerEngineGui::setDependencyState(Package *_package, QTreeWidget *list
             qDebug() << __FUNCTION__ << "selected package" << package->name() << "in previous state" << state << "for" << newState;
             if (list) 
             {   
-                QTreeWidgetItem * item = new QTreeWidgetItem(QStringList() << package->name() << package->version() << package->notes());
+                QTreeWidgetItem * item = new QTreeWidgetItem(QStringList() << package->name() << package->version().toString() << package->notes());
                 list->addTopLevelItem(item);
             }
             dependencyStates.setState(package,Package::BIN,newState);

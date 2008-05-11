@@ -102,7 +102,7 @@ bool Installer::createManifestFile()
     }
     QTextStream vo(&vf);
     vo.setCodec(QTextCodec::codecForName("UTF-8"));
-    vo << m_packageToInstall->name() + " " + m_packageToInstall->version() + " " + m_packageToInstall->notes() + "\n";
+    vo << m_packageToInstall->name() + " " + m_packageToInstall->version().toString() + " " + m_packageToInstall->notes() + "\n";
     vo << m_packageToInstall->name() + ":\n";
     vf.close();
 
@@ -127,7 +127,7 @@ bool Installer::createManifestFileForExecutable()
         return false;
     }
     QTextStream vo(&vf);
-    vo << m_packageToInstall->name() + " " + m_packageToInstall->version() + " " + m_packageToInstall->notes() + "\n";
+    vo << m_packageToInstall->name() + " " + m_packageToInstall->version().toString() + " " + m_packageToInstall->notes() + "\n";
     vo << m_packageToInstall->name() + ":\n";
     vf.close();
     return true;
