@@ -43,32 +43,32 @@ Package::PackageVersion &Package::PackageVersion::operator=(const Package::Packa
 	return *this; 
 }
 
-bool Package::PackageVersion::operator<(Package::PackageVersion &other) 
+bool Package::PackageVersion::operator<(const Package::PackageVersion &other) const
 {
 	return m_version < other.m_version; 
 }
 
-bool Package::PackageVersion::operator>(Package::PackageVersion &other) 
+bool Package::PackageVersion::operator>(const Package::PackageVersion &other) const
 {
 	return m_version > other.m_version; 
 }
 
-bool Package::PackageVersion::operator==(Package::PackageVersion &other) 
+bool Package::PackageVersion::operator==(const Package::PackageVersion &other) const
 {
 	return m_version == other.m_version; 
 }
 
-bool Package::PackageVersion::operator!=(Package::PackageVersion &other) 
+bool Package::PackageVersion::operator!=(const Package::PackageVersion &other) const
 {
 	return m_version != other.m_version; 
 }
 
-bool Package::PackageVersion::operator==(const QString &other) 
+bool Package::PackageVersion::operator==(const QString &other) const 
 {
 	return m_version == other; 
 }
 
-bool Package::PackageVersion::operator!=(const QString &other) 
+bool Package::PackageVersion::operator!=(const QString &other) const 
 {
 	return m_version != other; 
 }

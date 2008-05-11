@@ -55,12 +55,12 @@ public:
 		public:
 			PackageVersion(const QString &version=QString());
 			PackageVersion &operator=(const PackageVersion &other);
-			bool operator==(PackageVersion &other);
-			bool operator!=(PackageVersion &other);
-			bool operator<(PackageVersion &other);
-			bool operator>(PackageVersion &other);
-			bool operator==(const QString &other);
-			bool operator!=(const QString &other);
+			bool operator==(const PackageVersion &other) const;
+			bool operator!=(const PackageVersion &other) const;
+			bool operator<(const PackageVersion &other) const;
+			bool operator>(const PackageVersion &other) const;
+			bool operator==(const QString &other) const;
+			bool operator!=(const QString &other) const;
 			bool isEmpty();
 			QString toString() const;
 			friend QDebug &operator<<(QDebug &, const PackageVersion &);
