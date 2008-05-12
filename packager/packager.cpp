@@ -372,7 +372,7 @@ bool Packager::createHashFile(const QString &packageFileName)
         return false;
     }
     
-    QString hashFileName = packageFileName.mid(0,packageFileName.lastIndexOf('.')) + ".md5";
+    QString hashFileName = packageFileName + ".md5";
     QFile hashFile(hashFileName);
     if (!hashFile.open(QIODevice::WriteOnly)) 
     {
@@ -382,7 +382,7 @@ bool Packager::createHashFile(const QString &packageFileName)
 
     QFileInfo packageFileInfo(packageFileName);
     QByteArray hash = md5Hash(packageFile);
-    QByteArray hashFileContent = hash.toHex() + QByteArray("  ") + packageFileInfo.fileName().toLatin1() + QByteArray("\n");
+    QByteArray hashFileContent = hash.toHex() + QByteArray("  ") + packageFileInfo.fileName().toUtf8() + QByteArray("\n");
     hashFile.write(hashFileContent); 
     hashFile.close();
 
