@@ -139,6 +139,8 @@ void EndUserPackageSelectorPage::initializePage()
     connect(&Settings::instance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
     connect(&Settings::instance(),SIGNAL(compilerTypeChanged()),this,SLOT(slotCompilerTypeChanged()));
     setWidgetData(categories);
+	if (ui.packageList.topLevelItemCount() == 0)
+		;// no items skip page
 }
 
 void EndUserPackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
