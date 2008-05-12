@@ -383,7 +383,7 @@ bool InstallerEngineGui::setDependencyState(Package *_package, QTreeWidget *list
 {
     qDebug() << __FUNCTION__ << _package->name();
 
-    foreach(const QString &dep, _package->deps())
+    Q_FOREACH(const QString &dep, _package->deps())
     {
         Package *package = m_packageResources->getPackage(dep);
         if (!package)
@@ -496,7 +496,7 @@ void InstallerEngineGui::selectAllPackagesForRemoval()
 {
     Package::Type type = Package::BIN;
     stateType newState = _Remove;
-    foreach(Package *installed,m_database->packages())
+    Q_FOREACH(Package *installed,m_database->packages())
     {
         if (installed->hasType(type))
             packageStates.setState(installed,type,newState);

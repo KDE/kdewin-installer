@@ -152,7 +152,7 @@ PackageSelectorPage::PackageSelectorPage()  : InstallWizardPage(0)
     layout->setRowStretch(1,10);
     setLayout(layout);
     packageInfo->hide();
-    bool installMode = Settings::instance().isDeveloperMode() ? InstallerEngineGui::Developer : InstallerEngineGui::EndUser;
+    InstallerEngineGui::Type installMode = Settings::instance().isDeveloperMode() ? InstallerEngineGui::Developer : InstallerEngineGui::EndUser;
     if (installMode == InstallerEngineGui::Single)
     {
         BINColumn = 3;
@@ -204,11 +204,11 @@ void PackageSelectorPage::setLeftTreeData()
 
     qDebug() << categoryCache.categories();
     Settings &s = Settings::instance();
-    foreach (const QString &category,categoryCache.categories())
+    Q_FOREACH (const QString &category,categoryCache.categories())
     {
-        QStringList names = category.split(":");
+        const QStringList names = category.split(':');
         if ( (s.compilerType() == Settings::MinGW ||s.compilerType() == Settings::MSVC)
-            && (names[0] == "msvc" || names[0] == "mingw") )
+            && (names[0] == QLatin1String("msvc") || names[0] == QLatin1String("mingw")) )
             continue;
 
         QTreeWidgetItem *categoryItem = new QTreeWidgetItem ( ( QTreeWidget* ) 0, names );
@@ -261,7 +261,7 @@ void PackageSelectorPage::setWidgetData( QString categoryName )
     QList <Package*> packageList;
 
     // add packages which are installed but for which no config entry is there 
-    foreach(Package *instPackage, categoryCache.packages(categoryName,*engine->database())) 
+    Q_FOREACH(Package *instPackage, categoryCache.packages(categoryName,*engine->database())) 
     {
         Package *p = engine->packageResources()->getPackage(instPackage->name());
         if (!p)
@@ -269,7 +269,7 @@ void PackageSelectorPage::setWidgetData( QString categoryName )
     }
 
     Settings &s = Settings::instance();
-    foreach(Package *availablePackage,categoryCache.packages(categoryName,*engine->packageResources()))
+    Q_FOREACH(Package *availablePackage,categoryCache.packages(categoryName,*engine->packageResources()))
     {
         QString name = availablePackage->name();
         if ( ( categoryName == "mingw"  || s.compilerType() == Settings::MinGW )
@@ -281,7 +281,7 @@ void PackageSelectorPage::setWidgetData( QString categoryName )
         packageList << availablePackage;
     }
 
-    foreach(Package *availablePackage,packageList)
+    Q_FOREACH(Package *availablePackage,packageList)
     {
         QString name = availablePackage->name();
         QStringList data;

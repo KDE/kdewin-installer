@@ -101,7 +101,7 @@ Package *PackageList::getPackage(const QString &name, const QByteArray &version)
 QStringList PackageList::listPackages()
 {
     QStringList list;
-    Q_FOREACH (const Package *p, m_packageList )
+    Q_FOREACH ( const Package *p, m_packageList )
         list << p->toString(true," - ");
     return list;
 }
@@ -166,7 +166,7 @@ bool PackageList::readFromFile(const QString &_fileName)
 
 bool PackageList::append(const PackageList &src)
 {
-    Q_FOREACH (const Package *p, src.m_packageList ) {
+    Q_FOREACH ( const Package *p, src.m_packageList ) {
         addPackage(*p);
     }
     return true;
@@ -307,7 +307,7 @@ QStringList filterFileName(QStringList & files)
             }
         }
     }
-    Q_FOREACH(FileType *p,packages)
+    Q_FOREACH(const FileType *p,packages)
         filteredFiles << p->fileName;
     qDeleteAll(packages);
 
@@ -432,7 +432,7 @@ bool PackageList::addPackageFromHintFile(const QString &fileName)
     if (m_parserConfigFileFound)
         return false;
 
-    QStringList hintFile = QString(fileName).split(".");
+    QStringList hintFile = QString(fileName).split('.');
     QString pkgName = hintFile[0];
     // download hint file
     QByteArray ba;

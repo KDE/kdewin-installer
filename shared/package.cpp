@@ -736,7 +736,7 @@ QDebug &operator<<(QDebug &out, const QList<Package*> &c)
 {
     out << "QList<Package *> ("
         << "size:" << c.size();
-    Q_FOREACH(Package *p, c)
+    Q_FOREACH(const Package *p, c)
         out << *p;
     out << ")";
     return out;

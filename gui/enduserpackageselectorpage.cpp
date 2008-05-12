@@ -79,7 +79,7 @@ void EndUserPackageSelectorPage::setWidgetData(QString categoryName)
     QList <Package*> packageList;
 
     // add packages which are installed but for which no config entry is there 
-    foreach(Package *instPackage, categoryCache.packages(categoryName,*engine->database())) 
+    Q_FOREACH(Package *instPackage, categoryCache.packages(categoryName,*engine->database())) 
     {
         Package *p = engine->packageResources()->getPackage(instPackage->name());
         if (!p)
@@ -87,7 +87,7 @@ void EndUserPackageSelectorPage::setWidgetData(QString categoryName)
     }
 
     Settings &s = Settings::instance();
-    foreach(Package *availablePackage,categoryCache.packages(categoryName,*engine->packageResources()))
+    Q_FOREACH(Package *availablePackage,categoryCache.packages(categoryName,*engine->packageResources()))
     {
         QString name = availablePackage->name();
         if ( ( categoryName == "mingw"  || s.compilerType() == Settings::MinGW )
@@ -99,9 +99,8 @@ void EndUserPackageSelectorPage::setWidgetData(QString categoryName)
         packageList << availablePackage;
     }
 
-    foreach(Package *availablePackage,packageList)
+    Q_FOREACH(Package *availablePackage,packageList)
     {
-        QString name = availablePackage->name();
         QStringList data;
         Package *installedPackage = engine->database()->getPackage(availablePackage->name());
         Package::PackageVersion installedVersion = installedPackage ? installedPackage->installedVersion() : Package::PackageVersion();
