@@ -74,8 +74,9 @@ public:
     Database *database() { return m_database; }
     PackageList* packageResources() { return m_packageResources; }
     QUrl &usedDownloadSource() { return m_usedDownloadSource; }
-
-	// run post install commands 
+	
+	// pre/post installs commands
+	void runPreRemoveCommands();
 	void runPostInstallCommands();
 
 Q_SIGNALS:

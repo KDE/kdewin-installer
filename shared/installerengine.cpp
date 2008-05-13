@@ -314,13 +314,29 @@ void InstallerEngine::slotError(const QString &msg)
     emit error(msg);
 }
 
+void InstallerEngine::runPreRemoveCommands()
+{
+	// run menu updater 
+	QFileInfo f(Settings::instance().installDir()+"/bin/kwinstartmenu.exe");
+	qDebug() << "checking for start menu updater - " << (f.exists() ? "found" : "not found"); 
+	if (f.exists())
+	{
+		qDebug() << "removing start menu entries"; 
+		QProcess::startDetached ( f.absoluteFilePath(), QStringList() << "--remove" );
+
+	}
+}
+
 void InstallerEngine::runPostInstallCommands()
 {
 	// run menu updater 
 	QFileInfo f(Settings::instance().installDir()+"/bin/kwinstartmenu.exe");
 	qDebug() << "checking for start menu updater - " << (f.exists() ? "found" : "not found"); 
 	if (f.exists())
+	{
+		qDebug() << "creating start menu entries"; 
 		QProcess::startDetached ( f.absoluteFilePath() );
+	}
 }
 
 #include "installerengine.moc"
