@@ -1,5 +1,8 @@
 set (NAME kdewin-installer)
 project(${NAME})
+
+cmake_minimum_required(VERSION 2.4.5)
+
 set (VERSION_MAJOR 0)
 set (VERSION_MINOR 9)
 set (VERSION_PATCH 2)
@@ -10,6 +13,19 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 #set (CMAKE_SUPPRESS_REGENERATION 1)
 find_package(Qt4 REQUIRED)
+
+FIND_PROGRAM(QT_UIC_EXECUTABLE
+    NAMES uic
+    PATHS ${QT_BINARY_DIR}
+    NO_DEFAULT_PATH
+)
+
+FIND_PROGRAM(QT_UIC_EXECUTABLE
+    NAMES moc
+    PATHS ${QT_BINARY_DIR}
+    NO_DEFAULT_PATH
+)
+
 find_package(UPX)
 find_package(KDEWIN_Packager)
 find_package(WinSCP)
@@ -58,7 +74,7 @@ if (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel OR
     if (STATIC_BUILD)
         if (UPX_EXECUTABLE)
             set (PACK_EXECUTABLE 1)
-            message(STATUS "upx found, packing of executables enables")
+            message(STATUS "upx found, packing of executables enabled")
         endif (UPX_EXECUTABLE)
         set (INSTALL_SYSTEM_LIBS 0)
     else (STATIC_BUILD)
