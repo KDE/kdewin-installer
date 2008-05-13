@@ -43,34 +43,47 @@ Package::PackageVersion &Package::PackageVersion::operator=(const Package::Packa
 	return *this; 
 }
 
-bool Package::PackageVersion::operator<(const Package::PackageVersion &other) const
+int  Package::PackageVersion::compare(const Package::PackageVersion &other)
 {
-	return m_version < other.m_version; 
+    int result;
+    if (m_version < other.m_version)
+        result = -1;
+    else if (m_version > other.m_version)
+        result = 1;
+    else 
+        result = 0;
+    return result;
 }
 
-bool Package::PackageVersion::operator>(const Package::PackageVersion &other) const
+bool Package::PackageVersion::operator<(const Package::PackageVersion &other)
 {
-	return m_version > other.m_version; 
+	return compare(other) < 0 ? true : false; 
 }
 
-bool Package::PackageVersion::operator==(const Package::PackageVersion &other) const
+bool Package::PackageVersion::operator>(const Package::PackageVersion &other)
 {
-	return m_version == other.m_version; 
+	return compare(other) > 0; 
 }
 
-bool Package::PackageVersion::operator!=(const Package::PackageVersion &other) const
+bool Package::PackageVersion::operator==(const Package::PackageVersion &other)
 {
-	return m_version != other.m_version; 
+	return compare(other) == 0;
 }
 
-bool Package::PackageVersion::operator==(const QString &other) const 
+bool Package::PackageVersion::operator!=(const Package::PackageVersion &other)
 {
-	return m_version == other; 
+	return compare(other) != 0;
 }
 
-bool Package::PackageVersion::operator!=(const QString &other) const 
+bool Package::PackageVersion::operator==(const QString &other)
 {
-	return m_version != other; 
+	return compare(PackageVersion(other)) == 0; 
+}
+
+bool Package::PackageVersion::operator!=(const QString &other) 
+{
+    PackageVersion a(other);
+	return compare(a) != 0;
 }
 
 bool Package::PackageVersion::isEmpty()

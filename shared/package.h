@@ -53,17 +53,34 @@ public:
 
     class PackageVersion {
 		public:
+            ///  constructor
 			PackageVersion(const QString &version=QString());
+            ///  assignment operator 
 			PackageVersion &operator=(const PackageVersion &other);
-			bool operator==(const PackageVersion &other) const;
-			bool operator!=(const PackageVersion &other) const;
-			bool operator<(const PackageVersion &other) const;
-			bool operator>(const PackageVersion &other) const;
-			bool operator==(const QString &other) const;
-			bool operator!=(const QString &other) const;
+            ///  equal operator 
+			bool operator==(const PackageVersion &other);
+            /// not equal operator 
+			bool operator!=(const PackageVersion &other);
+            /// lower than operator 
+			bool operator<(const PackageVersion &other);
+            /// greater than operator 
+			bool operator>(const PackageVersion &other);
+            /// equal string operator 
+			bool operator==(const QString &other);
+            /// not equal string operator 
+			bool operator!=(const QString &other);
+            /// check if version is empty 
 			bool isEmpty();
+            /// return version in string representation
 			QString toString() const;
+            /// debug operator 
 			friend QDebug &operator<<(QDebug &, const PackageVersion &);
+		protected:
+            /** internal compare function, used by operators
+                                @param other Packageversion instance 
+                                @return -1 this < other, 1 this > other, 0 this = other
+                            */
+            int compare(const PackageVersion &other);
 		private:
 			QString m_version; 
  	};
