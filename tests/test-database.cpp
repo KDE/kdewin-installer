@@ -29,6 +29,7 @@
 
 
 
+#ifdef TEST_MSI_INSTALLER
 
 #ifndef UNICODE
 #define UNICODE
@@ -155,6 +156,7 @@ UINT DetermineContextForAllProducts()
 
 	return (ERROR_NO_MORE_ITEMS == uiStatus) ? ERROR_SUCCESS : uiStatus;
 }
+#endif
 
 // this should go into Package class sometime in the future
 static Package::Type StringToPackageType(const QString &_type)
@@ -193,7 +195,9 @@ int main(int argc, char *argv[])
     foreach(QString file, files)
         qDebug() << file;
     
+#ifdef TEST_MSI_INSTALLER
 	DetermineContextForAllProducts();
+#endif
 	
     return 0;
 }

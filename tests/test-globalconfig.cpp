@@ -33,15 +33,14 @@ int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
-    DownloaderProgress progress(0);
-    Downloader downloader(&progress);
+    Downloader *downloader = Downloader::instance();
 
-    GlobalConfig globalConfig(&downloader);
+    GlobalConfig globalConfig;
     QStringList files = globalConfig.fetch("http://82.149.170.66/kde-windows/installer");
     globalConfig.parse(files);
     qDebug() << globalConfig;
 
-    GlobalConfig localConfig(&downloader);
+    GlobalConfig localConfig;
     localConfig.parse(QStringList() << CMAKE_SOURCE_DIR "/tests/data/config-site.txt");
     qDebug() << localConfig;
     return 0;

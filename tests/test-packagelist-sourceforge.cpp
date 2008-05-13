@@ -33,18 +33,18 @@ int main(int argc, char ** argv)
 {
     QCoreApplication app(argc,argv);
 
-    Downloader downloader;
+    Downloader *downloader = Downloader::instance();
     PackageList packageList;
 
     qDebug() << "trying to download sourceforge related package list";
-    downloader.start(QUrl("http://sourceforge.net/project/showfiles.php?group_id=23617"),"packages.html");
+    downloader->start(QUrl("http://sourceforge.net/project/showfiles.php?group_id=23617"),"packages.html");
 
-    if (!packageList.readHTMLFromFile("packages.html",PackageList::SourceForge))
+    if (!packageList.readFromFile("packages.html",PackageList::SourceForge))
     {
         qDebug() << "... failed ";
         return false;
     }
-    packageList.listPackages("Package List");
+    packageList.listPackages();
     return 0;
 }
 

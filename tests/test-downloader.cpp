@@ -32,11 +32,10 @@ int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
-    DownloaderProgress dp(0);
-    Downloader d(&dp);
+    Downloader *d = Downloader::instance();
 
-    qDebug() << "download return code" << d.start(QUrl("http://download.cegit.de/kde-windows/installer/config.txt"),"config.txt");
-	qDebug() << "download return code" << d.start(QUrl("http://go.microsoft.com/fwlink/?LinkId=51410&clcid=0x409"),"vcexpress.exe");
-    qDebug() << "download return code" << d.start(QUrl("ftp://ftp.scarlet.be/pub/kde/unstable/3.97/windows/"),"config-ftp.txt");
+    qDebug() << "download return code" << d->start(QUrl("http://download.cegit.de/kde-windows/installer/config.txt"),"config.txt");
+	qDebug() << "download return code" << d->start(QUrl("http://go.microsoft.com/fwlink/?LinkId=51410&clcid=0x409"),"vcexpress.exe");
+    qDebug() << "download return code" << d->start(QUrl("ftp://ftp.scarlet.be/pub/kde/unstable/3.97/windows/"),"config-ftp.txt");
     return 0;
 }

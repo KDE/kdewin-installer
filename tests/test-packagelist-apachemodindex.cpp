@@ -33,8 +33,7 @@ int main(int argc, char *argv[])
 
     QCoreApplication app(argc, argv);
 
-    DownloaderProgress progress(0);
-    Downloader download(&progress);
+    Downloader *download = Downloader::instance();
     Site site;
 
     QStringList args = app.arguments();
@@ -49,8 +48,8 @@ int main(int argc, char *argv[])
             packageList.setCurrentSite(&site);
             packageList.setBaseURL(site.url());
             QString fileName = url.path().replace("/","_") + ".txt";
-            download.start(site.url(),fileName);            
-            if (!packageList.readHTMLFromFile(fileName,PackageList::ApacheModIndex)) {
+            download->start(site.url(),fileName);            
+            if (!packageList.readFromFile(fileName,PackageList::ApacheModIndex)) {
                 qDebug() << "parsing" << arg << "... failed ";
             }
             qDebug() << arg << packageList;
@@ -64,8 +63,8 @@ int main(int argc, char *argv[])
         packageList.setBaseURL(site.url());
         
         qDebug() << "trying to download win32 related package list";
-        download.start(site.url(),"packages1.html");
-        if (!packageList.readHTMLFromFile("packages1.html",PackageList::ApacheModIndex))
+        download->start(site.url(),"packages1.html");
+        if (!packageList.readFromFile("packages1.html",PackageList::ApacheModIndex))
         {
             qDebug() << "... failed ";
             return 1;
@@ -74,8 +73,8 @@ int main(int argc, char *argv[])
 
         PackageList packageList2;
 
-        download.start(QUrl("http://software.opensuse.org/download/KDE:/KDE3/SUSE_Linux_10.1/noarch/"),"packages2.html");
-        if (!packageList2.readHTMLFromFile("packages2.html",PackageList::ApacheModIndex))
+        download->start(QUrl("http://software.opensuse.org/download/KDE:/KDE3/SUSE_Linux_10.1/noarch/"),"packages2.html");
+        if (!packageList2.readFromFile("packages2.html",PackageList::ApacheModIndex))
         {
             qDebug() << "... failed ";
             return 1;
