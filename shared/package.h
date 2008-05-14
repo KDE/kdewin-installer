@@ -58,19 +58,19 @@ public:
             ///  assignment operator 
 			PackageVersion &operator=(const PackageVersion &other);
             ///  equal operator 
-			bool operator==(const PackageVersion &other);
+			bool operator==(const PackageVersion &other) const;
             /// not equal operator 
-			bool operator!=(const PackageVersion &other);
+			bool operator!=(const PackageVersion &other) const;
             /// lower than operator 
-			bool operator<(const PackageVersion &other);
+			bool operator<(const PackageVersion &other) const;
             /// greater than operator 
-			bool operator>(const PackageVersion &other);
+			bool operator>(const PackageVersion &other) const;
             /// equal string operator 
-			bool operator==(const QString &other);
+			bool operator==(const QString &other) const;
             /// not equal string operator 
-			bool operator!=(const QString &other);
+			bool operator!=(const QString &other) const;
             /// check if version is empty 
-			bool isEmpty();
+			bool isEmpty() const;
             /// return version in string representation
 			QString toString() const;
             /// debug operator 
@@ -80,7 +80,7 @@ public:
                                 @param other Packageversion instance 
                                 @return -1 this < other, 1 this > other, 0 this = other
                             */
-            int compare(const PackageVersion &other);
+            int compare(const PackageVersion &other) const;
 		private:
 			QString m_version; 
  	};
