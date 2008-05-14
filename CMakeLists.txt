@@ -37,6 +37,8 @@ OPTION(STATIC_BUILD "enable static build support" ON)
 OPTION(INSTALL_SYSTEM_LIBS "install required system libraries too (only in shared mode)" OFF)
 OPTION(BUILD_TESTS "build test applications " ON)
 
+ENABLE_TESTING()
+
 # -------------------------------------------------------
 # build type settings
 # -------------------------------------------------------
