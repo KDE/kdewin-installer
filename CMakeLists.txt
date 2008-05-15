@@ -17,8 +17,19 @@ find_package(Qt4 REQUIRED)
 if (WIN32 AND CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
 # emerge workaround for cmake 2.6. qt-static 4.3.2 combination which is not able to detect uic and moc correctly
 # we need also to set the environment variable QMAKESPEC to %KDEROOT%\mkspecs/<compiler>
-    set (QT_UIC_EXECUTABLE "uic.exe")
-    set (QT_MOC_EXECUTABLE "moc.exe")
+    FIND_PROGRAM(_QT_UIC_EXECUTABLE
+        NAMES uic
+        PATHS ${QT_BINARY_DIR}
+        NO_DEFAULT_PATH
+    )
+    set (QT_UIC_EXECUTABLE ${_QT_UIC_EXECUTABLE})
+
+    FIND_PROGRAM(_QT_MOC_EXECUTABLE
+        NAMES moc
+        PATHS ${QT_BINARY_DIR}
+        NO_DEFAULT_PATH
+    )
+    set (QT_MOC_EXECUTABLE ${_QT_MOC_EXECUTABLE})
 endif (WIN32 AND CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
 
 find_package(UPX)
