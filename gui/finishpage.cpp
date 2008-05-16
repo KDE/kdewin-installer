@@ -69,8 +69,6 @@ void FinishPage::initializePage()
     wizard()->button(QWizard::CustomButton3)->show();
 #endif
     wizard()->setOption(QWizard::NoBackButtonOnLastPage,true);
-
-	engine->runPostInstallCommands();
 }
 
 bool FinishPage::isComplete()

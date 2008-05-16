@@ -203,6 +203,10 @@ void InstallWizard::slotCurrentIdChanged(int id)
             reject();
             return;
         }
+        InstallWizardPage *aPage = static_cast<InstallWizardPage*>(currentPage());
+        aPage->setStatus("running post process commands");
+        QCoreApplication::processEvents();
+        engine->runPostInstallCommands();
         button(QWizard::BackButton)->setEnabled(true);
         button(QWizard::NextButton)->setEnabled(true);
         if (Settings::instance().autoNextStep())
