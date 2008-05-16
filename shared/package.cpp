@@ -517,7 +517,7 @@ bool Package::downloadItem(Package::Type type)
         if( !f.open( QIODevice::ReadOnly|QIODevice::Truncate ) )
           return ret;
         f.write( Downloader::instance()->md5Sum().toHex() );
-        f.write( " " );
+        f.write( "  " );
         f.write( fn.toLocal8Bit() );
         f.close();
       }
