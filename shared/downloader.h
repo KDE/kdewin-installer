@@ -60,6 +60,8 @@ public:
     QUrl       usedURL()   const {
         return m_usedURL;
     }
+    // calculated md5sum
+    QByteArray md5Sum() const;
 
 Q_SIGNALS:
     void done ( bool error );
@@ -78,6 +80,7 @@ protected:
     ResultType  m_result;
     QString     m_resultString;
     QUrl        m_usedURL;
+    QByteArray  m_md5Sum;
     QEventLoop *m_loop;
     class Private;
     Private * const d;

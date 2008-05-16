@@ -1,6 +1,8 @@
 /****************************************************************************
 **
-** Copyright (C) 2005 Ralf Habacker. All rights reserved.
+** Copyright (C) 2005 Ralf Habacker <ralf.habacker@freenet.de>
+** Copyright (C) 2007-2008 Christian Ehrlicher <ch.ehrlicher@gmx.de>
+** All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
@@ -41,6 +43,7 @@
 #include <QtCore/QTemporaryFile>
 #include <QtCore/QThread>
 #include <QtNetwork/QNetworkProxy>
+#include <QtCore/QCryptoGraphicHash>
 
 MyThread::MyThread ( CURL *handle, QObject *parent )
         : QThread ( parent ), curlHandle ( handle ), m_bCancel ( false ), m_ret ( CURLE_OK )
@@ -96,7 +99,7 @@ class Downloader::Private
 public:
     Private ()
             : curlHandle ( 0 ), thread ( NULL ), cancel ( false ), ret ( CURLE_OK ),
-            progress ( 0 ), ioDevice ( NULL ) {}
+            progress ( 0 ), ioDevice ( NULL ), crypt( QCryptographicHash::Md5 ) {}
     ~Private() {
         if ( thread )
             thread->terminate();
@@ -111,7 +114,8 @@ public:
     QIODevice  *ioDevice;
     QString     fileName;         // holds filename in case target is a file
     QByteArray  encodedUrl;       // the encoded url for some (old?) curl versions
-    // which don't copy the url to an own buffer
+                                  // which don't copy the url to an own buffer
+    QCryptographicHash crypt;
 };
 
 Downloader::Downloader ()
@@ -217,6 +221,7 @@ bool Downloader::startInternal ( const QUrl &url )
 
     m_usedURL = url;
     m_result = Undefined;
+    d->crypt.reset();
     d->cancel = false;
 
     if ( !d->curlHandle ) {
@@ -309,6 +314,7 @@ void Downloader::threadFinished ()
 
 size_t Downloader::curlWrite ( const char * data, size_t size )
 {
+    d->crypt.addData( data, size );
     return d->ioDevice->write ( data, size );
 }
 
@@ -347,6 +353,11 @@ void Downloader::setError ( const QString &errStr )
 {
     qWarning ( qPrintable ( errStr ) );
     emit error ( errStr );
+}
+
+QByteArray Downloader::md5Sum() const
+{
+    return d->crypt.result();
 }
 
 QDebug &operator<< ( QDebug &debug, const Downloader & )

@@ -1,6 +1,8 @@
 /****************************************************************************
 **
-** Copyright (C) 2005-2007 Ralf Habacker. All rights reserved.
+** Copyright (C) 2005-2007 Ralf Habacker <ralf.habacker@freenet.de>
+** Copyright (C) 2008 Christian Ehrlicher <ch.ehrlicher@gmx.de>
+** All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
@@ -25,6 +27,7 @@
 #include "downloader.h"
 #include "installer.h"
 #include "database.h"
+#include "misc.h"
 #include "uninstaller.h"
 
 #include <QtDebug>
@@ -439,21 +442,6 @@ bool Package::read(QTextStream &in)
     return true;
 }
 
-static bool makeDir(const QDir &dir)
-{
-    if(dir.exists())
-        return true;
-    if(dir.isRoot())
-        return false;
-    QString d = dir.absolutePath();
-    int idx = d.lastIndexOf('/');
-    if(idx == -1)
-        return false;
-    if(makeDir(QDir(d.left(idx))))
-        return dir.mkdir(d);
-    return false;
-}
-
 QString Package::makeFileName(Package::Type type, bool bCreateDir)
 {
     QString dir = Settings::instance().downloadDir();
@@ -461,12 +449,25 @@ QString Package::makeFileName(Package::Type type, bool bCreateDir)
 
     if(bCreateDir) {
         if(!d.exists(".")) {
-            if(!makeDir(d)) {
+            // FIXME: can't we use d.mkpath(dir) ?
+            if(!QDir().mkpath(dir)) {
                 qDebug() << "Can't create directory " << dir;
             }
         }
     }
     return d.absoluteFilePath(getFileName(type));
+}
+
+static QByteArray readMD5SumFile(const QString &filename)
+{
+  QFile f(filename);
+  if(!f.open(QIODevice::ReadOnly))
+    return QByteArray();
+  // simply use the first 32 Bytes - make this more robust!
+  QByteArray str = f.readLine().trimmed().left(32);
+  if(str.length() != 32)
+    return QByteArray();
+  return str;
 }
 
 bool Package::downloadItem(Package::Type type)
@@ -476,13 +477,52 @@ bool Package::downloadItem(Package::Type type)
         qDebug() << __FUNCTION__ << " empty URL for type " << type;
         return false;
     }
+
     QString fn = makeFileName(type, true);
-    if(QFile::exists(fn)) {
+    QString md5 = fn + QLatin1String(".md5");
+    if(QFile::exists(fn) && QFile::exists(md5)) {
+        // Already downloaded and md5sum exist - check if it md5sum matches so
+        // we don't need to download again
         qDebug() << __FUNCTION__ << " URL " << url.toString() << " already downloaded for type " << type;
-        return true;
+        QByteArray md5FromFile = readMD5SumFile( md5 );
+        if( md5FromFile.length() == 32 ) {
+          QByteArray md5sum = md5Hash( fn ).toHex();
+          if( md5FromFile == md5sum ) {
+            qDebug() << __FUNCTION__ << "md5sum is correct - no need to redownload file";
+            return true;
+          }
+        }
+        qDebug() << __FUNCTION__ << "md5sum is not correct - need to download file again!";
+        QFile::remove(fn);
+        QFile::remove(md5);
     }
+
     qDebug() << __FUNCTION__ << " downloading URL " << url.toString() << " for type " << type;
-    return Downloader::instance()->start(url, fn);
+    Downloader::instance()->start(url, md5);
+
+    bool ret = Downloader::instance()->start(url, fn);
+    if( ret && Downloader::instance()->result() == Downloader::Finished ) {
+      // try to read <filename>.md5
+      QUrl urlmd5 = url;
+      urlmd5.setPath(url.path() + ".md5");
+      QByteArray md5FromFile = readMD5SumFile( md5 );
+      if( md5FromFile.length() == 32 ) {
+        if( md5FromFile != Downloader::instance()->md5Sum().toHex() ) {
+          qDebug() << __FUNCTION__ << "md5sum is not correct - error downloading file!";
+          return false;
+        }
+      } else {
+        // no md5 file available - create it from downloaded data
+        QFile f( md5 );
+        if( !f.open( QIODevice::ReadOnly|QIODevice::Truncate ) )
+          return ret;
+        f.write( Downloader::instance()->md5Sum().toHex() );
+        f.write( " " );
+        f.write( fn.toLocal8Bit() );
+        f.close();
+      }
+    }
+    return ret;
 }
 
 bool Package::installItem(Installer *installer, Package::Type type)
@@ -754,6 +794,3 @@ QDebug &operator<<(QDebug &out, const QList<Package*> &c)
     out << ")";
     return out;
 }
-
-
-

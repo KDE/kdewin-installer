@@ -837,3 +837,11 @@ QByteArray md5Hash(QFile &file)
         md5.addData ( ba.data(), iBytesRead );
     return md5.result();
 }
+
+QByteArray md5Hash(const QString &file)
+{
+    QFile f(file);
+    if(!f.open(QIODevice::ReadOnly))
+      return QByteArray();
+    return md5Hash(f);
+}

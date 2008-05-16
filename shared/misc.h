@@ -89,6 +89,7 @@ bool delWin32RegistryValue(const RegKey& akey, const QString& subKey);
 bool deleteFile(const QString &root, const QString &fn);
 // create a md5 hash from file contents
 QByteArray md5Hash(QFile &f);
+QByteArray md5Hash(const QString &file);
 
 void setMessageHandler();
 
