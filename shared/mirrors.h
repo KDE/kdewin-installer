@@ -115,6 +115,7 @@ class Mirrors /* : public QObject */
     public:
         Mirrors();
         Mirrors(const Config &config);
+        ~Mirrors();
         void setConfig(const Config &config) { m_config = config; }
 
         // fetch mirror list 

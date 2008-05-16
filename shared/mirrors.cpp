@@ -48,6 +48,11 @@ Mirrors::Mirrors(const Config &config)
     initCountries();
 }
 
+Mirrors::~Mirrors()
+{
+    clear();
+}
+
 bool Mirrors::fetch()
 {
 #ifdef DEBUG

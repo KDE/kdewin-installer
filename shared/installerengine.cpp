@@ -112,11 +112,11 @@ bool InstallerEngine::init()
     return initPackages();
 }
 
-int versionToInt(QString version)
+static int versionToInt(QByteArray version)
 {
-    QStringList v = version.replace('-','.').split('.');
+    QList<QByteArray> v = version.replace('-','.').split('.');
     int n = 0;
-    Q_FOREACH(const QString &a,v)
+    Q_FOREACH(const QByteArray &a,v)
     {
         bool ok;
         int b = a.toInt(&ok);

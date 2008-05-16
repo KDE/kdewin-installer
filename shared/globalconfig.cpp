@@ -165,18 +165,18 @@ bool GlobalConfig::parse(QIODevice *ioDev)
         }
         else if (line.startsWith('@'))
         {
-            // TODO: encoding of config file! Currently: ascii
-            QString l = line;
-            QStringList cmd = l.split(' ');
+            QList<QByteArray> cmdBA = line.split(' ');
+            const QByteArray &keyword = cmdBA[0];
+            QStringList cmd = QString::fromUtf8(line).split(' ');
             QString col2;
             if (cmd.size() == 3)
                 col2 = cmd[2];
 
-            if (cmd[0] == "@format")
+            if (keyword == "@format")
                 ;
-            else if (cmd[0] == "@minversion")
-                m_minimalInstallerVersion = cmd[1];
-            else if (cmd[0] == "@timestamp")
+            else if (keyword == "@minversion")
+                m_minimalInstallerVersion = cmdBA[1];
+            else if (keyword == "@timestamp")
             {
                 QStringList patterns = QStringList() << "yyyyMMddHHmm" << "yyyyMMddHHmmss";
                 Q_FOREACH(const QString &pattern, patterns) {
@@ -187,14 +187,14 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 }
                 qDebug() << m_timestamp;
             }
-            else if (cmd[0] == "@mirror")
+            else if (keyword == "@mirror")
             {
                 mirror = new Mirror;
                 mirror->url = cmd[1];
                 mirror->location = cmd[2];
                 m_mirrors.append(mirror);
             }
-            else if (cmd[0] == "@news")
+            else if (keyword == "@news")
             {
                 QString date = cmd[1];
                 QString package = cmd[2];
@@ -203,14 +203,14 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 cmd.removeFirst();
                 m_news[date+"-"+package] = cmd.join(" ");
             }
-            else if (cmd[0] == "@categorynotes")
+            else if (keyword == "@categorynotes")
             {
                 QString category = cmd[1];
                 cmd.removeFirst();
                 cmd.removeFirst();
                 m_categoryNotes[category] = cmd.join(" ");
             }
-            else if (cmd[0] == "@categorypackages")
+            else if (keyword == "@categorypackages")
             {
                 QString category = cmd[1];
                 cmd.removeFirst();
@@ -219,17 +219,17 @@ bool GlobalConfig::parse(QIODevice *ioDev)
             }
             else if(inPackage)
             {
-                if(cmd[0] == "@version")
+                if(keyword == "@version")
                     pkg->setVersion(cmd[1]);
-                else if(cmd[0].startsWith("@url-")) {
+                else if(keyword.startsWith("@url-")) {
                   Package::Type typ;
-                  if(cmd[0] == "@url-bin")
+                  if(keyword == "@url-bin")
                     typ = Package::BIN;
-                  else if(cmd[0] == "@url-lib")
+                  else if(keyword == "@url-lib")
                     typ = Package::LIB;
-                  else if(cmd[0] == "@url-doc")
+                  else if(keyword == "@url-doc")
                     typ = Package::DOC;
-                  else if(cmd[0] == "@url-src")
+                  else if(keyword == "@url-src")
                     typ = Package::SRC;
                   else
                     continue;
@@ -240,92 +240,92 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                   if (item.set(url,col2,typ))
                     pkg->add(item);
                 }
-                else if(cmd[0] == "@require")
+                else if(keyword == "@require")
                 {
                     cmd.removeFirst();
                     pkg->addDeps(cmd);
                 }
-                else if(cmd[0] == "@notes") {
+                else if(keyword == "@notes") {
                     cmd.removeFirst();
                     pkg->setNotes(cmd.join(" "));
                 }
-                else if(cmd[0] == "@details") {
+                else if(keyword == "@details") {
                     cmd.removeFirst();
                     QString notes = cmd.join(" ").replace("\\n","\n");
                     pkg->setLongNotes(notes);
                 }
-                else if(cmd[0] == "@category")
+                else if(keyword == "@category")
                 {
                     cmd.removeFirst();
                     pkg->addCategories(cmd);
                 }
-                else if(cmd[0] == "@relocate")
+                else if(keyword == "@relocate")
                     pkg->addPathRelocation(cmd[1],col2);
             }
             else if (inSite)
             {
-                if(cmd[0] == "@siteurl" || cmd[0] == "@url")
+                if(keyword == "@siteurl" || keyword == "@url")
                 {
                     QUrl url(cmd[1]);
                     if (url.scheme().isEmpty())
                         url = QUrl(m_baseURL + '/' + cmd[1]);
                     site->setURL(url);
                 }
-                else if(cmd[0] == "@url-list")
+                else if(keyword == "@url-list")
                 {
                     QUrl url(cmd[1]);
                     if (url.scheme().isEmpty())
                         url = QUrl(m_baseURL + '/' + cmd[1]);
                     site->setListURL(url);
                 }
-                else if(cmd[0] == "@sitetype" || cmd[0] == "@type")
+                else if(keyword == "@sitetype" || keyword == "@type")
                 {
                     if (!site->setType(cmd[1]))
                         qCritical() << "unknown site type" << cmd[1];
                 }
-                else if(cmd[0] == "@mirrorurl") {
+                else if(keyword == "@mirrorurl") {
                     QUrl url(cmd.join(" "));
                     site->addMirror(url);
                 }
-                else if(cmd[0] == "@deps" || cmd[0] == "@require") {
+                else if(keyword == "@deps" || keyword == "@require") {
                     QString pkg = cmd[1];
                     cmd.removeFirst();
                     cmd.removeFirst();
                     site->addDependencies(pkg, cmd);
                 }
-                else if(cmd[0] == "@exclude") {
+                else if(keyword == "@exclude") {
                     cmd.removeFirst();
                     site->addExcludes(cmd);
                 }
-                else if(cmd[0] == "@copy") {
+                else if(keyword == "@copy") {
                     cmd.removeFirst();
                     site->addCopy(cmd.join(" "));
                 }
-                else if(cmd[0] == "@notes") {
+                else if(keyword == "@notes") {
                     cmd.removeFirst();
                     site->setNotes(cmd.join(" "));
                 }
-                else if(cmd[0] == "@pkgnotes") {
+                else if(keyword == "@pkgnotes") {
                     QString pkg = cmd[1];
                     cmd.removeFirst();
                     cmd.removeFirst();
                     site->setPackageNote(pkg,cmd.join(" "));
                 }
-                else if(cmd[0] == "@pkgdetails") {
+                else if(keyword == "@pkgdetails") {
                     QString pkg = cmd[1];
                     cmd.removeFirst();
                     cmd.removeFirst();
                     QString details = cmd.join(" ").replace("\\n","\n");
                     site->setPackageLongNotes(pkg,details);
                 }
-                else if(cmd[0] == "@pkgcategory") {
+                else if(keyword == "@pkgcategory") {
                     QString pkg = cmd[1];
                     cmd.removeFirst();
                     cmd.removeFirst();
                     site->setPackageCategories(pkg,cmd);
                 }
             }
-            else if(cmd[0] == "@site")
+            else if(keyword == "@site")
             {
                 site = new Site;
                 m_sites.append(site);
@@ -333,7 +333,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 site->setName(cmd.join(" "));
                 inSite = true;
             }
-            else if(cmd[0] == "@package")
+            else if(keyword == "@package")
             {
                  pkg = new Package;
                  m_packages.append(pkg);

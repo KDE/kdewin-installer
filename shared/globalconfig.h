@@ -68,7 +68,7 @@ class GlobalConfig {
         QDateTime &timeStamp() { return m_timestamp; }
         void clear(); 
         /// return version of required installer
-        const QString &minimalInstallerVersion() { return m_minimalInstallerVersion; }
+        const QByteArray &minimalInstallerVersion() { return m_minimalInstallerVersion; }
         void setBaseURL(const QUrl &url) { m_baseURL = url.toString(); }
         /// check if a config-remote.txt is located in download directory
         static bool isRemoteConfigAvailable();
@@ -90,7 +90,7 @@ class GlobalConfig {
         QList <Mirror*> m_mirrors;
         QString m_baseURL;
         QDateTime m_timestamp;
-        QString m_minimalInstallerVersion;
+        QByteArray m_minimalInstallerVersion;
 	Q_DISABLE_COPY(GlobalConfig)
 
     friend QDebug &operator<<(QDebug &,GlobalConfig &);
