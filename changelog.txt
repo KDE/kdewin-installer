@@ -6,6 +6,7 @@ ChangeLog
                   - added support for using sourceforge mirrors as download source 
                      (use http://xxxx.dl.sourceforge.net/sourceforge/kde-windows as mirror url) 
                   - added support for post-install scripts
+                  - use md5 hash to check if download is needed / was correct
 - installer-gui:  - used QWizard for the gui 
  
 0.8.5

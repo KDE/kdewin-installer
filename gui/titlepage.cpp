@@ -30,11 +30,13 @@ TitlePage::TitlePage()
     ui.setupUi(this);
     setTitle(windowTitle());
     setSubTitle(tr("Version " VERSION));
+    // do not move it to initializePage() - it destroys our layout (qt4.4.0)
+    // could not reproduce it with qt examples, therefore no bugreport :(
+    setPixmap(QWizard::WatermarkPixmap, QPixmap(":/watermark.png"));
 }
 
 void TitlePage::initializePage()
 {
-    setPixmap(QWizard::WatermarkPixmap, QPixmap(":/watermark.png"));
     Settings &s = Settings::instance();
     ui.skipBasicSettings->setCheckState(s.isSkipBasicSettings() ? Qt::Checked : Qt::Unchecked);
 }
