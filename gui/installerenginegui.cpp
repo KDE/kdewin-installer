@@ -23,6 +23,7 @@
 // uncomment to display text instead of icons
 //#define DISABLE_ICONS
 #include "config.h"
+#include "debug.h"
 
 #include "installerenginegui.h"
 #include "downloader.h"
@@ -39,7 +40,6 @@
 #include "packagestates.h"
 #include "installerdialogs.h"
 
-#include <QtDebug>
 #include <QDir>
 #include <QTreeWidget>
 #include <QListWidget>
@@ -463,7 +463,7 @@ bool isMarkedForRemoval ( Package *pkg,Package::Type type )
     stateType depState = dependencyStates.getState ( pkg, type );
     bool result = state == _Remove || state == _Update || depState == _Remove || depState == _Update;;
     if (Settings::hasDebug ( "InstallerEngineGui" ) && result)
-        kDebug() << __FUNCTION__ << "select package for removal" << pkg->name() << type;
+        qDebug() << __FUNCTION__ << "select package for removal" << pkg->name() << type;
     return result;
 }
 

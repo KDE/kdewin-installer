@@ -21,12 +21,12 @@
 **
 ****************************************************************************/
 
+#include "debug.h"
 #include "installerprogress.h"
 #include "misc.h"
 #include "uninstaller.h"
 #include "uninstaller_p.h"
 
-#include <QtCore/QDebug>
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>

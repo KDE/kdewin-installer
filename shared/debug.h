@@ -25,18 +25,18 @@
 
 #include <QtDebug>
 
-#ifdef INLINE_DEBUG
-inline QDebug kDebug() { QDebug a(QtDebugMsg); a << __FILE__ << __LINE__; return a; }
-inline QDebug kInfo() { QDebug a(QtDebugMsg); a << __FILE__ << __LINE__; return a; }
-inline QDebug kWarning() { QDebug a(QtWarningMsg); a << __FILE__ << __LINE__; return a; }
-inline QDebug kCritial() { QDebug a(QtCriticalMsg); a << __FILE__ << __LINE__; return a; }
-inline QDebug kFatal() { QDebug a(QtFatalMsg); a << __FILE__ << __LINE__; return a; }
-#else
-QDebug kDebug();
-QDebug kInfo();
-QDebug kWarning();
-QDebug kCritial();
-QDebug kFatal();
-#endif
+// own debug functions
+QDebug _qDebug(const char *file, int line);
+QDebug _qInfo(const char *file, int line);
+QDebug _qWarning(const char *file, int line);
+QDebug _qCritical(const char *file, int line);
+QDebug _qFatal(const char *file, int line);
+
+// wrapper for original q... calls 
+#define qDebug() _qDebug(__FILE__,__LINE__)
+#define qInfo() _qInfo(__FILE__,__LINE__)
+#define qWarning() _qWarning(__FILE__,__LINE__)
+#define qCritical() _qCritical(__FILE__,__LINE__)
+#define qFatal() _qFatal(__FILE__,__LINE__)
 
 #endif

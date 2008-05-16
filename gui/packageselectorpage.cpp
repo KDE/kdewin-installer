@@ -23,6 +23,7 @@
 ****************************************************************************/
 
 #include "config.h"
+#include "debug.h"
 #include "downloader.h"
 #include "installer.h"
 #include "installerprogress.h"

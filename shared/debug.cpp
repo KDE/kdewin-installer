@@ -22,34 +22,34 @@
 
 #include "debug.h"
 
-QDebug kDebug() 
+QDebug _qDebug(const char *file, int line) 
 { 
     QDebug a(QtDebugMsg); 
-    a << __FILE__ << __LINE__; 
+    a << file << line; 
     return a; 
 }
 
-QDebug kInfo() 
+QDebug _qInfo(const char *file, int line) 
 { 
     QDebug a(QtDebugMsg); 
-    a << __FILE__ << __LINE__; 
+    a << file << line; 
     return a; 
 }
-QDebug kWarning() 
+QDebug _qWarning(const char *file, int line) 
 { 
     QDebug a(QtWarningMsg); 
-    a << __FILE__ << __LINE__; 
+    a << file << line; 
     return a; 
 }
-QDebug kCritial() 
+QDebug _qCritical(const char *file, int line) 
 { 
     QDebug a(QtCriticalMsg); 
-    a << __FILE__ << __LINE__; 
+    a << file << line; 
     return a; 
 }
-QDebug kFatal() 
+QDebug _qFatal(const char *file, int line) 
 { 
     QDebug a(QtFatalMsg); 
-    a << __FILE__ << __LINE__; 
+    a << file << line; 
     return a; 
 }

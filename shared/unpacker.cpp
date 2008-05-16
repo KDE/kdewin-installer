@@ -525,7 +525,7 @@ void Unpacker::progressCallback ( const QString &file )
 
 void Unpacker::setError ( const QString &errStr )
 {
-    qWarning ( qPrintable ( errStr ) );
+    qWarning() << qPrintable ( errStr );
     emit error ( errStr );
 }
 

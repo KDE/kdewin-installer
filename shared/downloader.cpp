@@ -23,6 +23,7 @@
 **
 ****************************************************************************/
 
+#include "debug.h"
 #include "downloader.h"
 #include "downloader_p.h"
 #include "downloaderprogress.h"
@@ -37,7 +38,6 @@
 #include <qnamespace.h>
 #include <QtCore/QBuffer>
 #include <QtCore/QByteArray>
-#include <QtCore/QDebug>
 #include <QtCore/QEventLoop>
 #include <QtCore/QFile>
 #include <QtCore/QTemporaryFile>

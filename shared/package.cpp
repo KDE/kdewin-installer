@@ -23,6 +23,7 @@
 ****************************************************************************/
 
 #include "config.h"
+#include "debug.h"
 #include "package.h"
 #include "downloader.h"
 #include "installer.h"
@@ -30,7 +31,6 @@
 #include "misc.h"
 #include "uninstaller.h"
 
-#include <QtDebug>
 #include <QStringList>
 #include <QFile>
 #include <QDir>

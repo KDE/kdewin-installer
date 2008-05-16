@@ -23,6 +23,7 @@
 ****************************************************************************/
 
 #include "config.h"
+#include "debug.h"
 #include "mirrors.h"
 #include "mirrorsettingspage.h"
 #include "installerdialogs.h"

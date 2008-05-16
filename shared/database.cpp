@@ -20,12 +20,12 @@
 **
 ****************************************************************************/
 
+#include "debug.h"
 #include "database.h"
 #include "package.h"
 #include "packagelist.h"
 #include "misc.h"
 
-#include <QDebug>
 #include <QDir>
 #include <QFileInfo>
 #include <QtCore/QTextCodec>

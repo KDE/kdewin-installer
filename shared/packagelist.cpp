@@ -20,15 +20,15 @@
 **
 ****************************************************************************/
 
-#include "packagelist.h"
-#include "globalconfig.h"
 #include "database.h"
+#include "debug.h"
 #include "downloader.h"
-#include "misc.h"
+#include "globalconfig.h"
 #include "hintfile.h"
+#include "packagelist.h"
+#include "misc.h"
 
 #include <QBuffer>
-#include <QDebug>
 #include <QFile>
 #include <QFileInfo>
 #include <QStandardItemModel>

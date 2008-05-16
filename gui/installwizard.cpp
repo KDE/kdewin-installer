@@ -25,6 +25,7 @@
 #define ENABLE_ENDUSER_PAGES
 
 #include "config.h"
+#include "debug.h"
 #include "installwizard.h"
 #include "installerenginegui.h"
 #include "installerdialogs.h"
@@ -55,7 +56,6 @@
 #include "finishpage.h"
 
 #include <QCheckBox>
-#include <QDebug>
 #include <QFile>
 #include <QLabel>
 #include <QLineEdit>
