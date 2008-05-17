@@ -1,15 +1,17 @@
 
 set (configer_SOURCES
 	main.cpp
-	../shared/package.cpp
-	../shared/misc.cpp
+	../shared/debug.cpp
 	../shared/hintfile.cpp
+	../shared/misc.cpp
+	../shared/package.cpp
 )
 
 set (configer_HEADERS
-	../shared/package.h
-	../shared/misc.h
+	../shared/debug.h
 	../shared/hintfile.h
+	../shared/misc.h
+	../shared/package.h
 )
 
 include_directories(
