@@ -146,7 +146,7 @@ DownloaderProgress *Downloader::progress()
  return d->progress;
 }
 
-bool Downloader::start ( const QUrl &url, const QString &fileName )
+bool Downloader::fetch ( const QUrl &url, const QString &fileName )
 {
     if ( url.isEmpty() )
         return false;
@@ -164,10 +164,10 @@ bool Downloader::start ( const QUrl &url, const QString &fileName )
     d->fileName = fileName;
 
     qDebug() << "Downloading" << url.toString() << " to " << file->fileName();
-    return startInternal ( url );
+    return fetchInternal ( url );
 }
 
-bool Downloader::start ( const QUrl &url, QByteArray &ba )
+bool Downloader::fetch ( const QUrl &url, QByteArray &ba )
 {
     d->fileName = QString();
 
@@ -185,7 +185,7 @@ bool Downloader::start ( const QUrl &url, QByteArray &ba )
     }
 
     qDebug() << "Downloading" << url.toString() << " to memory";
-    return startInternal ( url );
+    return fetchInternal ( url );
 }
 
 #ifdef _DEBUG
@@ -215,7 +215,7 @@ static int my_curl_debug_callback (CURL *, curl_infotype type, char *data, size_
 }
 #endif
 
-bool Downloader::startInternal ( const QUrl &url )
+bool Downloader::fetchInternal ( const QUrl &url )
 {
     qDebug() << this << __FUNCTION__ << "url: " << url.toString();
 

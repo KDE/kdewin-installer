@@ -44,8 +44,12 @@ public:
     void setProgress ( DownloaderProgress *progress );
     DownloaderProgress *progress();
     // start download
-    bool start ( const QUrl &url, const QString &fileName = QString() );
-    bool start ( const QUrl &url, QByteArray &ba );
+    bool fetch ( const QUrl &url, const QString &fileName = QString() );
+    bool fetch ( const QUrl &url, QByteArray &ba );
+
+    QT_DEPRECATED bool start ( const QUrl &url, const QString &fileName = QString() ) { return fetch(url, fileName); }
+    QT_DEPRECATED bool start ( const QUrl &url, QByteArray &ba ) { return fetch(url, ba); }
+
     /// cancel started download
     void cancel();
     /// return result string
@@ -63,6 +67,8 @@ public:
     // calculated md5sum
     QByteArray md5Sum() const;
 
+    
+    
 Q_SIGNALS:
     void done ( bool error );
     void error ( const QString &error );
@@ -71,7 +77,7 @@ protected Q_SLOTS:
     int progressCallback ( double ultotal, double ulnow );
 protected:
     void setError ( const QString &errStr );
-    bool startInternal ( const QUrl &url );
+    bool fetchInternal ( const QUrl &url );
     size_t curlWrite ( const char * data, size_t  size );
     static size_t curlWriteCallback ( void *ptr, size_t size, size_t nmemb, void *stream );
     static int curlProgressCallback ( void *clientp, double dltotal, double dlnow,
