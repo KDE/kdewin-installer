@@ -226,9 +226,9 @@ bool InstallerEngine::addPackagesFromSites()
         }
         PackageList::Type type;
 
-        if (listURL.scheme() == "ftp")
+        if (listURL.scheme() == "ftp") {
             type = PackageList::Ftp; 
-        else 
+        } else { 
             switch(site->Type()) {
             case Site::SourceForge:    type = PackageList::SourceForge; break;
             case Site::SourceForgeMirror: type = PackageList::SourceForgeMirror; break;
@@ -237,9 +237,10 @@ bool InstallerEngine::addPackagesFromSites()
             default:
                 emit error("unknown Site type "  + site->Type());
                 type = PackageList::ApacheModIndex;
+                qDebug() << "error parsing file list" << ba;
                 break;
             }
-        qDebug() << "error parsing file list" << ba;
+        }
 
         if (!packageList.readFromByteArray(ba, type, true ))
         {
