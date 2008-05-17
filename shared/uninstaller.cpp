@@ -148,7 +148,7 @@ bool UIThread::readManifestFile ( QList<FileItem> &fileList )
             fileName = l;
         } else {
             hash = l.mid ( idx+1 );
-            fileName = l.left ( idx );
+            fileName = trimmed(l.left ( idx ));
             if ( !isHash ( hash ) ) {
                 if ( !isHash ( fileName ) ) {
                     emit warning ( QString ( "invalid entry in manifest file: '%1'" ).arg ( QString::fromUtf8 ( l ) ) );
