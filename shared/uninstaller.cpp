@@ -273,7 +273,7 @@ void Uninstaller::setError ( const QString &errStr )
 
 void Uninstaller::setWarning ( const QString &warnStr )
 {
-    qWarning ( qPrintable ( warnStr ) );
+    qWarning () << qPrintable ( warnStr );
     emit warning ( warnStr );
 }
 
