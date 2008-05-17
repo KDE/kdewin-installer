@@ -51,7 +51,7 @@ Packager::Packager(const QString &packageName, const QString &packageVersion, co
     m_notes(packageNotes),
     m_verbose(false),
     m_debugLibs(false),
-    m_compMode(1),
+    m_compMode(1)
 {
 }
 
