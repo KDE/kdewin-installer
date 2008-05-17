@@ -35,12 +35,11 @@ class PackageStates {
     stateType getState(Package *pkg, Package::Type type);
     QList <Package *>packages(PackageList *list);
     void clear();
+    friend QDebug operator<<(QDebug, const PackageStates &);
 
   protected:
     PackageStatesType m_states; 
-    friend QDebug operator<<(QDebug, PackageStates);
     QString getKey(QString pkgName, QString pkgVersion) { return pkgName; }
 };
 
-QDebug operator<<(QDebug, const PackageStates &);
 #endif

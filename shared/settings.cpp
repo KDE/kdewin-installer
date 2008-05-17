@@ -53,7 +53,7 @@ Settings::~Settings()
     delete m_settingsMain;
 }
 
-QString Settings::installDir()
+QString Settings::installDir() const
 {
     QString dir = m_settingsMain->value("rootdir", QDir::currentPath () ).toString();
     if(dir.isEmpty())
@@ -89,7 +89,7 @@ void Settings::setInstallDir(const QString &dir)
     }
     }
 
-QString Settings::downloadDir()
+QString Settings::downloadDir() const
 {
     QString result;
     QDir d(m_settingsMain->value("tempdir", QDir::currentPath()).toString());
@@ -128,7 +128,7 @@ void Settings::setCompilerType(CompilerType ctype)
     }
 }
 
-QString Settings::mirror()
+QString Settings::mirror() const
 {
     return m_settingsMain->value("mirror", "").toString();
 }
@@ -140,7 +140,7 @@ void Settings::setMirror(const QString &mirror)
     emit mirrorChanged(mirror);
 }
 
-QStringList Settings::localMirrors()
+QStringList Settings::localMirrors() const
 {
     return m_settingsMain->value("localMirrors").toStringList();
 }
@@ -158,7 +158,7 @@ void Settings::setLocalMirrors(const QStringList &locMirrors)
 //    emit mirrorChanged(mirror);
 }
 
-bool Settings::showTitlePage()
+bool Settings::showTitlePage() const
 {
     return m_settingsMain->value("displayTitlePage").toBool();
 }
@@ -356,7 +356,7 @@ bool Settings::hasDebug(const QString area)
             || s.debug().toLower().contains(area.toLower()));
 }
 
-QDebug operator<<(QDebug out, const Settings &c)
+QDebug operator<<(QDebug out, Settings &c)
 {
     out << "Settings ("
         << "installDir:" << c.installDir()

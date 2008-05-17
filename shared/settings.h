@@ -46,27 +46,27 @@ public:
     ~Settings();
 
     // Place where the packages should be installed to
-    QString installDir();
+    QString installDir() const;
     void setInstallDir(const QString &dir);
 
     // Place where the packages should be downloaded to
-    QString downloadDir();
+    QString downloadDir() const;
     void setDownloadDir(const QString &dir);
 
     // download mirror settings  
-    QString mirror();
+    QString mirror() const;
     void setMirror(const QString &mirror);
 
     // additional download mirrors
-    QStringList localMirrors();
+    QStringList localMirrors() const;
     void addLocalMirror(const QString &locMirror);
     void setLocalMirrors(const QStringList& locMirrors);
 
     // show title page
-    bool showTitlePage();
+    bool showTitlePage() const;
     void setShowTitlePage(bool bShow);
 
-    bool isSkipBasicSettings() { return m_settings->value("SkipBasicSettings", false).toBool(); }
+    bool isSkipBasicSettings() const { return m_settings->value("SkipBasicSettings", false).toBool(); }
     void setSkipBasicSettings(bool mode) { m_settings->setValue("SkipBasicSettings", mode); sync(); }
 
     // create start menu entries fomr .desktop files
@@ -74,24 +74,24 @@ public:
     void setCreateStartMenuEntries(bool bCreate);
 
     // true on first run
-    bool isFirstRun() { return m_settingsMain->value("FirstRun", true).toBool(); }
+    bool isFirstRun() const { return m_settingsMain->value("FirstRun", true).toBool(); }
     void setFirstRun(bool bFirstRun) { m_settingsMain->setValue("FirstRun", bFirstRun); sync(); }
 
     // package Manager mode 
-    bool isPackageManagerMode() { return m_settings->value("PackageManagerMode", true).toBool(); }
+    bool isPackageManagerMode() const { return m_settings->value("PackageManagerMode", true).toBool(); }
     void setPackageManagerMode(bool mode) { m_settings->setValue("PackageManagerMode", mode); sync(); }
 
-    bool isDeveloperMode() { return m_settings->value("DeveloperMode", m_settingsMain->value("DeveloperMode",false).toBool()).toBool(); }
+    const bool isDeveloperMode() { return m_settings->value("DeveloperMode", m_settingsMain->value("DeveloperMode",false).toBool()).toBool(); }
     void setDeveloperMode(bool bMode) { m_settings->setValue("DeveloperMode", bMode); sync(); }
 
     enum ProxyMode { None = 0, InternetExplorer, FireFox, Environment, Manual };
-    ProxyMode proxyMode() { return (ProxyMode)m_settingsMain->value("proxyMode",0).toInt(); }
+    ProxyMode proxyMode() const { return (ProxyMode)m_settingsMain->value("proxyMode",0).toInt(); }
     void setProxyMode(ProxyMode mode) { m_settingsMain->setValue("proxyMode", mode); }
 
-    const QString proxyHost() { return m_settingsMain->value("proxyHost").toString(); }
-    int proxyPort() { return m_settingsMain->value("proxyPort").toInt(); }
-    const QString proxyUser() { return m_settingsMain->value("proxyUser").toString(); }
-    const QString proxyPassword() { return m_settingsMain->value("proxyPassword").toString(); }
+    QString proxyHost() const { return m_settingsMain->value("proxyHost").toString(); }
+    int proxyPort() const { return m_settingsMain->value("proxyPort").toInt(); }
+    QString proxyUser() const { return m_settingsMain->value("proxyUser").toString(); }
+    QString proxyPassword() const { return m_settingsMain->value("proxyPassword").toString(); }
 
     bool proxy(const QString &url, proxySettings &proxy);
     void setProxy(const QString &host, const QString &port) 
@@ -109,14 +109,14 @@ public:
         sync();
     }
 
-    bool installDetails() { return m_settings->value("installDetails", false).toBool(); }
+    bool installDetails() const { return m_settings->value("installDetails", false).toBool(); }
     void setInstallDetails(bool state) { m_settings->setValue("installDetails", state); sync(); }
     
-    bool autoNextStep() { return m_settingsMain->value("autoNextStep", true).toBool(); }
+    bool autoNextStep() const { return m_settingsMain->value("autoNextStep", true).toBool(); }
     void setAutoNextStep(bool state) { m_settingsMain->setValue("autoNextStep", state); sync(); }
 
     typedef enum { unspecified=0, MinGW=1, MSVC=2 } CompilerType;
-    CompilerType compilerType() { return (CompilerType) (m_settings->value("compilerType",m_settingsMain->value("compilerType",0).toInt()).toInt()); }
+    CompilerType compilerType() const { return (CompilerType) (m_settings->value("compilerType",m_settingsMain->value("compilerType",0).toInt()).toInt()); }
     void setCompilerType(CompilerType type);
 
     // QSettings compatible interface
@@ -151,13 +151,13 @@ private:
     bool getFireFoxProxySettings(const QString &url, proxySettings &proxy);
     bool getEnvironmentProxySettings(const QString &url, proxySettings &proxy);
     QString debug(void) { return m_settings->value("debug", "").toString(); }
-    friend QDebug operator<<(QDebug, const Settings &);
+    friend QDebug operator<<(QDebug, Settings &);
 };
 
 
 #include <QDebug>
 
-inline QDebug operator<<(QDebug out, const Settings::proxySettings &c)
+inline QDebug operator<<(QDebug out, Settings::proxySettings &c)
 {
     out << "host:" << c.hostname << "port:" << c.port 
         << "user:" << c.user << "password:" << (c.password.isEmpty() ? "<empty>" : "****");
