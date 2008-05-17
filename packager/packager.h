@@ -48,7 +48,6 @@ class Packager {
 
       bool makePackage(const QString &dir, const QString &destdir=QString(), bool bComplete=false);
       void setVerbose(bool state) { m_verbose = state; }
-      void setHashEntriesFirst(bool state) { m_hashEntriesFirst = state; }
 
     protected:
         struct MemFile {
@@ -74,7 +73,6 @@ class Packager {
       bool m_verbose;
       bool m_debugLibs;
       unsigned int m_compMode;
-      bool m_hashEntriesFirst;
 };
 
 #endif

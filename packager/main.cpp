@@ -53,7 +53,6 @@ static void printHelp(const QString &addInfo)
        << "\n\t\t"      << "-compression <1|2> - set compression mode to"
        << "\n\t\t\t"    << "1 - zip, default"
        << "\n\t\t\t"    << "2 - tar.bz2"
-       << "\n\t\t"      << "-hashfirst print hashes in manifest file lists before file (default: no)"
        << "\n";
 
     ts.flush();
@@ -72,7 +71,7 @@ int main(int argc, char *argv[])
     bool strip = false;
     bool verbose = false;
     bool debugLibs = false;
-    bool hashFirst = false;
+    bool hashFirst = true;
     unsigned int compressionMode = 1; // zip
 
     args.removeAt(0);   // name of executable
@@ -131,6 +130,11 @@ int main(int argc, char *argv[])
     if(idx != -1) {
         hashFirst = true;
         args.removeAt(idx);
+        if (verbose) 
+        {
+            QTextStream ts(stderr);
+            ts << "-hashfirst switch ignored, hashes are written always at first\n";
+        }
     }
 
     idx = args.indexOf("-verbose");
@@ -209,7 +213,6 @@ int main(int argc, char *argv[])
     packager.setVerbose(verbose);
     packager.setWithDebugLibs(debugLibs);
     packager.setCompressionMode(compressionMode);
-    packager.setHashEntriesFirst(hashFirst);
 
     if (strip)
        packager.stripFiles(rootDir.filePath());
