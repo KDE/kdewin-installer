@@ -52,7 +52,6 @@ Packager::Packager(const QString &packageName, const QString &packageVersion, co
     m_verbose(false),
     m_debugLibs(false),
     m_compMode(1),
-    m_hashEntriesFirst(0)
 {
 }
 
