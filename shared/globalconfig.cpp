@@ -363,7 +363,7 @@ void GlobalConfig::clear()
 }
 
 
-QDebug &operator<<(QDebug &out,GlobalConfig &c)
+QDebug operator<<(QDebug out,GlobalConfig &c)
 {
     out << "GlobalConfig ("
         << "m_baseURL" << c.m_baseURL
@@ -383,7 +383,7 @@ QDebug &operator<<(QDebug &out,GlobalConfig &c)
 }
 
 
-QDebug &operator <<(QDebug &out,const GlobalConfig::Mirror &c)
+QDebug operator <<(QDebug out, GlobalConfig::Mirror c)
 {
     out << " Mirror (" << "url" << c.url << "location" << c.location << ")";
     return out;

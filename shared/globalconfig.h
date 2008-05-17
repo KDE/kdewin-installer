@@ -37,7 +37,7 @@ class GlobalConfig {
             public: 
                 QString url;
                 QString location;
-                friend QDebug &operator <<(QDebug &,const GlobalConfig::Mirror &);
+                friend QDebug operator <<(QDebug ,GlobalConfig::Mirror);
         };
 
         GlobalConfig();
@@ -93,9 +93,9 @@ class GlobalConfig {
         QByteArray m_minimalInstallerVersion;
 	Q_DISABLE_COPY(GlobalConfig)
 
-    friend QDebug &operator<<(QDebug &,GlobalConfig &);
+    friend QDebug operator<<(QDebug ,GlobalConfig&);
 };
 
-//QDebug &operator<<(QDebug &,const GlobalConfig &);
+//QDebug operator<<(QDebug ,GlobalConfig&);
 
 #endif

@@ -38,9 +38,9 @@ class PackageStates {
 
   protected:
     PackageStatesType m_states; 
-    friend QDebug &operator<<(QDebug &, const PackageStates &);
+    friend QDebug operator<<(QDebug, PackageStates);
     QString getKey(QString pkgName, QString pkgVersion) { return pkgName; }
 };
 
-QDebug &operator<<(QDebug &, const PackageStates &);
+QDebug operator<<(QDebug, PackageStates );
 #endif
