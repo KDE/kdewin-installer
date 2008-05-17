@@ -42,5 +42,5 @@ class PackageStates {
     QString getKey(QString pkgName, QString pkgVersion) { return pkgName; }
 };
 
-QDebug operator<<(QDebug, PackageStates );
+QDebug operator<<(QDebug, const PackageStates &);
 #endif

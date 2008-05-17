@@ -356,7 +356,7 @@ bool Settings::hasDebug(const QString area)
             || s.debug().toLower().contains(area.toLower()));
 }
 
-QDebug operator<<(QDebug out, Settings c)
+QDebug operator<<(QDebug out, const Settings &c)
 {
     out << "Settings ("
         << "installDir:" << c.installDir()

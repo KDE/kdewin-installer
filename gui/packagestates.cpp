@@ -129,7 +129,7 @@ QList <Package *>PackageStates::packages(PackageList *list)
     return packages;
 }
 
-QDebug operator<<(QDebug out, PackageStates c)
+QDebug operator<<(QDebug out, const PackageStates &c)
 {
     PackageStatesType::const_iterator i = c.m_states.begin();
     for (;i != c.m_states.end(); ++i)

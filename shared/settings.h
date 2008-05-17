@@ -151,13 +151,13 @@ private:
     bool getFireFoxProxySettings(const QString &url, proxySettings &proxy);
     bool getEnvironmentProxySettings(const QString &url, proxySettings &proxy);
     QString debug(void) { return m_settings->value("debug", "").toString(); }
-    friend QDebug operator<<(QDebug, Settings);
+    friend QDebug operator<<(QDebug, const Settings &);
 };
 
 
 #include <QDebug>
 
-inline QDebug operator<<(QDebug out, Settings::proxySettings c)
+inline QDebug operator<<(QDebug out, const Settings::proxySettings &c)
 {
     out << "host:" << c.hostname << "port:" << c.port 
         << "user:" << c.user << "password:" << (c.password.isEmpty() ? "<empty>" : "****");
