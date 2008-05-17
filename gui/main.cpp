@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     // check if download url is given on command line
-    QString param = QApplication::arguments().at(0);
+    QString param = QApplication::arguments().at(1);
     if (param.startsWith("file:") || param.startsWith("http:") || param.startsWith("ftp:"))
         InstallerEngine::defaultConfigURL = param;
 
