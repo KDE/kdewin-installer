@@ -351,7 +351,7 @@ void Downloader::cancel()
 
 void Downloader::setError ( const QString &errStr )
 {
-    qWarning ( qPrintable ( errStr ) );
+    qWarning() << qPrintable ( errStr );
     emit error ( errStr );
 }
 
