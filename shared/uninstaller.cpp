@@ -148,7 +148,7 @@ bool UIThread::readManifestFile ( QList<FileItem> &fileList )
             fileName = l;
         } else {
             hash = l.mid ( idx+1 );
-            fileName = trimmed(l.left ( idx ));
+            fileName = l.left ( idx ).trimmed();
             if ( !isHash ( hash ) ) {
                 if ( !isHash ( fileName ) ) {
                     emit warning ( QString ( "invalid entry in manifest file: '%1'" ).arg ( QString::fromUtf8 ( l ) ) );
@@ -267,7 +267,7 @@ void Uninstaller::progressCallback ( const QString &file )
 
 void Uninstaller::setError ( const QString &errStr )
 {
-    qWarning ( qPrintable ( errStr ) );
+    qWarning () << qPrintable ( errStr );
     emit error ( errStr );
 }
 
