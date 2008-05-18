@@ -1,0 +1,130 @@
+
+EBNF format used from http://de.wikipedia.org/wiki/Erweiterte_Backus-Naur-Form
+
+
+filename formats
+================
+
+archive-filename = package-name file-compiler-type file-version file-package-type archive-extension ;
+md5sum-filename = package-name file-compiler-type file-version file-package-type archive-extension '.md5' ;
+
+package-name =  letter { ( letter | digit | '_' | '-' ) } ;
+file-compiler-type = ( '-' ('mingw' | 'msvc') | '') ;
+
+file-version = '-' (version | date | string ) ;         (* string means something specific *) 
+version = major-version-number '.' minor-version-number [ '.' patchlevel [ '-' number ] ] ;
+major-version-number = number ;
+minor-version-number = number ;
+patchlevel = number; 
+number = { decimal-digit } ;
+decimal-digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+
+date = year month day ; 
+year =  4-digit-number ;
+month = 2-digit-number ; (* 00-12 *)
+day = 2-digit-number   ; (* 01-31 *)
+hour = 2-digit-number  ; (* 00-23 *) 
+minute = 2-digit-number; (* 00-59 *) 
+4-digit-number = decimal-digit decimal-digit decimal-digit decimal-digit ;
+2-digit-number = decimal-digit decimal-digit ;
+
+file-package-type = '-' package-type ;
+package-type = ( 'bin' | 'lib' | 'doc' | 'src' );
+archive-extension = ('.tar.bz2' | '.zip' | '.exe' | '.msi' ); 
+
+
+
+config-file format
+==================
+
+config-file = line { line } ;
+line = ( empty-line | line-comment | token ) '\n';
+empty-line = '' ;
+line-comment = ';' { string } ;
+string = (* all characters *) ; 
+token = '@' attribute ;
+attribute =   file-format-attribute 
+            | categorynotes-attribute
+            | categorypackages-attribute
+            | news-attribute
+            | minversion-attribute
+            | timestamp-attribute
+            | package-attributes
+            | site-attributes
+            ;
+
+(* file format version eg @format 1.3 *)            
+file-format-attribute = 'format' format-version ;                      
+format-version = number [ '.' number ] ;
+
+
+(* define minimal required installer version eg. @minversion 0.8.3-7 *)
+minversion-attribute = 'minversion' installer-version ;                 
+installerversion = version ;
+
+
+(* define config file timestamp *) 
+timestamp-attribute = 'timestamp'  year month day [ hour minute ] ;     
+
+
+(* define a category note eg. @categorynotes qt Qt related packages *)
+categorynotes-attribute = 'categorynotes' category comment ;      
+category = string ;
+
+
+(* category specific package association independend from sites *) 
+categorypackages-attribute = package-category { package-name } ;
+package-name = string ; 
+
+ 
+(* define a news entry (not used yet) *)
+news-attribute = date package-name comment          (* eg.@news 20071015 png2ico : removed package, it is now in kdewin32 *)
+comment = string
+
+
+(* attributes for describing a site 
+ A site defines a remote location which will be parsed on demand for archive files *)
+ 
+site-attributes = 'site' category                           (* main site keyword  eg @site win32libs *)
+                | 'url' absolute-or-relative-url            (* basic url for packages, which will be prefixed to the archive found by this site *)
+                | 'url-list' absolute-or-relative-url       (* url of html page containing package links *)
+                | 'deps' package-name depending-package-name (* package dependencies *)
+                | 'pkgnotes' package-name package-notes     (* description for a specific package *)
+                | 'type'  site-scanner-type                 (* site type - specifies the site scanner type (deprecated) *)
+                | 'notes'  comment                          (* a description of the site, which will be printed in the category view of the installer *)
+                | 'exclude' filename                        (* exclude file from package collecting *)
+                ;
+                
+absolute-or-relative-url = absolute-url | relative-url ; 
+absolute-url = ( 'http://' | 'ftp://' ) host path ; 
+relative-url = path ; 
+host = string | '.' ; 
+path = string | '/' ; 
+depending-package-name = string ; 
+package-notes = string ; 
+site-scanner-type = 'apachemodindex' | 'sourceforge' ;
+filename = string ;
+
+
+(* package definition *)
+        
+package-attributes =  'package' package-name                (* specifies package name listed in the installer eg @package qt-msvc *)
+                    | 'category' category-name              (* categorie(s) the package belongs to *)
+                    | 'version' package-version             (* package version eg. @version 4.3.0b *)
+                    | 'require' depending-package-name      (* package dependencies eg. @require dbus *)
+                    | 'url-bin' absolute-or-relative-url [ local-filename ]      (* url of binary/runtime package @url-bin qt/single/qt-msvc-4.3.0b-bin.zip *)
+                    | 'url-lib' absolute-or-relative-url [ local-filename ]      (* url of development package including include headers, import libraries and tools for compiling applications/libraries against this package *)
+                    | 'url-doc' absolute-or-relative-url [ local-filename ]      (* url of documentation package *)
+                    | 'url-src' absolute-or-relative-url [ local-filename ]      (* url of source package *)
+                    | 'md5-bin' md5sum                      (* md5 checksum of binary/runtime package @md5-bin 58cb5a282539da8ec2f67e4f96db7f6c *)
+                    | 'md5-lib' md5sum                      (* md5 checksum of development package including include headers, import libraries and tools for compiling applications/libraries against this package @eg. md5-lib 58cb5a282539da8ec2f67e4f96db7f6c *)
+                    | 'md5-doc' md5sum                      (* md5 checksum of documentation package eg. @md5-doc 58cb5a282539da8ec2f67e4f96db7f6c *)
+                    | 'md5-src' md5sum                      (* md5 checksum of source package eg. @md5-src 58cb5a282539da8ec2f67e4f96db7f6c *)
+                    | 'relocate' src-pattern dest-pattern   (* relocate path in the archive from src-pattern to dest-pattern eg. @relocate ^ bin/ *)
+                    ;
+category-name = string ;
+package-version = version ;
+local-filename = string ;                   
+src-pattern = regular-expression ;                          (* QRegex expression *) 
+dest-pattern = string ;
+
