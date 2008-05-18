@@ -7,21 +7,9 @@ Do you have considered how to manage dependencies for packages placed on a local
 - support cygwin like directory structure
 - support flat directory structures (for sourceforge required)
 
-Archive Files 
-<package>-<compiler>-<version>-<type>.<ext>
+for main file format specifications see ../doc/format-specifications.txt
 
-compiler = "mingw"|"msvc"
-version = <date>|<major>.<minor>-<patch>|<major>.<minor>.<patch>|<major>.<minor>.<date>
-
-date = <Year> <Month> <Day>
-Year = 4 digit integer
-Month = 2 digit integer (1-12)
-Day = 2 digit integer (1-31) 
-major = integer
-minor = integer
-patch = integer
-type = "bin"|"lib"|"doc"|"src"
-ext = "zip"|"tar.bz2"|"exe"|"msi"
+the other specifications here will be moved also into the above mentioned location 
 
 Hint files  (proposal)
 
