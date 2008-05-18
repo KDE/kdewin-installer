@@ -1,13 +1,13 @@
-@format 2
+@format 1.3
 ; this format is *prelimary* and may be changed without prior notice
 
-; define mininal required installer versionb
+; define mininal required installer version
 ;@minversion 0.8.3-7
 
 ; define config file timestamp  
 @timestamp 200711291436
 
-; define a news entry
+; define a news entry (not used yet)
 ; @news 20070806 <package name> <comment> 
 ; @news 20071015 png2ico : removed package, it is now in kdewin32
 
@@ -17,39 +17,73 @@
 
 ;------------------------------------------------------
 ; example for site definition
+; definitions for a site must not have empty lines
 ;------------------------------------------------------
 ; the site name after the @site keyword is used to create a package category
 @site win32libs
+;
 ; site note 
 @notes basic non kde related libraries
+;
 ; site scanner type: available types are 'apachemodindex' and 'sourceforge'
 @type apachemodindex
-; url of html page containing package links 
+;
+; basic url for packages (relative or absolute)
 @url win32libs/zip/single/
+;
+; url of html page containing package links (relative or absolute)
+@url-list win32libs/zip/single/
+;
 ; package dependencies
 @deps update-mime-database libintl libxml2 iconv
 @deps dbus libxml2
+;
+; define notes for a specific package
+@pkgnotes dbus dbus package note 
+;
+; exclude file from collecting
+@exclude config.txt
 
 ;------------------------------------------------------
 ; example for package definition
+; definitions for a site must not have empty lines
 ;------------------------------------------------------
+;
 ; the package name following the @package keyword is shown in the installer
 @package qt-msvc
+;
 ; categorie(s) the package belongs to 
 @category qt
+;
 ; package version 
 @version 4.3.0b
+;
 ; url of binary/runtime package
 @url-bin qt/single/qt-msvc-4.3.0b-bin.zip
+;
 ; url of development package including include headers, import libraries and tools for compiling applications/libraries against this package 
 @url-lib qt/single/qt-msvc-4.3.0b-lib.zip
+;
 ; url of documentation package
 @url-doc qt/single/qt-msvc-4.3.0b-doc.zip
+;
 ; url of source package
 @url-src http://ftp.iasi.roedu.net/mirrors/ftp.trolltech.com/qt/source/qt-win-opensource-src-4.3.0beta.zip qt-msvc-4.3.0b-src.zip
+;
 ; package dependencies
 @require dbus
-
+;
+; md5 checksum of binary/runtime package
+@md5-bin 58cb5a282539da8ec2f67e4f96db7f6c
+;
+; md5 checksum of development package including include headers, import libraries and tools for compiling applications/libraries against this package 
+@md5-lib 58cb5a282539da8ec2f67e4f96db7f6c
+;
+; md5 checksum of documentation package
+@md5-doc 58cb5a282539da8ec2f67e4f96db7f6c
+;
+; md5 checksum of source package
+@md5-src 58cb5a282539da8ec2f67e4f96db7f6c
 
 ;------------------------------------------------------
 ; category win32libs
@@ -89,6 +123,7 @@
 @url-doc qt/single/qt-msvc-4.3.0b-doc.zip
 @url-src http://ftp.iasi.roedu.net/mirrors/ftp.trolltech.com/qt/source/qt-win-opensource-src-4.3.0beta.zip qt-msvc-4.3.0b-src.zip
 @require dbus
+
 ;------------------------------------------------------
 ; tools
 ;------------------------------------------------------
