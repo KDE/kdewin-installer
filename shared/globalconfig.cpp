@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2006-2007 Ralf Habacker. All rights reserved.
+** Copyright (C) 2006-2008 Ralf Habacker ralf.habacker@freenet.de>. All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
@@ -21,8 +21,9 @@
 ****************************************************************************/
 
 #include "config.h"
-#include "globalconfig.h"
+#include "debug.h"
 #include "downloader.h"
+#include "globalconfig.h"
 
 #include <QFileInfo>
 #include <QBuffer>
@@ -86,7 +87,8 @@ QStringList GlobalConfig::fetch(const QString &baseURL)
 bool GlobalConfig::parse(const QStringList &configFiles)
 {
     bool ret = true;
-    Q_FOREACH(const QString &configFile, configFiles) {
+    Q_FOREACH(const QString &configFile, configFiles) 
+    {
         if( !parseFromFile(configFile) )
            ret = false;
         if (Settings::hasDebug("GlobalConfig"))
@@ -221,24 +223,25 @@ bool GlobalConfig::parse(QIODevice *ioDev)
             {
                 if(keyword == "@version")
                     pkg->setVersion(cmd[1]);
-                else if(keyword.startsWith("@url-")) {
-                  Package::Type typ;
-                  if(keyword == "@url-bin")
-                    typ = Package::BIN;
-                  else if(keyword == "@url-lib")
-                    typ = Package::LIB;
-                  else if(keyword == "@url-doc")
-                    typ = Package::DOC;
-                  else if(keyword == "@url-src")
-                    typ = Package::SRC;
-                  else
-                    continue;
-                  QUrl url(cmd[1]);
-                  if (url.scheme().isEmpty())
-                    url = QUrl(m_baseURL + '/' + cmd[1]);
-                  Package::PackageItem item;
-                  if (item.set(url,col2,typ))
-                    pkg->add(item);
+                else if(keyword.startsWith("@url-")) 
+                {
+                    Package::Type type;
+                    if(keyword == "@url-bin")
+                        type = Package::BIN;
+                    else if(keyword == "@url-lib")
+                        type = Package::LIB;
+                    else if(keyword == "@url-doc")
+                        type = Package::DOC;
+                    else if(keyword == "@url-src")
+                        type = Package::SRC;
+                    else
+                        continue;
+                    QUrl url(cmd[1]);
+                    if (url.scheme().isEmpty())
+                        url = QUrl(m_baseURL + '/' + cmd[1]);
+                    Package::PackageItem item;
+                    if (item.set(url,col2,type))
+                        pkg->add(item);
                 }
                 else if(keyword == "@require")
                 {
@@ -283,7 +286,8 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     if (!site->setType(cmd[1]))
                         qCritical() << "unknown site type" << cmd[1];
                 }
-                else if(keyword == "@mirrorurl") {
+                else if(keyword == "@mirrorurl") 
+                {
                     QUrl url(cmd.join(" "));
                     site->addMirror(url);
                 }
@@ -293,19 +297,23 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     cmd.removeFirst();
                     site->addDependencies(pkg, cmd);
                 }
-                else if(keyword == "@exclude") {
+                else if(keyword == "@exclude") 
+                {
                     cmd.removeFirst();
                     site->addExcludes(cmd);
                 }
-                else if(keyword == "@copy") {
+                else if(keyword == "@copy") 
+                {
                     cmd.removeFirst();
                     site->addCopy(cmd.join(" "));
                 }
-                else if(keyword == "@notes") {
+                else if(keyword == "@notes") 
+                {
                     cmd.removeFirst();
                     site->setNotes(cmd.join(" "));
                 }
-                else if(keyword == "@pkgnotes") {
+                else if(keyword == "@pkgnotes") 
+                {
                     QString pkg = cmd[1];
                     cmd.removeFirst();
                     cmd.removeFirst();
@@ -318,7 +326,8 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     QString details = cmd.join(" ").replace("\\n","\n");
                     site->setPackageLongNotes(pkg,details);
                 }
-                else if(keyword == "@pkgcategory") {
+                else if(keyword == "@pkgcategory") 
+                {
                     QString pkg = cmd[1];
                     cmd.removeFirst();
                     cmd.removeFirst();
