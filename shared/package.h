@@ -164,8 +164,8 @@ public:
     bool hasType(Package::Type contentType) const;
 
     /// return modifiable package item
-    //PackageItem &get(Package::Type contentType);
-
+    Package::PackageItem &item(Package::Type contentType);
+    
     /// add a package item to this package
     bool add(const PackageItem &item);
 

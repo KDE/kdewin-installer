@@ -300,6 +300,15 @@ bool Package::add(const PackageItem &item)
     return true;
 }
 
+Package::PackageItem &Package::item(Package::Type contentType)
+{
+    static PackageItem empty;
+    if(!m_packages.contains(contentType))
+        return empty;
+
+    return m_packages[contentType];
+}
+
 void Package::setInstalled(const Package &other)
 {
     // FIXME!
