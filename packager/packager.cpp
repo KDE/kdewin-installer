@@ -328,7 +328,7 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
         QByteArray md5 = md5Hash ( f );
         QByteArray fnUtf8 = file.outputFile.isEmpty() ? file.inputFile.toUtf8() : file.outputFile.toUtf8();
         fnUtf8.replace(' ', "\\ "); // escape ' '
-        out << md5 << "  " << fnUtf8 << '\n';
+        out << md5.toHex() << "  " << fnUtf8 << '\n';
     }
     // qt needs a specific config file
     if ((m_name.startsWith("qt") || m_name.startsWith("q++") || m_name.startsWith("q.."))
