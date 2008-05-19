@@ -21,6 +21,7 @@
 ****************************************************************************/
 
 #include "config.h"
+#include "debug.h"
 #include "installer.h"
 #include "installerprogress.h"
 #include "packagelist.h"
@@ -28,7 +29,6 @@
 #include "uninstaller.h"
 
 #include <QtCore/QBuffer>
-#include <QtCore/QDebug>
 #include <QtCore/QDir>
 #include <QtCore/QFileInfo>
 #include <QtCore/QTextStream>
@@ -84,7 +84,8 @@ bool Installer::createManifestFile()
     m_files << "manifest/"+ vFile;
     QFile mf(a.absoluteFilePath());
     if (!mf.open(QIODevice::WriteOnly | QIODevice::Text))
-        return false;
+        return false;        
+    /// @TODO: add md5 hashes 
     QTextStream mo(&mf);
     mo.setCodec(QTextCodec::codecForName("UTF-8"));
     mo << m_files.join("\n");
