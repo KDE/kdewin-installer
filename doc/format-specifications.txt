@@ -120,10 +120,12 @@ package-attributes =  'category' category-name              (* categorie(s) the 
                     | 'url-lib' absolute-or-relative-url [ local-filename ]      (* url of development package including include headers, import libraries and tools for compiling applications/libraries against this package *)
                     | 'url-doc' absolute-or-relative-url [ local-filename ]      (* url of documentation package *)
                     | 'url-src' absolute-or-relative-url [ local-filename ]      (* url of source package *)
+(* not yet implemented 
                     | 'md5-bin' md5sum                      (* md5 checksum of binary/runtime package @md5-bin 58cb5a282539da8ec2f67e4f96db7f6c *)
                     | 'md5-lib' md5sum                      (* md5 checksum of development package including include headers, import libraries and tools for compiling applications/libraries against this package @eg. md5-lib 58cb5a282539da8ec2f67e4f96db7f6c *)
                     | 'md5-doc' md5sum                      (* md5 checksum of documentation package eg. @md5-doc 58cb5a282539da8ec2f67e4f96db7f6c *)
                     | 'md5-src' md5sum                      (* md5 checksum of source package eg. @md5-src 58cb5a282539da8ec2f67e4f96db7f6c *)
+*)
                     | 'relocate' src-pattern dest-pattern   (* relocate path in the archive from src-pattern to dest-pattern eg. @relocate ^ bin/ *)
                     ;
 category-name = string ;
