@@ -36,6 +36,11 @@ find_package(UPX)
 find_package(KDEWIN_Packager)
 find_package(WinSCP)
 
+# make cmake 2.6 happy
+if(COMMAND cmake_policy)
+    cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
+	      
 OPTION(SEVENZIP_UNPACK_SUPPORT "Enable 7-zip unpacking support" OFF)
 OPTION(BZIP2_UNPACK_SUPPORT "Enable tar.bz2 unpacking support" ON)
 # todo detect static qt library automatically
@@ -243,7 +248,7 @@ if (WIN32)
     addExplorerWrapper()
 endif(WIN32)
 
-install( FILES cmake/modules/FINDKDEWIN_Packager.cmake  DESTINATION  share/apps/cmake/modules )
+install( FILES cmake/modules/FindKDEWIN_Packager.cmake  DESTINATION  share/apps/cmake/modules )
 
 # install required shared libraries
 if (INSTALL_SYSTEM_LIBS)
