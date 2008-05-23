@@ -1,0 +1,4 @@
+#!/bin/sh
+# list first entry of package manifest files
+for i in `ls *-bin.tar.bz2`; do echo $i; mkdir temp; cd temp ; tar -xjf ../$i 'manifest/*'; head -1 manifest/*.mft; cd ..; rm -r temp;  done
+for i in `ls *-bin.zip`; do echo $i; mkdir temp; cd temp ; unzip -xq ../$i 'manifest/*'; head -1 manifest/*.mft; cd ..; rm -r temp;  done
