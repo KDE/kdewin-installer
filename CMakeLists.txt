@@ -226,7 +226,7 @@ else(UNIX)
   endif(MINGW)
   # required for static linking
   set (LIBS kernel32 user32 shell32 uuid ole32 advapi32 ws2_32 shlwapi ${BZIP2_LIBRARIES} ${CURL_LIBRARIES})
-  set (GUI_LIBS gdi32 comdlg32 oleaut32 imm32 winmm winspool ws2_32 ole32 uuid user32 advapi32 shlwapi ${CURL_LIBRARIES})
+  set (GUI_LIBS dxguid gdi32 comdlg32 oleaut32 imm32 winmm winspool ws2_32 ole32 uuid user32 advapi32 shlwapi ${CURL_LIBRARIES})
 endif (UNIX)
 
 
