@@ -219,7 +219,7 @@ bool InstallerEngine::addPackagesFromSites()
 
         QByteArray ba;
         qDebug() << listURL;
-        if (!Downloader::instance()->start(listURL, ba))
+        if (!Downloader::instance()->fetch(listURL, ba))
         {
             emit error(tr("failed to download site list page from %1").arg(listURL.toString()));
             return false;

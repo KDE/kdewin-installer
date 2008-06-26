@@ -91,7 +91,7 @@ public:
     QString packageLongNotes(const QString &package);
 
     void setPackageCategories(const QString &package, const QStringList &categories);
-    QStringList &packageCategories(const QString &package);
+    const QStringList &packageCategories(const QString &package);
 
     void addExcludes(const QStringList &excludes);
     bool isExclude(const QString &package);

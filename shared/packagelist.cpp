@@ -274,7 +274,7 @@ class FileType {
 };
 
 // filter List to get latest versions
-QStringList filterFileName(QStringList & files)
+QStringList filterFileName(const QStringList &files)
 {
     QStringList filteredFiles;
 
@@ -329,14 +329,14 @@ bool PackageList::readInternal(QIODevice *ioDev, PackageList::Type type, bool ap
         // -rw-r--r--    1 10004    10004      385455 Feb 04 23:00 amarok-mingw-1.80.20080121-lib.tar.bz2
         while (!ioDev->atEnd())
         {
-            QString line = ioDev->readLine().replace("\n","");
-            QStringList parts = line.split(" ",QString::SkipEmptyParts);
+          const QString line = QString::fromUtf8(ioDev->readLine().replace("\n",""));
+            const QStringList parts = line.split(" ",QString::SkipEmptyParts);
             int size = parts.size();
             if (size != 9)
                 continue;
             // size could be used for download estimation 
             //QString size = parts[4];
-            QString file = parts[8];
+            const QString &file = parts[8];
             if (!isPackageFileName(file))
                 continue;
             files << file;
@@ -354,7 +354,7 @@ bool PackageList::readInternal(QIODevice *ioDev, PackageList::Type type, bool ap
                 Package pkg;
                 int a = line.indexOf("\">") + 2;
                 int b = line.indexOf("</a>");
-                QByteArray name = line.mid(a,b-a);
+                const QByteArray name = line.mid(a,b-a);
                 if(m_curSite && m_curSite->isExclude(name)) {
                     ioDev->readLine();
                     continue;
@@ -365,7 +365,7 @@ bool PackageList::readInternal(QIODevice *ioDev, PackageList::Type type, bool ap
                 line = ioDev->readLine();
                 a = line.indexOf("\">") + 2;
                 b = line.indexOf("</a>");
-                QByteArray version = line.mid(a,b-a);
+                const QByteArray version = line.mid(a,b-a);
                 pkg.setVersion(version);
                 // available types could not be determined on this web page
                 // so assume all types are available
@@ -390,7 +390,7 @@ bool PackageList::readInternal(QIODevice *ioDev, PackageList::Type type, bool ap
         const char *startKey1 = "<a href=\"";
         const char *startKey2 = "<A HREF=\"";
         const char *endKey = "\">";
-        QByteArray data = ioDev->readAll();
+        const QByteArray data = ioDev->readAll();
         int startKeyLength = strlen(startKey1);
         int endKeyLength = strlen(endKey);
         QUrl baseURL(m_baseURL);
@@ -405,7 +405,7 @@ bool PackageList::readInternal(QIODevice *ioDev, PackageList::Type type, bool ap
             QUrl url = QUrl(data.mid(a,b-a));
             if (!url.isValid())
                 continue;
-            QString path = url.path();
+            const QString path = url.path();
             if (path.isEmpty())
                 continue;
             if (!isPackageFileName(path))
@@ -432,11 +432,11 @@ bool PackageList::addPackageFromHintFile(const QString &fileName)
     if (m_parserConfigFileFound)
         return false;
 
-    QStringList hintFile = QString(fileName).split('.');
-    QString pkgName = hintFile[0];
+    const QStringList hintFile = QString(fileName).split('.');
+    const QString &pkgName = hintFile[0];
     // download hint file
     QByteArray ba;
-    if (!Downloader::instance()->start(m_baseURL.toString() + '/' + fileName, ba))
+    if (!Downloader::instance()->fetch(m_baseURL.toString() + '/' + fileName, ba))
     {
         qCritical() << "could not download" << m_baseURL.toString() + '/' + fileName;
         return false;
@@ -468,12 +468,12 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
     {
         // fetch config file
         QFileInfo cfi(Settings::instance().downloadDir()+"/config-temp.txt");
-        bool ret = Downloader::instance()->start(m_baseURL.toString() + "/config.txt",cfi.absoluteFilePath());
+        bool ret = Downloader::instance()->fetch(m_baseURL.toString() + "/config.txt",cfi.absoluteFilePath());
         if (ret)
         {
             GlobalConfig g;
             g.setBaseURL(m_baseURL);
-            QStringList configFile = QStringList() << cfi.absoluteFilePath();
+            const QStringList configFile = QStringList() << cfi.absoluteFilePath();
             if (!g.parse(configFile))
                 return false;
 

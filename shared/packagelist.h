@@ -23,7 +23,8 @@
 #ifndef PACKAGELIST_H
 #define PACKAGELIST_H
 
-#include <QObject>
+#include <QtCore/QObject>
+#include <QtCore/QStringList>
 #include "package.h"
 #include "site.h"
 

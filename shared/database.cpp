@@ -148,7 +148,7 @@ void Database::listPackages ( const QString &title )
 
 void Database::listPackageFiles ( const QString &pkgName, Package::Type pkgType )
 {
-    QStringList files = getPackageFiles ( pkgName,pkgType );
+    const QStringList files = getPackageFiles ( pkgName,pkgType );
     qDebug() << files;
 }
 
@@ -169,7 +169,7 @@ QStringList Database::getPackageFiles ( const QString &pkgName, Package::Type pk
     QTextStream in ( &file );
     in.setCodec ( QTextCodec::codecForName ( "UTF-8" ) );
     while ( !in.atEnd() ) {
-        QStringList parts = in.readLine().split ( ' ' );
+        const QStringList parts = in.readLine().split ( ' ' );
         if ( iPosFilename != -1 && parts.count() > iPosFilename ) {
             files << parts[iPosFilename];
             continue;

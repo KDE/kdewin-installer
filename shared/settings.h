@@ -23,9 +23,9 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include <QObject>
-#include <QSettings>
-#include <QNetworkProxy>
+#include <QtCore/QObject>
+#include <QtCore/QSettings>
+#include <QtCore/QStringList>
 
 /**
  holds global options, which are stored in a local user specific config file

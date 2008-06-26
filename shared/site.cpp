@@ -93,7 +93,7 @@ void Site::setPackageCategories(const QString &package, const QStringList &categ
     m_packageCategories[package] = categories;
 }
 
-QStringList &Site::packageCategories(const QString &package)
+const QStringList &Site::packageCategories(const QString &package)
 {
     return m_packageCategories[package];
 }

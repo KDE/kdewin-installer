@@ -22,13 +22,10 @@
 #ifndef MIRRORS_H
 #define MIRRORS_H
 
-#include <QObject>
-#include <QStringList>
-#include <QUrl>
-class QString;
-class QStringList;
+#include <QtCore/QObject>
+#include <QtCore/QString>
+#include <QtCore/QUrl>
 class QByteArray;
-class QFile;
 
 /**
  holds all attributes for a single mirror 

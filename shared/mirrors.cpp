@@ -81,7 +81,7 @@ bool Mirrors::fetch()
         }
 #endif
      }   
-     else if (!Downloader::instance()->start(m_config.url,out))
+     else if (!Downloader::instance()->fetch(m_config.url,out))
         return false;
     return parse(out);
 }
@@ -114,10 +114,10 @@ bool Mirrors::parse(QIODevice *ioDev)
         {
             while (!ioDev->atEnd())
             {
-                QString line = ioDev->readLine().replace("\n","");
+                const QString line = QString::fromUtf8(ioDev->readLine().replace("\n",""));
                 if ( line.startsWith(QLatin1Char('#')) || line.contains("stable only") ) 
                     continue;
-                QStringList parts = line.split(QLatin1Char(' '),QString::SkipEmptyParts);
+                const QStringList parts = line.split(QLatin1Char(' '),QString::SkipEmptyParts);
                 if (parts.size() >= 3) 
                 {
                     MirrorType mirror;
@@ -153,10 +153,10 @@ bool Mirrors::parse(QIODevice *ioDev)
         {
             while (!ioDev->atEnd())
             {
-                QByteArray line = ioDev->readLine().replace("\n","").trimmed();
+                const QByteArray line = ioDev->readLine().replace("\n","").trimmed();
                 if (line.startsWith("#") || line.size() == 0)
                     continue;
-                QList<QByteArray> a = line.split(';');
+                const QList<QByteArray> a = line.split(';');
                 if (a.size() < 4) 
                 {
                     qWarning() << "invalid mirror list entry" << line << "-> ignored";
@@ -469,7 +469,7 @@ void Mirrors::initCountries()
     // which is accessable by using QString continent = m_continents[<countrycode>];
     QHash<QString, QString>::ConstIterator it = countryGroups.constBegin();
     for( ; it != countryGroups.constEnd(); ++it) {
-        QStringList countries = it.value().split(':');
+        const QStringList countries = it.value().split(':');
         Q_FOREACH(const QString &country, countries) 
             m_continents[country] = it.key();
     }

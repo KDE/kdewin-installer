@@ -23,13 +23,11 @@
 #ifndef MISC_H
 #define MISC_H
 
-#include <QtDebug>
-#include <QFile>
 #include <QRegExp>
 #include <QString>
-#include <QStringList>
 #include <QSettings>
-#include <QIODevice>
+class QFile;
+class QIODevice;
 
 /*
  * Those three strings represent the Categories from freedesktop.org for .desktop files

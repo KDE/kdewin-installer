@@ -398,18 +398,18 @@ bool createStartMenuEntries(const QString &dir, const QString &installDir, const
         QSettings settings(dir + '/' + file, DesktopFormat);
 
         settings.beginGroup("Desktop Entry");
-        QString name = settings.value("Name").toString();
-        QString mimeType = settings.value("Mime Type").toString();
-        QString genericName = settings.value("GenericName").toString();
-        QString exec = installDir + settings.value("Exec").toString().split(' ')[0];
-        QString icon = settings.value("Icon").toString();
+        const QString name = settings.value("Name").toString();
+        const QString mimeType = settings.value("Mime Type").toString();
+        const QString genericName = settings.value("GenericName").toString();
+        const QString exec = installDir + settings.value("Exec").toString().split(' ')[0];
+        const QString icon = settings.value("Icon").toString();
 
         QStringList categories = settings.value("Categories").toString().split(';');
         file.replace(".desktop", ".lnk");
 
-        QStringList catIgnore = QString( FREEDESKTOP_IGNORE_CATEGORIES ).split(';');
-        QStringList catMain = QString( FREEDESKTOP_MAIN_CATEGORIES ).split(';');
-        QStringList catSub = QString( FREEDESKTOP_SUB_CATEGORIES ).split(';');
+        const QStringList catIgnore = QString( FREEDESKTOP_IGNORE_CATEGORIES ).split(';');
+        const QStringList catMain = QString( FREEDESKTOP_MAIN_CATEGORIES ).split(';');
+        const QStringList catSub = QString( FREEDESKTOP_SUB_CATEGORIES ).split(';');
         QString catMainFirst;
         QString catSubFirst;
 
@@ -484,7 +484,7 @@ bool removeStartMenuEntries(const QString &dir, const QString &category)
     QSettings registry("kdewin-installer");
     registry.beginGroup("StartMenuEntries");
     registry.beginGroup(category);
-    QStringList keys = registry.allKeys();
+    const QStringList keys = registry.allKeys();
 
     Q_FOREACH(const QString &key, keys) {
         registry.remove(key);

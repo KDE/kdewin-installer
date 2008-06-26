@@ -410,12 +410,12 @@ bool Package::read(QTextStream &in)
     if (in.atEnd())
         return false;
     QString line = in.readLine();
-    QStringList parts = line.split('\t');
+    const QStringList parts = line.split('\t');
     setName(parts.at(0));
     setVersion(parts.at(1));
-    QStringList options = parts.at(2).split(';');
-    QStringList state = options.at(0).split(':');
-    QString baseURL = options.at(1);
+    const QStringList options = parts.at(2).split(';');
+    const QStringList state = options.at(0).split(':');
+    const QString &baseURL = options.at(1);
     if(!options.at(2).isEmpty())
     {
         Package::PackageItem item;
@@ -657,7 +657,7 @@ bool Package::fromFileName(const QString &fileName, QString &pkgName, QString &p
         baseName = fileName.toLower();
     }
 
-    QStringList parts = baseName.split('-');
+    const QStringList parts = baseName.split('-');
 
     if (parts.size() == 6)
     {
@@ -744,7 +744,7 @@ bool Package::fromFileName(const QString &fileName, QString &pkgName, QString &p
 
 bool Package::fromString(const QString &name, QString &pkgName, QString &pkgVersion)
 {
-    QStringList parts = name.split('-');
+    const QStringList parts = name.split('-');
     // <name>-<version>
     if (parts.size() == 2 && parts[1][0].isNumber())
     {

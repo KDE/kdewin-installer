@@ -47,9 +47,6 @@ public:
     bool fetch ( const QUrl &url, const QString &fileName = QString() );
     bool fetch ( const QUrl &url, QByteArray &ba );
 
-    QT_DEPRECATED bool start ( const QUrl &url, const QString &fileName = QString() ) { return fetch(url, fileName); }
-    QT_DEPRECATED bool start ( const QUrl &url, QByteArray &ba ) { return fetch(url, ba); }
-
     /// cancel started download
     void cancel();
     /// return result string

@@ -205,11 +205,11 @@ bool Settings::getIEProxySettings(const QString &url, proxySettings &proxy)
     if (enable == 0)
         return false;
 
-    QString proxyServer = getWin32RegistryValue(hKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings","ProxyServer",&ok).toString();
+    const QString proxyServer = getWin32RegistryValue(hKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings","ProxyServer",&ok).toString();
     if (!ok)
         return false;
 
-    QStringList parts = proxyServer.split(':');
+    const QStringList parts = proxyServer.split(':');
     if(parts.count() != 2)
         return false;
 
@@ -263,10 +263,10 @@ bool Settings::getFireFoxProxySettings(const QString &url, proxySettings &proxy)
             QString line = in.readLine();
             if (line.startsWith("user_pref("))
             {
-                QString data = line.mid(10,line.length()-11-1);
-                QStringList attr = data.split(',');
-                QString key = attr[0].mid(1,attr[0].length()-2);
-                QString value = attr[1].mid(1,attr[1].length()-1).remove('\"');
+                const QString data = line.mid(10,line.length()-11-1);
+                const QStringList attr = data.split(',');
+                const QString key = attr[0].mid(1,attr[0].length()-2);
+                const QString value = attr[1].mid(1,attr[1].length()-1).remove('\"');
                 prefs[key] = value;
             }
         }
