@@ -113,7 +113,7 @@ public:
     void setName(QString const &name) { m_name = name; }
 
     /// return version
-    PackageVersion &version()  { return m_version.isEmpty() ? m_installedversion : m_version; }
+    const PackageVersion &version() const { return m_version.isEmpty() ? m_installedversion : m_version; }
     /// set version
     void setVersion(const QString &version) { m_version = PackageVersion(version); }
 
@@ -153,7 +153,7 @@ public:
      return path relocations - path relocations are used to install files from an archive into 
      a different location 
     */
-    StringHash &pathRelocations() { return m_pathRelocs; }
+    const StringHash &pathRelocations() const { return m_pathRelocs; }
     /// add path relocations
     void addPathRelocation(const QString &key, const QString &value) { m_pathRelocs[key] = value; }
 
@@ -175,7 +175,7 @@ public:
     QT_DEPRECATED void setInstalled(Package::Type type);
 
     /// returns fileName of package item e.g. xyz-1.2.3-bin.zip
-    QString getFileName(Package::Type contentType);
+    QString getFileName(Package::Type contentType) const;
 
     /// returns complete url of package item e.g. http://host/path.../fileName
     QUrl getUrl(Package::Type type) const;
@@ -207,10 +207,10 @@ public:
     void setHandled(bool state) { m_handled = state; }
 
     /// generate manifest file name
-    QString manifestFileName(const Package::Type type);
+    QString manifestFileName(const Package::Type type) const;
 
     /// generate version file name
-    QString versionFileName(const Package::Type type);
+    QString versionFileName(const Package::Type type) const;
 
     /// separate package name, version, type and file format from a filename
     static bool fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat);

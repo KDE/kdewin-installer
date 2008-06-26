@@ -267,7 +267,7 @@ Package::Package(const Package &other)
     m_installedversion = other.m_installedversion;
 }
 
-QString Package::getFileName(Package::Type contentType)
+QString Package::getFileName(Package::Type contentType) const
 {
     if(m_packages.contains(contentType))
         return m_packages[contentType].fileName;
@@ -278,7 +278,7 @@ QUrl Package::getUrl(Package::Type contentType) const
 {
     if(m_packages.contains(contentType))
         return m_packages[contentType].url;
-    return QString();
+    return QUrl();
 }
 
 bool Package::setUrl(Package::Type contentType, const QUrl &url)
@@ -770,12 +770,12 @@ bool Package::fromString(const QString &name, QString &pkgName, QString &pkgVers
         return false;
 }
 
-QString Package::manifestFileName(const Package::Type type)
+QString Package::manifestFileName(const Package::Type type) const
 {
     return Package::manifestFileName(m_name,m_version.toString(),type);
 }
 
-QString Package::versionFileName(const Package::Type type)
+QString Package::versionFileName(const Package::Type type) const
 {
     return Package::versionFileName(m_name,m_version.toString(),type);
 }
