@@ -65,7 +65,7 @@ QStringList GlobalConfig::fetch(const QString &baseURL)
         {
             QUrl url(baseURL + "/config.txt");
             QFileInfo cfi(Settings::instance().downloadDir()+"/config.txt");
-            bool ret = Downloader::instance()->start(url,cfi.absoluteFilePath());
+            bool ret = Downloader::instance()->fetch(url,cfi.absoluteFilePath());
             if (Settings::hasDebug("GlobalConfig"))
                 qDebug() << "download remote config file from" <<  url << "to" << cfi.absoluteFilePath() << "..." << (ret ? "okay" : "failure") ;
             if (ret)
@@ -180,7 +180,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 m_minimalInstallerVersion = cmdBA[1];
             else if (keyword == "@timestamp")
             {
-                QStringList patterns = QStringList() << "yyyyMMddHHmm" << "yyyyMMddHHmmss";
+                const QStringList patterns = QStringList() << "yyyyMMddHHmm" << "yyyyMMddHHmmss";
                 Q_FOREACH(const QString &pattern, patterns) {
                     if (cmd[1].size() == pattern.size()) {
                         m_timestamp = QDateTime::fromString(cmd[1],pattern);
@@ -270,15 +270,23 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 if(keyword == "@siteurl" || keyword == "@url")
                 {
                     QUrl url(cmd[1]);
-                    if (url.scheme().isEmpty())
-                        url = QUrl(m_baseURL + '/' + cmd[1]);
+                    if (url.scheme().isEmpty()) {
+                        QString u = m_baseURL + '/';
+                        if( cmd[1] != QLatin1String(".") )
+                            u += cmd[1];
+                        url = QUrl(u);
+                    }
                     site->setURL(url);
                 }
                 else if(keyword == "@url-list")
                 {
                     QUrl url(cmd[1]);
-                    if (url.scheme().isEmpty())
-                        url = QUrl(m_baseURL + '/' + cmd[1]);
+                    if (url.scheme().isEmpty()) {
+                        QString u = m_baseURL + '/';
+                        if( cmd[1] != QLatin1String(".") )
+                            u += cmd[1];
+                        url = QUrl(u);
+                    }
                     site->setListURL(url);
                 }
                 else if(keyword == "@sitetype" || keyword == "@type")
