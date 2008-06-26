@@ -24,7 +24,7 @@
 
 // @TODO add reference counter to be able to unselected indirect dependencies
 
-void PackageStates::setState(QString pkgName, QString pkgVersion, Package::Type type, stateType state)
+void PackageStates::setState(const QString &pkgName, const QString & pkgVersion, Package::Type type, stateType state)
 {
     QString key = getKey(pkgName,pkgVersion);
     PackageFlags value;
@@ -43,7 +43,7 @@ void PackageStates::setState(QString pkgName, QString pkgVersion, Package::Type 
     m_states[key] = value;
 }
 
-void PackageStates::setState(Package *pkg, Package::Type type, stateType state)
+void PackageStates::setState(const Package *pkg, Package::Type type, stateType state)
 {
     setState(pkg->name(),pkg->version().toString(),type,state);
 }
@@ -89,7 +89,7 @@ bool PackageStates::setPresentState(const QList <Package *>&list)
 
 #endif
 
-stateType PackageStates::getState(QString pkgName, QString pkgVersion, Package::Type type)
+stateType PackageStates::getState(const QString &pkgName, const QString &pkgVersion, Package::Type type)
 {
     QString key = getKey(pkgName,pkgVersion);
 
@@ -106,7 +106,7 @@ stateType PackageStates::getState(QString pkgName, QString pkgVersion, Package::
         default: return _Nothing;
     }
 }
-stateType PackageStates::getState(Package* pkg, Package::Type type)
+stateType PackageStates::getState(const Package* pkg, Package::Type type)
 {
     return getState(pkg->name(),pkg->version().toString(),type);
 }

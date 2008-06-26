@@ -496,7 +496,7 @@ void InstallerEngineGui::selectAllPackagesForRemoval()
 {
     Package::Type type = Package::BIN;
     stateType newState = _Remove;
-    Q_FOREACH(Package *installed,m_database->packages())
+    Q_FOREACH(const Package *installed,m_database->packages())
     {
         if (installed->hasType(type))
             packageStates.setState(installed,type,newState);

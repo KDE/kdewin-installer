@@ -29,17 +29,17 @@ typedef QHash<QString,PackageFlags> PackageStatesType;
 class PackageStates {
   public:
     PackageStates() {}
-    void setState(QString pkgName, QString pkgVersion, Package::Type type, stateType state);
-    void setState(Package *pkg, Package::Type type, stateType state);
-    stateType getState(QString pkgName, QString pkgVersion, Package::Type type  );
-    stateType getState(Package *pkg, Package::Type type);
+    void setState(const QString &pkgName, const QString &pkgVersion, Package::Type type, stateType state);
+    void setState(const Package *pkg, Package::Type type, stateType state);
+    stateType getState(const QString &pkgName, const QString &pkgVersion, Package::Type type  );
+    stateType getState(const Package *pkg, Package::Type type);
     QList <Package *>packages(PackageList *list);
     void clear();
     friend QDebug operator<<(QDebug, const PackageStates &);
 
   protected:
     PackageStatesType m_states; 
-    QString getKey(QString pkgName, QString pkgVersion) { return pkgName; }
+    inline const QString &getKey(const QString &pkgName, const QString &pkgVersion) { return pkgName; }
 };
 
 #endif

@@ -114,7 +114,7 @@ bool InstallerEngine::init()
 
 static int versionToInt(QByteArray version)
 {
-    QList<QByteArray> v = version.replace('-','.').split('.');
+    const QList<QByteArray> v = version.replace('-','.').split('.');
     int n = 0;
     Q_FOREACH(const QByteArray &a,v)
     {
@@ -215,7 +215,7 @@ bool InstallerEngine::addPackagesFromSites()
 
         packageList.setBaseURL(site->url());
 
-        QUrl listURL = site->listURL().isEmpty() ? site->url() : site->listURL();
+        const QUrl listURL = site->listURL().isEmpty() ? site->url() : site->listURL();
 
         QByteArray ba;
         qDebug() << listURL;

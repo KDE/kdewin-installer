@@ -167,7 +167,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
         }
         else if (line.startsWith('@'))
         {
-            QList<QByteArray> cmdBA = line.split(' ');
+            const QList<QByteArray> cmdBA = line.split(' ');
             const QByteArray &keyword = cmdBA[0];
             QStringList cmd = QString::fromUtf8(line).split(' ');
             QString col2;
