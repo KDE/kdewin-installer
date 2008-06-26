@@ -39,7 +39,7 @@ int main(int argc, char ** argv)
     packageList.setBaseURL("http://www.mirrorservice.org/sites/download.sourceforge.net/pub/sourceforge/k/kd/kde-cygwin/");
 
     qDebug() << "trying to download sourceforge related package list";
-    downloader->start(QUrl(packageList.BaseURL()),"packages.html");
+    downloader->fetch(QUrl(packageList.BaseURL()),"packages.html");
 
     if (!packageList.readFromFile("packages.html",PackageList::SourceForgeMirror))
     {
