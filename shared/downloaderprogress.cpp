@@ -25,16 +25,15 @@
 
 #include <time.h>
 
-#include <QDebug>
-#include <QLabel>
-#include <QProgressBar>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QUrl>
+#include <QtCore/QDebug>
+#include <QtCore/QUrl>
+#include <QtGui/QLabel>
+#include <QtGui/QProgressBar>
+#include <QtGui/QGridLayout>
 
 #ifdef USE_GUI
 GenericProgress::GenericProgress(QWidget *parent)
-  : QWidget(parent), m_titleLabel(NULL), m_statusLabel(NULL)
+  : QWidget(parent), m_titleLabel(NULL), m_parent(parent)
 {}
 
 GenericProgress::~GenericProgress()
@@ -46,20 +45,14 @@ void GenericProgress::setTitle(const QString &title)
       m_titleLabel->setText(title);
 }
 
-void GenericProgress::setStatus(const QString &status)
-{
-  if(m_statusLabel)
-      m_statusLabel->setText(status);
-}
-
 void GenericProgress::show()
 {
-  QWidget::show();
+  m_parent ? m_parent->show() : QWidget::show();
 }
 
 void GenericProgress::hide()
 {
-  QWidget::hide();
+  m_parent ? m_parent->hide() : QWidget::hide();
 }
 
 void GenericProgress::updateDisplay()
@@ -72,25 +65,17 @@ void GenericProgress::updateDisplay()
 DownloaderProgress::DownloaderProgress(QWidget *parent)
   : GenericProgress(parent), m_lastValue(0), m_fileNumber(0), m_fileCount(0)
 {    
-    QVBoxLayout *mainLayout = new QVBoxLayout;
+    QGridLayout *mainLayout = new QGridLayout(this);
 
     m_titleLabel = new QLabel;
-    mainLayout->addWidget(m_titleLabel);
- 
-    QHBoxLayout *statusLayout = new QHBoxLayout;
- 
-    m_statusLabel = new QLabel;
-    statusLayout->addWidget(m_statusLabel);
+    mainLayout->addWidget(m_titleLabel, 0, 0, 1, 2);
 
     m_progress = new QProgressBar(parent);
-    statusLayout->addWidget(m_progress);
-
-    mainLayout->addLayout(statusLayout);
+    mainLayout->addWidget(m_progress, 1, 0, 1, 1);
 
     m_speedLabel = new QLabel;
-    mainLayout->addWidget(m_speedLabel);
+    mainLayout->addWidget(m_speedLabel, 2, 0, 1, 2);
 
-    setLayout(mainLayout);
     hide();
 }
 

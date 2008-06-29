@@ -49,6 +49,8 @@ const QFileInfo GlobalConfig::remoteConfigFile()
 QStringList GlobalConfig::fetch(const QString &baseURL)
 {
     m_baseURL = baseURL;
+    if(!m_baseURL.endsWith('/'))
+      m_baseURL += '/';
 
     QStringList configFiles;
     // remote config file
@@ -63,7 +65,7 @@ QStringList GlobalConfig::fetch(const QString &baseURL)
         }
         else
         {
-            QUrl url(baseURL + "/config.txt");
+            QUrl url(m_baseURL + "config.txt");
             QFileInfo cfi(Settings::instance().downloadDir()+"/config.txt");
             bool ret = Downloader::instance()->fetch(url,cfi.absoluteFilePath());
             if (Settings::hasDebug("GlobalConfig"))
@@ -238,7 +240,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                         continue;
                     QUrl url(cmd[1]);
                     if (url.scheme().isEmpty())
-                        url = QUrl(m_baseURL + '/' + cmd[1]);
+                        url = QUrl(m_baseURL + cmd[1]);
                     Package::PackageItem item;
                     if (item.set(url,col2,type))
                         pkg->add(item);
@@ -271,7 +273,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 {
                     QUrl url(cmd[1]);
                     if (url.scheme().isEmpty()) {
-                        QString u = m_baseURL + '/';
+                        QString u = m_baseURL;
                         if( cmd[1] != QLatin1String(".") )
                             u += cmd[1];
                         url = QUrl(u);
@@ -282,7 +284,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 {
                     QUrl url(cmd[1]);
                     if (url.scheme().isEmpty()) {
-                        QString u = m_baseURL + '/';
+                        QString u = m_baseURL;
                         if( cmd[1] != QLatin1String(".") )
                             u += cmd[1];
                         url = QUrl(u);

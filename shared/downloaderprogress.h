@@ -40,13 +40,12 @@ public:
     GenericProgress(QWidget *parent);
     virtual ~GenericProgress();
     virtual void setTitle(const QString &title);
-    virtual void setStatus(const QString &status);
     virtual void show();
     virtual void hide();
 protected:
     virtual void updateDisplay();
     QLabel *m_titleLabel;
-    QLabel *m_statusLabel;
+    QWidget *m_parent;
 };
 
 class DownloaderProgress : public GenericProgress

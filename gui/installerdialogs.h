@@ -22,8 +22,9 @@
 #ifndef DIALOGS_H
 #define DIALOGS_H
 
-#include <QMessageBox>
-#include <QString>
+#include <QtCore/QRect>
+#include <QtCore/QString>
+#include <QtGui/QMessageBox>
 
 #include "downloaderprogress.h"
 #include "downloader.h"
@@ -31,6 +32,7 @@
 class InstallerDialogs : public QObject
 {
     public:
+        ~InstallerDialogs();
         void setParent(QWidget *parent) { m_parent = parent; }
         void setTitle(const QString &title) { m_title = title; }
 
@@ -44,10 +46,12 @@ class InstallerDialogs : public QObject
 
     protected:
         QWidget *m_parent;
-        QString m_title;
         DownloaderProgress *m_progress;
         DownloaderProgress *m_oldProgress;
         QDialog *m_d;
+        QString m_title;
+    private:
+        InstallerDialogs();
 };
 
 #endif

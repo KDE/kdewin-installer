@@ -44,9 +44,6 @@ InstallerProgress::InstallerProgress(QWidget *parent,bool showProgress)
 
     if (showProgress) 
     {
-        m_statusLabel = new QLabel;
-        statusLayout->addWidget(m_statusLabel);
-
         m_progress = new QProgressBar;
         statusLayout->addWidget(m_progress);
 
@@ -109,11 +106,8 @@ void InstallerProgress::show()
 {
     if (m_progress) 
     {
-        /// @TODO fix me
-        m_statusLabel->hide();
         if (m_progress->maximum() > 1) 
         {
-        //    m_statusLabel->show();
             m_progress->show();
         }
         else

@@ -22,7 +22,18 @@
 
 #include "installerdialogs.h"
 #include "settings.h"
-#include <QVBoxLayout>
+
+#include <QtGui/QDesktopWidget>
+#include <QtGui/QVBoxLayout>
+
+InstallerDialogs::InstallerDialogs()
+: m_parent(0), m_progress(0), m_oldProgress(0), m_d(0)
+{}
+
+InstallerDialogs::~InstallerDialogs()
+{
+    delete m_d;
+}
 
 bool InstallerDialogs::installerOutdated()
 {
@@ -55,22 +66,24 @@ void InstallerDialogs::downloadProgressDialog(QWidget *parent,bool show, const Q
 {
     if (show) 
     {
-        m_progress = new DownloaderProgress(0);
         m_d = new QDialog(parent);
+        m_progress = new DownloaderProgress(m_d);
         if (!title.isEmpty())
             m_d->setWindowTitle(title);
         QVBoxLayout *layout = new QVBoxLayout(m_d); 
         layout->addWidget(m_progress);
         m_d->setLayout(layout);
-        m_d->show();
         m_oldProgress = Downloader::instance()->progress();
         Downloader::instance()->setProgress(m_progress);
     }
     else 
     {
         Downloader::instance()->setProgress(m_oldProgress);
-        m_d->hide();
+        if(m_d)
+            m_d->hide();
         delete m_d;
+        m_d = NULL;
+        m_progress = NULL;
     }
 }
 
