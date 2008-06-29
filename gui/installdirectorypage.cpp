@@ -40,7 +40,7 @@ InstallDirectoryPage::InstallDirectoryPage() : InstallWizardPage(0)
 
 void InstallDirectoryPage::initializePage()
 {
-    Settings &s = Settings::instance();
+    const Settings &s = Settings::instance();
     ui.rootPathEdit->setText(QDir::convertSeparators(s.installDir()));
 }
 

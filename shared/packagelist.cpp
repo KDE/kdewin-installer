@@ -329,8 +329,8 @@ bool PackageList::readInternal(QIODevice *ioDev, PackageList::Type type, bool ap
         // -rw-r--r--    1 10004    10004      385455 Feb 04 23:00 amarok-mingw-1.80.20080121-lib.tar.bz2
         while (!ioDev->atEnd())
         {
-          const QString line = QString::fromUtf8(ioDev->readLine().replace("\n",""));
-            const QStringList parts = line.split(" ",QString::SkipEmptyParts);
+            const QString line = QString::fromUtf8(ioDev->readLine().replace("\n",""));
+            const QStringList parts = line.split(' ',QString::SkipEmptyParts);
             int size = parts.size();
             if (size != 9)
                 continue;

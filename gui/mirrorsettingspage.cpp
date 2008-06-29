@@ -100,7 +100,7 @@ void MirrorSettingsPage::initializePage()
     ui.downloadMirror->clear();
     InstallerDialogs::instance().downloadProgressDialog(this,false);
 
-    QUrl currentMirror = QUrl(s.mirror());
+    QUrl currentMirror(s.mirror());
 
     int mirrorIndex = -1;
     Q_FOREACH(const MirrorType &m, mirrors.mirrors())

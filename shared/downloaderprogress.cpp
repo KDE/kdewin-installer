@@ -68,13 +68,13 @@ DownloaderProgress::DownloaderProgress(QWidget *parent)
     QGridLayout *mainLayout = new QGridLayout(this);
 
     m_titleLabel = new QLabel;
-    mainLayout->addWidget(m_titleLabel, 0, 0, 1, 2);
+    mainLayout->addWidget(m_titleLabel, 0, 0, 1, 1);
 
     m_progress = new QProgressBar(parent);
     mainLayout->addWidget(m_progress, 1, 0, 1, 1);
 
     m_speedLabel = new QLabel;
-    mainLayout->addWidget(m_speedLabel, 2, 0, 1, 2);
+    mainLayout->addWidget(m_speedLabel, 2, 0, 1, 1);
 
     hide();
 }

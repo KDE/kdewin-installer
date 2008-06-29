@@ -92,7 +92,8 @@ bool Mirrors::parse(const QString &fileName)
     if (!file.exists())
         return false;
 
-    file.open(QIODevice::ReadOnly);
+    if (!file.open(QIODevice::ReadOnly))
+        return false;
     return parse(&file);
 }
 

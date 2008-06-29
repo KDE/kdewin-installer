@@ -34,7 +34,7 @@
 InstallerProgress::InstallerProgress(QWidget *parent,bool showProgress)
 : GenericProgress(parent), m_progress(0)
 {
-    QVBoxLayout *mainLayout = new QVBoxLayout;
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
     m_titleLabel = new QLabel;
     m_titleLabel->setTextFormat( Qt::PlainText );
@@ -54,7 +54,6 @@ InstallerProgress::InstallerProgress(QWidget *parent,bool showProgress)
     m_fileNameLabel->setTextFormat( Qt::PlainText );
     mainLayout->addWidget(m_fileNameLabel);
 
-    setLayout(mainLayout);
     hide();
 }
 
