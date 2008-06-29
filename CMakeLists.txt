@@ -176,6 +176,7 @@ set(installer_shared_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/unpacker.h
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/unpacker_p.h
 #    ${CMAKE_CURRENT_SOURCE_DIR}/shared/installerbase.h
+    ${CMAKE_BINARY_DIR}/config.h
 )
 set(installer_shared_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shared)
 
