@@ -30,6 +30,7 @@
 #include <QtGui/QLabel>
 #include <QtGui/QProgressBar>
 #include <QtGui/QGridLayout>
+#include <QtGui/QDesktopWidget>
 
 #ifdef USE_GUI
 GenericProgress::GenericProgress(QWidget *parent)
@@ -47,7 +48,13 @@ void GenericProgress::setTitle(const QString &title)
 
 void GenericProgress::show()
 {
-  m_parent ? m_parent->show() : QWidget::show();
+  if(m_parent) {
+    m_parent->show();
+    const QRect &r = QDesktopWidget().screenGeometry();
+    m_parent->move(r.width() / 2 - m_parent->width() / 2, r.height() / 2 - m_parent->height() / 2);
+    return;
+  }
+  QWidget::show();
 }
 
 void GenericProgress::hide()

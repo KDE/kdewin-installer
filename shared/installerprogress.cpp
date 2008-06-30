@@ -40,14 +40,10 @@ InstallerProgress::InstallerProgress(QWidget *parent,bool showProgress)
     m_titleLabel->setTextFormat( Qt::PlainText );
     mainLayout->addWidget(m_titleLabel);
 
-    QHBoxLayout *statusLayout = new QHBoxLayout;
-
     if (showProgress) 
     {
         m_progress = new QProgressBar;
-        statusLayout->addWidget(m_progress);
-
-        mainLayout->addLayout(statusLayout);
+        mainLayout->addWidget(m_progress);
     }
 
     m_fileNameLabel = new QLabel;

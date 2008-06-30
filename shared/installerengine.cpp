@@ -54,7 +54,6 @@ InstallerEngine::InstallerEngine(QObject *parent)
     m_packageResources = new PackageList();
 
     connect(&Settings::instance(),SIGNAL(installDirChanged(const QString&)),this,SLOT(installDirChanged(const QString&)));
-    connect(&Settings::instance(),SIGNAL(mirrorChanged(const QString&)),this,SLOT(mirrorChanged(const QString&)));
     connect(m_installer,SIGNAL(error(const QString &)),this,SLOT(slotError(const QString &)));
 
 }
@@ -287,12 +286,6 @@ void InstallerEngine::installDirChanged(const QString &newdir)
     m_installer->setRoot(newdir);
     // this will fetch installed packages
     m_database->setRoot(newdir);
-}
-
-void InstallerEngine::mirrorChanged(const QString &mirror)
-{
-    if (m_initFinished)
-        reload();
 }
 
 QDebug &operator<<(QDebug &out, const InstallerEngine &c)

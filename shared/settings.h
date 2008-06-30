@@ -134,7 +134,6 @@ public:
 Q_SIGNALS:
     void installDirChanged(const QString &newDir);
     void downloadDirChanged(const QString &newDir);
-    void mirrorChanged(const QString &mirror);
     void settingsChanged();
     void compilerTypeChanged();
 

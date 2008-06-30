@@ -137,7 +137,6 @@ void Settings::setMirror(const QString &mirror)
 {
     m_settingsMain->setValue("mirror", mirror);
     m_settingsMain->sync();
-    emit mirrorChanged(mirror);
 }
 
 QStringList Settings::localMirrors() const
@@ -155,7 +154,6 @@ void Settings::setLocalMirrors(const QStringList &locMirrors)
 {
     m_settingsMain->setValue("localMirrors", locMirrors);
     m_settingsMain->sync();
-//    emit mirrorChanged(mirror);
 }
 
 bool Settings::showTitlePage() const
