@@ -40,12 +40,7 @@
 #include "packagestates.h"
 #include "installerdialogs.h"
 
-#include <QDir>
-#include <QTreeWidget>
-#include <QListWidget>
-#include <QTextEdit>
-#include <QFlags>
-#include <QMessageBox>
+#include <QtGui/QTreeWidget>
 
 /// holds the package selection and icon states
 PackageStates packageStates;

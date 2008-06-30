@@ -71,7 +71,7 @@ public:
     {
         m_configFile = '/' + file;
     }
-    QString Name() const
+    QString name() const
     {
         return m_name;
     }
@@ -87,7 +87,7 @@ public:
     {
         m_notes = notes;
     }
-    const QUrl &BaseURL() const
+    const QUrl &baseURL() const
     {
         return m_baseURL;
     }

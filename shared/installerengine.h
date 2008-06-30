@@ -24,7 +24,6 @@
 #define INSTALLERENGINE_H
 
 #include <QString>
-#include <QList>
 
 #include "settings.h"
 #include "globalconfig.h"

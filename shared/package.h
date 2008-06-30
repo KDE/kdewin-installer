@@ -22,7 +22,6 @@
 #ifndef PACKAGE_H
 #define PACKAGE_H
 
-#include <QObject>
 #include <QString>
 #include <QUrl>
 #include <QStringList>

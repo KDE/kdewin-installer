@@ -55,22 +55,7 @@
 #include "installpage.h"
 #include "finishpage.h"
 
-#include <QCheckBox>
-#include <QFile>
-#include <QLabel>
-#include <QLineEdit>
-#include <QModelIndex>
-#include <QTreeWidgetItem>
-#include <QListWidget>
-#include <QPushButton>
-#include <QVBoxLayout>
-#include <QSplitter>
-#include <QGridLayout>
-#include <QFileDialog>
-#include <QInputDialog>
-#include <QApplication>
-#include <QTextEdit>
-#include <QTimer>
+#include <QtCore/QTimer>
 
 InstallerEngineGui *engine;
 

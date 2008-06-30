@@ -22,7 +22,6 @@
 #ifndef MIRRORS_H
 #define MIRRORS_H
 
-#include <QtCore/QObject>
 #include <QtCore/QString>
 #include <QtCore/QUrl>
 class QByteArray;
@@ -84,9 +83,8 @@ typedef QList<MirrorType> MirrorTypeList;
                of an <a> tag 
 */
 
-class Mirrors /* : public QObject */
+class Mirrors
 {
-    //Q_OBJECT
     public:
         enum Type { KDE = 1, KDE_HTML = 2, Cygwin= 3 };
 
