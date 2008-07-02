@@ -1,8 +1,8 @@
 ;kdewin installer configuration file 
 @format 1.3
 ; this format is *prelimary* and may be changed without prior notice
-@minversion 0.9.1
-@timestamp 200803160830
+@minversion 0.9.2
+@timestamp 200806272200
 
 ; category notes 
 @categorynotes qt Qt related packages 
@@ -19,13 +19,15 @@
 @categorypackages kdesupport kdewin32-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw qt-mingw phonon-mingw fontconfig-mingw freetype-mingw poppler-mingw
 @categorypackages KDE amarok-msvc  kdelibs-msvc  kdepimlibs-msvc  kdebase-apps-msvc  kdebase-runtime-msvc  kdeedu-msvc  kdegames-msvc  kdegraphics-msvc  kdenetwork-msvc  kdesdk-msvc  kdewebdev-msvc
 @categorypackages KDE amarok-mingw kdelibs-mingw kdepimlibs-mingw kdebase-apps-mingw kdebase-runtime-mingw kdeedu-mingw kdegames-mingw kdegraphics-mingw kdenetwork-mingw kdesdk-mingw kdewebdev-mingw 
+@categorypackages KDE koffice-msvc  ktorrent-msvc  
+@categorypackages KDE koffice-mingw  ktorrent-mingw  
 @categorypackages qt qt-msvc qt-mingw qt-static-msvc
-@categorypackages KDE kde-i18n-af kde-i18n-ar kde-i18n-be kde-i18n-bg kde-i18n-bn kde-i18n-bn_IN kde-i18n-br kde-i18n-ca kde-i18n-cs kde-i18n-csb kde-i18n-cy kde-i18n-da kde-i18n-de kde-i18n-el kde-i18n-en_GB 
-@categorypackages KDE kde-i18n-eo kde-i18n-es kde-i18n-et kde-i18n-eu kde-i18n-fa kde-i18n-fi kde-i18n-fr kde-i18n-fy kde-i18n-ga kde-i18n-gl kde-i18n-gu kde-i18n-ha kde-i18n-he kde-i18n-hi kde-i18n-hr kde-i18n-hsb 
-@categorypackages KDE kde-i18n-hu kde-i18n-hy kde-i18n-is kde-i18n-it kde-i18n-ja kde-i18n-ka kde-i18n-kk kde-i18n-km kde-i18n-kn kde-i18n-ko kde-i18n-ku kde-i18n-lb kde-i18n-lt kde-i18n-lv kde-i18n-ml kde-i18n-mk 
-@categorypackages KDE kde-i18n-ms kde-i18n-mt kde-i18n-nb kde-i18n-nds kde-i18n-ne kde-i18n-nl kde-i18n-nn kde-i18n-nso kde-i18n-oc kde-i18n-pa kde-i18n-pl kde-i18n-pt kde-i18n-pt_BR kde-i18n-ro kde-i18n-ru 
-@categorypackages KDE kde-i18n-rw kde-i18n-se kde-i18n-sk kde-i18n-sl kde-i18n-sr kde-i18n-sr@latin kde-i18n-sv kde-i18n-ta kde-i18n-te kde-i18n-tg kde-i18n-th kde-i18n-tr kde-i18n-uk kde-i18n-uz kde-i18n-vi 
-@categorypackages KDE kde-i18n-wa kde-i18n-xh kde-i18n-x-test kde-i18n-zh_CN kde-i18n-zh_HK kde-i18n-zh_TW
+@categorypackages KDE kde-l10n-af kde-l10n-ar kde-l10n-be kde-l10n-bg kde-l10n-bn kde-l10n-bn_IN kde-l10n-br kde-l10n-ca kde-l10n-cs kde-l10n-csb kde-l10n-cy kde-l10n-da kde-l10n-de kde-l10n-el kde-l10n-en_GB 
+@categorypackages KDE kde-l10n-eo kde-l10n-es kde-l10n-et kde-l10n-eu kde-l10n-fa kde-l10n-fi kde-l10n-fr kde-l10n-fy kde-l10n-ga kde-l10n-gl kde-l10n-gu kde-l10n-ha kde-l10n-he kde-l10n-hi kde-l10n-hr kde-l10n-hsb 
+@categorypackages KDE kde-l10n-hu kde-l10n-hy kde-l10n-is kde-l10n-it kde-l10n-ja kde-l10n-ka kde-l10n-kk kde-l10n-km kde-l10n-kn kde-l10n-ko kde-l10n-ku kde-l10n-lb kde-l10n-lt kde-l10n-lv kde-l10n-ml kde-l10n-mk 
+@categorypackages KDE kde-l10n-ms kde-l10n-mt kde-l10n-nb kde-l10n-nds kde-l10n-ne kde-l10n-nl kde-l10n-nn kde-l10n-nso kde-l10n-oc kde-l10n-pa kde-l10n-pl kde-l10n-pt kde-l10n-pt_BR kde-l10n-ro kde-l10n-ru 
+@categorypackages KDE kde-l10n-rw kde-l10n-se kde-l10n-sk kde-l10n-sl kde-l10n-sr kde-l10n-sr@latin kde-l10n-sv kde-l10n-ta kde-l10n-te kde-l10n-tg kde-l10n-th kde-l10n-tr kde-l10n-uk kde-l10n-uz kde-l10n-vi 
+@categorypackages KDE kde-l10n-wa kde-l10n-xh kde-l10n-x-test kde-l10n-zh_CN kde-l10n-zh_HK kde-l10n-zh_TW
 
 ;------------------------------------------------------
 ; all packages on the mirror
@@ -51,11 +53,13 @@
 @deps kdegames-mingw kdebase-runtime-mingw kdelibs-mingw phonon-mingw
 @deps kdegraphics-mingw kdebase-runtime-mingw kdelibs-mingw fontconfig-mingw freetype-mingw poppler-mingw
 @deps kdenetwork-mingw kdebase-runtime-mingw kdelibs-mingw
-@deps kdesdk-mingw kdebase-runtime-mingw kdelibs-mingw kdepimlibs-mingw
+@deps kdesdk-mingw kdebase-runtime-mingw kdelibs-mingw kdepimlibs-mingw astyle
 @deps kdetoys-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps kdewebdev-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps kdewin-installer-mingw qt-mingw
 @deps kdewin32-mingw qt-mingw
+@deps koffice-mingw kdebase-runtime-mingw kdelibs-mingw lcms
+@deps ktorrent-mingw libgmp-mingw kdelibs-mingw qca-mingw
 @deps qt-mingw dbus-mingw runtime-mingw
 @deps strigi-mingw libbzip2 openssl zlib iconv libxml2
 ; msvc dependencies 
@@ -70,16 +74,19 @@
 @deps kdelibs-msvc pcre-msvc vcredist qt-msvc dbus-msvc kdewin32-msvc qimageblitz-msvc qca-msvc strigi-msvc soprano-msvc taglib-msvc aspell libbzip2 expat giflib iconv jasper jpeg libintl libpng libxml2 libxslt openssl tiff zlib shared-mime-info
 @deps kdenetwork-msvc kdebase-runtime-msvc kdelibs-msvc
 @deps kdepimlibs-msvc kdelibs-msvc
-@deps kdesdk-msvc kdebase-runtime-msvc kdelibs-msvc
+@deps kdesdk-msvc kdebase-runtime-msvc kdelibs-msvc astyle
 @deps kdewebdev-msvc kdebase-runtime-msvc kdelibs-msvc
 @deps kdewin-installer-msvc qt-msvc
 @deps kdewin32-msvc qt-msvc
 @deps kdetoys-msvc kdebase-runtime-msvc kdelibs-msvc
+@deps koffice-msvc kdebase-runtime-msvc kdelibs-msvc lcms
+@deps ktorrent-msvc libgmp-msvc kdelibs-msvc qca-msvc
 @deps qt-msvc dbus-msvc vcredist
 @deps strigi-msvc libbzip2 openssl zlib iconv libxml2
 ; compiler independent
 @pkgnotes clucene high-performance, full-featured text search engine (required for compiling strigi) 
 ; mingw
+@pkgnotes akonadi-mingw KDE4 Personal Information Manager framework
 @pkgnotes amarok-mingw media player 
 @pkgnotes fontconfig-mingw library for font customization and configuration
 @pkgnotes freetype-mingw A Free, High-Quality, and Portable Font Engine
@@ -94,14 +101,22 @@
 @pkgnotes kdetoys-mingw collection of several programs in KDE
 @pkgnotes kdewebdev-mingw KDE Web Development applications
 @pkgnotes kdewin32-mingw kde supplementary package for win32
-@pkgnotes poppler-mingw PDF rendering library based on the xpdf-3.0
+@pkgnotes koffice-mingw KDE Office application suite
+@pkgnotes ktorrent-mingw KDE Torrent client
+@pkgnotes libgmp-mingw devel-tools GNU MP library for abritary precision arithmetic
+@pkgnotes phonon-mingw KDE KDE4 multimedia API
+@pkgnotes poppler-mingw PDF rendering library based on xpdf-3.0
+@pkgnotes pcre-mingw Perl-Compatible Regular Expressions (utilities)
 @pkgnotes qca-mingw Qt Cryptographic Architecture (QCA)
 @pkgnotes qimageblitz-mingw KDE image effect library
 @pkgnotes qt-mingw C++ GUI application framework
+@pkgnotes runtime-mingw Mingw runtime files
 @pkgnotes soprano-mingw RDF storage solutions library
 @pkgnotes strigi-mingw desktop search engine
+@pkgnotes subversion-mingw software revision system
 @pkgnotes taglib-mingw audio meda-data library
 ; msvc 
+@pkgnotes akonadi-msvc KDE4 Personal Information Manager framework
 @pkgnotes amarok-msvc media player 
 @pkgnotes fontconfig-msvc library for font customization and configuration
 @pkgnotes freetype-msvc A Free, High-Quality, and Portable Font Engine
@@ -116,7 +131,12 @@
 @pkgnotes kdetoys-msvc collection of several programs in KDE
 @pkgnotes kdewebdev-msvc KDE Web Development applications
 @pkgnotes kdewin32-msvc kde supplementary package for win32
+@pkgnotes koffice-msvc KDE Office application suite
+@pkgnotes ktorrent-msvc KDE Torrent client
+@pkgnotes libgmp-msvc devel-tools GNU MP library for abritary precision arithmetic
 @pkgnotes poppler-msvc PDF rendering library based on the xpdf-3.0
+@pkgnotes phonon-msvc KDE KDE4 multimedia API
+@pkgnotes pcre-msvc Perl-Compatible Regular Expressions (utilities)
 @pkgnotes qca-msvc Qt Cryptographic Architecture (QCA)
 @pkgnotes qimageblitz-msvc KDE image effect library
 @pkgnotes qt-msvc C++ GUI application framework
@@ -125,14 +145,27 @@
 @pkgnotes strigi-msvc desktop search engine
 @pkgnotes taglib-msvc audio meda-data library
 ;other
+@pkgnotes astyle source code formatter
 @pkgnotes aspell A powerful spell checker, designed to replace ispell
 @pkgnotes boost-headers portable C++ libraries
+@pkgnotes byacc Berkeley parser generator
+@pkgnotes bzip2 Bzip compression utility
 @pkgnotes cfitsio library for the FITS (Flexible Image Transport System) file format
+@pkgnotes diffutils Tools to find difference between two files
 @pkgnotes dbus-mingw Freedesktop message bus system (daemon and clients)
 @pkgnotes dbus-msvc Freedesktop message bus system (daemon and clients)
+@pkgnotes eigen Lightweight C++ template library for vector and matrix math
 @pkgnotes expat XML parser library written in C (development/documentation package)
+@pkgnotes findutils Utilities to find files
+@pkgnotes flex Fast lexical analyzer generator
+@pkgnotes gawk GNU Awk programming language
+@pkgnotes gettext GNU internationalization (i18n)
+@pkgnotes gettext-tools GNU internationalization (i18n) tools
+@pkgnotes gmm C++ template library for advanced linear algebra supporting dense and sparse representation of matrices and vectors
+@pkgnotes grep Global Regular Expression Print
 @pkgnotes giflib GIF file manipulation library (utilities and docs)
 @pkgnotes gpgme GnuPG cryptography support library (runtime)
+@pkgnotes gzip GNU zip compression tool
 @pkgnotes iconv GNU character set conversion library and utilities
 @pkgnotes jasper JPEG-2000 Library
 @pkgnotes jpeg A library for manipulating JPEG image format files
@@ -143,110 +176,114 @@
 @pkgnotes libpng PNG library (runtime)
 @pkgnotes libxml2 XML C parser and toolkit (runtime and applications)
 @pkgnotes libxslt The GNOME XSLT C library and tools
+@pkgnotes md5sums md5 checksum tool
+@pkgnotes mingw-utils Mingw Utilities
 @pkgnotes openslp openslp client and libraries
 @pkgnotes openssl The OpenSSL runtime environment
-@pkgnotes pcre-mingw Perl-Compatible Regular Expressions (utilities)
-@pkgnotes pcre-msvc Perl-Compatible Regular Expressions (utilities)
+@pkgnotes patch Tool to merge diff files
 @pkgnotes redland Resource Description Framework (RDF)
+@pkgnotes sed Stream Editor
 @pkgnotes shared-mime-info common mimetype library
+@pkgnotes tar Tape ARchive
 @pkgnotes tiff TIFF image library (utilities)
+@pkgnotes wget Tool to get websites / files
 @pkgnotes zlib The zlib compression and decompression library
 ; language packages
-@pkgnotes kde-i18n-af Afrikaans language package
-@pkgnotes kde-i18n-ar Arabic language package
-@pkgnotes kde-i18n-az Azerbaijani language package
-@pkgnotes kde-i18n-be Belarusian language package
-@pkgnotes kde-i18n-bg Bulgarian language package
-@pkgnotes kde-i18n-bn Bengali language package
-@pkgnotes kde-i18n-bn_IN Bengali (India) language package
-@pkgnotes kde-i18n-bo Tibetan language package
-@pkgnotes kde-i18n-br Breton language package
-@pkgnotes kde-i18n-bs Bosnian language package
-@pkgnotes kde-i18n-ca Catalan language package
-@pkgnotes kde-i18n-cs Czech language package
-@pkgnotes kde-i18n-csb Kashubian language package
-@pkgnotes kde-i18n-cy Welsh language package
-@pkgnotes kde-i18n-da Danish language package
-@pkgnotes kde-i18n-de German language package
-@pkgnotes kde-i18n-el Greek language package
-@pkgnotes kde-i18n-en_GB British English language package
-@pkgnotes kde-i18n-eo Esperanto language package
-@pkgnotes kde-i18n-es Spanish language package
-@pkgnotes kde-i18n-et Estonian language package
-@pkgnotes kde-i18n-eu Basque language package
-@pkgnotes kde-i18n-fa Farsi language package
-@pkgnotes kde-i18n-fi Finnish language package
-@pkgnotes kde-i18n-fo Faroese language package
-@pkgnotes kde-i18n-fr French language package
-@pkgnotes kde-i18n-fy Frisian language package
-@pkgnotes kde-i18n-ga Irish Gaelic language package
-@pkgnotes kde-i18n-gl Galician language package
-@pkgnotes kde-i18n-gu Gujarati language package
-@pkgnotes kde-i18n-ha Hausa language package
-@pkgnotes kde-i18n-he Hebrew language package
-@pkgnotes kde-i18n-hi Hindi language package
-@pkgnotes kde-i18n-hr Croatian language package
-@pkgnotes kde-i18n-hsb Upper Sorbian language package
-@pkgnotes kde-i18n-hu Hungarian language package
-@pkgnotes kde-i18n-hy Armenian language package
-@pkgnotes kde-i18n-id Indonesian language package
-@pkgnotes kde-i18n-is Icelandic language package
-@pkgnotes kde-i18n-it Italian language package
-@pkgnotes kde-i18n-ja Japanese language package
-@pkgnotes kde-i18n-ka Georgian language package
-@pkgnotes kde-i18n-kk Kazakh language package
-@pkgnotes kde-i18n-km Khmer language package
-@pkgnotes kde-i18n-kn Kannada language package
-@pkgnotes kde-i18n-ko Korean language package
-@pkgnotes kde-i18n-ku Kurdish language package
-@pkgnotes kde-i18n-lb Luxembourgish language package
-@pkgnotes kde-i18n-lo Lao language package
-@pkgnotes kde-i18n-lt Lithuanian language package
-@pkgnotes kde-i18n-lv Latvian language package
-@pkgnotes kde-i18n-mi Maori language package
-@pkgnotes kde-i18n-ml Malayalam language package
-@pkgnotes kde-i18n-mk Macedonian language package
-@pkgnotes kde-i18n-mn Mongolian language package
-@pkgnotes kde-i18n-ms Malay language package
-@pkgnotes kde-i18n-mt Maltese language package
-@pkgnotes kde-i18n-ne Nepali language package
-@pkgnotes kde-i18n-nl Dutch language package
-@pkgnotes kde-i18n-nb Norwegian Bokmal language package
-@pkgnotes kde-i18n-nds Low Saxon language package
-@pkgnotes kde-i18n-nso Northern Sotho language package
-@pkgnotes kde-i18n-nn Norwegian Nynorsk language package
-@pkgnotes kde-i18n-oc Occitan language package
-@pkgnotes kde-i18n-pa Panjabi/Punjabi language package
-@pkgnotes kde-i18n-pl Polish language package
-@pkgnotes kde-i18n-pt Portuguese language package
-@pkgnotes kde-i18n-pt_BR Brazilian Portuguese language package
-@pkgnotes kde-i18n-ro Romanian language package
-@pkgnotes kde-i18n-ru Russian language package
-@pkgnotes kde-i18n-rw Kinyarwanda language package
-@pkgnotes kde-i18n-se Northern Sami language package
-@pkgnotes kde-i18n-sk Slovak language package
-@pkgnotes kde-i18n-sl Slovenian language package
-@pkgnotes kde-i18n-sq Albanian language package
-@pkgnotes kde-i18n-sr Serbian language package
-@pkgnotes kde-i18n-sr@latin Serbian Latin language package
-@pkgnotes kde-i18n-ss Swati language package
-@pkgnotes kde-i18n-sv Swedish language package
-@pkgnotes kde-i18n-ta Tamil language package
-@pkgnotes kde-i18n-te Telugu language package
-@pkgnotes kde-i18n-tg Tajik language package
-@pkgnotes kde-i18n-th Thai language package
-@pkgnotes kde-i18n-tr Turkish language package
-@pkgnotes kde-i18n-tt Tatar language package
-@pkgnotes kde-i18n-uk Ukrainian language package
-@pkgnotes kde-i18n-uz Uzbek language package
-@pkgnotes kde-i18n-ven Venda language package
-@pkgnotes kde-i18n-vi Vietnamese language package
-@pkgnotes kde-i18n-wa Walloon language package
-@pkgnotes kde-i18n-xh Xhosa language package
-@pkgnotes kde-i18n-zh_CN Chinese Simplified language package
-@pkgnotes kde-i18n-zh_HK Chinese (Hong Kong) language package
-@pkgnotes kde-i18n-zh_TW Chinese Traditional language package
-@pkgnotes kde-i18n-zu Zulu language package
+@pkgnotes kde-l10n-af Afrikaans language package
+@pkgnotes kde-l10n-ar Arabic language package
+@pkgnotes kde-l10n-az Azerbaijani language package
+@pkgnotes kde-l10n-be Belarusian language package
+@pkgnotes kde-l10n-bg Bulgarian language package
+@pkgnotes kde-l10n-bn Bengali language package
+@pkgnotes kde-l10n-bn_IN Bengali (India) language package
+@pkgnotes kde-l10n-bo Tibetan language package
+@pkgnotes kde-l10n-br Breton language package
+@pkgnotes kde-l10n-bs Bosnian language package
+@pkgnotes kde-l10n-ca Catalan language package
+@pkgnotes kde-l10n-cs Czech language package
+@pkgnotes kde-l10n-csb Kashubian language package
+@pkgnotes kde-l10n-cy Welsh language package
+@pkgnotes kde-l10n-da Danish language package
+@pkgnotes kde-l10n-de German language package
+@pkgnotes kde-l10n-el Greek language package
+@pkgnotes kde-l10n-en_GB British English language package
+@pkgnotes kde-l10n-eo Esperanto language package
+@pkgnotes kde-l10n-es Spanish language package
+@pkgnotes kde-l10n-et Estonian language package
+@pkgnotes kde-l10n-eu Basque language package
+@pkgnotes kde-l10n-fa Farsi language package
+@pkgnotes kde-l10n-fi Finnish language package
+@pkgnotes kde-l10n-fo Faroese language package
+@pkgnotes kde-l10n-fr French language package
+@pkgnotes kde-l10n-fy Frisian language package
+@pkgnotes kde-l10n-ga Irish Gaelic language package
+@pkgnotes kde-l10n-gl Galician language package
+@pkgnotes kde-l10n-gu Gujarati language package
+@pkgnotes kde-l10n-ha Hausa language package
+@pkgnotes kde-l10n-he Hebrew language package
+@pkgnotes kde-l10n-hi Hindi language package
+@pkgnotes kde-l10n-hr Croatian language package
+@pkgnotes kde-l10n-hsb Upper Sorbian language package
+@pkgnotes kde-l10n-hu Hungarian language package
+@pkgnotes kde-l10n-hy Armenian language package
+@pkgnotes kde-l10n-id Indonesian language package
+@pkgnotes kde-l10n-is Icelandic language package
+@pkgnotes kde-l10n-it Italian language package
+@pkgnotes kde-l10n-ja Japanese language package
+@pkgnotes kde-l10n-ka Georgian language package
+@pkgnotes kde-l10n-kk Kazakh language package
+@pkgnotes kde-l10n-km Khmer language package
+@pkgnotes kde-l10n-kn Kannada language package
+@pkgnotes kde-l10n-ko Korean language package
+@pkgnotes kde-l10n-ku Kurdish language package
+@pkgnotes kde-l10n-lb Luxembourgish language package
+@pkgnotes kde-l10n-lo Lao language package
+@pkgnotes kde-l10n-lt Lithuanian language package
+@pkgnotes kde-l10n-lv Latvian language package
+@pkgnotes kde-l10n-mi Maori language package
+@pkgnotes kde-l10n-ml Malayalam language package
+@pkgnotes kde-l10n-mk Macedonian language package
+@pkgnotes kde-l10n-mn Mongolian language package
+@pkgnotes kde-l10n-ms Malay language package
+@pkgnotes kde-l10n-mt Maltese language package
+@pkgnotes kde-l10n-ne Nepali language package
+@pkgnotes kde-l10n-nl Dutch language package
+@pkgnotes kde-l10n-nb Norwegian Bokmal language package
+@pkgnotes kde-l10n-nds Low Saxon language package
+@pkgnotes kde-l10n-nso Northern Sotho language package
+@pkgnotes kde-l10n-nn Norwegian Nynorsk language package
+@pkgnotes kde-l10n-oc Occitan language package
+@pkgnotes kde-l10n-pa Panjabi/Punjabi language package
+@pkgnotes kde-l10n-pl Polish language package
+@pkgnotes kde-l10n-pt Portuguese language package
+@pkgnotes kde-l10n-pt_BR Brazilian Portuguese language package
+@pkgnotes kde-l10n-ro Romanian language package
+@pkgnotes kde-l10n-ru Russian language package
+@pkgnotes kde-l10n-rw Kinyarwanda language package
+@pkgnotes kde-l10n-se Northern Sami language package
+@pkgnotes kde-l10n-sk Slovak language package
+@pkgnotes kde-l10n-sl Slovenian language package
+@pkgnotes kde-l10n-sq Albanian language package
+@pkgnotes kde-l10n-sr Serbian language package
+@pkgnotes kde-l10n-sr@latin Serbian Latin language package
+@pkgnotes kde-l10n-ss Swati language package
+@pkgnotes kde-l10n-sv Swedish language package
+@pkgnotes kde-l10n-ta Tamil language package
+@pkgnotes kde-l10n-te Telugu language package
+@pkgnotes kde-l10n-tg Tajik language package
+@pkgnotes kde-l10n-th Thai language package
+@pkgnotes kde-l10n-tr Turkish language package
+@pkgnotes kde-l10n-tt Tatar language package
+@pkgnotes kde-l10n-uk Ukrainian language package
+@pkgnotes kde-l10n-uz Uzbek language package
+@pkgnotes kde-l10n-ven Venda language package
+@pkgnotes kde-l10n-vi Vietnamese language package
+@pkgnotes kde-l10n-wa Walloon language package
+@pkgnotes kde-l10n-xh Xhosa language package
+@pkgnotes kde-l10n-zh_CN Chinese Simplified language package
+@pkgnotes kde-l10n-zh_HK Chinese (Hong Kong) language package
+@pkgnotes kde-l10n-zh_TW Chinese Traditional language package
+@pkgnotes kde-l10n-zu Zulu language package
 
 ;------------------------------------------------------
 ; debugging tools
@@ -325,13 +362,6 @@
 @url-src http://www.cmake.org/files/v2.4/cmake-2.4.7.zip cmake-2.4.7-src.zip
 @relocate cmake-2.4.7-win32-x86 .
 ;@options
-
-@package astyle
-@category devel-tools 
-@notes source code formatter
-@version 1.20.2
-@url-bin http://mesh.dl.sourceforge.net/sourceforge/astyle/astyle_1.20.2_windows.zip astyle-1.20.2-bin.zip 
-@relocate astyle/ ./
 
 @package depends
 @notes Dependency Walker
