@@ -204,8 +204,8 @@ set (SITE_URL "@url .")
 set (SITE_URL_LIST ";")
 configure_file(${CMAKE_SOURCE_DIR}/config.txt.cmake ${CMAKE_BINARY_DIR}/config/ktown.kde.org/config.txt)
 
-set (RELEASE_PATH "/unstable/4.0.65/win32")
-set (RELEASE "4.0.65")
+set (RELEASE_PATH "/unstable/4.0.83/win32")
+set (RELEASE "4.0.83")
 configure_file(${CMAKE_SOURCE_DIR}/mirrors.lst.cmake ${CMAKE_BINARY_DIR}/config/mirrors.lst)
 
 #FIXME: ${BZIP2_LIBRARIES} -> 3rdparty
@@ -228,6 +228,11 @@ else(UNIX)
   # required for static linking
   set (LIBS kernel32 user32 shell32 uuid ole32 advapi32 ws2_32 shlwapi ${BZIP2_LIBRARIES} ${CURL_LIBRARIES})
   set (GUI_LIBS gdi32 comdlg32 oleaut32 imm32 winmm winspool ws2_32 ole32 uuid user32 advapi32 shlwapi ${CURL_LIBRARIES})
+  # when qt 4.4 is build with directx support dxguid is required 
+  # how to detect that qt 4.4 is build with directx ? 
+  if (QT_VERSION_MAJOR EQUAL 4 AND QT_VERSION_MINOR GREATER 3) 
+	  list(APPEND GUI_LIBS dxguid)
+  endif (QT_VERSION_MAJOR EQUAL 4 AND QT_VERSION_MINOR GREATER 3) 
 endif (UNIX)
 
 
