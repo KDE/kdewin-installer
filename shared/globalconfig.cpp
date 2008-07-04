@@ -251,6 +251,10 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     else
                         pkg->item(type).set(url,fn,type);
                 }
+                else if(keyword.startsWith("@nomd5")) 
+                {
+                    pkg->setMD5Check(false); 
+                }
                 else if(keyword.startsWith("@md5-")) 
                 {
                     Package::Type type;

@@ -195,6 +195,10 @@ public:
     /// set Install state of a package type (e.g. from gnuwin32 manifests)
     QT_DEPRECATED void setInstalled(const Package &other);
 
+    /// enable/disable MD5 checking for this package 
+    void setMD5Check(bool mode) { m_MD5Check = mode; }
+    bool MD5Check() { return m_MD5Check; }
+
     /// save package to stream
     bool write(QTextStream &out) const;
     /// load package from stream
@@ -241,6 +245,7 @@ protected:
     QStringList m_deps;
     StringHash m_pathRelocs;
     bool       m_handled;      // marker for several operations
+    bool       m_MD5Check;    // marker for md5 checking 
 
     friend QDebug &operator<<(QDebug &, const Package &);
 };

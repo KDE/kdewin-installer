@@ -248,12 +248,12 @@ QDebug &operator<<(QDebug &out, const Package::PackageItem &c)
 
 #ifndef PACKAGE_SMALL_VERSION
 
-Package::Package()
+Package::Package() : m_MD5Check(true)
 {
     m_handled = false;
 }
 
-Package::Package(const Package &other)
+Package::Package(const Package &other) : m_MD5Check(true)
 {
     m_packages   = other.m_packages;
     m_name       = other.m_name;
