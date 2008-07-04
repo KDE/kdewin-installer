@@ -30,10 +30,7 @@ FinishPage::FinishPage()
     setSubTitle(tr(" "));
 
     QLabel* label = new QLabel(tr(
-         "<p>Now you should be able to run KDE applications. "
-         "Please open an explorer window and navigate to the bin folder of the KDE installation root. "
-         "There you will find several applications which can be started by simply double clicking on the executable.</p>"
-         "<p>In future versions of this installer it will also be possible to start KDE applications from the Windows Start menu.</p>"
+         "<p>Now you should be able to run KDE applications. In the start menu you will find entries for the installed kde applications.</p>"
          "<p>If you <ul>"
          "<li>like to see the KDE on Windows project web site see <a href=\"http://windows.kde.org\">http://windows.kde.org</a></li>"
          "<li>like to get community support for this installer and/or running KDE applications please contact "
@@ -46,8 +43,7 @@ FinishPage::FinishPage()
          "<p><b>The KDE on Windows team</b></p>"
          "<p>&nbsp;</p>"
          "<p>&nbsp;</p>"
-         "<p>This software is designed to provide a powerfull and flexible network based install system using a modern gui toolkit."
-         "If you need assistance or have specific needs for such services, please contact <a href=\"mailto:ralf.habacker@freenet.de\">Ralf Habacker</a>.</p>"
+         "<p>This software is designed to provide a powerfull and flexible network based install system using a modern gui toolkit.</p>"
          ));
 
     label->setOpenExternalLinks (true);
