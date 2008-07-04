@@ -58,16 +58,16 @@
 ; package version 
 @version 4.3.0b
 ;
-; url of binary/runtime package
+; url of binary/runtime package (absolute or relative)
 @url-bin qt/single/qt-msvc-4.3.0b-bin.zip
 ;
-; url of development package including include headers, import libraries and tools for compiling applications/libraries against this package 
+; url of development package including include headers, import libraries and tools for compiling applications/libraries against this package  (absolute or relative)
 @url-lib qt/single/qt-msvc-4.3.0b-lib.zip
 ;
-; url of documentation package
+; url of documentation package (absolute or relative)
 @url-doc qt/single/qt-msvc-4.3.0b-doc.zip
 ;
-; url of source package
+; url of source package (absolute or relative)
 @url-src http://ftp.iasi.roedu.net/mirrors/ftp.trolltech.com/qt/source/qt-win-opensource-src-4.3.0beta.zip qt-msvc-4.3.0b-src.zip
 ;
 ; package dependencies
