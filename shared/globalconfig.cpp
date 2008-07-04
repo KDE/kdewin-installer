@@ -251,6 +251,28 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     else
                         pkg->item(type).set(url,fn,type);
                 }
+                else if(keyword.startsWith("@md5-")) 
+                {
+                    Package::Type type;
+                    if(keyword == "@md5-bin")
+                        type = Package::BIN;
+                    else if(keyword == "@md5-lib")
+                        type = Package::LIB;
+                    else if(keyword == "@md5-doc")
+                        type = Package::DOC;
+                    else if(keyword == "@md5-src")
+                        type = Package::SRC;
+                    else
+                        continue;
+                    if (!pkg->hasType(type))
+                    {
+                        Package::PackageItem item;
+                        item.md5 = cmd[1];
+                        pkg->add(item);
+                    }
+                    else
+                        pkg->item(type).md5 = cmd[1];
+                }
                 else if(keyword == "@require")
                 {
                     cmd.removeFirst();

@@ -93,6 +93,7 @@ public:
             QUrl    url;            // complete download url
             QString fileName;       // filename only
             QString packageType;    // zip / msi / ...
+            QString md5;            /// md5 sum 
             Type    contentType;    // BIN / LIB / DOC / SRC
             bool    bInstalled;     // true if already installed
             PackageVersion version; // package item version
