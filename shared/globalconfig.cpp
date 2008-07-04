@@ -239,11 +239,17 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     else
                         continue;
                     QUrl url(cmd[1]);
+                    QString fn = col2;
                     if (url.scheme().isEmpty())
                         url = QUrl(m_baseURL + cmd[1]);
-                    Package::PackageItem item;
-                    if (item.set(url,col2,type))
-                        pkg->add(item);
+                    if (!pkg->hasType(type))
+                    {
+                        Package::PackageItem item;
+                        if (item.set(url,fn,type))
+                            pkg->add(item);
+                    }
+                    else
+                        pkg->item(type).set(url,fn,type);
                 }
                 else if(keyword == "@require")
                 {
