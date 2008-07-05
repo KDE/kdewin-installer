@@ -253,7 +253,7 @@ Package::Package() : m_MD5Check(true)
     m_handled = false;
 }
 
-Package::Package(const Package &other) : m_MD5Check(true)
+Package::Package(const Package &other)
 {
     m_packages   = other.m_packages;
     m_name       = other.m_name;
@@ -265,6 +265,7 @@ Package::Package(const Package &other) : m_MD5Check(true)
     m_notes      = other.m_notes;
     m_longNotes  = other.m_longNotes;
     m_installedversion = other.m_installedversion;
+	m_MD5Check = other.m_MD5Check;
 }
 
 QString Package::getFileName(Package::Type contentType) const
@@ -479,7 +480,7 @@ static QByteArray readMD5SumFile(const QString &filename)
   return str;
 }
 
-bool Package::downloadItem(Package::Type type)
+ bool Package::downloadItem(Package::Type type)
 {
 	/// @TODO: prevent downloading md5 sum file twice
     QUrl url = getUrl(type);
@@ -498,13 +499,13 @@ bool Package::downloadItem(Package::Type type)
     bool ret = true;
     // md5 sum may not be present from older downloads, try downloading first. 
     // This prevents redownloading the archive unconditionally when no md5 sum is present 
-    if (!QFile::exists(md5)) {
+    if (m_MD5Check && !QFile::exists(md5)) {
         qDebug() << __FUNCTION__ << " downloading md5 sum file";
         Downloader::instance()->fetch(urlmd5, md5);
         // errors are handled later 
     }
     //  if archive and md5 file is present check md5 sum 
-    if(QFile::exists(fn) && QFile::exists(md5)) {
+    if(m_MD5Check && QFile::exists(fn) && QFile::exists(md5)) {
         // Already downloaded and md5sum exist - check if it md5sum matches so
         // we don't need to download again        qDebug() << __FUNCTION__ << " URL " << url.toString() << " already downloaded for type " << type;
         QByteArray md5FromFile = readMD5SumFile( md5 );
@@ -520,7 +521,7 @@ bool Package::downloadItem(Package::Type type)
         QFile::remove(md5);
     }
 
-    if (!QFile::exists(md5)) {
+    if (m_MD5Check && !QFile::exists(md5)) {
         qDebug() << __FUNCTION__ << " downloading md5 sum file";
         Downloader::instance()->fetch(urlmd5, md5);
         // errors are handled later 
@@ -534,23 +535,26 @@ bool Package::downloadItem(Package::Type type)
         if (!ret || Downloader::instance()->result() != Downloader::Finished)
             return false; 
     }
-    // try to read <filename>.md5
-    QByteArray md5FromFile = readMD5SumFile( md5 );
-    if( md5FromFile.length() == 32 ) {
-        if( md5FromFile != Downloader::instance()->md5Sum().toHex() ) {
-            qDebug() << __FUNCTION__ << "md5sum is not correct - error downloading file!";
-            return false;
+    if (m_MD5Check) 
+    {
+        // try to read <filename>.md5
+        QByteArray md5FromFile = readMD5SumFile( md5 );
+        if( md5FromFile.length() == 32 ) {
+            if( md5FromFile != Downloader::instance()->md5Sum().toHex() ) {
+                qDebug() << __FUNCTION__ << "md5sum is not correct - error downloading file!";
+                return false;
+            }
+        } else {
+            // no md5 file available - create it from downloaded data
+            //  RH: This  may create a validation hole  because the md5sum may be created from a corrupt archive
+            QFile f( md5 );
+            if( !f.open( QIODevice::ReadOnly|QIODevice::Truncate ) )
+                return ret;
+            f.write( Downloader::instance()->md5Sum().toHex() );
+            f.write( "  " );
+            f.write( fn.toLocal8Bit() );
+            f.close();
         }
-    } else {
-        // no md5 file available - create it from downloaded data
-        //  RH: This  may create a validation hole  because the md5sum may be created from a corrupt archive
-        QFile f( md5 );
-        if( !f.open( QIODevice::ReadOnly|QIODevice::Truncate ) )
-            return ret;
-        f.write( Downloader::instance()->md5Sum().toHex() );
-        f.write( "  " );
-        f.write( fn.toLocal8Bit() );
-        f.close();
     }
     return true;
 }
