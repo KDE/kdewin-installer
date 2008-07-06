@@ -177,10 +177,10 @@ void InstallerEngineGui::setEndUserInitialState ( QTreeWidgetItem &item, Package
     if (installed && available->version() > installed->version())
     {
         if (installed->isInstalled(Package::BIN))
-		{
+        {
             setIcon(item,column,packageStates.getState(installed,Package::BIN),_update);
-			packageStates.setState(available,Package::BIN,_Update);
-		}
+            packageStates.setState(available,Package::BIN,_Update);
+        }
     }
     else if (installed)
     {
