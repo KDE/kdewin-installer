@@ -118,7 +118,7 @@ QDebug &operator<<(QDebug &out, const Site::SiteType &c)
         case Site::SourceForge:       out << "SourceForge"; break;
         case Site::SourceForgeMirror: out << "SourceForgeMirror"; break;
         case Site::ApacheModIndex:    out << "ApacheModIndex"; break;
-        default:					  out << "unknown type";
+        default:                      out << "unknown type";
     }
     return out;
 }

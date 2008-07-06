@@ -37,13 +37,13 @@
 
 Package::PackageVersion::PackageVersion(const QString &version)
 {
-	m_version = version;
+    m_version = version;
 }
 
 Package::PackageVersion &Package::PackageVersion::operator=(const Package::PackageVersion &other)
 {
-	m_version = other.m_version;
-	return *this; 
+    m_version = other.m_version;
+    return *this; 
 }
 
 int  Package::PackageVersion::compare(const Package::PackageVersion &other) const
@@ -60,50 +60,50 @@ int  Package::PackageVersion::compare(const Package::PackageVersion &other) cons
 
 bool Package::PackageVersion::operator<(const Package::PackageVersion &other) const
 {
-	return compare(other) < 0 ? true : false; 
+    return compare(other) < 0 ? true : false; 
 }
 
 bool Package::PackageVersion::operator>(const Package::PackageVersion &other) const
 {
-	return compare(other) > 0; 
+    return compare(other) > 0; 
 }
 
 bool Package::PackageVersion::operator==(const Package::PackageVersion &other) const
 {
-	return compare(other) == 0;
+    return compare(other) == 0;
 }
 
 bool Package::PackageVersion::operator!=(const Package::PackageVersion &other) const
 {
-	return compare(other) != 0;
+    return compare(other) != 0;
 }
 
 bool Package::PackageVersion::operator==(const QString &other) const
 {
-	return compare(PackageVersion(other)) == 0; 
+    return compare(PackageVersion(other)) == 0; 
 }
 
 bool Package::PackageVersion::operator!=(const QString &other) const
 {
     PackageVersion a(other);
-	return compare(a) != 0;
+    return compare(a) != 0;
 }
 
 bool Package::PackageVersion::isEmpty() const
 {
-	return m_version.isEmpty();
+    return m_version.isEmpty();
 }
 
 QString Package::PackageVersion::toString()  const
 {
-	return m_version;
+    return m_version;
 }
 
 QDebug &operator<<(QDebug &out, const Package::PackageVersion &c)
 {
     out << "PackageVersion ("
-		<< "m_version" << c.m_version
-		<< ")";
+        << "m_version" << c.m_version
+        << ")";
     return out;
 }
 
@@ -265,7 +265,7 @@ Package::Package(const Package &other)
     m_notes      = other.m_notes;
     m_longNotes  = other.m_longNotes;
     m_installedversion = other.m_installedversion;
-	m_MD5Check = other.m_MD5Check;
+    m_MD5Check = other.m_MD5Check;
 }
 
 QString Package::getFileName(Package::Type contentType) const
@@ -482,7 +482,7 @@ static QByteArray readMD5SumFile(const QString &filename)
 
  bool Package::downloadItem(Package::Type type)
 {
-	/// @TODO: prevent downloading md5 sum file twice
+    /// @TODO: prevent downloading md5 sum file twice
     QUrl url = getUrl(type);
     qDebug() << __FUNCTION__ << " going to download URL " << url.toString() << "type" << type;
 

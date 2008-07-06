@@ -73,10 +73,10 @@ public:
     Database *database() { return m_database; }
     PackageList* packageResources() { return m_packageResources; }
     QUrl &usedDownloadSource() { return m_usedDownloadSource; }
-	
-	// pre/post installs commands
-	void runPreRemoveCommands();
-	void runPostInstallCommands();
+    
+    // pre/post installs commands
+    void runPreRemoveCommands();
+    void runPostInstallCommands();
 
 Q_SIGNALS:
     void error ( const QString &error );

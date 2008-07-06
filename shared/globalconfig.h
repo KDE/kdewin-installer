@@ -91,7 +91,7 @@ class GlobalConfig {
         QString m_baseURL;
         QDateTime m_timestamp;
         QByteArray m_minimalInstallerVersion;
-	Q_DISABLE_COPY(GlobalConfig)
+    Q_DISABLE_COPY(GlobalConfig)
 
     friend QDebug operator<<(QDebug, const GlobalConfig &);
 };

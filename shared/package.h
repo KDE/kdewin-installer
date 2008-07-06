@@ -51,38 +51,38 @@ public:
     Q_DECLARE_FLAGS(Types,Type);
 
     class PackageVersion {
-		public:
+        public:
             ///  constructor
-			PackageVersion(const QString &version=QString());
+            PackageVersion(const QString &version=QString());
             ///  assignment operator 
-			PackageVersion &operator=(const PackageVersion &other);
+            PackageVersion &operator=(const PackageVersion &other);
             ///  equal operator 
-			bool operator==(const PackageVersion &other) const;
+            bool operator==(const PackageVersion &other) const;
             /// not equal operator 
-			bool operator!=(const PackageVersion &other) const;
+            bool operator!=(const PackageVersion &other) const;
             /// lower than operator 
-			bool operator<(const PackageVersion &other) const;
+            bool operator<(const PackageVersion &other) const;
             /// greater than operator 
-			bool operator>(const PackageVersion &other) const;
+            bool operator>(const PackageVersion &other) const;
             /// equal string operator 
-			bool operator==(const QString &other) const;
+            bool operator==(const QString &other) const;
             /// not equal string operator 
-			bool operator!=(const QString &other) const;
+            bool operator!=(const QString &other) const;
             /// check if version is empty 
-			bool isEmpty() const;
+            bool isEmpty() const;
             /// return version in string representation
-			QString toString() const;
+            QString toString() const;
             /// debug operator 
-			friend QDebug &operator<<(QDebug &, const PackageVersion &);
-		protected:
+            friend QDebug &operator<<(QDebug &, const PackageVersion &);
+        protected:
             /** internal compare function, used by operators
                                 @param other Packageversion instance 
                                 @return -1 this < other, 1 this > other, 0 this = other
                             */
             int compare(const PackageVersion &other) const;
-		private:
-			QString m_version; 
- 	};
+        private:
+            QString m_version; 
+     };
 
     class PackageItem {
         public:
