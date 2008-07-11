@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2005-2007 Ralf Habacker <ralf.habacker@freenet.de>
+** Copyright (C) 2005-2008 Ralf Habacker <ralf.habacker@freenet.de>
 ** Copyright (C) 2008 Christian Ehrlicher <ch.ehrlicher@gmx.de>
 ** All rights reserved.
 **
