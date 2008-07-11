@@ -203,7 +203,8 @@ static int my_curl_debug_callback (CURL *, curl_infotype type, char *data, size_
       qDebug() << "HeaderOut: " << ba.data();
       break;
     case CURLINFO_DATA_IN:
-      qDebug() << "DataIn: " << ba.data();
+      /// this print complete package content 
+      //qDebug() << "DataIn: " << ba.data();
       break;
     case CURLINFO_DATA_OUT:
       qDebug() << "DataOut: " << ba.data();
@@ -232,6 +233,8 @@ bool Downloader::fetchInternal ( const QUrl &url )
         curl_easy_setopt ( d->curlHandle, CURLOPT_WRITEDATA, this );
         curl_easy_setopt ( d->curlHandle, CURLOPT_NOPROGRESS, 0 );
         curl_easy_setopt ( d->curlHandle, CURLOPT_FOLLOWLOCATION, 1 );
+        /// @TODO: activate this to let downloader know about download errors 
+        //curl_easy_setopt ( d->curlHandle, CURLOPT_FAILONERROR, 1 );
 #ifdef _DEBUG
         curl_easy_setopt( d->curlHandle, CURLOPT_VERBOSE, 1 );
         curl_easy_setopt( d->curlHandle, CURLOPT_DEBUGFUNCTION, my_curl_debug_callback );
