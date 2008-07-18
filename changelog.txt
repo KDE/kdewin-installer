@@ -2,11 +2,12 @@ ChangeLog
 =========
 0.9.2-2 (r830781)
 -------
-- installer-gui:   - bug fix complaining about non available md5 sum files for external packages
+- installer-gui:   - bug fix complaining about non available md5 sum files for external packages by 
+                     adding the @nomd5 config item
 
 0.9.2-1 (r824894)
 -------
-- installer-gui:   - bug fix 
+- installer-gui:   - several bug fixes
 
 0.9.2
 -----
