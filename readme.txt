@@ -20,11 +20,6 @@ NOTES
 
 - runtime dependencies should be separated from the build requirement. perl for example is a build requirement of kdebase. 
 - some msi files are started without displaying a gui like perl. This should be fixed
-
--  gui-installer: changing compiler type is not possible when install root is changed to 
-   a location where no packages are installed 
-   -> run 'del "%APPDATA%\kde\installer.ini" ' on command line and restart installer
-
    
 Known Bugs
 ==========
