@@ -7,7 +7,7 @@ See http://commit-digest.org/issues/2007-01-14/ for an article about the backgro
 State
 =====
 The gui installer is able to download, install and update packages from different internet ftp 
-or http location with or without using a proxy. The command line installer is only minimal working. 
+or http location with or without using a proxy. The command line installer works basically.
 
 NOTES
 ===== 
@@ -18,13 +18,14 @@ NOTES
 - the released version is build using a static qt release with specific configure 
   parameters, see section "static compile hints" for more informations
 
-- to be able to use the update-mime-database package with kde please add the installation path to the 
-  enviromment variable KDEDIRS
-
 - runtime dependencies should be separated from the build requirement. perl for example is a build requirement of kdebase. 
 - some msi files are started without displaying a gui like perl. This should be fixed
 
- 
+-  gui-installer: changing compiler type is not possible when install root is changed to 
+   a location where no packages are installed 
+   -> run 'del "%APPDATA%\kde\installer.ini" ' on command line and restart installer
+
+   
 Known Bugs
 ==========
 -  manifest files for gnuwin32 source packages does not contain the full path, there must 
@@ -33,10 +34,7 @@ Known Bugs
 -  packager: stripping of dll's which are in use results in deleting the related dll. 
    Please make sure no one uses a dll when using the -strip option
 
--  gui-installer: changing compiler type is not possible when install root is changed to 
-   a location where no packages are installed 
-   -> run 'del "%APPDATA%\kde\installer.ini" ' on command line and restart installer
-  
+ 
 TODO
 ====
 
@@ -52,7 +50,7 @@ TODO
     5 test creating start menu entries support
     6 add support to create/remove start menu entries for a specific package, which is required for the installer 
     7 how to handle packages which requires administrative access like vcredist and others (which package exactly ?)
-	
+
   2 command line installer 
     3 test
   
