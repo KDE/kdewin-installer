@@ -29,6 +29,7 @@
 #include "misc.h"
 
 #include <QBuffer>
+#include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QStandardItemModel>
@@ -312,6 +313,33 @@ QStringList filterFileName(const QStringList &files)
     qDeleteAll(packages);
 
     return filteredFiles;
+}
+bool PackageList::readFromDirectory(const QString &dir, bool append)
+{
+    if (!append)
+        m_packageList.clear();
+
+	QStringList files;
+	QDir d(dir);
+
+	if (!d.exists())
+		return false;
+
+	d.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
+	d.setSorting(QDir::Size | QDir::Reversed);
+
+	QFileInfoList list = d.entryInfoList();
+	for (int i = 0; i < list.size(); ++i) 
+	{
+		QFileInfo fi = list.at(i);
+		files << fi.fileName();
+	}
+    files = filterFileName(files);
+    addPackagesFromFileNames(files);
+
+	emit configLoaded();
+    m_parserConfigFileFound = false;
+    return true;
 }
 
 bool PackageList::readInternal(QIODevice *ioDev, PackageList::Type type, bool append)

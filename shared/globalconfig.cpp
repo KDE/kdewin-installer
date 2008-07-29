@@ -53,8 +53,23 @@ QStringList GlobalConfig::fetch(const QString &baseURL)
       m_baseURL += '/';
 
     QStringList configFiles;
+    QUrl url(m_baseURL + "config.txt");
+
+	if (url.scheme() == "file")
+	{
+		QFileInfo cfr(url.toLocalFile());
+        if (cfr.exists())
+        {
+            configFiles << cfr.absoluteFilePath();
+        }
+        else
+        {
+            qCritical() << "local config file does not exist" <<  cfr.absoluteFilePath();	
+		}
+		return configFiles;
+	}
     // remote config file
-    if (baseURL.startsWith("http") || baseURL.startsWith("ftp"))
+    else if (url.scheme() == "http" || url.scheme() == "ftp")
     {
         QFileInfo cfr(Settings::instance().downloadDir()+"/config-remote.txt");
         if (Settings::hasDebug("GlobalConfig"))
@@ -65,8 +80,7 @@ QStringList GlobalConfig::fetch(const QString &baseURL)
         }
         else
         {
-            QUrl url(m_baseURL + "config.txt");
-            QFileInfo cfi(Settings::instance().downloadDir()+"/config.txt");
+			QFileInfo cfi(Settings::instance().downloadDir()+"/config.txt");
             bool ret = Downloader::instance()->fetch(url,cfi.absoluteFilePath());
             if (Settings::hasDebug("GlobalConfig"))
                 qDebug() << "download remote config file from" <<  url << "to" << cfi.absoluteFilePath() << "..." << (ret ? "okay" : "failure") ;

@@ -218,35 +218,46 @@ bool InstallerEngine::addPackagesFromSites()
 
         QByteArray ba;
         qDebug() << listURL;
-        if (!Downloader::instance()->fetch(listURL, ba))
-        {
-            emit error(tr("failed to download site list page from %1").arg(listURL.toString()));
-            return false;
-        }
-        PackageList::Type type;
+        if (listURL.scheme() == "file") 
+		{
+			if (!packageList.readFromDirectory(listURL.toLocalFile(),true))
+			{
+				emit error("error reading package list from directory");
+				continue;
+			}
+		}
+		else {
+			if (!Downloader::instance()->fetch(listURL, ba))
+			{
+				emit error(tr("failed to download site list page from %1").arg(listURL.toString()));
+				return false;
+			}
+			PackageList::Type type;
 
-        if (listURL.scheme() == "ftp") {
-            type = PackageList::Ftp; 
-        } else { 
-            switch(site->Type()) {
-            case Site::SourceForge:    type = PackageList::SourceForge; break;
-            case Site::SourceForgeMirror: type = PackageList::SourceForgeMirror; break;
-            case Site::ApacheModIndex: type = PackageList::ApacheModIndex; break;
-            case Site::Ftp: type = PackageList::Ftp; break;
-            default:
-                emit error("unknown Site type "  + site->Type());
-                type = PackageList::ApacheModIndex;
-                qDebug() << "error parsing file list" << ba;
-                break;
-            }
-        }
+			if (listURL.scheme() == "ftp") {
+				type = PackageList::Ftp; 
+			} else { 
+				switch(site->Type()) {
+				case Site::SourceForge:    type = PackageList::SourceForge; break;
+				case Site::SourceForgeMirror: type = PackageList::SourceForgeMirror; break;
+				case Site::ApacheModIndex: type = PackageList::ApacheModIndex; break;
+				case Site::Ftp: type = PackageList::Ftp; break;
+				default:
+					emit error("unknown Site type "  + site->Type());
+					type = PackageList::ApacheModIndex;
+					qDebug() << "error parsing file list" << ba;
+					break;
+				}
+			}
 
-        if (!packageList.readFromByteArray(ba, type, true ))
-        {
-            emit error("error reading package list from download html file");
-            continue;
-        }
-        if (Settings::hasDebug("InstallerEngine"))
+			if (!packageList.readFromByteArray(ba, type, true ))
+			{
+				emit error("error reading package list from download html file");
+				continue;
+			}
+		}
+
+		if (Settings::hasDebug("InstallerEngine"))
             qDebug() << __FUNCTION__ << packageList;
 
         Q_FOREACH(Package *pkg, packageList.packages())

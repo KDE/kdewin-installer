@@ -51,6 +51,7 @@ public:
     bool readFromFile(const QString &_fileName=QString());
     bool readFromFile(const QString &fileName, PackageList::Type type=PackageList::Default, bool append=false);
     bool readFromByteArray(const QByteArray &_ba, PackageList::Type type=PackageList::Default, bool append=false);
+	bool readFromDirectory(const QString &dir, bool append=false);
 
     bool writeToFile(QString const &fileName=QString::null);
     bool syncWithFile(const QString &_fileName=QString());
