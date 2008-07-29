@@ -285,6 +285,9 @@
 @pkgnotes kde-l10n-zh_TW Chinese Traditional language package
 @pkgnotes kde-l10n-zu Zulu language package
 
+;======================================================
+; external packages
+;======================================================
 ;------------------------------------------------------
 ; debugging tools
 ;------------------------------------------------------
