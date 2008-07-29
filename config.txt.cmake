@@ -2,7 +2,7 @@
 @format 1.3
 ; this format is *prelimary* and may be changed without prior notice
 @minversion 0.9.2
-@timestamp 200806272200
+@timestamp 200807292000
 
 ; category notes 
 @categorynotes qt Qt related packages 
@@ -293,6 +293,7 @@
 @version 6.6.07.5
 @notes msvc Debugging Tools
 @url-bin http://msdl.microsoft.com/download/symbols/debuggers/dbg_x86_6.6.07.5.exe
+@nomd5
 
 @package regmon
 @category debug-tools
@@ -300,6 +301,7 @@
 @notes registry monitor
 @url-bin http://download.sysinternals.com/Files/Regmon.zip
 @relocate ^ bin/
+@nomd5
 
 @package filemon
 @category debug-tools
@@ -307,6 +309,7 @@
 @notes filesystem monitor
 @url-bin http://download.sysinternals.com/Files/Filemon.zip
 @relocate ^ bin/
+@nomd5
 
 @package procmon
 @category debug-tools
@@ -314,12 +317,14 @@
 @notes process monitor
 @url-bin http://download.sysinternals.com/Files/ProcessMonitor.zip
 @relocate ^ bin/
+@nomd5
 
 @package gdb
 @category debug-tools
 @version 6.3-2
 @notes mingw debugger 
 @url-bin http://heanet.dl.sourceforge.net/sourceforge/mingw/gdb-6.3-2.exe
+@nomd5
 
 @package debugview
 @category debug-tools
@@ -327,6 +332,7 @@
 @notes debug message monitor
 @url-bin http://download.sysinternals.com/Files/DebugView.zip
 @relocate ^ bin/
+@nomd5
 
 @package Process Explorer
 @category debug-tools
@@ -334,6 +340,7 @@
 @notes Process Explorer
 @url-bin http://download.sysinternals.com/Files/ProcessExplorer.zip
 @relocate ^ bin/
+@nomd5
 
 @package perl 
 @notes Perl Installer
@@ -341,6 +348,7 @@
 @version 5.8.8
 @url-bin http://downloads.activestate.com/ActivePerl/Windows/5.8/ActivePerl-5.8.8.819-MSWin32-x86-267479.msi 
 ;@packageoptions
+@nomd5
 
 @package zip
 @category tools 
@@ -350,6 +358,7 @@
 @url-lib http://switch.dl.sourceforge.net/sourceforge/gnuwin32/zip-2.31-lib.zip
 @url-doc http://switch.dl.sourceforge.net/sourceforge/gnuwin32/zip-2.31-doc.zip
 @url-src http://switch.dl.sourceforge.net/sourceforge/gnuwin32/zip-2.31-src.zip
+@nomd5
 
 ;------------------------------------------------------
 ; devel-tools
@@ -357,11 +366,11 @@
 @package cmake
 @category devel-tools 
 @notes platform independent build tool 
-@version 2.4.7
-@url-bin http://www.cmake.org/files/v2.4/cmake-2.4.7-win32-x86.zip cmake-2.4.7-bin.zip
-@url-src http://www.cmake.org/files/v2.4/cmake-2.4.7.zip cmake-2.4.7-src.zip
-@relocate cmake-2.4.7-win32-x86 .
-;@options
+@version 2.6.0
+@url-bin http://www.cmake.org/files/v2.6/cmake-2.6.0-win32-x86.zip cmake-2.6.0-bin.zip
+@url-src http://www.cmake.org/files/v2.4/cmake-2.6.0.zip cmake-2.6.0-src.zip
+@relocate cmake-2.6.0-win32-x86 .
+@nomd5
 
 @package depends
 @notes Dependency Walker
@@ -369,6 +378,7 @@
 @version 2.2
 @url-bin http://www.dependencywalker.com/depends22_x86.zip depends-2.2-bin.zip
 @relocate ^ bin/
+@nomd5
 
 @package doxygen
 @notes Source code documentation generator tool
@@ -376,36 +386,42 @@
 @version 1.5.4
 @url-bin http://ftp.stack.nl/pub/users/dimitri/doxygen-1.5.4.windows.bin.zip doxygen-1.5.4-bin.zip
 @relocate ^ bin/
+@nomd5
 
 @package psdk-msvc
 @category devel-tools
 @notes MS Platform SDK 2003
 @version r2
 @url-bin http://download.microsoft.com/download/f/a/d/fad9efde-8627-4e7a-8812-c351ba099151/PSDK-x86.exe
+@nomd5
 
 @package gcc-mingw
 @version 5.1.3
 @category devel-tools
 @notes gcc for windows 
 @url-bin http://heanet.dl.sourceforge.net/sourceforge/mingw/MinGW-5.1.3.exe
+@nomd5
 
 @package subversion
 @version 1.4.5
 @category devel-tools
 @notes software revision system 
 @url-bin http://subversion.tigris.org/files/documents/15/39559/svn-1.4.5-setup.exe
+@nomd5
 
 @package tortoisecvs
 @category devel-tools 
 @version 1.8.31
 @notes cvs explorer integration 
 @url-bin http://prdownloads.sourceforge.net/tortoisecvs/TortoiseCVS-1.8.31.exe
+@nomd5
 
 @package tortoisesvn
 @category devel-tools 
 @version 1.4.3
 @notes svn explorer integration 
 @url-bin http://heanet.dl.sourceforge.net/sourceforge/tortoisesvn/TortoiseSVN-1.4.3.8645-win32-svn-1.4.3.msi
+@nomd5
 
 @package upx
 @notes Ultimate Packer for eXecutables with lzma support
@@ -414,28 +430,32 @@
 @url-bin http://upx.sourceforge.net/download/upx300w.zip upx-3.0.0-bin.zip
 ; relocate directories in zip files 
 @relocate upx300w bin
+@nomd5
 
 @package vcexpress-en-msvc
 @category devel-tools
 @version 2005
 @notes Visual Studio Express 2005 (english version)
 @url-bin http://download.microsoft.com/download/8/3/a/83aad8f9-38ba-4503-b3cd-ba28c360c27b/ENU/vcsetup.exe
+@nomd5
 
 @package vcexpress-de-msvc
 @category devel-tools
 @version 2005
 @notes Visual Studio Express 2005 (german version)
 @url-bin http://download.microsoft.com/download/8/3/a/83aad8f9-38ba-4503-b3cd-ba28c360c27b/DEU/vcsetup.exe
+@nomd5
 
 @package vcredist
 @category devel-tools
 @version 8.0.50727.762
 @notes Microsoft Visual C++ 2005 SP1 Redistributable Package (x86)
 @url-bin http://download.microsoft.com/download/e/1/c/e1c773de-73ba-494a-a5ba-f24906ecf088/vcredist_x86.exe
+@nomd5
 
 @package winscp
 @category devel-tools 
 @version 3.8.2
 @notes secure transfer copy tool 
 @url-bin http://kent.dl.sourceforge.net/sourceforge/winscp/winscp382setup.exe
-
+@nomd5
