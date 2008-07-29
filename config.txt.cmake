@@ -45,7 +45,7 @@
 ; mingw dependencies 
 @deps dbus-mingw expat 
 @deps amarok-mingw kdebase-runtime-mingw phonon-mingw
-@deps kdelibs-mingw pcre-mingw dbus-mingw kdewin32-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw aspell libbzip2 expat giflib iconv jasper jpeg libintl libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
+@deps kdelibs-mingw phonon-mingw pcre-mingw dbus-mingw kdewin32-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw aspell libbzip2 expat giflib iconv jasper jpeg libintl libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
 @deps kdepimlibs-mingw kdelibs-mingw
 @deps kdebase-runtime-mingw kdepimlibs-mingw kdelibs-mingw
 @deps kdebase-apps-mingw kdebase-runtime-mingw
@@ -71,7 +71,7 @@
 @deps kdeedu-msvc kdebase-runtime-msvc kdelibs-msvc
 @deps kdegames-msvc kdebase-runtime-msvc kdelibs-msvc phonon-msvc
 @deps kdegraphics-msvc kdebase-runtime-msvc kdelibs-msvc fontconfig-msvc freetype-msvc poppler-msvc
-@deps kdelibs-msvc pcre-msvc vcredist qt-msvc dbus-msvc kdewin32-msvc qimageblitz-msvc qca-msvc strigi-msvc soprano-msvc taglib-msvc aspell libbzip2 expat giflib iconv jasper jpeg libintl libpng libxml2 libxslt openssl tiff zlib shared-mime-info
+@deps kdelibs-msvc phonon-msvc pcre-msvc vcredist qt-msvc dbus-msvc kdewin32-msvc qimageblitz-msvc qca-msvc strigi-msvc soprano-msvc taglib-msvc aspell libbzip2 expat giflib iconv jasper jpeg libintl libpng libxml2 libxslt openssl tiff zlib shared-mime-info
 @deps kdenetwork-msvc kdebase-runtime-msvc kdelibs-msvc
 @deps kdepimlibs-msvc kdelibs-msvc
 @deps kdesdk-msvc kdebase-runtime-msvc kdelibs-msvc astyle
