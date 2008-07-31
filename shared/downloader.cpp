@@ -248,7 +248,7 @@ bool Downloader::fetchInternal ( const QUrl &url )
     d->encodedUrl = m_usedURL.toEncoded();
     curl_easy_setopt ( d->curlHandle, CURLOPT_URL, d->encodedUrl.constData() );
     // curl reads from environment when nothing is set
-    if ( !ps.hostname.isEmpty() && s.proxyMode() != Settings::Environment ) {
+    if (s.proxyMode() != Settings::Environment ) {
         curl_easy_setopt ( d->curlHandle, CURLOPT_PROXY, ps.hostname.toLocal8Bit().constData() );
         curl_easy_setopt ( d->curlHandle, CURLOPT_PROXYPORT, ps.port );
         QString user =  ps.user.isEmpty() ? QString() : ps.user + ":" +  ps.password;
