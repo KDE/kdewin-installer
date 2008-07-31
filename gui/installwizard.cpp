@@ -158,8 +158,10 @@ void InstallWizard::readSettings()
 void InstallWizard::slotCurrentIdChanged(int id)
 {
     InstallWizardPage *currentPage = static_cast<InstallWizardPage*>(page(id));
-    currentPage->performAction(); 
-    m_lastId = id;
+	if (currentPage) {
+		currentPage->performAction(); 
+	    m_lastId = id;
+	}
 }
 
 void InstallWizard::slotEngineError(const QString &msg)
