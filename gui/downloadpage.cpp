@@ -60,3 +60,17 @@ bool DownloadPage::validatePage()
 {
     return true;
 }
+
+void DownloadPage::performAction()
+{
+    wizard()->button(QWizard::BackButton)->setEnabled(false);
+    wizard()->button(QWizard::NextButton)->setEnabled(false);
+    if (!engine->downloadPackages()) {
+        wizard()->reject();
+        return;
+    }
+    wizard()->button(QWizard::BackButton)->setEnabled(true);
+    wizard()->button(QWizard::NextButton)->setEnabled(true);
+    if (Settings::instance().autoNextStep())
+        wizard()->next();
+}

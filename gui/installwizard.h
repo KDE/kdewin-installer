@@ -83,13 +83,22 @@ class InstallWizardPage : public QWizardPage
 public:
     InstallWizardPage(QWidget *parent = 0);
 
+    /// setup page before it is displayed
     virtual void initializePage();
+    /// return next page id, called when pressed next (not used) 
     virtual int nextId() const;
+    /// check if page is complete
     virtual bool isComplete();
+    /// cancel wizard 
     virtual void cancel();
-    void setStatus(const QString &text);
+    /// enable/disable settings button (deprecated )
     void setSettingsButtonVisible(bool mode);
 
+public Q_SLOTS:
+    /// set status label
+    void setStatus(const QString &text);
+    /// slot for performing page action after page is displayed
+    virtual void performAction();
 
 protected:
     QLabel *topLabel;

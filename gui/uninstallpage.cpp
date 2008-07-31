@@ -57,3 +57,17 @@ bool UninstallPage::validatePage()
 {
     return true;
 }
+
+void UninstallPage::performAction()
+{       
+    wizard()->button(QWizard::BackButton)->setEnabled(false);
+    wizard()->button(QWizard::NextButton)->setEnabled(false);
+    if (!engine->removePackages()) {
+        wizard()->reject();
+        return;
+    }
+    wizard()->button(QWizard::BackButton)->setEnabled(true);
+    wizard()->button(QWizard::NextButton)->setEnabled(true);
+    if (Settings::instance().autoNextStep())
+        wizard()->next();
+}

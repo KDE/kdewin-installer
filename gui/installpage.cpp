@@ -57,3 +57,23 @@ bool InstallPage::validatePage()
 {
     return true;
 }
+
+void InstallPage::performAction()
+{
+    wizard()->button(QWizard::BackButton)->setEnabled(false);
+    wizard()->button(QWizard::NextButton)->setEnabled(false);
+    if (!engine->installPackages()) {
+        wizard()->reject();
+        return;
+    }
+    /// @TODO: separate status messages
+    setStatus("running post process commands");
+    QCoreApplication::processEvents();
+    connect(engine,SIGNAL(status(QString)),this,SLOT(setStatus(QString))); 
+    engine->runPostInstallCommands();
+    disconnect(engine,SIGNAL(status(QString)),this,SLOT(setStatus(QString))); 
+    wizard()->button(QWizard::BackButton)->setEnabled(true);
+    wizard()->button(QWizard::NextButton)->setEnabled(true);
+    if (Settings::instance().autoNextStep())
+        wizard()->next();
+}

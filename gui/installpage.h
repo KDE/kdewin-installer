@@ -36,6 +36,7 @@ public:
     void initializePage();
     bool isComplete();
     bool validatePage();
+    void performAction();
 };
 
 #endif

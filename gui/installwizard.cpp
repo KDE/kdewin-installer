@@ -153,50 +153,12 @@ void InstallWizard::readSettings()
     settings.endGroup();
 }
 
-// @TODO: The nextId() methods are not called for unknown reason, 
-// all id change handling is done in slotCurrentIdChanged()
+// this method is called after a page changed
+// the new page is visible
 void InstallWizard::slotCurrentIdChanged(int id)
 {
-    if (id == downloadPage) {
-        button(QWizard::BackButton)->setEnabled(false);
-        button(QWizard::NextButton)->setEnabled(false);
-        if (!engine->downloadPackages()) {
-            reject();
-            return;
-        }
-        button(QWizard::BackButton)->setEnabled(true);
-        button(QWizard::NextButton)->setEnabled(true);
-        if (Settings::instance().autoNextStep())
-            next();
-    }
-    else if (id == uninstallPage) {
-        button(QWizard::BackButton)->setEnabled(false);
-        button(QWizard::NextButton)->setEnabled(false);
-        if (!engine->removePackages()) {
-            reject();
-            return;
-        }
-        button(QWizard::BackButton)->setEnabled(true);
-        button(QWizard::NextButton)->setEnabled(true);
-        if (Settings::instance().autoNextStep())
-            next();
-    }
-    else if (id == installPage) {
-        button(QWizard::BackButton)->setEnabled(false);
-        button(QWizard::NextButton)->setEnabled(false);
-        if (!engine->installPackages()) {
-            reject();
-            return;
-        }
-        InstallWizardPage *aPage = static_cast<InstallWizardPage*>(currentPage());
-        aPage->setStatus("running post process commands");
-        QCoreApplication::processEvents();
-        engine->runPostInstallCommands();
-        button(QWizard::BackButton)->setEnabled(true);
-        button(QWizard::NextButton)->setEnabled(true);
-        if (Settings::instance().autoNextStep())
-            next();
-    }
+    InstallWizardPage *currentPage = static_cast<InstallWizardPage*>(page(id));
+    currentPage->performAction(); 
     m_lastId = id;
 }
 
@@ -343,5 +305,9 @@ void InstallWizardPage::setSettingsButtonVisible(bool mode)
 #endif
 }
 
+void InstallWizardPage::performAction()
+{
+    qDebug() << "called"; 
+}
 
 #include "installwizard.moc"
