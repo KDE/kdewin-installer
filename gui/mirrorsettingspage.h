@@ -39,10 +39,12 @@ public:
     bool isComplete();
     bool validatePage();
     void cleanupPage();
+    void performAction();
 
 protected:
     Ui::MirrorSettingsPage ui;
-
+    bool m_failed;
+    
 protected slots:
     void addNewMirrorClicked();
 };

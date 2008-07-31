@@ -81,19 +81,20 @@ void MirrorSettingsPage::initializePage()
     Mirrors &mirrors = Mirrors::instance();
     mirrors.setConfig(mirrorConfig);
     InstallerDialogs::instance().downloadProgressDialog(this,true,tr("Downloading Mirror List"));
-
+    m_failed = false;
+    
     if (mirrors.mirrors().size() == 0)
     {
-        /// @TODO add vivible progress bar
+
         if ( !mirrors.fetch() ) 
         {
             qCritical() << "could not load mirrors from" << mirrorConfig.url;
-            /// @TODO add vivible progress bar
             mirrors.setConfig(fallBackConfig);
             if ( !mirrors.fetch() )
             {
                 qCritical() << "could not load fallback mirror list from" << fallBackConfig.url;
-                // display warning box
+                InstallerDialogs::instance().downloadMirrorListFailed(mirrorConfig.url,fallBackConfig.url);
+                m_failed = true;
             }
         }
     }
@@ -130,6 +131,12 @@ void MirrorSettingsPage::initializePage()
     ui.downloadMirror->setCurrentItem(item);
 
     connect(ui.addMirrorButton,SIGNAL(clicked()), this, SLOT(addNewMirrorClicked()));
+}
+
+void MirrorSettingsPage::performAction()
+{
+    if (m_failed)
+        wizard()->back();                    
 }
 
 bool MirrorSettingsPage::validatePage()
