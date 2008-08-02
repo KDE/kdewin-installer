@@ -141,8 +141,10 @@ void DownloaderProgress::updateDisplay()
     // calculate speed 
     int range = m_progress->maximum() - m_progress->minimum();
     int value = m_progress->value();
-    if (value == 0 || range == 0)
+    if (value == 0 || range == 0) {
+        m_speedLabel->setText(QLatin1String(""));
         return;
+    }
     // only update rate when difference >= 1% 
     int diff = (value - m_lastValue) * 100 / range; 
     if (diff == 0)
