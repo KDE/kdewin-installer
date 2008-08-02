@@ -44,35 +44,6 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
    <item row="1" column="0" >
-    <widget class="QLabel" name="label_3" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text" >
-      <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:8pt;">Contributors: &lt;/span>&lt;/p>
-&lt;ul style="-qt-list-indent: 1;">&lt;li style=" font-size:8pt;" style=" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Ralf Habacker - main application, design, maintainer &lt;/li>
-&lt;li style=" font-size:8pt;" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Christian Ehrlicher - curl and uncompress support, bug fixing &lt;/li>
-&lt;li style=" font-size:8pt;" style=" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Patrick Spendrin - start menu support &lt;/li>&lt;/ul>
-&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>&lt;/body>&lt;/html></string>
-     </property>
-     <property name="textFormat" >
-      <enum>Qt::RichText</enum>
-     </property>
-     <property name="alignment" >
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-     </property>
-     <property name="wordWrap" >
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0" >
     <spacer name="verticalSpacer_2" >
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
@@ -88,7 +59,7 @@ p, li { white-space: pre-wrap; }
      </property>
     </spacer>
    </item>
-   <item row="3" column="0" >
+   <item row="2" column="0" >
     <widget class="QLabel" name="label_2" >
      <property name="sizePolicy" >
       <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
@@ -107,7 +78,7 @@ p, li { white-space: pre-wrap; }
      </property>
     </widget>
    </item>
-   <item row="4" column="0" >
+   <item row="3" column="0" >
     <spacer name="verticalSpacer" >
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
@@ -120,7 +91,7 @@ p, li { white-space: pre-wrap; }
      </property>
     </spacer>
    </item>
-   <item row="5" column="0" >
+   <item row="4" column="0" >
     <widget class="QCheckBox" name="skipBasicSettings" >
      <property name="text" >
       <string>go directly to the download server page, skip basic settings</string>
