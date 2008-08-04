@@ -22,52 +22,30 @@
 **
 ****************************************************************************/
 
-#include "installpage.h"
-#include "installerprogress.h"
-#include "unpacker.h"
+#ifndef POSTPROCESSPAGE_H
+#define POSTPROCESSPAGE_H
 
-InstallPage::InstallPage() : InstallWizardPage(0)
+#include "installwizard.h"
+#include "ui_postprocesspage.h"
+
+class PostProcessPage : public InstallWizardPage
 {
-    setTitle(tr("Installing packages"));
-    setSubTitle(tr(" "));
+    Q_OBJECT
 
-    InstallerProgress *progress = new InstallerProgress(this);
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(progress);
-    layout->addStretch(1);
-    setLayout(layout);
-    Unpacker::instance()->setProgress(progress);
-}
+public:
+    PostProcessPage();
 
-void InstallPage::initializePage()
-{
-}
+    void initializePage();
+    bool isComplete();
+    bool validatePage();
+    void cleanupPage();
+    void performAction();
 
-bool InstallPage::isComplete()
-{
-    return true;
-}
+protected:
+    Ui::PostProcessPage ui;
+    bool runCommand(const QString &msg, const QString &app, const QStringList &params=QStringList());
 
-void InstallPage::cancel()
-{
-    engine->stop();
-}
+};
 
-bool InstallPage::validatePage()
-{
-    return true;
-}
 
-void InstallPage::performAction()
-{
-    wizard()->button(QWizard::BackButton)->setEnabled(false);
-    wizard()->button(QWizard::NextButton)->setEnabled(false);
-    if (!engine->installPackages()) {
-        wizard()->reject();
-        return;
-    }
-    wizard()->button(QWizard::BackButton)->setEnabled(true);
-    wizard()->button(QWizard::NextButton)->setEnabled(true);
-    if (Settings::instance().autoNextStep())
-        wizard()->next();
-}
+#endif

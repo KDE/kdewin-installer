@@ -331,26 +331,4 @@ void InstallerEngine::slotError(const QString &msg)
     emit error(msg);
 }
 
-void runCommand(const QString &app, const QStringList &params=QStringList())
-{
-    QFileInfo f(Settings::instance().installDir()+"/bin/" + app + ".exe");
-    qDebug() << "checking for app " << app << " - "  <<(f.exists() ? "found" : "not found"); 
-    if (f.exists())
-    {
-        qDebug() << "running " << app << params; 
-        QProcess::execute( f.absoluteFilePath(), params);
-    }
-}
-
-void InstallerEngine::runPreRemoveCommands()
-{
-}
-
-void InstallerEngine::runPostInstallCommands()
-{
-    runCommand("update-mime-database",QStringList() << Settings::instance().installDir()+ "/share/mime");
-    runCommand("kbuildsycoca4");
-    runCommand("kwinstartmenu");
-}
-
 #include "installerengine.moc"

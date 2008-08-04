@@ -49,6 +49,7 @@
 //#include "enduserremovepage.h"
 #include "mirrorsettingspage.h"
 #include "packageselectorpage.h"
+#include "postprocesspage.h"
 #include "dependenciespage.h"
 #include "downloadpage.h"
 #include "uninstallpage.h"
@@ -97,6 +98,7 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     setPage(downloadPage, new DownloadPage()); 
     setPage(uninstallPage, new UninstallPage()); 
     setPage(installPage, new InstallPage()); 
+    setPage(postProcessPage, new PostProcessPage); 
     setPage(finishPage, new FinishPage()); 
 
     setSizeGripEnabled(true);
@@ -158,10 +160,10 @@ void InstallWizard::readSettings()
 void InstallWizard::slotCurrentIdChanged(int id)
 {
     InstallWizardPage *currentPage = static_cast<InstallWizardPage*>(page(id));
-	if (currentPage) {
-		currentPage->performAction(); 
-	    m_lastId = id;
-	}
+    if (currentPage) {
+        currentPage->performAction(); 
+        m_lastId = id;
+    }
 }
 
 void InstallWizard::slotEngineError(const QString &msg)
@@ -216,7 +218,8 @@ int InstallWizard::nextIdEndUser() const
     case dependenciesPage:           return downloadPage;
     case downloadPage:               return uninstallPage;
     case uninstallPage:              return installPage;
-    case installPage:                return finishPage;
+    case installPage:                return postProcessPage;
+    case postProcessPage:            return finishPage;
     case finishPage: 
     default:
      return -1;
@@ -246,7 +249,8 @@ int InstallWizard::nextIdDeveloper() const
     case dependenciesPage:     return downloadPage;
     case downloadPage:         return uninstallPage;
     case uninstallPage:        return installPage;
-    case installPage:          return finishPage;
+    case installPage:          return postProcessPage;
+    case postProcessPage:      return finishPage;
     case finishPage: 
     default:
      return -1;

@@ -1,0 +1,59 @@
+<ui version="4.0" >
+ <class>PostProcessPage</class>
+ <widget class="QWidget" name="PostProcessPage" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>611</width>
+    <height>341</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Post Processing</string>
+  </property>
+  <property name="statusTip" >
+   <string>After installation/removal of packages some post processing steps are required.</string>
+  </property>
+  <layout class="QGridLayout" >
+   <item row="2" column="0" >
+    <spacer name="verticalSpacer" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="0" >
+    <widget class="QProgressBar" name="progressBar" >
+     <property name="value" >
+      <number>24</number>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <widget class="QListWidget" name="listWidget" >
+     <property name="autoFillBackground" >
+      <bool>true</bool>
+     </property>
+     <property name="styleSheet" >
+      <string notr="true" >background-color: rgb(236, 233, 216);</string>
+     </property>
+     <property name="frameShape" >
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Plain</enum>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
