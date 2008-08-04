@@ -383,6 +383,13 @@
 @relocate ^ bin/
 @nomd5
 
+@package directx-sdk
+@category devel-tools
+@notes DirectX SDK April 2007
+@version 2007-04
+@url-bin http://download.microsoft.com/download/3/b/d/3bd0a88d-4e99-49fc-931d-9eeb11ecd2a3/dxsdk_apr2007.exe
+@nomd5
+
 @package doxygen
 @notes Source code documentation generator tool
 @category devel-tools
