@@ -23,6 +23,7 @@
 **
 ****************************************************************************/
 
+#include "config.h"
 #include "debug.h"
 #include "downloader.h"
 #include "downloader_p.h"
@@ -233,6 +234,7 @@ bool Downloader::fetchInternal ( const QUrl &url )
         curl_easy_setopt ( d->curlHandle, CURLOPT_WRITEDATA, this );
         curl_easy_setopt ( d->curlHandle, CURLOPT_NOPROGRESS, 0 );
         curl_easy_setopt ( d->curlHandle, CURLOPT_FOLLOWLOCATION, 1 );
+        curl_easy_setopt ( d->curlHandle, CURLOPT_USERAGENT, "KDEWin-Installer/" VERSION );
         /// @TODO: activate this to let downloader know about download errors 
         //curl_easy_setopt ( d->curlHandle, CURLOPT_FAILONERROR, 1 );
 #ifdef _DEBUG
