@@ -87,6 +87,8 @@ bool InstallerEngine::initPackages()
     if (!addPackagesFromSites())
         return false;
 
+    addInstalledPackages();
+
     // add site independend package category relations
     QHash<QString, QStringList>::const_iterator i = m_globalConfig->categoryPackages().constBegin();
     for (; i != m_globalConfig->categoryPackages().constEnd(); i++)
@@ -277,7 +279,17 @@ bool InstallerEngine::addPackagesFromSites()
             categoryCache.addPackage(pkg);
         }
     }
+    return true;
+}
 
+/// download all packagelists, which are available on the configured sites
+bool InstallerEngine::addInstalledPackages()
+{
+    foreach(Package *pkg, m_database->packages()) 
+    {
+        if (!m_packageResources->getPackage(pkg->name(),pkg->version().toString().toLatin1()))
+            m_packageResources->addPackage(*pkg);
+    }
     return true;
 }
 

@@ -74,10 +74,6 @@ public:
     PackageList* packageResources() { return m_packageResources; }
     QUrl &usedDownloadSource() { return m_usedDownloadSource; }
     
-    // pre/post installs commands
-    void runPreRemoveCommands();
-    void runPostInstallCommands();
-
 Q_SIGNALS:
     void error ( const QString &error );
 
@@ -110,8 +106,11 @@ protected:
     /// adds packages defined directly in GlobalConfig
     bool addPackagesFromGlobalConfig();
 
-    /// adds package collected from site definition
+    /// add packages collected from site definition
     bool addPackagesFromSites();
+    
+    /// add installed packages for which no package is available
+    bool addInstalledPackages();
 
     friend QDebug &operator<<(QDebug &, const InstallerEngine &);
 };
