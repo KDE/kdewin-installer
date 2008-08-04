@@ -61,6 +61,8 @@ void PostProcessPage::performAction()
     runCommand("updating system configuration database","kbuildsycoca4");
     ui.progressBar->setValue(2);
     runCommand("updating windows start menu entries","kwinstartmenu");
+    ui.progressBar->setValue(3);
+
     if (Settings::instance().autoNextStep())
         wizard()->next();
 }
