@@ -39,6 +39,7 @@ public:
 
     void initializePage();
     bool validatePage();
+    void performAction();
 
 protected:
     Ui::DependenciesPage ui;

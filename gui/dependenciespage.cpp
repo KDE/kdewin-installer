@@ -36,12 +36,16 @@ DependenciesPage::DependenciesPage() : InstallWizardPage(0)
 void DependenciesPage::initializePage()
 {
     engine->checkUpdateDependencies(ui.dependenciesList);
-//    if (ui.dependenciesList->topLevelItemCount() == 0)
-//        wizard()->next();
     setSettingsButtonVisible(false);
 }
 
 bool DependenciesPage::validatePage()
 {
     return true;
+}
+
+void DependenciesPage::performAction()
+{
+    if (ui.dependenciesList->topLevelItemCount() == 0)
+        wizard()->next();
 }
