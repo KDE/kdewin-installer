@@ -51,7 +51,6 @@ public:
 
     Database *database() { return m_database; }
     void setDatabase(Database *database) { m_database = database; }
-    /// @TODO pathRelocations are obsolated, they can be retrieved from the pkg parameter
     bool install(Package *pkg, const Package::Type type, const QString &fileName);
     bool uninstall(const QString &pathToManifest);
 

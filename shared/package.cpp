@@ -492,7 +492,6 @@ static QByteArray readMD5SumFile(const QString &filename)
 
  bool Package::downloadItem(Package::Type type)
 {
-    /// @TODO: prevent downloading md5 sum file twice
     QUrl url = getUrl(type);
     qDebug() << __FUNCTION__ << " going to download URL " << url.toString() << "type" << type;
 

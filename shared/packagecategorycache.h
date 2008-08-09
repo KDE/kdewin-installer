@@ -34,7 +34,6 @@ class Database;
 class PackageCategoryCache 
 {
     public:
-        // @TODO save category notes too from sites
         typedef struct {
             QString notes;
             QList<QString> packages;
