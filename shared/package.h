@@ -62,8 +62,12 @@ public:
             bool operator!=(const PackageVersion &other) const;
             /// lower than operator 
             bool operator<(const PackageVersion &other) const;
+            /// lower equal operator 
+            bool operator<=(const PackageVersion &other) const;
             /// greater than operator 
             bool operator>(const PackageVersion &other) const;
+            /// greater equal operator 
+            bool operator>=(const PackageVersion &other) const;
             /// equal string operator 
             bool operator==(const QString &other) const;
             /// not equal string operator 

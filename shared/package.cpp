@@ -63,9 +63,19 @@ bool Package::PackageVersion::operator<(const Package::PackageVersion &other) co
     return compare(other) < 0 ? true : false; 
 }
 
+bool Package::PackageVersion::operator<=(const Package::PackageVersion &other) const
+{
+    return compare(other) <= 0 ? true : false; 
+}
+
 bool Package::PackageVersion::operator>(const Package::PackageVersion &other) const
 {
     return compare(other) > 0; 
+}
+
+bool Package::PackageVersion::operator>=(const Package::PackageVersion &other) const
+{
+    return compare(other) >= 0; 
 }
 
 bool Package::PackageVersion::operator==(const Package::PackageVersion &other) const
