@@ -59,13 +59,13 @@ void InstallerEngineConsole::queryPackages(const QString &pkgName, bool listFile
         return;
     }
     if (listFiles) {
-        Q_FOREACH(const QString &file, m_database->packageFiles(pkgName,Package::BIN))
+        Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::BIN))
             printf("BIN: %s\n", qPrintable(file));
-        Q_FOREACH(const QString &file, m_database->packageFiles(pkgName,Package::LIB))
+        Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::LIB))
             printf("LIB: %s\n", qPrintable(file));
-        Q_FOREACH(const QString &file, m_database->packageFiles(pkgName,Package::DOC))
+        Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::DOC))
             printf("DOC: %s\n", qPrintable(file));
-        Q_FOREACH(const QString &file, m_database->packageFiles(pkgName,Package::SRC))
+        Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::SRC))
             printf("SRC: %s\n", qPrintable(file));
     }        
     else {
