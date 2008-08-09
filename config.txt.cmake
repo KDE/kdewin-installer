@@ -2,7 +2,7 @@
 @format 1.3
 ; this format is *prelimary* and may be changed without prior notice
 @minversion 0.9.2
-@timestamp 200807292000
+@timestamp 200808092100
 
 ; category notes 
 @categorynotes qt Qt related packages 
@@ -289,6 +289,16 @@
 ; external packages
 ;======================================================
 ;------------------------------------------------------
+; 3rdparty runtime packages 
+;------------------------------------------------------
+@package oggcodecs
+@category KDE-3rdparty
+@notes Directshow Filters for Ogg Vorbis, Speex, Theora and FLAC
+@version 0.80.15039
+@url-bin http://www.xiph.org/dshow//uploads/Main/oggcodecs_0.80.15039.exe
+@nomd5
+
+;------------------------------------------------------
 ; debugging tools
 ;------------------------------------------------------
 @package dbg_x86
@@ -398,18 +408,18 @@
 @relocate ^ bin/
 @nomd5
 
-@package psdk-msvc
-@category devel-tools
-@notes MS Platform SDK 2003
-@version r2
-@url-bin http://download.microsoft.com/download/f/a/d/fad9efde-8627-4e7a-8812-c351ba099151/PSDK-x86.exe
-@nomd5
-
 @package gcc-mingw
 @version 5.1.3
 @category devel-tools
 @notes gcc for windows 
 @url-bin http://heanet.dl.sourceforge.net/sourceforge/mingw/MinGW-5.1.3.exe
+@nomd5
+
+@package psdk-msvc
+@category devel-tools
+@notes MS Platform SDK 2003
+@version r2
+@url-bin http://download.microsoft.com/download/f/a/d/fad9efde-8627-4e7a-8812-c351ba099151/PSDK-x86.exe
 @nomd5
 
 @package subversion
