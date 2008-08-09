@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>658</width>
-    <height>277</height>
+    <height>282</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -18,6 +18,18 @@
   <layout class="QVBoxLayout" >
    <item>
     <widget class="QLabel" name="label" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Minimum" hsizetype="Preferred" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>16777215</width>
+       <height>120</height>
+      </size>
+     </property>
      <property name="text" >
       <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
 &lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
@@ -25,7 +37,8 @@ p, li { white-space: pre-wrap; }
 &lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
 &lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">This setup program installs amarok - the KDE media player. &lt;/p>
 &lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">The pages that follow will guide you through the installation.&lt;/p>
-&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Please note some packages require administrative rights for installing. If the current windows user lacks those right  the installation may fail.&lt;/p>&lt;/body>&lt;/html></string>
+&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;span style=" font-weight:600;">Please note that some packages require administrative rights for installing. If the current windows user lacks those rights the installation may fail.&lt;/span>&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;">&lt;/p>&lt;/body>&lt;/html></string>
      </property>
      <property name="textFormat" >
       <enum>Qt::RichText</enum>
