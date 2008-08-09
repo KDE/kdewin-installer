@@ -53,7 +53,7 @@ EndUserPackageSelectorPage::EndUserPackageSelectorPage()  : InstallWizardPage(0)
     categories = "KDE";
 }
 
-void EndUserPackageSelectorPage::setWidgetData(QString categoryName)
+void EndUserPackageSelectorPage::setWidgetData(QString categoryPattern)
 {
     QTreeWidget *tree = ui.packageList;
     tree->clear();
@@ -79,27 +79,41 @@ void EndUserPackageSelectorPage::setWidgetData(QString categoryName)
     QList<QTreeWidgetItem *> categoryList;
     QList <Package*> packageList;
 
-    // add packages which are installed but for which no config entry is there 
-    Q_FOREACH(Package *instPackage, categoryCache.packages(categoryName,*engine->database())) 
+    QStringList selectedCategories;
+    Q_FOREACH(QString category, categoryCache.categories())
     {
-        Package *p = engine->packageResources()->getPackage(instPackage->name());
-        if (!p)
-            packageList << instPackage;
+        QStringList a = category.split(":");
+        if (a[0].startsWith(categoryPattern))
+            selectedCategories << a[0];
     }
 
+    Q_FOREACH(QString categoryName, selectedCategories) 
+    {
+        // add packages which are installed but for which no config entry is there 
+        Q_FOREACH(Package *instPackage, categoryCache.packages(categoryName,*engine->database())) 
+        {
+            Package *p = engine->packageResources()->getPackage(instPackage->name());
+            if (!p)
+                packageList << instPackage;
+        }
+    }
+    
     Settings &s = Settings::instance();
-    Q_FOREACH(Package *availablePackage,categoryCache.packages(categoryName,*engine->packageResources()))
+    Q_FOREACH(QString categoryName, selectedCategories) 
     {
-        QString name = availablePackage->name();
-        if ( ( categoryName == "mingw"  || s.compilerType() == Settings::MinGW )
-                && ( name.endsWith ( QLatin1String( "-msvc" ) ) ) )
-            continue;
-        else if ( ( categoryName == "msvc"  || s.compilerType() == Settings::MSVC )
-                  && ( name.endsWith ( QLatin1String ( "-mingw" ) ) ) )
-            continue;
-        packageList << availablePackage;
+        Q_FOREACH(Package *availablePackage,categoryCache.packages(categoryName,*engine->packageResources()))
+        {
+            QString name = availablePackage->name();
+            if ( ( categoryName == "mingw"  || s.compilerType() == Settings::MinGW )
+                    && ( name.endsWith ( QLatin1String( "-msvc" ) ) ) )
+                continue;
+            else if ( ( categoryName == "msvc"  || s.compilerType() == Settings::MSVC )
+                      && ( name.endsWith ( QLatin1String ( "-mingw" ) ) ) )
+                continue;
+            packageList << availablePackage;
+        }
     }
-
+    
     Q_FOREACH(Package *availablePackage,packageList)
     {
         QStringList data;
@@ -139,6 +153,7 @@ void EndUserPackageSelectorPage::initializePage()
     connect(&Settings::instance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
     connect(&Settings::instance(),SIGNAL(compilerTypeChanged()),this,SLOT(slotCompilerTypeChanged()));
     setWidgetData(categories);
+    // @TODO remove
     if (ui.packageList->topLevelItemCount() == 0) {
         // no items skip page
     }
