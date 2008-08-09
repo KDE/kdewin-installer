@@ -122,9 +122,8 @@ void EndUserPackageSelectorPage::setWidgetData(QString categoryPattern)
         Package::PackageVersion availableVersion = availablePackage->version();
         availablePackage->setInstalledVersion(installedVersion);
 
-        if (installedPackage && availableVersion == installedVersion)
+        if (installedPackage && availableVersion <= installedVersion)
             continue;
-        /// @TODO add version format check to be sure available package is really newer
         data 
             << ""
             << availablePackage->name()
