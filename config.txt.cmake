@@ -17,8 +17,8 @@
 @categorypackages tools findutils grep mingw-utils diffutils patch
 @categorypackages kdesupport kdewin32-msvc  kdewin-installer-msvc  vcredist      qimageblitz-msvc  qca-msvc  strigi-msvc  soprano-msvc  taglib-msvc  qt-msvc  phonon-msvc  fontconfig-msvc  freetype-msvc  poppler-msvc
 @categorypackages kdesupport kdewin32-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw qt-mingw phonon-mingw fontconfig-mingw freetype-mingw poppler-mingw
-@categorypackages KDE amarok-msvc  kdelibs-msvc  kdepimlibs-msvc  kdebase-apps-msvc  kdebase-runtime-msvc  kdeedu-msvc  kdegames-msvc  kdegraphics-msvc  kdenetwork-msvc  kdesdk-msvc  kdewebdev-msvc
-@categorypackages KDE amarok-mingw kdelibs-mingw kdepimlibs-mingw kdebase-apps-mingw kdebase-runtime-mingw kdeedu-mingw kdegames-mingw kdegraphics-mingw kdenetwork-mingw kdesdk-mingw kdewebdev-mingw 
+@categorypackages KDE amarok-msvc  kdelibs-msvc  kdepimlibs-msvc  kdebase-apps-msvc  kdebase-runtime-msvc  kdeedu-msvc  kdegames-msvc  kdegraphics-msvc  kdenetwork-msvc  kdesdk-msvc  kdewebdev-msvc kdeutils-msvc
+@categorypackages KDE amarok-mingw kdelibs-mingw kdepimlibs-mingw kdebase-apps-mingw kdebase-runtime-mingw kdeedu-mingw kdegames-mingw kdegraphics-mingw kdenetwork-mingw kdesdk-mingw kdewebdev-mingw kdeutils-mingw
 @categorypackages KDE koffice-msvc  ktorrent-msvc  
 @categorypackages KDE koffice-mingw  ktorrent-mingw  
 @categorypackages qt qt-msvc qt-mingw qt-static-msvc
@@ -47,14 +47,15 @@
 @deps amarok-mingw kdebase-runtime-mingw phonon-mingw
 @deps kdelibs-mingw phonon-mingw pcre-mingw dbus-mingw kdewin32-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw aspell libbzip2 expat giflib iconv jasper jpeg libintl libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
 @deps kdepimlibs-mingw kdelibs-mingw
-@deps kdebase-runtime-mingw kdepimlibs-mingw kdelibs-mingw
+@deps kdebase-runtime-mingw kdepimlibs-mingw kdelibs-mingw oggcodecs
 @deps kdebase-apps-mingw kdebase-runtime-mingw
 @deps kdeedu-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps kdegames-mingw kdebase-runtime-mingw kdelibs-mingw phonon-mingw
 @deps kdegraphics-mingw kdebase-runtime-mingw kdelibs-mingw fontconfig-mingw freetype-mingw poppler-mingw
 @deps kdenetwork-mingw kdebase-runtime-mingw kdelibs-mingw
-@deps kdesdk-mingw kdebase-runtime-mingw kdelibs-mingw kdepimlibs-mingw astyle
+@deps kdesdk-mingw kdebase-runtime-mingw kdelibs-mingw kdepimlibs-mingw astyle diffutils
 @deps kdetoys-mingw kdebase-runtime-mingw kdelibs-mingw
+@deps kdeutils-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps kdewebdev-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps kdewin-installer-mingw qt-mingw
 @deps kdewin32-mingw qt-mingw
@@ -66,7 +67,7 @@
 @deps amarok-msvc kdebase-runtime-msvc phonon-msvc
 ; dbus may be compiled with libxml2 or expat, so use both dependencies
 @deps dbus-msvc libxml2 iconv expat 
-@deps kdebase-runtime-msvc kdepimlibs-msvc kdelibs-msvc
+@deps kdebase-runtime-msvc kdepimlibs-msvc kdelibs-msvc oggcodecs
 @deps kdebase-apps-msvc kdebase-runtime-msvc
 @deps kdeedu-msvc kdebase-runtime-msvc kdelibs-msvc
 @deps kdegames-msvc kdebase-runtime-msvc kdelibs-msvc phonon-msvc
@@ -74,7 +75,8 @@
 @deps kdelibs-msvc phonon-msvc pcre-msvc vcredist qt-msvc dbus-msvc kdewin32-msvc qimageblitz-msvc qca-msvc strigi-msvc soprano-msvc taglib-msvc aspell libbzip2 expat giflib iconv jasper jpeg libintl libpng libxml2 libxslt openssl tiff zlib shared-mime-info
 @deps kdenetwork-msvc kdebase-runtime-msvc kdelibs-msvc
 @deps kdepimlibs-msvc kdelibs-msvc
-@deps kdesdk-msvc kdebase-runtime-msvc kdelibs-msvc astyle
+@deps kdesdk-msvc kdebase-runtime-msvc kdelibs-msvc astyle diffutils
+@deps kdeutils-msvc kdebase-runtime-msvc
 @deps kdewebdev-msvc kdebase-runtime-msvc kdelibs-msvc
 @deps kdewin-installer-msvc qt-msvc
 @deps kdewin32-msvc qt-msvc
@@ -87,7 +89,7 @@
 @pkgnotes clucene high-performance, full-featured text search engine (required for compiling strigi) 
 ; mingw
 @pkgnotes akonadi-mingw KDE4 Personal Information Manager framework
-@pkgnotes amarok-mingw media player 
+@pkgnotes amarok-mingw UNSTABLE media player
 @pkgnotes fontconfig-mingw library for font customization and configuration
 @pkgnotes freetype-mingw A Free, High-Quality, and Portable Font Engine
 @pkgnotes kdelibs-mingw KDE libraries (support applications)
@@ -99,10 +101,11 @@
 @pkgnotes kdepimlibs-mingw KDE PIM library
 @pkgnotes kdenetwork-mingw KDE Networking applications
 @pkgnotes kdetoys-mingw collection of several programs in KDE
+@pkgnotes kdeutils-mingw various desktop utilities (KGpg, Okteta)
 @pkgnotes kdewebdev-mingw KDE Web Development applications
 @pkgnotes kdewin32-mingw kde supplementary package for win32
-@pkgnotes koffice-mingw KDE Office application suite
-@pkgnotes ktorrent-mingw KDE Torrent client
+@pkgnotes koffice-mingw UNSTABLE KDE Office application suite
+@pkgnotes ktorrent-mingw UNSTABLE KDE Torrent client
 @pkgnotes libgmp-mingw devel-tools GNU MP library for abritary precision arithmetic
 @pkgnotes phonon-mingw KDE KDE4 multimedia API
 @pkgnotes poppler-mingw PDF rendering library based on xpdf-3.0
@@ -117,7 +120,7 @@
 @pkgnotes taglib-mingw audio meda-data library
 ; msvc 
 @pkgnotes akonadi-msvc KDE4 Personal Information Manager framework
-@pkgnotes amarok-msvc media player 
+@pkgnotes amarok-msvc UNSTABLE media player
 @pkgnotes fontconfig-msvc library for font customization and configuration
 @pkgnotes freetype-msvc A Free, High-Quality, and Portable Font Engine
 @pkgnotes kdelibs-msvc KDE libraries (support applications)
@@ -129,10 +132,11 @@
 @pkgnotes kdepimlibs-msvc KDE PIM library
 @pkgnotes kdenetwork-msvc KDE Networking applications
 @pkgnotes kdetoys-msvc collection of several programs in KDE
+@pkgnotes kdeutils-msvc various desktop utilities (KGpg, Okteta)
 @pkgnotes kdewebdev-msvc KDE Web Development applications
 @pkgnotes kdewin32-msvc kde supplementary package for win32
-@pkgnotes koffice-msvc KDE Office application suite
-@pkgnotes ktorrent-msvc KDE Torrent client
+@pkgnotes koffice-msvc UNSTABLE KDE Office application suite
+@pkgnotes ktorrent-msvc UNSTABLE KDE Torrent client
 @pkgnotes libgmp-msvc devel-tools GNU MP library for abritary precision arithmetic
 @pkgnotes poppler-msvc PDF rendering library based on the xpdf-3.0
 @pkgnotes phonon-msvc KDE KDE4 multimedia API
