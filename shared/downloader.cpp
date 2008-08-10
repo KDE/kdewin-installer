@@ -236,7 +236,7 @@ bool Downloader::fetchInternal ( const QUrl &url )
         curl_easy_setopt ( d->curlHandle, CURLOPT_FOLLOWLOCATION, 1 );
         curl_easy_setopt ( d->curlHandle, CURLOPT_USERAGENT, "KDEWin-Installer/" VERSION );
         /// @TODO: activate this to let downloader know about download errors 
-        //curl_easy_setopt ( d->curlHandle, CURLOPT_FAILONERROR, 1 );
+        curl_easy_setopt ( d->curlHandle, CURLOPT_FAILONERROR, 1 );
 #ifdef _DEBUG
         curl_easy_setopt( d->curlHandle, CURLOPT_VERBOSE, 1 );
         curl_easy_setopt( d->curlHandle, CURLOPT_DEBUGFUNCTION, my_curl_debug_callback );
