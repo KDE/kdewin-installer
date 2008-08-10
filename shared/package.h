@@ -91,21 +91,19 @@ public:
     class PackageItem {
         public:
             PackageItem() { }
-            PackageItem(Package::Type type) { contentType = type; }
+            PackageItem(Package::Type type) { m_contentType = type; }
             PackageItem(const QString &type) { setContentType(type); }
             
-            /// setter for several parameter type and binstalled will be removed in the future
-            QT_DEPRECATED bool set(const QUrl &url, const QString &fn, const QByteArray &contentType, bool bInstalled = false);
 
             bool setContentType(const QString &type);
-            //Package::Type contentType() { return m_contentType; } 
+            Package::Type contentType() const { return m_contentType; } 
             
             bool setFileName(const QString &_fileName) 
             { 
-                fileName = _fileName; 
+                m_fileName = _fileName; 
                 return true; 
             }
-            //const QString &fileName() { return m_fileName; }
+            const QString &fileName() const { return m_fileName; }
             
             bool setUrl(const QUrl &_url) 
             { 
@@ -114,30 +112,29 @@ public:
                     qCritical() << __FUNCTION__ << "invalid url" << _url;
                     return false;
                 }
-                url = _url; 
+                m_url = _url; 
                 return true; 
             }
-            //const QUrl &url() { return m_url; }
+            const QUrl &url() const { return m_url; }
 
             bool setUrlAndFileName(const QUrl &url, const QString &fn);
 
-            void setMD5(const QString &_md5) { md5 = _md5; }
-            //const QString &MD5() { return m_md5; }
+            void setMD5(const QString &md5) { m_md5 = md5; }
+            const QString &MD5() const { return m_md5; }
 
-            void setInstalled(bool state) { bInstalled = state; }
-            bool installed() const { return bInstalled; }
+            void setInstalled(bool state) { m_installed = state; }
+            bool installed() const { return m_installed; }
             
-            QUrl    url;            // complete download url
-            QString fileName;       // filename only
-            // not used
-            QT_DEPRECATED QString packageType;    // zip / msi / ...
-            QString md5;            /// md5 sum 
-            Type    contentType;    // BIN / LIB / DOC / SRC
             PackageVersion version; // package item version
     friend QDebug &operator<<(QDebug &, const Package::PackageItem &);
     protected:
-            bool    bInstalled;     // true if already installed
+            QString m_fileName;       // filename only
+            Type    m_contentType;    // BIN / LIB / DOC / SRC
+            bool    m_installed;     // true if already installed
+            QString m_md5;            /// md5 sum 
+            QUrl    m_url;            // complete download url
             QT_DEPRECATED bool set(const QUrl &url, const QString &fn, Package::Type contentType=Package::NONE, bool bInstalled = false);
+            QT_DEPRECATED bool set(const QUrl &url, const QString &fn, const QByteArray &contentType, bool bInstalled = false);
 
     };
 public:

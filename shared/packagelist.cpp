@@ -569,8 +569,8 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
                 }
                 addPackage(p);
             } else {
-                Package::PackageItem item;
-                item.set(m_baseURL.toString() + '/' + fileName, "", pkgType.toAscii());
+                Package::PackageItem item(pkgType);
+                item.setUrlAndFileName(m_baseURL.toString() + '/' + fileName,fileName);
                 pkg->add(item);
                 if (m_curSite)
                 {
