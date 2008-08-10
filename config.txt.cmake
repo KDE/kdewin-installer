@@ -2,7 +2,7 @@
 @format 1.3
 ; this format is *prelimary* and may be changed without prior notice
 @minversion 0.9.2
-@timestamp 200808092100
+@timestamp 200808101000
 
 ; category notes 
 @categorynotes qt Qt related packages 
@@ -297,9 +297,9 @@
 ;------------------------------------------------------
 @package oggcodecs
 @category KDE-3rdparty
-@notes Directshow Filters for Ogg Vorbis, Speex, Theora and FLAC
-@version 0.80.15039
-@url-bin http://www.xiph.org/dshow//uploads/Main/oggcodecs_0.80.15039.exe
+@notes Directshow Filters for Ogg Vorbis
+@version 0.9.9.5
+@url-bin http://www.free-codecs.com/download_soft.php?d=4151&s=58 OggDS0995.exe
 @nomd5
 
 ;------------------------------------------------------
