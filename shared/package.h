@@ -94,7 +94,6 @@ public:
             PackageItem(Package::Type type) { m_contentType = type; }
             PackageItem(const QString &type) { setContentType(type); }
             
-
             bool setContentType(const QString &type);
             Package::Type contentType() const { return m_contentType; } 
             
@@ -126,8 +125,9 @@ public:
             bool installed() const { return m_installed; }
             
             PackageVersion version; // package item version
-    friend QDebug &operator<<(QDebug &, const Package::PackageItem &);
-    protected:
+            friend QDebug &operator<<(QDebug &, const Package::PackageItem &);
+
+        protected:
             QString m_fileName;       // filename only
             Type    m_contentType;    // BIN / LIB / DOC / SRC
             bool    m_installed;     // true if already installed
