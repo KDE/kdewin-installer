@@ -26,7 +26,7 @@
 #include <QUrl>
 #include <QStringList>
 #include <QHash>
-#include <QDebug>
+#include <QtDebug>
 
 #include "settings.h"
 
@@ -109,7 +109,7 @@ public:
             { 
                 if (!_url.isValid()) 
                 {
-                    qCritical() << __FUNCTION__ << "invalid url" << _url;
+                    qCritical() << __FUNCTION__ << "invalid url" << _url.toString();
                     return false;
                 }
                 m_url = _url; 
