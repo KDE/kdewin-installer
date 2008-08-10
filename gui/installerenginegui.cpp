@@ -532,7 +532,7 @@ bool InstallerEngineGui::downloadPackageItem(Package *pkg, Package::Type type )
         QMessageBox::StandardButton result = QMessageBox::critical(
             m_parent,
             tr("Download failed"),
-            tr("The download of %1 failed with error %2").arg(pkg->getUrl(type).toString()).arg(Downloader::instance()->resultString()),
+            tr("The download of %1 failed with error: %2").arg(pkg->getUrl(type).toString()).arg(pkg->error()),
             QMessageBox::Cancel | QMessageBox::Ignore | QMessageBox::Retry,
             QMessageBox::Retry
         );

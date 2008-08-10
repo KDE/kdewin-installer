@@ -248,6 +248,9 @@ public:
     bool handled() const { return m_handled; }
     void setHandled(bool state) { m_handled = state; }
 
+    /// return last error in cleartext form
+    const QString &error() const { return m_lastError; }
+
     /// generate manifest file name
     QString manifestFileName(const Package::Type type) const;
 
@@ -272,6 +275,8 @@ private slots:
 protected:
     // Creates the full path + filename for a package type, creates path when wanted
     QString makeFileName(Package::Type type, bool bCreateDir = false);
+    
+    bool setError(const QString &text) { m_lastError = text; qCritical() << text; return false; }
 
     PackageItemType m_packages;
     QString m_name;     // base name (a2ps)
@@ -284,7 +289,7 @@ protected:
     StringHash m_pathRelocs;
     bool       m_handled;      // marker for several operations
     bool       m_MD5Check;    // marker for md5 checking 
-
+    QString    m_lastError;    
     friend QDebug &operator<<(QDebug &, const Package &);
 };
 QDebug &operator<<(QDebug &, const Package::Type);
