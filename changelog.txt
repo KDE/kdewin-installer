@@ -1,5 +1,10 @@
 ChangeLog
 =========
+0.9.2-4 (r844558)
+-------
+- installer-gui:   - added note about required administrative rights 
+                   - display all packages located in categories starting with 'KDE' in End User Mode
+
 0.9.2-3 (r842009)
 -------
 - installer-gui:   - don't display dependency page when no dependencies are affected
