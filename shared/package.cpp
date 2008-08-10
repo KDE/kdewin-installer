@@ -160,20 +160,23 @@ bool Package::PackageItem::set(const QUrl &url, const QString &fn, Package::Type
 #ifdef DEBUG
     qDebug() << __FUNCTION__ << path << fn << contentType << bInstalled;
 #endif
-    // generate fileName from from url
-    if(fn.isEmpty())
+    // generate fileName from from url when not set previously 
+    if (fileName.isEmpty()) 
     {
-        QString sUrl = url.toString();
-        idx = sUrl.lastIndexOf('/');
-        if(idx == -1) {
-            qDebug() << __FUNCTION__ << "Invalid - no complete url found " << url << "packageitem ignored";    // FIXME
-            return false;
+        if(fn.isEmpty())
+        {
+            QString sUrl = url.toString();
+            idx = sUrl.lastIndexOf('/');
+            if(idx == -1) {
+                qDebug() << __FUNCTION__ << "Invalid - no complete url found " << url << "packageitem ignored";    // FIXME
+                return false;
+            }
+            desc.fileName = sUrl.mid(idx + 1);
         }
-        desc.fileName = sUrl.mid(idx + 1);
+        else
+            desc.fileName = fn;
     }
-    else
-        desc.fileName = fn;
-
+    
     idx = desc.fileName.lastIndexOf('.');
     if(idx == -1) {
         qDebug() << __FUNCTION__ << "Invalid - dot in filename expected" << desc.fileName;    // FIXME
@@ -182,12 +185,42 @@ bool Package::PackageItem::set(const QUrl &url, const QString &fn, Package::Type
     desc.packageType = desc.fileName.mid(idx + 1);
 
     desc.url = url;
-    desc.contentType = contentType;
+    if (contentType != Package::NONE)
+        desc.contentType = contentType;
     desc.bInstalled  = bInstalled;
 #ifdef DEBUG
     qDebug() << __FUNCTION__ << desc.contentType << desc.bInstalled;
 #endif
     *this = desc;
+    return true;
+}
+
+bool Package::PackageItem::setUrlAndFileName(const QUrl &_url, const QString &fn)
+{
+    int idx;
+#ifdef DEBUG
+    qDebug() << __FUNCTION__ << path << fn;
+#endif
+    // if filename is set store it unconditional 
+    if(!fn.isEmpty()) 
+    {
+        url = _url;
+        fileName = fn; 
+        return true;
+    }
+
+    // generate fileName from from url when not set previously 
+    if (!fileName.isEmpty()) 
+    {
+        QString path = _url.path();
+        idx = path.lastIndexOf('/');
+        if(idx == -1) {
+            qCritical() << __FUNCTION__ << "could not set filename from url" << _url;
+            return false;
+        }
+        fileName = path.mid(idx + 1);
+        url = _url;
+    }    
     return true;
 }
 
@@ -347,7 +380,7 @@ QString Package::getTypeAsString(bool requiredIsInstalled, const QString &delim)
 
     QHash<Type, PackageItem>::ConstIterator it = m_packages.constBegin();
     for( ; it != m_packages.constEnd(); ++it) {
-        if(requiredIsInstalled && !(*it).bInstalled)
+        if(requiredIsInstalled && !(*it).installed())
             continue;
 
         switch((*it).contentType) {
@@ -376,20 +409,20 @@ bool Package::isInstalled(Package::Type contentType) const
     {
         Q_FOREACH (const PackageItem &item, m_packages)
         {
-            if (item.bInstalled)
+            if (item.installed())
                 return true;
         }
         return false;
     }
     if(m_packages.contains(contentType))
-        return m_packages[contentType].bInstalled;
+        return m_packages[contentType].installed();
     return false;
 }
 
 void Package::setInstalled(Package::Type contentType)
 {
     if(m_packages.contains(contentType))
-        m_packages[contentType].bInstalled = true;
+        m_packages[contentType].setInstalled(true);
 }
 
 // deprecated?
@@ -429,32 +462,36 @@ bool Package::read(QTextStream &in)
     const QString &baseURL = options.at(1);
     if(!options.at(2).isEmpty())
     {
-        Package::PackageItem item;
-        if (item.set(options.at(2), "", BIN, state.size() > 0 && state.at(0) == "bin"))
+        Package::PackageItem item(BIN);
+        item.setInstalled(state.size() > 0 && state.at(0) == "bin");
+        if (item.setUrlAndFileName(options.at(2), ""))
           add(item);
         else
             qWarning() << "could not set BIN packageitem for package '" << parts.at(0) << "'";
     }
     if(!options.at(3).isEmpty())
     {
-        Package::PackageItem item;
-        if (item.set(options.at(3), "", LIB, state.size() > 1 && state.at(1) == "lib"))
+        Package::PackageItem item(LIB);
+        item.setInstalled(state.size() > 1 && state.at(1) == "lib");
+        if (item.setUrlAndFileName(options.at(3), ""))
           add(item);
         else
             qWarning() << "could not set LIB packageitem for package '" << parts.at(0) << "'";
     }
     if(!options.at(4).isEmpty())
     {
-        Package::PackageItem item;
-        if (item.set(options.at(4), "", DOC, state.size() > 2 && state.at(2) == "doc"))
+        Package::PackageItem item(DOC);
+        item.setInstalled(state.size() > 2 && state.at(2) == "doc");
+        if (item.setUrlAndFileName(options.at(4), ""))
             add(item);
         else
             qWarning() << "could not set DOC packageitem for package '" << parts.at(0) << "'";
     }
     if(!options.at(5).isEmpty())
     {
-        Package::PackageItem item;
-        if (item.set(options.at(5), "", SRC, state.size() > 3 && state.at(3) == "src"))
+        Package::PackageItem item(SRC);
+        item.setInstalled(state.size() > 3 && state.at(3) == "doc");
+        if (item.setUrlAndFileName(options.at(5), ""))
             add(item);
         else
             qWarning() << "could not set SRC packageitem for package '" << parts.at(0) << "'";

@@ -102,9 +102,8 @@ void Database::addFromRegistry()
             Package *pkg =  new Package;
             pkg->setName ( i.key() );
             pkg->setInstalledVersion ( version );
-            Package::PackageItem pi;
-            pi.bInstalled = true;
-            pi.setContentType ( "BIN" );
+            Package::PackageItem pi( "BIN" );
+            pi.setInstalled(true);
             pkg->add ( pi );
             m_database.append ( pkg );
         }
@@ -207,17 +206,15 @@ bool Database::readFromDirectory ( const QString &_dir )
             continue;
         Package *pkg;
         if ( ( pkg = getPackage ( pkgName,pkgVersion.toAscii() ) ) != NULL ) {
-            Package::PackageItem pi;
-            pi.bInstalled = true;
-            pi.setContentType ( pkgType );
+            Package::PackageItem pi ( pkgType );
+            pi.setInstalled(true);
             pkg->add ( pi );
         } else {
             Package *pkg =  new Package;
             pkg->setName ( pkgName );
             pkg->setInstalledVersion ( pkgVersion );
-            Package::PackageItem pi;
-            pi.bInstalled = true;
-            pi.setContentType ( pkgType );
+            Package::PackageItem pi ( pkgType );
+            pi.setInstalled(true);
             pkg->add ( pi );
             m_database.append ( pkg );
         }

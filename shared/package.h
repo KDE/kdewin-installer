@@ -90,18 +90,55 @@ public:
 
     class PackageItem {
         public:
-            bool set(const QUrl &url, const QString &fn, Package::Type contentType, bool bInstalled = false);
-            bool set(const QUrl &url, const QString &fn, const QByteArray &contentType, bool bInstalled = false);
-            bool setContentType(const QString &type);
+            PackageItem() { }
+            PackageItem(Package::Type type) { contentType = type; }
+            PackageItem(const QString &type) { setContentType(type); }
+            
+            /// setter for several parameter type and binstalled will be removed in the future
+            QT_DEPRECATED bool set(const QUrl &url, const QString &fn, const QByteArray &contentType, bool bInstalled = false);
 
+            bool setContentType(const QString &type);
+            //Package::Type contentType() { return m_contentType; } 
+            
+            bool setFileName(const QString &_fileName) 
+            { 
+                fileName = _fileName; 
+                return true; 
+            }
+            //const QString &fileName() { return m_fileName; }
+            
+            bool setUrl(const QUrl &_url) 
+            { 
+                if (!_url.isValid()) 
+                {
+                    qCritical() << __FUNCTION__ << "invalid url" << _url;
+                    return false;
+                }
+                url = _url; 
+                return true; 
+            }
+            //const QUrl &url() { return m_url; }
+
+            bool setUrlAndFileName(const QUrl &url, const QString &fn);
+
+            void setMD5(const QString &_md5) { md5 = _md5; }
+            //const QString &MD5() { return m_md5; }
+
+            void setInstalled(bool state) { bInstalled = state; }
+            bool installed() const { return bInstalled; }
+            
             QUrl    url;            // complete download url
             QString fileName;       // filename only
-            QString packageType;    // zip / msi / ...
+            // not used
+            QT_DEPRECATED QString packageType;    // zip / msi / ...
             QString md5;            /// md5 sum 
             Type    contentType;    // BIN / LIB / DOC / SRC
-            bool    bInstalled;     // true if already installed
             PackageVersion version; // package item version
     friend QDebug &operator<<(QDebug &, const Package::PackageItem &);
+    protected:
+            bool    bInstalled;     // true if already installed
+            QT_DEPRECATED bool set(const QUrl &url, const QString &fn, Package::Type contentType=Package::NONE, bool bInstalled = false);
+
     };
 public:
     typedef QHash<Type, PackageItem> PackageItemType;

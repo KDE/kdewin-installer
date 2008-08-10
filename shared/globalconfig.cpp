@@ -258,12 +258,34 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                         url = QUrl(m_baseURL + cmd[1]);
                     if (!pkg->hasType(type))
                     {
-                        Package::PackageItem item;
-                        if (item.set(url,fn,type))
+                        Package::PackageItem item(type);
+                        if (item.setUrlAndFileName(url,fn))
                             pkg->add(item);
                     }
                     else
-                        pkg->item(type).set(url,fn,type);
+                        pkg->item(type).setUrlAndFileName(url,fn);
+                }
+                else if(keyword.startsWith("@filename-")) 
+                {
+                    Package::Type type;
+                    if(keyword == "@filename-bin")
+                        type = Package::BIN;
+                    else if(keyword == "@filename-lib")
+                        type = Package::LIB;
+                    else if(keyword == "@filename-doc")
+                        type = Package::DOC;
+                    else if(keyword == "@filename-src")
+                        type = Package::SRC;
+                    else
+                        continue;
+                    if (!pkg->hasType(type))
+                    {
+                        Package::PackageItem item(type);
+                        item.setFileName(cmd[1]);
+                        pkg->add(item);
+                    }
+                    else
+                        pkg->item(type).setFileName(cmd[1]);
                 }
                 else if(keyword.startsWith("@nomd5")) 
                 {
@@ -284,12 +306,12 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                         continue;
                     if (!pkg->hasType(type))
                     {
-                        Package::PackageItem item;
-                        item.md5 = cmd[1];
+                        Package::PackageItem item(type);
+                        item.setMD5(cmd[1]);
                         pkg->add(item);
                     }
                     else
-                        pkg->item(type).md5 = cmd[1];
+                        pkg->item(type).setMD5(cmd[1]);
                 }
                 else if(keyword == "@require")
                 {

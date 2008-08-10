@@ -397,15 +397,30 @@ bool PackageList::readInternal(QIODevice *ioDev, PackageList::Type type, bool ap
                 pkg.setVersion(version);
                 // available types could not be determined on this web page
                 // so assume all types are available
-                Package::PackageItem item;
-                item.set(m_baseURL,name+"-"+version+"-bin.zip",Package::BIN,false);
-                pkg.add(item);
-                item.set(m_baseURL,name+"-"+version+"-lib.zip",Package::LIB,false);
-                pkg.add(item);
-                item.set(m_baseURL,name+"-"+version+"-src.zip",Package::SRC,false);
-                pkg.add(item);
-                item.set(m_baseURL,name+"-"+version+"-doc.zip",Package::DOC,false);
-                pkg.add(item);
+                {
+                    Package::PackageItem item(Package::BIN);
+                    item.setUrl(m_baseURL);
+                    item.setFileName(name+"-"+version+"-bin.zip");
+                    pkg.add(item);
+                }
+                {
+                    Package::PackageItem item(Package::LIB);
+                    item.setUrl(m_baseURL);
+                    item.setFileName(name+"-"+version+"-lib.zip");
+                    pkg.add(item);
+                }
+                {
+                    Package::PackageItem item(Package::DOC);
+                    item.setUrl(m_baseURL);
+                    item.setFileName(name+"-"+version+"-doc.zip");
+                    pkg.add(item);
+                }
+                {
+                    Package::PackageItem item(Package::SRC);
+                    item.setUrl(m_baseURL);
+                    item.setFileName(name+"-"+version+"-src.zip");
+                    pkg.add(item);
+                }
                 addPackage(pkg);
             }
         }
@@ -538,8 +553,8 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
                 Package p;
                 p.setVersion(pkgVersion);
                 p.setName(pkgName);
-                Package::PackageItem item;
-                item.set(m_baseURL.toString() + '/' + fileName, "", pkgType.toAscii());
+                Package::PackageItem item(pkgType);
+                item.setUrlAndFileName(m_baseURL.toString() + '/' + fileName,fileName);
                 p.add(item);
                 if(m_curSite)
                     p.setNotes(m_curSite->packageNote(pkgName));
