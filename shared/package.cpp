@@ -49,6 +49,7 @@ Package::PackageVersion &Package::PackageVersion::operator=(const Package::Packa
 int  Package::PackageVersion::compare(const Package::PackageVersion &other) const
 {
     int result;
+    /// @TODO add version specifc compare here when required e.g. 4.00.80 is equal to 4.0.80
     if (m_version < other.m_version)
         result = -1;
     else if (m_version > other.m_version)
@@ -60,12 +61,12 @@ int  Package::PackageVersion::compare(const Package::PackageVersion &other) cons
 
 bool Package::PackageVersion::operator<(const Package::PackageVersion &other) const
 {
-    return compare(other) < 0 ? true : false; 
+    return compare(other) < 0;
 }
 
 bool Package::PackageVersion::operator<=(const Package::PackageVersion &other) const
 {
-    return compare(other) <= 0 ? true : false; 
+    return compare(other) <= 0;
 }
 
 bool Package::PackageVersion::operator>(const Package::PackageVersion &other) const
