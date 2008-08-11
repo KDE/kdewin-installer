@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>775</width>
-    <height>363</height>
+    <height>364</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -16,13 +16,6 @@
    <string/>
   </property>
   <layout class="QGridLayout" name="gridLayout" >
-   <item row="7" column="0" >
-    <widget class="QCheckBox" name="skipBasicSettings" >
-     <property name="text" >
-      <string>go directly to the download server page, skip basic settings</string>
-     </property>
-    </widget>
-   </item>
    <item row="3" column="0" >
     <widget class="QLabel" name="label_2" >
      <property name="sizePolicy" >
@@ -47,61 +40,6 @@
       <bool>true</bool>
      </property>
     </widget>
-   </item>
-   <item row="0" column="0" >
-    <widget class="QLabel" name="label" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize" >
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize" >
-      <size>
-       <width>1024</width>
-       <height>140</height>
-      </size>
-     </property>
-     <property name="text" >
-      <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
-&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">This setup program is used for the installation of KDE for Windows applications.&lt;/p>
-&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">The pages that follow will guide you through the installation. &lt;/p>
-&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">This installer will install only a basic set of applications by default. You can always run this program at any time in the future to add, remove or upgrade packages if necessary. &lt;/p>
-&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;span style=" font-weight:600;">Please note that some packages require administrative rights for installing. If the current windows user lacks those rights the installation may fail.&lt;/span>&lt;/p>
-&lt;p style="-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;">&lt;/p>&lt;/body>&lt;/html></string>
-     </property>
-     <property name="textFormat" >
-      <enum>Qt::RichText</enum>
-     </property>
-     <property name="alignment" >
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-     </property>
-     <property name="wordWrap" >
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0" >
-    <spacer name="verticalSpacer" >
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0" >
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
    </item>
    <item row="2" column="0" >
     <widget class="QLabel" name="label_3" >
@@ -139,13 +77,56 @@ p, li { white-space: pre-wrap; }
      </property>
     </widget>
    </item>
+   <item rowspan="2" row="0" column="0" >
+    <widget class="QLabel" name="label" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize" >
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>1024</width>
+       <height>180</height>
+      </size>
+     </property>
+     <property name="text" >
+      <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">This setup program is used for the installation of KDE for Windows applications.&lt;/p>
+&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">The pages that follow will guide you through the installation. &lt;/p>
+&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">This installer will install only a basic set of applications by default. You can always run this program at any time in the future to add, remove or upgrade packages if necessary. &lt;/p>
+&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;span style=" font-weight:600;">Please note that some external packages require administrative rights for installing. If the current windows user lacks those rights the installation may fail.&lt;/span>&lt;/p>
+&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;">Please also note that is it required to stop all kde processes especially background processes before updating packages. Otherwise it may be possible that files which are in use will not be updated and your installation may not work.  You can check this with the taskmanager. This limitation may be removed in further versions of the installer. &lt;/p>&lt;/body>&lt;/html></string>
+     </property>
+     <property name="textFormat" >
+      <enum>Qt::RichText</enum>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <property name="wordWrap" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" >
+    <widget class="QCheckBox" name="skipBasicSettings" >
+     <property name="text" >
+      <string>go directly to the download server page, skip basic settings</string>
+     </property>
+    </widget>
+   </item>
   </layout>
-  <zorder>verticalSpacer</zorder>
-  <zorder>skipBasicSettings</zorder>
-  <zorder>label_2</zorder>
-  <zorder>label</zorder>
-  <zorder>verticalSpacer</zorder>
-  <zorder>label_3</zorder>
  </widget>
  <resources/>
  <connections/>
