@@ -174,7 +174,7 @@ static void setIcon ( QTreeWidgetItem &item, Package::Type type, iconType action
     
 void InstallerEngineGui::setEndUserInitialState ( QTreeWidgetItem &item, Package *available, Package *installed, int column )
 {
-    if (installed && available->version() > installed->version())
+    if (installed && available->version() != installed->version())
     {
         if (installed->isInstalled(Package::BIN))
         {
