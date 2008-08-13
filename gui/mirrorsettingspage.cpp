@@ -77,7 +77,6 @@ MirrorSettingsPage::MirrorSettingsPage() : InstallWizardPage(0)
 void MirrorSettingsPage::initializePage()
 {
     Settings &s = Settings::instance();
-    s.setSkipBasicSettings(true);
     Mirrors &mirrors = Mirrors::instance();
     mirrors.setConfig(mirrorConfig);
     InstallerDialogs::instance().downloadProgressDialog(this,true,tr("Downloading Mirror List"));
