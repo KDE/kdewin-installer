@@ -260,7 +260,7 @@ int InstallWizard::nextIdDeveloper() const
     case downloadSettingsPage: return internetSettingsPage;
     case internetSettingsPage: return mirrorSettingsPage;
     case mirrorSettingsPage:   return releaseSelectionPage;
-    case releaseSelectionPage: return endUserPackageSelectorPage;
+    case releaseSelectionPage: return packageSelectorPage;
     case packageSelectorPage:  return dependenciesPage;
     case dependenciesPage:     return downloadPage;
     case downloadPage:         return uninstallPage;
