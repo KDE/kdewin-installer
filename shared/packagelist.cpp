@@ -303,7 +303,7 @@ QStringList filterFileName(const QStringList &files)
             }
             else
             {
-                qDebug() << "added" << fileName;
+                qDebug() << "added" << fileName << "as" << key;
                 packages[key] = new FileType(pkgVersion,fileName);
             }
         }
