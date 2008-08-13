@@ -13,7 +13,7 @@
    <string>Release Selection</string>
   </property>
   <property name="statusTip" >
-   <string>In the list below all available releases on the selected server are displayed. Select the release you like to install or update from. A highlighted entry indicates the release used on on the last installer run.</string>
+   <string>In the list below all available releases on the selected server are displayed. Select the release you like to install or update from. The highlighted entry indicates the release used on the last installer run.</string>
   </property>
   <layout class="QGridLayout" >
    <item row="0" column="0" >
