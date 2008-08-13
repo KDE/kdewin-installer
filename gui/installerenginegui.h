@@ -39,6 +39,7 @@ public:
 
     void selectAllPackagesForRemoval();
     void selectPackagesForReinstall();
+    void unselectAllPackages();
 
     void checkUpdateDependencies(QTreeWidget *list);
     bool checkRemoveDependencies(QTreeWidget *list);
@@ -46,6 +47,7 @@ public:
     bool downloadPackages(const QString &category=QString());
     bool installPackages(const QString &category=QString());
     bool removePackages(const QString &category=QString());
+
     /// @TODO: cleanup
     void setEndUserInitialState ( QTreeWidgetItem &item, Package *available, Package *installed, int column=0 );
 

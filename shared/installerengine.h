@@ -48,6 +48,10 @@ public:
     InstallerEngine(QObject *parent);
     virtual ~InstallerEngine();
 
+    void setConfigURL(const QUrl &url);
+    
+    void setRoot(const QString &root);
+    
     // read in global config 
     void initGlobalConfig();
 
@@ -72,14 +76,14 @@ public:
     static QString fallBackURL;
     Database *database() { return m_database; }
     PackageList* packageResources() { return m_packageResources; }
-    QUrl &usedDownloadSource() { return m_usedDownloadSource; }
+    QUrl &usedDownloadSource() { return m_usedConfigURL; }
     
 Q_SIGNALS:
     void error ( const QString &error );
 
 protected slots:
     //@ TODO using this slots make thing much complicater as necessary 
-    void installDirChanged(const QString &newdir);
+    //void installDirChanged(const QString &newdir);
     void slotError ( const QString &error );
 
 protected:
@@ -91,7 +95,10 @@ protected:
     bool                m_globalConfigReaded;
     bool                m_addedPackages;
     bool                m_canceled;
-    QUrl                m_usedDownloadSource;
+    QString             m_root;
+    QUrl                m_configURL;
+    QUrl                m_usedConfigURL;
+    
     /// init all package definitions
     virtual bool init();
     /// reload all package definition

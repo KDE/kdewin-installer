@@ -137,10 +137,22 @@ bool InstallerEngine::isInstallerVersionOutdated()
     return minVersion != 0 && currentVersion < minVersion;
 }
 
+void InstallerEngine::setRoot(const QString &root)
+{
+    m_root = root;
+    m_installer->setRoot(root);
+    m_database->setRoot(root);
+}
+
+void InstallerEngine::setConfigURL(const QUrl &url)
+{
+    m_configURL  = url;
+}
+ 
 void InstallerEngine::reload()
 {
     m_database->clear();
-    m_database->setRoot(Settings::instance().installDir());
+    m_database->setRoot(m_root);
     categoryCache.clear();
     init();
 }
@@ -153,15 +165,15 @@ bool InstallerEngine::readGlobalConfig()
     if (!defaultConfigURL.isEmpty()) // command line overrides
     {
         configFiles = m_globalConfig->fetch(defaultConfigURL);
-        m_usedDownloadSource = defaultConfigURL;
+        m_usedConfigURL = defaultConfigURL;
     }
     if (configFiles.isEmpty())
     {
-        hostURL = Settings::instance().mirror();
+        hostURL = m_configURL.toString();
         if (!hostURL.isEmpty())
         {
             configFiles = m_globalConfig->fetch(hostURL);
-            m_usedDownloadSource = hostURL;
+            m_usedConfigURL = hostURL;
         }
     }
     if (configFiles.isEmpty())
@@ -169,11 +181,14 @@ bool InstallerEngine::readGlobalConfig()
         if (hostURL != fallBackURL) // fallBack URL is other url
         {
             configFiles = m_globalConfig->fetch(fallBackURL);
-            m_usedDownloadSource = fallBackURL;
+            m_usedConfigURL = fallBackURL;
         }
     }
     if (configFiles.isEmpty())
+    {
+        qCritical() << "no download url found, you have to run setConfigUrl() to specify one";
         return false;
+    }
 
     if (!m_globalConfig->parse(configFiles))
         return false;
@@ -302,13 +317,6 @@ void InstallerEngine::stop()
 {
     Downloader::instance()->cancel();
     m_canceled = true;
-}
-
-void InstallerEngine::installDirChanged(const QString &newdir)
-{
-    m_installer->setRoot(newdir);
-    // this will fetch installed packages
-    m_database->setRoot(newdir);
 }
 
 QDebug &operator<<(QDebug &out, const InstallerEngine &c)

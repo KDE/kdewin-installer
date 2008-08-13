@@ -53,7 +53,7 @@ bool InstallDirectoryPage::validatePage()
 {
     Settings &s = Settings::instance();
     s.setInstallDir(ui.rootPathEdit->text());
-
+    engine->setRoot(s.installDir());
     return true;
 }
 

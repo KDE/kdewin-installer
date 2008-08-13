@@ -486,6 +486,11 @@ void InstallerEngineGui::reload()
     dependencyStates.clear();
     InstallerEngine::reload();
 }
+void InstallerEngineGui::unselectAllPackages()
+{
+    packageStates.clear();
+    dependencyStates.clear();
+}
 
 void InstallerEngineGui::selectAllPackagesForRemoval()
 {

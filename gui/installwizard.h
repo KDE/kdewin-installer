@@ -47,6 +47,7 @@ public:
         downloadSettingsPage,
         internetSettingsPage,
         mirrorSettingsPage,
+        releaseSelectionPage,
         packageSelectorPage,
         postProcessPage,
         dependenciesPage,

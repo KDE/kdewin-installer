@@ -48,6 +48,7 @@
 //#include "enduserrepairpage.h"
 //#include "enduserremovepage.h"
 #include "mirrorsettingspage.h"
+#include "releaseselectionpage.h"
 #include "packageselectorpage.h"
 #include "postprocesspage.h"
 #include "dependenciespage.h"
@@ -62,6 +63,9 @@ InstallerEngineGui *engine;
 
 InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     engine = new InstallerEngineGui(this);
+    // default settings from stored values, they may be overrided by the  wizard pages 
+    engine->setRoot(Settings::instance().installDir());
+    engine->setConfigURL(Settings::instance().mirrorWithReleasePath());
     connect(engine, SIGNAL(error(const QString &)), this, SLOT(slotEngineError(const QString &)) );
 
     // must be first
@@ -93,6 +97,7 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
 //    setPage(endUserRepairPage,     new EndUserRepairPage);    
 //    setPage(endUserRemovePage,     new EndUserRemovePage);    
     setPage(mirrorSettingsPage, new MirrorSettingsPage); 
+    setPage(releaseSelectionPage, new ReleaseSelectionPage); 
     setPage(packageSelectorPage, new PackageSelectorPage); 
     setPage(dependenciesPage, new DependenciesPage); 
     setPage(downloadPage, new DownloadPage()); 
@@ -176,11 +181,19 @@ void InstallWizard::slotEngineError(const QString &msg)
     );
 }
 
+bool skipSettings()
+{
+    return Settings::instance().isSkipBasicSettings()
+        && !Settings::instance().installDir().isEmpty()
+        && !Settings::instance().downloadDir().isEmpty()
+        && Settings::instance().mirrorWithReleasePath().isValid();
+}
+
 int InstallWizard::nextIdEndUser() const
 {
     switch (currentId()) {
     case titlePage:
-        if (Settings::instance().isSkipBasicSettings())
+        if (skipSettings())
         {
             if (Database::isAnyPackageInstalled(Settings::instance().installDir()))
 #if 1
@@ -210,7 +223,8 @@ int InstallWizard::nextIdEndUser() const
         return _page->nextId();
     }
 #endif
-    case mirrorSettingsPage: return endUserPackageSelectorPage;
+    case mirrorSettingsPage: return releaseSelectionPage;
+    case releaseSelectionPage: return endUserPackageSelectorPage;
 //    case endUserUpdatePage:        return dependenciesPage;
 //    case endUserRepairPage:        return uninstallPage;
 //    case endUserRemovePage:        return uninstallPage;
@@ -226,11 +240,12 @@ int InstallWizard::nextIdEndUser() const
     }
 }
 
+
 int InstallWizard::nextIdDeveloper() const
 {
     switch (currentId()) {
     case titlePage:
-        if (Settings::instance().isSkipBasicSettings())
+        if (skipSettings())
         {
             if (GlobalConfig::isRemoteConfigAvailable())
                 return packageSelectorPage;
@@ -244,7 +259,8 @@ int InstallWizard::nextIdDeveloper() const
     case userCompilerModePage: return downloadSettingsPage;
     case downloadSettingsPage: return internetSettingsPage;
     case internetSettingsPage: return mirrorSettingsPage;
-    case mirrorSettingsPage:   return packageSelectorPage;
+    case mirrorSettingsPage:   return releaseSelectionPage;
+    case releaseSelectionPage: return endUserPackageSelectorPage;
     case packageSelectorPage:  return dependenciesPage;
     case dependenciesPage:     return downloadPage;
     case downloadPage:         return uninstallPage;

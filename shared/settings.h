@@ -26,6 +26,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QSettings>
 #include <QtCore/QStringList>
+#include <QtCore/QUrl>
 
 /**
  holds global options, which are stored in a local user specific config file
@@ -53,9 +54,13 @@ public:
     QString downloadDir() const;
     void setDownloadDir(const QString &dir);
 
-    // download mirror settings  
+    // download mirror base url 
     QString mirror() const;
     void setMirror(const QString &mirror);
+
+    // url of last used mirror url 
+    QUrl mirrorWithReleasePath() const { return m_settings->value("MirrorWithReleasePath", "").toString(); }
+    void setMirrorWithReleasePath(const QUrl &url) { m_settings->setValue("MirrorWithReleasePath", url.toString()); sync(); } 
 
     // additional download mirrors
     QStringList localMirrors() const;
