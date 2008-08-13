@@ -72,17 +72,52 @@ bool Releases::fetch(const QUrl &baseURL)
 #endif
     }   
     m_releases.clear();
-    QUrl url = baseURL.toString() + "/stable";
+    QUrl url = baseURL.toString() + "/stable/";
     if (!Downloader::instance()->fetch(url,out))
-        return false;
-    if (!parse(out,url,ReleaseType::Stable))
-        return false;
+    {
+        qWarning() << "could not fetch stable versions from" << url;
+    }
+    else if (!parse(out,url,ReleaseType::Stable))
+    {
+        qWarning() << "could not extract stable versions from directory list fetched from" << url;
+    }
 
-    url = baseURL.toString() + "/unstable";
+    url = baseURL.toString() + "/unstable/";
     if (!Downloader::instance()->fetch(url,out))
-        return false;
-    if (!parse(out,url,ReleaseType::Unstable))
-        return false;
+    {
+        qWarning() << "could not fetch unstable versions from" << url;
+    }
+    else if (!parse(out,url,ReleaseType::Unstable))
+    {
+        qWarning() << "could not extract unstable versions from directory list fetched from" << url;
+    }
+
+    // wwww.winkde.org and sf uses flat directory structure below the version dir, so no extra action is required here 
+    if (baseURL.host() == "www.winkde.org" 
+        || baseURL.host() == "sourceforge.net" 
+        || baseURL.host() == "sf.net" 
+        || baseURL.host() == "downloads.sourceforge.net" )
+        return true;
+
+    // kde mirrors uses a win32 subdir which has to be checked for the existance of a win32 release
+    /// @TODO add a fetchSilent() method 
+    DownloaderProgress *old = Downloader::instance()->progress();
+    Downloader::instance()->setProgress(0);
+
+    ReleaseTypeList temp = m_releases;
+    m_releases.clear();
+
+    for (int i = 0; i < temp.size(); ++i) 
+    {
+        ReleaseType r = temp.at(i);
+        QUrl u = r.url.toString() + "/win32/config.txt";
+        if (Downloader::instance()->fetch(u,out)) 
+        {
+            r.url = r.url.toString() + "/win32/";
+            m_releases.append(r);
+        }
+    }
+    Downloader::instance()->setProgress(old);
 
     return true;
 }
@@ -124,11 +159,11 @@ bool Releases::parse(QIODevice *ioDev, const QUrl &url, ReleaseType::Type type)
                 continue;
                 
             int end = line.indexOf("\"",start+6);
-            QString x = line.mid(start+6,end-start-6);
-            qDebug() << line << x;
+            QString version = line.mid(start+6,end-start-6);
+            qDebug() << line << version;
             ReleaseType release;
-            release.url = url.toString() + "/" + x;
-            release.name = x.replace("/","");
+            release.url = url.toString() + "/" + version;
+            release.name = version.replace("/","");
             release.type = type;
             m_releases.append(release);
         }
@@ -136,6 +171,28 @@ bool Releases::parse(QIODevice *ioDev, const QUrl &url, ReleaseType::Type type)
     else if (url.scheme() == "ftp") 
     {
         // parse ftp listing
+        //drwxr-xr-x    4 emoenke  ftp          4096 May  6 22:06 4.0.4
+        while (!ioDev->atEnd())
+        {
+            const QString line = QString::fromUtf8(ioDev->readLine().replace("\n","").replace("\r",""));
+            if (!line.startsWith(QLatin1Char('d')) ) 
+                continue;
+            QStringList a = line.split(" ",QString::SkipEmptyParts);
+            if (a.size() < 9)
+                continue;
+            QString version = a[8];
+            
+            // check syntax  x.y.z 
+            if (version.indexOf(QRegExp("^[0-9]+\\.[0-9]+\\.[0-9]+$"), 0) == -1)   
+                continue;
+                
+            ReleaseType release;
+            release.url = url.toString() + "/" + version;
+            release.name = version.replace("/","");
+            release.type = type;
+            m_releases.append(release);
+        }
+
     } 
 
     qDebug() << m_releases;
