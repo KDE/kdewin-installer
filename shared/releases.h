@@ -58,6 +58,8 @@ class Releases
         ReleaseTypeList &releases() { return m_releases; }
         static Releases &instance();
     protected:
+        bool convertFromOldMirrorUrl(const QUrl &url);
+        bool patchReleaseUrls(const QUrl &url);
 
         /**
          parse mirror list from a local file. The mirror list is accessable 

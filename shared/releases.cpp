@@ -42,6 +42,71 @@ Releases::~Releases()
     clear();
 }
 
+bool Releases::convertFromOldMirrorUrl(const QUrl &url)
+{
+    // in case the url contains already a release path, transform the url to the ReleaseTyp 
+    QString path = url.path();
+    QString aString = "/stable/";
+    int i = path.indexOf(aString);
+    if (i != -1)
+    {
+        int k = path.indexOf("/",i+aString.size()+1);
+        QString version = path.mid(i+aString.size(),k-i-aString.size());
+        ReleaseType release;
+        release.name = version;
+        release.url = url;
+        release.type = ReleaseType::Stable;
+        m_releases.append(release);
+        return true;
+    }    
+    aString = "/unstable/";
+    i = path.indexOf(aString);
+    if (i != -1)
+    {
+        int k = path.indexOf("/",i+aString.size()+1);
+        QString version = path.mid(i+aString.size(),k-i-aString.size());
+        ReleaseType release;
+        release.name = version;
+        release.url = url;
+        release.type = ReleaseType::Unstable;
+        m_releases.append(release);
+        return true;
+    }    
+    return false;
+}
+
+bool Releases::patchReleaseUrls(const QUrl &url)
+{
+    // wwww.winkde.org and sf uses flat directory structure below the version dir, so no extra action is required here 
+    if (url.host() == "www.winkde.org" 
+        || url.host() == "sourceforge.net" 
+        || url.host() == "sf.net" 
+        || url.host() == "downloads.sourceforge.net" )
+        return true;
+
+    // kde mirrors uses a win32 subdir which has to be checked for the existance of a win32 release
+    /// @TODO add a fetchSilent() method 
+    DownloaderProgress *old = Downloader::instance()->progress();
+    Downloader::instance()->setProgress(0);
+
+    ReleaseTypeList temp = m_releases;
+    m_releases.clear();
+    QByteArray out;
+
+    for (int i = 0; i < temp.size(); ++i) 
+    {
+        ReleaseType r = temp.at(i);
+        QUrl u = r.url.toString() + "/win32/config.txt";
+        if (Downloader::instance()->fetch(u,out)) 
+        {
+            r.url = r.url.toString() + "/win32/";
+            m_releases.append(r);
+        }
+    }
+    Downloader::instance()->setProgress(old);
+    return true;
+}
+
 bool Releases::fetch(const QUrl &baseURL)
 {
 #ifdef DEBUG
@@ -72,6 +137,10 @@ bool Releases::fetch(const QUrl &baseURL)
 #endif
     }   
     m_releases.clear();
+
+    if (convertFromOldMirrorUrl(baseURL))
+        return true;
+
     QUrl url = baseURL.toString() + "/stable/";
     if (!Downloader::instance()->fetch(url,out))
     {
@@ -92,34 +161,7 @@ bool Releases::fetch(const QUrl &baseURL)
         qWarning() << "could not extract unstable versions from directory list fetched from" << url;
     }
 
-    // wwww.winkde.org and sf uses flat directory structure below the version dir, so no extra action is required here 
-    if (baseURL.host() == "www.winkde.org" 
-        || baseURL.host() == "sourceforge.net" 
-        || baseURL.host() == "sf.net" 
-        || baseURL.host() == "downloads.sourceforge.net" )
-        return true;
-
-    // kde mirrors uses a win32 subdir which has to be checked for the existance of a win32 release
-    /// @TODO add a fetchSilent() method 
-    DownloaderProgress *old = Downloader::instance()->progress();
-    Downloader::instance()->setProgress(0);
-
-    ReleaseTypeList temp = m_releases;
-    m_releases.clear();
-
-    for (int i = 0; i < temp.size(); ++i) 
-    {
-        ReleaseType r = temp.at(i);
-        QUrl u = r.url.toString() + "/win32/config.txt";
-        if (Downloader::instance()->fetch(u,out)) 
-        {
-            r.url = r.url.toString() + "/win32/";
-            m_releases.append(r);
-        }
-    }
-    Downloader::instance()->setProgress(old);
-
-    return true;
+    return patchReleaseUrls(baseURL);
 }
 
 bool Releases::parse(const QString &fileName, const QUrl &url, ReleaseType::Type type)
