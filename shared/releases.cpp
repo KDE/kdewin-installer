@@ -261,6 +261,7 @@ QDebug &operator<<(QDebug &out, const ReleaseType &c)
     out << "ReleaseType ("
         << "url:" << c.url
         << "name:" << c.name
+        << "type:" << (c.type == ReleaseType::Stable ? "stable" : "unstable")
         << ")";
     return out;
 }
