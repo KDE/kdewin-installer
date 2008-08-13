@@ -199,6 +199,7 @@ void EndUserPackageSelectorPage::cleanupPage()
     disconnect(ui.packageList,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
     disconnect(&Settings::instance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
     disconnect(&Settings::instance(),SIGNAL(compilerTypeChanged()),this,SLOT(slotCompilerTypeChanged()));
+    engine->unselectAllPackages();
 }
 
 bool EndUserPackageSelectorPage::isComplete()
