@@ -758,7 +758,7 @@ bool Package::fromFileName(const QString &fileName, QString &pkgName, QString &p
             pkgFormat = fileName.mid(idx2 + 1);
             idx = idx2;
         }
-        baseName = fileName.left(idx).toLower();
+        baseName = fileName.left(idx);
     }
     else
     {
