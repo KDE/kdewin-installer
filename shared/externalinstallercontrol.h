@@ -25,6 +25,24 @@
 #include <QtDebug>
 #include <windows.h>
 
+class InstallerControlType {
+    public:
+        bool parse(const QString &line); 
+        bool parse(const QStringList &line); 
+        QString type() { return m_type; }
+        QString setType(const QString &type) { m_type = type; }
+        QString caption() { return m_caption; }
+        QString setCaption(const QString &caption) { m_caption = caption; }
+        QString timeout() { return m_timeout; }
+ 
+    protected:
+        QString m_type;    // window item className 
+        QString m_caption; // window item titleName  
+        QString m_timeout; 
+};
+
+typedef QList<InstallerControlType>  InstallerControlTypeList; 
+
 class QProcess;
 class ExternalInstallerControlPrivate;
 

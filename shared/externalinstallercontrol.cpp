@@ -27,6 +27,31 @@
 
 #include <windows.h>
 
+bool InstallerControlType::parse(const QString &string)
+{
+    return parse(string.split(','));
+}
+
+bool InstallerControlType::parse(const QStringList &fields)
+{
+    if (fields.size() == 3)
+    {
+        m_type = fields[0];
+        m_caption = fields[1];
+        m_timeout = fields[2];
+        return true;
+    }
+
+    else if (fields.size() == 2)
+    {
+        m_type = fields[0];
+        m_caption = fields[1];
+        return true;
+    }
+    else 
+        return false;
+}
+
 class WindowItem {
     public:
         HWND handle;
