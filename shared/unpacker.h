@@ -31,22 +31,35 @@
 class QEventLoop;
 class UPThread;
 class InstallerProgress;
+
+/** 
+\brief The class Unpacker provides unpackaging of downloaded package files 
+
+
+*/
 class Unpacker : public QObject
 {
     Q_OBJECT
 public:
-    // dtor
+    /// dtor
     virtual ~Unpacker();
-    // singleton
+
+    /// singleton
     static Unpacker *instance();
-    // for user interaction
+
+    /// for user interaction
     void setProgress ( InstallerProgress *progress );
+
+    /// returns currently used Installer process instance
     InstallerProgress *progress();
-    // unpack file
+
+    /// unpack file
     bool unpackFile ( const QString &fn, const QString &destpath, const StringHash &pathRelocations=StringHash() );
+
     /// cancel file unpack
     void cancel();
-    // get unpacked files
+
+    /// get unpacked files
     QStringList getUnpackedFiles() const;
 Q_SIGNALS:
     void done ( bool bOk );
