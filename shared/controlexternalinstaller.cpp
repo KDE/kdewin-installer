@@ -21,7 +21,10 @@
 ****************************************************************************/
 
 #include "controlexternalinstaller.h"
+
+#include <QCoreApplication>
 #include <QProcess>
+
 #include <windows.h>
 
 class WindowItem {
@@ -130,6 +133,28 @@ void SetForegroundWindowEx( HWND hWnd )
    AttachThreadInput ( ForeGroundID, CurrentID, FALSE );
 }// End SetForegroundWindowEx
 
+/// clear input text field 
+void clearItemText(HWND hwnd)
+{
+    for (int i = 0; i < 50 ; i++)
+    {
+        PostMessage(hwnd,WM_KEYDOWN, VkKeyScan((char)8) ,0);
+    }
+}
+
+/// set message into input text field 
+void SetItemText(HWND hwnd, const QString &message)
+{
+    clearItemText(hwnd);
+    for (int i = 0; i < message.size(); i++)
+    {
+        char c = message.at(i).toAscii();
+        uint aKey=MapVirtualKey((uint)c,1);
+        PostMessage(hwnd,WM_KEYDOWN,VkKeyScan(c) ,0);
+        PostMessage(hwnd,WM_KEYUP,VkKeyScan(c) ,0);
+    }
+}
+
 ControlExternalInstaller::ControlExternalInstaller()
 {
     d = new ControlExternalInstallerPrivate;
@@ -170,11 +195,41 @@ bool ControlExternalInstaller::updateWindowItems()
     return true;
 }
 
-bool ControlExternalInstaller::pressButtonWithText(const QString &text)
+bool ControlExternalInstaller::pressButton(const QString &caption)
 {
     int interval = 1; // sec
     int timeout = 0;
-    while (timeout < 120) // sec 
+    while (timeout < 60) // sec 
+    {
+        updateWindowItems();
+
+        Q_FOREACH(const WindowItem &item, d->items)
+        {
+            if (item.className == "Button" && item.titleName == caption)
+            {
+                // setting breakpoints in the critical section below breaks 
+                // the wanted action for unknown reason
+                // any hints how to solve this problem are welcome
+
+                // --- start critial section --
+                SetForegroundWindowEx(d->m_parentWindowsHandle);
+                PostMessage(item.handle,WM_LBUTTONDOWN,0,0);
+                PostMessage(item.handle,WM_LBUTTONUP,0,0);
+                return true;
+                // --- end critial section -- 
+            }
+        }
+        Sleep(interval*1000);
+        timeout++;
+    }    
+    return false;
+}
+
+bool ControlExternalInstaller::fillInputField(const QString &identifier, const QString &text)
+{
+    int interval = 1; // sec
+    int timeout = 0;
+    while (timeout < 60) // sec 
     {
         updateWindowItems();
 
@@ -182,10 +237,10 @@ bool ControlExternalInstaller::pressButtonWithText(const QString &text)
         {
             if (item.className == "Button" && item.titleName == text)
             {
-                SetForegroundWindowEx(d->m_parentWindowsHandle);
                 PostMessage(item.handle,WM_SETFOCUS,0,0);
-                PostMessage(item.handle,WM_LBUTTONDOWN,0,0);
+                Sleep(1);
                 PostMessage(item.handle,WM_LBUTTONUP,0,0);
+                Sleep(1);
                 return true;
             }
         }

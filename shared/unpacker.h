@@ -43,7 +43,7 @@ public:
     void setProgress ( InstallerProgress *progress );
     InstallerProgress *progress();
     // unpack file
-    bool unpackFile ( const QString &fn, const QString &destpath, const StringHash &pathRelocations );
+    bool unpackFile ( const QString &fn, const QString &destpath, const StringHash &pathRelocations=StringHash() );
     /// cancel file unpack
     void cancel();
     // get unpacked files

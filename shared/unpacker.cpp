@@ -360,12 +360,12 @@ bool UPThread::unpackExe()
         return false;
 
     /// @TODO this is a hack to test the new feature 
-    if (m_filename.startsWith("OggDS0"))
+    if (m_filename.contains("OggDS0"))
     {
         ControlExternalInstaller e;
         e.connect(proc);
-        e.pressButtonWithText("I Agree");
-        e.pressButtonWithText("Close");
+        e.pressButton("I Agree");
+        e.pressButton("Close");
     }
     do {
         msleep ( 50 );

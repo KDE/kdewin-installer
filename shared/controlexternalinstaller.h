@@ -39,7 +39,10 @@ class ControlExternalInstaller {
         bool connect(const QProcess &proc);
         bool disconnect();
         
-        bool pressButtonWithText(const QString &text);
+        /// press button whi
+        bool pressButton(const QString &caption);
+        bool fillInputField(const QString &caption, const QString &text);
+
 
         friend QDebug &operator<<(QDebug &,const ControlExternalInstaller &);
     protected:
