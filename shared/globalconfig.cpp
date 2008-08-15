@@ -159,10 +159,11 @@ bool GlobalConfig::parse(QIODevice *ioDev)
     Site *site = 0;
     Package *pkg = 0;
     Mirror *mirror;
-
+    int lineNr = 0; 
     while (!ioDev->atEnd())
     {
         QByteArray line = ioDev->readLine().replace('\x0a', ""); // support unix format file
+        lineNr++;
         if (line.startsWith(';'))
             continue;
         else if (line.size() < 2)
