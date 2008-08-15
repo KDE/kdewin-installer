@@ -19,21 +19,22 @@
 ** Boston, MA 02110-1301, USA.
 **
 ****************************************************************************/
-#ifndef CONTROLEXTERNALINSTALLER_H
-#define CONTROLEXTERNALINSTALLER_H
+#ifndef EXTERNALINSTALLERCONTROL_H
+#define EXTERNALINSTALLERCONTROL_H
 
 #include <QtDebug>
 #include <windows.h>
+
 class QProcess;
-class ControlExternalInstallerPrivate;
+class ExternalInstallerControlPrivate;
 
 /**    
-   \brief The ControlExternalInstaller class provides support for controlling external installers by selecting buttons and set text in edit fields
+   \brief The ExternalInstallerControl class provides support for controlling external installers by selecting buttons and set text in edit fields
    */
-class ControlExternalInstaller {
+class ExternalInstallerControl {
     public:
-        ControlExternalInstaller();
-        ~ControlExternalInstaller();
+        ExternalInstallerControl();
+        ~ExternalInstallerControl();
         bool connect(int pid);
         bool connect(HANDLE handle);
         bool connect(const QProcess &proc);
@@ -44,12 +45,12 @@ class ControlExternalInstaller {
         bool fillInputField(const QString &caption, const QString &text);
 
 
-        friend QDebug &operator<<(QDebug &,const ControlExternalInstaller &);
+        friend QDebug &operator<<(QDebug &,const ExternalInstallerControl &);
     protected:
         bool updateWindowItems();
 
     private:
-        ControlExternalInstallerPrivate *d;
+        ExternalInstallerControlPrivate *d;
         DWORD m_processId;
 };
 

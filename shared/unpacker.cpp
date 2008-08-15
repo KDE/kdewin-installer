@@ -40,7 +40,7 @@ using namespace qua7zip;
 #include "unpacker.h"
 #include "unpacker_p.h"
 
-#include "ControlExternalInstaller"
+#include "ExternalInstallerControl"
 
 #include <QtCore/QDebug>
 #include <QtCore/QDir>
@@ -362,7 +362,7 @@ bool UPThread::unpackExe()
     /// @TODO this is a hack to test the new feature 
     if (m_filename.contains("OggDS0"))
     {
-        ControlExternalInstaller e;
+        ExternalInstallerControl e;
         e.connect(proc);
         e.pressButton("I Agree");
         e.pressButton("Close");

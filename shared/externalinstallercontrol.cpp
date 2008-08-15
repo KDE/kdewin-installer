@@ -20,7 +20,7 @@
 **
 ****************************************************************************/
 
-#include "controlexternalinstaller.h"
+#include "externalinstallercontrol.h"
 
 #include <QCoreApplication>
 #include <QProcess>
@@ -37,7 +37,7 @@ class WindowItem {
 
 typedef QList<WindowItem> WindowItemList;
 
-class ControlExternalInstallerPrivate {
+class ExternalInstallerControlPrivate {
     public:
         bool enumerateWindows(DWORD processID);
         
@@ -47,12 +47,12 @@ class ControlExternalInstallerPrivate {
         QList<WindowItem> items;
         DWORD m_processId;
         HWND m_parentWindowsHandle;
-    friend class ControlExternalInstaller;
+    friend class ExternalInstallerControl;
 };
 
-BOOL CALLBACK ControlExternalInstallerPrivate::EnumChildWindowProc(HWND hwnd,LPARAM lParam)
+BOOL CALLBACK ExternalInstallerControlPrivate::EnumChildWindowProc(HWND hwnd,LPARAM lParam)
 {
-    ControlExternalInstallerPrivate *p = (ControlExternalInstallerPrivate*)lParam;
+    ExternalInstallerControlPrivate *p = (ExternalInstallerControlPrivate*)lParam;
 
     char className[MAX_PATH];
     char titleName[MAX_PATH];
@@ -66,9 +66,9 @@ BOOL CALLBACK ControlExternalInstallerPrivate::EnumChildWindowProc(HWND hwnd,LPA
     return TRUE;
 }
 
-BOOL CALLBACK ControlExternalInstallerPrivate::EnumWindowsProc(HWND hwnd,LPARAM lParam)
+BOOL CALLBACK ExternalInstallerControlPrivate::EnumWindowsProc(HWND hwnd,LPARAM lParam)
 {
-    ControlExternalInstallerPrivate *p = (ControlExternalInstallerPrivate*)lParam;
+    ExternalInstallerControlPrivate *p = (ExternalInstallerControlPrivate*)lParam;
 
     DWORD dwProcessId;
     DWORD processID = GetWindowThreadProcessId(hwnd, &dwProcessId);
@@ -87,14 +87,14 @@ BOOL CALLBACK ControlExternalInstallerPrivate::EnumWindowsProc(HWND hwnd,LPARAM 
     p->items.append(item);
     p->m_parentWindowsHandle = hwnd;
 
-    BOOL ret = EnumChildWindows(hwnd, ControlExternalInstallerPrivate::EnumChildWindowProc,lParam);
+    BOOL ret = EnumChildWindows(hwnd, ExternalInstallerControlPrivate::EnumChildWindowProc,lParam);
     return TRUE;
 }
 
-bool ControlExternalInstallerPrivate::enumerateWindows(DWORD processId)
+bool ExternalInstallerControlPrivate::enumerateWindows(DWORD processId)
 {
     m_processId = processId;
-    BOOL ret = EnumWindows(ControlExternalInstallerPrivate::EnumWindowsProc,(LPARAM)this);
+    BOOL ret = EnumWindows(ExternalInstallerControlPrivate::EnumWindowsProc,(LPARAM)this);
     return true;
 }
 
@@ -155,25 +155,25 @@ void SetItemText(HWND hwnd, const QString &message)
     }
 }
 
-ControlExternalInstaller::ControlExternalInstaller()
+ExternalInstallerControl::ExternalInstallerControl()
 {
-    d = new ControlExternalInstallerPrivate;
+    d = new ExternalInstallerControlPrivate;
 }
 
-ControlExternalInstaller::~ControlExternalInstaller()
+ExternalInstallerControl::~ExternalInstallerControl()
 {
     delete d;
 }
 
 /*
- bool ControlExternalInstaller::connect(const QString &windowTitle)
+ bool ExternalInstallerControl::connect(const QString &windowTitle)
 {
     BOOL ret = EnumWindows(EnumWindowsProc,(LPARAM)this);
     //HANDLE h = FindWindowEx(null, windowTitle.toLatin1().data());
 }
 */
 
-bool ControlExternalInstaller::connect(const QProcess &proc)
+bool ExternalInstallerControl::connect(const QProcess &proc)
 {
     _PROCESS_INFORMATION* p = proc.pid();
     m_processId = GetProcessId(p->hProcess);
@@ -181,7 +181,7 @@ bool ControlExternalInstaller::connect(const QProcess &proc)
     return d->items.size() > 0;
 }
 
-bool ControlExternalInstaller::updateWindowItems()
+bool ExternalInstallerControl::updateWindowItems()
 {
     d->items.clear();
     while(1) 
@@ -195,7 +195,7 @@ bool ControlExternalInstaller::updateWindowItems()
     return true;
 }
 
-bool ControlExternalInstaller::pressButton(const QString &caption)
+bool ExternalInstallerControl::pressButton(const QString &caption)
 {
     int interval = 1; // sec
     int timeout = 0;
@@ -225,7 +225,7 @@ bool ControlExternalInstaller::pressButton(const QString &caption)
     return false;
 }
 
-bool ControlExternalInstaller::fillInputField(const QString &identifier, const QString &text)
+bool ExternalInstallerControl::fillInputField(const QString &identifier, const QString &text)
 {
     int interval = 1; // sec
     int timeout = 0;
@@ -250,9 +250,9 @@ bool ControlExternalInstaller::fillInputField(const QString &identifier, const Q
     return false;
 }
 
-QDebug &operator<<(QDebug &out, const ControlExternalInstaller &c)
+QDebug &operator<<(QDebug &out, const ExternalInstallerControl &c)
 {
-    out << "ControlExternalInstaller ("
+    out << "ExternalInstallerControl ("
         << c.d
         << ")";
     return out;
