@@ -310,7 +310,7 @@ Package::Package(const Package &other)
     m_MD5Check = other.m_MD5Check;
 }
 
-QString Package::getFileName(Package::Type contentType) const
+QString Package::localFileName(Package::Type contentType) const
 {
     if(m_packages.contains(contentType))
         return m_packages[contentType].fileName();
@@ -498,7 +498,7 @@ bool Package::read(QTextStream &in)
     return true;
 }
 
-QString Package::makeFileName(Package::Type type, bool bCreateDir)
+QString Package::localFilePath(Package::Type type, bool bCreateDir)
 {
     QString dir = Settings::instance().downloadDir();
     QDir d(dir);
@@ -511,7 +511,7 @@ QString Package::makeFileName(Package::Type type, bool bCreateDir)
             }
         }
     }
-    return d.absoluteFilePath(getFileName(type));
+    return d.absoluteFilePath(localFileName(type));
 }
 
 static QByteArray readMD5SumFile(const QString &filename)
@@ -537,7 +537,7 @@ bool Package::downloadItem(Package::Type type)
     }
 
     int ret; 
-    QString fn = makeFileName(type, true);
+    QString fn = localFilePath(type, true);
     /*
     There are three modes of md5 sum handling, which are handled in the following order: 
         case 1. md5 sum checking is disabled, 
@@ -666,7 +666,7 @@ bool Package::downloadItem(Package::Type type)
 
 bool Package::installItem(Installer *installer, Package::Type type)
 {
-    QString fileName = getFileName(type);
+    QString fileName = localFileName(type);
     if (fileName.isEmpty())
     {
 #ifdef DEBUG
@@ -674,10 +674,9 @@ bool Package::installItem(Installer *installer, Package::Type type)
 #endif
         return false;
     }
-    fileName = makeFileName(type);
-    if (!installer->install(this, type, fileName))
+    if (!installer->install(this, type))
     {
-        qDebug() << __FUNCTION__ << " install failure for file " << fileName << " type " << type;
+        qDebug() << __FUNCTION__ << " install failure for file " << localFilePath(type) << " type " << type;
         return false;
     }
 

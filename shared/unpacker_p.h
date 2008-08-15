@@ -51,8 +51,6 @@ protected:
     bool unzipFile();
     bool unbz2File();
     bool un7zipFile();
-    bool unpackExe();
-    bool unpackMsi();
     void relocateFileName ( const QString &in, QString &out );
     bool makeSurePathExists ( const QFileInfo &fi, bool bIsDir );
     bool openNewFile( QFile &fi, const QString &newFileName );

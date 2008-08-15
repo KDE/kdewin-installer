@@ -212,8 +212,11 @@ public:
     /// set that a specific content is already installed
     QT_DEPRECATED void setInstalled(Package::Type type);
 
-    /// returns fileName of package item e.g. xyz-1.2.3-bin.zip
-    QString getFileName(Package::Type contentType) const;
+    /// returns local fileName of package item e.g. xyz-1.2.3-bin.zip
+    QString localFileName(Package::Type type) const;
+
+    /// return full local path and filename for a package type in the download  directory. If bCreateDir is true creates path 
+    QString localFilePath(Package::Type type, bool bCreateDir = false);
 
     /// returns complete url of package item e.g. http://host/path.../fileName
     QUrl getUrl(Package::Type type) const;
@@ -273,8 +276,6 @@ private slots:
     void logOutput();
 
 protected:
-    // Creates the full path + filename for a package type, creates path when wanted
-    QString makeFileName(Package::Type type, bool bCreateDir = false);
     
     bool setError(const QString &text) { m_lastError = text; qCritical() << text; return false; }
 

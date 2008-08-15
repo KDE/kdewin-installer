@@ -152,20 +152,36 @@ bool Installer::createQtConfigFile()
     return true;
 }
 
-bool Installer::install(Package *pkg, const Package::Type type, const QString &fileName)
+bool Installer::install(Package *pkg, const Package::Type type)
 {
     m_packageToInstall = pkg;
     m_installType = type;
+    QString fileName = pkg->localFileName(type); 
     qDebug() << __FUNCTION__ << "filename: " << fileName << "type: " << type;
-
-    if(!Unpacker::instance()->unpackFile(fileName, m_root, pkg->pathRelocations())) {
-        return false;
-    }
     
-    m_files = Unpacker::instance()->getUnpackedFiles();
+    if (fileName.endsWith(".exe")) 
+    {
+        // mark install state  for accessing deinstaller on  remove    
+        if (!installExecutable(pkg,type))
+            return false;
+        m_files = QStringList() << pkg->localFilePath(type);
+    }
+    else if (fileName.endsWith(".msi")) 
+    {
+        // mark install state  for accessing deinstaller on  remove    
+        if (!installMsiPackage(pkg,type))
+            return false;
+        m_files = QStringList() << pkg->localFilePath(type);;
+    }
+    else {
+        if (!Unpacker::instance()->unpackFile(fileName, m_root, pkg->pathRelocations()))
+            return false;
+        m_files = Unpacker::instance()->getUnpackedFiles();
+    }
+
     qSort(m_files);
     createManifestFile();
-    QString postInstall = QString("manifest/post-install-%1.cmd").arg(pkg->getFileName(type));
+    QString postInstall = QString("manifest/post-install-%1.cmd").arg(fileName);
     if(m_files.contains(postInstall))
       handlePostInstall(root() + '/' + postInstall);
 
@@ -174,6 +190,44 @@ bool Installer::install(Package *pkg, const Package::Type type, const QString &f
         createQtConfigFile();
 
     return true;
+}
+
+bool Installer::installExecutable(Package *pkg, Package::Type type)
+{
+#ifdef Q_OS_WIN
+    QString fileName = pkg->localFilePath(type);
+    QProcess proc;
+    proc.start (fileName, QStringList ( "/Q" ) );   // FIXME: don't hardcode command line parameters!
+    if ( !proc.waitForStarted() )
+        return false;
+    do {
+        Sleep(50);
+    } while ( !proc.waitForFinished() );
+
+    return ( proc.exitStatus() == QProcess::NormalExit && proc.exitCode() == 0 );
+#else
+    emit error ( tr ( "Don't know how to execute %1 on a non windows system." ).arg ( fileName ) );
+    return false;
+#endif
+}
+
+bool Installer::installMsiPackage(Package *pkg, Package::Type type)
+{
+#ifdef Q_OS_WIN
+    QString fileName = pkg->localFilePath(type);
+    QProcess proc;
+    proc.start ( "msiexec", QStringList() << "/I" << QDir::toNativeSeparators ( fileName ) );
+    if ( !proc.waitForStarted() )
+        return false;
+    do {
+        Sleep (50);
+    } while (!proc.waitForFinished());
+
+    return (proc.exitStatus() == QProcess::NormalExit && proc.exitCode() == 0);
+#else
+    emit error ( tr ( "Don't know how to execute %1 on a non windows system." ).arg ( fileName ) );
+    return false;
+#endif
 }
 
 bool Installer::handlePostInstall(const QString &postInstall)

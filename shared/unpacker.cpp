@@ -40,8 +40,6 @@ using namespace qua7zip;
 #include "unpacker.h"
 #include "unpacker_p.h"
 
-#include "ExternalInstallerControl"
-
 #include <QtCore/QDebug>
 #include <QtCore/QDir>
 #include <QtCore/QEventLoop>
@@ -70,14 +68,6 @@ void UPThread::run()
     }
     if ( m_filename.endsWith ( ".7z" ) ) {
         m_bRet = un7zipFile();
-        return;
-    }
-    if ( m_filename.endsWith ( ".exe" ) ) {
-        m_bRet = unpackExe();
-        return;
-    }
-    if ( m_filename.endsWith ( ".msi" ) ) {
-        m_bRet = unpackMsi();
         return;
     }
     emit error ( tr ( "Don't know what to do with %1" ).arg ( m_filename ) );
@@ -349,51 +339,6 @@ bool UPThread::un7zipFile()
     emit error ( tr ( "7-zip support not compiled in for %1" ).arg ( m_filename ) );
     return false;
 #endif  // SEVENZIP_UNPACK_SUPPORT
-}
-
-bool UPThread::unpackExe()
-{
-#ifdef Q_OS_WIN
-    QProcess proc;
-    proc.start ( m_filename, QStringList ( "/Q" ) );   // FIXME: don't hardcode command line parameters!
-    if ( !proc.waitForStarted() )
-        return false;
-
-    /// @TODO this is a hack to test the new feature 
-    if (m_filename.contains("OggDS0"))
-    {
-        ExternalInstallerControl e;
-        e.connect(proc);
-        e.pressButton("I Agree");
-        e.pressButton("Close");
-    }
-    do {
-        msleep ( 50 );
-    } while ( !proc.waitForFinished() );
-
-    return ( proc.exitStatus() == QProcess::NormalExit && proc.exitCode() == 0 );
-#else
-    emit error ( tr ( "Don't know how to execute %1 on a non windows system." ).arg ( m_filename ) );
-    return false;
-#endif
-}
-
-bool UPThread::unpackMsi()
-{
-#ifdef Q_OS_WIN
-    QProcess proc;
-    proc.start ( "msiexec", QStringList() << "/I" << QDir::toNativeSeparators ( m_filename ) );
-    if ( !proc.waitForStarted() )
-        return false;
-    do {
-        msleep ( 50 );
-    } while ( !proc.waitForFinished() );
-
-    return ( proc.exitStatus() == QProcess::NormalExit && proc.exitCode() == 0 );
-#else
-    emit error ( tr ( "Don't know how to execute %1 on a non windows system." ).arg ( m_filename ) );
-    return false;
-#endif
 }
 
 void UPThread::relocateFileName ( const QString &in, QString &out )
