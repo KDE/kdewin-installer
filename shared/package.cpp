@@ -293,6 +293,8 @@ QDebug &operator<<(QDebug &out, const Package::PackageItem &c)
 Package::Package() : m_MD5Check(true)
 {
     m_handled = false;
+    m_userData[0] = 0;
+    m_userData[1] = 0;
 }
 
 Package::Package(const Package &other)
@@ -308,6 +310,8 @@ Package::Package(const Package &other)
     m_longNotes  = other.m_longNotes;
     m_installedversion = other.m_installedversion;
     m_MD5Check = other.m_MD5Check;
+    m_userData[0] = other.m_userData[0];
+    m_userData[1] = other.m_userData[1];
 }
 
 QString Package::localFileName(Package::Type contentType) const

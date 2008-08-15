@@ -259,6 +259,25 @@ public:
 
     /// generate version file name
     QString versionFileName(const Package::Type type) const;
+    
+    /// user specific data pointer (currently used for ExternalInstallerControl)
+    bool setUserData(int index,void *data) 
+    { 
+        if (index >= 0 && index <= 1) 
+        {
+            m_userData[index] = data;
+            return true;
+        }
+        return false;
+    }
+        
+    /// return user specific data pointer (currently used for ExternalInstallerControl)
+    void *userData(int index) 
+    { 
+        if (index >= 0 && index <= 1) 
+            return m_userData[index]; 
+        return 0;
+    }
 
     /// separate package name, version, type and file format from a filename
     static bool fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat);
@@ -291,6 +310,7 @@ protected:
     bool       m_handled;      // marker for several operations
     bool       m_MD5Check;    // marker for md5 checking 
     QString    m_lastError;    
+    void       *m_userData[2];
     friend QDebug &operator<<(QDebug &, const Package &);
 };
 QDebug &operator<<(QDebug &, const Package::Type);
