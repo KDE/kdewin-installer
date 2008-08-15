@@ -42,7 +42,20 @@ Releases::~Releases()
     clear();
 }
 
-bool Releases::convertFromOldMirrorUrl(const QUrl &url)
+bool Releases::convertFromOldMirrorUrl(QUrl &url)
+{
+    // in case the url contains already a release path, remove this part as the following code will detect the releases by itself
+    QString path = url.path();
+    int i = path.indexOf(QRegExp("/(unstable|stable)/(latest|[0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{1,2})"));
+    if (i != -1)
+    {
+        url.setPath(path.left(i));
+        return false;
+    }
+    return false;
+}
+
+bool Releases::useOldMirrorUrl(const QUrl &url)
 {
     // in case the url contains already a release path, transform the url to the ReleaseTyp 
     QString path = url.path();
@@ -107,7 +120,7 @@ bool Releases::patchReleaseUrls(const QUrl &url)
     return true;
 }
 
-bool Releases::fetch(const QUrl &baseURL)
+bool Releases::fetch(const QUrl &_url)
 {
 #ifdef DEBUG
     QString out = Settings::instance().downloadDir() + "/releases.html";
@@ -137,6 +150,7 @@ bool Releases::fetch(const QUrl &baseURL)
 #endif
     }   
     m_releases.clear();
+    QUrl baseURL = _url;
 
     if (convertFromOldMirrorUrl(baseURL))
         return true;

@@ -25,7 +25,10 @@
 #include <QtCore/QString>
 #include <QtCore/QUrl>
 class QByteArray;
-    
+
+/**    
+   \brief The ReleaseType class provides access to the details of a single release from a given mirror. 
+   */
 class ReleaseType {
     public:
         typedef enum { Stable, Unstable } Type;
@@ -42,8 +45,16 @@ class ReleaseType {
 };
 QDebug &operator<<(QDebug &out, const ReleaseType &c);
 
+/**    
+   The ReleaseTypeList type specifies a list of releases. 
+    */
 typedef QList<ReleaseType> ReleaseTypeList;
 
+/**    
+   \brief The Releases class provides access to all releases located on a specific mirror.  
+   
+   Releases are fetched from a mirror by fetch(). The detected releases are accessable through the releases() method.
+    */
 class Releases
 {
     public:
@@ -51,29 +62,39 @@ class Releases
         Releases();
         ~Releases();
 
-        // fetch list of releases
+        /// fetch list of releases from the given url
         bool fetch(const QUrl &baseURL);
+        /// clear list of previously fetched releases 
         void clear() { m_releases.clear(); }
+        ///manually add a release to the list of releases
         void add(const ReleaseType &release) { m_releases.append(release); }
+        /// return list of detected releases
         ReleaseTypeList &releases() { return m_releases; }
+        /// return singleton instance
         static Releases &instance();
     protected:
-        bool convertFromOldMirrorUrl(const QUrl &url);
+        /// convert old style mirror url to ReleaseType based 
+        bool convertFromOldMirrorUrl(QUrl &url);
+        /// remove release path from old style mirror url 
+        bool useOldMirrorUrl(const QUrl &url);
+        /// check win32 in release path for kde mirrors
         bool patchReleaseUrls(const QUrl &url);
 
         /**
-         parse mirror list from a local file. The mirror list is accessable 
-         by the mirrors() method. 
+         parse release list from a local file. The release list is accessable by the releases() method. 
         
          @param filename
+         @param url base mirror url 
+         @param type type of release list provided by filename
          @return true if parse was performed successfully, false otherwise
         */
         bool parse(const QString &fileName, const QUrl &url, ReleaseType::Type type);
         /**
-         parse releases list from a QByteArray. The releases list is accessable 
-         by the releases() method. 
+         parse releases list from a QByteArray. The release list is accessable by the releases() method. 
          
-         @param data - QByteArry instance 
+         @param data QByteArry instance 
+         @param url base mirror url 
+         @param type type of release list provided by data
          @return true if parse was performed successfully, false otherwise
         */
         bool parse(const QByteArray &data, const QUrl &url, ReleaseType::Type type);
@@ -81,14 +102,15 @@ class Releases
          parse releases list from an QIODevice instance. The releases list is accessable 
          by the releases() method. 
          
-         @param data - QIODevice instance 
+         @param data QIODevice instance 
+         @param url base mirror url 
+         @param type type of release list provided by data
          @return true if parse was performed successfully, false otherwise
         */
         bool parse(QIODevice *ioDev, const QUrl &url, ReleaseType::Type type);
 
         ReleaseTypeList m_releases;
 };
-
 
 QDebug &operator<<(QDebug &,const ReleaseTypeList &);
 
