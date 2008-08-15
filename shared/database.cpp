@@ -33,6 +33,9 @@
 Database::Database ( QObject *parent )
         : QObject ( parent )
 {
+// a better way seems to use the following key for a list see http://www.microsoft.com/technet/scriptcenter/csc/scripts/software/installed/cscsw005.mspx
+//    HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\OggDS
+
     m_installKeys["vcredist"] = "HKEY_CLASSES_ROOT\\Installer\\Products\\b25099274a207264182f8181add555d0";
 // hex would be more natural, implement in the future
 //    m_versionKeys["vcredist-800dc10"] = "8.0.50727.762";
