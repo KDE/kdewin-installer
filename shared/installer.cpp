@@ -22,6 +22,7 @@
 
 #include "config.h"
 #include "debug.h"
+#include "externalinstallercontrol.h"
 #include "installer.h"
 #include "installerprogress.h"
 #include "packagelist.h"
@@ -200,6 +201,18 @@ bool Installer::installExecutable(Package *pkg, Package::Type type)
     proc.start (fileName, QStringList ( "/Q" ) );   // FIXME: don't hardcode command line parameters!
     if ( !proc.waitForStarted() )
         return false;
+
+    InstallerControlTypeList *l = (InstallerControlTypeList *)pkg->userData(0);
+    if (l)
+    {
+        ExternalInstallerControl e;
+        e.connect(proc);
+        Q_FOREACH(InstallerControlType item, *l)
+        {
+            if (item.type() == "Button")
+                e.pressButton(item.caption());
+        }
+    }
     do {
         Sleep(50);
     } while ( !proc.waitForFinished() );

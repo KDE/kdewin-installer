@@ -22,6 +22,7 @@
 
 #include "config.h"
 #include "debug.h"
+#include "externalinstallercontrol.h"
 #include "downloader.h"
 #include "globalconfig.h"
 
@@ -335,6 +336,25 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 }
                 else if(keyword == "@relocate")
                     pkg->addPathRelocation(cmd[1],col2);
+                else if(keyword == "@control")
+                {
+                    cmd.removeFirst();
+                    InstallerControlType control;
+                    if (control.parse(cmd.join(" "))) 
+                    {
+                        InstallerControlTypeList *l;
+                        if (pkg->userData(0))
+                            l = (InstallerControlTypeList *)pkg->userData(0);
+                        else 
+                        {
+                            l = new InstallerControlTypeList;
+                            pkg->setUserData(0,(void*)l);
+                        }
+                        l->append(control);
+                    }
+                    else
+                        qCritical() << "line" << lineNr << "invalid InstallerControlType definition" << cmd;
+                }
             }
             else if (inSite)
             {
