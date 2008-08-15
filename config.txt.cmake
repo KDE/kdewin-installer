@@ -300,6 +300,7 @@
 @notes Directshow Filters for Ogg Vorbis
 @version 0.9.9.5
 @url-bin http://www.free-codecs.com/download_soft.php?d=4151&s=58 OggDS0995.exe
+@filename-bin OggDS0995.exe
 @nomd5
 
 ;------------------------------------------------------
@@ -482,4 +483,5 @@
 @version 3.8.2
 @notes secure transfer copy tool 
 @url-bin http://kent.dl.sourceforge.net/sourceforge/winscp/winscp382setup.exe
-@nomd5
+@md5-bin 3bb053732844b7cac6a856ac06dab642
+
