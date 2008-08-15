@@ -40,6 +40,8 @@ using namespace qua7zip;
 #include "unpacker.h"
 #include "unpacker_p.h"
 
+#include "ControlExternalInstaller"
+
 #include <QtCore/QDebug>
 #include <QtCore/QDir>
 #include <QtCore/QEventLoop>
@@ -356,6 +358,15 @@ bool UPThread::unpackExe()
     proc.start ( m_filename, QStringList ( "/Q" ) );   // FIXME: don't hardcode command line parameters!
     if ( !proc.waitForStarted() )
         return false;
+
+    /// @TODO this is a hack to test the new feature 
+    if (m_filename.startsWith("OggDS0"))
+    {
+        ControlExternalInstaller e;
+        e.connect(proc);
+        e.pressButtonWithText("I Agree");
+        e.pressButtonWithText("Close");
+    }
     do {
         msleep ( 50 );
     } while ( !proc.waitForFinished() );
