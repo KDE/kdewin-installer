@@ -25,10 +25,8 @@ endif(WIN32)
 qt4_automoc(${all_sources})
 
 add_executable(${APPNAME}-installer-gui-${VERSION} WIN32 ${all_sources})
-target_link_libraries(${APPNAME}-installer-gui-${VERSION}
-                      ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY}  ${QT_QTGUI_LIBRARY}
-                      ${GUI_LIBS}
-)
+target_link_libraries(${APPNAME}-installer-gui-${VERSION} ${GUI_LIBS})
+set_target_properties(${APPNAME}-installer-gui-${VERSION} PROPERTIES COMPILE_FLAGS -DUSE_GUI)
 
 get_target_property( installer_filename ${APPNAME}-installer-gui-${VERSION} LOCATION )
 get_filename_component( installer_filename_only ${installer_filename} NAME )

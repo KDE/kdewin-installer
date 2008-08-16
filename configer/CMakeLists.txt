@@ -1,17 +1,9 @@
 
 set (configer_SOURCES
 	main.cpp
-	../shared/debug.cpp
-	../shared/hintfile.cpp
-	../shared/misc.cpp
-	../shared/package.cpp
 )
 
 set (configer_HEADERS
-	../shared/debug.h
-	../shared/hintfile.h
-	../shared/misc.h
-	../shared/package.h
 )
 
 include_directories(
@@ -23,7 +15,7 @@ add_definitions(-DPACKAGE_SMALL_VERSION -DMISC_SMALL_VERSION)
 
 qt4_automoc(${configer_SOURCES})
 add_executable(kdewin-configer ${configer_SOURCES} ${configer_HEADERS})
-target_link_libraries(kdewin-configer ${QT_QTMAIN_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
+target_link_libraries(kdewin-configer ${CONSOLE_LIBS})
 
 install_targets(/bin kdewin-configer )
 

@@ -1,7 +1,6 @@
 set(installer_CONSOLE_SOURCES
    main.cpp
    installerengineconsole.cpp
-
 )
 
 set(installer_CONSOLE_HEADERS
@@ -15,27 +14,15 @@ if(CMAKE_COMPILER_2005)
      add_definitions( -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE )
 endif(CMAKE_COMPILER_2005)
 
-set(all_sources ${installer_CONSOLE_SOURCES}
-                ${installer_CONSOLE_HEADERS}
-                ${installer_shared_SOURCES}
-                ${installer_shared_HEADERS}
-                ${quazip_HEADERS}
-                ${quazip_SOURCES}
-                ${qua7zip_SOURCES}
-                ${qua7zip_HEADERS}
-                ${filters_SOURCES}
-                ${filters_HEADERS}
-                ${bzip2_SOURCES}
-                ${bzip2_HEADERS}
-        )
-
-source_group(quazip FILES ${quazip_SOURCES} ${quazip_HEADERS})
-source_group(qua7zip FILES ${qua7zip_SOURCES} ${qua7zip_HEADERS})
+set(all_sources 
+    ${installer_CONSOLE_SOURCES}
+    ${installer_CONSOLE_HEADERS}
+)
 
 qt4_automoc(${all_sources})
 
 add_executable(kdewin-installer-console ${all_sources})
 
-target_link_libraries(kdewin-installer-console ${QT_QTMAIN_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
+target_link_libraries(kdewin-installer-console ${CONSOLE_LIBS})
 
 install_targets(/bin kdewin-installer-console )

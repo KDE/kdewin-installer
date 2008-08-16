@@ -23,7 +23,7 @@ add_definitions(-DMENUBUILDER_VERSION=${VER_MAJ}.${VER_MIN}.${VER_PATCH})
 
 qt4_automoc(${menubuilder_SOURCES})
 add_executable(kdewin-menubuilder ${menubuilder_SOURCES} ${menubuilder_HEADERS})
-target_link_libraries(kdewin-menubuilder ${QT_QTMAIN_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${LIBS})
+target_link_libraries(kdewin-menubuilder ${CONSOLE_LIBS})
 
 install_targets(/bin kdewin-menubuilder )
 

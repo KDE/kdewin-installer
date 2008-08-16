@@ -31,7 +31,6 @@ ENDMACRO(QT4_ADD_RESOURCES2)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
-add_definitions(-DUSE_GUI)
 if(CMAKE_COMPILER_2005)
      # to avoid a lot of deprecated warnings
      add_definitions( -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE )
@@ -107,23 +106,9 @@ set(main_all_sources
     ${installer_GUI_HEADERS}
     ${installer_shared_SOURCES}
     ${installer_shared_HEADERS}
-    ${quazip_SOURCES}
-    ${quazip_HEADERS}
-    ${qua7zip_SOURCES}
-    ${qua7zip_HEADERS}
     ${md5_SOURCES}
     ${md5_HEADERS}
-    ${filters_SOURCES}
-    ${filters_HEADERS}
-    ${bzip2_SOURCES}
-    ${bzip2_HEADERS}
 )
-
-source_group(bzip2   FILES ${bzip2_SOURCES}   ${bzip2_HEADERS})
-source_group(filters FILES ${filters_SOURCES} ${filters_HEADERS})
-source_group(quazip  FILES ${quazip_SOURCES}  ${quazip_HEADERS})
-source_group(qua7zip FILES ${qua7zip_SOURCES} ${qua7zip_HEADERS})
-
 
 add_subdirectory(themes/amarok)
 add_subdirectory(themes/main)

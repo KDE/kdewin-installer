@@ -129,67 +129,10 @@ include(3rdparty/CMakeLists.txt)
 # this will define .... _HEADERS, ...._SOURCES, ..._INCLUDE_DIR. for ... = quazip, bzip2, curl, filter,md5
 # add_subdirectory does not work for unknown reason
 
-
-# set installer_shared_SOURCES/installer_shared_HEADERS
-set(installer_shared_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/externalinstallercontrol.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/debug.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/downloader.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/downloaderprogress.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/installerprogress.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/installer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/package.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/packagelist.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/site.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/mirrors.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/globalconfig.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/registry.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/releases.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/settings.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/installerengine.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/misc.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/database.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/packagecategorycache.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/hintfile.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/uninstaller.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/unpacker.cpp
-#    ${CMAKE_CURRENT_SOURCE_DIR}/shared/installerbase.cpp
-)
-
-set(installer_shared_HEADERS
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/externalinstallercontrol.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/debug.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/downloader.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/downloader_p.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/downloaderprogress.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/installerprogress.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/installer.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/package.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/packagelist.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/site.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/mirrors.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/registry.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/releases.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/settings.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/installerengine.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/misc.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/globalconfig.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/database.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/packagecategorycache.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/hintfile.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/uninstaller.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/uninstaller_p.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/unpacker.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/unpacker_p.h
-#    ${CMAKE_CURRENT_SOURCE_DIR}/shared/installerbase.h
-    ${CMAKE_BINARY_DIR}/config.h
-)
-set(installer_shared_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shared)
-
 include_directories(
   ${CMAKE_SOURCE_DIR}
   ${CMAKE_BINARY_DIR}
-  ${installer_shared_INCLUDE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/shared
   ${QT_INCLUDES}
   $ENV{QMAKESPEC}
 )
@@ -216,8 +159,8 @@ configure_file(${CMAKE_SOURCE_DIR}/mirrors.lst.cmake ${CMAKE_BINARY_DIR}/config/
 
 #FIXME: ${BZIP2_LIBRARIES} -> 3rdparty
 if (UNIX)
-  set (LIBS pthread dl z rt ${BZIP2_LIBRARIES} ${CURL_LIBRARIES})
-  set (GUI_LIBS pthread dl z rt ${BZIP2_LIBRARIES} ${CURL_LIBRARIES})
+  set (CONSOLE_LIBS pthread dl z rt ${BZIP2_LIBRARIES} ${CURL_LIBRARIES} shared-console)
+  set (GUI_LIBS pthread dl z rt ${BZIP2_LIBRARIES} ${CURL_LIBRARIES} shared-gui)
   if (STATIC_BUILD)
     find_package(X11)
     find_package(Freetype)
@@ -232,8 +175,8 @@ else(UNIX)
     set (FIRST_LIBS mingw32)
   endif(MINGW)
   # required for static linking
-  set (LIBS kernel32 user32 shell32 uuid ole32 advapi32 ws2_32 shlwapi ${BZIP2_LIBRARIES} ${CURL_LIBRARIES})
-  set (GUI_LIBS gdi32 comdlg32 oleaut32 imm32 winmm winspool ws2_32 ole32 uuid user32 advapi32 shlwapi ${CURL_LIBRARIES})
+  set (CONSOLE_LIBS shared-console ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} ${BZIP2_LIBRARIES} ${QUAZIP_LIBRARIES} ${CURL_LIBRARIES} kernel32 user32 shell32 uuid ole32 advapi32 ws2_32 shlwapi )
+  set (GUI_LIBS shared-gui ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} ${QT_QTGUI_LIBRARY} ${BZIP2_LIBRARIES} ${QUAZIP_LIBRARIES} ${CURL_LIBRARIES} gdi32 comdlg32 oleaut32 imm32 winmm winspool ws2_32 ole32 uuid user32 advapi32 shlwapi )
   # when qt 4.4 is build with directx support dxguid is required 
   # how to detect that qt 4.4 is build with directx ? 
   if (QT_VERSION_MAJOR EQUAL 4 AND QT_VERSION_MINOR GREATER 3) 
@@ -243,6 +186,7 @@ endif (UNIX)
 
 
 # our targets
+add_subdirectory(shared)
 add_subdirectory(console)
 add_subdirectory(gui)
 #add_subdirectory(enduser)
@@ -251,7 +195,7 @@ add_subdirectory(packager)
 add_subdirectory(doc)
 add_subdirectory(configer)
 if(WIN32)
-  add_subdirectory(menubuilder)
+#  add_subdirectory(menubuilder)
 endif(WIN32)
 #add_subdirectory(tools)
 
