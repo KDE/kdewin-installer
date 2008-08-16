@@ -72,12 +72,6 @@ bool findExecutables(QList<InstallFile> &fileList, const QString &root, const QS
 bool generateFileList(QList<InstallFile> &result, const QString &root, const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList, bool verbose=false);
 bool generateFileList(QList<InstallFile> &result, const QString &root, const QString &subdir, const QString &filter, const QString &exclude = QString(), bool verbose=false);
 
-bool readDesktopFile(QIODevice &device, QSettings::SettingsMap &map);
-bool writeDesktopFile(QIODevice &device, const QSettings::SettingsMap &map);
-
-bool createStartMenuEntries(const QString &dir, const QString &installDir, const QString &category=QString());
-bool removeStartMenuEntries(const QString &dir, const QString &category=QString());
-
 typedef enum RegKey { hKEY_CURRENT_USER, hKEY_LOCAL_MACHINE, hKEY_CLASSES_ROOT };
 typedef enum RegType { qt_unknown = -1, qt_String, qt_ExpandedString, qt_DWORD, qt_BINARY, qt_MultiString };
 QVariant getWin32RegistryValue(RegKey akey, const QString& subKey, const QString& item, bool *ok = false);
