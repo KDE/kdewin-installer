@@ -26,35 +26,37 @@
 #include <QDateTime>
 #include <QFile>
 
+static int fileOffset;
+
 QDebug _qDebug(const char *file, int line) 
 { 
     QDebug a(QtDebugMsg); 
-    a << file << line; 
+    a << file+fileOffset << line; 
     return a; 
 }
 
 QDebug _qInfo(const char *file, int line) 
 { 
     QDebug a(QtDebugMsg); 
-    a << file << line; 
+    a << file+fileOffset << line; 
     return a; 
 }
 QDebug _qWarning(const char *file, int line) 
 { 
     QDebug a(QtWarningMsg); 
-    a << file << line; 
+    a << file+fileOffset << line; 
     return a; 
 }
 QDebug _qCritical(const char *file, int line) 
 { 
     QDebug a(QtCriticalMsg); 
-    a << file << line; 
+    a << file+fileOffset << line; 
     return a; 
 }
 QDebug _qFatal(const char *file, int line) 
 { 
     QDebug a(QtFatalMsg); 
-    a << file << line; 
+    a << file+fileOffset << line; 
     return a; 
 }
 
@@ -97,6 +99,11 @@ void myMessageOutput(QtMsgType type, const char *msg)
 */
 void setMessageHandler()
 {
+    QString file = __FILE__; 
+    QString key = "kdewin-installer";
+    int i = file.indexOf(key);
+    if (i != -1)
+        fileOffset = i + key.size() + 1;
     logFile = new QFile(Settings::instance().logFile());
     logFile->remove();
     logFile->open(QIODevice::WriteOnly);
