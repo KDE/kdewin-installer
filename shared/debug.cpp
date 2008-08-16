@@ -21,6 +21,10 @@
 ****************************************************************************/
 
 #include "debug.h"
+#include "settings.h"
+
+#include <QDateTime>
+#include <QFile>
 
 QDebug _qDebug(const char *file, int line) 
 { 
@@ -57,7 +61,7 @@ QDebug _qFatal(const char *file, int line)
 void myMessageOutput(QtMsgType type, const char *msg)
 {
     QFile log(Settings::instance().downloadDir()+"/kdewin-installer.log");
-    log.open(QIODevice::Append);
+    log.open(QIODevice::WriteOnly);
 
     log.write(QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ").toLocal8Bit().data());
     switch (type) {
