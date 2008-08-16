@@ -162,16 +162,16 @@ bool Installer::install(Package *pkg, const Package::Type type)
     
     if (fileName.endsWith(".exe")) 
     {
-        // mark install state  for accessing deinstaller on  remove    
         if (!installExecutable(pkg,type))
             return false;
+        // mark install state  for accessing deinstaller on  remove    
         m_files = QStringList() << pkg->localFilePath(type);
     }
     else if (fileName.endsWith(".msi")) 
     {
-        // mark install state  for accessing deinstaller on  remove    
         if (!installMsiPackage(pkg,type))
             return false;
+        // mark install state  for accessing deinstaller on  remove    
         m_files = QStringList() << pkg->localFilePath(type);
     }
     else {

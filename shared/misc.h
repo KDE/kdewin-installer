@@ -23,20 +23,13 @@
 #ifndef MISC_H
 #define MISC_H
 
+#include "registry.h" // for compatibility 
+
 #include <QRegExp>
 #include <QString>
 #include <QSettings>
 class QFile;
 class QIODevice;
-
-/*
- * Those three strings represent the Categories from freedesktop.org for .desktop files
- * http://standards.freedesktop.org/menu-spec/menu-spec-1.0.html
- * they are used to find the subcategories for startmenu entries
- */
-#define FREEDESKTOP_MAIN_CATEGORIES "AudioVideo;Audio;Video;Development;Education;Game;Graphics;Network;Office;Settings;System;Utility;"
-#define FREEDESKTOP_SUB_CATEGORIES "Building;Debugger;IDE;GUIDesigner;Profiling;RevisionControl;Translation;Calendar;ContactManagement;Database;Dictionary;Chart;Email;Finance;FlowChart;PDA;ProjectManagement;Presentation;Spreadsheet;WordProcessor;2DGraphics;VectorGraphics;RasterGraphics;3DGraphics;Scanning;OCR;Photography;Publishing;Viewer;TextTools;DesktopSettings;HardwareSettings;Printing;PackageManager;Dialup;InstantMessaging;Chat;IRCClient;FileTransfer;HamRadio;News;P2P;RemoteAccess;Telephony;TelephonyTools;VideoConference;WebBrowser;WebDevelopment;Midi;Mixer;Sequencer;Tuner;TV;AudioVideoEditing;Player;Recorder;DiscBurning;ActionGame;AdventureGame;ArcadeGame;BoardGame;BlocksGame;CardGame;KidsGame;LogicGame;RolePlaying;Simulation;SportsGame;StrategyGame;Art;Construction;Music;Languages;Science;ArtificialIntelligence;Astronomy;Biology;Chemistry;ComputerScience;DataVisualization;Economy;Electricity;Geography;Geology;Geoscience;History;ImageProcessing;Literature;Math;NumericalAnalysis;MedicalSoftware;Physics;Robotics;Sports;ParallelComputing;Amusement;Archiving;Compression;Electronics;Emulator;Engineering;FileTools;TerminalEmulator;Filesystem;Monitor;Security;Accessibility;Calculator;Clock;TextEditor;Documentation;Core"
-#define FREEDESKTOP_IGNORE_CATEGORIES "KDE;GNOME;Qt;Motif;Java;ConsoleOnly"
 
 struct InstallFile
 {
@@ -72,11 +65,6 @@ bool findExecutables(QList<InstallFile> &fileList, const QString &root, const QS
 bool generateFileList(QList<InstallFile> &result, const QString &root, const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList, bool verbose=false);
 bool generateFileList(QList<InstallFile> &result, const QString &root, const QString &subdir, const QString &filter, const QString &exclude = QString(), bool verbose=false);
 
-typedef enum RegKey { hKEY_CURRENT_USER, hKEY_LOCAL_MACHINE, hKEY_CLASSES_ROOT };
-typedef enum RegType { qt_unknown = -1, qt_String, qt_ExpandedString, qt_DWORD, qt_BINARY, qt_MultiString };
-QVariant getWin32RegistryValue(RegKey akey, const QString& subKey, const QString& item, bool *ok = false);
-bool setWin32RegistryValue(const RegKey& akey, const QString& subKey, const QString& item, const QVariant& value, RegType pqvType = qt_unknown);
-bool delWin32RegistryValue(const RegKey& akey, const QString& subKey);
 // try to delete a file, if not possible, move to root/tmp/deleteme
 bool deleteFile(const QString &root, const QString &fn);
 // create a md5 hash from file contents
