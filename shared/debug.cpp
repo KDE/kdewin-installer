@@ -26,7 +26,9 @@
 #include <QDateTime>
 #include <QFile>
 
-static int fileOffset;
+#include <windows.h>
+
+static int fileOffset = 0;
 
 QDebug _qDebug(const char *file, int line) 
 { 
@@ -80,8 +82,9 @@ void myMessageOutput(QtMsgType type, const char *msg)
          break;
     }
     QString data = QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ") + QLatin1String(msgtype) + msg + QLatin1String("\n");
-
-    ///@ TODO in debug mode write additional to OutputDebugString
+#ifdef QT_DEBUG
+    OutputDebugString(data.toLocal8Bit().data());
+#endif
     if (logFile)
     {
         logFile->write(data.toLocal8Bit().data());
