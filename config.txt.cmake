@@ -301,6 +301,9 @@
 @version 0.9.9.5
 @url-bin http://www.free-codecs.com/download_soft.php?d=4151&s=58 OggDS0995.exe
 @filename-bin OggDS0995.exe
+;@control <controltype>,<caption>,<timeout in secs>
+;@control Button,I Agree,20
+;@control Button,Close,20
 @nomd5
 
 ;------------------------------------------------------
