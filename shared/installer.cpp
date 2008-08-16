@@ -172,10 +172,10 @@ bool Installer::install(Package *pkg, const Package::Type type)
         // mark install state  for accessing deinstaller on  remove    
         if (!installMsiPackage(pkg,type))
             return false;
-        m_files = QStringList() << pkg->localFilePath(type);;
+        m_files = QStringList() << pkg->localFilePath(type);
     }
     else {
-        if (!Unpacker::instance()->unpackFile(fileName, m_root, pkg->pathRelocations()))
+        if (!Unpacker::instance()->unpackFile(pkg->localFilePath(type), m_root, pkg->pathRelocations()))
             return false;
         m_files = Unpacker::instance()->getUnpackedFiles();
     }
