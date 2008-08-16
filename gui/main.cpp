@@ -23,7 +23,7 @@
 
 #include "installwizard.h"
 #include "installerengine.h"
-#include "misc.h"
+#include "debug.h"
 
 #include <QApplication>
 #include <QPlastiqueStyle>
