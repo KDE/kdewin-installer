@@ -54,14 +54,16 @@ void PostProcessPage::initializePage()
 
 void PostProcessPage::performAction()
 {
-    ui.progressBar->setMaximum(3);
+    ui.progressBar->setMaximum(4);
     ui.progressBar->setValue(0);
     runCommand("updating mime database","update-mime-database",QStringList() << Settings::instance().installDir()+ "/share/mime");
     ui.progressBar->setValue(1);
     runCommand("updating system configuration database","kbuildsycoca4");
     ui.progressBar->setValue(2);
-    runCommand("updating windows start menu entries","kwinstartmenu");
+    runCommand("deleting old windows start menu entries","kwinstartmenu",QStringList() <<  "--remove");
     ui.progressBar->setValue(3);
+    runCommand("creating new windows start menu entries","kwinstartmenu");
+    ui.progressBar->setValue(4);
 
     if (Settings::instance().autoNextStep())
         wizard()->next();
