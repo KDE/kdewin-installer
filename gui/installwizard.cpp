@@ -228,7 +228,11 @@ int InstallWizard::nextIdEndUser() const
         return _page->nextId();
     }
 #endif
-    case mirrorSettingsPage: return releaseSelectionPage;
+    case mirrorSettingsPage: 
+        if (InstallerEngine::isLocalInstall())
+            return endUserPackageSelectorPage;
+        else
+            return releaseSelectionPage;
     case releaseSelectionPage: return endUserPackageSelectorPage;
 //    case endUserUpdatePage:        return dependenciesPage;
 //    case endUserRepairPage:        return uninstallPage;
@@ -268,7 +272,11 @@ int InstallWizard::nextIdDeveloper() const
             return downloadSettingsPage;
     case downloadSettingsPage: return internetSettingsPage;
     case internetSettingsPage: return mirrorSettingsPage;
-    case mirrorSettingsPage:   return releaseSelectionPage;
+    case mirrorSettingsPage:           
+        if (InstallerEngine::isLocalInstall())
+            return endUserPackageSelectorPage;
+        else
+            return releaseSelectionPage;
     case releaseSelectionPage: return packageSelectorPage;
     case packageSelectorPage:  return dependenciesPage;
     case dependenciesPage:     return downloadPage;

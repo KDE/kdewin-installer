@@ -145,9 +145,13 @@ bool MirrorSettingsPage::validatePage()
     if (ui.downloadMirror->currentItem())
         data = ui.downloadMirror->currentItem()->data(Qt::UserRole).toUrl();
     qDebug() << data;
-    if (!data.isEmpty() && QUrl(s.mirror()) != data)
+    if (data.scheme() == "file")
+    {
+        InstallerEngine::setLocalInstall(true);
+        InstallerEngine::defaultConfigURL = data.toString();
+    }
+    else if (!data.isEmpty() && QUrl(s.mirror()) != data)
         s.setMirror(data.toString());
-
     s.setFirstRun(false);
     setSettingsButtonVisible(true);
     return true;
