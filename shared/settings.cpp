@@ -92,31 +92,31 @@ void Settings::setInstallDir(const QString &dir)
 QString Settings::downloadDir() const
 {
     QString result;
-    QDir d(m_settingsMain->value("tempdir", QDir::currentPath()).toString());
-    if (d.exists())
-        return QDir::toNativeSeparators(d.absolutePath());
+    QStringList tempPathes;
+    QString path = m_settingsMain->value("tempdir","").toString();
+    if (path.isEmpty())
+        path = qgetenv("TEMP");
+    if (path.isEmpty())
+        path = qgetenv("TMP");
 
-    d.setPath(qgetenv("TEMP"));
+    QDir d(path);
     if (d.exists())
         return QDir::toNativeSeparators(d.absolutePath());
             
     if (d.mkpath(d.absolutePath()))
         return QDir::toNativeSeparators(d.absolutePath());
 
-    // this results in an endless loop !
-    //qWarning() << "could not setup temporay directory" << d.absolutePath();
+    qWarning() << "could not setup temporay directory" << d.absolutePath();
+    // last ressort path
     return QDir::toNativeSeparators(QDir::currentPath());
 }
 
 void Settings::setDownloadDir(const QString &dir)
 {
-    if (dir != downloadDir())
-    {
-        QDir d(dir);
-        m_settingsMain->setValue("tempdir", QDir::toNativeSeparators(d.absolutePath()));
-        sync();
-        emit downloadDirChanged(QDir::toNativeSeparators(d.absolutePath()));
-    }
+    QDir d(dir);
+    m_settingsMain->setValue("tempdir", QDir::toNativeSeparators(d.absolutePath()));
+    sync();
+    emit downloadDirChanged(QDir::toNativeSeparators(d.absolutePath()));
 }
 
 void Settings::setCompilerType(CompilerType ctype)
