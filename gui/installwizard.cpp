@@ -208,7 +208,12 @@ int InstallWizard::nextIdEndUser() const
             return installDirectoryPage;
 
     case installDirectoryPage: return userCompilerModePage;
-    case userCompilerModePage: return downloadSettingsPage;
+    case userCompilerModePage: 
+        if (InstallerEngine::isLocalInstall())
+            return endUserPackageSelectorPage;
+        else
+            return downloadSettingsPage;
+
     case downloadSettingsPage: return internetSettingsPage;
     case internetSettingsPage: 
         if (!Settings::instance().isDeveloperMode() && Database::isAnyPackageInstalled(Settings::instance().installDir()) )
@@ -247,7 +252,7 @@ int InstallWizard::nextIdDeveloper() const
     case titlePage:
         if (skipSettings())
         {
-            if (GlobalConfig::isRemoteConfigAvailable())
+            if (GlobalConfig::isRemoteConfigAvailable() || InstallerEngine::isLocalInstall())
                 return packageSelectorPage;
             else
                 return mirrorSettingsPage;
@@ -256,7 +261,11 @@ int InstallWizard::nextIdDeveloper() const
             return installDirectoryPage;
 
     case installDirectoryPage: return userCompilerModePage;
-    case userCompilerModePage: return downloadSettingsPage;
+    case userCompilerModePage: 
+        if (InstallerEngine::isLocalInstall())
+            return packageSelectorPage;
+        else
+            return downloadSettingsPage;
     case downloadSettingsPage: return internetSettingsPage;
     case internetSettingsPage: return mirrorSettingsPage;
     case mirrorSettingsPage:   return releaseSelectionPage;

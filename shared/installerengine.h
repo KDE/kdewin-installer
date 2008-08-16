@@ -77,7 +77,15 @@ public:
     Database *database() { return m_database; }
     PackageList* packageResources() { return m_packageResources; }
     QUrl &usedDownloadSource() { return m_usedConfigURL; }
-    
+
+    /// set local install mode which means using a file url 
+    static void setLocalInstall(bool mode) { m_localInstall = mode; }
+
+    /// return state of local install mode 
+    static bool isLocalInstall() { return m_localInstall; }
+
+
+
 Q_SIGNALS:
     void error ( const QString &error );
 
@@ -98,6 +106,7 @@ protected:
     QString             m_root;
     QUrl                m_configURL;
     QUrl                m_usedConfigURL;
+    static bool         m_localInstall;
     
     /// init all package definitions
     virtual bool init();

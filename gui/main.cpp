@@ -30,15 +30,24 @@
 
 int main(int argc, char *argv[])
 {
-    setMessageHandler();
     QApplication app(argc, argv);
 
     // check if download url is given on command line
-    if(argc > 1) {
+    if(argc > 1) 
+    {
         QString param = QApplication::arguments().at(1);
         if (param.startsWith("file:") || param.startsWith("http:") || param.startsWith("ftp:"))
             InstallerEngine::defaultConfigURL = param;
+
+        // setup local install mode 
+        if (param.startsWith("file:"))
+        {
+            InstallerEngine::setLocalInstall(true);
+            Settings::instance().setDownloadDir(param.replace("file:///",""));
+        }
     }
+    setMessageHandler();
+
     InstallWizard *wizard = new InstallWizard();
     int ret = wizard->exec();
     delete wizard;
