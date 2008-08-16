@@ -53,3 +53,46 @@ QDebug _qFatal(const char *file, int line)
     a << file << line; 
     return a; 
 }
+
+void myMessageOutput(QtMsgType type, const char *msg)
+{
+    QFile log(Settings::instance().downloadDir()+"/kdewin-installer.log");
+    log.open(QIODevice::Append);
+
+    log.write(QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ").toLocal8Bit().data());
+    switch (type) {
+     case QtDebugMsg:
+         log.write("Debug:");
+         log.write(msg);
+         log.write("\n");
+         log.flush();
+         break;
+     case QtWarningMsg:
+         log.write("Warning:");
+         log.write(msg);
+         log.write("\n");
+         log.flush();
+         break;
+     case QtCriticalMsg:
+         log.write("Critical:");
+         log.write(msg);
+         log.write("\n");
+         log.flush();
+         break;
+     case QtFatalMsg:
+         log.write("Fatal:");
+         log.write(msg);
+         log.write("\n");
+         log.flush();
+         abort();
+    }
+    log.close();
+}
+
+/**
+ redirect all Qt debug, warning and error messages to a file
+*/
+void setMessageHandler()
+{
+    qInstallMsgHandler(myMessageOutput);
+}

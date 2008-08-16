@@ -89,6 +89,4 @@ bool deleteFile(const QString &root, const QString &fn);
 QByteArray md5Hash(QFile &f);
 QByteArray md5Hash(const QString &file);
 
-void setMessageHandler();
-
 #endif

@@ -759,41 +759,6 @@ bool delWin32RegistryValue(const RegKey& akey, const QString& subKey)
 }
 #endif  // Q_WS_WIN
 
-void myMessageOutput(QtMsgType type, const char *msg)
-{
-    QFile log(Settings::instance().downloadDir()+"/kdewin-installer.log");
-    log.open(QIODevice::Append);
-
-    log.write(QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ").toLocal8Bit().data());
-    switch (type) {
-     case QtDebugMsg:
-         log.write("Debug:");
-         log.write(msg);
-         log.write("\n");
-         log.flush();
-         break;
-     case QtWarningMsg:
-         log.write("Warning:");
-         log.write(msg);
-         log.write("\n");
-         log.flush();
-         break;
-     case QtCriticalMsg:
-         log.write("Critical:");
-         log.write(msg);
-         log.write("\n");
-         log.flush();
-         break;
-     case QtFatalMsg:
-         log.write("Fatal:");
-         log.write(msg);
-         log.write("\n");
-         log.flush();
-         abort();
-    }
-    log.close();
-}
-
 /*
   tries to delete a file named filename
   if it's not possible, move them to root/tmp/removeme
@@ -817,13 +782,6 @@ bool deleteFile( const QString &root, const QString &filename )
     return true;
 }
 
-/**
- redirect all Qt debug, warning and error messages to a file
-*/
-void setMessageHandler()
-{
-    qInstallMsgHandler(myMessageOutput);
-}
 #endif  // MISC_SMALL_VERSION
 
 QByteArray md5Hash(QFile &file)
