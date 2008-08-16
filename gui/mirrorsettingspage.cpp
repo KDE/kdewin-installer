@@ -152,8 +152,6 @@ bool MirrorSettingsPage::validatePage()
     }
     else if (!data.isEmpty() && QUrl(s.mirror()) != data)
         s.setMirror(data.toString());
-    s.setFirstRun(false);
-    setSettingsButtonVisible(true);
     return true;
 }
 

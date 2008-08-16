@@ -97,9 +97,6 @@ bool ReleaseSelectionPage::validatePage()
     {
         s.setMirrorWithReleasePath(data);
         engine->setConfigURL(data);
-        s.setFirstRun(false);
-        s.setSkipBasicSettings(true);
-        setSettingsButtonVisible(true);
         return true;
     }
     return false;

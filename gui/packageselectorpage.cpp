@@ -366,6 +366,9 @@ void PackageSelectorPage::updatePackageInfo(const Package *availablePackage, con
 
 void PackageSelectorPage::initializePage()
 {
+    Settings::instance().setFirstRun(false);
+    Settings::instance().setSkipBasicSettings(true);
+    setSettingsButtonVisible(true);
     /// @TODO display separate window
     InstallerDialogs::instance().downloadProgressDialog(this,true,tr("Downloading Package Lists"));
     engine->init();
@@ -378,7 +381,6 @@ void PackageSelectorPage::initializePage()
     setWidgetData("");
     //engine->setPageSelectorWidgetData(tree);
     on_leftTree_itemClicked(leftTree->currentItem(), 0);
-    setSettingsButtonVisible(true);
 }
 
 void PackageSelectorPage::on_leftTree_itemClicked(QTreeWidgetItem *item, int column)

@@ -186,7 +186,7 @@ bool skipSettings()
     return Settings::instance().isSkipBasicSettings()
         && !Settings::instance().installDir().isEmpty()
         && !Settings::instance().downloadDir().isEmpty()
-        && Settings::instance().mirrorWithReleasePath().isValid();
+        && (InstallerEngine::isLocalInstall() || Settings::instance().mirrorWithReleasePath().isValid());
 }
 
 int InstallWizard::nextIdEndUser() const
@@ -210,7 +210,7 @@ int InstallWizard::nextIdEndUser() const
     case installDirectoryPage: return userCompilerModePage;
     case userCompilerModePage: 
         if (InstallerEngine::isLocalInstall())
-            return endUserPackageSelectorPage;
+            return endUserInstallModePage;
         else
             return downloadSettingsPage;
 

@@ -17,7 +17,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout" >
    <item row="4" column="0" >
-    <widget class="QLabel" name="label_2" >
+    <widget class="QLabel" name="skipBasicSettingsLabel" >
      <property name="sizePolicy" >
       <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
        <horstretch>0</horstretch>
@@ -27,11 +27,11 @@
      <property name="maximumSize" >
       <size>
        <width>1024</width>
-       <height>50</height>
+       <height>30</height>
       </size>
      </property>
      <property name="text" >
-      <string>If you have already entered basic settings you can skip those wizard pages and go directly to the download server page. If this is the first run of the wizard you should not skip the basic settings.</string>
+      <string>If you have already entered basic settings those wizard pages are skipped by default. If you like to change those settings unselect the check box below.</string>
      </property>
      <property name="alignment" >
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -87,7 +87,7 @@ p, li { white-space: pre-wrap; }
    <item row="5" column="0" >
     <widget class="QCheckBox" name="skipBasicSettings" >
      <property name="text" >
-      <string>go directly to the download server page, skip basic settings</string>
+      <string> skip basic setting pages</string>
      </property>
     </widget>
    </item>
@@ -113,7 +113,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Contributors: &lt;/p>
 &lt;ul style="-qt-list-indent: 1;">&lt;li style=" font-size:8pt;" style=" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Ralf Habacker - main application, design, maintainer &lt;/li>
 &lt;li style=" font-size:8pt;" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Christian Ehrlicher - curl and uncompress support, bug fixing &lt;/li>
-&lt;li style=" font-size:8pt;" style=" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Patrick Spendrin - start menu support &lt;/li>&lt;/ul>
+&lt;li style=" font-size:8pt;" style=" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Patrick Spendrin - initial start menu support &lt;/li>&lt;/ul>
 &lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>&lt;/body>&lt;/html></string>
      </property>
      <property name="textFormat" >

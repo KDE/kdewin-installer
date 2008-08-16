@@ -47,7 +47,12 @@ void EndUserInstallModePage::initializePage()
 int EndUserInstallModePage::nextId() const
 {
     if (ui.updateInstallButton->isChecked())
-        return InstallWizard::mirrorSettingsPage;
+    {
+        if (InstallerEngine::isLocalInstall())
+            return InstallWizard::endUserPackageSelectorPage;
+        else
+            return InstallWizard::mirrorSettingsPage;
+    }
     else if (ui.repairInstallButton->isChecked())
         return InstallWizard::endUserRepairPage;
     else if (ui.removeInstallButton->isChecked())

@@ -49,7 +49,13 @@ EndUserPackageSelectorPage::EndUserPackageSelectorPage()  : InstallWizardPage(0)
 {
     ui.setupUi(this);
     setTitle(windowTitle());
-    setSubTitle(statusTip());
+    if (0/* update*/) 
+        setSubTitle(tr("This page shows all available updates for installed package and further available packages. "
+            "You may click into the action column to exclude a package from the update, to installl further packages "
+            "or to remove installed packages. If you are ready, press Next to start the update.")
+        );
+    else
+        setSubTitle(statusTip());
     categories = "KDE";
 }
 
@@ -145,6 +151,9 @@ void EndUserPackageSelectorPage::setWidgetData(QString categoryPattern)
 
 void EndUserPackageSelectorPage::initializePage()
 {
+    Settings::instance().setFirstRun(false);
+    Settings::instance().setSkipBasicSettings(true);
+    setSettingsButtonVisible(true);
     InstallerDialogs::instance().downloadProgressDialog(this,true,tr("Downloading Package Lists"));
     engine->init();
     InstallerDialogs::instance().downloadProgressDialog(this,false);
