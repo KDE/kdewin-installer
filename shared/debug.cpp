@@ -58,39 +58,38 @@ QDebug _qFatal(const char *file, int line)
     return a; 
 }
 
+static QFile *logFile = 0;
+
 void myMessageOutput(QtMsgType type, const char *msg)
 {
-    QFile log(Settings::instance().downloadDir()+"/kdewin-installer.log");
-    log.open(QIODevice::WriteOnly);
-
-    log.write(QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ").toLocal8Bit().data());
+    char *msgtype;
     switch (type) {
-     case QtDebugMsg:
-         log.write("Debug:");
-         log.write(msg);
-         log.write("\n");
-         log.flush();
+     case QtDebugMsg: 
+         msgtype = "Debug: ";
          break;
      case QtWarningMsg:
-         log.write("Warning:");
-         log.write(msg);
-         log.write("\n");
-         log.flush();
+         msgtype = "Warning: ";
          break;
      case QtCriticalMsg:
-         log.write("Critical:");
-         log.write(msg);
-         log.write("\n");
-         log.flush();
+         msgtype = "Critical: ";
          break;
      case QtFatalMsg:
-         log.write("Fatal:");
-         log.write(msg);
-         log.write("\n");
-         log.flush();
-         abort();
+         msgtype = "Fatal: ";
+         break;
     }
-    log.close();
+    QString data = QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ") + QLatin1String(msgtype) + msg + QLatin1String("\n");
+
+    ///@ TODO in debug mode write additional to OutputDebugString
+    if (logFile)
+    {
+        logFile->write(data.toLocal8Bit().data());
+        logFile->flush();
+    }
+    switch (type) {
+     case QtFatalMsg:
+        abort();
+        break;
+    }
 }
 
 /**
@@ -98,5 +97,9 @@ void myMessageOutput(QtMsgType type, const char *msg)
 */
 void setMessageHandler()
 {
+    logFile = new QFile(Settings::instance().logFile());
+    logFile->remove();
+    logFile->open(QIODevice::WriteOnly);
+
     qInstallMsgHandler(myMessageOutput);
 }
