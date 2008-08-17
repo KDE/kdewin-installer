@@ -27,7 +27,7 @@
 class LinkFile {
     public:
         /// create instance 
-        LinkFile(const QString &_execPath, const QString &_linkPath, const QString &_description, const QString &_workingDir)
+        LinkFile(const QString &_linkPath, const QString &_execPath, const QString &_description, const QString &_workingDir)
         {
             m_execPath     = _execPath;    
             m_arguments    = QStringList();
@@ -38,7 +38,7 @@ class LinkFile {
         /** 
             constructs  LinkFile instance with arguments
                     */
-        LinkFile(const QStringList &args, const QString &linkPath, const QString &description, const QString &workingDir)
+        LinkFile(const QString &linkPath, const QStringList &args, const QString &description, const QString &workingDir)
         {
             if (args.size() > 0)
                 m_execPath = args[0];
