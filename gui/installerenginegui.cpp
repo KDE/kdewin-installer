@@ -588,6 +588,7 @@ bool InstallerEngineGui::removePackages ( const QString &category )
         list.append(pkg);
     m_installer->progress()->setPackageCount(list.size());
     int i = 0;
+    m_removedPackages = 0;
     Q_FOREACH ( Package *pkg, list ) {
         if ( !pkg )
             continue;
@@ -610,6 +611,7 @@ bool InstallerEngineGui::removePackages ( const QString &category )
             return false;
         if ( all || isMarkedForRemoval ( pkg,Package::SRC ) )
             pkg->removeItem ( m_installer, Package::SRC );
+        m_removedPackages++;
     }
     return true;
 }
@@ -621,6 +623,7 @@ bool InstallerEngineGui::installPackages ( const QString &_category )
         list.append(pkg);
     m_installer->progress()->setPackageCount(list.size());
     int i = 0; 
+    m_installedPackages = 0;
     Q_FOREACH ( Package *pkg, list ) {
         if ( !pkg )
             continue;
@@ -644,6 +647,7 @@ bool InstallerEngineGui::installPackages ( const QString &_category )
         if ( all || isMarkedForInstall ( pkg,Package::SRC ) )
             pkg->installItem ( m_installer, Package::SRC );
         // @TODO: where to handle desktop icons creating
+        m_installedPackages++;
     }
     return true;
 }

@@ -78,6 +78,14 @@ public:
     PackageList* packageResources() { return m_packageResources; }
     QUrl &usedDownloadSource() { return m_usedConfigURL; }
 
+    /// number of installed packages
+    int installedPackages() { return m_installedPackages; }
+    
+    /// number of installed packages
+    int removedPackages() { return m_removedPackages; }
+    /// number of really downloaded packages
+    int downloadedPackages() { return m_downloadedPackages; }
+
     /// set local install mode which means using a file url 
     static void setLocalInstall(bool mode) { m_localInstall = mode; }
 
@@ -106,6 +114,9 @@ protected:
     QString             m_root;
     QUrl                m_configURL;
     QUrl                m_usedConfigURL;
+    int                 m_installedPackages;
+    int                 m_downloadedPackages;
+    int                 m_removedPackages;
     static bool         m_localInstall;
     
     /// init all package definitions

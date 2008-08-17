@@ -241,7 +241,12 @@ int InstallWizard::nextIdEndUser() const
     case dependenciesPage:           return downloadPage;
     case downloadPage:               return uninstallPage;
     case uninstallPage:              return installPage;
-    case installPage:                return postProcessPage;
+    case installPage:                
+        if (engine->installedPackages() > 0 || engine->removedPackages() > 0)
+            return postProcessPage;
+        else
+            return finishPage;
+            
     case postProcessPage:            return finishPage;
     case finishPage: 
     default:
@@ -256,10 +261,7 @@ int InstallWizard::nextIdDeveloper() const
     case titlePage:
         if (skipSettings())
         {
-            if (GlobalConfig::isRemoteConfigAvailable() || InstallerEngine::isLocalInstall())
-                return packageSelectorPage;
-            else
-                return mirrorSettingsPage;
+            return packageSelectorPage;
         }
         else
             return installDirectoryPage;
@@ -282,7 +284,12 @@ int InstallWizard::nextIdDeveloper() const
     case dependenciesPage:     return downloadPage;
     case downloadPage:         return uninstallPage;
     case uninstallPage:        return installPage;
-    case installPage:          return postProcessPage;
+    case installPage:        
+        if (engine->installedPackages() > 0 || engine->removedPackages() > 0)
+            return postProcessPage;
+        else
+            return finishPage;
+
     case postProcessPage:      return finishPage;
     case finishPage: 
     default:
