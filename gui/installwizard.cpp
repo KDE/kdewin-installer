@@ -181,7 +181,7 @@ void InstallWizard::slotEngineError(const QString &msg)
     );
 }
 
-bool skipSettings()
+bool InstallWizard::skipSettings()
 {
     return Settings::instance().isSkipBasicSettings()
         && !Settings::instance().installDir().isEmpty()

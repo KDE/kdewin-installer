@@ -61,6 +61,9 @@ public:
     InstallWizard(QWidget *parent = 0);
     virtual ~InstallWizard();
 
+    /// check if settings should really skipped - this depends on present install dir, downlod dir full mirror release 
+    static bool skipSettings();
+    
 protected:
     void writeSettings();
     void readSettings();

@@ -40,8 +40,9 @@ void TitlePage::initializePage()
     Settings &s = Settings::instance();
     ui.skipBasicSettings->setCheckState(s.isSkipBasicSettings() ? Qt::Checked : Qt::Unchecked);
 
-    ui.skipBasicSettings->setVisible(!s.isFirstRun());
-    ui.skipBasicSettingsLabel->setVisible(!s.isFirstRun());
+    bool hided = s.isFirstRun() || !InstallWizard::skipSettings();
+    ui.skipBasicSettings->setVisible(!hided);
+    ui.skipBasicSettingsLabel->setVisible(!hided);
 }
 
 bool TitlePage::validatePage()
