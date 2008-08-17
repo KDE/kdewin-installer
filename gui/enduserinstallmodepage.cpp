@@ -44,21 +44,16 @@ void EndUserInstallModePage::initializePage()
 {
 }
 
-int EndUserInstallModePage::nextId() const
+EndUserInstallModePage::InstallMode EndUserInstallModePage::selectedInstallMode()
 {
     if (ui.updateInstallButton->isChecked())
-    {
-        if (InstallerEngine::isLocalInstall())
-            return InstallWizard::endUserPackageSelectorPage;
-        else
-            return InstallWizard::mirrorSettingsPage;
-    }
+        return Update;
     else if (ui.repairInstallButton->isChecked())
-        return InstallWizard::endUserRepairPage;
+        return Repair;
     else if (ui.removeInstallButton->isChecked())
-        return InstallWizard::uninstallPage;
+        return Remove;
     else 
-        return InstallWizard::endUserInstallModePage;
+        return Nothing;
 }
 
 bool EndUserInstallModePage::validatePage()

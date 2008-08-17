@@ -60,6 +60,7 @@ public:
 
     InstallWizard(QWidget *parent = 0);
     virtual ~InstallWizard();
+
 protected:
     void writeSettings();
     void readSettings();

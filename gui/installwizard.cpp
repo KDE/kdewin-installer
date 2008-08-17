@@ -221,13 +221,24 @@ int InstallWizard::nextIdEndUser() const
         else
             return mirrorSettingsPage;
         
-#if 1
     case endUserInstallModePage:
     { 
         EndUserInstallModePage *_page = static_cast<EndUserInstallModePage*>(page(endUserInstallModePage));
-        return _page->nextId();
+        switch(_page->selectedInstallMode()) {
+            case EndUserInstallModePage::Update:
+                if (skipSettings() || InstallerEngine::isLocalInstall())
+                    return endUserPackageSelectorPage;
+                else
+                    return mirrorSettingsPage;
+            case EndUserInstallModePage::Remove:
+                return uninstallPage;
+            case EndUserInstallModePage::Repair:
+                return endUserRepairPage;
+            default: 
+                return endUserInstallModePage;
+        }
     }
-#endif
+
     case mirrorSettingsPage: 
         if (InstallerEngine::isLocalInstall())
             return endUserPackageSelectorPage;

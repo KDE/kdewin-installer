@@ -31,11 +31,12 @@
 class EndUserInstallModePage : public InstallWizardPage
 {
 public:
+    typedef enum {Nothing, Update, Remove, Repair } InstallMode;
     EndUserInstallModePage();
 
     void initializePage();
     bool validatePage();
-    int nextId() const;
+    InstallMode selectedInstallMode();
 
 protected: 
       Ui::EndUserInstallModePage ui;
