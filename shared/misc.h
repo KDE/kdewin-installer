@@ -67,8 +67,12 @@ bool generateFileList(QList<InstallFile> &result, const QString &root, const QSt
 
 // try to delete a file, if not possible, move to root/tmp/deleteme
 bool deleteFile(const QString &root, const QString &fn);
+
 // create a md5 hash from file contents
 QByteArray md5Hash(QFile &f);
 QByteArray md5Hash(const QString &file);
+
+/// return windows start menu path
+QString getStartMenuPath(bool bAllUsers);
 
 #endif
