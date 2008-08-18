@@ -23,6 +23,7 @@
 #ifndef GLOBALCONFIG_H
 #define GLOBALCONFIG_H
 
+#include "installerupdate.h"
 #include "site.h"
 #include "package.h"
 
@@ -70,6 +71,9 @@ class GlobalConfig {
         /// return version of required installer
         const QByteArray &minimalInstallerVersion() { return m_minimalInstallerVersion; }
         void setBaseURL(const QUrl &url) { m_baseURL = url.toString(); }
+
+        InstallerUpdate &installerUpdate() { return m_installerUpdate; }
+
         /// check if a config-remote.txt is located in download directory
         static bool isRemoteConfigAvailable();
         /// return path of remote config file
@@ -89,6 +93,7 @@ class GlobalConfig {
         QHash <QString,QStringList> m_categoryPackages;
         QList <Mirror*> m_mirrors;
         QString m_baseURL;
+        InstallerUpdate m_installerUpdate;
         QDateTime m_timestamp;
         QByteArray m_minimalInstallerVersion;
     Q_DISABLE_COPY(GlobalConfig)

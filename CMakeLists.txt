@@ -5,8 +5,10 @@ cmake_minimum_required(VERSION 2.4.5)
 
 set (VERSION_MAJOR 0)
 set (VERSION_MINOR 9)
-set (VERSION_PATCH 3)
-set (VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
+set (VERSION_REVISION 3)
+set (VERSION_PATCH 0)
+set (VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REVISION}")
+set (VERSION_PATCH "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REVISION}-${VERSION_PATCH}")
 
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")

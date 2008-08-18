@@ -472,7 +472,14 @@ bool InstallerEngineGui::init()
     m_installMode = Settings::instance().isDeveloperMode() ? Developer : EndUser;
 
     initGlobalConfig();
-    if (isInstallerVersionOutdated())
+    if (m_globalConfig->installerUpdate().isUpdateAvailable()) {
+        if (InstallerDialogs::instance().newInstallerAvailable())
+            if (m_globalConfig->installerUpdate().fetch())
+                m_globalConfig->installerUpdate().run();
+            else 
+                InstallerDialogs::instance().newInstallerDownloadError();
+    }
+    else if (isInstallerVersionOutdated())
         InstallerDialogs::instance().installerOutdated();
     return initPackages();
 
@@ -581,14 +588,27 @@ bool InstallerEngineGui::downloadPackages ( const QString &category )
     return true;
 }
 
+void killAllKDEApps()
+{
+    /// will work in kde >= 4.1.1 
+    /// I got cases where files are not removed and created a could not remove file error on installing 
+    int ret = QProcess::execute( Settings::instance().installDir() +"/bin/kdeinit4.exe", QStringList() << "--shutdown");
+    qDebug() << "running" << Settings::instance().installDir() +"/bin/kdeinit4.exe --shutdown" << (ret == 0 ? "without errors" : "failed");
+}
+
 bool InstallerEngineGui::removePackages ( const QString &category )
 {
+
     QList<Package*> list = packageStates.packages(m_packageResources);
     Q_FOREACH ( Package *pkg, dependencyStates.packages(m_packageResources) )
         list.append(pkg);
     m_installer->progress()->setPackageCount(list.size());
     int i = 0;
-    m_removedPackages = 0;
+    m_removedPackages = 0;    
+
+    if (list.size() > 0) 
+        killAllKDEApps();
+
     Q_FOREACH ( Package *pkg, list ) {
         if ( !pkg )
             continue;
@@ -624,6 +644,10 @@ bool InstallerEngineGui::installPackages ( const QString &_category )
     m_installer->progress()->setPackageCount(list.size());
     int i = 0; 
     m_installedPackages = 0;
+
+    if (list.size() > 0 && m_removedPackages == 0) 
+        killAllKDEApps();
+
     Q_FOREACH ( Package *pkg, list ) {
         if ( !pkg )
             continue;

@@ -196,6 +196,12 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 ;
             else if (keyword == "@minversion")
                 m_minimalInstallerVersion = cmdBA[1];
+            else if (keyword == "@newversion")
+            {
+                m_installerUpdate.setNewVersion(cmd[1]);
+                m_installerUpdate.setCurrentVersion(VERSION_PATCH);
+                m_installerUpdate.setUrl(cmd[2]);
+            }
             else if (keyword == "@timestamp")
             {
                 const QStringList patterns = QStringList() << "yyyyMMddHHmm" << "yyyyMMddHHmmss";

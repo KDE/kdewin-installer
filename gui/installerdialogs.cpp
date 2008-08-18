@@ -46,6 +46,30 @@ bool InstallerDialogs::installerOutdated()
     return true; 
 }
 
+bool InstallerDialogs::newInstallerAvailable()
+{
+    QString text = tr("There is a new installer available. Should I download it to the same location as the recent installer and run it ?");
+    QMessageBox::StandardButton result = QMessageBox::warning ( 
+            m_parent, 
+            m_title, 
+            text,
+            QMessageBox::Cancel | QMessageBox::Ok,
+            QMessageBox::Ok
+        );
+    return result == QMessageBox::Ok;
+}
+
+bool InstallerDialogs::newInstallerDownloadError()
+{
+    QString text = tr("Could not download new installer. You should search manually for the new installer");
+    QMessageBox::StandardButton result = QMessageBox::warning ( 
+            m_parent, 
+            m_title, 
+            text
+        );
+    return true; 
+}
+
 QMessageBox::StandardButton InstallerDialogs::downloadFailed(const QString &url, const QString &error)
 {
     QString text;
