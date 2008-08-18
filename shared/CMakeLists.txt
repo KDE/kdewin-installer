@@ -15,6 +15,7 @@ set(installer_shared_HEADERS
     installer.h
     installerengine.h
     installerprogress.h
+    installerupdate.h
     package.h
     packagecategorycache.h
     packagelist.h
@@ -43,6 +44,7 @@ set(installer_shared_SOURCES
     installer.cpp
     installerengine.cpp
     installerprogress.cpp
+    installerupdate.cpp
     mirrors.cpp
     misc.cpp
     package.cpp
