@@ -36,7 +36,9 @@ public:
     void initializePage();
     bool isComplete();
 
-//protected:
+protected:
+    QLabel *label;
+    QLabel *label2;
 //    Ui::FinishPage ui;
 };
 

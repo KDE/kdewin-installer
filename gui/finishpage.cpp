@@ -26,11 +26,14 @@
 
 FinishPage::FinishPage()
 {
-    setTitle(tr("Installation Finished"));
+    setTitle(tr("Installation/Update Finished"));
     setSubTitle(tr(" "));
 
-    QLabel* label = new QLabel(tr(
+    label = new QLabel(tr(
          "<p>Now you should be able to run KDE applications. In the start menu you will find entries for the installed kde applications.</p>"
+        ));
+
+    label2 = new QLabel(tr(
          "<p>If you <ul>"
          "<li>like to see the KDE on Windows project web site see <a href=\"http://windows.kde.org\">http://windows.kde.org</a></li>"
          "<li>like to get community support for this installer and/or running KDE applications please contact "
@@ -48,15 +51,24 @@ FinishPage::FinishPage()
 
     label->setOpenExternalLinks (true);
     label->setWordWrap(true);
+    label2->setOpenExternalLinks (true);
+    label2->setWordWrap(true);
     
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(label);
+    layout->addWidget(label2);
     layout->addStretch(1);
     setLayout(layout);
 }
 
 void FinishPage::initializePage()
 {
+    if (engine->installedPackages() == 0 && engine->removedPackages() > 0)
+    {
+        setTitle(tr("Package removal Finished"));
+        label->setVisible(false);
+    }
+    
     setFinalPage(true);
     //wizard()->setOption(QWizard::NoCancelButton,true);
     wizard()->button(QWizard::CancelButton)->setEnabled(false);
@@ -65,6 +77,7 @@ void FinishPage::initializePage()
     wizard()->button(QWizard::CustomButton3)->show();
 #endif
     wizard()->setOption(QWizard::NoBackButtonOnLastPage,true);
+    Settings::instance().setFirstRun(false);
 }
 
 bool FinishPage::isComplete()

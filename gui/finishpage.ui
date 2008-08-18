@@ -21,6 +21,18 @@
      <property name="text" >
       <string>You should now be able to run KDE applications.  Please open an explorer window and navigate to the bin folder of the KDE installation root. There you will find several applications which can be started by simply double clicking on the executable.
 In future versions of this installer it will also be possible to start kde applications from the Windows Start menu.
+</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <property name="wordWrap" >
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label2" >
+     <property name="text" >
+      <string>
 If you &lt;ul>
 &lt;li>like to see the KDE on windows project web site see &lt;a href=http://windows.kde.org>http://windows.kde.org&lt;/a>&lt;/li>
 &lt;li>like to get community support for this installer and/or running kde applications please contact 
