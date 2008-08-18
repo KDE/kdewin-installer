@@ -41,6 +41,22 @@ InstallerUpdate::~InstallerUpdate()
 {
 }
 
+void InstallerUpdate::setCurrentVersion(const QString version)
+{ 
+    if (!version.contains("-"))
+        m_currentVersion = version + "-0";
+    else
+        m_currentVersion = version;
+}
+
+void InstallerUpdate::setNewVersion(const QString version) 
+{
+    if (!version.contains("-"))
+        m_newVersion = version + "-0";
+    else
+        m_newVersion = version;
+}
+
 bool InstallerUpdate::isUpdateAvailable()
 {
     return m_url.isValid() 

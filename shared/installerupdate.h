@@ -19,8 +19,8 @@
 ** Boston, MA 02110-1301, USA.
 **
 ****************************************************************************/
-#ifndef InstallerUpdate_H
-#define InstallerUpdate_H
+#ifndef INSTALLERUPDATE_H
+#define INSTALLERUPDATE_H
 
 #include <QtCore/QString>
 #include <QtCore/QUrl>
@@ -35,9 +35,9 @@ class InstallerUpdate
         ~InstallerUpdate();
 
         /// set current installer version
-        void setCurrentVersion(const QString version) { m_currentVersion = version; }
+        void setCurrentVersion(const QString version);
         /// set new installer version
-        void setNewVersion(const QString version) { m_newVersion = version; }
+        void setNewVersion(const QString version);
         /// set url for new update
         void setUrl(const QUrl &url);
         /// check if the provided version is newer 
