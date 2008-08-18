@@ -29,33 +29,15 @@
 #include "installerdialogs.h"
 
 Mirrors::Config winkde_org_mirrorConfig(
-    "http://www.winkde.org/pub/kde/ports/win32/mirrors.lst",
+    "http://www.winkde.org/pub/kde/ports/win32/mirrors.list",
     Mirrors::KDE,
     "",
     ""
 );
 
-Mirrors::Config sourceforge_mirrorConfig(
-    "http://downloads.sourceforge.net/kde-windows/mirrors.lst",
-    Mirrors::Cygwin,
-    "",
-    ""
-);
-
-#if 0
-// sourceforge mirror could only be added manually 
-Mirrors::Config download_kde_org_mirrorConfig(
-    "http://download.kde.org/download.php?url=unstable/4.0.67/win32",
-    Mirrors::KDE_HTML,
-    "",
-    ""
-);
-#endif
-
-
-Mirrors::Config webdev_cegit_de_mirrorConfig(
-    "http://webdev.cegit.de/snapshots/kde-windows/mirrors.lst",
-    Mirrors::Cygwin,
+Mirrors::Config winkde_org_mirrorConfigOld(
+    "http://www.winkde.org/pub/kde/ports/win32/mirrors.lst",
+    Mirrors::KDE,
     "",
     ""
 );
@@ -64,7 +46,7 @@ Mirrors::Config webdev_cegit_de_mirrorConfig(
 #define mirrorConfig winkde_org_mirrorConfig
 
 /// fall back server when main mirror list server could not be contacted
-#define fallBackConfig sourceforge_mirrorConfig
+#define fallBackConfig winkde_org_mirrorConfigOld
 
 
 MirrorSettingsPage::MirrorSettingsPage() : InstallWizardPage(0)
