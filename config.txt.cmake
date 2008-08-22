@@ -11,14 +11,14 @@
 @categorynotes KDE KDE packages
 
 ; to which category packages belongs to
-@categorypackages win32libs aspell expat giflib iconv jasper jpeg lcms libbzip2 libidn libintl libintl libpng libxml2 libxslt openslp openssl tiff zlib shared-mime-info 
-@categorypackages win32libs pcre-msvc  dbus-msvc 
-@categorypackages win32libs pcre-mingw dbus-mingw
+@categorypackages win32libs aspell expat giflib iconv jasper jpeg lcms libbzip2 libidn libintl libintl libpng libxml2 libxslt openslp openssl tiff zlib shared-mime-info sqlite
+@categorypackages win32libs pcre-msvc  dbus-msvc gpgme gpgme-qt-msvc
+@categorypackages win32libs pcre-mingw dbus-mingw gpgme gpgme-qt-mingw
 @categorypackages tools findutils grep mingw-utils diffutils patch
 @categorypackages kdesupport kdewin32-msvc  kdewin-installer-msvc  vcredist      qimageblitz-msvc  qca-msvc  strigi-msvc  soprano-msvc  taglib-msvc  qt-msvc  phonon-msvc  fontconfig-msvc  freetype-msvc  poppler-msvc
 @categorypackages kdesupport kdewin32-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw qt-mingw phonon-mingw fontconfig-mingw freetype-mingw poppler-mingw
-@categorypackages KDE amarok-msvc  kdelibs-msvc  kdepimlibs-msvc  kdebase-apps-msvc  kdebase-runtime-msvc  kdeedu-msvc  kdegames-msvc  kdegraphics-msvc  kdenetwork-msvc  kdesdk-msvc  kdewebdev-msvc kdeutils-msvc
-@categorypackages KDE amarok-mingw kdelibs-mingw kdepimlibs-mingw kdebase-apps-mingw kdebase-runtime-mingw kdeedu-mingw kdegames-mingw kdegraphics-mingw kdenetwork-mingw kdesdk-mingw kdewebdev-mingw kdeutils-mingw
+@categorypackages KDE amarok-msvc  kdelibs-msvc  kdepimlibs-msvc  kdepim-msvc  kdebase-apps-msvc  kdebase-runtime-msvc  kdeedu-msvc  kdegames-msvc  kdegraphics-msvc  kdenetwork-msvc  kdesdk-msvc  kdewebdev-msvc kdeutils-msvc
+@categorypackages KDE amarok-mingw kdelibs-mingw kdepimlibs-mingw kdepim-mingw kdebase-apps-mingw kdebase-runtime-mingw kdeedu-mingw kdegames-mingw kdegraphics-mingw kdenetwork-mingw kdesdk-mingw kdewebdev-mingw kdeutils-mingw
 @categorypackages KDE koffice-msvc  ktorrent-msvc  
 @categorypackages KDE koffice-mingw  ktorrent-mingw  
 @categorypackages qt qt-msvc qt-mingw qt-static-msvc
@@ -45,13 +45,15 @@
 ; mingw dependencies 
 @deps dbus-mingw expat 
 @deps amarok-mingw kdebase-runtime-mingw phonon-mingw
+@deps gpgme-qt-mingw gpgme qt-msvc
 @deps kdelibs-mingw phonon-mingw pcre-mingw dbus-mingw kdewin32-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw aspell libbzip2 expat giflib iconv jasper jpeg libintl libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
-@deps kdepimlibs-mingw kdelibs-mingw
 @deps kdebase-runtime-mingw kdepimlibs-mingw kdelibs-mingw oggcodecs
 @deps kdebase-apps-mingw kdebase-runtime-mingw
 @deps kdeedu-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps kdegames-mingw kdebase-runtime-mingw kdelibs-mingw phonon-mingw
 @deps kdegraphics-mingw kdebase-runtime-mingw kdelibs-mingw fontconfig-mingw freetype-mingw poppler-mingw
+@deps kdepim-mingw kdepimlibs-mingw kdebase-runtime-mingw gpgme-qt-mingw sqlite
+@deps kdepimlibs-mingw kdelibs-mingw
 @deps kdenetwork-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps kdesdk-mingw kdebase-runtime-mingw kdelibs-mingw kdepimlibs-mingw astyle diffutils
 @deps kdetoys-mingw kdebase-runtime-mingw kdelibs-mingw
@@ -67,6 +69,7 @@
 @deps amarok-msvc kdebase-runtime-msvc phonon-msvc
 ; dbus may be compiled with libxml2 or expat, so use both dependencies
 @deps dbus-msvc libxml2 iconv expat 
+@deps gpgme-qt-msvc gpgme qt-msvc
 @deps kdebase-runtime-msvc kdepimlibs-msvc kdelibs-msvc oggcodecs
 @deps kdebase-apps-msvc kdebase-runtime-msvc
 @deps kdeedu-msvc kdebase-runtime-msvc kdelibs-msvc
@@ -74,6 +77,7 @@
 @deps kdegraphics-msvc kdebase-runtime-msvc kdelibs-msvc fontconfig-msvc freetype-msvc poppler-msvc
 @deps kdelibs-msvc phonon-msvc pcre-msvc vcredist qt-msvc dbus-msvc kdewin32-msvc qimageblitz-msvc qca-msvc strigi-msvc soprano-msvc taglib-msvc aspell libbzip2 expat giflib iconv jasper jpeg libintl libpng libxml2 libxslt openssl tiff zlib shared-mime-info
 @deps kdenetwork-msvc kdebase-runtime-msvc kdelibs-msvc
+@deps kdepim-msvc kdepimlibs-msvc kdebase-runtime-msvc gpgme-qt-msvc sqlite
 @deps kdepimlibs-msvc kdelibs-msvc
 @deps kdesdk-msvc kdebase-runtime-msvc kdelibs-msvc astyle diffutils
 @deps kdeutils-msvc kdebase-runtime-msvc
@@ -92,14 +96,17 @@
 @pkgnotes amarok-mingw UNSTABLE media player
 @pkgnotes fontconfig-mingw library for font customization and configuration
 @pkgnotes freetype-mingw A Free, High-Quality, and Portable Font Engine
-@pkgnotes kdelibs-mingw KDE libraries (support applications)
+@pkgnotes gpgme-qt-mingw Qt wrapper for gpgme library
 @pkgnotes kdebase-runtime-mingw KDE runtime package 
 @pkgnotes kdebase-apps-mingw KDE base applicaton package 
-@pkgnotes kdesdk-mingw software development package (umbrello, kate)
-@pkgnotes kdegames-mingw KDE games
 @pkgnotes kdeedu-mingw KDE education apps
-@pkgnotes kdepimlibs-mingw KDE PIM library
+@pkgnotes kdegames-mingw KDE games
+@pkgnotes kdegraphics-mingw Graphics applications for KDE
+@pkgnotes kdelibs-mingw KDE libraries (support applications)
+@pkgnotes kdepim-mingw UNSTABLE KDE Personal Informations Suite
+@pkgnotes kdepimlibs-mingw UNSTABLE KDE PIM library
 @pkgnotes kdenetwork-mingw KDE Networking applications
+@pkgnotes kdesdk-mingw software development package (umbrello, kate)
 @pkgnotes kdetoys-mingw collection of several programs in KDE
 @pkgnotes kdeutils-mingw various desktop utilities (KGpg, Okteta)
 @pkgnotes kdewebdev-mingw KDE Web Development applications
@@ -123,14 +130,17 @@
 @pkgnotes amarok-msvc UNSTABLE media player
 @pkgnotes fontconfig-msvc library for font customization and configuration
 @pkgnotes freetype-msvc A Free, High-Quality, and Portable Font Engine
-@pkgnotes kdelibs-msvc KDE libraries (support applications)
+@pkgnotes gpgme-qt-msvc Qt wrapper for gpgme library
 @pkgnotes kdebase-runtime-msvc KDE runtime package
 @pkgnotes kdebase-apps-msvc KDE base applicaton package 
-@pkgnotes kdesdk-msvc software development package (umbrello, kate)
-@pkgnotes kdegames-msvc KDE games
 @pkgnotes kdeedu-msvc KDE education apps
-@pkgnotes kdepimlibs-msvc KDE PIM library
+@pkgnotes kdegames-msvc KDE games
+@pkgnotes kdegraphics-msvc Graphics applications for KDE
+@pkgnotes kdelibs-msvc KDE libraries (support applications)
+@pkgnotes kdepim-msvc UNSTABLE KDE Personal Informations Suite
+@pkgnotes kdepimlibs-msvc UNSTABLE KDE PIM library
 @pkgnotes kdenetwork-msvc KDE Networking applications
+@pkgnotes kdesdk-msvc software development package (umbrello, kate)
 @pkgnotes kdetoys-msvc collection of several programs in KDE
 @pkgnotes kdeutils-msvc various desktop utilities (KGpg, Okteta)
 @pkgnotes kdewebdev-msvc KDE Web Development applications
