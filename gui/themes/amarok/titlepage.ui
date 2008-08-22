@@ -76,7 +76,7 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label_2" >
+    <widget class="QLabel" name="skipBasicSettingsLabel" >
      <property name="text" >
       <string>If you have already entered basic settings you can skip those wizard pages and go directly to the download server page. If this is the first run of the wizard you should not skip the basic settings.</string>
      </property>
