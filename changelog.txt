@@ -1,9 +1,13 @@
 ChangeLog
 =========
+0.9.3-1 (r850954)
+-------
+- installer-gui:   - fixed bug not killing kde applications for kde <= 4.1.0
+
 0.9.3 (r848631)
 -------
 - installer-gui:   - display different messages in finishpage when only removing packages
-                   - added feature to update the installer itself by using the @newversion <version> <installer-url> 
+                   - added feature to update the installer itself by using the @newversion <version> <installer-url> config file attribute
                    - display skip basic settings checkbox only when all settings are available
                    - display package selector page immediatly after titlepage if skipsettings is set or local install triggerd by command line parameter
                    - only run post process steps when at least one package is removed or installed
@@ -25,8 +29,8 @@ ChangeLog
                    - added new Release Selection Page, which is displayed after the mirror selection page. It fetches available releases from a server and 
                      let the user choose on of the available packages. 
                    - allow also package downgrade in end user mode
-                   - md5 support for external packages - by the the config file @md5-<bin|lib|doc|src> attribute
-                   - added support for placing local filenames into config file by using the new @filename-<bin|src|doc|lib> 
+                   - md5 support for external packages - by the the config file @md5-<bin|lib|doc|src> <md5sum> attribute
+                   - added support for placing local filenames into config file by using the new @filename-<bin|src|doc|lib>  <filename> attribute
                    - added note about that running kde applications should be closed before updating packages. 
                    - some code cleanup
 
