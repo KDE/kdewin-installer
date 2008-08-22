@@ -40,6 +40,8 @@
 #include "packagestates.h"
 #include "installerdialogs.h"
 
+#include <windows.h>
+
 #include <QtGui/QTreeWidget>
 
 /// holds the package selection and icon states
@@ -588,12 +590,41 @@ bool InstallerEngineGui::downloadPackages ( const QString &category )
     return true;
 }
 
-void killAllKDEApps()
+bool killAllKDEApps()
 {
-    /// will work in kde >= 4.1.1 
-    /// I got cases where files are not removed and created a could not remove file error on installing 
-    int ret = QProcess::execute( Settings::instance().installDir() +"/bin/kdeinit4.exe", QStringList() << "--shutdown");
-    qDebug() << "running" << Settings::instance().installDir() +"/bin/kdeinit4.exe --shutdown" << (ret == 0 ? "without errors" : "failed");
+    QString cmd = Settings::instance().installDir() +"/bin/kdeinit4.exe";
+    QStringList args = QStringList() << "--help";
+    QProcess p;
+    p.start(cmd, args);
+    if (!p.waitForStarted()) 
+    {
+        qCritical() << "could not start" << cmd << args;
+        return false;
+    }
+    if (!p.waitForFinished())
+    {
+        qCritical() << "failed to run" << cmd << args;
+        return false;
+    }
+    QByteArray _stdout = p.readAllStandardOutput();
+    args = QStringList() << (_stdout.contains("--shutdown") ? "--shutdown" : "--terminate");
+
+    /// I got cases where files are not removed and resulted into "a could not remove file error on installing" 
+    p.start(cmd,args);
+    if (!p.waitForStarted()) 
+    {
+        qCritical() << "could not start" << cmd << args;
+        return false;
+    }
+    if (!p.waitForFinished())
+    {
+        qCritical() << "failed to run" << cmd << args;
+        return false;
+    }
+    qDebug() << "run" << cmd << args << "without errors"; 
+    // give applications some time to really be terminated
+    Sleep(1000);
+    return true;
 }
 
 bool InstallerEngineGui::removePackages ( const QString &category )
