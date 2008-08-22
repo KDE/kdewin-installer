@@ -14,7 +14,7 @@ if (WIN32)
     	if(NOT WINSCP_DIR)
     		# search in the default program install folder
     		file(TO_CMAKE_PATH "$ENV{PROGRAMFILES}" _progFiles)
-    		find_file(WINSCP_DIR_tmp winscp3
+    		find_file(WINSCP_DIR_tmp winscp3 winscp
        			PATHS
        			"${_progFiles}"
     		)
