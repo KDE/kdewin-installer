@@ -24,7 +24,7 @@ if (WIN32)
         
     if (WINSCP_DIR)
     
-        find_program(WINSCP_EXECUTABLE winscp3.com
+        find_program(WINSCP_EXECUTABLE winSCP.exe winscp3.com 
             PATHS
                 ${WINSCP_DIR}
         )
