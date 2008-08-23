@@ -55,7 +55,17 @@ bool InstallerEngineConsole::init()
 void InstallerEngineConsole::queryPackages(const QString &pkgName, bool listFiles)
 {
     if (pkgName.isEmpty()) {
-        m_database->listPackages();
+        foreach(Package *p, m_database->packages())
+        {
+            if (p->hasType(Package::BIN))
+                printf("%s-bin-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
+            if (p->hasType(Package::LIB))
+                printf("%s-lib-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
+            if (p->hasType(Package::BIN))
+                printf("%s-doc-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
+            if (p->hasType(Package::BIN))
+                printf("%s-src-%s\n",qPrintable(p->name()), qPrintable(p->version().toString()));   
+        }
         return;
     }
     if (listFiles) {
@@ -79,9 +89,17 @@ void InstallerEngineConsole::queryPackages(const QString &pkgName, bool listFile
 
 void InstallerEngineConsole::listPackages(const QString &title)
 {
-    QStringList list = m_packageResources->listPackages();
-    Q_FOREACH(const QString &package, list)
-        printf("%s\n",qPrintable(package)); 
+    Q_FOREACH(Package *p, m_packageResources->packages())
+    {
+        if (p->hasType(Package::BIN))
+            printf("%s-bin-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
+        if (p->hasType(Package::LIB))
+            printf("%s-lib-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
+        if (p->hasType(Package::BIN))
+            printf("%s-doc-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
+        if (p->hasType(Package::BIN))
+            printf("%s-src-%s\n",qPrintable(p->name()), qPrintable(p->version().toString()));   
+    }
 }
 
 void InstallerEngineConsole::listURL(const QString &title)
