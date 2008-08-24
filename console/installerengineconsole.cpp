@@ -142,11 +142,40 @@ void InstallerEngineConsole::queryPackageWhatRequires(const QStringList &list)
 {
     init();
     Q_FOREACH(const QString &pkgName, list) 
-    {
-        Package *p = m_packageResources->getPackage(pkgName);
-        queryPackageWhatRequires(p->name());
-    }
+        queryPackageWhatRequires(pkgName);
 }
+
+void InstallerEngineConsole::queryPackageWhatRequiresAll(const QString &pkgName, QStringList &list)
+{
+    init();
+    static int level=0; 
+    Package *p = m_packageResources->getPackage(pkgName);
+    if (!p)
+        return; 
+
+    level++;
+    Q_FOREACH(const QString &dep, p->deps()) 
+    {
+        queryPackageWhatRequiresAll(dep,list);
+        if (!dep.isEmpty() && !list.contains(dep))
+            list.append(dep);
+        // debug print 
+        //printf("%d %s\n", level, qPrintable(dep));
+    }
+    level--;
+}
+ 
+void InstallerEngineConsole::queryPackageWhatRequiresAll(const QStringList &list)
+ {
+    init();
+    QStringList result;
+    Q_FOREACH(const QString &pkgName, list) 
+        queryPackageWhatRequiresAll(pkgName,result);
+    result.sort();
+    Q_FOREACH(const QString &dep, result) 
+        printf("%s\n", qPrintable(dep));    
+}
+
 
 void InstallerEngineConsole::listPackage()
 {

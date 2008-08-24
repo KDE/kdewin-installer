@@ -41,6 +41,9 @@ public:
     void queryPackageWhatRequires(const QString &pkgName);
     void queryPackageWhatRequires(const QStringList &list);
 
+    void queryPackageWhatRequiresAll(const QString &pkgName,QStringList &list);
+    void queryPackageWhatRequiresAll(const QStringList &list);
+
     // available packages
     void listPackage();
     void listPackage(const QString &pkgName);

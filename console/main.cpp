@@ -60,22 +60,33 @@ static void usage()
     cout << "... [options] <packagename> [<packagename>]"
     << "\nRelease: " << VERSION
     << "\nOptions: "
-    << "\nOptions for available packages"
+    << "\n -v|--verbose                                   print detailed process informations"
+    << "\n -u|--url                                       use download server <url> [1]"
+    << "\n -r|--root <path>                               use install <root> [1]"
+    << "\n"
+    << "\n -i|--install <package>                         download and install package"
+    << "\n -d|--download <package>                        download package"
+    << "\n -e|--erase <package>                           remove installed package"
+    << "\n"
+    << "\n -l|--list <listoptions> [<package>]            list available package"
+    << "\n -q|--query <queryoptions> [<package>]          query installed packages"
+    << "\n\nOptions for available packages"
     // is search instead of list a better name ? 
-    << "\n -l|--list -u|--url <package>         list package items url of <package>" 
-    << "\n -l|--list -a|--all                   list all available packages"
-    << "\n -l|--list -c|--categories <package>  print categories of <package"
-    << "\n -l|--list -d|--description <package> print description of <package"
-    << "\n -l|--list -r|--requires <package>    list required packages of <package>"
+    << "\n -l|--list -u|--url <package>                   list package items url of <package>" 
+    << "\n -l|--list -a|--all                             list all available packages"
+    << "\n -l|--list -c|--categories <package>            print categories of <package>"
+    << "\n -l|--list -d|--description <package>           print description of <package>"
+    << "\n -l|--list -r|--requires <package>              list required packages of <package>"
     << "\n\nOptions for installed packages"
-    << "\n -q|--query <package>                 print generic information of <package>"
-    << "\n -q|--query -l <packagen>             list installed package files of <package>"
-    << "\n -q|--query -a|-all                   query all installed packages"
-    << "\n -q|--query -r|--requires             query package dependencies"
-    << "\n -i|--install <package>               download and install package"
-    << "\n -d|--download <package>              download package"
-    << "\n -u|--url                             download server url"
-    << "\n -v|--verbose                         print detailed process informations"
+    << "\n -q|--query <package>                           print generic information of <package>"
+    << "\n -q|--query -l <package>                        list installed package files of <package>"
+    << "\n -q|--query -a|-all                             query all installed packages"
+    << "\n -q|--query -r|--requires                       query package dependencies"
+    << "\n"
+    << "\n notes: "
+    << "\n[1] (url/path is shared with the gui installer and will be stored for further runs)"
+    << "\n"
+
     ;
 }
 //#define CYGWIN_INSTALLER
@@ -120,11 +131,14 @@ int main(int argc, char *argv[])
                     options.description = true;
                     i++;
                 }
+                else if (app.arguments().at(i+1) == "-r" || app.arguments().at(i+1) == "--requires")
+                {
+                    options.requires = true;
+                    i++;
+                }
             }
-            else if (option == "-q" || option == "--quiet")
+            else if (option == "-q" || option == "--query")
                 options.query = true;
-            else if (option == "-r" || option == "--what-requires")
-                options.requires = true;
             else if (option == "-m" || option == "--mmm")
             {}
             else if (option.startsWith("--url"))
@@ -166,9 +180,7 @@ int main(int argc, char *argv[])
     // query needs setting database root 
     if (options.query)
     {
-        if (options.requires)
-            engine.queryPackageWhatRequires(packages);
-        else if (options.all)
+        if (options.all)
             engine.queryPackage();
         else if (options.list)
             engine.queryPackageListFiles(packages);
@@ -184,6 +196,8 @@ int main(int argc, char *argv[])
             else
                 engine.listPackageURLs(packages);
         }
+        else if (options.requires)
+            engine.queryPackageWhatRequiresAll(packages);
         else if (options.all)
             engine.listPackage();
         else if (options.categories) 
