@@ -36,121 +36,253 @@
 #include "database.h"
 
 InstallerEngineConsole::InstallerEngineConsole()
-: InstallerEngine(0)
+: InstallerEngine(0), done(false)
 {
+}
+
+void InstallerEngineConsole::initLocal()
+{
+    // required because this is initial set in InstallerEngine's constructor
+    m_database->setRoot(Settings::instance().installDir());
 }
 
 bool InstallerEngineConsole::init()
 {
+    if (done)
+        return true;
     initGlobalConfig();
     if (isInstallerVersionOutdated())   
         qWarning() << "Installer version outdated";
+    done = true;
     return initPackages();
 }
 
-/**
- query package from installed package database 
- @param pkgName 
-*/ 
-void InstallerEngineConsole::queryPackages(const QString &pkgName, bool listFiles)
+
+void InstallerEngineConsole::printPackage(Package *p)
 {
-    if (pkgName.isEmpty()) {
-        foreach(Package *p, m_database->packages())
-        {
-            if (p->hasType(Package::BIN))
-                printf("%s-bin-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
-            if (p->hasType(Package::LIB))
-                printf("%s-lib-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
-            if (p->hasType(Package::BIN))
-                printf("%s-doc-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
-            if (p->hasType(Package::BIN))
-                printf("%s-src-%s\n",qPrintable(p->name()), qPrintable(p->version().toString()));   
-        }
+    if (!p)
         return;
-    }
-    if (listFiles) {
+    if (p->isInstalled(Package::BIN))
+        printf("%s-bin-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
+    if (p->isInstalled(Package::LIB))
+        printf("%s-lib-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
+    if (p->isInstalled(Package::DOC))
+        printf("%s-doc-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
+    if (p->isInstalled(Package::SRC))
+        printf("%s-src-%s\n",qPrintable(p->name()), qPrintable(p->version().toString()));   
+}
+
+void InstallerEngineConsole::queryPackage()
+{
+    Q_FOREACH(Package *p,m_database->packages())
+        printPackage(p);
+}
+
+void InstallerEngineConsole::queryPackage(const QString &pkgName)
+{
+    Package *p = m_database->getPackage(pkgName);
+    if (p)
+        return;
+    
+    printPackage(p);
+}
+
+void InstallerEngineConsole::queryPackage(const QStringList &list)
+{
+    Q_FOREACH(const QString &pkgName,list)
+        queryPackage(pkgName);
+}
+
+void InstallerEngineConsole::queryPackageListFiles(const QString &pkgName)
+{
+    Package *p = m_database->getPackage(pkgName);
+    if (!p)
+        return;
+
+    if (p->isInstalled(Package::BIN))
+    {
         Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::BIN))
-            printf("BIN: %s\n", qPrintable(file));
+           printf("BIN: %s\n", qPrintable(file));
+    }
+    if (p->isInstalled(Package::LIB))
+    {
         Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::LIB))
             printf("LIB: %s\n", qPrintable(file));
+    }
+    if (p->isInstalled(Package::DOC))
+    {
         Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::DOC))
             printf("DOC: %s\n", qPrintable(file));
+    }
+    if (p->isInstalled(Package::SRC))
+    {
         Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::SRC))
-            printf("SRC: %s\n", qPrintable(file));
-    }        
-    else {
-        Package *pkg = m_database->getPackage(pkgName);
-        if (!pkg)
-            return; 
-
-        printf("%s\n", qPrintable(pkg->toString(true)));
+        printf("SRC: %s\n", qPrintable(file));
     }
 }
 
-void InstallerEngineConsole::listPackages(const QString &title)
+void InstallerEngineConsole::queryPackageListFiles(const QStringList &list)
 {
+    Q_FOREACH(const QString &pkgName, list)
+        queryPackageListFiles(pkgName);
+}
+
+void InstallerEngineConsole::queryPackageWhatRequires(const QString &pkgName)
+{
+    init();
+    Package *p = m_packageResources->getPackage(pkgName);
+    if (!p)
+        return; 
+
+    Q_FOREACH(const QString &dep, p->deps()) 
+        printf("%s\n", qPrintable(dep));
+}
+
+void InstallerEngineConsole::queryPackageWhatRequires(const QStringList &list)
+{
+    init();
+    Q_FOREACH(const QString &pkgName, list) 
+    {
+        Package *p = m_packageResources->getPackage(pkgName);
+        queryPackageWhatRequires(p->name());
+    }
+}
+
+void InstallerEngineConsole::listPackage()
+{
+    init();
     Q_FOREACH(Package *p, m_packageResources->packages())
-    {
-        if (p->hasType(Package::BIN))
-            printf("%s-bin-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
-        if (p->hasType(Package::LIB))
-            printf("%s-lib-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
-        if (p->hasType(Package::BIN))
-            printf("%s-doc-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
-        if (p->hasType(Package::BIN))
-            printf("%s-src-%s\n",qPrintable(p->name()), qPrintable(p->version().toString()));   
-    }
+        printPackage(p);
 }
 
-void InstallerEngineConsole::listURL(const QString &title)
+void InstallerEngineConsole::listPackage(const QString &pkgName)
 {
-    QList <Package*> list = m_packageResources->packages(); 
-    Q_FOREACH(Package *package, list)
-    {
-        QUrl url;
-        url = package->getUrl(Package::BIN);
-        if (!url.isEmpty())
-            printf("%s\n",qPrintable(url.toString())); 
-        url = package->getUrl(Package::LIB);
-        if (!url.isEmpty())
-            printf("%s\n",qPrintable(url.toString())); 
-        url = package->getUrl(Package::DOC);
-        if (!url.isEmpty())
-            printf("%s\n",qPrintable(url.toString())); 
-        url = package->getUrl(Package::SRC);
-        if (!url.isEmpty())
-            printf("%s\n",qPrintable(url.toString())); 
-    }
+    init();
+    Package *p = m_packageResources->getPackage(pkgName);
+    printPackage(p);
 }
+
+void InstallerEngineConsole::listPackage(const QStringList &list)
+{
+    init();
+    Q_FOREACH(const QString &pkgName, list)
+        listPackage(pkgName);
+}
+
+void InstallerEngineConsole::printPackageURLs(Package *p)
+{
+    if (!p)
+        return;
+    QUrl url;
+    url = p->getUrl(Package::BIN);
+    if (!url.isEmpty())
+        printf("%s\n",qPrintable(url.toString())); 
+    url = p->getUrl(Package::LIB);
+    if (!url.isEmpty())
+        printf("%s\n",qPrintable(url.toString())); 
+    url = p->getUrl(Package::DOC);
+    if (!url.isEmpty())
+        printf("%s\n",qPrintable(url.toString())); 
+    url = p->getUrl(Package::SRC);
+    if (!url.isEmpty())
+        printf("%s\n",qPrintable(url.toString())); 
+}
+
+void InstallerEngineConsole::listPackageURLs()
+{
+    init();
+    QList <Package*> list = m_packageResources->packages(); 
+    Q_FOREACH(Package *p, list)
+        printPackageURLs(p);
+}
+
+void InstallerEngineConsole::listPackageURLs(const QString &pkgName)
+{
+    init();
+    Package *p = m_packageResources->getPackage(pkgName); 
+    printPackageURLs(p);
+}
+
+void InstallerEngineConsole::listPackageURLs(const QStringList &list)
+{
+    init();
+    Q_FOREACH(const QString &pkgName, list)
+        listPackageURLs(pkgName);
+}
+
+void InstallerEngineConsole::listPackageDescription(const QString &pkgName)
+{
+    init();
+    Package *p = m_packageResources->getPackage(pkgName); 
+    if (!p)
+        return;
+    printf("%s\n",qPrintable(p->notes()));
+}
+
+void InstallerEngineConsole::listPackageDescription(const QStringList &list)
+{
+    init();
+    Q_FOREACH(const QString &pkgName, list)
+        listPackageDescription(pkgName);
+}
+
+void InstallerEngineConsole::listPackageCategories(const QString &pkgName)
+{
+    init();
+    Package *p = m_packageResources->getPackage(pkgName); 
+    if (!p)
+        return;
+    printf("%s\n",qPrintable(p->categories().join("\n")));
+}
+
+void InstallerEngineConsole::listPackageCategories(const QStringList &list)
+{
+    init();
+    Q_FOREACH(const QString &pkgName, list)
+        listPackageCategories(pkgName);
+}
+
+
+
 
 
 bool InstallerEngineConsole::downloadPackages(const QStringList &packages, const QString &category)
 {
-   Q_FOREACH(const QString &pkgName, packages)
-   {
-        Package *pkg = m_packageResources->getPackage(pkgName);
-        if (!pkg)
+    init();
+    Q_FOREACH(const QString &pkgName, packages)
+    {
+        Package *p = m_packageResources->getPackage(pkgName);
+        if (!p)
             continue;
-        pkg->downloadItem(Package::BIN);
-        pkg->downloadItem(Package::LIB);
-        pkg->downloadItem(Package::DOC);
-        pkg->downloadItem(Package::SRC);
-   }
-   return true;
+        if (p->hasType(Package::BIN))
+            p->downloadItem(Package::BIN);
+        if (p->hasType(Package::LIB))
+            p->downloadItem(Package::LIB);
+        if (p->hasType(Package::DOC))
+            p->downloadItem(Package::DOC);
+        if (p->hasType(Package::SRC))
+            p->downloadItem(Package::SRC);
+    }
+    return true;
 }
 
 bool InstallerEngineConsole::installPackages(const QStringList &packages,const QString &category)
 {
-   Q_FOREACH(const QString &pkgName, packages)
-   {
-        Package *pkg = m_packageResources->getPackage(pkgName);
-        if (!pkg)
+    init();
+    Q_FOREACH(const QString &pkgName, packages)
+    {
+        Package *p = m_packageResources->getPackage(pkgName);
+        if (!p)
             continue;
-        pkg->installItem(m_installer,Package::BIN);
-        pkg->installItem(m_installer,Package::LIB);
-        pkg->installItem(m_installer,Package::DOC);
-        pkg->installItem(m_installer,Package::SRC);
-   }
-   return true;
+        if (p->hasType(Package::BIN))
+            p->installItem(m_installer,Package::BIN);
+        if (p->hasType(Package::BIN))
+            p->installItem(m_installer,Package::LIB);
+        if (p->hasType(Package::BIN))
+            p->installItem(m_installer,Package::DOC);
+        if (p->hasType(Package::BIN))
+            p->installItem(m_installer,Package::SRC);
+    }
+    return true;
 }
 

@@ -29,14 +29,44 @@ class InstallerEngineConsole : public InstallerEngine
 {
 public:
     InstallerEngineConsole();
-    bool init();
-    void queryPackages(const QString &pkgName=QString(), bool listFiles=false);
-    void listPackages(const QString &title);
-    void listURL(const QString &title);
+
+    // installed packages
+    void queryPackage();
+    void queryPackage(const QString &pkgName);
+    void queryPackage(const QStringList &pkglist);
+
+    void queryPackageListFiles(const QString &pkgName);
+    void queryPackageListFiles(const QStringList &list);
+
+    void queryPackageWhatRequires(const QString &pkgName);
+    void queryPackageWhatRequires(const QStringList &list);
+
+    // available packages
+    void listPackage();
+    void listPackage(const QString &pkgName);
+    void listPackage(const QStringList &list);
+
+    void listPackageURLs();
+    void listPackageURLs(const QString &pkgName);
+    void listPackageURLs(const QStringList &list);
+
+    void listPackageDescription(const QString &pkgName);
+    void listPackageDescription(const QStringList &list);
+
+    void listPackageCategories(const QString &pkgName);
+    void listPackageCategories(const QStringList &list);
 
     bool downloadPackages(const QStringList &packages, const QString &category=QString());
     bool installPackages(const QStringList &packages, const QString &category=QString());
+
+    void initLocal();
+protected:
+    bool init();
+    void printPackage(Package *p);
+    void printPackageURLs(Package *p);
+
 private:
+    bool done;
 };
 
 #endif

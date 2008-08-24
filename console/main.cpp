@@ -40,13 +40,16 @@ using namespace std;
 
 static struct Options
 {
-    bool verbose;
-    bool query;
+    bool all;
     bool download;
     bool install;
     bool list;
     bool listURL;
-    bool all;
+    bool query;
+    bool description;
+    bool categories;
+    bool requires;
+    bool verbose;
     QString url;
     QString rootdir;
 }
@@ -57,15 +60,22 @@ static void usage()
     cout << "... [options] <packagename> [<packagename>]"
     << "\nRelease: " << VERSION
     << "\nOptions: "
-    << "\n -l|--list -u|--url list package items url"
-    << "\n -l or --list list packages"
-    << "\n -q|--query -a|-all  query all packages"
-    << "\n -q|--query <packagename> query packages"
-    << "\n -q|--query -l <packagename> list package files"
-    << "\n -i|--install <packagename> download and install package"
-    << "\n -d|--download <packagename> download package"
-    << "\n -u|--url download server url"
-    << "\n -v|--verbose print detailed process informations "
+    << "\nOptions for available packages"
+    // is search instead of list a better name ? 
+    << "\n -l|--list -u|--url <package>         list package items url of <package>" 
+    << "\n -l|--list -a|--all                   list all available packages"
+    << "\n -l|--list -c|--categories <package>  print categories of <package"
+    << "\n -l|--list -d|--description <package> print description of <package"
+    << "\n -l|--list -r|--requires <package>    list required packages of <package>"
+    << "\n\nOptions for installed packages"
+    << "\n -q|--query <package>                 print generic information of <package>"
+    << "\n -q|--query -l <packagen>             list installed package files of <package>"
+    << "\n -q|--query -a|-all                   query all installed packages"
+    << "\n -q|--query -r|--requires             query package dependencies"
+    << "\n -i|--install <package>               download and install package"
+    << "\n -d|--download <package>              download package"
+    << "\n -u|--url                             download server url"
+    << "\n -v|--verbose                         print detailed process informations"
     ;
 }
 //#define CYGWIN_INSTALLER
@@ -84,8 +94,14 @@ int main(int argc, char *argv[])
             if (option == "-h" || option == "--help")
             {
                 usage();
-                exit(0);
+                exit(1);
             }
+            else if (option == "-a" || option == "--all")
+                options.all = true;
+            else if (option == "-d" || option == "--download")
+                options.download = true;
+            else if (option == "-i" || option == "--install")
+                options.download = options.install = true;
             if (option == "-l" || option == "--list") 
             {
                 options.list = true;
@@ -94,30 +110,33 @@ int main(int argc, char *argv[])
                     options.listURL = true;
                     i++;
                 }
+                else if (app.arguments().at(i+1) == "-c" || app.arguments().at(i+1) == "--categories")
+                {
+                    options.categories = true;
+                    i++;
+                }
+                else if (app.arguments().at(i+1) == "-d" || app.arguments().at(i+1) == "--description")
+                {
+                    options.description = true;
+                    i++;
+                }
             }
-            if (option == "-a" || option == "--all")
-                options.all = true;
-            else if (option == "-v" || option == "--verbose")
-                options.verbose = true;
             else if (option == "-q" || option == "--quiet")
                 options.query = true;
-            else if (option == "-d" || option == "--download")
-                options.download = true;
+            else if (option == "-r" || option == "--what-requires")
+                options.requires = true;
+            else if (option == "-m" || option == "--mmm")
+            {}
             else if (option.startsWith("--url"))
                 options.url = option.replace("--url=","");
             else if (option == "-u")
                 options.url = app.arguments().at(++i);                
-            else if (option == "-i" || option == "--install")
-            {
-                options.download = true;
-                options.install = true;
-            }
-            else if (option == "-m" || option == "--mmm")
-            {}
-            else if (option == "-r" || option == "-root")
-            {
+            else if (option == "-r")
                 options.rootdir = app.arguments().at(++i);
-            }
+            else if (option.startsWith("--root"))
+                options.rootdir = option.replace("--root=","");
+            else if (option == "-v" || option == "--verbose")
+                options.verbose = true;
         }
         else
             packages << app.arguments().at(i);
@@ -127,37 +146,52 @@ int main(int argc, char *argv[])
         setMessageHandler();
 
     InstallerEngineConsole engine;
-//    if (!options.url.isEmpty())
-        InstallerEngine::defaultConfigURL = options.url;
-//    else
-//        InstallerEngine::defaultConfigURL = "http://82.149.170.66/kde-windows";
 
-    qDebug() << "using url" << InstallerEngine::defaultConfigURL;
-    
+    // set default url 
+    if (!options.url.isEmpty())
+        InstallerEngine::defaultConfigURL = options.url;
+    else if (!Settings::instance().downloadDir().isEmpty())
+        InstallerEngine::defaultConfigURL = "file:///" + Settings::instance().downloadDir().replace("\\","/");
+    else if (Settings::instance().mirrorWithReleasePath().isValid())
+        InstallerEngine::defaultConfigURL = Settings::instance().mirrorWithReleasePath().toString();
+
+    if (options.verbose)
+        qDebug() << "using url" << InstallerEngine::defaultConfigURL;
+
     if (!options.rootdir.isEmpty())
         Settings::instance().setInstallDir(options.rootdir);
 
-    if (options.query && packages.size() > 0) {
-        for(int i = 0; i < packages.size(); i++)
-            engine.queryPackages(packages[i],options.list);
-        return 0;
-    }   
-    else if (options.query && options.all) {
-        engine.queryPackages();
+    engine.initLocal();
+
+    // query needs setting database root 
+    if (options.query)
+    {
+        if (options.requires)
+            engine.queryPackageWhatRequires(packages);
+        else if (options.all)
+            engine.queryPackage();
+        else if (options.list)
+            engine.queryPackageListFiles(packages);
         return 0;
     }
 
-    // the following operations need remote configuration
-    if (options.list || (options.download || options.install) && packages.size() > 0)
-        engine.init();
-
-    if (options.listURL) {
-        engine.listURL("Package List");
-        return 0;
-    }
-    
-    if (options.list) {
-        engine.listPackages("Package List");
+    if (options.list)
+    {
+        if (options.listURL) 
+        {
+            if (options.all)
+                engine.listPackageURLs();
+            else
+                engine.listPackageURLs(packages);
+        }
+        else if (options.all)
+            engine.listPackage();
+        else if (options.categories) 
+            engine.listPackageCategories(packages);
+        else if (options.description) 
+            engine.listPackageDescription(packages);
+        else 
+            engine.listPackage(packages);
         return 0;
     }
 
