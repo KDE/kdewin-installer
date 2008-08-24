@@ -704,9 +704,12 @@ void Package::addCategories(const QString &cat)
     if (cat.contains(QLatin1Char(' ')))
     {
         Q_FOREACH(const QString &acat, cat.split(QLatin1Char(' ')))
-            m_categories << acat;
+        {
+            if (!m_categories.contains(cat))
+                m_categories << acat;
+        }
     }
-    else
+    else if (!m_categories.contains(cat))
         m_categories << cat;
 }
 
