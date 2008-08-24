@@ -75,23 +75,12 @@ Package *PackageList::getPackage(const QString &name, const QByteArray &version)
 #ifdef DEBUG
     qDebug() << __FUNCTION__;
 #endif
-    QString pkgName = name;
-    QString pkgVersion = version;
-    // name may have version info included, split it
-    if (version.isEmpty())
-    {
-        QString _pkgName;
-        QString _pkgVersion;
-        if (PackageInfo::fromString(name, _pkgName, _pkgVersion) && !_pkgVersion.isEmpty())
-        {
-            pkgName = _pkgName;
-            pkgVersion = _pkgVersion;
-        }
-    }
+    PackageInfo info = PackageInfo::fromString(name, version);
+
     Q_FOREACH( Package *p, m_packageList )
     {
-        if (p->name() == pkgName) {
-            if(!pkgVersion.isEmpty() && p->version() != pkgVersion)
+        if (p->name() == info.name) {
+            if(!info.version.isEmpty() && p->version() != info.version)
                 continue;
             return p;
         }

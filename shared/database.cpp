@@ -115,15 +115,16 @@ void Database::addFromRegistry()
 }
 
 
-Package *Database::getPackage ( const QString &pkgName, const QByteArray &version )
+Package *Database::getPackage ( const QString &name, const QByteArray &version )
 {
 #ifdef DEBUG
     qDebug() << __FUNCTION__;
 #endif
+    PackageInfo info = PackageInfo::fromString(name, version);
 
     Q_FOREACH ( Package *pkg, m_database ) {
-        if ( pkg->name() == pkgName ) {
-            if ( !version.isEmpty() && pkg->version() != version )
+        if ( pkg->name() == info.name ) {
+            if ( !info.version.isEmpty() && pkg->version() != info.version )
                 continue;
             return pkg;
         }

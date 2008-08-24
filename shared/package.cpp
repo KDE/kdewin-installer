@@ -939,3 +939,68 @@ QDebug &operator<<(QDebug &out, const QList<Package*> &c)
     out << ")";
     return out;
 }
+
+PackageInfo PackageInfo::fromString(const QString &_name, const QString &version)
+{
+    PackageInfo result; 
+    QString name = _name; 
+    
+    // check type 
+    result.type = Package::NONE;
+    if (name.contains("-bin")) 
+    {
+        result.type = Package::BIN;
+        name.replace("-bin","");
+    }
+    else if (name.contains("-lib")) 
+    {
+        result.type = Package::LIB;
+        name.replace("-lib","");
+    }
+    else if (name.contains("-doc")) 
+    {
+        result.type = Package::DOC;
+        name.replace("-doc","");
+    }
+    else if (name.contains("-src")) 
+    {
+        result.type = Package::SRC;
+        name.replace("-src","");
+    }
+    
+    // version is given
+    if (!version.isEmpty())
+    {
+        result.version = version; 
+        result.name = name;
+        return result; 
+    }
+
+    // version is empty
+    const QStringList parts = name.split('-');
+    // <name>-<version>
+    if (parts.size() == 1)
+    {
+        result.name = name;
+    }
+    else if (parts.size() == 2 && parts[1][0].isNumber())
+    {
+        result.name = parts[0];
+        result.version = parts[1];
+    }
+    // <name>-<version>-<patchlevel>
+    else if (parts.size() == 3 && parts[1][0].isNumber())
+    {
+        result.name = parts[0];
+        result.version = parts[1] + '-' + parts[2];
+    }
+    // <name1>-<name2>-<version>
+    else if (parts.size() == 3 && parts[2][0].isNumber())
+    {
+        result.name = parts[0] + '-' + parts[1];
+        result.version = parts[2];
+    }
+    else 
+        result.name = name;
+    return result; 
+}

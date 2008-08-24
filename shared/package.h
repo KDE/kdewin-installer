@@ -279,6 +279,7 @@ public:
         return 0;
     }
 
+    // @TODO move the static methods to PackageInfo
     /// separate package name, version, type and file format from a filename
     static bool fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat);
 
@@ -320,5 +321,29 @@ QDebug &operator<<(QDebug &, const QList<Package*> &);
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Package::Types);
 
-#define PackageInfo Package
+class PackageInfo {
+   public: 
+        QString name; 
+        Package::Type type;
+        QString version; 
+        /// separate package name and version from a string
+        static inline bool fromString(const QString &astring, QString &pkgName, QString &pkgVersion)
+        {
+            return Package::fromString(astring,pkgName,pkgVersion);
+        }
+
+        /// separate package name and version from a string
+        static inline QString manifestFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type)
+        {
+            return Package::manifestFileName(pkgName,pkgVersion,type);
+        }
+
+        /// separate package name, version, type and file format from a filename
+        static bool fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat)
+        {
+            return Package::fromFileName(fileName, pkgName, pkgVersion, pkgType, pkgFormat);
+        }
+
+        static PackageInfo fromString(const QString &name, const QString &version=QString());
+};
 #endif
