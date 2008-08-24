@@ -844,9 +844,12 @@ bool Package::fromFileName(const QString &fileName, QString &pkgName, QString &p
         pkgVersion = parts[1];
         pkgType = "bin";
     }
-    else if(parts.size() < 2)
+    else if(parts.size() == 1)
     {
-        qWarning() << "can't parse filename " << baseName;
+        pkgName = parts[0];
+        pkgVersion = "";
+        pkgType = "bin";
+        qWarning() << "filename without version found" << baseName;
         return false;
     }
     else
