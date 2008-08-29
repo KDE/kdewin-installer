@@ -177,8 +177,8 @@ else(UNIX)
     set (FIRST_LIBS mingw32)
   endif(MINGW)
   # required for static linking
-  set (CONSOLE_LIBS shared-console ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} ${BZIP2_LIBRARIES} ${QUAZIP_LIBRARIES} ${CURL_LIBRARIES} kernel32 user32 shell32 uuid ole32 advapi32 ws2_32 shlwapi )
-  set (GUI_LIBS shared-gui ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} ${QT_QTGUI_LIBRARY} ${BZIP2_LIBRARIES} ${QUAZIP_LIBRARIES} ${CURL_LIBRARIES} gdi32 comdlg32 oleaut32 imm32 winmm winspool ws2_32 ole32 uuid user32 advapi32 shlwapi )
+  set (CONSOLE_LIBS shared-console ${QUAZIP_LIBRARIES} ${BZIP2_LIBRARIES} ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} ${CURL_LIBRARIES} kernel32 user32 shell32 uuid ole32 advapi32 ws2_32 shlwapi )
+  set (GUI_LIBS shared-gui ${QUAZIP_LIBRARIES} ${BZIP2_LIBRARIES} ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} ${QT_QTGUI_LIBRARY} ${CURL_LIBRARIES} gdi32 comdlg32 oleaut32 imm32 winmm winspool ws2_32 ole32 uuid user32 advapi32 shlwapi )
   # when qt 4.4 is build with directx support dxguid is required 
   # how to detect that qt 4.4 is build with directx ? 
   if (QT_VERSION_MAJOR EQUAL 4 AND QT_VERSION_MINOR GREATER 3) 

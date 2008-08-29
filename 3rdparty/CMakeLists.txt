@@ -34,7 +34,7 @@ if (BZIP2_UNPACK_SUPPORT)
 
     # public interface
     set(BZIP2_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/bzip2 ${CMAKE_SOURCE_DIR}/3rdparty/filters)
-    set(BZIP2_LIBRARIES bzip2 filters)
+    set(BZIP2_LIBRARIES filters bzip2)
 
 endif (BZIP2_UNPACK_SUPPORT)
 
