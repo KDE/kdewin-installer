@@ -172,7 +172,7 @@ QStringList Database::getPackageFiles ( const QString &pkgName, Package::Type pk
     QTextStream in ( &file );
     in.setCodec ( QTextCodec::codecForName ( "UTF-8" ) );
     while ( !in.atEnd() ) {
-        const QStringList parts = in.readLine().split ( ' ' );
+        const QStringList parts = in.readLine().split ( ' ', QString::SkipEmptyParts);
         if ( iPosFilename != -1 && parts.count() > iPosFilename ) {
             files << parts[iPosFilename];
             continue;
@@ -186,6 +186,44 @@ QStringList Database::getPackageFiles ( const QString &pkgName, Package::Type pk
         }
     }
     return files;
+}
+
+bool Database::verifyFiles( const QString &pkgName, Package::Type pkgType )
+{
+    QStringList files;
+    Package *pkg = getPackage ( pkgName );
+    if ( !pkg )
+        return false;
+    QString manifestFile = m_root + "/manifest/" +
+                           PackageInfo::manifestFileName ( pkg->name(),pkg->version().toString(),pkgType );
+    QFile file ( manifestFile );
+    if ( !file.open ( QIODevice::ReadOnly| QIODevice::Text ) )
+        return false;
+
+    int iPosFilename = -1;
+    int iPosHash = 0;
+    QTextStream in ( &file );
+    in.setCodec ( QTextCodec::codecForName ( "UTF-8" ) );
+    while ( !in.atEnd() ) {
+        const QStringList parts = in.readLine().split ( ' ', QString::SkipEmptyParts);
+        if (iPosFilename == -1) 
+        {
+            for ( int i = 0; i < parts.count(); i++ ) 
+            {
+                if ( isHash ( parts[i].toUtf8() ) ) 
+                    iPosHash = i;
+                else
+                    iPosFilename = i;
+            }
+        }
+        if ( iPosFilename >= 0 && iPosHash >= 0) 
+        {
+            QByteArray md5sum = md5Hash(parts[iPosFilename]).toHex();
+            if (parts[iPosHash] != md5sum)
+                printf("%s checksum failed\n",qPrintable(parts[iPosFilename]));
+        }
+    }
+    return true;
 }
 
 bool Database::readFromDirectory ( const QString &_dir )

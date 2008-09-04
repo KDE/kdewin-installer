@@ -47,6 +47,7 @@ public:
     void listPackageFiles ( const QString &pkgName, Package::Type pkgType=Package::BIN );
     void listPackages ( const QString &title=QString() );
     QStringList getPackageFiles ( const QString &pkgName, Package::Type pkgType=Package::BIN );
+    bool verifyFiles( const QString &pkgName, Package::Type pkgType=Package::BIN  );
     Package *getPackage ( const QString &pkgName, const QByteArray &version=QByteArray() );
     void clear();
 
