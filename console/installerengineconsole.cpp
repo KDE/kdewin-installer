@@ -99,25 +99,26 @@ void InstallerEngineConsole::queryPackageListFiles(const QString &pkgName)
     if (!p)
         return;
 
-    if (p->isInstalled(Package::BIN))
+    PackageInfo info = PackageInfo::fromString(pkgName);
+    if ((info.type == Package::NONE || info.type == Package::BIN) && p->isInstalled(Package::BIN))
     {
         Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::BIN))
-           printf("BIN: %s\n", qPrintable(file));
+            printf("%s%s\n", info.type == Package::NONE  ? "BIN: " : "", qPrintable(file));
     }
-    if (p->isInstalled(Package::LIB))
+    if ((info.type == Package::NONE || info.type == Package::LIB) && p->isInstalled(Package::LIB))
     {
         Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::LIB))
-            printf("LIB: %s\n", qPrintable(file));
+            printf("%s%s\n", info.type == Package::NONE  ? "LIB: " : "", qPrintable(file));
     }
-    if (p->isInstalled(Package::DOC))
+    if ((info.type == Package::NONE || info.type == Package::DOC) && p->isInstalled(Package::DOC))
     {
         Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::DOC))
-            printf("DOC: %s\n", qPrintable(file));
+            printf("%s%s\n", info.type == Package::NONE  ? "DOC: " : "", qPrintable(file));
     }
-    if (p->isInstalled(Package::SRC))
+    if ((info.type == Package::NONE || info.type == Package::SRC) && p->isInstalled(Package::SRC))
     {
         Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::SRC))
-        printf("SRC: %s\n", qPrintable(file));
+            printf("%s%s\n", info.type == Package::NONE  ? "SRC: " : "", qPrintable(file));
     }
 }
 
