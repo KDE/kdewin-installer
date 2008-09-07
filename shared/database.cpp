@@ -251,6 +251,7 @@ bool Database::readFromDirectory ( const QString &_dir )
             Package::PackageItem pi ( pkgType );
             pi.setInstalled(true);
             pkg->add ( pi );
+            qDebug() << "set package installed state" << pi << "for package" << *pkg;
         } else {
             Package *pkg =  new Package;
             pkg->setName ( pkgName );
@@ -259,6 +260,7 @@ bool Database::readFromDirectory ( const QString &_dir )
             pi.setInstalled(true);
             pkg->add ( pi );
             m_database.append ( pkg );
+            qDebug() << "added" << *pkg;
         }
     }
     emit configLoaded();
