@@ -73,6 +73,7 @@ static void usage()
     << "\n\nOptions for available packages"
     // is search instead of list a better name ? 
     << "\n -l|--list -u|--url <package>                   list package items url of <package>" 
+    << "\n -l|--list -u|--url -a|-all                     list package items url of all packages" 
     << "\n -l|--list -a|--all                             list all available packages"
     << "\n -l|--list -c|--categories <package>            print categories of <package>"
     << "\n -l|--list -d|--description <package>           print description of <package>"
