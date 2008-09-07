@@ -915,6 +915,7 @@ QDebug &operator<<(QDebug &out, const Package &c)
     out << "Package ("
         << "name:" << c.name()
         << "version:" << c.m_version.toString()
+        << "installedversion:" << c.installedVersion()
         << "categories:" << c.categories()
         << "notes:" << c.notes()
         << "longNotes:" << c.longNotes()
