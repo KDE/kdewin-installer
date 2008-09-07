@@ -199,6 +199,24 @@ void InstallerEngineConsole::listPackage(const QStringList &list)
         listPackage(pkgName);
 }
 
+bool includePackage(Package *p)
+{
+    if (Settings::instance().compilerType() == Settings::MinGW && p->name().contains("-msvc")
+        || Settings::instance().compilerType() == Settings::MSVC && p->name().contains("-mingw"))
+        return false;
+    else
+        return true;
+}
+
+bool includePackage(const QString &p)
+{
+    if (Settings::instance().compilerType() == Settings::MinGW && p.contains("-msvc")
+        || Settings::instance().compilerType() == Settings::MSVC && p.contains("-mingw"))
+        return false;
+    else
+        return true;
+}
+
 void InstallerEngineConsole::printPackageURLs(Package *p)
 {
     if (!p)
@@ -207,6 +225,10 @@ void InstallerEngineConsole::printPackageURLs(Package *p)
     url = p->getUrl(Package::BIN);
     if (!url.isEmpty())
         printf("%s\n",qPrintable(url.toString())); 
+    
+    if (!Settings::instance().isDeveloperMode())
+        return;
+
     url = p->getUrl(Package::LIB);
     if (!url.isEmpty())
         printf("%s\n",qPrintable(url.toString())); 
@@ -223,21 +245,28 @@ void InstallerEngineConsole::listPackageURLs()
     init();
     QList <Package*> list = m_packageResources->packages(); 
     Q_FOREACH(Package *p, list)
-        printPackageURLs(p);
+    {
+        if (includePackage(p))
+            printPackageURLs(p);
+    }
 }
 
 void InstallerEngineConsole::listPackageURLs(const QString &pkgName)
 {
     init();
     Package *p = m_packageResources->getPackage(pkgName); 
-    printPackageURLs(p);
+    if (includePackage(p))
+        printPackageURLs(p);
 }
 
 void InstallerEngineConsole::listPackageURLs(const QStringList &list)
 {
     init();
     Q_FOREACH(const QString &pkgName, list)
-        listPackageURLs(pkgName);
+    {
+        if (includePackage(pkgName))
+            listPackageURLs(pkgName);
+    }
 }
 
 void InstallerEngineConsole::listPackageDescription(const QString &pkgName)
