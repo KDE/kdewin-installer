@@ -17,6 +17,7 @@ else(PSDK_INCLUDE_DIR)
     FIND_PATH(PSDK_DIR include/WinBase.h
         "$ENV{ProgramFiles}/Microsoft Platform SDK for Windows Server 2003 R2"
         "$ENV{ProgramFiles}/Microsoft Platform SDK for Windows Server 2003 R1"
+        $ENV{PSDK_DIR}
     )
     
   set (PSDK_INCLUDE_DIR ${PSDK_DIR}/include)
