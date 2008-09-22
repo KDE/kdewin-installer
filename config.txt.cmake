@@ -12,8 +12,9 @@
 
 ; to which category packages belongs to
 @categorypackages win32libs aspell expat giflib iconv jasper jpeg lcms libbzip2 libidn libintl libintl libpng libxml2 libxslt openslp openssl tiff zlib shared-mime-info sqlite
-@categorypackages win32libs pcre-msvc  dbus-msvc gpgme gpgme-qt-msvc
-@categorypackages win32libs pcre-mingw dbus-mingw gpgme gpgme-qt-mingw
+@categorypackages win32libs gpgme libzip libgs ebook-tools
+@categorypackages win32libs pcre-msvc  dbus-msvc  gpgme-qt-msvc  libgmp-msvc  libspectre-msvc
+@categorypackages win32libs pcre-mingw dbus-mingw gpgme-qt-mingw libgmp-mingw libspectre-mingw
 @categorypackages tools findutils grep mingw-utils diffutils patch
 @categorypackages kdesupport kdewin32-msvc  kdewin-installer-msvc  vcredist      qimageblitz-msvc  qca-msvc  strigi-msvc  soprano-msvc  taglib-msvc  qt-msvc  phonon-msvc  fontconfig-msvc  freetype-msvc  poppler-msvc
 @categorypackages kdesupport kdewin32-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw qt-mingw phonon-mingw fontconfig-mingw freetype-mingw poppler-mingw
@@ -40,8 +41,10 @@
 ; compiler independent deps 
 @deps findutils libintl
 @deps grep pcre-mingw
-@deps update-mime-database libintl libxml2 iconv
+@deps shared-mime-info libintl libxml2 iconv
 @deps strigi-msvc libbzip2 openssl zlib iconv libxml2
+@deps ebook-tools libzip
+@deps libspectre libgs
 ; mingw dependencies 
 @deps dbus-mingw expat 
 @deps amarok-mingw kdebase-runtime-mingw phonon-mingw
@@ -125,6 +128,7 @@
 @pkgnotes strigi-mingw desktop search engine
 @pkgnotes subversion-mingw software revision system
 @pkgnotes taglib-mingw audio meda-data library
+@pkgnotes automoc-mingw build system application
 ; msvc 
 @pkgnotes akonadi-msvc KDE4 Personal Information Manager framework
 @pkgnotes amarok-msvc UNSTABLE media player
@@ -158,6 +162,7 @@
 @pkgnotes soprano-msvc RDF storage solutions library
 @pkgnotes strigi-msvc desktop search engine
 @pkgnotes taglib-msvc audio meda-data library
+@pkgnotes automoc-msvc build system application
 ;other
 @pkgnotes astyle source code formatter
 @pkgnotes aspell A powerful spell checker, designed to replace ispell
