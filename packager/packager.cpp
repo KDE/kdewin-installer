@@ -222,7 +222,13 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
             case SRC:
                 // TODO: not implemented, exclude temporay files and svn/cvs dirs
                 //generateFileList(fileList, dir, "src", "*.*");
-                generateFileList(fileList, dir, "manifest", "*-src.cmd" );               
+                exclude = m_srcExcludes + " .svn CVS .#* *.rej *.orig *.bak";
+                // * and not *.* because *.* does not find "foo" (filename without extension) - Qt-bug?
+                if (m_srcRoot.isEmpty())
+                    generateFileList(fileList, dir, "src", "*",exclude);
+                else
+                    generateFileList(fileList, m_srcRoot, ".", "*",exclude);
+                generateFileList(fileList, dir, "manifest", "*-src.cmd" );                   
                 return true;
             case NONE:
                 generateFileList(fileList, dir, ".", "*.*", "manifest .svn CVS");
