@@ -51,7 +51,7 @@
 /* Define this to 'int' if ssize_t is not an available typedefed type */
 #undef ssize_t
 
-/* Define this to 'int' if socklen_t is not an available typedefed type */
+/* Type to use in place of socklen_t when system does not provide it. */
 #undef socklen_t
 
 /* Define this as a suitable file to read random data from */
@@ -322,6 +322,9 @@
 /* Define if you have the <sys/types.h> header file. */
 #define HAVE_SYS_TYPES_H
 
+/* Define if you have the <sys/un.h> header file. */
+#define HAVE_SYS_UN_H
+
 /* Define if you have the <sys/ioctl.h> header file. */
 #define HAVE_SYS_IOCTL_H
 
@@ -361,7 +364,7 @@
 /* The size of a `long double', as computed by sizeof. */
 #define SIZEOF_LONG_DOUBLE      8
 
-/* Define if 64 bit integers are supported. */
+/* Define if the compiler supports the 'long long' data type. */
 #define HAVE_LONGLONG
 
 /* The size of a `long long', as computed by sizeof. */
@@ -371,13 +374,8 @@
 
 #define HAVE_LL
 
-/* The size of `curl_off_t', as computed by sizeof. */
-
-#ifndef _LARGE_FILES
-#define _LARGE_FILES
-#endif
-
-#define SIZEOF_CURL_OFF_T 8
+/* Define this if you have struct sockaddr_storage */
+#define HAVE_STRUCT_SOCKADDR_STORAGE
 
 /* Define if you have the ANSI C header files. */
 #define STDC_HEADERS
@@ -392,7 +390,7 @@
 #undef _FILE_OFFSET_BITS
 
 /* Define for large files, on AIX-style hosts. */
-#undef _LARGE_FILES
+#define _LARGE_FILES
 
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
@@ -450,6 +448,30 @@
 /* Define to the function return type for recv. */
 #define RECV_TYPE_RETV int
 
+/* Define if you have the recvfrom function. */
+#define HAVE_RECVFROM
+
+/* Define to the type of arg 1 for recvfrom. */
+#define RECVFROM_TYPE_ARG1 int
+
+/* Define to the type pointed by arg 2 for recvfrom. */
+#define RECVFROM_TYPE_ARG2 char
+
+/* Define to the type of arg 3 for recvfrom. */
+#define RECVFROM_TYPE_ARG3 int
+
+/* Define to the type of arg 4 for recvfrom. */
+#define RECVFROM_TYPE_ARG4 int
+
+/* Define to the type pointed by arg 5 for recvfrom. */
+#define RECVFROM_TYPE_ARG5 struct sockaddr
+
+/* Define to the type pointed by arg 6 for recvfrom. */
+#define RECVFROM_TYPE_ARG6 int
+
+/* Define to the function return type for recvfrom. */
+#define RECVFROM_TYPE_RETV int
+
 /* Define if you have the send function. */
 #define HAVE_SEND
 
@@ -476,3 +498,15 @@
 
 /* Use the system keyring as the default CA bundle. */
 #define CURL_CA_BUNDLE  "/QIBM/UserData/ICSS/Cert/Server/DEFAULT.KDB"
+
+/* ---------------------------------------------------------------- */
+/*                       ADDITIONAL DEFINITIONS                     */
+/* ---------------------------------------------------------------- */
+
+/* The following must be defined BEFORE system header files inclusion. */
+
+#define __ptr128                       /* No teraspace. */
+#define qadrt_use_fputc_inline         /* Generate fputc() wrapper inline. */
+#define qadrt_use_fread_inline         /* Generate fread() wrapper inline. */
+#define qadrt_use_fwrite_inline        /* Generate fwrite() wrapper inline. */
+

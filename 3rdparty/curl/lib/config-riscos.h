@@ -44,7 +44,7 @@
 /* Define this to 'int' if ssize_t is not an available typedefed type */
 #undef ssize_t
 
-/* Define this to 'int' if socklen_t is not an available typedefed type */
+/* Type to use in place of socklen_t when system does not provide it. */
 #undef socklen_t
 
 /* Define this as a suitable file to read random data from */
@@ -381,9 +381,6 @@
 /* Define to `unsigned' if <sys/types.h> does not define. */
 #undef size_t
 
-/* type to use in place of socklen_t if not defined */
-#undef socklen_t
-
 /* Define to `int' if <sys/types.h> does not define. */
 #undef ssize_t
 
@@ -432,6 +429,33 @@
 
 /* Define to the function return type for recv. */
 #define RECV_TYPE_RETV ssize_t
+
+/* Define 1 if you have the recvfrom function. */
+#define HAVE_RECVFROM 1
+
+/* Define to the type of arg 1 for recvfrom. */
+#define RECVFROM_TYPE_ARG1 int
+
+/* Define to the type pointed by arg 2 for recvfrom. */
+#define RECVFROM_TYPE_ARG2 void
+
+/* Define to 1 if the type pointed by arg 2 for recvfrom is void. */
+#define RECVFROM_TYPE_ARG2_IS_VOID 1
+
+/* Define to the type of arg 3 for recvfrom. */
+#define RECVFROM_TYPE_ARG3 size_t
+
+/* Define to the type of arg 4 for recvfrom. */
+#define RECVFROM_TYPE_ARG4 int
+
+/* Define to the type pointed by arg 5 for recvfrom. */
+#define RECVFROM_TYPE_ARG5 struct sockaddr
+
+/* Define to the type pointed by arg 6 for recvfrom. */
+#define RECVFROM_TYPE_ARG6 int
+
+/* Define to the function return type for recvfrom. */
+#define RECVFROM_TYPE_RETV ssize_t
 
 /* Define if you have the send function. */
 #define HAVE_SEND 1

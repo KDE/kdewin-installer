@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: connect.c,v 1.187 2008-02-07 22:25:04 bagder Exp $
+ * $Id: connect.c,v 1.197 2008-08-26 21:28:57 danf Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -34,6 +34,9 @@
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h> /* <netinet/tcp.h> may need it */
 #endif
+#ifdef HAVE_SYS_UN_H
+#include <sys/un.h> /* for sockaddr_un */
+#endif
 #ifdef HAVE_NETINET_TCP_H
 #include <netinet/tcp.h> /* for TCP_NODELAY */
 #endif
@@ -48,9 +51,6 @@
 #endif
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h>
-#endif
-#ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
 #endif
 #ifdef HAVE_ARPA_INET_H
 #include <arpa/inet.h>
@@ -77,6 +77,9 @@
 #include <errno.h>
 #include <string.h>
 
+#define _MPRINTF_REPLACE /* use our functions only */
+#include <curl/mprintf.h>
+
 #include "urldata.h"
 #include "sendf.h"
 #include "if2ip.h"
@@ -89,9 +92,15 @@
 #include "sockaddr.h" /* required for Curl_sockaddr_storage */
 #include "inet_ntop.h"
 #include "inet_pton.h"
+#include "sslgen.h" /* for Curl_ssl_check_cxn() */
 
 /* The last #include file should be: */
 #include "memdebug.h"
+
+#ifdef __SYMBIAN32__
+/* This isn't actually supported under Symbian OS */
+#undef SO_NOSIGPIPE
+#endif
 
 static bool verifyconnect(curl_socket_t sockfd, int *error);
 
@@ -331,9 +340,7 @@ static CURLcode bindlocal(struct connectdata *conn,
       if(h) {
         if(in == CURL_INADDR_NONE)
           /* convert the resolved address, sizeof myhost >= INET_ADDRSTRLEN */
-          Curl_inet_ntop(h->addr->ai_addr->sa_family,
-                         &((struct sockaddr_in*)h->addr->ai_addr)->sin_addr,
-                         myhost, sizeof myhost);
+          Curl_printable_address(h->addr, myhost, sizeof myhost);
         else
           /* we know data->set.device is shorter than the myhost array */
           strcpy(myhost, dev);
@@ -545,7 +552,7 @@ CURLcode Curl_store_ip_addr(struct connectdata *conn)
 }
 
 /* Used within the multi interface. Try next IP address, return TRUE if no
-   more address exists */
+   more address exists or error */
 static bool trynextip(struct connectdata *conn,
                       int sockindex,
                       bool *connected)
@@ -571,8 +578,7 @@ static bool trynextip(struct connectdata *conn,
       conn->sock[sockindex] = sockfd;
       conn->ip_addr = ai;
 
-      Curl_store_ip_addr(conn);
-      return FALSE;
+      return Curl_store_ip_addr(conn) != CURLE_OK;
     }
     ai = ai->ai_next;
   }
@@ -677,7 +683,14 @@ static void tcpnodelay(struct connectdata *conn,
   socklen_t onoff = (socklen_t) data->set.tcp_nodelay;
   int proto = IPPROTO_TCP;
 
-#ifdef HAVE_GETPROTOBYNAME
+#if 0
+  /* The use of getprotobyname() is disabled since it isn't thread-safe on
+     numerous systems. On these getprotobyname_r() should be used instead, but
+     that exists in at least one 4 arg version and one 5 arg version, and
+     since the proto number rarely changes anyway we now just use the hard
+     coded number. The "proper" fix would need a configure check for the
+     correct function much in the same style the gethostbyname_r versions are
+     detected. */
   struct protoent *pe = getprotobyname("tcp");
   if(pe)
     proto = pe->p_proto;
@@ -759,15 +772,38 @@ singleipconnect(struct connectdata *conn,
 
   *connected = FALSE; /* default is not connected */
 
+#ifdef CURLRES_IPV6
+  if (conn->scope && (addr->family == AF_INET6)) {
+    struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)&addr->addr;
+    in6->sin6_scope_id = conn->scope;
+  }
+#endif
+
   /* FIXME: do we have Curl_printable_address-like with struct sockaddr* as
      argument? */
-  iptoprint = &((const struct sockaddr_in*)(&addr->addr))->sin_addr;
-#ifdef ENABLE_IPV6
-  if(addr->family==AF_INET6)
-    iptoprint= &((const struct sockaddr_in6*)(&addr->addr))->sin6_addr;
+#if defined(HAVE_SYS_UN_H) && defined(AF_UNIX)
+  if(addr->family==AF_UNIX) {
+    infof(data, "  Trying %s... ",
+          ((const struct sockaddr_un*)(&addr->addr))->sun_path);
+    snprintf(data->info.ip, MAX_IPADR_LEN, "%s",
+             ((const struct sockaddr_un*)(&addr->addr))->sun_path);
+  }
+  else
 #endif
-  Curl_inet_ntop(addr->family, iptoprint, addr_buf, sizeof(addr_buf));
-  infof(data, "  Trying %s... ", addr_buf);
+  {
+#ifdef ENABLE_IPV6
+    if(addr->family==AF_INET6)
+      iptoprint= &((const struct sockaddr_in6*)(&addr->addr))->sin6_addr;
+    else
+#endif
+      iptoprint = &((const struct sockaddr_in*)(&addr->addr))->sin_addr;
+
+    if(Curl_inet_ntop(addr->family, iptoprint, addr_buf,
+                      sizeof(addr_buf)) != NULL) {
+      infof(data, "  Trying %s... ", addr_buf);
+      snprintf(data->info.ip, MAX_IPADR_LEN, "%s", addr_buf);
+    }
+  }
 
   if(data->set.tcp_nodelay)
     tcpnodelay(conn, sockfd);
@@ -882,6 +918,7 @@ CURLcode Curl_connecthost(struct connectdata *conn,  /* context */
   long timeout_ms;
   long timeout_per_addr;
 
+  DEBUGASSERT(sockconn);
   *connected = FALSE; /* default to not connected */
 
   /* get the timeout left */
@@ -930,9 +967,10 @@ CURLcode Curl_connecthost(struct connectdata *conn,  /* context */
     before = after;
   }  /* end of connect-to-each-address loop */
 
+  *sockconn = sockfd;    /* the socket descriptor we've connected */
+
   if(sockfd == CURL_SOCKET_BAD) {
     /* no good connect was made */
-    *sockconn = CURL_SOCKET_BAD;
     failf(data, "couldn't connect to host");
     return CURLE_COULDNT_CONNECT;
   }
@@ -943,11 +981,50 @@ CURLcode Curl_connecthost(struct connectdata *conn,  /* context */
   if(addr)
     *addr = curr_addr;
 
-  /* allow NULL-pointers to get passed in */
-  if(sockconn)
-    *sockconn = sockfd;    /* the socket descriptor we've connected */
-
   data->info.numconnects++; /* to track the number of connections made */
+
+  return CURLE_OK;
+}
+
+/*
+ * Used to extract socket and connectdata struct for the most recent
+ * transfer on the given SessionHandle.
+ *
+ * The socket 'long' will be -1 in case of failure!
+ */
+CURLcode Curl_getconnectinfo(struct SessionHandle *data,
+                             long *param_longp,
+                             struct connectdata **connp)
+{
+  if((data->state.lastconnect != -1) &&
+     (data->state.connc->connects[data->state.lastconnect] != NULL)) {
+    struct connectdata *c =
+      data->state.connc->connects[data->state.lastconnect];
+    if(connp)
+      /* only store this if the caller cares for it */
+      *connp = c;
+    *param_longp = c->sock[FIRSTSOCKET];
+    /* we have a socket connected, let's determine if the server shut down */
+    /* determine if ssl */
+    if(c->ssl[FIRSTSOCKET].use) {
+      /* use the SSL context */
+      if(!Curl_ssl_check_cxn(c))
+        *param_longp = -1;   /* FIN received */
+    }
+/* Minix 3.1 doesn't support any flags on recv; just assume socket is OK */
+#ifdef MSG_PEEK
+    else {
+      /* use the socket */
+      char buf;
+      if(recv((RECV_TYPE_ARG1)c->sock[FIRSTSOCKET], (RECV_TYPE_ARG2)&buf,
+              (RECV_TYPE_ARG3)1, (RECV_TYPE_ARG4)MSG_PEEK) == 0) {
+        *param_longp = -1;   /* FIN received */
+      }
+    }
+#endif
+  }
+  else
+    *param_longp = -1;
 
   return CURLE_OK;
 }

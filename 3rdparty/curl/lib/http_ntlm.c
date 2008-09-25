@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: http_ntlm.c,v 1.68 2007-11-05 09:45:09 bagder Exp $
+ * $Id: http_ntlm.c,v 1.71 2008-08-17 01:57:10 yangtse Exp $
  ***************************************************************************/
 #include "setup.h"
 
@@ -56,7 +56,7 @@
 #include "easyif.h"  /* for Curl_convert_... prototypes */
 #include "sendf.h"
 #include "strequal.h"
-#include "base64.h"
+#include "curl_base64.h"
 #include "http_ntlm.h"
 #include "url.h"
 #include "memory.h"
@@ -70,11 +70,23 @@
 
 #ifndef USE_WINDOWS_SSPI
 
-#include <openssl/des.h>
-#include <openssl/md4.h>
-#include <openssl/md5.h>
-#include <openssl/ssl.h>
-#include <openssl/rand.h>
+#  ifdef USE_SSLEAY
+#    ifdef USE_OPENSSL
+#      include <openssl/des.h>
+#      include <openssl/md4.h>
+#      include <openssl/md5.h>
+#      include <openssl/ssl.h>
+#      include <openssl/rand.h>
+#    else
+#      include <des.h>
+#      include <md4.h>
+#      include <md5.h>
+#      include <ssl.h>
+#      include <rand.h>
+#    endif
+#  else
+#    error "Can't compile NTLM support without OpenSSL."
+#  endif
 
 #if OPENSSL_VERSION_NUMBER < 0x00907001L
 #define DES_key_schedule des_key_schedule
@@ -358,7 +370,7 @@ static void lm_resp(unsigned char *keys,
  * Set up lanmanager hashed password
  */
 static void mk_lm_hash(struct SessionHandle *data,
-                       char *password, 
+                       char *password,
                        unsigned char *lmbuffer /* 21 bytes */)
 {
   unsigned char pw[14];
@@ -545,32 +557,12 @@ CURLcode Curl_output_ntlm(struct connectdata *conn,
     passwdp=(char *)"";
 
 #ifdef USE_WINDOWS_SSPI
-  /* If security interface is not yet initialized try to do this */
-  if(s_hSecDll == NULL) {
-    /* Determine Windows version. Security functions are located in
-     * security.dll on WinNT 4.0 and in secur32.dll on Win9x. Win2K and XP
-     * contain both these DLLs (security.dll just forwards calls to
-     * secur32.dll)
-     */
-    OSVERSIONINFO osver;
-    osver.dwOSVersionInfoSize = sizeof(osver);
-    GetVersionEx(&osver);
-    if(osver.dwPlatformId == VER_PLATFORM_WIN32_NT
-      && osver.dwMajorVersion == 4)
-      s_hSecDll = LoadLibrary("security.dll");
-    else
-      s_hSecDll = LoadLibrary("secur32.dll");
-    if(s_hSecDll != NULL) {
-      INIT_SECURITY_INTERFACE pInitSecurityInterface;
-      pInitSecurityInterface =
-        (INIT_SECURITY_INTERFACE)GetProcAddress(s_hSecDll,
-                                                "InitSecurityInterfaceA");
-      if(pInitSecurityInterface != NULL)
-        s_pSecFn = pInitSecurityInterface();
-    }
+  if (s_hSecDll == NULL) {
+    /* not thread safe and leaks - use curl_global_init() to avoid */
+    CURLcode err = Curl_ntlm_global_init();
+    if (s_hSecDll == NULL)
+      return err;
   }
-  if(s_pSecFn == NULL)
-    return CURLE_RECV_ERROR;
 #endif
 
   switch(ntlm->state) {
@@ -1064,7 +1056,7 @@ CURLcode Curl_output_ntlm(struct connectdata *conn,
 
 #ifdef CURL_DOES_CONVERSIONS
     /* convert domain, user, and host to ASCII but leave the rest as-is */
-    if(CURLE_OK != Curl_convert_to_network(conn->data, 
+    if(CURLE_OK != Curl_convert_to_network(conn->data,
                                            (char *)&ntlmbuf[domoff],
                                            size-domoff)) {
       return CURLE_CONV_FAILED;
@@ -1113,15 +1105,53 @@ Curl_ntlm_cleanup(struct connectdata *conn)
 #ifdef USE_WINDOWS_SSPI
   ntlm_sspi_cleanup(&conn->ntlm);
   ntlm_sspi_cleanup(&conn->proxyntlm);
+#else
+  (void)conn;
+#endif
+}
+
+#ifdef USE_WINDOWS_SSPI
+CURLcode Curl_ntlm_global_init()
+{
+  /* If security interface is not yet initialized try to do this */
+  if(s_hSecDll == NULL) {
+    /* Determine Windows version. Security functions are located in
+     * security.dll on WinNT 4.0 and in secur32.dll on Win9x. Win2K and XP
+     * contain both these DLLs (security.dll just forwards calls to
+     * secur32.dll)
+     */
+    OSVERSIONINFO osver;
+    osver.dwOSVersionInfoSize = sizeof(osver);
+    GetVersionEx(&osver);
+    if(osver.dwPlatformId == VER_PLATFORM_WIN32_NT
+      && osver.dwMajorVersion == 4)
+      s_hSecDll = LoadLibrary("security.dll");
+    else
+      s_hSecDll = LoadLibrary("secur32.dll");
+    if(s_hSecDll != NULL) {
+      INIT_SECURITY_INTERFACE pInitSecurityInterface;
+      pInitSecurityInterface =
+        (INIT_SECURITY_INTERFACE)GetProcAddress(s_hSecDll,
+                                                "InitSecurityInterfaceA");
+      if(pInitSecurityInterface != NULL)
+        s_pSecFn = pInitSecurityInterface();
+    }
+  }
+  if(s_pSecFn == NULL)
+    return CURLE_RECV_ERROR;
+
+  return CURLE_OK;
+}
+
+void Curl_ntlm_global_cleanup()
+{
   if(s_hSecDll != NULL) {
     FreeLibrary(s_hSecDll);
     s_hSecDll = NULL;
     s_pSecFn = NULL;
   }
-#else
-  (void)conn;
-#endif
 }
+#endif
 
 #endif /* USE_NTLM */
 #endif /* !CURL_DISABLE_HTTP */

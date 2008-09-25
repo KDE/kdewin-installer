@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: tftp.c,v 1.68 2008-02-11 22:03:31 bagder Exp $
+ * $Id: tftp.c,v 1.71 2008-07-30 05:10:42 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -141,7 +141,7 @@ typedef struct tftp_state_data {
   struct Curl_sockaddr_storage   local_addr;
   struct Curl_sockaddr_storage   remote_addr;
   socklen_t       remote_addrlen;
-  int             rbytes;
+  ssize_t         rbytes;
   int             sbytes;
   tftp_packet_t   rpacket;
   tftp_packet_t   spacket;
@@ -420,7 +420,7 @@ static CURLcode tftp_rx(tftp_state_data_t *state, tftp_event_t event)
     }
 
     /* Check if completed (That is, a less than full packet is received) */
-    if(state->rbytes < (int)sizeof(state->spacket)){
+    if(state->rbytes < (ssize_t)sizeof(state->spacket)){
       state->state = TFTP_STATE_FIN;
     }
     else {
@@ -764,10 +764,13 @@ static CURLcode tftp_do(struct connectdata *conn, bool *done)
     else {
 
       /* Receive the packet */
-      fromlen=sizeof(fromaddr);
-      state->rbytes = recvfrom(state->sockfd,
-                               (void *)&state->rpacket, sizeof(state->rpacket),
-                               0, (struct sockaddr *)&fromaddr, &fromlen);
+      fromlen = sizeof(fromaddr);
+      state->rbytes = (ssize_t)recvfrom(state->sockfd,
+                                        (void *)&state->rpacket,
+                                        sizeof(state->rpacket),
+                                        0,
+                                        (struct sockaddr *)&fromaddr,
+                                        &fromlen);
       if(state->remote_addrlen==0) {
         memcpy(&state->remote_addr, &fromaddr, fromlen);
         state->remote_addrlen = fromlen;

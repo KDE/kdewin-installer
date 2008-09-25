@@ -1,4 +1,3 @@
-#ifdef CURLDEBUG
 /***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
@@ -19,11 +18,12 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: memdebug.c,v 1.55 2007-11-07 09:21:35 bagder Exp $
+ * $Id: memdebug.c,v 1.56 2008-05-14 23:36:26 danf Exp $
  ***************************************************************************/
 
 #include "setup.h"
 
+#ifdef CURLDEBUG
 #include <curl/curl.h>
 
 #ifdef HAVE_SYS_SOCKET_H

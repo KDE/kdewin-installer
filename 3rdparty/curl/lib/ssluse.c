@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: ssluse.c,v 1.196 2008-02-26 10:30:13 gknauf Exp $
+ * $Id: ssluse.c,v 1.205 2008-07-30 21:24:59 bagder Exp $
  ***************************************************************************/
 
 /*
@@ -70,10 +70,6 @@
 /* The last #include file should be: */
 #include "memdebug.h"
 
-#ifndef min
-#define min(a, b)   ((a) < (b) ? (a) : (b))
-#endif
-
 #if OPENSSL_VERSION_NUMBER >= 0x0090581fL
 #define HAVE_SSL_GET1_SESSION 1
 #else
@@ -110,6 +106,13 @@
 #define SSL_METHOD_QUAL const
 #else
 #define SSL_METHOD_QUAL
+#endif
+
+#if OPENSSL_VERSION_NUMBER >= 0x00907000L
+/* 0.9.6 didn't have X509_STORE_set_flags() */
+#define HAVE_X509_STORE_SET_FLAGS 1
+#else
+#define X509_STORE_set_flags(x,y)
 #endif
 
 /*
@@ -1297,6 +1300,7 @@ ossl_connect_step1(struct connectdata *conn,
   struct SessionHandle *data = conn->data;
   SSL_METHOD_QUAL SSL_METHOD *req_method=NULL;
   void *ssl_sessionid=NULL;
+  X509_LOOKUP *lookup=NULL;
   curl_socket_t sockfd = conn->sock[sockindex];
   struct ssl_connect_data *connssl = &conn->ssl[sockindex];
 #ifdef SSL_CTRL_SET_TLSEXT_HOSTNAME
@@ -1433,6 +1437,31 @@ ossl_connect_step1(struct connectdata *conn,
           data->set.str[STRING_SSL_CAPATH] ? data->set.str[STRING_SSL_CAPATH]:
           "none");
   }
+
+  if (data->set.str[STRING_SSL_CRLFILE]) {
+    /* tell SSL where to find CRL file that is used to check certificate
+     * revocation */
+    lookup=X509_STORE_add_lookup(connssl->ctx->cert_store,X509_LOOKUP_file());
+    if ( !lookup ||
+         (X509_load_crl_file(lookup,data->set.str[STRING_SSL_CRLFILE],
+                             X509_FILETYPE_PEM)!=1) ) {
+      failf(data,"error loading CRL file :\n"
+            "  CRLfile: %s\n",
+            data->set.str[STRING_SSL_CRLFILE]?
+            data->set.str[STRING_SSL_CRLFILE]: "none");
+      return CURLE_SSL_CRL_BADFILE;
+    }
+    else {
+      /* Everything is fine. */
+      infof(data, "successfully load CRL file:\n");
+      X509_STORE_set_flags(connssl->ctx->cert_store,
+                           X509_V_FLAG_CRL_CHECK|X509_V_FLAG_CRL_CHECK_ALL);
+    }
+    infof(data,
+          "  CRLfile: %s\n", data->set.str[STRING_SSL_CRLFILE] ?
+          data->set.str[STRING_SSL_CRLFILE]: "none");
+  }
+
   /* SSL always tries to verify the peer, this only says whether it should
    * fail to connect if the verification fails, or if it should continue
    * anyway. In the latter case the result of the verification is checked with
@@ -1497,8 +1526,7 @@ ossl_connect_step1(struct connectdata *conn,
 }
 
 static CURLcode
-ossl_connect_step2(struct connectdata *conn,
-                   int sockindex, long *timeout_ms)
+ossl_connect_step2(struct connectdata *conn, int sockindex)
 {
   struct SessionHandle *data = conn->data;
   int err;
@@ -1507,15 +1535,6 @@ ossl_connect_step2(struct connectdata *conn,
   DEBUGASSERT(ssl_connect_2 == connssl->connecting_state
              || ssl_connect_2_reading == connssl->connecting_state
              || ssl_connect_2_writing == connssl->connecting_state);
-
-  /* Find out how much more time we're allowed */
-  *timeout_ms = Curl_timeleft(conn, NULL, TRUE);
-
-  if(*timeout_ms < 0) {
-    /* no need to continue if time already is up */
-    failf(data, "SSL connection timeout");
-    return CURLE_OPERATION_TIMEDOUT;
-  }
 
   err = SSL_connect(connssl->handle);
 
@@ -1617,6 +1636,11 @@ static CURLcode servercert(struct connectdata *conn,
   long lerr;
   ASN1_TIME *certdate;
   struct SessionHandle *data = conn->data;
+  X509 *issuer;
+  FILE *fp;
+
+  data->set.ssl.certverifyresult = !X509_V_OK;
+
   connssl->server_cert = SSL_get_peer_certificate(connssl->handle);
   if(!connssl->server_cert) {
     if(strict)
@@ -1666,24 +1690,59 @@ static CURLcode servercert(struct connectdata *conn,
     /* We could do all sorts of certificate verification stuff here before
        deallocating the certificate. */
 
+    /* e.g. match issuer name with provided issuer certificate */
+    if (data->set.str[STRING_SSL_ISSUERCERT]) {
+      if (! (fp=fopen(data->set.str[STRING_SSL_ISSUERCERT],"r"))) {
+        if (strict)
+          failf(data, "SSL: Unable to open issuer cert (%s)\n",
+                data->set.str[STRING_SSL_ISSUERCERT]);
+        X509_free(connssl->server_cert);
+        connssl->server_cert = NULL;
+        return CURLE_SSL_ISSUER_ERROR;
+      }
+      issuer = PEM_read_X509(fp,NULL,ZERO_NULL,NULL);
+      if (!issuer) {
+        if (strict)
+          failf(data, "SSL: Unable to read issuer cert (%s)\n",
+                data->set.str[STRING_SSL_ISSUERCERT]);
+        X509_free(connssl->server_cert);
+        X509_free(issuer);
+        fclose(fp);
+        return CURLE_SSL_ISSUER_ERROR;
+      }
+      fclose(fp);
+      if (X509_check_issued(issuer,connssl->server_cert) != X509_V_OK) {
+        if (strict)
+          failf(data, "SSL: Certificate issuer check failed (%s)\n",
+                data->set.str[STRING_SSL_ISSUERCERT]);
+        X509_free(connssl->server_cert);
+        X509_free(issuer);
+        connssl->server_cert = NULL;
+        return CURLE_SSL_ISSUER_ERROR;
+      }
+      infof(data, "\t SSL certificate issuer check ok (%s)\n",
+            data->set.str[STRING_SSL_ISSUERCERT]);
+      X509_free(issuer);
+    }
+
     lerr = data->set.ssl.certverifyresult=
       SSL_get_verify_result(connssl->handle);
     if(data->set.ssl.certverifyresult != X509_V_OK) {
       if(data->set.ssl.verifypeer) {
         /* We probably never reach this, because SSL_connect() will fail
-           and we return earlyer if verifypeer is set? */
+           and we return earlier if verifypeer is set? */
         if(strict)
           failf(data, "SSL certificate verify result: %s (%ld)",
                 X509_verify_cert_error_string(lerr), lerr);
         retcode = CURLE_PEER_FAILED_VERIFICATION;
       }
       else
-        infof(data, "SSL certificate verify result: %s (%ld),"
+        infof(data, "\t SSL certificate verify result: %s (%ld),"
               " continuing anyway.\n",
               X509_verify_cert_error_string(lerr), lerr);
     }
     else
-      infof(data, "SSL certificate verify ok.\n");
+      infof(data, "\t SSL certificate verify ok.\n");
   }
 
   X509_free(connssl->server_cert);
@@ -1767,6 +1826,14 @@ ossl_connect_common(struct connectdata *conn,
   long timeout_ms;
 
   if(ssl_connect_1==connssl->connecting_state) {
+    /* Find out how much more time we're allowed */
+    timeout_ms = Curl_timeleft(conn, NULL, TRUE);
+
+    if(timeout_ms < 0) {
+      /* no need to continue if time already is up */
+      failf(data, "SSL connection timeout");
+      return CURLE_OPERATION_TIMEDOUT;
+    }
     retcode = ossl_connect_step1(conn, sockindex);
     if(retcode)
       return retcode;
@@ -1776,6 +1843,15 @@ ossl_connect_common(struct connectdata *conn,
   while(ssl_connect_2 == connssl->connecting_state ||
         ssl_connect_2_reading == connssl->connecting_state ||
         ssl_connect_2_writing == connssl->connecting_state) {
+
+    /* check allowed time left */
+    timeout_ms = Curl_timeleft(conn, NULL, TRUE);
+
+    if(timeout_ms < 0) {
+      /* no need to continue if time already is up */
+      failf(data, "SSL connection timeout");
+      return CURLE_OPERATION_TIMEDOUT;
+    }
 
     /* if ssl is expecting something, check if it's available. */
     if(connssl->connecting_state == ssl_connect_2_reading
@@ -1812,7 +1888,7 @@ ossl_connect_common(struct connectdata *conn,
     }
 
     /* get the timeout from step2 to avoid computing it twice. */
-    retcode = ossl_connect_step2(conn, sockindex, &timeout_ms);
+    retcode = ossl_connect_step2(conn, sockindex);
     if(retcode)
       return retcode;
 
@@ -1862,10 +1938,20 @@ Curl_ossl_connect(struct connectdata *conn,
   return CURLE_OK;
 }
 
+bool Curl_ossl_data_pending(const struct connectdata *conn,
+                            int connindex)
+{
+  if(conn->ssl[connindex].handle)
+    /* SSL is in use */
+    return (bool)(0 != SSL_pending(conn->ssl[connindex].handle));
+  else
+    return FALSE;
+}
+
 /* return number of sent (non-SSL) bytes */
 ssize_t Curl_ossl_send(struct connectdata *conn,
                        int sockindex,
-                       void *mem,
+                       const void *mem,
                        size_t len)
 {
   /* SSL_write() is said to return 'int' while write() and send() returns

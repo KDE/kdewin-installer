@@ -1,7 +1,16 @@
 /* lib/config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* Define to 1 if you have the $func function. */
+#undef AS_TR_CPP
+
 /* when building libcurl itself */
 #undef BUILDING_LIBCURL
+
+/* Location of default ca bundle */
+#undef CURL_CA_BUNDLE
+
+/* Location of default ca path */
+#undef CURL_CA_PATH
 
 /* to disable cookies support */
 #undef CURL_DISABLE_COOKIES
@@ -93,6 +102,9 @@
 /* Define to 1 if bool is an available type. */
 #undef HAVE_BOOL_T
 
+/* Define to 1 if you have the clock_gettime function and monotonic timer. */
+#undef HAVE_CLOCK_GETTIME_MONOTONIC
+
 /* Define to 1 if you have the `closesocket' function. */
 #undef HAVE_CLOSESOCKET
 
@@ -144,7 +156,7 @@
 /* If you have gethostbyname */
 #undef HAVE_GETHOSTBYNAME
 
-/* Define to 1 if you have the `gethostbyname_r' function. */
+/* Define to 1 if you have the gethostbyname_r function. */
 #undef HAVE_GETHOSTBYNAME_R
 
 /* gethostbyname_r() takes 3 args */
@@ -185,6 +197,15 @@
 
 /* if you have the gssapi libraries */
 #undef HAVE_GSSAPI
+
+/* Define to 1 if you have the <gssapi/gssapi_generic.h> header file. */
+#undef HAVE_GSSAPI_GSSAPI_GENERIC_H
+
+/* Define to 1 if you have the <gssapi/gssapi.h> header file. */
+#undef HAVE_GSSAPI_GSSAPI_H
+
+/* Define to 1 if you have the <gssapi/gssapi_krb5.h> header file. */
+#undef HAVE_GSSAPI_GSSAPI_KRB5_H
 
 /* if you have the GNU gssapi libraries */
 #undef HAVE_GSSGNU
@@ -297,7 +318,7 @@
 /* Define to 1 if you have the `localtime_r' function. */
 #undef HAVE_LOCALTIME_R
 
-/* if your compiler supports long long */
+/* Define to 1 if the compiler supports the 'long long' data type. */
 #undef HAVE_LONGLONG
 
 /* Define to 1 if you have the malloc.h header file. */
@@ -329,6 +350,10 @@
 
 /* we have no strerror_r() proto */
 #undef HAVE_NO_STRERROR_R_DECL
+
+/* if you have an old MIT gssapi library, lacking GSS_C_NT_HOSTBASED_SERVICE
+   */
+#undef HAVE_OLD_GSSMIT
 
 /* Define to 1 if you have the <openssl/crypto.h> header file. */
 #undef HAVE_OPENSSL_CRYPTO_H
@@ -395,6 +420,9 @@
 
 /* Define to 1 if you have the recv function. */
 #undef HAVE_RECV
+
+/* Define to 1 if you have the recvfrom function. */
+#undef HAVE_RECVFROM
 
 /* Define to 1 if you have the <rsa.h> header file. */
 #undef HAVE_RSA_H
@@ -546,6 +574,9 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
 
+/* Define to 1 if you have the <sys/un.h> header file. */
+#undef HAVE_SYS_UN_H
+
 /* Define to 1 if you have the <sys/utime.h> header file. */
 #undef HAVE_SYS_UTIME_H
 
@@ -621,7 +652,7 @@
 /* Define to 1 if you need the malloc.h header file even with stdlib.h */
 #undef NEED_MALLOC_H
 
-/* need REENTRANT defined */
+/* Define to 1 if _REENTRANT preprocessor symbol must be defined. */
 #undef NEED_REENTRANT
 
 /* cpu-machine-OS */
@@ -648,6 +679,36 @@
 /* a suitable file to read random data from */
 #undef RANDOM_FILE
 
+/* Define to the type of arg 1 for recvfrom. */
+#undef RECVFROM_TYPE_ARG1
+
+/* Define to the type pointed by arg 2 for recvfrom. */
+#undef RECVFROM_TYPE_ARG2
+
+/* Define to 1 if the type pointed by arg 2 for recvfrom is void. */
+#undef RECVFROM_TYPE_ARG2_IS_VOID
+
+/* Define to the type of arg 3 for recvfrom. */
+#undef RECVFROM_TYPE_ARG3
+
+/* Define to the type of arg 4 for recvfrom. */
+#undef RECVFROM_TYPE_ARG4
+
+/* Define to the type pointed by arg 5 for recvfrom. */
+#undef RECVFROM_TYPE_ARG5
+
+/* Define to 1 if the type pointed by arg 5 for recvfrom is void. */
+#undef RECVFROM_TYPE_ARG5_IS_VOID
+
+/* Define to the type pointed by arg 6 for recvfrom. */
+#undef RECVFROM_TYPE_ARG6
+
+/* Define to 1 if the type pointed by arg 6 for recvfrom is void. */
+#undef RECVFROM_TYPE_ARG6_IS_VOID
+
+/* Define to the function return type for recvfrom. */
+#undef RECVFROM_TYPE_RETV
+
 /* Define to the type of arg 1 for recv. */
 #undef RECV_TYPE_ARG1
 
@@ -666,14 +727,20 @@
 /* Define as the return type of signal handlers (`int' or `void'). */
 #undef RETSIGTYPE
 
-/* Define to the type of arg 1 for `select'. */
+/* Define to the type qualifier of arg 5 for select. */
+#undef SELECT_QUAL_ARG5
+
+/* Define to the type of arg 1 for select. */
 #undef SELECT_TYPE_ARG1
 
-/* Define to the type of args 2, 3 and 4 for `select'. */
+/* Define to the type of args 2, 3 and 4 for select. */
 #undef SELECT_TYPE_ARG234
 
-/* Define to the type of arg 5 for `select'. */
+/* Define to the type of arg 5 for select. */
 #undef SELECT_TYPE_ARG5
+
+/* Define to the function return type for select. */
+#undef SELECT_TYPE_RETV
 
 /* Define to the type qualifier of arg 2 for send. */
 #undef SEND_QUAL_ARG2
@@ -693,8 +760,8 @@
 /* Define to the function return type for send. */
 #undef SEND_TYPE_RETV
 
-/* The size of `curl_off_t', as computed by sizeof. */
-#undef SIZEOF_CURL_OFF_T
+/* The size of `int', as computed by sizeof. */
+#undef SIZEOF_INT
 
 /* The size of `long', as computed by sizeof. */
 #undef SIZEOF_LONG
@@ -707,6 +774,9 @@
 
 /* The size of `time_t', as computed by sizeof. */
 #undef SIZEOF_TIME_T
+
+/* The size of `void*', as computed by sizeof. */
+#undef SIZEOF_VOIDP
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
@@ -735,6 +805,10 @@
 /* if SSL is enabled */
 #undef USE_SSLEAY
 
+/* Define to 1 if you are building a Windows target without large file
+   support. */
+#undef USE_WIN32_LARGE_FILES
+
 /* to enable SSPI support */
 #undef USE_WINDOWS_SSPI
 
@@ -747,11 +821,9 @@
 /* Define to avoid automatic inclusion of winsock.h */
 #undef WIN32_LEAN_AND_MEAN
 
-/* Define to 1 if on AIX 3.
-   System headers sometimes define this.
-   We just want to avoid a redefinition error message.  */
+/* Define to 1 if OS is AIX. */
 #ifndef _ALL_SOURCE
-# undef _ALL_SOURCE
+#  undef _ALL_SOURCE
 #endif
 
 /* Number of bits in a file offset, on hosts where this is settable. */
@@ -766,7 +838,7 @@
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
 
-/* type to use in place of in_addr_t if not defined */
+/* Type to use in place of in_addr_t when system does not provide it. */
 #undef in_addr_t
 
 /* Define to `__inline__' or `__inline' if that's what the C compiler
@@ -778,7 +850,7 @@
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 #undef size_t
 
-/* type to use in place of socklen_t if not defined */
+/* Type to use in place of socklen_t when system does not provide it. */
 #undef socklen_t
 
 /* the signed version of size_t */

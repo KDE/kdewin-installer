@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: getinfo.c,v 1.59 2007-11-07 09:21:35 bagder Exp $
+ * $Id: getinfo.c,v 1.63 2008-07-03 06:56:03 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include "memory.h"
 #include "sslgen.h"
+#include "connect.h" /* Curl_getconnectinfo() */
 
 /* Make this the last #include */
 #include "memdebug.h"
@@ -75,9 +76,6 @@ CURLcode Curl_getinfo(struct SessionHandle *data, CURLINFO info, ...)
   double *param_doublep=NULL;
   char **param_charp=NULL;
   struct curl_slist **param_slistp=NULL;
-#ifdef MSG_PEEK
-  char buf;
-#endif
   int type;
 
   if(!data)
@@ -138,6 +136,9 @@ CURLcode Curl_getinfo(struct SessionHandle *data, CURLINFO info, ...)
     break;
   case CURLINFO_CONNECT_TIME:
     *param_doublep = data->progress.t_connect;
+    break;
+  case CURLINFO_APPCONNECT_TIME:
+    *param_doublep = data->progress.t_appconnect;
     break;
   case CURLINFO_PRETRANSFER_TIME:
     *param_doublep =  data->progress.t_pretransfer;
@@ -205,31 +206,16 @@ CURLcode Curl_getinfo(struct SessionHandle *data, CURLINFO info, ...)
     *param_charp = data->state.most_recent_ftp_entrypath;
     break;
   case CURLINFO_LASTSOCKET:
-    if((data->state.lastconnect != -1) &&
-       (data->state.connc->connects[data->state.lastconnect] != NULL)) {
-      struct connectdata *c = data->state.connc->connects
-        [data->state.lastconnect];
-      *param_longp = c->sock[FIRSTSOCKET];
-      /* we have a socket connected, let's determine if the server shut down */
-      /* determine if ssl */
-      if(c->ssl[FIRSTSOCKET].use) {
-        /* use the SSL context */
-        if(!Curl_ssl_check_cxn(c))
-          *param_longp = -1;   /* FIN received */
-      }
-/* Minix 3.1 doesn't support any flags on recv; just assume socket is OK */
-#ifdef MSG_PEEK
-      else {
-        /* use the socket */
-        if(recv((RECV_TYPE_ARG1)c->sock[FIRSTSOCKET], (RECV_TYPE_ARG2)&buf,
-                (RECV_TYPE_ARG3)1, (RECV_TYPE_ARG4)MSG_PEEK) == 0) {
-          *param_longp = -1;   /* FIN received */
-        }
-      }
-#endif
-    }
-    else
-      *param_longp = -1;
+    (void)Curl_getconnectinfo(data, param_longp, NULL);
+    break;
+  case CURLINFO_REDIRECT_URL:
+    /* Return the URL this request would have been redirected to if that
+       option had been enabled! */
+    *param_charp = data->info.wouldredirect;
+    break;
+  case CURLINFO_PRIMARY_IP:
+    /* Return the ip address of the most recent (primary) connection */
+    *param_charp = data->info.ip;
     break;
   default:
     return CURLE_BAD_FUNCTION_ARGUMENT;

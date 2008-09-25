@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: easy.c,v 1.116 2008-03-20 08:09:24 mmarek Exp $
+ * $Id: easy.c,v 1.123 2008-08-31 12:12:35 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -83,7 +83,8 @@
 #include "easyif.h"
 #include "select.h"
 #include "sendf.h" /* for failf function prototype */
-#include <ca-bundle.h>
+#include "http_ntlm.h"
+#include "connect.h" /* for Curl_getconnectinfo */
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -103,18 +104,23 @@
 /* The last #include file should be: */
 #include "memdebug.h"
 
-#ifdef USE_WINSOCK
 /* win32_cleanup() is for win32 socket cleanup functionality, the opposite
    of win32_init() */
 static void win32_cleanup(void)
 {
+#ifdef USE_WINSOCK
   WSACleanup();
+#endif
+#ifdef USE_WINDOWS_SSPI
+  Curl_ntlm_global_cleanup();
+#endif
 }
 
 /* win32_init() performs win32 socket initialization to properly setup the
    stack to allow networking */
 static CURLcode win32_init(void)
 {
+#ifdef USE_WINSOCK
   WORD wVersionRequested;
   WSADATA wsaData;
   int err;
@@ -147,14 +153,18 @@ static CURLcode win32_init(void)
     return CURLE_FAILED_INIT;
   }
   /* The Windows Sockets DLL is acceptable. Proceed. */
+#endif
+
+#ifdef USE_WINDOWS_SSPI
+  {
+    CURLcode err = Curl_ntlm_global_init();
+    if (err != CURLE_OK)
+      return err;
+  }
+#endif
+
   return CURLE_OK;
 }
-
-#else
-/* These functions exist merely to prevent compiler warnings */
-static CURLcode win32_init(void) { return CURLE_OK; }
-static void win32_cleanup(void) { }
-#endif
 
 #ifdef USE_LIBIDN
 /*
@@ -195,16 +205,35 @@ static long          init_flags;
 #define system_strdup strdup
 #endif
 
+#if defined(_MSC_VER) && defined(_DLL)
+#  pragma warning(disable:4232) /* MSVC extension, dllimport identity */
+#endif
+
+#ifndef __SYMBIAN32__
 /*
  * If a memory-using function (like curl_getenv) is used before
  * curl_global_init() is called, we need to have these pointers set already.
  */
-
 curl_malloc_callback Curl_cmalloc = (curl_malloc_callback)malloc;
 curl_free_callback Curl_cfree = (curl_free_callback)free;
 curl_realloc_callback Curl_crealloc = (curl_realloc_callback)realloc;
 curl_strdup_callback Curl_cstrdup = (curl_strdup_callback)system_strdup;
 curl_calloc_callback Curl_ccalloc = (curl_calloc_callback)calloc;
+#else
+/*
+ * Symbian OS doesn't support initialization to code in writeable static data.
+ * Initialization will occur in the curl_global_init() call.
+ */
+curl_malloc_callback Curl_cmalloc;
+curl_free_callback Curl_cfree;
+curl_realloc_callback Curl_crealloc;
+curl_strdup_callback Curl_cstrdup;
+curl_calloc_callback Curl_ccalloc;
+#endif
+
+#if defined(_MSC_VER) && defined(_DLL)
+#  pragma warning(default:4232) /* MSVC extension, dllimport identity */
+#endif
 
 /**
  * curl_global_init() globally initializes cURL given a bitwise set of the
@@ -716,9 +745,9 @@ void curl_easy_reset(CURL *curl)
   /* use fread as default function to read input */
   data->set.fread_func = (curl_read_callback)fread;
 
-  data->set.infilesize = -1; /* we don't know any size */
-  data->set.postfieldsize = -1;
-
+  data->set.infilesize = -1;      /* we don't know any size */
+  data->set.postfieldsize = -1;   /* unknown size */
+  data->set.maxredirs = -1;       /* allow any amount by default */
   data->state.current_speed = -1; /* init to negative == impossible */
 
   data->set.httpreq = HTTPREQ_GET; /* Default HTTP request */
@@ -734,7 +763,7 @@ void curl_easy_reset(CURL *curl)
   /* Set the default size of the SSL session ID cache */
   data->set.ssl.numsessions = 5;
 
-  data->set.proxyport = 1080;
+  data->set.proxyport = CURL_DEFAULT_PROXY_PORT; /* from url.h */
   data->set.proxytype = CURLPROXY_HTTP; /* defaults to HTTP proxy */
   data->set.httpauth = CURLAUTH_BASIC;  /* defaults to basic */
   data->set.proxyauth = CURLAUTH_BASIC; /* defaults to basic */
@@ -938,7 +967,8 @@ CURLcode Curl_convert_from_network(struct SessionHandle *data,
             rc, curl_easy_strerror(rc));
     }
     return(rc);
-  } else {
+  }
+  else {
 #ifdef HAVE_ICONV
     /* do the translation ourselves */
     char *input_ptr, *output_ptr;
@@ -953,9 +983,9 @@ CURLcode Curl_convert_from_network(struct SessionHandle *data,
         error = ERRNO;
         failf(data,
               "The iconv_open(\"%s\", \"%s\") call failed with errno %i: %s",
-               CURL_ICONV_CODESET_OF_HOST,
-               CURL_ICONV_CODESET_OF_NETWORK,
-               error, strerror(error));
+              CURL_ICONV_CODESET_OF_HOST,
+              CURL_ICONV_CODESET_OF_NETWORK,
+              error, strerror(error));
         return CURLE_CONV_FAILED;
       }
     }
@@ -967,8 +997,8 @@ CURLcode Curl_convert_from_network(struct SessionHandle *data,
     if((rc == ICONV_ERROR) || (in_bytes != 0)) {
       error = ERRNO;
       failf(data,
-        "The Curl_convert_from_network iconv call failed with errno %i: %s",
-             error, strerror(error));
+            "The Curl_convert_from_network iconv call failed with errno %i: %s",
+            error, strerror(error));
       return CURLE_CONV_FAILED;
     }
 #else
@@ -1014,9 +1044,9 @@ CURLcode Curl_convert_from_utf8(struct SessionHandle *data,
         error = ERRNO;
         failf(data,
               "The iconv_open(\"%s\", \"%s\") call failed with errno %i: %s",
-               CURL_ICONV_CODESET_OF_HOST,
-               CURL_ICONV_CODESET_FOR_UTF8,
-               error, strerror(error));
+              CURL_ICONV_CODESET_OF_HOST,
+              CURL_ICONV_CODESET_FOR_UTF8,
+              error, strerror(error));
         return CURLE_CONV_FAILED;
       }
     }
@@ -1028,8 +1058,8 @@ CURLcode Curl_convert_from_utf8(struct SessionHandle *data,
     if((rc == ICONV_ERROR) || (in_bytes != 0)) {
       error = ERRNO;
       failf(data,
-        "The Curl_convert_from_utf8 iconv call failed with errno %i: %s",
-             error, strerror(error));
+            "The Curl_convert_from_utf8 iconv call failed with errno %i: %s",
+            error, strerror(error));
       return CURLE_CONV_FAILED;
     }
     if(output_ptr < input_ptr) {
@@ -1046,3 +1076,98 @@ CURLcode Curl_convert_from_utf8(struct SessionHandle *data,
 }
 
 #endif /* CURL_DOES_CONVERSIONS */
+
+static CURLcode easy_connection(struct SessionHandle *data,
+                                curl_socket_t *sfd,
+                                struct connectdata **connp)
+{
+  CURLcode ret;
+  long sockfd;
+
+  if(data == NULL)
+    return CURLE_BAD_FUNCTION_ARGUMENT;
+
+  /* only allow these to be called on handles with CURLOPT_CONNECT_ONLY */
+  if(!data->set.connect_only) {
+    failf(data, "CONNECT_ONLY is required!");
+    return CURLE_UNSUPPORTED_PROTOCOL;
+  }
+
+  ret = Curl_getconnectinfo(data, &sockfd, connp);
+  if(ret != CURLE_OK)
+    return ret;
+
+  if(sockfd == -1) {
+    failf(data, "Failed to get recent socket");
+    return CURLE_UNSUPPORTED_PROTOCOL;
+  }
+
+  *sfd = (curl_socket_t)sockfd; /* we know that this is actually a socket
+                                   descriptor so the typecast is fine here */
+
+  return CURLE_OK;
+}
+
+/*
+ * Receives data from the connected socket. Use after successful
+ * curl_easy_perform() with CURLOPT_CONNECT_ONLY option.
+ * Returns CURLE_OK on success, error code on error.
+ */
+CURLcode curl_easy_recv(CURL *curl, void *buffer, size_t buflen, size_t *n)
+{
+  curl_socket_t sfd;
+  CURLcode ret;
+  int ret1;
+  ssize_t n1;
+  struct connectdata *c;
+  struct SessionHandle *data = (struct SessionHandle *)curl;
+
+  ret = easy_connection(data, &sfd, &c);
+  if(ret)
+    return ret;
+
+  *n = 0;
+  ret1 = Curl_read(c, sfd, buffer, buflen, &n1);
+
+  if(ret1 == -1)
+    return CURLE_AGAIN;
+
+  if(n1 == -1)
+    return CURLE_RECV_ERROR;
+
+  *n = (size_t)n1;
+
+  return CURLE_OK;
+}
+
+/*
+ * Sends data over the connected socket. Use after successful
+ * curl_easy_perform() with CURLOPT_CONNECT_ONLY option.
+ */
+CURLcode curl_easy_send(CURL *curl, const void *buffer, size_t buflen,
+                        size_t *n)
+{
+  curl_socket_t sfd;
+  CURLcode ret;
+  ssize_t n1;
+  struct connectdata *c = NULL;
+  struct SessionHandle *data = (struct SessionHandle *)curl;
+
+  ret = easy_connection(data, &sfd, &c);
+  if(ret)
+    return ret;
+
+  *n = 0;
+  ret = Curl_write(c, sfd, buffer, buflen, &n1);
+
+  if(n1 == -1)
+    return CURLE_SEND_ERROR;
+
+  /* detect EAGAIN */
+  if((CURLE_OK == ret) && (0 == n1))
+    return CURLE_AGAIN;
+
+  *n = (size_t)n1;
+
+  return ret;
+}

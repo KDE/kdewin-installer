@@ -2,6 +2,7 @@
  *
  * Copyright (c) 1995, 1996, 1997, 1998, 1999 Kungliga Tekniska Högskolan
  * (Royal Institute of Technology, Stockholm, Sweden).
+ * Copyright (c) 2004 - 2008 Daniel Stenberg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +37,7 @@
 #ifndef CURL_DISABLE_FTP
 #ifdef HAVE_GSSAPI
 
-#ifdef HAVE_GSSMIT
+#ifdef HAVE_OLD_GSSMIT
 #define GSS_C_NT_HOSTBASED_SERVICE gss_nt_service_name
 #endif
 
@@ -56,11 +57,14 @@
 #endif
 
 #include "urldata.h"
-#include "base64.h"
+#include "curl_base64.h"
 #include "ftp.h"
 #include "sendf.h"
 #include "krb4.h"
 #include "memory.h"
+
+#define _MPRINTF_REPLACE /* use our functions only */
+#include <curl/mprintf.h>
 
 /* The last #include file should be: */
 #include "memdebug.h"
@@ -116,7 +120,7 @@ krb5_overhead(void *app_data, int level, int len)
 }
 
 static int
-krb5_encode(void *app_data, void *from, int length, int level, void **to,
+krb5_encode(void *app_data, const void *from, int length, int level, void **to,
             struct connectdata *conn)
 {
   gss_ctx_id_t *context = app_data;
@@ -128,7 +132,10 @@ krb5_encode(void *app_data, void *from, int length, int level, void **to,
   /* shut gcc up */
   conn = NULL;
 
-  dec.value = from;
+  /* NOTE that the cast is safe, neither of the krb5, gnu gss and heimdal 
+   * libraries modify the input buffer in gss_seal()
+   */
+  dec.value = (void*)from;
   dec.length = length;
   maj = gss_seal(&min, *context,
 		 level == prot_private,

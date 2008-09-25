@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: urldata.h,v 1.377 2008-03-13 20:56:13 bagder Exp $
+ * $Id: urldata.h,v 1.385 2008-08-17 01:57:10 yangtse Exp $
  ***************************************************************************/
 
 /* This file is for lib internal stuff */
@@ -48,6 +48,8 @@
 #define CURL_DEFAULT_USER "anonymous"
 #define CURL_DEFAULT_PASSWORD "ftp@example.com"
 
+#define MAX_IPADR_LEN (4*9) /* should be enough to hold the longest ipv6 one */
+
 #include "cookie.h"
 #include "formdata.h"
 
@@ -72,6 +74,12 @@
 #include "pem.h"
 #include "ssl.h"
 #include "err.h"
+#ifdef HAVE_OPENSSL_ENGINE_H
+#include <engine.h>
+#endif
+#ifdef HAVE_OPENSSL_PKCS12_H
+#include <pkcs12.h>
+#endif
 #endif /* USE_OPENSSL */
 #ifdef USE_GNUTLS
 #error Configuration error; cannot use GnuTLS *and* OpenSSL.
@@ -210,6 +218,8 @@ struct ssl_config_data {
                             2: CN must match hostname */
   char *CApath;          /* certificate dir (doesn't work on windows) */
   char *CAfile;          /* cerficate to verify peer against */
+  char *CRLfile;         /* CRL to check cerficate revocation */
+  char *issuercert;      /* optional issuer cerficate filename */
   char *random_file;     /* path to file containing "random" data */
   char *egdsocket;       /* path to file containing the EGD daemon socket */
   char *cipher_list;     /* list of ciphers to use */
@@ -760,8 +770,10 @@ struct SingleRequest {
   bool ignorecl;    /* This HTTP response has no body so we ignore the Content-
                        Length: header */
 
-  char *newurl; /* This can only be set if a Location: was in the
-                   document headers */
+  char *location;   /* This points to an allocated version of the Location:
+                       header data */
+  char *newurl;     /* Set to the new URL to use when a redirect or a retry is
+                       wanted */
 
   /* 'upload_present' is used to keep a byte counter of how much data there is
      still left in the buffer, aimed for upload. */
@@ -897,6 +909,8 @@ struct connectdata {
      set. */
   char *ip_addr_str;
 
+  unsigned int scope;    /* address scope for IPv6 */
+
   char protostr[16];  /* store the protocol string in this buffer */
   int socktype;  /* SOCK_STREAM or SOCK_DGRAM */
 
@@ -1021,21 +1035,22 @@ struct connectdata {
  */
 struct PureInfo {
   int httpcode;  /* Recent HTTP or FTP response code */
-  int httpproxycode;
-  int httpversion;
+  int httpproxycode; /* response code from proxy when received separate */
+  int httpversion; /* the http version number X.Y = X*10+Y */
   long filetime; /* If requested, this is might get set. Set to -1 if the time
                     was unretrievable. We cannot have this of type time_t,
                     since time_t is unsigned on several platforms such as
                     OpenVMS. */
   long header_size;  /* size of read header(s) in bytes */
   long request_size; /* the amount of bytes sent in the request(s) */
-
-  long proxyauthavail;
-  long httpauthavail;
-
+  long proxyauthavail; /* what proxy auth types were announced */
+  long httpauthavail;  /* what host auth types were announced */
   long numconnects; /* how many new connection did libcurl created */
-
   char *contenttype; /* the content type of the object */
+  char *wouldredirect; /* URL this would've been redirected to if asked to */
+  char ip[MAX_IPADR_LEN]; /* this buffer gets the numerical ip version stored
+                             at the connect *attempt* so it will get the last
+                             tried connect IP even on failures */
 };
 
 
@@ -1060,6 +1075,7 @@ struct Progress {
 
   double t_nslookup;
   double t_connect;
+  double t_appconnect;
   double t_pretransfer;
   double t_starttransfer;
   double t_redirect;
@@ -1203,7 +1219,8 @@ struct UrlState {
   bool pipe_broke; /* TRUE if the connection we were pipelined on broke
                       and we need to restart from the beginning */
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(MSDOS) && !defined(__EMX__) && \
+    !defined(__SYMBIAN32__)
 /* do FTP line-end conversions on most platforms */
 #define CURL_DO_LINEEND_CONV
   /* for FTP downloads: track CRLF sequences that span blocks */
@@ -1312,6 +1329,8 @@ enum dupstring {
   STRING_USERAGENT,       /* User-Agent string */
   STRING_USERPWD,         /* <user:password>, if used */
   STRING_SSH_HOST_PUBLIC_KEY_MD5, /* md5 of host public key in ascii hex */
+  STRING_SSL_CRLFILE,     /* crl file to check certificate */
+  STRING_SSL_ISSUERCERT,  /* issuer cert file to check certificate */
 
   /* -- end of strings -- */
   STRING_LAST /* not used, just an end-of-list marker */
@@ -1467,6 +1486,7 @@ struct UserDefined {
   bool proxy_transfer_mode; /* set transfer mode (;type=<a|i>) when doing FTP
                                via an HTTP proxy */
   char *str[STRING_LAST]; /* array of strings, pointing to allocated memory */
+  unsigned int scope;    /* address scope for IPv6 */
 };
 
 struct Names {

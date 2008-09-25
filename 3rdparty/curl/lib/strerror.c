@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: strerror.c,v 1.49 2007-11-07 09:21:36 bagder Exp $
+ * $Id: strerror.c,v 1.52 2008-06-06 20:52:32 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -222,6 +222,12 @@ curl_easy_strerror(CURLcode error)
   case CURLE_SSL_SHUTDOWN_FAILED:
     return "Failed to shut down the SSL connection";
 
+  case CURLE_SSL_CRL_BADFILE:
+    return "Failed to load CRL file (path? access rights?, format?)";
+
+  case CURLE_SSL_ISSUER_ERROR:
+    return "Issuer check against peer certificate failed";
+
   case CURLE_SEND_FAIL_REWIND:
     return "Send failed since rewinding of the data stream failed";
 
@@ -260,6 +266,9 @@ curl_easy_strerror(CURLcode error)
 
   case CURLE_SSH:
     return "Error in the SSH layer";
+
+  case CURLE_AGAIN:
+    return "Socket not ready for send/recv";
 
     /* error codes not used by current libcurl */
   case CURLE_OBSOLETE4:

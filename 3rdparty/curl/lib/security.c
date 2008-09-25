@@ -10,7 +10,7 @@
  * Copyright (c) 1998, 1999 Kungliga Tekniska Högskolan
  * (Royal Institute of Technology, Stockholm, Sweden).
  *
- * Copyright (C) 2001 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 2001 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * All rights reserved.
  *
@@ -51,7 +51,10 @@
 
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef HAVE_NETDB_H
 #include <netdb.h>
+#endif
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -59,15 +62,13 @@
 
 #include "urldata.h"
 #include "krb4.h"
-#include "base64.h"
+#include "curl_base64.h"
 #include "sendf.h"
 #include "ftp.h"
 #include "memory.h"
 
 /* The last #include file should be: */
 #include "memdebug.h"
-
-#define min(a, b)   ((a) < (b) ? (a) : (b))
 
 static const struct {
   enum protection_level level;
@@ -176,7 +177,8 @@ sec_get_data(struct connectdata *conn,
 static size_t
 buffer_read(struct krb4buffer *buf, void *data, size_t len)
 {
-  len = min(len, buf->size - buf->index);
+  if(buf->size - buf->index < len)
+    len = buf->size - buf->index;
   memcpy(data, (char*)buf->data + buf->index, len);
   buf->index += len;
   return len;
@@ -237,7 +239,7 @@ Curl_sec_read(struct connectdata *conn, int fd, void *buffer, int length)
 }
 
 static int
-sec_send(struct connectdata *conn, int fd, char *from, int length)
+sec_send(struct connectdata *conn, int fd, const char *from, int length)
 {
   int bytes;
   void *buf;
@@ -292,7 +294,7 @@ Curl_sec_fflush_fd(struct connectdata *conn, int fd)
 }
 
 int
-Curl_sec_write(struct connectdata *conn, int fd, char *buffer, int length)
+Curl_sec_write(struct connectdata *conn, int fd, const char *buffer, int length)
 {
   int len = conn->buffer_size;
   int tx = 0;
@@ -315,7 +317,7 @@ Curl_sec_write(struct connectdata *conn, int fd, char *buffer, int length)
 }
 
 ssize_t
-Curl_sec_send(struct connectdata *conn, int num, char *buffer, int length)
+Curl_sec_send(struct connectdata *conn, int num, const char *buffer, int length)
 {
   curl_socket_t fd = conn->sock[num];
   return (ssize_t)Curl_sec_write(conn, fd, buffer, length);

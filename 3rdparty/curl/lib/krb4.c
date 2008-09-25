@@ -37,7 +37,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: krb4.c,v 1.47 2008-01-15 23:19:02 bagder Exp $
+ * $Id: krb4.c,v 1.49 2008-08-17 00:25:38 yangtse Exp $
  */
 
 #include "setup.h"
@@ -58,7 +58,7 @@
 #endif
 
 #include "urldata.h"
-#include "base64.h"
+#include "curl_base64.h"
 #include "ftp.h"
 #include "sendf.h"
 #include "krb4.h"
@@ -151,17 +151,20 @@ krb4_overhead(void *app_data, int level, int len)
 }
 
 static int
-krb4_encode(void *app_data, void *from, int length, int level, void **to,
+krb4_encode(void *app_data, const void *from, int length, int level, void **to,
             struct connectdata *conn)
 {
   struct krb4_data *d = app_data;
   *to = malloc(length + 31);
   if(level == prot_safe)
-    return krb_mk_safe(from, *to, length, &d->key,
+    /* NOTE that the void* cast is safe, krb_mk_safe/priv don't modify the
+     * input buffer
+     */
+    return krb_mk_safe((void*)from, *to, length, &d->key,
                        (struct sockaddr_in *)LOCAL_ADDR,
                        (struct sockaddr_in *)REMOTE_ADDR);
   else if(level == prot_private)
-    return krb_mk_priv(from, *to, length, d->schedule, &d->key,
+    return krb_mk_priv((void*)from, *to, length, d->schedule, &d->key,
                        (struct sockaddr_in *)LOCAL_ADDR,
                        (struct sockaddr_in *)REMOTE_ADDR);
   else

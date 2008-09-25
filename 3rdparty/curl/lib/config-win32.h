@@ -172,6 +172,10 @@
 /* Define if you have the `RAND_status' function when using SSL. */
 #define HAVE_RAND_STATUS 1
 
+/* Define to 1 if you have the `CRYPTO_cleanup_all_ex_data' function.
+   This is present in OpenSSL versions after 0.9.6b */
+#define HAVE_CRYPTO_CLEANUP_ALL_EX_DATA 1
+
 /* Define if you have the select function.  */
 #define HAVE_SELECT 1
 
@@ -248,6 +252,30 @@
 /* Define to the function return type for recv. */
 #define RECV_TYPE_RETV int
 
+/* Define if you have the recvfrom function. */
+#define HAVE_RECVFROM 1
+
+/* Define to the type of arg 1 for recvfrom. */
+#define RECVFROM_TYPE_ARG1 SOCKET
+
+/* Define to the type pointed by arg 2 for recvfrom. */
+#define RECVFROM_TYPE_ARG2 char
+
+/* Define to the type of arg 3 for recvfrom. */
+#define RECVFROM_TYPE_ARG3 int
+
+/* Define to the type of arg 4 for recvfrom. */
+#define RECVFROM_TYPE_ARG4 int
+
+/* Define to the type pointed by arg 5 for recvfrom. */
+#define RECVFROM_TYPE_ARG5 struct sockaddr
+
+/* Define to the type pointed by arg 6 for recvfrom. */
+#define RECVFROM_TYPE_ARG6 int
+
+/* Define to the function return type for recvfrom. */
+#define RECVFROM_TYPE_RETV int
+
 /* Define if you have the send function. */
 #define HAVE_SEND 1
 
@@ -300,21 +328,6 @@
 /* The number of bytes in a long long.  */
 /* #define SIZEOF_LONG_LONG 8 */
 
-/* Undef SIZEOF_CURL_OFF_T if already defined. */
-#ifdef SIZEOF_CURL_OFF_T
-#undef SIZEOF_CURL_OFF_T
-#endif
-
-/* Define SIZEOF_CURL_OFF_T as computed by sizeof(curl_off_t) */
-/* Borland/PellesC/SalfordC lacks _lseeki64(), so we don't support
- * >2GB files.
- */
-#if defined(__BORLANDC__) || defined(__POCC__) || defined(__SALFORDC__)
-#define SIZEOF_CURL_OFF_T 4
-#else
-#define SIZEOF_CURL_OFF_T 8
-#endif
-
 /* ---------------------------------------------------------------- */
 /*                          STRUCT RELATED                          */
 /* ---------------------------------------------------------------- */
@@ -342,7 +355,7 @@
 #define HAVE_VARIADIC_MACROS_C99 1
 #endif
 
-/* Define if the compiler supports LONGLONG. */
+/* Define if the compiler supports the 'long long' data type. */
 #if defined(__MINGW32__) || defined(__WATCOMC__)
 #define HAVE_LONGLONG 1
 #endif
@@ -375,6 +388,22 @@
 #  if (_WIN32_WINNT < 0x0501) || (WINVER < 0x0501)
 #    error VS2008 does not support Windows build targets prior to WinXP
 #  endif
+#endif
+
+/* ---------------------------------------------------------------- */
+/*                        LARGE FILE SUPPORT                        */
+/* ---------------------------------------------------------------- */
+
+#if defined(_MSC_VER) && !defined(_WIN32_WCE)
+#  if (_MSC_VER >= 900) && (_INTEGRAL_MAX_BITS >= 64)
+#    define USE_WIN32_LARGE_FILES
+#  else
+#    define USE_WIN32_SMALL_FILES
+#  endif
+#endif
+
+#if !defined(USE_WIN32_LARGE_FILES) && !defined(USE_WIN32_SMALL_FILES)
+#  define USE_WIN32_SMALL_FILES
 #endif
 
 /* ---------------------------------------------------------------- */

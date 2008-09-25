@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: http.c,v 1.366 2008-03-27 13:07:12 bagder Exp $
+ * $Id: http.c,v 1.382 2008-08-17 00:25:38 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -81,7 +81,7 @@
 #include "easyif.h" /* for Curl_convert_... prototypes */
 #include "formdata.h"
 #include "progress.h"
-#include "base64.h"
+#include "curl_base64.h"
 #include "cookie.h"
 #include "strequal.h"
 #include "sslgen.h"
@@ -104,11 +104,16 @@
 /* The last #include file should be: */
 #include "memdebug.h"
 
+/* Default proxy timeout in milliseconds */
+#define PROXY_TIMEOUT (3600*1000)
 
 /*
  * Forward declarations.
  */
 
+static int http_getsock_do(struct connectdata *conn,
+                           curl_socket_t *socks,
+                           int numsocks);
 static CURLcode https_connecting(struct connectdata *conn, bool *done);
 #ifdef USE_SSL
 static int https_getsock(struct connectdata *conn,
@@ -129,7 +134,7 @@ const struct Curl_handler Curl_handler_http = {
   ZERO_NULL,                            /* connecting */
   ZERO_NULL,                            /* doing */
   ZERO_NULL,                            /* proto_getsock */
-  ZERO_NULL,                            /* doing_getsock */
+  http_getsock_do,                      /* doing_getsock */
   ZERO_NULL,                            /* disconnect */
   PORT_HTTP,                            /* defport */
   PROT_HTTP,                            /* protocol */
@@ -149,7 +154,7 @@ const struct Curl_handler Curl_handler_https = {
   https_connecting,                     /* connecting */
   ZERO_NULL,                            /* doing */
   https_getsock,                        /* proto_getsock */
-  ZERO_NULL,                            /* doing_getsock */
+  http_getsock_do,                      /* doing_getsock */
   ZERO_NULL,                            /* disconnect */
   PORT_HTTPS,                           /* defport */
   PROT_HTTP | PROT_HTTPS | PROT_SSL     /* protocol */
@@ -173,6 +178,60 @@ static char *checkheaders(struct SessionHandle *data, const char *thisheader)
       return head->data;
   }
   return NULL;
+}
+
+/*
+ * Strip off leading and trailing whitespace from the value in the
+ * given HTTP header line and return a strdupped copy. Returns NULL in
+ * case of allocation failure. Returns an empty string if the header value
+ * consists entirely of whitespace.
+ */
+char *Curl_copy_header_value(const char *h)
+{
+  const char *start;
+  const char *end;
+  char *value;
+  size_t len;
+
+  DEBUGASSERT(h);
+
+  /* Find the end of the header name */
+  while (*h && (*h != ':'))
+    ++h;
+
+  if (*h)
+    /* Skip over colon */
+    ++h;
+
+  /* Find the first non-space letter */
+  for(start=h;
+      *start && ISSPACE(*start);
+      start++)
+    ;  /* empty loop */
+
+  /* data is in the host encoding so
+     use '\r' and '\n' instead of 0x0d and 0x0a */
+  end = strchr(start, '\r');
+  if(!end)
+    end = strchr(start, '\n');
+  if(!end)
+    end = strchr(start, '\0');
+
+  /* skip all trailing space letters */
+  for(; ISSPACE(*end) && (end > start); end--)
+    ;  /* empty loop */
+
+  /* get length of the type */
+  len = end-start+1;
+
+  value = malloc(len + 1);
+  if(!value)
+    return NULL;
+
+  memcpy(value, start, len);
+  value[len] = 0; /* zero terminate */
+
+  return value;
 }
 
 /*
@@ -250,7 +309,7 @@ static bool pickoneauth(struct auth *pick)
 }
 
 /*
- * perhapsrewind()
+ * Curl_http_perhapsrewind()
  *
  * If we are doing POST or PUT {
  *   If we have more data to send {
@@ -272,17 +331,26 @@ static bool pickoneauth(struct auth *pick)
  *   }
  * }
  */
-static CURLcode perhapsrewind(struct connectdata *conn)
+CURLcode Curl_http_perhapsrewind(struct connectdata *conn)
 {
   struct SessionHandle *data = conn->data;
   struct HTTP *http = data->state.proto.http;
   curl_off_t bytessent;
   curl_off_t expectsend = -1; /* default is unknown */
 
-  if(!http)
+  if(!http || !(conn->protocol & PROT_HTTP))
     /* If this is still NULL, we have not reach very far and we can
-       safely skip this rewinding stuff */
+       safely skip this rewinding stuff, or this is attempted to get used
+       when HTTP isn't activated */
     return CURLE_OK;
+
+  switch(data->set.httpreq) {
+  case HTTPREQ_GET:
+  case HTTPREQ_HEAD:
+    return CURLE_OK;
+  default:
+    break;
+  }
 
   bytessent = http->writebytecount;
 
@@ -338,9 +406,13 @@ static CURLcode perhapsrewind(struct connectdata *conn)
      */
     conn->bits.close = TRUE;
     data->req.size = 0; /* don't download any more than 0 bytes */
+
+    /* There still is data left to send, but this connection is marked for
+       closure so we can safely do the rewind right now */
   }
 
   if(bytessent)
+    /* we rewind now at once since if we already sent something */
     return Curl_readrewind(conn);
 
   return CURLE_OK;
@@ -360,7 +432,7 @@ CURLcode Curl_http_auth_act(struct connectdata *conn)
   bool pickproxy = FALSE;
   CURLcode code = CURLE_OK;
 
-  if(100 == data->req.httpcode)
+  if(100 <= data->req.httpcode && 199 >= data->req.httpcode)
     /* this is a transient response code, ignore */
     return CURLE_OK;
 
@@ -390,7 +462,7 @@ CURLcode Curl_http_auth_act(struct connectdata *conn)
     if((data->set.httpreq != HTTPREQ_GET) &&
        (data->set.httpreq != HTTPREQ_HEAD) &&
        !conn->bits.rewindaftersend) {
-      code = perhapsrewind(conn);
+      code = Curl_http_perhapsrewind(conn);
       if(code)
         return code;
     }
@@ -659,6 +731,7 @@ CURLcode Curl_http_input_auth(struct connectdata *conn,
       /* if exactly this is wanted, go */
       int neg = Curl_input_negotiate(conn, (bool)(httpcode == 407), start);
       if(neg == 0) {
+        DEBUGASSERT(!data->req.newurl);
         data->req.newurl = strdup(data->change.url);
         data->state.authproblem = (data->req.newurl == NULL);
       }
@@ -1221,7 +1294,7 @@ CURLcode Curl_proxyCONNECT(struct connectdata *conn,
   CURLcode result;
   int res;
   long timeout =
-    data->set.timeout?data->set.timeout:3600000; /* in milliseconds */
+    data->set.timeout?data->set.timeout:PROXY_TIMEOUT; /* in milliseconds */
   curl_socket_t tunnelsocket = conn->sock[sockindex];
   curl_off_t cl=0;
   bool closeConnection = FALSE;
@@ -1401,6 +1474,7 @@ CURLcode Curl_proxyCONNECT(struct connectdata *conn,
         case 0: /* timeout */
           break;
         default:
+          DEBUGASSERT(ptr+BUFSIZE-nread <= data->state.buffer+BUFSIZE+1);
           res = Curl_read(conn, tunnelsocket, ptr, BUFSIZE-nread, &gotbytes);
           if(res< 0)
             /* EWOULDBLOCK */
@@ -1433,6 +1507,7 @@ CURLcode Curl_proxyCONNECT(struct connectdata *conn,
               /* This means we are currently ignoring a response-body */
 
               nread = 0; /* make next read start over in the read buffer */
+              ptr=data->state.buffer;
               if(cl) {
                 /* A Content-Length based body: simply count down the counter
                    and make sure to break out of the loop when we're done! */
@@ -1492,6 +1567,7 @@ CURLcode Curl_proxyCONNECT(struct connectdata *conn,
                     /* end of response-headers from the proxy */
                     nread = 0; /* make next read start over in the read
                                   buffer */
+                    ptr=data->state.buffer;
                     if((407 == k->httpcode) && !data->state.authproblem) {
                       /* If we get a 407 response code with content length
                          when we have no auth problem, we must ignore the
@@ -1604,10 +1680,20 @@ CURLcode Curl_proxyCONNECT(struct connectdata *conn,
       if(error)
         return CURLE_RECV_ERROR;
 
-      if(data->info.httpproxycode != 200)
+      if(data->info.httpproxycode != 200) {
         /* Deal with the possibly already received authenticate
            headers. 'newurl' is set to a new URL if we must loop. */
-        Curl_http_auth_act(conn);
+        result = Curl_http_auth_act(conn);
+        if(result)
+          return result;
+
+        if(conn->bits.close)
+          /* the connection has been marked for closure, most likely in the
+             Curl_http_auth_act() function and thus we can kill it at once
+             below
+          */
+          closeConnection = TRUE;
+      }
 
       if(closeConnection && data->req.newurl) {
         /* Connection closed by server. Don't use it anymore */
@@ -1710,6 +1796,19 @@ CURLcode Curl_http_connect(struct connectdata *conn, bool *done)
   return CURLE_OK;
 }
 
+/* this returns the socket to wait for in the DO and DOING state for the multi
+   interface and then we're always _sending_ a request and thus we wait for
+   the single socket to become writable only */
+static int http_getsock_do(struct connectdata *conn,
+                           curl_socket_t *socks,
+                           int numsocks)
+{
+  /* write mode */
+  (void)numsocks; /* unused, we trust it to be at least 1 */
+  socks[0] = conn->sock[FIRSTSOCKET];
+  return GETSOCK_WRITESOCK(0);
+}
+
 static CURLcode https_connecting(struct connectdata *conn, bool *done)
 {
   CURLcode result;
@@ -1717,8 +1816,11 @@ static CURLcode https_connecting(struct connectdata *conn, bool *done)
 
   /* perform SSL initialization for this socket */
   result = Curl_ssl_connect_nonblocking(conn, FIRSTSOCKET, done);
-  if(result)
+  if(result) {
+    conn->bits.close = TRUE; /* a failed connection is marked for closure
+                                to prevent (bad) re-use or similar */
     return result;
+  }
 
   return CURLE_OK;
 }
@@ -2062,23 +2164,18 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
        custom Host: header if this is NOT a redirect, as setting Host: in the
        redirected request is being out on thin ice. Except if the host name
        is the same as the first one! */
-    char *start = ptr+strlen("Host:");
-    while(*start && ISSPACE(*start ))
-      start++;
-    ptr = start; /* start host-scanning here */
-
-    /* scan through the string to find the end (space or colon) */
-    while(*ptr && !ISSPACE(*ptr) && !(':'==*ptr))
-      ptr++;
-
-    if(ptr != start) {
-      size_t len=ptr-start;
+    char *cookiehost = Curl_copy_header_value(ptr);
+    if (!cookiehost)
+      return CURLE_OUT_OF_MEMORY;
+    if (!*cookiehost)
+      /* ignore empty data */
+      free(cookiehost);
+    else {
+      char *colon = strchr(cookiehost, ':');
+      if (colon)
+        *colon = 0; /* The host must not include an embedded port number */
       Curl_safefree(conn->allocptr.cookiehost);
-      conn->allocptr.cookiehost = malloc(len+1);
-      if(!conn->allocptr.cookiehost)
-        return CURLE_OUT_OF_MEMORY;
-      memcpy(conn->allocptr.cookiehost, start, len);
-      conn->allocptr.cookiehost[len]=0;
+      conn->allocptr.cookiehost = cookiehost;
     }
 #endif
 
@@ -2266,7 +2363,7 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
      * or uploading and we always let customized headers override our internal
      * ones if any such are specified.
      */
-    if((httpreq == HTTPREQ_GET) &&
+    if(((httpreq == HTTPREQ_GET) || (httpreq == HTTPREQ_HEAD)) &&
        !checkheaders(data, "Range:")) {
       /* if a line like this was already allocated, free the previous one */
       if(conn->allocptr.rangeline)
@@ -2281,7 +2378,17 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
       if(conn->allocptr.rangeline)
         free(conn->allocptr.rangeline);
 
-      if(data->state.resume_from) {
+      if(data->set.set_resume_from < 0) {
+        /* Upload resume was asked for, but we don't know the size of the
+           remote part so we tell the server (and act accordingly) that we
+           upload the whole file (again) */
+        conn->allocptr.rangeline =
+          aprintf("Content-Range: bytes 0-%" FORMAT_OFF_T
+                  "/%" FORMAT_OFF_T "\r\n",
+                  data->set.infilesize - 1, data->set.infilesize);
+
+      }
+      else if(data->state.resume_from) {
         /* This is because "resume" was selected */
         curl_off_t total_expected_size=
           data->state.resume_from + data->set.infilesize;
@@ -2506,7 +2613,14 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
       return CURLE_HTTP_POST_ERROR;
     }
 
-    /* set the read function to read from the generated form data */
+    /* Get the currently set callback function pointer and store that in the
+       form struct since we might want the actual user-provided callback later
+       on. The conn->fread_func pointer itself will be changed for the
+       multipart case to the function that returns a multipart formatted
+       stream. */
+    http->form.fread_func = conn->fread_func;
+
+    /* Set the read function to read from the generated form data */
     conn->fread_func = (curl_read_callback)Curl_FormReader;
     conn->fread_in = &http->form;
 

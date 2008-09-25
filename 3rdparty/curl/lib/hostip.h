@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hostip.h,v 1.61 2008-01-15 22:44:12 bagder Exp $
+ * $Id: hostip.h,v 1.62 2008-07-09 18:39:49 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -104,6 +104,10 @@
  */
 #ifdef CURLRES_IPV6
 typedef struct addrinfo Curl_addrinfo;
+#ifdef CURLRES_ARES
+Curl_addrinfo *Curl_ip2addr6(struct in6_addr *in,
+			     const char *hostname, int port);
+#endif
 #else
 /* OK, so some ipv4-only include tree probably have the addrinfo struct, but
    to work even on those that don't, we provide our own look-alike! */

@@ -1,5 +1,5 @@
-#ifndef __CURL_STRTOK_H
-#define __CURL_STRTOK_H
+#ifndef __CURL_MD5_H
+#define __CURL_MD5_H
 /***************************************************************************
  *                                  _   _ ____  _     
  *  Project                     ___| | | |  _ \| |    
@@ -20,17 +20,10 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: strtok.h,v 1.10 2008-07-11 18:52:35 yangtse Exp $
+ * $Id: curl_md5.h,v 1.1 2008-08-17 00:01:26 yangtse Exp $
  ***************************************************************************/
-#include "setup.h"
-#include <stddef.h>
 
-#ifndef HAVE_STRTOK_R
-char *Curl_strtok_r(char *s, const char *delim, char **last);
-#define strtok_r Curl_strtok_r
-#else
-#include <string.h>
-#endif
+void Curl_md5it(unsigned char *output,
+                const unsigned char *input);
 
 #endif
-
