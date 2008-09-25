@@ -201,7 +201,7 @@ ExternalInstallerControl::~ExternalInstallerControl()
 bool ExternalInstallerControl::connect(const QProcess &proc)
 {
     _PROCESS_INFORMATION* p = proc.pid();
-    m_processId = GetProcessId(p->hProcess);
+    m_processId = p->dwProcessId;
     updateWindowItems();
     return d->items.size() > 0;
 }
