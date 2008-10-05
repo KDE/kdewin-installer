@@ -2,7 +2,7 @@
 @format 1.3
 ; this format is *prelimary* and may be changed without prior notice
 @minversion 0.9.2
-@timestamp 200808101000
+@timestamp 200810051600
 
 ; category notes 
 @categorynotes qt Qt related packages 
@@ -13,8 +13,8 @@
 ; to which category packages belongs to
 @categorypackages win32libs aspell expat giflib iconv jasper jpeg lcms libbzip2 libidn libintl libintl libpng libxml2 libxslt openslp openssl tiff zlib shared-mime-info sqlite
 @categorypackages win32libs gpgme libzip libgs ebook-tools
-@categorypackages win32libs pcre-msvc  dbus-msvc  gpgme-qt-msvc  libgmp-msvc  libspectre-msvc
-@categorypackages win32libs pcre-mingw dbus-mingw gpgme-qt-mingw libgmp-mingw libspectre-mingw
+@categorypackages win32libs pcre-msvc  dbus-msvc  gpgme-qt-msvc  libgmp-msvc  libspectre-msvc  exiv2-msvc
+@categorypackages win32libs pcre-mingw dbus-mingw gpgme-qt-mingw libgmp-mingw libspectre-mingw exiv2-mingw
 @categorypackages tools findutils grep mingw-utils diffutils patch
 @categorypackages kdesupport kdewin32-msvc  kdewin-installer-msvc  vcredist      qimageblitz-msvc  qca-msvc  strigi-msvc  soprano-msvc  taglib-msvc  qt-msvc  phonon-msvc  fontconfig-msvc  freetype-msvc  poppler-msvc
 @categorypackages kdesupport kdewin32-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw qt-mingw phonon-mingw fontconfig-mingw freetype-mingw poppler-mingw
@@ -54,7 +54,7 @@
 @deps kdebase-apps-mingw kdebase-runtime-mingw
 @deps kdeedu-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps kdegames-mingw kdebase-runtime-mingw kdelibs-mingw phonon-mingw
-@deps kdegraphics-mingw kdebase-runtime-mingw kdelibs-mingw fontconfig-mingw freetype-mingw poppler-mingw
+@deps kdegraphics-mingw kdebase-runtime-mingw kdelibs-mingw fontconfig-mingw freetype-mingw poppler-mingw exiv2-mingw
 @deps kdepim-mingw kdepimlibs-mingw kdebase-runtime-mingw gpgme-qt-mingw sqlite
 @deps kdepimlibs-mingw kdelibs-mingw
 @deps kdenetwork-mingw kdebase-runtime-mingw kdelibs-mingw
@@ -77,7 +77,7 @@
 @deps kdebase-apps-msvc kdebase-runtime-msvc
 @deps kdeedu-msvc kdebase-runtime-msvc kdelibs-msvc
 @deps kdegames-msvc kdebase-runtime-msvc kdelibs-msvc phonon-msvc
-@deps kdegraphics-msvc kdebase-runtime-msvc kdelibs-msvc fontconfig-msvc freetype-msvc poppler-msvc
+@deps kdegraphics-msvc kdebase-runtime-msvc kdelibs-msvc fontconfig-msvc freetype-msvc poppler-msvc exiv2-msvc
 @deps kdelibs-msvc phonon-msvc pcre-msvc vcredist qt-msvc dbus-msvc kdewin32-msvc qimageblitz-msvc qca-msvc strigi-msvc soprano-msvc taglib-msvc aspell libbzip2 expat giflib iconv jasper jpeg libintl libpng libxml2 libxslt openssl tiff zlib shared-mime-info
 @deps kdenetwork-msvc kdebase-runtime-msvc kdelibs-msvc
 @deps kdepim-msvc kdepimlibs-msvc kdebase-runtime-msvc gpgme-qt-msvc sqlite
@@ -97,6 +97,7 @@
 ; mingw
 @pkgnotes akonadi-mingw KDE4 Personal Information Manager framework
 @pkgnotes amarok-mingw UNSTABLE media player
+@pkgnotes exiv2-mingw an image metadata library
 @pkgnotes fontconfig-mingw library for font customization and configuration
 @pkgnotes freetype-mingw A Free, High-Quality, and Portable Font Engine
 @pkgnotes gpgme-qt-mingw Qt wrapper for gpgme library
@@ -132,6 +133,7 @@
 ; msvc 
 @pkgnotes akonadi-msvc KDE4 Personal Information Manager framework
 @pkgnotes amarok-msvc UNSTABLE media player
+@pkgnotes exiv2-msvc an image metadata library
 @pkgnotes fontconfig-msvc library for font customization and configuration
 @pkgnotes freetype-msvc A Free, High-Quality, and Portable Font Engine
 @pkgnotes gpgme-qt-msvc Qt wrapper for gpgme library
