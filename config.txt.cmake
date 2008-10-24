@@ -328,9 +328,9 @@
 ;------------------------------------------------------
 @package dbg_x86
 @category debug-tools
-@version 6.6.07.5
+@version 6.9.3.113
 @notes msvc Debugging Tools
-@url-bin http://msdl.microsoft.com/download/symbols/debuggers/dbg_x86_6.6.07.5.exe
+@url-bin http://msdl.microsoft.com/download/symbols/debuggers/dbg_x86_6.9.3.113.msi
 @nomd5
 
 @package regmon
@@ -359,9 +359,9 @@
 
 @package gdb
 @category debug-tools
-@version 6.3-2
+@version 6.8
 @notes mingw debugger 
-@url-bin http://heanet.dl.sourceforge.net/sourceforge/mingw/gdb-6.3-2.exe
+@url-bin http://prdownloads.sourceforge.net/mingw/gdb-6.8-mingw-3.tar.bz2
 @nomd5
 
 @package debugview
@@ -404,10 +404,10 @@
 @package cmake
 @category devel-tools 
 @notes platform independent build tool 
-@version 2.6.0
-@url-bin http://www.cmake.org/files/v2.6/cmake-2.6.0-win32-x86.zip cmake-2.6.0-bin.zip
-@url-src http://www.cmake.org/files/v2.4/cmake-2.6.0.zip cmake-2.6.0-src.zip
-@relocate cmake-2.6.0-win32-x86 .
+@version 2.6.2
+@url-bin http://www.cmake.org/files/v2.6/cmake-2.6.2-win32-x86.zip cmake-2.6.2-bin.zip
+@url-src http://www.cmake.org/files/v2.6/cmake-2.6.2.zip cmake-2.6.2-src.zip
+@relocate cmake-2.6.2-win32-x86 .
 @nomd5
 
 @package depends
@@ -428,16 +428,16 @@
 @package doxygen
 @notes Source code documentation generator tool
 @category devel-tools
-@version 1.5.4
-@url-bin http://ftp.stack.nl/pub/users/dimitri/doxygen-1.5.4.windows.bin.zip doxygen-1.5.4-bin.zip
+@version 1.5.6
+@url-bin http://ftp.stack.nl/pub/users/dimitri/doxygen-1.5.6.windows.bin.zip doxygen-1.5.6-bin.zip
 @relocate ^ bin/
 @nomd5
 
 @package gcc-mingw
-@version 5.1.3
+@version 5.1.4
 @category devel-tools
 @notes gcc for windows 
-@url-bin http://heanet.dl.sourceforge.net/sourceforge/mingw/MinGW-5.1.3.exe
+@url-bin http://prdownloads.sourceforge.net/mingw/MinGW-5.1.4.exe
 @nomd5
 
 @package psdk-msvc
@@ -448,33 +448,33 @@
 @nomd5
 
 @package subversion
-@version 1.4.5
+@version 1.5.2
 @category devel-tools
 @notes software revision system 
-@url-bin http://subversion.tigris.org/files/documents/15/39559/svn-1.4.5-setup.exe
+@url-bin http://subversion.tigris.org/files/documents/15/43506/Setup-Subversion-1.5.2.en-us.msi
 @nomd5
 
 @package tortoisecvs
 @category devel-tools 
-@version 1.8.31
+@version 1.10.9
 @notes cvs explorer integration 
-@url-bin http://prdownloads.sourceforge.net/tortoisecvs/TortoiseCVS-1.8.31.exe
+@url-bin http://prdownloads.sourceforge.net/tortoisecvs/TortoiseCVS-1.10.9.exe
 @nomd5
 
 @package tortoisesvn
 @category devel-tools 
-@version 1.4.3
+@version 1.5.4
 @notes svn explorer integration 
-@url-bin http://heanet.dl.sourceforge.net/sourceforge/tortoisesvn/TortoiseSVN-1.4.3.8645-win32-svn-1.4.3.msi
+@url-bin http://prdownloads.sourceforge.net/tortoisesvn/TortoiseSVN-1.5.4.14259-win32-svn-1.5.3.msi
 @nomd5
 
 @package upx
 @notes Ultimate Packer for eXecutables with lzma support
 @category devel-tools
-@version 3.0.0
-@url-bin http://upx.sourceforge.net/download/upx300w.zip upx-3.0.0-bin.zip
+@version 3.0.3
+@url-bin http://upx.sourceforge.net/download/upx303w.zip upx-3.0.3-bin.zip
 ; relocate directories in zip files 
-@relocate upx300w bin
+@relocate upx303w bin
 @nomd5
 
 @package vcexpress-en-msvc
@@ -500,8 +500,8 @@
 
 @package winscp
 @category devel-tools 
-@version 3.8.2
+@version 4.1.7
 @notes secure transfer copy tool 
-@url-bin http://kent.dl.sourceforge.net/sourceforge/winscp/winscp382setup.exe
-@md5-bin 3bb053732844b7cac6a856ac06dab642
+@url-bin http://prdownloads.sourceforge.net/winscp/winscp417setup.exe
+@nomd5
 
