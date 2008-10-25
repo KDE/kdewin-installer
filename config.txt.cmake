@@ -465,7 +465,7 @@
 @category devel-tools 
 @version 1.5.4
 @notes svn explorer integration 
-@url-bin http://prdownloads.sourceforge.net/tortoisesvn/TortoiseSVN-1.5.4.14259-win32-svn-1.5.3.msi
+@url-bin http://prdownloads.sourceforge.net/tortoisesvn/TortoiseSVN-1.5.5.14361-win32-svn-1.5.4.msi
 @nomd5
 
 @package upx
