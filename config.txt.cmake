@@ -2,7 +2,7 @@
 @format 1.3
 ; this format is *prelimary* and may be changed without prior notice
 @minversion 0.9.2
-@timestamp 200810051600
+@timestamp 200811031800
 
 ; category notes 
 @categorynotes qt Qt related packages 
@@ -11,17 +11,16 @@
 @categorynotes KDE KDE packages
 
 ; to which category packages belongs to
-@categorypackages win32libs aspell expat giflib iconv jasper jpeg lcms libbzip2 libidn libintl libintl libpng libxml2 libxslt openslp openssl tiff zlib shared-mime-info sqlite
-@categorypackages win32libs gpgme libzip libgs ebook-tools
-@categorypackages win32libs pcre-msvc  dbus-msvc  gpgme-qt-msvc  libgmp-msvc  libspectre-msvc  exiv2-msvc
-@categorypackages win32libs pcre-mingw dbus-mingw gpgme-qt-mingw libgmp-mingw libspectre-mingw exiv2-mingw
+@categorypackages win32libs aspell ebook-tools expat giflib iconv jasper jpeg lcms libbzip2 libgs libidn libintl libpng libxml2 libxslt libzip openslp openssl tiff zlib shared-mime-info sqlite gpgme
+@categorypackages win32libs pcre-msvc  dbus-msvc  exiv2-msvc  gpgme-qt-msvc  libgmp-msvc  libspectre-msvc
+@categorypackages win32libs pcre-mingw dbus-mingw exiv2-mingw gpgme-qt-mingw libgmp-mingw libspectre-mingw
 @categorypackages tools findutils grep mingw-utils diffutils patch
-@categorypackages kdesupport kdewin32-msvc  kdewin-installer-msvc  vcredist      qimageblitz-msvc  qca-msvc  strigi-msvc  soprano-msvc  taglib-msvc  qt-msvc  phonon-msvc  fontconfig-msvc  freetype-msvc  poppler-msvc
-@categorypackages kdesupport kdewin32-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw qt-mingw phonon-mingw fontconfig-mingw freetype-mingw poppler-mingw
-@categorypackages KDE amarok-msvc  kdelibs-msvc  kdepimlibs-msvc  kdepim-msvc  kdebase-apps-msvc  kdebase-runtime-msvc  kdeedu-msvc  kdegames-msvc  kdegraphics-msvc  kdenetwork-msvc  kdesdk-msvc  kdewebdev-msvc kdeutils-msvc
-@categorypackages KDE amarok-mingw kdelibs-mingw kdepimlibs-mingw kdepim-mingw kdebase-apps-mingw kdebase-runtime-mingw kdeedu-mingw kdegames-mingw kdegraphics-mingw kdenetwork-mingw kdesdk-mingw kdewebdev-mingw kdeutils-mingw
-@categorypackages KDE koffice-msvc  ktorrent-msvc  
-@categorypackages KDE koffice-mingw  ktorrent-mingw  
+@categorypackages kdesupport kdewin32-msvc  kdewin-installer-msvc  vcredist      qimageblitz-msvc  qca-msvc  strigi-msvc  soprano-msvc  taglib-msvc  phonon-msvc  fontconfig-msvc  freetype-msvc  poppler-msvc  automoc-msvc  digikam-support-msvc
+@categorypackages kdesupport kdewin32-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw phonon-mingw fontconfig-mingw freetype-mingw poppler-mingw automoc-mingw digikam-support-mingw
+@categorypackages KDE amarok-msvc  digikam-msvc  kdelibs-msvc  kdepimlibs-msvc  kdepim-msvc  kdebase-apps-msvc  kdebase-runtime-msvc  kdebase-workspace-msvc  kdeedu-msvc  kdegames-msvc  kdegraphics-msvc  kdenetwork-msvc  kdesdk-msvc  kdewebdev-msvc  kdeutils-msvc  kdeplasma-addons-msvc  kipi-plugins-msvc
+@categorypackages KDE amarok-mingw digikam-mingw kdelibs-mingw kdepimlibs-mingw kdepim-mingw kdebase-apps-mingw kdebase-runtime-mingw kdebase-workspace-mingw kdeedu-mingw kdegames-mingw kdegraphics-mingw kdenetwork-mingw kdesdk-mingw kdewebdev-mingw kdeutils-mingw kdeplasma-addons-mingw kipi-plugins-mingw
+@categorypackages KDE koffice-msvc  ktorrent-msvc
+@categorypackages KDE koffice-mingw ktorrent-mingw
 @categorypackages qt qt-msvc qt-mingw qt-static-msvc
 @categorypackages KDE kde-l10n-af kde-l10n-ar kde-l10n-be kde-l10n-bg kde-l10n-bn kde-l10n-bn_IN kde-l10n-br kde-l10n-ca kde-l10n-cs kde-l10n-csb kde-l10n-cy kde-l10n-da kde-l10n-de kde-l10n-el kde-l10n-en_GB 
 @categorypackages KDE kde-l10n-eo kde-l10n-es kde-l10n-et kde-l10n-eu kde-l10n-fa kde-l10n-fi kde-l10n-fr kde-l10n-fy kde-l10n-ga kde-l10n-gl kde-l10n-gu kde-l10n-ha kde-l10n-he kde-l10n-hi kde-l10n-hr kde-l10n-hsb 
@@ -45,51 +44,67 @@
 @deps strigi-msvc libbzip2 openssl zlib iconv libxml2
 @deps ebook-tools libzip
 @deps libspectre libgs
-; mingw dependencies 
+; mingw dependencies
+@deps amarok-mingw kdebase-runtime-mingw phonon-mingw taglib-mingw
+@deps automoc-mingw qt-mingw
 @deps dbus-mingw expat 
-@deps amarok-mingw kdebase-runtime-mingw phonon-mingw
-@deps gpgme-qt-mingw gpgme qt-msvc
-@deps kdelibs-mingw phonon-mingw pcre-mingw dbus-mingw kdewin32-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw aspell libbzip2 expat giflib iconv jasper jpeg libintl libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
-@deps kdebase-runtime-mingw kdepimlibs-mingw kdelibs-mingw oggcodecs
+@deps digikam-mingw digikam-support-mingw kdeedu-mingw lcms
+@deps digikam-support-mingw exiv2-mingw
+@deps gpgme-qt-mingw gpgme qt-mingw
+@deps kdelibs-mingw qt-mingw phonon-mingw pcre-mingw dbus-mingw kdewin32-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw aspell libbzip2 expat giflib iconv jasper jpeg libintl libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
 @deps kdebase-apps-mingw kdebase-runtime-mingw
+@deps kdebase-runtime-mingw kdepimlibs-mingw kdelibs-mingw
+@deps kdebase-workspace-mingw kdebase-runtime-mingw
 @deps kdeedu-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps kdegames-mingw kdebase-runtime-mingw kdelibs-mingw phonon-mingw
-@deps kdegraphics-mingw kdebase-runtime-mingw kdelibs-mingw fontconfig-mingw freetype-mingw poppler-mingw exiv2-mingw
+@deps kdegraphics-mingw kdebase-runtime-mingw kdelibs-mingw poppler-mingw ebook-tools libspectre exiv2-mingw
+@deps kdemultimedia-mingw kdebase-runtime-mingw taglib-mingw
+@deps kdenetwork-mingw kdebase-runtime-mingw kdelibs-mingw sqlite libgmp-mingw
 @deps kdepim-mingw kdepimlibs-mingw kdebase-runtime-mingw gpgme-qt-mingw sqlite
 @deps kdepimlibs-mingw kdelibs-mingw
-@deps kdenetwork-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps kdesdk-mingw kdebase-runtime-mingw kdelibs-mingw kdepimlibs-mingw astyle diffutils
 @deps kdetoys-mingw kdebase-runtime-mingw kdelibs-mingw
-@deps kdeutils-mingw kdebase-runtime-mingw kdelibs-mingw
+@deps kdeutils-mingw kdebase-runtime-mingw kdelibs-mingw libzip
 @deps kdewebdev-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps kdewin-installer-mingw qt-mingw
 @deps kdewin32-mingw qt-mingw
+@deps kipi-plugins-mingw digikam-support-mingw
 @deps koffice-mingw kdebase-runtime-mingw kdelibs-mingw lcms
 @deps ktorrent-mingw libgmp-mingw kdelibs-mingw qca-mingw
+@deps phonon-mingw qt-mingw
+@deps poppler-mingw fontconfig-mingw freetype-mingw
 @deps qt-mingw dbus-mingw runtime-mingw
 @deps strigi-mingw libbzip2 openssl zlib iconv libxml2
-; msvc dependencies 
-@deps amarok-msvc kdebase-runtime-msvc phonon-msvc
+; msvc dependencies
+@deps amarok-msvc kdebase-runtime-msvc phonon-msvc taglib-msvc
+@deps automoc-msvc qt-msvc
 ; dbus may be compiled with libxml2 or expat, so use both dependencies
-@deps dbus-msvc libxml2 iconv expat 
+@deps dbus-msvc libxml2 iconv expat
+@deps digikam-msvc digikam-support-msvc kdeedu-msvc lcms
+@deps digikam-support-msvc exiv2-msvc
 @deps gpgme-qt-msvc gpgme qt-msvc
-@deps kdebase-runtime-msvc kdepimlibs-msvc kdelibs-msvc oggcodecs
 @deps kdebase-apps-msvc kdebase-runtime-msvc
+@deps kdebase-runtime-msvc kdepimlibs-msvc kdelibs-msvc
+@deps kdebase-workspace-msvc kdebase-runtime-msvc
 @deps kdeedu-msvc kdebase-runtime-msvc kdelibs-msvc
 @deps kdegames-msvc kdebase-runtime-msvc kdelibs-msvc phonon-msvc
-@deps kdegraphics-msvc kdebase-runtime-msvc kdelibs-msvc fontconfig-msvc freetype-msvc poppler-msvc exiv2-msvc
-@deps kdelibs-msvc phonon-msvc pcre-msvc vcredist qt-msvc dbus-msvc kdewin32-msvc qimageblitz-msvc qca-msvc strigi-msvc soprano-msvc taglib-msvc aspell libbzip2 expat giflib iconv jasper jpeg libintl libpng libxml2 libxslt openssl tiff zlib shared-mime-info
-@deps kdenetwork-msvc kdebase-runtime-msvc kdelibs-msvc
+@deps kdegraphics-msvc kdebase-runtime-msvc kdelibs-msvc poppler-msvc ebook-tools libspectre exiv2-msvc
+@deps kdelibs-msvc qt-msvc phonon-msvc pcre-msvc vcredist qt-msvc dbus-msvc kdewin32-msvc qimageblitz-msvc qca-msvc strigi-msvc soprano-msvc taglib-msvc aspell libbzip2 expat giflib iconv jasper jpeg libintl libpng libxml2 libxslt openssl tiff zlib shared-mime-info
+@deps kdemultimedia-msvc kdebase-runtime-msvc taglib-msvc
+@deps kdenetwork-msvc kdebase-runtime-msvc kdelibs-msvc sqlite libgmp-msvc
 @deps kdepim-msvc kdepimlibs-msvc kdebase-runtime-msvc gpgme-qt-msvc sqlite
 @deps kdepimlibs-msvc kdelibs-msvc
 @deps kdesdk-msvc kdebase-runtime-msvc kdelibs-msvc astyle diffutils
-@deps kdeutils-msvc kdebase-runtime-msvc
+@deps kdetoys-msvc kdebase-runtime-msvc kdelibs-msvc
+@deps kdeutils-msvc kdebase-runtime-msvc libzip
 @deps kdewebdev-msvc kdebase-runtime-msvc kdelibs-msvc
 @deps kdewin-installer-msvc qt-msvc
 @deps kdewin32-msvc qt-msvc
-@deps kdetoys-msvc kdebase-runtime-msvc kdelibs-msvc
+@deps kipi-plugins-msvc digikam-support-msvc
 @deps koffice-msvc kdebase-runtime-msvc kdelibs-msvc lcms
 @deps ktorrent-msvc libgmp-msvc kdelibs-msvc qca-msvc
+@deps phonon-msvc qt-msvc
+@deps poppler-msvc fontconfig-msvc freetype-msvc
 @deps qt-msvc dbus-msvc vcredist
 @deps strigi-msvc libbzip2 openssl zlib iconv libxml2
 ; compiler independent
@@ -97,12 +112,14 @@
 ; mingw
 @pkgnotes akonadi-mingw KDE4 Personal Information Manager framework
 @pkgnotes amarok-mingw UNSTABLE media player
+@pkgnotes automoc-mingw build system application
 @pkgnotes exiv2-mingw an image metadata library
 @pkgnotes fontconfig-mingw library for font customization and configuration
 @pkgnotes freetype-mingw A Free, High-Quality, and Portable Font Engine
 @pkgnotes gpgme-qt-mingw Qt wrapper for gpgme library
-@pkgnotes kdebase-runtime-mingw KDE runtime package 
 @pkgnotes kdebase-apps-mingw KDE base applicaton package 
+@pkgnotes kdebase-runtime-mingw KDE runtime package 
+@pkgnotes kdebase-workspace-mingw parts of the KDE desktop package
 @pkgnotes kdeedu-mingw KDE education apps
 @pkgnotes kdegames-mingw KDE games
 @pkgnotes kdegraphics-mingw Graphics applications for KDE
@@ -129,16 +146,17 @@
 @pkgnotes strigi-mingw desktop search engine
 @pkgnotes subversion-mingw software revision system
 @pkgnotes taglib-mingw audio meda-data library
-@pkgnotes automoc-mingw build system application
 ; msvc 
 @pkgnotes akonadi-msvc KDE4 Personal Information Manager framework
 @pkgnotes amarok-msvc UNSTABLE media player
+@pkgnotes automoc-msvc build system application
 @pkgnotes exiv2-msvc an image metadata library
 @pkgnotes fontconfig-msvc library for font customization and configuration
 @pkgnotes freetype-msvc A Free, High-Quality, and Portable Font Engine
 @pkgnotes gpgme-qt-msvc Qt wrapper for gpgme library
-@pkgnotes kdebase-runtime-msvc KDE runtime package
 @pkgnotes kdebase-apps-msvc KDE base applicaton package 
+@pkgnotes kdebase-runtime-msvc KDE runtime package
+@pkgnotes kdebase-workspace-msvc parts of the KDE desktop package
 @pkgnotes kdeedu-msvc KDE education apps
 @pkgnotes kdegames-msvc KDE games
 @pkgnotes kdegraphics-msvc Graphics applications for KDE
@@ -163,8 +181,7 @@
 @pkgnotes qt-static-msvc static release of qt package, which is used for build kdewin installer
 @pkgnotes soprano-msvc RDF storage solutions library
 @pkgnotes strigi-msvc desktop search engine
-@pkgnotes taglib-msvc audio meda-data library
-@pkgnotes automoc-msvc build system application
+@pkgnotes taglib-msvc audio meta-data library
 ;other
 @pkgnotes astyle source code formatter
 @pkgnotes aspell A powerful spell checker, designed to replace ispell
@@ -192,11 +209,14 @@
 @pkgnotes jpeg A library for manipulating JPEG image format files
 @pkgnotes lcms A small-footprint, speed optimized color management engine
 @pkgnotes libbzip2 shared libraries for bzip2 (runtime)
+@pkgnotes libgs a library for printing post script files
 @pkgnotes libidn internationalized domain names library
 @pkgnotes libintl native language support library
 @pkgnotes libpng PNG library (runtime)
+@pkgnotes libspectre a wrapper library for libgs
 @pkgnotes libxml2 XML C parser and toolkit (runtime and applications)
 @pkgnotes libxslt The GNOME XSLT C library and tools
+@pkgnotes libzip a zip library
 @pkgnotes md5sums md5 checksum tool
 @pkgnotes mingw-utils Mingw Utilities
 @pkgnotes openslp openslp client and libraries
@@ -504,4 +524,3 @@
 @notes secure transfer copy tool 
 @url-bin http://prdownloads.sourceforge.net/winscp/winscp417setup.exe
 @nomd5
-
