@@ -11,7 +11,7 @@
 @categorynotes KDE KDE packages
 
 ; to which category packages belongs to
-@categorypackages win32libs aspell ebook-tools expat giflib iconv jasper jpeg lcms libbzip2 libgs libidn libintl libpng libxml2 libxslt libzip openslp openssl tiff zlib shared-mime-info sqlite gpgme
+@categorypackages win32libs aspell ebook-tools expat giflib iconv jasper jpeg lcms libbzip2 libgs libidn libintl libpng libxml2 libxslt libzip mysql-embedded openslp openssl tiff zlib shared-mime-info sqlite gpgme
 @categorypackages win32libs pcre-msvc  dbus-msvc  exiv2-msvc  gpgme-qt-msvc  libgmp-msvc  libspectre-msvc
 @categorypackages win32libs pcre-mingw dbus-mingw exiv2-mingw gpgme-qt-mingw libgmp-mingw libspectre-mingw
 @categorypackages tools findutils grep mingw-utils diffutils patch
@@ -45,7 +45,7 @@
 @deps ebook-tools libzip
 @deps libspectre libgs
 ; mingw dependencies
-@deps amarok-mingw kdebase-runtime-mingw phonon-mingw taglib-mingw
+@deps amarok-mingw kdebase-runtime-mingw phonon-mingw taglib-mingw mysql-embedded
 @deps automoc-mingw qt-mingw
 @deps dbus-mingw expat 
 @deps digikam-mingw digikam-support-mingw kdeedu-mingw lcms
@@ -76,7 +76,7 @@
 @deps qt-mingw dbus-mingw runtime-mingw
 @deps strigi-mingw libbzip2 openssl zlib iconv libxml2
 ; msvc dependencies
-@deps amarok-msvc kdebase-runtime-msvc phonon-msvc taglib-msvc
+@deps amarok-msvc kdebase-runtime-msvc phonon-msvc taglib-msvc mysql-embedded
 @deps automoc-msvc qt-msvc
 ; dbus may be compiled with libxml2 or expat, so use both dependencies
 @deps dbus-msvc libxml2 iconv expat
@@ -109,6 +109,7 @@
 @deps strigi-msvc libbzip2 openssl zlib iconv libxml2
 ; compiler independent
 @pkgnotes clucene high-performance, full-featured text search engine (required for compiling strigi) 
+@pkgnotes mysql-embedded the mysql libraries including the embedded
 ; mingw
 @pkgnotes akonadi-mingw KDE4 Personal Information Manager framework
 @pkgnotes amarok-mingw UNSTABLE media player
