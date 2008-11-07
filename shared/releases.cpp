@@ -156,6 +156,7 @@ bool Releases::fetch(const QUrl &_url)
         return true;
 
     QUrl url = baseURL.toString() + "/stable/";
+    qWarning() << "baseURL1:" << url;
     if (!Downloader::instance()->fetch(url,out))
     {
         qWarning() << "could not fetch stable versions from" << url;
@@ -166,6 +167,7 @@ bool Releases::fetch(const QUrl &_url)
     }
 
     url = baseURL.toString() + "/unstable/";
+    out.clear();
     if (!Downloader::instance()->fetch(url,out))
     {
         qWarning() << "could not fetch unstable versions from" << url;
@@ -216,7 +218,7 @@ bool Releases::parse(QIODevice *ioDev, const QUrl &url, ReleaseType::Type type)
                 
             int end = line.indexOf("\"",start+6);
             QString version = line.mid(start+6,end-start-6);
-            qDebug() << line << version;
+            qDebug() << "line:" << line << version;
             ReleaseType release;
             release.url = url.toString() + "/" + version;
             release.name = version.replace("/","");
