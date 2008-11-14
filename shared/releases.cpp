@@ -167,7 +167,6 @@ bool Releases::fetch(const QUrl &_url)
     }
 
     url = baseURL.toString() + "/unstable/";
-    out.clear();
     if (!Downloader::instance()->fetch(url,out))
     {
         qWarning() << "could not fetch unstable versions from" << url;
