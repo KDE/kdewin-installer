@@ -1,5 +1,38 @@
 ChangeLog
 =========
+0.9.3-3 (r881405)
+-----------------
+
+- installer-gui:   - fix showing of wrong unstable releases (Patrick Spendrin)
+
+
+0.9.3-2 (r858132)
+-------
+- installer-gui:   
+                   - manual updated (Ralf Habacker)
+                   - make the installer work again on w2k (Christian Ehrlicher)
+
+- installer-console: (Ralf Habacker)
+                   - refactored console installer
+                   - filter packages by used compiler and install mode 
+                   - fixed help page
+                   - added enhanced listing of package files
+                   - print all requirements for a given package
+                   - added printing of package descriptions. dependencies and categories
+                   - don't add category if already present
+                   - display package in query and list mode in rpm like format 
+
+- common: (Ralf Habacker)         
+                   - added more debug informations
+                   - fixed package file list reading
+                   - added package verifing 
+                   - fixed more filename case
+                   - implemented PackageInfo::fromString() which is now able to handle package type information to 
+                     allow package names with package type postfix e.g. tiff-bin 
+
+- packager:        - pack qt sources (Christian Ehrlicher)
+
+
 0.9.3-1 (r850954)
 -------
 - installer-gui:   - fixed bug not killing kde applications for kde <= 4.1.0
