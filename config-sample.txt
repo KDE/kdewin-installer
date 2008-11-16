@@ -4,6 +4,9 @@
 ; define mininal required installer version
 ;@minversion 0.8.3-7
 
+; define new installer 
+@newversion 0.9.3-3 <new-installer-url>
+
 ; define config file timestamp  
 @timestamp 200711291436
 
