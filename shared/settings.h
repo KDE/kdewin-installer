@@ -83,11 +83,12 @@ public:
     void setFirstRun(bool bFirstRun) { m_settingsMain->setValue("FirstRun", bFirstRun); sync(); }
 
     // package Manager mode 
-    bool isPackageManagerMode() const { return m_settings->value("PackageManagerMode", true).toBool(); }
+    bool isPackageManagerMode() const { return m_settings->value("PackageManagerMode", m_settingsMain->value("PackageManagerMode",false).toBool()).toBool(); }
     void setPackageManagerMode(bool mode) { m_settings->setValue("PackageManagerMode", mode); sync(); }
 
-    const bool isDeveloperMode() { return m_settings->value("DeveloperMode", m_settingsMain->value("DeveloperMode",false).toBool()).toBool(); }
-    void setDeveloperMode(bool bMode) { m_settings->setValue("DeveloperMode", bMode); sync(); }
+    // property of the packagerManagerMode
+    const bool isDeveloperInstallMode() { return false; }
+    const bool setDeveloperInstallMode() {  }
 
     enum ProxyMode { None = 0, InternetExplorer, FireFox, Environment, Manual };
     ProxyMode proxyMode() const { return (ProxyMode)m_settingsMain->value("proxyMode",0).toInt(); }

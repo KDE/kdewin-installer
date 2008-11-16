@@ -216,7 +216,7 @@ int InstallWizard::nextIdEndUser() const
 
     case downloadSettingsPage: return internetSettingsPage;
     case internetSettingsPage: 
-        if (!Settings::instance().isDeveloperMode() && Database::isAnyPackageInstalled(Settings::instance().installDir()) )
+        if (!Settings::instance().isPackageManagerMode() && Database::isAnyPackageInstalled(Settings::instance().installDir()) )
             return endUserInstallModePage;
         else
             return mirrorSettingsPage;
@@ -311,7 +311,7 @@ int InstallWizard::nextIdDeveloper() const
 int InstallWizard::nextId() const
 {
 #ifdef ENABLE_ENDUSER_PAGES
-    if (!Settings::instance().isDeveloperMode())
+    if (!Settings::instance().isPackageManagerMode())
         return nextIdEndUser();
     else
 #endif

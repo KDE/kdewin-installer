@@ -153,25 +153,6 @@ PackageSelectorPage::PackageSelectorPage()  : InstallWizardPage(0)
     layout->setRowStretch(1,10);
     setLayout(layout);
     packageInfo->hide();
-    InstallerEngineGui::Type installMode = Settings::instance().isDeveloperMode() ? InstallerEngineGui::Developer : InstallerEngineGui::EndUser;
-    if (installMode == InstallerEngineGui::Single)
-    {
-        BINColumn = 3;
-        LIBColumn = 4;
-        DOCColumn = 5;
-        SRCColumn = 6;
-        NotesColumn = 7;
-        ColumnCount = 8;
-    }
-    else if (installMode == InstallerEngineGui::Developer)
-    {
-        BINColumn = 3;
-        SRCColumn = 4;
-        NotesColumn = 5;
-        ColumnCount = 6;
-        LIBColumn = 0;
-        DOCColumn = 0;
-    }
 }
 
 void PackageSelectorPage::setLeftTreeStatus()
@@ -231,6 +212,25 @@ void PackageSelectorPage::setLeftTreeData()
 
 void PackageSelectorPage::setWidgetData( QString categoryName )
 {
+    InstallerEngineGui::Type installMode = engine->installMode();
+    if (installMode == InstallerEngineGui::Single)
+    {
+        BINColumn = 3;
+        LIBColumn = 4;
+        DOCColumn = 5;
+        SRCColumn = 6;
+        NotesColumn = 7;
+        ColumnCount = 8;
+    }
+    else if (installMode == InstallerEngineGui::Developer)
+    {
+        BINColumn = 3;
+        SRCColumn = 4;
+        NotesColumn = 5;
+        ColumnCount = 6;
+        LIBColumn = 0;
+        DOCColumn = 0;
+    }
     tree->clear();
     QStringList labels;
     QList<QTreeWidgetItem *> items;

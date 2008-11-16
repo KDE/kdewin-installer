@@ -42,31 +42,31 @@ UserCompilerModePage::UserCompilerModePage() : InstallWizardPage(0)
 
     QButtonGroup *groupB = new QButtonGroup(this);
     groupB->addButton(ui.installModeEndUser);
-    groupB->addButton(ui.installModeDeveloper);
+    groupB->addButton(ui.installModePackageManager);
     connect( groupB,SIGNAL(buttonClicked (int)),this,SLOT(slotModeButtonClicked(int)) );
 }
 
 void UserCompilerModePage::initializePage()
 {
     Settings &s = Settings::instance();
-    setCompilerMode(!s.isDeveloperMode());
+    setCompilerMode(!s.isPackageManagerMode());
 
-    ui.installModeEndUser->setChecked(!s.isDeveloperMode() ? Qt::Checked : Qt::Unchecked);
-    ui.installModeDeveloper->setChecked(s.isDeveloperMode() ? Qt::Checked : Qt::Unchecked);
+    ui.installModeEndUser->setChecked(!s.isPackageManagerMode() ? Qt::Checked : Qt::Unchecked);
+    ui.installModePackageManager->setChecked(s.isPackageManagerMode() ? Qt::Checked : Qt::Unchecked);
     
     if (Database::isAnyPackageInstalled(s.installDir()))
     {
-        ui.installModeDeveloper->setEnabled(false);
+        ui.installModePackageManager->setEnabled(false);
         ui.installModeEndUser->setEnabled(false);
     }
     else
     {
-        ui.installModeDeveloper->setEnabled(true);
+        ui.installModePackageManager->setEnabled(true);
         ui.installModeEndUser->setEnabled(true);
     }
 
-    if (s.isDeveloperMode())
-        ui.installModeDeveloper->setChecked(true);
+    if (s.isPackageManagerMode())
+        ui.installModePackageManager->setChecked(true);
     else
         ui.installModeEndUser->setChecked(true);
 
@@ -81,7 +81,7 @@ bool UserCompilerModePage::isComplete()
 bool UserCompilerModePage::validatePage()
 {
     Settings &s = Settings::instance();
-    s.setDeveloperMode(ui.installModeDeveloper->isChecked());
+    s.setPackageManagerMode(ui.installModePackageManager->isChecked());
 
     if (ui.compilerMinGW->isChecked())
         s.setCompilerType(Settings::MinGW);
@@ -122,7 +122,7 @@ void UserCompilerModePage::setCompilerMode(bool EndUserMode)
 
 void UserCompilerModePage::slotModeButtonClicked(int id)
 {
-    setCompilerMode(ui.installModeDeveloper->isChecked() ? 0 : 1);
+    setCompilerMode(ui.installModePackageManager->isChecked() ? 0 : 1);
 }
 
 

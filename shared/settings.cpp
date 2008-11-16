@@ -27,11 +27,27 @@
 #include <QUrl>
 #include <QtDebug>
 
+#define SETTINGS_VERSION "2"
+
 Settings::Settings()
  : m_settingsMain( new QSettings(QSettings::IniFormat, QSettings::UserScope, "KDE", "Installer") ), 
    m_settings( new QSettings(installDir()+"/etc/installer.ini",QSettings::IniFormat) )
 
 {
+    QString version = m_settings->value("version", "").toString();
+    // update to current version
+    if (version.isEmpty()) // version 1
+    {
+        m_settings->setValue("version", SETTINGS_VERSION);
+        setPackageManagerMode(m_settings->value("DeveloperMode",false).toBool());
+        m_settings->remove("DeveloperMode");
+        m_settings->sync();
+    }
+    else if (version != SETTINGS_VERSION)
+    {
+        qCritical() << "unknown settings version" << version << "found"; 
+    }
+
 #ifdef DEBUG
     qDebug() << "installDir:" << installDir();
     qDebug() << "downloadDir:" << downloadDir();

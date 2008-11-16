@@ -260,7 +260,7 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
         isAvailable = available && (available->hasType(type) || available->hasType(Package::LIB) || available->hasType(Package::DOC));
         isInstalled = installed && (installed->isInstalled(type) || installed->hasType(Package::LIB) || installed->hasType(Package::DOC));
     }
-    else if (type == Package::BIN && m_installMode == EndUser)
+    else if (type == Package::BIN && m_installMode == BinaryOnly)
     {
         isAvailable = available && (available->hasType(type) /*|| available->hasType(Package::DOC)*/);
         isInstalled = installed && (installed->isInstalled(type) /*|| installed->hasType(Package::DOC)*/);
@@ -341,7 +341,7 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
         if (available->hasType(Package::DOC))
             packageStates.setState(available,Package::DOC,newState);
     }
-    else if (type == Package::BIN && m_installMode == EndUser)
+    else if (type == Package::BIN && m_installMode == BinaryOnly)
     {
         ;//if (available->hasType(Package::DOC))
          //   packageStates.setState(available,Package::DOC,newState);
@@ -424,7 +424,7 @@ bool InstallerEngineGui::setDependencyState(Package *_package, QTreeWidget *list
                 if (package->hasType(Package::DOC))
                     dependencyStates.setState(package,Package::DOC,newState);
             }
-            else if (m_installMode == EndUser)
+            else if (m_installMode == BinaryOnly)
             {
                 ;//if (package->hasType(Package::DOC))
                  //   dependenciesStates.setState(package,Package::DOC,_Install);
@@ -471,7 +471,7 @@ InstallerEngineGui::InstallerEngineGui (QWidget *parent)
 
 bool InstallerEngineGui::init()
 {
-    m_installMode = Settings::instance().isDeveloperMode() ? Developer : EndUser;
+    m_installMode = Settings::instance().isPackageManagerMode() ? Developer : BinaryOnly;
 
     initGlobalConfig();
     if (m_globalConfig->installerUpdate().isUpdateAvailable()) {
@@ -490,7 +490,7 @@ bool InstallerEngineGui::init()
 
 void InstallerEngineGui::reload()
 {
-    m_installMode = Settings::instance().isDeveloperMode() ? Developer : EndUser;
+    m_installMode = Settings::instance().isPackageManagerMode() ? Developer : BinaryOnly;
     packageStates.clear();
     dependencyStates.clear();
     InstallerEngine::reload();
@@ -517,7 +517,7 @@ void InstallerEngineGui::selectAllPackagesForRemoval()
             if (installed->hasType(Package::DOC))
                 packageStates.setState(installed,Package::DOC,newState);
         }
-        else if (type == Package::BIN && m_installMode == EndUser)
+        else if (type == Package::BIN && m_installMode == BinaryOnly)
         {
             ;//if (installed->hasType(Package::DOC))
              //   packageStates.setState(available,Package::DOC,newState);
