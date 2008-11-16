@@ -1,10 +1,10 @@
 ChangeLog
 =========
-0.9.3-3 (r881405)
+0.9.3-3 (r884546)
 -----------------
 
 - installer-gui:   - fix showing of wrong unstable releases (Patrick Spendrin)
-
+                   - added documentation about local file url's in mirror setting page (Ralf Habacker)
 
 0.9.3-2 (r858132)
 -------
