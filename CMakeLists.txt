@@ -186,8 +186,10 @@ else(UNIX)
   endif (QT_VERSION_MAJOR EQUAL 4 AND QT_VERSION_MINOR GREATER 3) 
 endif (UNIX)
 
-
 # our targets
+add_subdirectory(md5sum)
+set (MD5SUM_EXECUTABLE ${EXECUTABLE_OUTPUT_PATH}/md5sum.exe)
+
 add_subdirectory(shared)
 add_subdirectory(console)
 add_subdirectory(gui)

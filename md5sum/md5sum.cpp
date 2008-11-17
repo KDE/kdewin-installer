@@ -1,0 +1,94 @@
+/****************************************************************************
+**
+** Copyright (C) 2008 Ralf Habacker ralf.habacker@freenet.de
+**
+** This file is part of the KDE installer for windows
+**
+** This library is free software; you can redistribute it and/or
+** modify it under the terms of the GNU Library General Public
+** License version 2 as published by the Free Software Foundation.
+**
+** This library is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+** Library General Public License for more details.
+**
+** You should have received a copy of the GNU Library General Public License
+** along with this library; see the file COPYING.LIB.  If not, write to
+** the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+** Boston, MA 02110-1301, USA.
+**
+****************************************************************************/
+
+#include "misc.h"
+
+#include <QCoreApplication>
+#include <QFile>
+#include <QStringList>
+#include <QTextStream>
+#include <QtDebug>
+
+#include <stdio.h>
+
+int main(int argc, char *argv[])
+{
+    QCoreApplication app(argc, argv);
+
+    // check if download url is given on command line
+    if(argc < 1) 
+    {
+        fprintf(stdout,"no file given"); 
+        return -1;
+    }
+    QString input, output;
+        
+    if (QCoreApplication::arguments().at(1) == "-o" || QCoreApplication::arguments().at(1) == "--output")  
+    {
+        output = QCoreApplication::arguments().at(2);
+        input = QCoreApplication::arguments().at(3);
+    }
+    else if (QCoreApplication::arguments().at(1) == "-c" || QCoreApplication::arguments().at(1) == "--check")  
+    {
+        input = QCoreApplication::arguments().at(2);
+        QFile file(input);
+        if (!file.open(QIODevice::ReadOnly))
+        {
+            fprintf(stderr,"could not open md5sum file");
+            return -2;
+        }
+        QTextStream in(&file);
+        QString line = in.readLine();
+        QStringList cols = line.split(" ",QString::SkipEmptyParts);
+        if (cols.size() != 2)
+        {
+            fprintf(stderr,"hash file has illegal format");
+            return -3;
+        }
+        QByteArray givenHash = cols[0].toAscii();
+        QFile inFile(cols[1]);
+        QByteArray computedHash = md5Hash(inFile).toHex();
+        if (computedHash != givenHash)
+        {
+            fprintf(stderr,"wrong hash");
+            return -4;
+        }   
+        return 0;
+    }
+
+    else 
+        input = QCoreApplication::arguments().at(1);
+
+    QFile f(input);
+    QByteArray hashValue = md5Hash(f);
+    if (!output.isEmpty())
+    {
+        FILE *f = fopen(output.toAscii().data(),"w");
+        fprintf(f,"%s  %s",hashValue.toHex().data(),input.toAscii().data());
+        fclose(f);
+    }
+    else 
+    {
+        fprintf(stdout,"%s  %s\n",hashValue.toHex().data(),input.toAscii().data());
+    }
+    return 0;
+}
