@@ -226,7 +226,7 @@ void InstallerEngineConsole::printPackageURLs(Package *p)
     if (!url.isEmpty())
         printf("%s\n",qPrintable(url.toString())); 
     
-    if (!Settings::instance().isDeveloperMode())
+    if (!Settings::instance().isDeveloperInstallMode())
         return;
 
     url = p->getUrl(Package::LIB);
