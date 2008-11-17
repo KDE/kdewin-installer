@@ -83,7 +83,7 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
 #endif
     TitlePage *titlePageP = new TitlePage();
     
-    QString windowTitle = titlePageP->windowTitle() + QLatin1String(" - Version " VERSION);
+    QString windowTitle = titlePageP->windowTitle() + QLatin1String(" - Version " VERSION_PATCH);
     setWindowTitle(windowTitle);
 
     setPage(titlePage, titlePageP); 
