@@ -24,22 +24,27 @@ endif(WIN32)
 
 qt4_automoc(${all_sources})
 
-add_executable(${APPNAME}-installer-gui-${VERSION} WIN32 ${all_sources})
-target_link_libraries(${APPNAME}-installer-gui-${VERSION} ${GUI_LIBS})
-set_target_properties(${APPNAME}-installer-gui-${VERSION} PROPERTIES COMPILE_FLAGS -DUSE_GUI)
 
-get_target_property( installer_filename ${APPNAME}-installer-gui-${VERSION} LOCATION )
-get_filename_component( installer_filename_only ${installer_filename} NAME )
-write_file(${EXECUTABLE_OUTPUT_PATH}/${APPNAME}-installer-gui.bat "start ${installer_filename_only}")
+set (TARGET ${APPNAME}-installer-gui)
+set (TARGET_FILENAME ${APPNAME}-installer-gui-${VERSION_PATCH})
 
-install_targets(/bin ${APPNAME}-installer-gui-${VERSION} )
-install(FILES ${EXECUTABLE_OUTPUT_PATH}/${APPNAME}-installer-gui.bat DESTINATION bin)
+add_executable(${TARGET} WIN32 ${all_sources})
+set_target_properties(${TARGET} PROPERTIES COMPILE_FLAGS -DUSE_GUI)
+set_target_properties(${TARGET} PROPERTIES OUTPUT_NAME ${TARGET_FILENAME})
+target_link_libraries(${TARGET}
+                      ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY}  ${QT_QTGUI_LIBRARY}
+                      ${GUI_LIBS}
+)
+
+write_file(${EXECUTABLE_OUTPUT_PATH}/${TARGET}.bat "start ${TARGET_FILENAME}")
+
+install_targets(/bin ${TARGET} )
+install(FILES ${EXECUTABLE_OUTPUT_PATH}/${TARGET}.bat DESTINATION bin)
 
 if (PACK_EXECUTABLE)
     add_custom_command(
-        TARGET ${APPNAME}-installer-gui-${VERSION}
+        TARGET ${TARGET}
         POST_BUILD
-        COMMAND ${UPX_EXECUTABLE} --lzma -9 "${installer_filename}"
+        COMMAND ${UPX_EXECUTABLE} --lzma -9 "${TARGET_FILENAME}"
     )
 endif (PACK_EXECUTABLE)
-
