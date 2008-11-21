@@ -186,6 +186,36 @@ else(UNIX)
   endif (QT_VERSION_MAJOR EQUAL 4 AND QT_VERSION_MINOR GREATER 3) 
 endif (UNIX)
 
+
+macro (pack_target _target)
+    if (PACK_EXECUTABLE)
+        get_target_property( _filename ${_target} LOCATION )
+        add_custom_command(
+            TARGET ${_target}
+            POST_BUILD
+            COMMAND ${UPX_EXECUTABLE} --lzma -9 "${_filename}"
+            COMMENT "packing ${_target}"
+        )
+    endif (PACK_EXECUTABLE)
+endmacro (pack_target)
+
+macro (create_md5sum_file _target)
+    if (MD5SUM_EXECUTABLE)
+        get_target_property( _filename ${_target} LOCATION )
+        get_filename_component(_name ${_filename} NAME)
+        add_custom_command(
+            TARGET ${_target}
+            POST_BUILD
+            COMMAND "${MD5SUM_EXECUTABLE} -o "
+            ARGS -o ${_name}.md5 ${_name}
+            WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
+            COMMENT "creating md5sum file for ${_target}"
+        )
+        install(FILES ${_filename}.md5 DESTINATION bin)
+    endif (MD5SUM_EXECUTABLE)
+endmacro (create_md5sum_file _target)
+
+
 # our targets
 add_subdirectory(md5sum)
 set (MD5SUM_EXECUTABLE ${EXECUTABLE_OUTPUT_PATH}/md5sum.exe)

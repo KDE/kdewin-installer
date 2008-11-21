@@ -19,16 +19,13 @@ include_directories(
 add_definitions(-DPACKAGER_VERSION=${VER_MAJ}.${VER_MIN}.${VER_PATCH})
 
 qt4_automoc(${packager_SOURCES})
-add_executable(kdewin-packager ${packager_SOURCES} ${packager_HEADERS})
-target_link_libraries(kdewin-packager ${CONSOLE_LIBS})
 
-install_targets(/bin kdewin-packager )
+set (TARGET kdewin-packager)
 
-if (PACK_EXECUTABLE)
-    get_target_property( packager_filename kdewin-packager LOCATION )
-    add_custom_command(
-        TARGET kdewin-packager
-        POST_BUILD
-        COMMAND ${UPX_EXECUTABLE} --lzma -9 "${packager_filename}"
-    )
-endif (PACK_EXECUTABLE)
+add_executable(${TARGET} ${packager_SOURCES} ${packager_HEADERS})
+target_link_libraries(${TARGET} ${CONSOLE_LIBS})
+
+install_targets(/bin ${TARGET} )
+
+pack_target(${TARGET} )
+create_md5sum_file(${TARGET} )
