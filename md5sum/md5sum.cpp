@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
 
     // check if download url is given on command line
-    if(argc < 1) 
+    if(argc < 2) 
     {
         fprintf(stdout,"no file given"); 
         return -1;
