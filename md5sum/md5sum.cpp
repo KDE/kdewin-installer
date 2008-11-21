@@ -88,8 +88,7 @@ int main(int argc, char *argv[])
     else 
         input = QCoreApplication::arguments().at(1);
 
-    QFile f(input);
-    QByteArray hashValue = md5Hash(f);
+    QByteArray hashValue = md5Hash(input);
     if (!output.isEmpty())
     {
         FILE *f = fopen(output.toAscii().data(),"w");

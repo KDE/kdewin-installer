@@ -206,7 +206,7 @@ macro (create_md5sum_file _target)
         add_custom_command(
             TARGET ${_target}
             POST_BUILD
-            COMMAND "${MD5SUM_EXECUTABLE} -o "
+            COMMAND ${MD5SUM_EXECUTABLE}
             ARGS -o ${_name}.md5 ${_name}
             WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
             COMMENT "creating md5sum file for ${_target}"
