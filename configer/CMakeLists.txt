@@ -22,14 +22,5 @@ target_link_libraries(${TARGET} ${CONSOLE_LIBS})
 
 install_targets(/bin ${TARGET} )
 
-if (PACK_EXECUTABLE)
-    get_target_property( configer_filename kdewin-configer LOCATION )
-    add_custom_command(
-        TARGET kdewin-configer
-        POST_BUILD 
-        COMMAND ${UPX_EXECUTABLE} --lzma -9 "${configer_filename}" 
-    )
-endif (PACK_EXECUTABLE)
-
 pack_target(${TARGET})
 create_md5sum_file(${TARGET})
