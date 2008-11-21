@@ -44,11 +44,21 @@ int main(int argc, char *argv[])
         
     if (QCoreApplication::arguments().at(1) == "-o" || QCoreApplication::arguments().at(1) == "--output")  
     {
+        if (QCoreApplication::arguments().size() < 4)
+        {
+            fprintf(stderr,"not enough parameter given");
+            return -2;
+        }
         output = QCoreApplication::arguments().at(2);
         input = QCoreApplication::arguments().at(3);
     }
     else if (QCoreApplication::arguments().at(1) == "-c" || QCoreApplication::arguments().at(1) == "--check")  
     {
+        if (QCoreApplication::arguments().size() < 3)
+        {
+            fprintf(stderr,"no filename given");
+            return -2;
+        }
         input = QCoreApplication::arguments().at(2);
         QFile file(input);
         if (!file.open(QIODevice::ReadOnly))
