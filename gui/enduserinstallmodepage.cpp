@@ -71,6 +71,3 @@ bool EndUserInstallModePage::validatePage()
     return true;
 }
 
-
-#include "enduserinstallmodepage.moc"
-

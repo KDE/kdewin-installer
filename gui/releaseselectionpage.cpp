@@ -110,5 +110,3 @@ bool ReleaseSelectionPage::isComplete()
 {
     return ui.releaseList->currentItem();
 }
-
-#include "releaseselectionpage.moc"

@@ -62,5 +62,3 @@ void DownloadSettingsPage::tempPathSelectClicked()
     if(!fileName.isEmpty())
         ui.tempPathEdit->setText(QDir::toNativeSeparators(fileName));
 }
-
-#include "downloadsettingspage.moc"

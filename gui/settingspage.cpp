@@ -74,5 +74,3 @@ int main(int argc, char **argv)
     app.exec();
 }
 #endif
-
-#include "settingspage.moc"

@@ -215,5 +215,3 @@ bool EndUserPackageSelectorPage::isComplete()
 {
     return true;
 }
-
-#include "enduserpackageselectorpage.moc"

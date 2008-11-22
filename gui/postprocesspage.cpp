@@ -82,5 +82,3 @@ bool PostProcessPage::isComplete()
 {
     return true;
 }
-
-#include "postprocesspage.moc"

@@ -69,6 +69,3 @@ void InstallDirectoryPage::rootPathSelectClicked()
     if(!fileName.isEmpty())
         ui.rootPathEdit->setText(QDir::toNativeSeparators(fileName));
 }
-
-
-#include "installdirectorypage.moc"

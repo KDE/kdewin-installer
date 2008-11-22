@@ -471,5 +471,3 @@ bool PackageSelectorPage::isComplete()
 {
     return true;
 }
-
-#include "packageselectorpage.moc"

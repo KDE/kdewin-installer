@@ -11,6 +11,10 @@ set(all_sources
     ${main_all_sources}
 )
 
+set(all_headers
+    ${main_all_headers}
+)
+
 QT4_WRAP_UI(all_sources ${UI_SOURCES})
 
 QT4_ADD_RESOURCES(all_sources gui.qrc)
@@ -22,9 +26,7 @@ if(WIN32)
  endif(MINGW)
 endif(WIN32)
 
-qt4_automoc(${all_sources})
-
-
+qt4_wrap_cpp(all_sources ${all_headers})
 
 set (TARGET ${APPNAME}-installer-gui)
 set (TARGET_FILENAME ${APPNAME}-installer-gui-${VERSION_PATCH})

@@ -103,10 +103,12 @@ set (main_UI_SOURCES
 
 set(main_all_sources 
     ${installer_GUI_SOURCES}
-    ${installer_GUI_HEADERS}
     ${installer_shared_SOURCES}
-    ${installer_shared_HEADERS}
     ${md5_SOURCES}
+)
+set(main_all_headers
+    ${installer_shared_HEADERS}
+    ${installer_GUI_HEADERS}
     ${md5_HEADERS}
 )
 

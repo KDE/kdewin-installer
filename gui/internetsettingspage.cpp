@@ -110,5 +110,3 @@ void InternetSettingsPage::switchProxyFields(bool mode)
     ui.proxyPassword->setEnabled(mode);
 }
 
-
-#include "internetsettingspage.moc"

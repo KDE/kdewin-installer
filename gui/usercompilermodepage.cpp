@@ -124,6 +124,3 @@ void UserCompilerModePage::slotModeButtonClicked(int id)
 {
     setCompilerMode(ui.installModePackageManager->isChecked() ? 0 : 1);
 }
-
-
-#include "usercompilermodepage.moc"

@@ -173,5 +173,3 @@ void MirrorSettingsPage::addNewMirrorClicked()
         ui.addServerURL->setText(QString());
     }
 }
-
-#include "mirrorsettingspage.moc"

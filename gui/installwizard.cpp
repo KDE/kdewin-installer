@@ -366,5 +366,3 @@ void InstallWizardPage::performAction()
 {
     qDebug() << "called"; 
 }
-
-#include "installwizard.moc"
