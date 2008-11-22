@@ -696,9 +696,6 @@ bool Package::removeItem(Installer *installer, Package::Type type)
     return true;
 }
 
-void Package::logOutput()
-{}
-
 void Package::addCategories(const QString &cat)
 {
     if (cat.contains(QLatin1Char(' ')))

@@ -292,9 +292,6 @@ public:
     /// generate version file name
     static QString versionFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type);
 
-private slots:
-    void logOutput();
-
 protected:
     
     bool setError(const QString &text) { m_lastError = text; qCritical() << text; return false; }
