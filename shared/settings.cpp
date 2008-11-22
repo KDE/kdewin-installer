@@ -386,8 +386,3 @@ QDebug operator<<(QDebug out, Settings &c)
         << ")";
     return out;
 }
-
-
-
-
-#include "settings.moc"

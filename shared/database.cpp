@@ -292,5 +292,3 @@ QDebug & operator<< ( QDebug &out, const Database &c )
     out << ") )";
     return out;
 }
-
-#include "database.moc"

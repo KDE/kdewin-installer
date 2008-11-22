@@ -485,5 +485,3 @@ void Unpacker::setError ( const QString &errStr )
     emit error ( errStr );
 }
 
-#include "unpacker.moc"
-#include "unpacker_p.moc"

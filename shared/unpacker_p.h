@@ -24,6 +24,8 @@
 #ifndef UNPACKER_P_H
 #define UNPACKER_P_H
 
+#include "package.h"
+
 #include <QtCore/QDir>
 #include <QtCore/QList>
 #include <QtCore/QRegExp>

@@ -69,8 +69,8 @@ set(installer_shared_gui_SOURCES
 set (shared_sources_console ${installer_shared_console_SOURCES} ${installer_shared_HEADERS})
 set (shared_sources_gui ${installer_shared_gui_SOURCES} ${installer_shared_HEADERS})
 
-qt4_automoc(${shared_sources_console})
-qt4_automoc(${shared_sources_gui})
+qt4_wrap_cpp(shared_sources_console ${installer_shared_HEADERS})
+qt4_wrap_cpp(shared_sources_gui ${installer_shared_HEADERS})
 
 add_library(shared-console ${shared_sources_console})
 target_link_libraries(shared-console)

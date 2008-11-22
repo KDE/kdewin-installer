@@ -339,5 +339,3 @@ void InstallerEngine::slotError(const QString &msg)
 {
     emit error(msg);
 }
-
-#include "installerengine.moc"

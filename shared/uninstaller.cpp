@@ -276,6 +276,3 @@ void Uninstaller::setWarning ( const QString &warnStr )
     qWarning () << qPrintable ( warnStr );
     emit warning ( warnStr );
 }
-
-#include "uninstaller.moc"
-#include "uninstaller_p.moc"

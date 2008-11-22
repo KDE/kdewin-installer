@@ -281,5 +281,3 @@ InstallerProgress *Installer::progress()
 {
     return Unpacker::instance()->progress();
 }
-
-#include "installer.moc"

@@ -639,5 +639,3 @@ QDebug & operator<<(QDebug &out, PackageList &c)
     out << ") )";
     return out;
 }
-
-#include "packagelist.moc"

@@ -370,6 +370,3 @@ QDebug &operator<< ( QDebug &debug, const Downloader & )
 {
     return debug;
 }
-
-#include "downloader.moc"
-#include "downloader_p.moc"
