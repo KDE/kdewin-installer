@@ -1,5 +1,9 @@
 find_package(Doxygen)
 
+if (DOXYGEN_DOT_EXECUTABLE)
+    get_filename_component(DOXYGEN_DOT_PATH ${DOXYGEN_DOT_EXECUTABLE} PATH)
+    set (HAVE_DOT YES)
+endif (DOXYGEN_DOT_EXECUTABLE)
 
 set (top_srcdir ${CMAKE_SOURCE_DIR}/..)
 set (INPUT "${CMAKE_SOURCE_DIR}/shared ${CMAKE_SOURCE_DIR}/gui ${CMAKE_SOURCE_DIR}/console ${CMAKE_SOURCE_DIR}/tests")
