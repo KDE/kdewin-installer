@@ -28,6 +28,8 @@
 #include <QApplication>
 #include <QPlastiqueStyle>
 
+#include <windows.h>
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
@@ -36,6 +38,12 @@ int main(int argc, char *argv[])
     if(argc > 1) 
     {
         QString param = QApplication::arguments().at(1);
+        if (param.startsWith("-w"))
+        {
+            int delay = QApplication::arguments().at(2).toInt();
+            if (delay > 0)
+                Sleep(delay*1000);
+        }
         if (param.startsWith("file:") || param.startsWith("http:") || param.startsWith("ftp:"))
             InstallerEngine::defaultConfigURL = param;
 

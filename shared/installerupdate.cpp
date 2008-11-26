@@ -109,7 +109,8 @@ bool InstallerUpdate::run()
 {
     if (m_url.isValid())
     {
-        QProcess::startDetached(m_localFilePath);
+        // let new installer wait some second before processing until recent installer is down 
+        QProcess::startDetached(m_localFilePath,QStringList() << "-w" << "5");
         QCoreApplication::quit();
         return true;
     }
