@@ -49,7 +49,7 @@ class InstallerUpdate
         bool run();
 
         /// finish update - delete old installer executable
-        static bool finish(const QString &oldpath);
+        static bool finish(const QStringList &args, int startIndex);
 
         /// return singleton instance
         static InstallerUpdate &instance();

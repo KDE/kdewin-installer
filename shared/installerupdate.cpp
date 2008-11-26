@@ -24,7 +24,7 @@
 #include "debug.h"
 #include "downloader.h"
 #include "downloaderprogress.h"
-#include "InstallerUpdate.h"
+#include "installerupdate.h"
 #include "settings.h"
 
 #include <windows.h>
@@ -33,6 +33,31 @@
 #include <QtDebug>
 #include <QProcess>
 #include <QFileInfo>
+
+#include <psapi.h>
+
+bool isProcessRunning(int pid)
+{
+    DWORD aProcesses[1024], cbNeeded, cProcesses;
+    unsigned int i;
+
+    if ( !EnumProcesses( aProcesses, sizeof(aProcesses), &cbNeeded ) )
+        return false;
+
+    // Calculate how many process identifiers were returned.
+
+    cProcesses = cbNeeded / sizeof(DWORD);
+
+    // Print the name and process identifier for each process.
+
+    for ( i = 0; i < cProcesses; i++ ) 
+    {
+        if (aProcesses[i] == pid)
+            return true;
+    }
+    return false;
+}
+
 
 InstallerUpdate::InstallerUpdate()
 {
@@ -111,7 +136,8 @@ bool InstallerUpdate::run()
 {
     if (m_url.isValid())
     {
-        QProcess::startDetached(m_localFilePath,QStringList() << "--finish-update" << m_currentInstallerFilePath);
+        QString processID = QString::number(GetCurrentProcessId());
+        QProcess::startDetached(m_localFilePath,QStringList() << "--finish-update" << m_currentInstallerFilePath << processID);
         QCoreApplication::quit();
         exit(0);
 		// never reached;
@@ -119,13 +145,34 @@ bool InstallerUpdate::run()
     return false;
 }
 
-bool InstallerUpdate::finish(const QString &oldpath)
+bool InstallerUpdate::finish(const QStringList &args, int startIndex)
 {
-    // let old installer enough time to shut down. There may be a better way to detect the process end
-    Sleep(5000);
-    qDebug() << oldpath;
-    if (!oldpath.isEmpty())
-        return QFile::remove (oldpath);
+    QString oldPath = args.at(startIndex);
+    int oldPid = args.at(startIndex+1).toInt();
+
+    int interval = 500;
+    int oneSec = 1000;
+    int maxSecs = 10;
+    if (oldPid) 
+    {
+        for (int i=maxSecs*oneSec/interval; i > 0; i++)
+        {
+            if (!isProcessRunning(oldPid))
+            {
+                qDebug() << "process" << oldPid << "is terminated";
+                break;
+            }
+            Sleep(interval);
+        }
+    }
+    else 
+       qDebug() << "no process id given";
+
+    if (!oldPath.isEmpty())
+    {
+        qDebug() << "removing old installer executable" << oldPath;
+        return QFile::remove (oldPath);
+    }
     return true;
 }
 

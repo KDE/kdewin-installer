@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
         QString param = QApplication::arguments().at(1);
         if (param.startsWith("--finish-update"))
         {
-            InstallerUpdate::instance().finish(QApplication::arguments().at(2));
+            InstallerUpdate::instance().finish(QApplication::arguments(),2);
         }
         else if (param.startsWith("file:") || param.startsWith("http:") || param.startsWith("ftp:"))
             InstallerEngine::defaultConfigURL = param;
