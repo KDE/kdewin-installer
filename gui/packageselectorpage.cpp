@@ -243,8 +243,20 @@ void PackageSelectorPage::setWidgetData( QString categoryName )
     labels
     << tr ( "Package" )
     << tr ( "Available" )
-    << tr ( "Installed" )
-    << tr ( "Bin/Devel/Doc" ) 
+    << tr ( "Installed" );
+    if (installMode == InstallerEngineGui::Single)
+    {
+        labels 
+        << tr ( "Bin" ) 
+        << tr ( "Devel" ) 
+        << tr ( "Doc" );
+    }
+    else if (installMode == InstallerEngineGui::Developer)
+    {
+        labels
+        << tr ( "Bin/Devel/Doc" );
+    }
+    labels 
     << tr ( "Src" )
     << tr ( "Package notes" )
     ;
@@ -423,7 +435,7 @@ void PackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
     if ( column < BINColumn )
         return;
 
-    if ( column == BINColumn || column == SRCColumn )
+    if ( column == BINColumn || column == LIBColumn || column == DOCColumn || column == SRCColumn )
     {
 #if 0
         if (!checkRemoveDependencies(installedPackage))

@@ -471,7 +471,7 @@ InstallerEngineGui::InstallerEngineGui (QWidget *parent)
 
 bool InstallerEngineGui::init()
 {
-    m_installMode = Settings::instance().isPackageManagerMode() ? Developer : BinaryOnly;
+    m_installMode = Settings::instance().isPackageManagerMode() ? Single : BinaryOnly;
 
     initGlobalConfig();
     if (m_globalConfig->installerUpdate().isUpdateAvailable()) {

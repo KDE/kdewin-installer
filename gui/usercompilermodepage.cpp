@@ -54,17 +54,6 @@ void UserCompilerModePage::initializePage()
     ui.installModeEndUser->setChecked(!s.isPackageManagerMode() ? Qt::Checked : Qt::Unchecked);
     ui.installModePackageManager->setChecked(s.isPackageManagerMode() ? Qt::Checked : Qt::Unchecked);
     
-    if (Database::isAnyPackageInstalled(s.installDir()))
-    {
-        ui.installModePackageManager->setEnabled(false);
-        ui.installModeEndUser->setEnabled(false);
-    }
-    else
-    {
-        ui.installModePackageManager->setEnabled(true);
-        ui.installModeEndUser->setEnabled(true);
-    }
-
     if (s.isPackageManagerMode())
         ui.installModePackageManager->setChecked(true);
     else
