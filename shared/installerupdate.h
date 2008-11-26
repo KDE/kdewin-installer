@@ -47,6 +47,10 @@ class InstallerUpdate
 
         /// run new installer 
         bool run();
+
+        /// finish update - delete old installer executable
+        static bool finish(const QString &oldpath);
+
         /// return singleton instance
         static InstallerUpdate &instance();
     protected:
@@ -54,6 +58,7 @@ class InstallerUpdate
         QString m_newVersion;
         QString m_currentVersion;
         QString m_localFilePath;
+        QString m_currentInstallerFilePath;
     friend QDebug &operator<<(QDebug &out, const InstallerUpdate &c);
 };
 

@@ -21,6 +21,7 @@
 **
 ****************************************************************************/
 
+#include "debug.h"
 #include "downloader.h"
 #include "downloaderprogress.h"
 #include "InstallerUpdate.h"
@@ -71,6 +72,7 @@ void InstallerUpdate::setUrl(const QUrl &url)
     char installerExePath[MAX_PATH+1];
     GetModuleFileNameA(NULL, installerExePath, MAX_PATH);
     QFileInfo pi(installerExePath); 
+    m_currentInstallerFilePath = installerExePath;
     QFileInfo fi(m_url.path()); 
     m_localFilePath = pi.absolutePath() + "/" + fi.fileName();
 }
@@ -109,12 +111,22 @@ bool InstallerUpdate::run()
 {
     if (m_url.isValid())
     {
-        // let new installer wait some second before processing until recent installer is down 
-        QProcess::startDetached(m_localFilePath,QStringList() << "-w" << "5");
+        QProcess::startDetached(m_localFilePath,QStringList() << "--finish-update" << m_currentInstallerFilePath);
         QCoreApplication::quit();
-        return true;
+        exit(0);
+		// never reached;
     }
     return false;
+}
+
+bool InstallerUpdate::finish(const QString &oldpath)
+{
+    // let old installer enough time to shut down. There may be a better way to detect the process end
+    Sleep(5000);
+    qDebug() << oldpath;
+    if (!oldpath.isEmpty())
+        return QFile::remove (oldpath);
+    return true;
 }
 
 InstallerUpdate &InstallerUpdate::instance()
@@ -129,6 +141,7 @@ QDebug &operator<<(QDebug &out, const InstallerUpdate &c)
         << "m_url:" << c.m_url
         << "m_newVersion:" << c.m_newVersion
         << "m_currentVersion:" << c.m_currentVersion
+        << "m_installerExePath:" << c.m_currentVersion
         << ")";
     return out;
 }

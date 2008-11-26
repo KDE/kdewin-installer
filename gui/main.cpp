@@ -23,12 +23,11 @@
 
 #include "installwizard.h"
 #include "installerengine.h"
+#include "installerupdate.h"
 #include "debug.h"
 
 #include <QApplication>
 #include <QPlastiqueStyle>
-
-#include <windows.h>
 
 int main(int argc, char *argv[])
 {
@@ -38,13 +37,11 @@ int main(int argc, char *argv[])
     if(argc > 1) 
     {
         QString param = QApplication::arguments().at(1);
-        if (param.startsWith("-w"))
+        if (param.startsWith("--finish-update"))
         {
-            int delay = QApplication::arguments().at(2).toInt();
-            if (delay > 0)
-                Sleep(delay*1000);
+            InstallerUpdate::instance().finish(QApplication::arguments().at(2));
         }
-        if (param.startsWith("file:") || param.startsWith("http:") || param.startsWith("ftp:"))
+        else if (param.startsWith("file:") || param.startsWith("http:") || param.startsWith("ftp:"))
             InstallerEngine::defaultConfigURL = param;
 
         // setup local install mode 
