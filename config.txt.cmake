@@ -393,7 +393,7 @@
 @relocate ^ bin/
 @nomd5
 
-@package Process Explorer
+@package procexp
 @category debug-tools
 @version 11.04
 @notes Process Explorer
