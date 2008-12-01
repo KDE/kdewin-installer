@@ -19,8 +19,8 @@
 @categorypackages kdesupport kdewin32-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw phonon-mingw fontconfig-mingw freetype-mingw poppler-mingw automoc-mingw digikam-support-mingw
 @categorypackages KDE amarok-msvc  digikam-msvc  kdelibs-msvc  kdepimlibs-msvc  kdepim-msvc  kdebase-apps-msvc  kdebase-runtime-msvc  kdebase-workspace-msvc  kdeedu-msvc  kdegames-msvc  kdegraphics-msvc  kdenetwork-msvc  kdesdk-msvc  kdewebdev-msvc  kdeutils-msvc  kdeplasma-addons-msvc  kipi-plugins-msvc
 @categorypackages KDE amarok-mingw digikam-mingw kdelibs-mingw kdepimlibs-mingw kdepim-mingw kdebase-apps-mingw kdebase-runtime-mingw kdebase-workspace-mingw kdeedu-mingw kdegames-mingw kdegraphics-mingw kdenetwork-mingw kdesdk-mingw kdewebdev-mingw kdeutils-mingw kdeplasma-addons-mingw kipi-plugins-mingw
-@categorypackages KDE koffice-msvc  ktorrent-msvc
-@categorypackages KDE koffice-mingw ktorrent-mingw
+@categorypackages KDE koffice-msvc  ktorrent-msvc  kile-msvc
+@categorypackages KDE koffice-mingw ktorrent-mingw kile-mingw
 @categorypackages qt qt-msvc qt-mingw qt-static-msvc
 @categorypackages KDE kde-l10n-af kde-l10n-ar kde-l10n-be kde-l10n-bg kde-l10n-bn kde-l10n-bn_IN kde-l10n-br kde-l10n-ca kde-l10n-cs kde-l10n-csb kde-l10n-cy kde-l10n-da kde-l10n-de kde-l10n-el kde-l10n-en_GB 
 @categorypackages KDE kde-l10n-eo kde-l10n-es kde-l10n-et kde-l10n-eu kde-l10n-fa kde-l10n-fi kde-l10n-fr kde-l10n-fy kde-l10n-ga kde-l10n-gl kde-l10n-gu kde-l10n-ha kde-l10n-he kde-l10n-hi kde-l10n-hr kde-l10n-hsb 
@@ -68,6 +68,7 @@
 @deps kdewebdev-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps kdewin-installer-mingw qt-mingw
 @deps kdewin32-mingw qt-mingw
+@deps kile-mingw kdesdk-mingw
 @deps kipi-plugins-mingw digikam-support-mingw
 @deps koffice-mingw kdebase-runtime-mingw kdelibs-mingw lcms
 @deps ktorrent-mingw libgmp-mingw kdelibs-mingw qca-mingw
@@ -100,6 +101,7 @@
 @deps kdewebdev-msvc kdebase-runtime-msvc kdelibs-msvc
 @deps kdewin-installer-msvc qt-msvc
 @deps kdewin32-msvc qt-msvc
+@deps kile-msvc kdesdk-msvc
 @deps kipi-plugins-msvc digikam-support-msvc
 @deps koffice-msvc kdebase-runtime-msvc kdelibs-msvc lcms
 @deps ktorrent-msvc libgmp-msvc kdelibs-msvc qca-msvc
@@ -133,6 +135,7 @@
 @pkgnotes kdeutils-mingw various desktop utilities (KGpg, Okteta)
 @pkgnotes kdewebdev-mingw KDE Web Development applications
 @pkgnotes kdewin32-mingw kde supplementary package for win32
+@pkgnotes kile-mingw UNSTABLE latex editor
 @pkgnotes koffice-mingw UNSTABLE KDE Office application suite
 @pkgnotes ktorrent-mingw UNSTABLE KDE Torrent client
 @pkgnotes libgmp-mingw devel-tools GNU MP library for abritary precision arithmetic
@@ -170,6 +173,7 @@
 @pkgnotes kdeutils-msvc various desktop utilities (KGpg, Okteta)
 @pkgnotes kdewebdev-msvc KDE Web Development applications
 @pkgnotes kdewin32-msvc kde supplementary package for win32
+@pkgnotes kile-msvc UNSTABLE latex editor
 @pkgnotes koffice-msvc UNSTABLE KDE Office application suite
 @pkgnotes ktorrent-msvc UNSTABLE KDE Torrent client
 @pkgnotes libgmp-msvc devel-tools GNU MP library for abritary precision arithmetic
