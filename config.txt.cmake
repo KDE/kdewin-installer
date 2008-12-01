@@ -116,6 +116,7 @@
 @pkgnotes akonadi-mingw KDE4 Personal Information Manager framework
 @pkgnotes amarok-mingw UNSTABLE media player
 @pkgnotes automoc-mingw build system application
+@pkgnotes digikam-mingw UNSTABLE a photo management application
 @pkgnotes exiv2-mingw an image metadata library
 @pkgnotes fontconfig-mingw library for font customization and configuration
 @pkgnotes freetype-mingw A Free, High-Quality, and Portable Font Engine
@@ -136,6 +137,7 @@
 @pkgnotes kdewebdev-mingw KDE Web Development applications
 @pkgnotes kdewin32-mingw kde supplementary package for win32
 @pkgnotes kile-mingw UNSTABLE latex editor
+@pkgnotes kipi-plugins-mingw UNSTABLE plugins for graphics applications
 @pkgnotes koffice-mingw UNSTABLE KDE Office application suite
 @pkgnotes ktorrent-mingw UNSTABLE KDE Torrent client
 @pkgnotes libgmp-mingw devel-tools GNU MP library for abritary precision arithmetic
@@ -154,6 +156,7 @@
 @pkgnotes akonadi-msvc KDE4 Personal Information Manager framework
 @pkgnotes amarok-msvc UNSTABLE media player
 @pkgnotes automoc-msvc build system application
+@pkgnotes digikam-msvc UNSTABLE a photo management application
 @pkgnotes exiv2-msvc an image metadata library
 @pkgnotes fontconfig-msvc library for font customization and configuration
 @pkgnotes freetype-msvc A Free, High-Quality, and Portable Font Engine
@@ -174,6 +177,7 @@
 @pkgnotes kdewebdev-msvc KDE Web Development applications
 @pkgnotes kdewin32-msvc kde supplementary package for win32
 @pkgnotes kile-msvc UNSTABLE latex editor
+@pkgnotes kipi-plugins-msvc UNSTABLE plugins for graphics applications
 @pkgnotes koffice-msvc UNSTABLE KDE Office application suite
 @pkgnotes ktorrent-msvc UNSTABLE KDE Torrent client
 @pkgnotes libgmp-msvc devel-tools GNU MP library for abritary precision arithmetic
