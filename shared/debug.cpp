@@ -113,3 +113,12 @@ void setMessageHandler()
 
     qInstallMsgHandler(myMessageOutput);
 }
+
+void closeMessageHandler()
+{
+    if (logFile)
+    {
+        qDebug() << "closed log file";
+        logFile->close();
+    }
+}

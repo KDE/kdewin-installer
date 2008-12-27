@@ -40,6 +40,7 @@ QDebug _qFatal(const char *file, int line);
 #define qFatal() _qFatal(__FILE__,__LINE__)
 
 void setMessageHandler();
+void closeMessageHandler();
 
 
 #endif
