@@ -21,17 +21,30 @@
 **
 ****************************************************************************/
 
+#include "config.h"
 #include "installwizard.h"
 #include "installerengine.h"
 #include "installerupdate.h"
 #include "debug.h"
+#include "misc.h"
 
 #include <QApplication>
+#include <QLocale>
 #include <QPlastiqueStyle>
+#include <QTranslator>
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+
+#ifdef BUILD_TRANSLATIONS
+    QTranslator translator;
+    QString lang = QLocale::system().name().left(2);
+    QString qmFile = exePath() + "/installer-gui-" + lang  + ".qm"; 
+    bool result = translator.load(qmFile);
+    qDebug() << "loading translations from" << qmFile << (result ? "okay" : "failed");    
+    app.installTranslator(&translator);
+#endif
 
     // check if download url is given on command line
     if(argc > 1) 

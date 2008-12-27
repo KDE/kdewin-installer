@@ -324,3 +324,11 @@ QByteArray md5Hash(const QString &file)
       return QByteArray();
     return md5Hash(f);
 }
+
+QString exePath()
+{
+    char installerExePath[MAX_PATH+1];
+    GetModuleFileNameA(NULL, installerExePath, MAX_PATH);
+    QFileInfo pi(installerExePath); 
+    return pi.absolutePath();
+}

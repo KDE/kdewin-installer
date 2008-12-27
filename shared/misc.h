@@ -75,4 +75,7 @@ QByteArray md5Hash(const QString &file);
 /// return windows start menu path
 QString getStartMenuPath(bool bAllUsers);
 
+/// return path of executable
+QString exePath();
+
 #endif

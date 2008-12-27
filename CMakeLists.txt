@@ -42,13 +42,14 @@ find_package(WinSCP)
 if(COMMAND cmake_policy)
     cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
-	      
+          
 OPTION(SEVENZIP_UNPACK_SUPPORT "Enable 7-zip unpacking support" OFF)
 OPTION(BZIP2_UNPACK_SUPPORT "Enable tar.bz2 unpacking support" ON)
 # todo detect static qt library automatically
 OPTION(STATIC_BUILD "enable static build support" ON)
 OPTION(INSTALL_SYSTEM_LIBS "install required system libraries too (only in shared mode)" OFF)
 OPTION(BUILD_TESTS "build test applications " ON)
+OPTION(BUILD_TRANSLATIONS "build translations" OFF)
 
 ENABLE_TESTING()
 
@@ -182,10 +183,54 @@ else(UNIX)
   # when qt 4.4 is build with directx support dxguid is required 
   # how to detect that qt 4.4 is build with directx ? 
   if (QT_VERSION_MAJOR EQUAL 4 AND QT_VERSION_MINOR GREATER 3) 
-	  list(APPEND GUI_LIBS dxguid)
+      list(APPEND GUI_LIBS dxguid)
   endif (QT_VERSION_MAJOR EQUAL 4 AND QT_VERSION_MINOR GREATER 3) 
 endif (UNIX)
 
+if (BUILD_TRANSLATIONS)
+    # copied from cmake Modules dir because the original one does not support the _target_dir parameter
+    MACRO(QT4_CREATE_TRANSLATION _qm_files  _target_dir)
+      SET(_my_sources)
+      SET(_my_tsfiles)
+      FOREACH (_file ${ARGN})
+         GET_FILENAME_COMPONENT(_ext ${_file} EXT)
+         GET_FILENAME_COMPONENT(_abs_FILE ${_file} ABSOLUTE)
+         IF(_ext MATCHES "ts")
+           LIST(APPEND _my_tsfiles ${_abs_FILE})
+         ELSE(_ext MATCHES "ts")
+              LIST(APPEND _my_sources ${_abs_FILE})
+         ENDIF(_ext MATCHES "ts")
+      ENDFOREACH(_file)
+      FOREACH(_ts_file ${_my_tsfiles})
+        ADD_CUSTOM_COMMAND(OUTPUT ${_ts_file}
+           COMMAND ${QT_LUPDATE_EXECUTABLE}
+           ARGS ${_my_sources} -ts ${_ts_file}
+           DEPENDS ${_my_sources}
+           COMMENT "updating ${_ts_file}"
+       )
+      ENDFOREACH(_ts_file)
+      QT4_ADD_TRANSLATION(${_qm_files} ${_target_dir} ${_my_tsfiles})
+    ENDMACRO(QT4_CREATE_TRANSLATION)
+
+    MACRO(QT4_ADD_TRANSLATION _qm_files _target_dir)
+      IF(_target_dir STREQUAL "")
+         SET(_target_dir ${CMAKE_CURRENT_BINARY_DIR})
+      ENDIF(_target_dir STREQUAL "")
+      FOREACH (_current_FILE ${ARGN})
+         GET_FILENAME_COMPONENT(_abs_FILE ${_current_FILE} ABSOLUTE)
+         GET_FILENAME_COMPONENT(qm ${_abs_FILE} NAME_WE)
+         SET(qm "${_target_dir}/${qm}.qm")
+
+         ADD_CUSTOM_COMMAND(OUTPUT ${qm}
+            COMMAND ${QT_LRELEASE_EXECUTABLE}
+            ARGS ${_abs_FILE} -qm ${qm}
+            DEPENDS ${_abs_FILE}
+           COMMENT "creating ${qm}"
+         )
+         SET(${_qm_files} ${${_qm_files}} ${qm})
+      ENDFOREACH (_current_FILE)
+    ENDMACRO(QT4_ADD_TRANSLATION)
+endif(BUILD_TRANSLATIONS)
 
 macro (pack_target _target)
     if (PACK_EXECUTABLE)
