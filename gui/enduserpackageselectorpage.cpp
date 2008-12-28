@@ -56,10 +56,10 @@ EndUserPackageSelectorPage::EndUserPackageSelectorPage()  : InstallWizardPage(0)
         );
     else
         setSubTitle(statusTip());
-    categories = "KDE";
+    
 }
 
-void EndUserPackageSelectorPage::setWidgetData(QString categoryPattern)
+void EndUserPackageSelectorPage::setWidgetData()
 {
     QTreeWidget *tree = ui.packageList;
     tree->clear();
@@ -89,7 +89,7 @@ void EndUserPackageSelectorPage::setWidgetData(QString categoryPattern)
     Q_FOREACH(QString category, categoryCache.categories())
     {
         QStringList a = category.split(":");
-        if (a[0].startsWith(categoryPattern))
+        if (activeCategories.contains(a[0]))
             selectedCategories << a[0];
     }
 
@@ -160,7 +160,8 @@ void EndUserPackageSelectorPage::initializePage()
     connect(ui.packageList,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
     connect(&Settings::instance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
     connect(&Settings::instance(),SIGNAL(compilerTypeChanged()),this,SLOT(slotCompilerTypeChanged()));
-    setWidgetData(categories);
+    activeCategories = engine->globalConfig()->endUserCategories().size() > 0 ? engine->globalConfig()->endUserCategories() : QStringList() << "KDE";
+    setWidgetData();
     // @TODO remove
     if (ui.packageList->topLevelItemCount() == 0) {
         // no items skip page
@@ -190,12 +191,13 @@ void EndUserPackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
 void EndUserPackageSelectorPage::installDirChanged(const QString &dir)
 {
     engine->reload();
-    setWidgetData(categories);
+    activeCategories = engine->globalConfig()->endUserCategories().size() > 0 ? engine->globalConfig()->endUserCategories() : QStringList() << "KDE";
+    setWidgetData();
 }
 
 void EndUserPackageSelectorPage::slotCompilerTypeChanged()
 {
-    setWidgetData(categories);
+    setWidgetData();
 }
 
 bool EndUserPackageSelectorPage::validatePage()

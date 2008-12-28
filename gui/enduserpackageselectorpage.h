@@ -42,7 +42,7 @@ public:
     void cleanupPage();
 
 protected:
-    void setWidgetData(QString categoryName=QString());
+    void setWidgetData();
 
 public slots:
     void itemClicked(QTreeWidgetItem *item, int column);
@@ -52,7 +52,7 @@ public slots:
 
 private:
     Ui::EndUserPackageSelectorPage ui;
-    QString categories;
+    QStringList activeCategories;
 };
 
 #endif

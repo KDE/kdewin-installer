@@ -66,6 +66,9 @@ class GlobalConfig {
         /// return package orientated news
         QHash<QString, QString> *news() { return &m_news; }
 
+        /// return category displayed in enduser mode
+        QStringList &endUserCategories() { return m_endUserCategories; }
+
         QDateTime &timeStamp() { return m_timestamp; }
         void clear(); 
         /// return version of required installer
@@ -96,6 +99,7 @@ class GlobalConfig {
         InstallerUpdate m_installerUpdate;
         QDateTime m_timestamp;
         QByteArray m_minimalInstallerVersion;
+        QStringList m_endUserCategories;
     Q_DISABLE_COPY(GlobalConfig)
 
     friend QDebug operator<<(QDebug, const GlobalConfig &);

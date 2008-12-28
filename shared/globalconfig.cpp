@@ -248,6 +248,11 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 cmd.removeFirst();
                 m_categoryPackages[category] << cmd;
             }
+            else if (keyword == "endusercategories")
+            {
+                cmd.removeFirst();
+                m_endUserCategories << cmd;
+            }
             else if(inPackage)
             {
                 if(keyword == "version")
@@ -479,6 +484,8 @@ void GlobalConfig::clear()
 
     qDeleteAll(m_packages);
     m_packages.clear();
+    
+    m_endUserCategories.clear();
 }
 
 
