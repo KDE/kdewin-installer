@@ -191,16 +191,17 @@ bool TarFilter::Private::addHeader(const FileInformations &infos)
 bool TarFilter::Private::tph2fi(FileInformations &infos)
 {
   Private::tar_posix_header hdr;
-  int iBytesRead = device->read((char*)&hdr, sizeof(hdr));
-  if(iBytesRead != sizeof(hdr)) {
-    if(iBytesRead == 0 && device->atEnd()) {
-      lastError = QString();
+  do {
+    int iBytesRead = device->read((char*)&hdr, sizeof(hdr));
+    if(iBytesRead != sizeof(hdr)) {
+      if(iBytesRead == 0 && device->atEnd()) {
+        lastError = QString();
+        return false;
+      }
+      lastError = QString(QLatin1String("Error reading from QIODevice! needed: %1, got: %2")).arg(sizeof(hdr)).arg(iBytesRead);
       return false;
     }
-    lastError = QString(QLatin1String("Error reading from QIODevice! needed: %1, got: %2")).arg(sizeof(hdr)).arg(iBytesRead);
-    return false;
-  }
-
+  } while ( memcmp(hdr.magic, "\0\0\0\0\0\0", sizeof(hdr.magic)) == 0 );
   if(memcmp(hdr.magic, "ustar  ", sizeof(hdr.magic))) {
     lastError = QLatin1String("The archive is not supported");
     return false;
