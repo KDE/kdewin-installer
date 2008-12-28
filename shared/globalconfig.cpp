@@ -183,15 +183,15 @@ bool GlobalConfig::parse(QIODevice *ioDev)
             }
             continue;
         }
-		else
+        else
         {
             QStringList cmd = QString::fromUtf8(line).split(' ');
-			const QList<QByteArray> cmdBA = line.split(' ');
-			QString keyword;
-			if (cmd[0].startsWith('@'))
-				keyword = cmd[0].mid(1).toAscii();
-			else
-				continue;
+            const QList<QByteArray> cmdBA = line.split(' ');
+            QString keyword;
+            if (cmd[0].startsWith('@'))
+                keyword = cmd[0].mid(1).toAscii();
+            else
+                continue;
            
             QString col2;
             if (cmd.size() == 3)
