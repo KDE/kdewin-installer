@@ -47,6 +47,7 @@ set(curl_SOURCES
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/connect.c
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/content_encoding.c
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/cookie.c
+    ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/curl_addrinfo.c
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/dict.c
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/easy.c
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/escape.c
@@ -85,6 +86,7 @@ set(curl_SOURCES
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/parsedate.c
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/progress.c
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/qssl.c
+    ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/rawstr.c
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/security.c
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/select.c
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/sendf.c
