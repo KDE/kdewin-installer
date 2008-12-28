@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hostip4.c,v 1.43 2008-07-09 18:39:49 bagder Exp $
+ * $Id: hostip4.c,v 1.47 2008-11-06 17:19:57 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -53,10 +53,6 @@
 #include <stdlib.h>
 #endif
 
-#ifdef HAVE_SETJMP_H
-#include <setjmp.h>
-#endif
-
 #ifdef HAVE_PROCESS_H
 #include <process.h>
 #endif
@@ -72,10 +68,6 @@
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
-
-#if defined(HAVE_INET_NTOA_R) && !defined(HAVE_INET_NTOA_R_DECL)
-#include "inet_ntoa_r.h"
-#endif
 
 #include "memory.h"
 /* The last #include file should be: */
@@ -126,20 +118,18 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
 #endif
   Curl_addrinfo *ai = NULL;
   struct hostent *h = NULL;
-  in_addr_t in;
+  struct in_addr in;
   struct hostent *buf = NULL;
 
 #ifdef CURL_DISABLE_VERBOSE_STRINGS
   (void)conn;
 #endif
 
-  (void)port; /* unused in IPv4 code */
-
   *waitp = 0; /* don't wait, we act synchronously */
 
-  if(1 == Curl_inet_pton(AF_INET, hostname, &in))
+  if(Curl_inet_pton(AF_INET, hostname, &in) > 0)
     /* This is a dotted IP address 123.123.123.123-style */
-    return Curl_ip2addr(in, hostname, port);
+    return Curl_ip2addr(AF_INET, &in, hostname, port);
 
 #if defined(HAVE_GETHOSTBYNAME_R)
   /*
@@ -150,7 +140,7 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
   else {
     int h_errnop;
 
-    buf = (struct hostent *)calloc(CURL_HOSTENT_SIZE, 1);
+    buf = calloc(CURL_HOSTENT_SIZE, 1);
     if(!buf)
       return NULL; /* major failure */
     /*

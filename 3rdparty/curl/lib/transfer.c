@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: transfer.c,v 1.405 2008-08-29 10:47:59 bagder Exp $
+ * $Id: transfer.c,v 1.421 2008-10-29 19:06:48 danf Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -33,6 +33,7 @@
 
 #include "strtoofft.h"
 #include "strequal.h"
+#include "rawstr.h"
 
 #ifdef WIN32
 #include <time.h>
@@ -110,11 +111,13 @@
 #define CURL_TIMEOUT_EXPECT_100 1000 /* counting ms here */
 
 
-static CURLcode readwrite_headers(struct SessionHandle *data,
-                                  struct connectdata *conn,
-                                  struct SingleRequest *k,
-                                  ssize_t *nread,
-                                  bool *stop_reading);
+#ifndef CURL_DISABLE_HTTP
+static CURLcode readwrite_http_headers(struct SessionHandle *data,
+                                       struct connectdata *conn,
+                                       struct SingleRequest *k,
+                                       ssize_t *nread,
+                                       bool *stop_reading);
+#endif /* CURL_DISABLE_HTTP */
 
 /*
  * This function will call the read callback to fill our buffer with data
@@ -129,7 +132,7 @@ CURLcode Curl_fillreadbuffer(struct connectdata *conn, int bytes, int *nreadp)
   if(data->req.upload_chunky) {
     /* if chunked Transfer-Encoding */
     buffersize -= (8 + 2 + 2);   /* 32bit hex + CRLF + CRLF */
-    data->req.upload_fromhere += 10; /* 32bit hex + CRLF */
+    data->req.upload_fromhere += (8 + 2); /* 32bit hex + CRLF */
   }
 
   /* this function returns a size_t, so we typecast to int to prevent warnings
@@ -146,12 +149,17 @@ CURLcode Curl_fillreadbuffer(struct connectdata *conn, int bytes, int *nreadp)
     struct SingleRequest *k = &data->req;
     /* CURL_READFUNC_PAUSE pauses read callbacks that feed socket writes */
     k->keepon |= KEEP_WRITE_PAUSE; /* mark socket send as paused */
+    if(data->req.upload_chunky) {
+      /* Back out the preallocation done above */
+      data->req.upload_fromhere -= (8 + 2);
+    }
     *nreadp = 0;
     return CURLE_OK; /* nothing was read */
   }
   else if((size_t)nread > buffersize) {
     /* the read function returned a too large value */
     *nreadp = 0;
+    failf(data, "read function returned funny value");
     return CURLE_READ_ERROR;
   }
 
@@ -164,7 +172,7 @@ CURLcode Curl_fillreadbuffer(struct connectdata *conn, int bytes, int *nreadp)
     data->req.upload_fromhere -= hexlen;
     nread += hexlen;
 
-    /* copy the prefix to the buffer */
+    /* copy the prefix to the buffer, leaving out the NUL */
     memcpy(data->req.upload_fromhere, hexbuffer, hexlen);
 
     /* always append CRLF to the data */
@@ -194,6 +202,7 @@ CURLcode Curl_fillreadbuffer(struct connectdata *conn, int bytes, int *nreadp)
   return CURLE_OK;
 }
 
+#ifndef CURL_DISABLE_HTTP
 /*
  * checkhttpprefix()
  *
@@ -238,6 +247,7 @@ checkhttpprefix(struct SessionHandle *data,
 #endif /* CURL_DOES_CONVERSIONS */
   return rc;
 }
+#endif   /* CURL_DISABLE_HTTP */
 
 /*
  * Curl_readrewind() rewinds the read stream. This is typically used for HTTP
@@ -357,6 +367,8 @@ static CURLcode readwrite_data(struct SessionHandle *data,
   ssize_t nread; /* number of bytes read */
   bool is_empty_data = FALSE;
 
+  *done = FALSE;
+
   /* This is where we loop until we have read everything there is to
      read or we get a EWOULDBLOCK */
   do {
@@ -421,18 +433,20 @@ static CURLcode readwrite_data(struct SessionHandle *data,
        in the flow below before the actual storing is done. */
     k->str = k->buf;
 
+#ifndef CURL_DISABLE_HTTP
     /* Since this is a two-state thing, we check if we are parsing
        headers at the moment or not. */
     if(k->header) {
       /* we are in parse-the-header-mode */
       bool stop_reading = FALSE;
-      result = readwrite_headers(data, conn, k, &nread, &stop_reading);
+      result = readwrite_http_headers(data, conn, k, &nread, &stop_reading);
       if(result)
 	return result;
       if(stop_reading)
 	/* We've stopped dealing with input, get out of the do-while loop */
 	break;
     }
+#endif /* CURL_DISABLE_HTTP */
 
 
     /* This is not an 'else if' since it may be a rest from the header
@@ -440,6 +454,7 @@ static CURLcode readwrite_data(struct SessionHandle *data,
        is non-headers. */
     if(k->str && !k->header && (nread > 0 || is_empty_data)) {
 
+#ifndef CURL_DISABLE_HTTP
       if(0 == k->bodywrites && !is_empty_data) {
 	/* These checks are only made the first time we are about to
 	   write a piece of the body */
@@ -501,6 +516,7 @@ static CURLcode readwrite_data(struct SessionHandle *data,
 
 	} /* this is HTTP */
       } /* this is the first time we write a body part */
+#endif /* CURL_DISABLE_HTTP */
       k->bodywrites++;
 
       /* pass data to the debug function before it gets "dechunked" */
@@ -658,9 +674,9 @@ static CURLcode readwrite_data(struct SessionHandle *data,
 
   if(((k->keepon & (KEEP_READ|KEEP_WRITE)) == KEEP_WRITE) &&
      conn->bits.close ) {
-    /* When we've read the entire thing and the close bit is set, the server may
-       now close the connection. If there's now any kind of sending going on from
-       our side, we need to stop that immediately. */
+    /* When we've read the entire thing and the close bit is set, the server
+       may now close the connection. If there's now any kind of sending going
+       on from our side, we need to stop that immediately. */
     infof(data, "we are done reading and this is set to close, stop send\n");
     k->keepon &= ~KEEP_WRITE; /* no writing anymore either */
   }
@@ -668,14 +684,15 @@ static CURLcode readwrite_data(struct SessionHandle *data,
   return CURLE_OK;
 }
 
+#ifndef CURL_DISABLE_HTTP
 /*
- * Read any header lines from the server and pass them to the client app.
+ * Read any HTTP header lines from the server and pass them to the client app.
  */
-static CURLcode readwrite_headers(struct SessionHandle *data,
-                                  struct connectdata *conn,
-                                  struct SingleRequest *k,
-                                  ssize_t *nread,
-                                  bool *stop_reading)
+static CURLcode readwrite_http_headers(struct SessionHandle *data,
+                                       struct connectdata *conn,
+                                       struct SingleRequest *k,
+                                       ssize_t *nread,
+                                       bool *stop_reading)
 {
   CURLcode result;
 
@@ -702,7 +719,7 @@ static CURLcode readwrite_headers(struct SessionHandle *data,
 	size_t newsize=CURLMAX((k->hbuflen+*nread)*3/2,
 			       data->state.headersize*2);
 	hbufp_index = k->hbufp - data->state.headerbuff;
-	newbuff = (char *)realloc(data->state.headerbuff, newsize);
+	newbuff = realloc(data->state.headerbuff, newsize);
 	if(!newbuff) {
 	  failf (data, "Failed to alloc memory for big header!");
 	  return CURLE_OUT_OF_MEMORY;
@@ -747,7 +764,7 @@ static CURLcode readwrite_headers(struct SessionHandle *data,
       size_t newsize=CURLMAX((k->hbuflen+full_length)*3/2,
 			     data->state.headersize*2);
       hbufp_index = k->hbufp - data->state.headerbuff;
-      newbuff = (char *)realloc(data->state.headerbuff, newsize);
+      newbuff = realloc(data->state.headerbuff, newsize);
       if(!newbuff) {
 	failf (data, "Failed to alloc memory for big header!");
 	return CURLE_OUT_OF_MEMORY;
@@ -810,7 +827,6 @@ static CURLcode readwrite_headers(struct SessionHandle *data,
 	k->p++; /* pass the \n byte */
 #endif /* CURL_DOES_CONVERSIONS */
 
-#ifndef CURL_DISABLE_HTTP
       if(100 <= k->httpcode && 199 >= k->httpcode) {
 	/*
 	 * We have made a HTTP PUT or POST and this is 1.1-lingo
@@ -832,7 +848,7 @@ static CURLcode readwrite_headers(struct SessionHandle *data,
 	k->header = FALSE; /* no more header to parse! */
 
 	if((k->size == -1) && !k->chunk && !conn->bits.close &&
-	   (k->httpversion >= 11) ) {
+	   (conn->httpversion >= 11) ) {
 	  /* On HTTP 1.1, when connection is not to get closed, but no
 	     Content-Length nor Content-Encoding chunked have been
 	     received, according to RFC2616 section 4.4 point 5, we
@@ -864,7 +880,6 @@ static CURLcode readwrite_headers(struct SessionHandle *data,
 	       k->httpcode);
 	return CURLE_HTTP_RETURNED_ERROR;
       }
-#endif   /* CURL_DISABLE_HTTP */
 
       /* now, only output this if the header AND body are requested:
        */
@@ -893,7 +908,6 @@ static CURLcode readwrite_headers(struct SessionHandle *data,
 	*stop_reading = TRUE;
       }
 
-#ifndef CURL_DISABLE_HTTP
       if(!*stop_reading) {
 	/* Curl_http_auth_act() checks what authentication methods
 	 * that are available and decides which one (if any) to
@@ -910,7 +924,6 @@ static CURLcode readwrite_headers(struct SessionHandle *data,
 	  k->keepon |= KEEP_WRITE;
 	}
       }
-#endif   /* CURL_DISABLE_HTTP */
 
       if(!k->header) {
 	/*
@@ -970,7 +983,6 @@ static CURLcode readwrite_headers(struct SessionHandle *data,
       continue;
     }
 
-#ifndef CURL_DISABLE_HTTP
     /*
      * Checks for special headers coming up.
      */
@@ -1006,17 +1018,17 @@ static CURLcode readwrite_headers(struct SessionHandle *data,
       nc = sscanf(HEADER1,
 		  " HTTP/%d.%d %3d",
 		  &httpversion_major,
-		  &k->httpversion,
+		  &conn->httpversion,
 		  &k->httpcode);
       if(nc==3) {
-	k->httpversion += 10 * httpversion_major;
+	conn->httpversion += 10 * httpversion_major;
       }
       else {
 	/* this is the real world, not a Nirvana
 	   NCSA 1.5.x returns this crap when asked for HTTP/1.1
 	*/
 	nc=sscanf(HEADER1, " HTTP %3d", &k->httpcode);
-	k->httpversion = 10;
+	conn->httpversion = 10;
 
 	/* If user has set option HTTP200ALIASES,
 	   compare header line against list of aliases
@@ -1025,14 +1037,18 @@ static CURLcode readwrite_headers(struct SessionHandle *data,
 	  if(checkhttpprefix(data, k->p)) {
 	    nc = 1;
 	    k->httpcode = 200;
-	    k->httpversion = 10;
+	    conn->httpversion = 10;
 	  }
 	}
       }
 
       if(nc) {
 	data->info.httpcode = k->httpcode;
-	data->info.httpversion = k->httpversion;
+	data->info.httpversion = conn->httpversion;
+        if (!data->state.httpversion ||
+            data->state.httpversion > conn->httpversion)
+          /* store the lowest server version we encounter */
+          data->state.httpversion = conn->httpversion;
 
 	/*
 	 * This code executes as part of processing the header.  As a
@@ -1060,14 +1076,14 @@ static CURLcode readwrite_headers(struct SessionHandle *data,
 	  }
 	}
 
-	if(k->httpversion == 10) {
+	if(conn->httpversion == 10) {
 	  /* Default action for HTTP/1.0 must be to close, unless
 	     we get one of those fancy headers that tell us the
 	     server keeps it open for us! */
 	  infof(data, "HTTP 1.0, assume close after body\n");
 	  conn->bits.close = TRUE;
 	}
-	else if(k->httpversion >= 11 &&
+	else if(conn->httpversion >= 11 &&
 		!conn->bits.close) {
 	  /* If HTTP version is >= 1.1 and connection is persistent
 	     server supports pipelining. */
@@ -1107,7 +1123,6 @@ static CURLcode readwrite_headers(struct SessionHandle *data,
 	break;
       }
     }
-#endif /* CURL_DISABLE_HTTP */
 
 #ifdef CURL_DOES_CONVERSIONS
     /* convert from the network encoding */
@@ -1118,7 +1133,6 @@ static CURLcode readwrite_headers(struct SessionHandle *data,
     /* Curl_convert_from_network calls failf if unsuccessful */
 #endif /* CURL_DOES_CONVERSIONS */
 
-#ifndef CURL_DISABLE_HTTP
     /* Check for Content-Length: header lines to get size. Ignore
        the header completely if we get a 416 response as then we're
        resuming a document that we don't get, and this header contains
@@ -1161,7 +1175,7 @@ static CURLcode readwrite_headers(struct SessionHandle *data,
 	data->info.contenttype = contenttype;
       }
     }
-    else if((k->httpversion == 10) &&
+    else if((conn->httpversion == 10) &&
 	    conn->bits.httpproxy &&
 	    Curl_compareheader(k->p,
 			       "Proxy-Connection:", "keep-alive")) {
@@ -1174,7 +1188,7 @@ static CURLcode readwrite_headers(struct SessionHandle *data,
       conn->bits.close = FALSE; /* don't close when done */
       infof(data, "HTTP/1.0 proxy connection set to keep alive!\n");
     }
-    else if((k->httpversion == 11) &&
+    else if((conn->httpversion == 11) &&
 	    conn->bits.httpproxy &&
 	    Curl_compareheader(k->p,
 			       "Proxy-Connection:", "close")) {
@@ -1185,7 +1199,7 @@ static CURLcode readwrite_headers(struct SessionHandle *data,
       conn->bits.close = TRUE; /* close when done */
       infof(data, "HTTP/1.1 proxy connection set close!\n");
     }
-    else if((k->httpversion == 10) &&
+    else if((conn->httpversion == 10) &&
 	    Curl_compareheader(k->p, "Connection:", "keep-alive")) {
       /*
        * A HTTP/1.0 reply with the 'Connection: keep-alive' line
@@ -1246,10 +1260,9 @@ static CURLcode readwrite_headers(struct SessionHandle *data,
       char *start;
 
       /* Find the first non-space letter */
-      for(start=k->p+17;
-	  *start && ISSPACE(*start);
-	  start++)
-	;  /* empty loop */
+      start = k->p + 17;
+      while(*start && ISSPACE(*start))
+        start++;
 
       /* Record the content-encoding for later use */
       if(checkprefix("identity", start))
@@ -1343,7 +1356,6 @@ static CURLcode readwrite_headers(struct SessionHandle *data,
 	}
       }
     }
-#endif   /* CURL_DISABLE_HTTP */
 
     /*
      * End of header-checks. Write them to the client.
@@ -1376,6 +1388,7 @@ static CURLcode readwrite_headers(struct SessionHandle *data,
 
   return CURLE_OK;
 }
+#endif   /* CURL_DISABLE_HTTP */
 
 /*
  * Send data to upload to the server, when the socket is writable.
@@ -1844,11 +1857,9 @@ Transfer(struct connectdata *conn)
       /* The EINTR is not serious, and it seems you might get this more
          often when using the lib in a multi-threaded environment! */
       if(SOCKERRNO == EINTR)
-        ;
-      else
+        continue;
 #endif
-        done = TRUE; /* no more read or write */
-      continue;
+      return CURLE_RECV_ERROR;  /* indicate a network problem */
     case 0:  /* timeout */
     default: /* readable descriptors */
 
@@ -1886,10 +1897,13 @@ CURLcode Curl_pretransfer(struct SessionHandle *data)
   data->set.followlocation=0; /* reset the location-follow counter */
   data->state.this_is_a_follow = FALSE; /* reset this */
   data->state.errorbuf = FALSE; /* no error has occurred */
+  data->state.httpversion = 0; /* don't assume any particular server version */
 
   data->state.authproblem = FALSE;
   data->state.authhost.want = data->set.httpauth;
   data->state.authproxy.want = data->set.proxyauth;
+  Curl_safefree(data->info.wouldredirect);
+  data->info.wouldredirect = NULL;
 
   /* If there is a list of cookie files to read, do it now! */
   if(data->change.cookielist) {
@@ -1936,6 +1950,7 @@ CURLcode Curl_posttransfer(struct SessionHandle *data)
   return CURLE_OK;
 }
 
+#ifndef CURL_DISABLE_HTTP
 /*
  * strlen_url() returns the length of the given URL if the spaces within the
  * URL were properly URL encoded.
@@ -2007,7 +2022,7 @@ static bool is_absolute_url(const char *url)
   char prot[16]; /* URL protocol string storage */
   char letter;   /* used for a silly sscanf */
 
-  return 2 == sscanf(url, "%15[^?&/:]://%c", prot, &letter);
+  return (bool)(2 == sscanf(url, "%15[^?&/:]://%c", prot, &letter));
 }
 
 /*
@@ -2131,7 +2146,7 @@ static char *concat_url(const char *base, const char *relurl)
 
   urllen = strlen(url_clone);
 
-  newest=(char *)malloc( urllen + 1 + /* possible slash */
+  newest = malloc( urllen + 1 + /* possible slash */
 			 newlen + 1 /* zero byte */);
 
   if(!newest) {
@@ -2155,6 +2170,7 @@ static char *concat_url(const char *base, const char *relurl)
 
   return newest;
 }
+#endif /* CURL_DISABLE_HTTP */
 
 /*
  * Curl_follow() handles the URL redirect magic. Pass in the 'newurl' string
@@ -2166,6 +2182,14 @@ CURLcode Curl_follow(struct SessionHandle *data,
                                       here */
                      followtype type) /* see transfer.h */
 {
+#ifdef CURL_DISABLE_HTTP
+  (void)data;
+  (void)newurl;
+  (void)type;
+  /* Location: following will not happen when HTTP is disabled */
+  return CURLE_TOO_MANY_REDIRECTS;
+#else
+
   /* Location: redirect */
   bool disallowport = FALSE;
 
@@ -2286,7 +2310,7 @@ CURLcode Curl_follow(struct SessionHandle *data,
      * libcurl gets the page that most user agents would get, libcurl has to
      * force GET.
      *
-     * This behaviour can be overridden with CURLOPT_POST301.
+     * This behaviour can be overridden with CURLOPT_POSTREDIR.
      */
     if( (data->set.httpreq == HTTPREQ_POST
          || data->set.httpreq == HTTPREQ_POST_FORM)
@@ -2313,7 +2337,18 @@ CURLcode Curl_follow(struct SessionHandle *data,
     status. When interoperability with such clients is a concern, the
     302 status code may be used instead, since most user agents react
     to a 302 response as described here for 303.
+
+    This behaviour can be overriden with CURLOPT_POSTREDIR
     */
+    if( (data->set.httpreq == HTTPREQ_POST
+         || data->set.httpreq == HTTPREQ_POST_FORM)
+        && !data->set.post302) {
+      infof(data,
+            "Violate RFC 2616/10.3.3 and switch from POST to GET\n");
+      data->set.httpreq = HTTPREQ_GET;
+    }
+    break;
+
   case 303: /* See Other */
     /* Disable both types of POSTs, since doing a second POST when
      * following isn't what anyone would want! */
@@ -2342,6 +2377,7 @@ CURLcode Curl_follow(struct SessionHandle *data,
   Curl_pgrsResetTimes(data);
 
   return CURLE_OK;
+#endif /* CURL_DISABLE_HTTP */
 }
 
 static CURLcode
@@ -2449,15 +2485,16 @@ CURLcode Curl_perform(struct SessionHandle *data)
 
       if(res == CURLE_OK) {
         res = Transfer(conn); /* now fetch that URL please */
-        if(res == CURLE_OK) {
+        if((res == CURLE_OK) || (res == CURLE_RECV_ERROR)) {
           bool retry = Curl_retry_request(conn, &newurl);
 
           if(retry) {
+            res = CURLE_OK;
             follow = FOLLOW_RETRY;
             if (!newurl)
               res = CURLE_OUT_OF_MEMORY;
           }
-          else {
+          else if (res == CURLE_OK) {
             /*
              * We must duplicate the new URL here as the connection data may
              * be free()ed in the Curl_done() function. We prefer the newurl

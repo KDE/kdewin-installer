@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: tftp.c,v 1.71 2008-07-30 05:10:42 yangtse Exp $
+ * $Id: tftp.c,v 1.73 2008-09-29 21:44:50 danf Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -53,7 +53,6 @@
 #include <net/if.h>
 #endif
 #include <sys/ioctl.h>
-#include <signal.h>
 
 #ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
@@ -803,7 +802,7 @@ static CURLcode tftp_do(struct connectdata *conn, bool *done)
           break;
         case TFTP_EVENT_ERROR:
           state->error = (tftp_error_t)getrpacketblock(&state->rpacket);
-          infof(data, "%s\n", (char *)&state->rpacket.data[4]);
+          infof(data, "%s\n", (const char *)&state->rpacket.data[4]);
           break;
         case TFTP_EVENT_ACK:
           break;

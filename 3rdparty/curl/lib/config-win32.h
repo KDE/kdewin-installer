@@ -157,9 +157,6 @@
 /* Define if you have the inet_addr function.  */
 #define HAVE_INET_ADDR 1
 
-/* Define if you have the inet_ntoa function.  */
-#define HAVE_INET_NTOA 1
-
 /* Define if you have the ioctlsocket function.  */
 #define HAVE_IOCTLSOCKET 1
 
@@ -188,14 +185,20 @@
 /* Define if you have the strcasecmp function.  */
 /* #define HAVE_STRCASECMP 1 */
 
-/* Define if you have the stricmp function.  */
-#define HAVE_STRICMP 1
-
 /* Define if you have the strdup function.  */
 #define HAVE_STRDUP 1
 
 /* Define if you have the strftime function.  */
 #define HAVE_STRFTIME 1
+
+/* Define if you have the stricmp function. */
+#define HAVE_STRICMP 1
+
+/* Define if you have the strncasecmp function. */
+/* #define HAVE_STRNCASECMP 1 */
+
+/* Define if you have the strnicmp function. */
+#define HAVE_STRNICMP 1
 
 /* Define if you have the strstr function.  */
 #define HAVE_STRSTR 1
@@ -215,9 +218,6 @@
 #ifndef __BORLANDC__
 #define HAVE_UTIME 1
 #endif
-
-/* Define if you have the getnameinfo function. */
-#define HAVE_GETNAMEINFO 1
 
 /* Define to the type qualifier of arg 1 for getnameinfo. */
 #define GETNAMEINFO_QUAL_ARG1 const
@@ -390,6 +390,20 @@
 #  endif
 #endif
 
+/* Availability of freeaddrinfo, getaddrinfo and getnameinfo functions is quite */
+/* convoluted, compiler dependant and in some cases even build target dependat. */
+#if defined(HAVE_WS2TCPIP_H)
+#  if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501)
+#    define HAVE_FREEADDRINFO 1
+#    define HAVE_GETADDRINFO  1
+#    define HAVE_GETNAMEINFO  1
+#  elif defined(_MSC_VER) && (_MSC_VER >= 1200)
+#    define HAVE_FREEADDRINFO 1
+#    define HAVE_GETADDRINFO  1
+#    define HAVE_GETNAMEINFO  1
+#  endif
+#endif
+
 /* ---------------------------------------------------------------- */
 /*                        LARGE FILE SUPPORT                        */
 /* ---------------------------------------------------------------- */
@@ -400,6 +414,10 @@
 #  else
 #    define USE_WIN32_SMALL_FILES
 #  endif
+#endif
+
+#if defined(__MINGW32__) && !defined(USE_WIN32_LARGE_FILES)
+#  define USE_WIN32_LARGE_FILES
 #endif
 
 #if !defined(USE_WIN32_LARGE_FILES) && !defined(USE_WIN32_SMALL_FILES)

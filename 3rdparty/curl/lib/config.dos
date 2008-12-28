@@ -3,7 +3,7 @@
 
 /* lib/config.dos - Hand crafted config file for MSDOS.
  *
- * $Id: config.dos,v 1.20 2008-08-21 14:08:47 giva Exp $
+ * $Id: config.dos,v 1.24 2008-11-03 15:24:44 giva Exp $
  */
 #if defined(DJGPP)
   #define OS  "MSDOS/djgpp"
@@ -20,12 +20,12 @@
 #define HAVE_ARPA_INET_H       1
 #define HAVE_FCNTL_H           1
 #define HAVE_FIONBIO           1
+#define HAVE_GETADDRINFO       1
+#define HAVE_GETNAMEINFO       1
 #define HAVE_GETPROTOBYNAME    1
 #define HAVE_GETTIMEOFDAY      1
 #define HAVE_IO_H              1
 #define HAVE_IOCTLSOCKET       1
-#define HAVE_INET_PTON         1
-#define HAVE_INET_NTOP         1
 #define HAVE_LOCALE_H          1
 #define HAVE_LONGLONG          1
 #define HAVE_MEMORY_H          1
@@ -64,7 +64,7 @@
 #define STDC_HEADERS           1
 #define TIME_WITH_SYS_TIME     1
 
-/* Qualifiers for send(), recv() and recvfrom(). */
+/* Qualifiers for send(), recv(), recvfrom() and getnameinfo(). */
 
 #define SEND_TYPE_ARG1         int
 #define SEND_QUAL_ARG2         const
@@ -87,6 +87,12 @@
 #define RECVFROM_TYPE_ARG6     int
 #define RECVFROM_TYPE_RETV     int
 #define RECVFROM_TYPE_ARG2_IS_VOID 1
+
+#define GETNAMEINFO_QUAL_ARG1  const
+#define GETNAMEINFO_TYPE_ARG1  struct sockaddr *
+#define GETNAMEINFO_TYPE_ARG2  int
+#define GETNAMEINFO_TYPE_ARG46 int
+#define GETNAMEINFO_TYPE_ARG7  int
 
 #define BSD
 

@@ -222,17 +222,11 @@
 /* Define to 1 if you have the `inet_addr' function. */
 /*#define HAVE_INET_ADDR 1*/
 
-/* Define to 1 if you have the `inet_ntoa' function. */
-/*#define HAVE_INET_NTOA 1*/
+/* Define to 1 if you have a IPv6 capable working inet_ntop function. */
+/*#define HAVE_INET_NTOP 1*/
 
-/* Define to 1 if you have the `inet_ntoa_r' function. */
-/* #undef HAVE_INET_NTOA_R */
-
-/* inet_ntoa_r() is declared */
-/* #undef HAVE_INET_NTOA_R_DECL */
-
-/* Define to 1 if you have the `inet_pton' function. */
-#define HAVE_INET_PTON 1
+/* Define to 1 if you have a IPv6 capable working inet_pton function. */
+/*#define HAVE_INET_PTON 1*/
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
@@ -297,9 +291,6 @@
 /* Define to 1 if you have the `ssl' library (-lssl). */
 /*#define HAVE_LIBSSL 1*/
 
-/* if zlib is available */
-/*#define HAVE_LIBZ 1*/
-
 /* Define to 1 if you have the <limits.h> header file. */
 #define HAVE_LIMITS_H 1
 
@@ -338,9 +329,6 @@
 
 /* Define to 1 if NI_WITHSCOPEID exists and works. */
 /*#define HAVE_NI_WITHSCOPEID 1*/
-
-/* Defined if no inet_pton() prototype available */
-/* #undef HAVE_NO_INET_PTON_PROTO */
 
 /* we have no strerror_r() proto */
 /* #undef HAVE_NO_STRERROR_R_DECL */
@@ -628,9 +616,6 @@
 /* Define to 1 if you have the <x509.h> header file. */
 /* #undef HAVE_X509_H */
 
-/* if you have the zlib.h header file */
-/*#define HAVE_ZLIB_H 1*/
-
 /* Define to 1 if you are building a native Windows target. */
 /* #undef NATIVE_WINDOWS */
 
@@ -803,7 +788,18 @@
 /* #define CURLDEBUG */
 #endif
 
-/* sys/cdefs.h fails to define this for WINSCW */
+/* sys/cdefs.h fails to define this for WINSCW prior to Symbian OS ver. 9.4 */
 #ifndef __LONG_LONG_SUPPORTED
 #define __LONG_LONG_SUPPORTED
+#endif
+
+/* Enable appropriate header only when zlib support is enabled */
+#ifdef HAVE_LIBZ
+#define HAVE_ZLIB_H 1
+#endif
+
+/* Enable appropriate definitions only when OpenSSL support is enabled */
+#ifdef USE_SSL
+#define USE_OPENSSL 1
+#define USE_SSLEAY 1
 #endif

@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: gtls.h,v 1.7 2008-06-11 17:01:59 bagder Exp $
+ * $Id: gtls.h,v 1.9 2008-10-17 22:33:08 danf Exp $
  ***************************************************************************/
 
 #ifdef USE_GNUTLS
@@ -58,7 +58,7 @@ int Curl_gtls_shutdown(struct connectdata *conn, int sockindex);
 #define curlssl_shutdown(x,y) Curl_gtls_shutdown(x,y)
 #define curlssl_set_engine(x,y) (x=x, y=y, CURLE_FAILED_INIT)
 #define curlssl_set_engine_default(x) (x=x, CURLE_FAILED_INIT)
-#define curlssl_engines_list(x) (x=x, NULL)
+#define curlssl_engines_list(x) (x=x, (struct curl_slist *)NULL)
 #define curlssl_send Curl_gtls_send
 #define curlssl_recv Curl_gtls_recv
 #define curlssl_version Curl_gtls_version

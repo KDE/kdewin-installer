@@ -74,6 +74,9 @@
 /* Define to the type of arg 7 for getnameinfo. */
 /* #undef GETNAMEINFO_TYPE_ARG7 */
 
+/* Define to 1 if you have the alarm function. */
+#define HAVE_ALARM 1
+
 /* Define to 1 if you have the <arpa/inet.h> header file. */
 #define HAVE_ARPA_INET_H 1
 
@@ -205,16 +208,10 @@
 /* Define to 1 if you have the `inet_addr' function. */
 #define HAVE_INET_ADDR 1
 
-/* Define to 1 if you have the `inet_ntoa' function. */
-#define HAVE_INET_NTOA 1
+/* Define to 1 if you have a IPv6 capable working inet_ntop function. */
+/* #undef HAVE_INET_NTOP */
 
-/* Define to 1 if you have the `inet_ntoa_r' function. */
-/* #undef HAVE_INET_NTOA_R */
-
-/* inet_ntoa_r() is declared */
-/* #undef HAVE_INET_NTOA_R_DECL */
-
-/* Define to 1 if you have the `inet_pton' function. */
+/* Define to 1 if you have a IPv6 capable working inet_pton function. */
 /* #undef HAVE_INET_PTON */
 
 /* Define to 1 if you have the <inttypes.h> header file. */
@@ -295,9 +292,6 @@
 
 /* Define if NI_WITHSCOPEID exists and works */
 /* #undef HAVE_NI_WITHSCOPEID */
-
-/* Defined if no inet_pton() prototype available */
-/* #undef HAVE_NO_INET_PTON_PROTO */
 
 /* we have no strerror_r() proto */
 /* #undef HAVE_NO_STRERROR_R_DECL */

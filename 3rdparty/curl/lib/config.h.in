@@ -36,6 +36,9 @@
 /* to disable LDAPS */
 #undef CURL_DISABLE_LDAPS
 
+/* to disable proxies */
+#undef CURL_DISABLE_PROXY
+
 /* to disable TELNET */
 #undef CURL_DISABLE_TELNET
 
@@ -83,6 +86,15 @@
 
 /* Define to the type of arg 7 for getnameinfo. */
 #undef GETNAMEINFO_TYPE_ARG7
+
+/* Specifies the number of arguments to getservbyport_r */
+#undef GETSERVBYPORT_R_ARGS
+
+/* Specifies the size of the buffer to pass to getservbyport_r */
+#undef GETSERVBYPORT_R_BUFSIZE
+
+/* Define to 1 if you have the alarm function. */
+#undef HAVE_ALARM
 
 /* Define to 1 if you have the <alloca.h> header file. */
 #undef HAVE_ALLOCA_H
@@ -135,16 +147,25 @@
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
 
+/* Define to 1 if you have the fdopen function. */
+#undef HAVE_FDOPEN
+
 /* use FIONBIO for non-blocking sockets */
 #undef HAVE_FIONBIO
 
 /* Define to 1 if you have the `fork' function. */
 #undef HAVE_FORK
 
-/* Define to 1 if you have the `ftruncate' function. */
+/* Define to 1 if you have the freeaddrinfo function. */
+#undef HAVE_FREEADDRINFO
+
+/* Define to 1 if you have the freeifaddrs function. */
+#undef HAVE_FREEIFADDRS
+
+/* Define to 1 if you have the ftruncate function. */
 #undef HAVE_FTRUNCATE
 
-/* Define if getaddrinfo exists and works */
+/* Define to 1 if you have a working getaddrinfo function. */
 #undef HAVE_GETADDRINFO
 
 /* Define to 1 if you have the `geteuid' function. */
@@ -152,6 +173,18 @@
 
 /* Define to 1 if you have the `gethostbyaddr' function. */
 #undef HAVE_GETHOSTBYADDR
+
+/* Define to 1 if you have the gethostbyaddr_r function. */
+#undef HAVE_GETHOSTBYADDR_R
+
+/* gethostbyaddr_r() takes 5 args */
+#undef HAVE_GETHOSTBYADDR_R_5
+
+/* gethostbyaddr_r() takes 7 args */
+#undef HAVE_GETHOSTBYADDR_R_7
+
+/* gethostbyaddr_r() takes 8 args */
+#undef HAVE_GETHOSTBYADDR_R_8
 
 /* If you have gethostbyname */
 #undef HAVE_GETHOSTBYNAME
@@ -167,6 +200,12 @@
 
 /* gethostbyname_r() takes 6 args */
 #undef HAVE_GETHOSTBYNAME_R_6
+
+/* Define to 1 if you have the gethostname function. */
+#undef HAVE_GETHOSTNAME
+
+/* Define to 1 if you have a working getifaddrs function. */
+#undef HAVE_GETIFADDRS
 
 /* Define to 1 if you have the getnameinfo function. */
 #undef HAVE_GETNAMEINFO
@@ -186,13 +225,16 @@
 /* Define to 1 if you have the `getrlimit' function. */
 #undef HAVE_GETRLIMIT
 
+/* Define to 1 if you have the getservbyport_r function. */
+#undef HAVE_GETSERVBYPORT_R
+
 /* Define to 1 if you have the `gettimeofday' function. */
 #undef HAVE_GETTIMEOFDAY
 
-/* we have a glibc-style strerror_r() */
+/* Define to 1 if you have a working glibc-style strerror_r function. */
 #undef HAVE_GLIBC_STRERROR_R
 
-/* Define to 1 if you have the `gmtime_r' function. */
+/* Define to 1 if you have a working gmtime_r function. */
 #undef HAVE_GMTIME_R
 
 /* if you have the gssapi libraries */
@@ -225,19 +267,25 @@
 /* Define to 1 if you have the <idn-free.h> header file. */
 #undef HAVE_IDN_FREE_H
 
+/* Define to 1 if you have the <ifaddrs.h> header file. */
+#undef HAVE_IFADDRS_H
+
 /* Define to 1 if you have the `inet_addr' function. */
 #undef HAVE_INET_ADDR
 
-/* Define to 1 if you have the `inet_ntoa' function. */
-#undef HAVE_INET_NTOA
-
-/* Define to 1 if you have the `inet_ntoa_r' function. */
+/* Define to 1 if you have the inet_ntoa_r function. */
 #undef HAVE_INET_NTOA_R
 
-/* inet_ntoa_r() is declared */
-#undef HAVE_INET_NTOA_R_DECL
+/* inet_ntoa_r() takes 2 args */
+#undef HAVE_INET_NTOA_R_2
 
-/* Define to 1 if you have the `inet_pton' function. */
+/* inet_ntoa_r() takes 3 args */
+#undef HAVE_INET_NTOA_R_3
+
+/* Define to 1 if you have a IPv6 capable working inet_ntop function. */
+#undef HAVE_INET_NTOP
+
+/* Define to 1 if you have a IPv6 capable working inet_pton function. */
 #undef HAVE_INET_PTON
 
 /* Define to 1 if you have the <inttypes.h> header file. */
@@ -315,7 +363,7 @@
 /* Define to 1 if you have the <locale.h> header file. */
 #undef HAVE_LOCALE_H
 
-/* Define to 1 if you have the `localtime_r' function. */
+/* Define to 1 if you have a working localtime_r function. */
 #undef HAVE_LOCALTIME_R
 
 /* Define to 1 if the compiler supports the 'long long' data type. */
@@ -344,12 +392,6 @@
 
 /* Define to 1 if NI_WITHSCOPEID exists and works. */
 #undef HAVE_NI_WITHSCOPEID
-
-/* Defined if no inet_pton() prototype available */
-#undef HAVE_NO_INET_PTON_PROTO
-
-/* we have no strerror_r() proto */
-#undef HAVE_NO_STRERROR_R_DECL
 
 /* if you have an old MIT gssapi library, lacking GSS_C_NT_HOSTBASED_SERVICE
    */
@@ -403,7 +445,7 @@
 /* Define to 1 if you have the <poll.h> header file. */
 #undef HAVE_POLL_H
 
-/* we have a POSIX-style strerror_r() */
+/* Define to 1 if you have a working POSIX-style strerror_r function. */
 #undef HAVE_POSIX_STRERROR_R
 
 /* Define to 1 if you have the <pwd.h> header file. */
@@ -448,19 +490,19 @@
 /* Define to 1 if you have the <sgtty.h> header file. */
 #undef HAVE_SGTTY_H
 
-/* Define to 1 if you have the `sigaction' function. */
+/* Define to 1 if you have the sigaction function. */
 #undef HAVE_SIGACTION
 
-/* Define to 1 if you have the `siginterrupt' function. */
+/* Define to 1 if you have the siginterrupt function. */
 #undef HAVE_SIGINTERRUPT
 
-/* Define to 1 if you have the `signal' function. */
+/* Define to 1 if you have the signal function. */
 #undef HAVE_SIGNAL
 
 /* Define to 1 if you have the <signal.h> header file. */
 #undef HAVE_SIGNAL_H
 
-/* If you have sigsetjmp */
+/* Define to 1 if you have the sigsetjmp function or macro. */
 #undef HAVE_SIGSETJMP
 
 /* Define to 1 if sig_atomic_t is an available typedef. */
@@ -496,22 +538,22 @@
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
 
-/* Define to 1 if you have the `strcasecmp' function. */
+/* Define to 1 if you have the strcasecmp function. */
 #undef HAVE_STRCASECMP
 
-/* Define to 1 if you have the `strcasestr' function. */
+/* Define to 1 if you have the strcasestr function. */
 #undef HAVE_STRCASESTR
 
-/* Define to 1 if you have the `strcmpi' function. */
+/* Define to 1 if you have the strcmpi function. */
 #undef HAVE_STRCMPI
 
-/* Define to 1 if you have the `strdup' function. */
+/* Define to 1 if you have the strdup function. */
 #undef HAVE_STRDUP
 
-/* Define to 1 if you have the `strerror_r' function. */
+/* Define to 1 if you have the strerror_r function. */
 #undef HAVE_STRERROR_R
 
-/* Define to 1 if you have the `stricmp' function. */
+/* Define to 1 if you have the stricmp function. */
 #undef HAVE_STRICMP
 
 /* Define to 1 if you have the <strings.h> header file. */
@@ -520,19 +562,28 @@
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
-/* Define to 1 if you have the `strlcat' function. */
+/* Define to 1 if you have the strlcat function. */
 #undef HAVE_STRLCAT
 
 /* Define to 1 if you have the `strlcpy' function. */
 #undef HAVE_STRLCPY
 
-/* Define to 1 if you have the `strstr' function. */
+/* Define to 1 if you have the strncasecmp function. */
+#undef HAVE_STRNCASECMP
+
+/* Define to 1 if you have the strncmpi function. */
+#undef HAVE_STRNCMPI
+
+/* Define to 1 if you have the strnicmp function. */
+#undef HAVE_STRNICMP
+
+/* Define to 1 if you have the strstr function. */
 #undef HAVE_STRSTR
 
-/* Define to 1 if you have the `strtok_r' function. */
+/* Define to 1 if you have the strtok_r function. */
 #undef HAVE_STRTOK_R
 
-/* Define to 1 if you have the `strtoll' function. */
+/* Define to 1 if you have the strtoll function. */
 #undef HAVE_STRTOLL
 
 /* if struct sockaddr_storage is defined */
@@ -573,6 +624,9 @@
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <sys/uio.h> header file. */
+#undef HAVE_SYS_UIO_H
 
 /* Define to 1 if you have the <sys/un.h> header file. */
 #undef HAVE_SYS_UN_H
@@ -630,6 +684,9 @@
 
 /* Define this symbol if your OS supports changing the contents of argv */
 #undef HAVE_WRITABLE_ARGV
+
+/* Define to 1 if you have the writev function. */
+#undef HAVE_WRITEV
 
 /* Define to 1 if you have the ws2tcpip.h header file. */
 #undef HAVE_WS2TCPIP_H
@@ -780,6 +837,9 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
+
+/* Define to the type of arg 3 for strerror_r. */
+#undef STRERROR_R_TYPE_ARG3
 
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
 #undef TIME_WITH_SYS_TIME

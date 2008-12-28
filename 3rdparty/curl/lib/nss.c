@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: nss.c,v 1.30 2008-06-21 21:19:42 bagder Exp $
+ * $Id: nss.c,v 1.36 2008-10-16 08:23:48 bagder Exp $
  ***************************************************************************/
 
 /*
@@ -43,7 +43,6 @@
 #include "strequal.h"
 #include "select.h"
 #include "sslgen.h"
-#include "strequal.h" 
 
 #define _MPRINTF_REPLACE /* use the internal *printf() functions */
 #include <curl/mprintf.h>
@@ -78,7 +77,9 @@
 
 PRFileDesc *PR_ImportTCPSocket(PRInt32 osfd);
 
-int initialized = 0;
+PRLock * nss_initlock = NULL;
+
+volatile int initialized = 0;
 
 #define HANDSHAKE_TIMEOUT 30
 
@@ -200,7 +201,7 @@ static SECStatus set_ciphers(struct SessionHandle *data, PRFileDesc * model,
     found = PR_FALSE;
 
     for(i=0; i<NUM_OF_CIPHERS; i++) {
-      if(strequal(cipher, cipherlist[i].name)) {
+      if(Curl_raw_equal(cipher, cipherlist[i].name)) {
         cipher_state[i] = PR_TRUE;
         found = PR_TRUE;
         break;
@@ -298,8 +299,8 @@ nss_load_cert(const char *filename, PRBool cacert)
   else
     slotID = 1;
 
-  slotname = (char *)malloc(SLOTSIZE);
-  nickname = (char *)malloc(PATH_MAX);
+  slotname = malloc(SLOTSIZE);
+  nickname = malloc(PATH_MAX);
   snprintf(slotname, SLOTSIZE, "PEM Token #%ld", slotID);
   snprintf(nickname, PATH_MAX, "PEM Token #%ld:%s", slotID, n);
 
@@ -367,7 +368,7 @@ done:
   return 1;
 }
 
-static int nss_load_crl(char* crlfilename, PRBool ascii)
+static int nss_load_crl(const char* crlfilename, PRBool ascii)
 {
   PRFileDesc *infile;
   PRStatus    prstat;
@@ -460,7 +461,7 @@ static int nss_load_key(struct connectdata *conn, char *key_file)
 
   slotID = 1; /* hardcoded for now */
 
-  slotname = (char *)malloc(SLOTSIZE);
+  slotname = malloc(SLOTSIZE);
   snprintf(slotname, SLOTSIZE, "PEM Token #%ld", slotID);
 
   slot = PK11_FindSlotByName(slotname);
@@ -485,7 +486,7 @@ static int nss_load_key(struct connectdata *conn, char *key_file)
   SECMOD_WaitForAnyTokenEvent(mod, 0, 0);
   PK11_IsPresent(slot);
 
-  parg = (pphrase_arg_t *) malloc(sizeof(*parg));
+  parg = malloc(sizeof(pphrase_arg_t));
   parg->retryCount = 0;
   parg->data = conn->data;
   /* parg is initialized in nss_Init_Tokens() */
@@ -581,7 +582,7 @@ static SECStatus nss_Init_Tokens(struct connectdata * conn)
   SECStatus ret, status = SECSuccess;
   pphrase_arg_t *parg = NULL;
 
-  parg = (pphrase_arg_t *) malloc(sizeof(*parg));
+  parg = malloc(sizeof(pphrase_arg_t));
   parg->retryCount = 0;
   parg->data = conn->data;
 
@@ -800,7 +801,7 @@ static SECStatus SelectClientCert(void *arg, PRFileDesc *sock,
 
     if(!strncmp(nickname, "PEM Token", 9)) {
       CK_SLOT_ID slotID = 1; /* hardcoded for now */
-      char * slotname = (char *)malloc(SLOTSIZE);
+      char * slotname = malloc(SLOTSIZE);
       snprintf(slotname, SLOTSIZE, "PEM Token #%ld", slotID);
       slot = PK11_FindSlotByName(slotname);
       privKey = PK11_FindPrivateKeyFromCert(slot, cert, NULL);
@@ -837,8 +838,11 @@ static SECStatus SelectClientCert(void *arg, PRFileDesc *sock,
  */
 int Curl_nss_init(void)
 {
-  if(!initialized)
+  /* curl_global_init() is not thread-safe so this test is ok */
+  if (nss_initlock == NULL) {
     PR_Init(PR_USER_THREAD, PR_PRIORITY_NORMAL, 256);
+    nss_initlock = PR_NewLock();
+  }
 
   /* We will actually initialize NSS later */
 
@@ -848,7 +852,17 @@ int Curl_nss_init(void)
 /* Global cleanup */
 void Curl_nss_cleanup(void)
 {
-  NSS_Shutdown();
+  /* This function isn't required to be threadsafe and this is only done
+   * as a safety feature.
+   */
+  PR_Lock(nss_initlock);
+  if (initialized)
+    NSS_Shutdown();
+  PR_Unlock(nss_initlock);
+
+  PR_DestroyLock(nss_initlock);
+  nss_initlock = NULL;
+
   initialized = 0;
 }
 
@@ -926,7 +940,8 @@ CURLcode Curl_nss_connect(struct connectdata *conn, int sockindex)
     return CURLE_OK;
 
   /* FIXME. NSS doesn't support multiple databases open at the same time. */
-  if(!initialized) {
+  PR_Lock(nss_initlock);
+  if(!initialized && !NSS_IsInitialized()) {
     initialized = 1;
 
     certDir = getenv("SSL_DIR"); /* Look in $SSL_DIR */
@@ -950,13 +965,15 @@ CURLcode Curl_nss_connect(struct connectdata *conn, int sockindex)
     if(rv != SECSuccess) {
       infof(conn->data, "Unable to initialize NSS database\n");
       curlerr = CURLE_SSL_CACERT_BADFILE;
+      initialized = 0;
+      PR_Unlock(nss_initlock);
       goto error;
     }
 
     NSS_SetDomesticPolicy();
 
 #ifdef HAVE_PK11_CREATEGENERICOBJECT
-    configstring = (char *)malloc(PATH_MAX);
+    configstring = malloc(PATH_MAX);
 
     PR_snprintf(configstring, PATH_MAX, "library=%s name=PEM", pem_library);
 
@@ -972,6 +989,7 @@ CURLcode Curl_nss_connect(struct connectdata *conn, int sockindex)
     }
 #endif
   }
+  PR_Unlock(nss_initlock);
 
   model = PR_NewTCPSocket();
   if(!model)
@@ -1091,12 +1109,12 @@ CURLcode Curl_nss_connect(struct connectdata *conn, int sockindex)
     char *n;
     char *nickname;
 
-    nickname = (char *)malloc(PATH_MAX);
+    nickname = malloc(PATH_MAX);
     if(is_file(data->set.str[STRING_CERT])) {
       n = strrchr(data->set.str[STRING_CERT], '/');
       if(n) {
         n++; /* skip last slash */
-        snprintf(nickname, PATH_MAX, "PEM Token #%ld:%s", 1, n);
+        snprintf(nickname, PATH_MAX, "PEM Token #%d:%s", 1, n);
       }
     }
     else {
@@ -1159,12 +1177,12 @@ CURLcode Curl_nss_connect(struct connectdata *conn, int sockindex)
   if (data->set.str[STRING_SSL_ISSUERCERT]) {
     char *n;
     char *nickname;
-    nickname = (char *)malloc(PATH_MAX);
+    nickname = malloc(PATH_MAX);
     if(is_file(data->set.str[STRING_SSL_ISSUERCERT])) {
       n = strrchr(data->set.str[STRING_SSL_ISSUERCERT], '/');
       if (n) {
         n++; /* skip last slash */
-        snprintf(nickname, PATH_MAX, "PEM Token #%ld:%s", 1, n);
+        snprintf(nickname, PATH_MAX, "PEM Token #%d:%s", 1, n);
       }
     }
     else {

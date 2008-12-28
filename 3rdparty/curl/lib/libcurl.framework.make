@@ -10,7 +10,7 @@ SDK = /Developer/SDKs/MacOSX10.4u.sdk
 # Sets the minimum OSX version where the framework will work.
 ENVP = MACOSX_DEPLOYMENT_TARGET=10.3
 
-# for debug symbols add the -g option.  Remove the -O2 option for best debuggin.
+# for debug symbols add the -g option.  Remove the -O2 option for best debugging.
 # Can be compiled with -O3 optimizations.
 C_OPTIONS = -isysroot $(SDK) \
 	-fno-common \
@@ -48,6 +48,7 @@ OBJECTS = $(TMP_DIR)/base64.o \
 	$(TMP_DIR)/connect.o \
 	$(TMP_DIR)/content_encoding.o \
 	$(TMP_DIR)/cookie.o \
+	$(TMP_DIR)/curl_addrinfo.o \
 	$(TMP_DIR)/dict.o \
 	$(TMP_DIR)/easy.o \
 	$(TMP_DIR)/escape.o \
@@ -83,6 +84,7 @@ OBJECTS = $(TMP_DIR)/base64.o \
 	$(TMP_DIR)/netrc.o \
 	$(TMP_DIR)/parsedate.o \
 	$(TMP_DIR)/progress.o \
+	$(TMP_DIR)/rawstr.o \
 	$(TMP_DIR)/security.o \
 	$(TMP_DIR)/select.o \
 	$(TMP_DIR)/sendf.o \

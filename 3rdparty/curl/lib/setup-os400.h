@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: setup-os400.h,v 1.3 2008-07-22 00:12:06 yangtse Exp $
+ * $Id: setup-os400.h,v 1.4 2008-09-24 12:22:16 yangtse Exp $
  ***************************************************************************/
 
 
@@ -58,12 +58,6 @@ extern int      Curl_getnameinfo_a(const struct sockaddr * sa, socklen_t salen,
 
 
 /* SSL wrappers. */
-
-extern int      Curl_inet_ntoa_r_a(struct in_addr internet_address,
-                                   char * output_buffer,
-                                   int output_buffer_length);
-#define inet_ntoa_r             Curl_inet_ntoa_r_a
-
 
 extern int      Curl_SSL_Init_Application_a(SSLInitApp * init_app);
 #define SSL_Init_Application    Curl_SSL_Init_Application_a

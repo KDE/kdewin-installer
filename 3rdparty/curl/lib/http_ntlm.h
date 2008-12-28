@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: http_ntlm.h,v 1.14 2008-08-11 20:29:36 bagder Exp $
+ * $Id: http_ntlm.h,v 1.15 2008-09-30 15:06:03 yangtse Exp $
  ***************************************************************************/
 
 typedef enum {
@@ -45,8 +45,8 @@ void Curl_ntlm_cleanup(struct connectdata *conn);
 #endif
 
 #ifdef USE_WINDOWS_SSPI
-CURLcode Curl_ntlm_global_init();
-void Curl_ntlm_global_cleanup();
+CURLcode Curl_ntlm_global_init(void);
+void Curl_ntlm_global_cleanup(void);
 #endif
 
 /* Flag bits definitions based on http://davenport.sourceforge.net/ntlm.html */

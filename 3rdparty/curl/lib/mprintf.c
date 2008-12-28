@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: mprintf.c,v 1.77 2008-08-24 23:21:46 yangtse Exp $
+ * $Id: mprintf.c,v 1.80 2008-09-13 16:37:16 yangtse Exp $
  *
  * Purpose:
  *  A merge of Bjorn Reese's format() function and Daniel's dsprintf()
@@ -179,8 +179,6 @@ struct asprintf {
   int fail;     /* (!= 0) if an alloc has failed and thus
                    the output is not the complete data */
 };
-
-int curl_msprintf(char *buffer, const char *format, ...);
 
 static long dprintf_DollarString(char *input, char **end)
 {
@@ -1068,7 +1066,7 @@ static int alloc_addbyter(int output, FILE *data)
   unsigned char outc = (unsigned char)output;
 
   if(!infop->buffer) {
-    infop->buffer=(char *)malloc(32);
+    infop->buffer = malloc(32);
     if(!infop->buffer) {
       infop->fail = 1;
       return -1; /* fail */
@@ -1079,7 +1077,7 @@ static int alloc_addbyter(int output, FILE *data)
   else if(infop->len+1 >= infop->alloc) {
     char *newptr;
 
-    newptr = (char *)realloc(infop->buffer, infop->alloc*2);
+    newptr = realloc(infop->buffer, infop->alloc*2);
 
     if(!newptr) {
       infop->fail = 1;

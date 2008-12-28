@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: gtls.c,v 1.48 2008-06-10 21:53:59 bagder Exp $
+ * $Id: gtls.c,v 1.51 2008-11-11 22:19:27 bagder Exp $
  ***************************************************************************/
 
 /*
@@ -223,9 +223,9 @@ static gnutls_x509_crt_fmt do_file_type(const char *type)
 {
   if(!type || !type[0])
     return GNUTLS_X509_FMT_PEM;
-  if(curl_strequal(type, "PEM"))
+  if(Curl_raw_equal(type, "PEM"))
     return GNUTLS_X509_FMT_PEM;
-  if(curl_strequal(type, "DER"))
+  if(Curl_raw_equal(type, "DER"))
     return GNUTLS_X509_FMT_DER;
   return -1;
 }
@@ -262,6 +262,11 @@ Curl_gtls_connect(struct connectdata *conn,
 #else
   struct in_addr addr;
 #endif
+
+  if(conn->ssl[sockindex].state == ssl_connection_complete)
+    /* to make us tolerant against being called more than once for the
+       same connection */
+    return CURLE_OK;
 
   if(!gtls_inited)
     _Curl_gtls_init();

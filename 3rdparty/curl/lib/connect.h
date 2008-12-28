@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: connect.h,v 1.25 2008-05-12 21:43:28 bagder Exp $
+ * $Id: connect.h,v 1.26 2008-11-03 16:24:56 bagder Exp $
  ***************************************************************************/
 
 int Curl_nonblock(curl_socket_t sockfd,    /* operate on this */
@@ -36,8 +36,6 @@ CURLcode Curl_connecthost(struct connectdata *conn,
                           curl_socket_t *sockconn, /* not set if error */
                           Curl_addrinfo **addr, /* the one we used */
                           bool *connected); /* truly connected? */
-
-CURLcode Curl_store_ip_addr(struct connectdata *conn);
 
 /* generic function that returns how much time there's left to run, according
    to the timeouts set */

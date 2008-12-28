@@ -20,11 +20,11 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: if2ip.h,v 1.20 2006-03-04 22:39:32 bagder Exp $
+ * $Id: if2ip.h,v 1.21 2008-10-09 19:23:50 danf Exp $
  ***************************************************************************/
 #include "setup.h"
 
-extern char *Curl_if2ip(const char *interf, char *buf, int buf_size);
+extern char *Curl_if2ip(int af, const char *interf, char *buf, int buf_size);
 
 #ifdef __INTERIX
 #include <sys/socket.h>

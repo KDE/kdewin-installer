@@ -145,9 +145,6 @@
 /* Define if you have the inet_addr function.  */
 #define HAVE_INET_ADDR 1
 
-/* Define if you have the inet_ntoa function.  */
-#define HAVE_INET_NTOA 1
-
 /* Define if you have the ioctlsocket function.  */
 #define HAVE_IOCTLSOCKET 1
 
@@ -172,14 +169,20 @@
 /* Define if you have the strcasecmp function.  */
 /* #define HAVE_STRCASECMP 1 */
 
-/* Define if you have the stricmp function.  */
-/* #define HAVE_STRICMP 1 */
-
 /* Define if you have the strdup function.  */
 /* #define HAVE_STRDUP 1 */
 
 /* Define if you have the strftime function.  */
 /* #define HAVE_STRFTIME 1 */
+
+/* Define if you have the stricmp function. */
+/* #define HAVE_STRICMP 1 */
+
+/* Define if you have the strncasecmp function. */
+/* #define HAVE_STRNCASECMP 1 */
+
+/* Define if you have the strnicmp function. */
+/* #define HAVE_STRNICMP 1 */
 
 /* Define if you have the strstr function.  */
 #define HAVE_STRSTR 1

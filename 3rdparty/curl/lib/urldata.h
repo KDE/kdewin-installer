@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: urldata.h,v 1.385 2008-08-17 01:57:10 yangtse Exp $
+ * $Id: urldata.h,v 1.395 2008-11-03 16:24:56 bagder Exp $
  ***************************************************************************/
 
 /* This file is for lib internal stuff */
@@ -48,7 +48,8 @@
 #define CURL_DEFAULT_USER "anonymous"
 #define CURL_DEFAULT_PASSWORD "ftp@example.com"
 
-#define MAX_IPADR_LEN (4*9) /* should be enough to hold the longest ipv6 one */
+/* length of longest IPv6 address string including the trailing null */
+#define MAX_IPADR_LEN sizeof("ffff:ffff:ffff:ffff:ffff:ffff:255.255.255.255")
 
 #include "cookie.h"
 #include "formdata.h"
@@ -106,6 +107,10 @@
 
 #ifdef HAVE_ZLIB_H
 #include <zlib.h>               /* for content-encoding */
+#ifdef __SYMBIAN32__
+/* zlib pollutes the namespace with this definition */
+#undef WIN32
+#endif
 #endif
 
 #ifdef USE_ARES
@@ -218,8 +223,8 @@ struct ssl_config_data {
                             2: CN must match hostname */
   char *CApath;          /* certificate dir (doesn't work on windows) */
   char *CAfile;          /* cerficate to verify peer against */
-  char *CRLfile;         /* CRL to check cerficate revocation */
-  char *issuercert;      /* optional issuer cerficate filename */
+  const char *CRLfile;   /* CRL to check cerficate revocation */
+  const char *issuercert;/* optional issuer cerficate filename */
   char *random_file;     /* path to file containing "random" data */
   char *egdsocket;       /* path to file containing the EGD daemon socket */
   char *cipher_list;     /* list of ciphers to use */
@@ -227,6 +232,7 @@ struct ssl_config_data {
   curl_ssl_ctx_callback fsslctx; /* function to initialize ssl ctx */
   void *fsslctxp;        /* parameter for call back */
   bool sessionid;        /* cache session IDs or not */
+  bool certinfo;         /* gather lots of cert info */
 };
 
 /* information stored about one single SSL session */
@@ -308,7 +314,7 @@ struct negotiatedata {
 struct HTTP {
   struct FormData *sendit;
   curl_off_t postsize; /* off_t to handle large file sizes */
-  char *postdata;
+  const char *postdata;
 
   const char *p_pragma;      /* Pragma: string */
   const char *p_accept;      /* Accept: string */
@@ -321,7 +327,7 @@ struct HTTP {
   struct back {
     curl_read_callback fread_func; /* backup storage for fread pointer */
     void *fread_in;           /* backup storage for fread_in pointer */
-    char *postdata;
+    const char *postdata;
     curl_off_t postsize;
   } backup;
 
@@ -629,7 +635,7 @@ struct hostname {
   char *rawalloc; /* allocated "raw" version of the name */
   char *encalloc; /* allocated IDN-encoded version of the name */
   char *name;     /* name to use internally, might be encoded, might be raw */
-  char *dispname; /* name to display, as 'name' might be encoded */
+  const char *dispname; /* name to display, as 'name' might be encoded */
 };
 
 /*
@@ -693,7 +699,7 @@ enum expect100 {
 /*
  * Request specific data in the easy handle (SessionHandle).  Previously,
  * these members were on the connectdata struct but since a conn struct may
- * now be shared between different SessionHandles, we store connection-specifc
+ * now be shared between different SessionHandles, we store connection-specific
  * data here. This struct only keeps stuff that's interesting for *this*
  * request, as it will be cleared between multiple ones
  */
@@ -737,7 +743,6 @@ struct SingleRequest {
   curl_off_t offset;            /* possible resume offset read from the
                                    Content-Range: header */
   int httpcode;                 /* error code from the 'HTTP/1.? XXX' line */
-  int httpversion;              /* the HTTP version*10 */
   struct timeval start100;      /* time stamp to wait for the 100 code from */
   enum expect100 exp100;        /* expect 100 continue state */
 
@@ -903,11 +908,10 @@ struct connectdata {
      cache entry remains locked. It gets unlocked in Curl_done() */
   Curl_addrinfo *ip_addr;
 
-  /* 'ip_addr_str' is the ip_addr data as a human readable malloc()ed string.
+  /* 'ip_addr_str' is the ip_addr data as a human readable string.
      It remains available as long as the connection does, which is longer than
-     the ip_addr itself. Set with Curl_store_ip_addr() when ip_addr has been
-     set. */
-  char *ip_addr_str;
+     the ip_addr itself. */
+  char ip_addr_str[MAX_IPADR_LEN];
 
   unsigned int scope;    /* address scope for IPv6 */
 
@@ -927,6 +931,8 @@ struct connectdata {
   char *proxyuser;    /* proxy user name string, allocated */
   char *proxypasswd;  /* proxy password string, allocated */
   curl_proxytype proxytype; /* what kind of proxy that is in use */
+
+  int httpversion;              /* the HTTP version*10 reported by the server */
 
   struct timeval now;     /* "current" time */
   struct timeval created; /* creation time */
@@ -1051,6 +1057,9 @@ struct PureInfo {
   char ip[MAX_IPADR_LEN]; /* this buffer gets the numerical ip version stored
                              at the connect *attempt* so it will get the last
                              tried connect IP even on failures */
+  struct curl_certinfo certs; /* info about the certs, only populated in
+                                 OpenSSL builds. Asked for with
+                                 CURLOPT_CERTINFO / CURLINFO_CERTINFO */
 };
 
 
@@ -1214,6 +1223,8 @@ struct UrlState {
   /* set after initial USER failure, to prevent an authentication loop */
   bool ftp_trying_alternative;
 
+  int httpversion;       /* the lowest HTTP version*10 reported by any server
+                            involved in this request */
   bool expect100header;  /* TRUE if we added Expect: 100-continue */
 
   bool pipe_broke; /* TRUE if the connection we were pipelined on broke
@@ -1315,7 +1326,6 @@ enum dupstring {
                              $HOME/.netrc */
   STRING_COPYPOSTFIELDS,  /* if POST, set the fields' values here */
   STRING_PROXY,           /* proxy to use */
-  STRING_PROXYUSERPWD,    /* Proxy <user:password>, if used */
   STRING_SET_RANGE,       /* range, if used */
   STRING_SET_REFERER,     /* custom string for the HTTP referer field */
   STRING_SET_URL,         /* what original URL to work on */
@@ -1327,10 +1337,13 @@ enum dupstring {
   STRING_SSL_EGDSOCKET,   /* path to file containing the EGD daemon socket */
   STRING_SSL_RANDOM_FILE, /* path to file containing "random" data */
   STRING_USERAGENT,       /* User-Agent string */
-  STRING_USERPWD,         /* <user:password>, if used */
   STRING_SSH_HOST_PUBLIC_KEY_MD5, /* md5 of host public key in ascii hex */
   STRING_SSL_CRLFILE,     /* crl file to check certificate */
   STRING_SSL_ISSUERCERT,  /* issuer cert file to check certificate */
+  STRING_USERNAME,        /* <username>, if used */
+  STRING_PASSWORD,        /* <password>, if used */
+  STRING_PROXYUSERNAME,   /* Proxy <username>, if used */
+  STRING_PROXYPASSWORD,   /* Proxy <password>, if used */
 
   /* -- end of strings -- */
   STRING_LAST /* not used, just an end-of-list marker */
@@ -1354,6 +1367,7 @@ struct UserDefined {
                         for infinity */
   bool post301;      /* Obey RFC 2616/10.3.2 and keep POSTs as POSTs after a
                         301 */
+  bool post302;      /* keep POSTs as POSTs after a 302 */
   bool free_referer; /* set TRUE if 'referer' points to a string we
                         allocated */
   void *postfields;  /* if POST, set the fields' values here */
@@ -1514,7 +1528,7 @@ struct SessionHandle {
   struct Names dns;
   struct Curl_multi *multi;    /* if non-NULL, points to the multi handle
                                   struct to which this "belongs" */
-  struct Curl_one_easy *multi_pos; /* if non-NULL, points to the its position
+  struct Curl_one_easy *multi_pos; /* if non-NULL, points to its position
                                       in multi controlling structure to assist
                                       in removal. */
   struct Curl_share *share;    /* Share, handles global variable mutexing */

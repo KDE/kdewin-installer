@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hostthre.c,v 1.53 2008-08-06 08:05:09 giva Exp $
+ * $Id: hostthre.c,v 1.57 2008-11-06 17:19:57 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -53,10 +53,6 @@
 #include <stdlib.h>
 #endif
 
-#ifdef HAVE_SETJMP_H
-#include <setjmp.h>
-#endif
-
 #ifdef HAVE_PROCESS_H
 #include <process.h>
 #endif
@@ -74,6 +70,7 @@
 #include "strerror.h"
 #include "url.h"
 #include "multiif.h"
+#include "inet_pton.h"
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -96,7 +93,7 @@
 /* This function is used to init a threaded resolve */
 static bool init_resolve_thread(struct connectdata *conn,
                                 const char *hostname, int port,
-                                const Curl_addrinfo *hints);
+                                const struct addrinfo *hints);
 
 #ifdef CURLRES_IPV4
   #define THREAD_FUNC  gethostbyname_thread
@@ -292,7 +289,7 @@ static unsigned __stdcall getaddrinfo_thread (void *arg)
 {
   struct connectdata *conn = (struct connectdata*) arg;
   struct thread_data *td   = (struct thread_data*) conn->async.os_specific;
-  struct addrinfo    *res;
+  Curl_addrinfo      *res;
   char   service [NI_MAXSERV];
   int    rc;
   struct addrinfo hints = td->hints;
@@ -317,7 +314,7 @@ static unsigned __stdcall getaddrinfo_thread (void *arg)
      need */
   SetEvent(td->event_thread_started);
 
-  rc = getaddrinfo(tsd.hostname, service, &hints, &res);
+  rc = Curl_getaddrinfo_ex(tsd.hostname, service, &hints, &res);
 
   /* is parent thread waiting for us and are we able to access conn members? */
   if(acquire_thread_sync(&tsd)) {
@@ -400,7 +397,7 @@ void Curl_destroy_thread_data (struct Curl_async *async)
  */
 static bool init_resolve_thread (struct connectdata *conn,
                                  const char *hostname, int port,
-                                 const Curl_addrinfo *hints)
+                                 const struct addrinfo *hints)
 {
   struct thread_data *td = calloc(sizeof(*td), 1);
   HANDLE thread_and_event[2] = {0};
@@ -669,14 +666,13 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
 {
   struct hostent *h = NULL;
   struct SessionHandle *data = conn->data;
-  in_addr_t in;
+  struct in_addr in;
 
   *waitp = 0; /* don't wait, we act synchronously */
 
-  in = inet_addr(hostname);
-  if(in != CURL_INADDR_NONE)
+  if(Curl_inet_pton(AF_INET, hostname, &in) > 0)
     /* This is a dotted IP address 123.123.123.123-style */
-    return Curl_ip2addr(in, hostname, port);
+    return Curl_ip2addr(AF_INET, &in, hostname, port);
 
   /* fire up a new resolver thread! */
   if(init_resolve_thread(conn, hostname, port, NULL)) {
@@ -707,7 +703,8 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
                                 int port,
                                 int *waitp)
 {
-  struct addrinfo hints, *res;
+  struct addrinfo hints;
+  Curl_addrinfo *res;
   int error;
   char sbuf[NI_MAXSERV];
   int pf;
@@ -766,7 +763,7 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
   infof(data, "init_resolve_thread() failed for %s; %s\n",
         hostname, Curl_strerror(conn, ERRNO));
 
-  error = getaddrinfo(hostname, sbuf, &hints, &res);
+  error = Curl_getaddrinfo_ex(hostname, sbuf, &hints, &res);
   if(error) {
     infof(data, "getaddrinfo() failed for %s:%d; %s\n",
           hostname, port, Curl_strerror(conn, SOCKERRNO));

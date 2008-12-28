@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: ssh.c,v 1.109 2008-08-16 01:34:00 yangtse Exp $
+ * $Id: ssh.c,v 1.118 2008-10-23 01:20:57 danf Exp $
  ***************************************************************************/
 
 /* #define CURL_LIBSSH2_DEBUG */
@@ -98,23 +98,18 @@
 #include "sslgen.h"
 #include "connect.h"
 #include "strerror.h"
-#include "memory.h"
 #include "inet_ntop.h"
 #include "parsedate.h" /* for the week day and month names */
 #include "sockaddr.h" /* required for Curl_sockaddr_storage */
+#include "strtoofft.h"
 #include "multiif.h"
-
-#if defined(HAVE_INET_NTOA_R) && !defined(HAVE_INET_NTOA_R_DECL)
-#include "inet_ntoa_r.h"
-#endif
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
 
+#include "memory.h"
 /* The last #include file should be: */
-#ifdef CURLDEBUG
 #include "memdebug.h"
-#endif
 
 #ifndef PATH_MAX
 #define PATH_MAX 1024 /* just an extra precaution since there are systems that
@@ -379,7 +374,7 @@ static CURLcode ssh_getworkingpath(struct connectdata *conn,
 
   /* Check for /~/ , indicating relative to the user's home directory */
   if(conn->protocol & PROT_SCP) {
-    real_path = (char *)malloc(working_path_len+1);
+    real_path = malloc(working_path_len+1);
     if(real_path == NULL) {
       free(working_path);
       return CURLE_OUT_OF_MEMORY;
@@ -393,7 +388,7 @@ static CURLcode ssh_getworkingpath(struct connectdata *conn,
   else if(conn->protocol & PROT_SFTP) {
     if((working_path_len > 1) && (working_path[1] == '~')) {
       size_t homelen = strlen(homedir);
-      real_path = (char *)malloc(homelen + working_path_len + 1);
+      real_path = malloc(homelen + working_path_len + 1);
       if(real_path == NULL) {
         free(working_path);
         return CURLE_OUT_OF_MEMORY;
@@ -409,7 +404,7 @@ static CURLcode ssh_getworkingpath(struct connectdata *conn,
       }
     }
     else {
-      real_path = (char *)malloc(working_path_len+1);
+      real_path = malloc(working_path_len+1);
       if(real_path == NULL) {
         free(working_path);
         return CURLE_OUT_OF_MEMORY;
@@ -765,7 +760,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
     else if(rc > 0) {
       /* It seems that this string is not always NULL terminated */
       tempHome[rc] = '\0';
-      sshc->homedir = (char *)strdup(tempHome);
+      sshc->homedir = strdup(tempHome);
       if(!sshc->homedir) {
         state(conn, SSH_SFTP_CLOSE);
         sshc->actualcode = CURLE_OUT_OF_MEMORY;
@@ -827,7 +822,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
     /*
      * Support some of the "FTP" commands
      */
-    if(curl_strnequal(sshc->quote_item->data, "PWD", 3)) {
+    if(curl_strequal("pwd", sshc->quote_item->data)) {
       /* output debug output if that is requested */
       if(data->set.verbose) {
         char tmp[PATH_MAX+1];
@@ -1403,12 +1398,12 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
         break;
       }
     }
-    if((sshc->readdir_filename = (char *)malloc(PATH_MAX+1)) == NULL) {
+    if((sshc->readdir_filename = malloc(PATH_MAX+1)) == NULL) {
       state(conn, SSH_SFTP_CLOSE);
       sshc->actualcode = CURLE_OUT_OF_MEMORY;
       break;
     }
-    if((sshc->readdir_longentry = (char *)malloc(PATH_MAX+1)) == NULL) {
+    if((sshc->readdir_longentry = malloc(PATH_MAX+1)) == NULL) {
       Curl_safefree(sshc->readdir_filename);
       sshc->readdir_filename = NULL;
       state(conn, SSH_SFTP_CLOSE);
@@ -1461,7 +1456,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
       else {
         sshc->readdir_currLen = strlen(sshc->readdir_longentry);
         sshc->readdir_totalLen = 80 + sshc->readdir_currLen;
-        sshc->readdir_line = (char *)calloc(sshc->readdir_totalLen, 1);
+        sshc->readdir_line = calloc(sshc->readdir_totalLen, 1);
         if(!sshc->readdir_line) {
           Curl_safefree(sshc->readdir_filename);
           sshc->readdir_filename = NULL;
@@ -1477,7 +1472,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
         if((sshc->readdir_attrs.flags & LIBSSH2_SFTP_ATTR_PERMISSIONS) &&
            ((sshc->readdir_attrs.permissions & LIBSSH2_SFTP_S_IFMT) ==
             LIBSSH2_SFTP_S_IFLNK)) {
-          sshc->readdir_linkPath = (char *)malloc(PATH_MAX + 1);
+          sshc->readdir_linkPath = malloc(PATH_MAX + 1);
           if(sshc->readdir_linkPath == NULL) {
             Curl_safefree(sshc->readdir_filename);
             sshc->readdir_filename = NULL;
@@ -1637,9 +1632,45 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
       data->req.maxdownload = -1;
     }
     else {
-      data->req.size = attrs.filesize;
-      data->req.maxdownload = attrs.filesize;
-      Curl_pgrsSetDownloadSize(data, attrs.filesize);
+      curl_off_t size;
+
+      size = attrs.filesize;
+      if(conn->data->state.use_range) {
+        curl_off_t from, to;
+        char *ptr;
+        char *ptr2;
+
+        from=curlx_strtoofft(conn->data->state.range, &ptr, 0);
+        while(ptr && *ptr && (isspace((int)*ptr) || (*ptr=='-')))
+          ptr++;
+        to=curlx_strtoofft(ptr, &ptr2, 0);
+        if((ptr == ptr2) /* no "to" value given */
+            || (to >= size)) {
+          to = size - 1;
+        }
+        if(from < 0) {
+          /* from is relative to end of file */
+          from += size;
+        }
+        if(from >= size) {
+          failf(data, "Offset (%"
+                FORMAT_OFF_T ") was beyond file size (%" FORMAT_OFF_T ")",
+                from, attrs.filesize);
+          return CURLE_BAD_DOWNLOAD_RESUME;
+        }
+        if(from > to) {
+          from = to;
+          size = 0;
+        }
+        else {
+          size = to - from + 1;
+        }
+
+        libssh2_sftp_seek(conn->proto.sshc.sftp_handle, from);
+      }
+      data->req.size = size;
+      data->req.maxdownload = size;
+      Curl_pgrsSetDownloadSize(data, size);
     }
 
     /* We can resume if we can seek to the resume position */
@@ -2021,7 +2052,7 @@ static CURLcode ssh_init(struct connectdata *conn)
   if(data->state.proto.ssh)
     return CURLE_OK;
 
-  ssh = (struct SSHPROTO *)calloc(sizeof(struct SSHPROTO), 1);
+  ssh = calloc(sizeof(struct SSHPROTO), 1);
   if(!ssh)
     return CURLE_OUT_OF_MEMORY;
 
@@ -2437,8 +2468,8 @@ get_pathname(const char **cpp, char **path)
 {
   const char *cp = *cpp, *end;
   char quot;
-  u_int i, j;
-  static const char * const WHITESPACE = " \t\r\n";
+  unsigned int i, j;
+  static const char WHITESPACE[] = " \t\r\n";
 
   cp += strspn(cp, WHITESPACE);
   if(!*cp) {

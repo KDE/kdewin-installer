@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: getinfo.c,v 1.63 2008-07-03 06:56:03 bagder Exp $
+ * $Id: getinfo.c,v 1.65 2008-10-07 18:28:24 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -77,6 +77,11 @@ CURLcode Curl_getinfo(struct SessionHandle *data, CURLINFO info, ...)
   char **param_charp=NULL;
   struct curl_slist **param_slistp=NULL;
   int type;
+
+  union {
+    struct curl_certinfo * to_certinfo;
+    struct curl_slist    * to_slist;
+  } ptr;
 
   if(!data)
     return CURLE_BAD_FUNCTION_ARGUMENT;
@@ -216,6 +221,12 @@ CURLcode Curl_getinfo(struct SessionHandle *data, CURLINFO info, ...)
   case CURLINFO_PRIMARY_IP:
     /* Return the ip address of the most recent (primary) connection */
     *param_charp = data->info.ip;
+    break;
+  case CURLINFO_CERTINFO:
+    /* Return the a pointer to the certinfo struct. Not really an slist
+       pointer but we can pretend it is here */
+    ptr.to_certinfo = &data->info.certs;
+    *param_slistp = ptr.to_slist;
     break;
   default:
     return CURLE_BAD_FUNCTION_ARGUMENT;

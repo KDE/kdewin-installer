@@ -1,5 +1,5 @@
-#ifndef __BASE64_H
-#define __BASE64_H
+#ifndef __RAWSTR_H
+#define __RAWSTR_H
 /***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,9 +20,23 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: base64.h,v 1.18 2007-01-03 23:04:41 bagder Exp $
+ * $Id: rawstr.h,v 1.1 2008-10-23 11:49:19 bagder Exp $
  ***************************************************************************/
-size_t Curl_base64_encode(struct SessionHandle *data,
-                          const char *input, size_t size, char **str);
-size_t Curl_base64_decode(const char *source, unsigned char **outptr);
+
+#include <curl/curl.h>
+
+/*
+ * Curl_raw_equal() is for doing "raw" case insensitive strings. This is meant
+ * to be locale independent and only compare strings we know are safe for
+ * this.
+ *
+ * The function is capable of comparing a-z case insensitively even for non-ascii.
+ */
+int Curl_raw_equal(const char *first, const char *second);
+int Curl_raw_nequal(const char *first, const char *second, size_t max);
+
+/* checkprefix() is a shorter version of the above, used when the first
+   argument is zero-byte terminated */
+#define checkprefix(a,b)    Curl_raw_nequal(a,b,strlen(a))
+
 #endif
