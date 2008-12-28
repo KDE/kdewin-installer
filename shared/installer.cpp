@@ -177,7 +177,7 @@ bool Installer::install(Package *pkg, const Package::Type type)
     else {
         if (!Unpacker::instance()->unpackFile(pkg->localFilePath(type), m_root, pkg->pathRelocations()))
             return false;
-        m_files = Unpacker::instance()->getUnpackedFiles();
+        m_files = Unpacker::instance()->unpackedFiles();
     }
 
     qSort(m_files);

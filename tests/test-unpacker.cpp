@@ -32,7 +32,12 @@ int main(int argc, char ** argv)
 
     Unpacker *u = Unpacker::instance(); 
     
-    u->unpackFile("e:\\downloads\\kde\\OggDS0995.exe","e:\\downloads\\kde");
+    if( argc == 3 ) {
+        u->unpackFile( argv[1], argv[2] );
+    } else {
+        u->unpackFile("e:\\downloads\\kde\\OggDS0995.exe","e:\\downloads\\kde");
+    }
+    fprintf(stdout, "Unpack result: %s", qPrintable( u->lastError() ));
 
     return 0;
 }

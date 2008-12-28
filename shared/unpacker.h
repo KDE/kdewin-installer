@@ -60,7 +60,10 @@ public:
     void cancel();
 
     /// get unpacked files
-    QStringList getUnpackedFiles() const;
+    QStringList unpackedFiles() const;
+
+    /// get last error string
+    QString lastError() const;
 Q_SIGNALS:
     void done ( bool bOk );
     void error ( const QString &error );
@@ -74,6 +77,7 @@ protected:
     bool m_bRet;
     bool m_bFinished;
     QEventLoop *m_loop;
+    QString m_lastError;
 private:
     Unpacker ();
 

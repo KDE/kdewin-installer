@@ -244,10 +244,7 @@ bool UPThread::unbz2File()
         newFile.close();
     }
     if ( tf.error() ) {
-        if ( bzip2.errorString().isEmpty() )
-            emit error ( tr ( "Error reading from tar stream (%1)" ).arg ( tf.lastError() ) );
-        else
-            emit error ( tr ( "Error reading from file %1 (%2)" ).arg ( fi.absoluteFilePath() ).arg ( bzip2.errorString() ) );
+        emit error ( tr ( "Error reading from file %1 (%2)" ).arg ( fi.absoluteFilePath() ).arg ( tf.lastError() ) );
     }
 
     bzip2.close();
@@ -420,6 +417,7 @@ bool Unpacker::unpackFile ( const QString &fn, const QString &destpath, const St
     qDebug() << __FUNCTION__ << "filename: " << fn << "root: " << destpath;
     m_bRet = false;
     m_bFinished = false;
+    m_lastError = "No Error";
 
     QDir path ( destpath );
     if ( !path.exists() ) {
@@ -460,9 +458,14 @@ void Unpacker::cancel()
         m_thread->cancel();
 }
 
-QStringList Unpacker::getUnpackedFiles() const
+QStringList Unpacker::unpackedFiles() const
 {
     return m_thread ? m_thread->getUnpackedFiles() : QStringList();
+}
+
+QString Unpacker::lastError() const
+{
+  return m_lastError;
 }
 
 void Unpacker::threadFinished ()
@@ -482,6 +485,6 @@ void Unpacker::progressCallback ( const QString &file )
 void Unpacker::setError ( const QString &errStr )
 {
     qWarning() << qPrintable ( errStr );
+    m_lastError = errStr;
     emit error ( errStr );
 }
-
