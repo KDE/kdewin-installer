@@ -23,9 +23,13 @@
 #include "settings.h"
 #include "misc.h"
 
-#include <QDir>
-#include <QUrl>
-#include <QtDebug>
+#include <QtCore/QDir>
+#include <QtCore/QUrl>
+#include <QtCore/QtDebug>
+
+#ifdef Q_WS_WIN
+#include <windows.h>
+#endif
 
 #define SETTINGS_VERSION "2"
 
@@ -110,11 +114,33 @@ QString Settings::downloadDir() const
     QString result;
     QStringList tempPathes;
     QString path = m_settingsMain->value("tempdir","").toString();
-    if (path.isEmpty())
-        path = qgetenv("TEMP");
-    if (path.isEmpty())
-        path = qgetenv("TMP");
 
+#ifdef Q_WS_WIN
+    if (path.isEmpty()) {
+        WCHAR *buf = new WCHAR[256];
+        int iRet = GetTempPathW(256, buf);
+        if( iRet > 255 ) {
+           delete[] buf;
+           buf = new WCHAR[iRet];
+           GetTempPathW(iRet, buf);
+        }
+        WCHAR *buf2 = new WCHAR[256];
+        iRet = GetLongPathNameW(buf, buf2, 256);
+        if( iRet > 255 ) {
+           delete[] buf2;
+           buf2 = new WCHAR[iRet];
+           GetLongPathNameW(buf, buf2, iRet);
+        }
+        path = QString::fromUtf16((const ushort*)buf2, iRet);
+        delete[] buf;
+        delete[] buf2;
+    }
+#else
+    if (path.isEmpty())
+        path = QString::fromLocal8Bit(qgetenv("TEMP"));
+    if (path.isEmpty())
+        path = QString::fromLocal8Bit(qgetenv("TMP"));
+#endif
     QDir d(path);
     if (d.exists())
         return QDir::toNativeSeparators(d.absolutePath());

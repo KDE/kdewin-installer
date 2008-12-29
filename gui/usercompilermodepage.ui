@@ -70,8 +70,7 @@ p, li { white-space: pre-wrap; }
      <item rowspan="3" row="0" column="3" >
       <widget class="QLabel" name="label" >
        <property name="text" >
-        <string>The Package Manager Mode gives you more flexibility and allows more packages to install as the End User install mode. Because of the flexibility the Package Manager Mode may be more complicated to use.
- .</string>
+        <string>The Package Manager Mode gives you more flexibility and allows more packages to install as the End User install mode. Because of the flexibility the Package Manager Mode may be more complicated to use.</string>
        </property>
        <property name="alignment" >
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
