@@ -207,8 +207,7 @@
 @pkgnotes cfitsio library for the FITS (Flexible Image Transport System) file format
 @pkgnotes clucene high-performance, full-featured text search engine (required for compiling strigi) 
 @pkgnotes diffutils Tools to find difference between two files
-@pkgnotes dbus-mingw Freedesktop message bus system (daemon and clients)
-@pkgnotes dbus-msvc Freedesktop message bus system (daemon and clients)
+@pkgnotes dbus-* Freedesktop message bus system (daemon and clients)
 @pkgnotes ebook-tools Tools for accessing and converting various ebook file formats 
 @pkgnotes eigen Lightweight C++ template library for vector and matrix math
 @pkgnotes eigen2 Lightweight C++ template library for vector and matrix math
