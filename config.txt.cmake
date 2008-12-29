@@ -5,10 +5,14 @@
 @timestamp 200811031800
 
 ; category notes 
-@categorynotes qt Qt related packages 
-@categorynotes devel-tools tools required or usefull for development
+@categorynotes aspell-data Spelling packages 
 @categorynotes debug-tools tools required or usefull for debugging
+@categorynotes devel-tools tools required or usefull for development
 @categorynotes KDE KDE packages
+@categorynotes kdesupport KDE support packages 
+@categorynotes kde-3rdparty external KDE support packages
+@categorynotes kde-l10n KDE localization packages
+@categorynotes qt Qt related packages 
 
 ; to which category packages belongs to
 @categorypackages win32libs aspell ebook-tools expat giflib iconv jasper jpeg lcms libbzip2 libgs libidn libintl libpng libxml2 libxslt libzip mysql-embedded openslp openssl tiff zlib shared-mime-info sqlite gpgme
@@ -22,12 +26,20 @@
 @categorypackages KDE koffice-msvc  ktorrent-msvc  kile-msvc
 @categorypackages KDE koffice-mingw ktorrent-mingw kile-mingw
 @categorypackages qt qt-msvc qt-mingw qt-static-msvc
-@categorypackages KDE kde-l10n-af kde-l10n-ar kde-l10n-be kde-l10n-bg kde-l10n-bn kde-l10n-bn_IN kde-l10n-br kde-l10n-ca kde-l10n-cs kde-l10n-csb kde-l10n-cy kde-l10n-da kde-l10n-de kde-l10n-el kde-l10n-en_GB 
-@categorypackages KDE kde-l10n-eo kde-l10n-es kde-l10n-et kde-l10n-eu kde-l10n-fa kde-l10n-fi kde-l10n-fr kde-l10n-fy kde-l10n-ga kde-l10n-gl kde-l10n-gu kde-l10n-ha kde-l10n-he kde-l10n-hi kde-l10n-hr kde-l10n-hsb 
-@categorypackages KDE kde-l10n-hu kde-l10n-hy kde-l10n-is kde-l10n-it kde-l10n-ja kde-l10n-ka kde-l10n-kk kde-l10n-km kde-l10n-kn kde-l10n-ko kde-l10n-ku kde-l10n-lb kde-l10n-lt kde-l10n-lv kde-l10n-ml kde-l10n-mk 
-@categorypackages KDE kde-l10n-ms kde-l10n-mt kde-l10n-nb kde-l10n-nds kde-l10n-ne kde-l10n-nl kde-l10n-nn kde-l10n-nso kde-l10n-oc kde-l10n-pa kde-l10n-pl kde-l10n-pt kde-l10n-pt_BR kde-l10n-ro kde-l10n-ru 
-@categorypackages KDE kde-l10n-rw kde-l10n-se kde-l10n-sk kde-l10n-sl kde-l10n-sr kde-l10n-sr@latin kde-l10n-sv kde-l10n-ta kde-l10n-te kde-l10n-tg kde-l10n-th kde-l10n-tr kde-l10n-uk kde-l10n-uz kde-l10n-vi 
-@categorypackages KDE kde-l10n-wa kde-l10n-xh kde-l10n-x-test kde-l10n-zh_CN kde-l10n-zh_HK kde-l10n-zh_TW
+@categorypackages kde-l10n kde-l10n-af kde-l10n-ar kde-l10n-be kde-l10n-bg kde-l10n-bn kde-l10n-bn_IN kde-l10n-br kde-l10n-ca kde-l10n-cs kde-l10n-csb kde-l10n-cy kde-l10n-da kde-l10n-de kde-l10n-el kde-l10n-en_GB 
+@categorypackages kde-l10n kde-l10n-eo kde-l10n-es kde-l10n-et kde-l10n-eu kde-l10n-fa kde-l10n-fi kde-l10n-fr kde-l10n-fy kde-l10n-ga kde-l10n-gl kde-l10n-gu kde-l10n-ha kde-l10n-he kde-l10n-hi kde-l10n-hr kde-l10n-hsb 
+@categorypackages kde-l10n kde-l10n-hu kde-l10n-hy kde-l10n-is kde-l10n-it kde-l10n-ja kde-l10n-ka kde-l10n-kk kde-l10n-km kde-l10n-kn kde-l10n-ko kde-l10n-ku kde-l10n-lb kde-l10n-lt kde-l10n-lv kde-l10n-ml kde-l10n-mk 
+@categorypackages kde-l10n kde-l10n-ms kde-l10n-mt kde-l10n-nb kde-l10n-nds kde-l10n-ne kde-l10n-nl kde-l10n-nn kde-l10n-nso kde-l10n-oc kde-l10n-pa kde-l10n-pl kde-l10n-pt kde-l10n-pt_BR kde-l10n-ro kde-l10n-ru 
+@categorypackages kde-l10n kde-l10n-rw kde-l10n-se kde-l10n-sk kde-l10n-sl kde-l10n-sr kde-l10n-sr@latin kde-l10n-sv kde-l10n-ta kde-l10n-te kde-l10n-tg kde-l10n-th kde-l10n-tr kde-l10n-uk kde-l10n-uz kde-l10n-vi 
+@categorypackages kde-l10n kde-l10n-wa kde-l10n-xh kde-l10n-x-test kde-l10n-zh_CN kde-l10n-zh_HK kde-l10n-zh_TW
+
+@categorypackages aspell-data aspell-af aspell-am aspell-ar aspell-az aspell-be aspell-bg aspell-bn aspell-br aspell-ca aspell-cs aspell-csb aspell-cy aspell-da aspell-de aspell-el aspell-en 
+@categorypackages aspell-data aspell-eo aspell-es aspell-et aspell-fa aspell-fi aspell-fo aspell-fr aspell-ga aspell-gd aspell-gl aspell-gv aspell-he aspell-hi aspell-hil aspell-hr aspell-hsb 
+@categorypackages aspell-data aspell-hu aspell-ia aspell-id aspell-is aspell-it aspell-ku aspell-la aspell-lt aspell-lv aspell-mg aspell-mi aspell-mk aspell-mn aspell-mr aspell-ms aspell-mt 
+@categorypackages aspell-data aspell-nb aspell-nn aspell-no aspell-ny aspell-or aspell-pa aspell-pl aspell-pt aspell-qu aspell-ro aspell-ru aspell-rw aspell-sc aspell-sk aspell-sl aspell-sr 
+@categorypackages aspell-data aspell-sv aspell-sw aspell-ta aspell-tet aspell-tl aspell-tn aspell-tr aspell-uk aspell-uz aspell-vi aspell-wa aspell-yi aspell-zu
+
+@endusercategories KDE aspell-data kde-l10n
 
 ;------------------------------------------------------
 ; all packages on the mirror
@@ -109,88 +121,86 @@
 @deps poppler-msvc fontconfig-msvc freetype-msvc
 @deps qt-msvc dbus-msvc vcredist
 @deps strigi-msvc libbzip2 openssl zlib iconv libxml2
-; mingw
-@pkgnotes akonadi-mingw KDE4 Personal Information Manager framework
-@pkgnotes amarok-mingw UNSTABLE media player
-@pkgnotes automoc-mingw build system application
-@pkgnotes digikam-mingw UNSTABLE a photo management application
-@pkgnotes exiv2-mingw an image metadata library
-@pkgnotes fontconfig-mingw library for font customization and configuration
-@pkgnotes freetype-mingw A Free, High-Quality, and Portable Font Engine
-@pkgnotes gpgme-qt-mingw Qt wrapper for gpgme library
-@pkgnotes kdebase-apps-mingw KDE base applicaton package 
-@pkgnotes kdebase-runtime-mingw KDE runtime package 
-@pkgnotes kdebase-workspace-mingw parts of the KDE desktop package
-@pkgnotes kdeedu-mingw KDE education apps
-@pkgnotes kdegames-mingw KDE games
-@pkgnotes kdegraphics-mingw Graphics applications for KDE
-@pkgnotes kdelibs-mingw KDE libraries (support applications)
-@pkgnotes kdepim-mingw UNSTABLE KDE Personal Informations Suite
-@pkgnotes kdepimlibs-mingw UNSTABLE KDE PIM library
-@pkgnotes kdenetwork-mingw KDE Networking applications
-@pkgnotes kdesdk-mingw software development package (umbrello, kate)
-@pkgnotes kdetoys-mingw collection of several programs in KDE
-@pkgnotes kdeutils-mingw various desktop utilities (KGpg, Okteta)
-@pkgnotes kdewebdev-mingw KDE Web Development applications
-@pkgnotes kdewin32-mingw kde supplementary package for win32
-@pkgnotes kile-mingw UNSTABLE latex editor
-@pkgnotes kipi-plugins-mingw UNSTABLE plugins for graphics applications
-@pkgnotes koffice-mingw UNSTABLE KDE Office application suite
-@pkgnotes ktorrent-mingw UNSTABLE KDE Torrent client
-@pkgnotes libgmp-mingw devel-tools GNU MP library for abritary precision arithmetic
-@pkgnotes phonon-mingw KDE KDE4 multimedia API
-@pkgnotes poppler-mingw PDF rendering library based on xpdf-3.0
-@pkgnotes pcre-mingw Perl-Compatible Regular Expressions (utilities)
-@pkgnotes qca-mingw Qt Cryptographic Architecture (QCA)
-@pkgnotes qimageblitz-mingw KDE image effect library
-@pkgnotes qt-mingw C++ GUI application framework
-@pkgnotes runtime-mingw Mingw runtime files
-@pkgnotes soprano-mingw RDF storage solutions library
-@pkgnotes strigi-mingw desktop search engine
-@pkgnotes subversion-mingw software revision system
-@pkgnotes taglib-mingw audio meda-data library
-; msvc 
-@pkgnotes akonadi-msvc KDE4 Personal Information Manager framework
-@pkgnotes amarok-msvc UNSTABLE media player
-@pkgnotes automoc-msvc build system application
-@pkgnotes digikam-msvc UNSTABLE a photo management application
-@pkgnotes exiv2-msvc an image metadata library
-@pkgnotes fontconfig-msvc library for font customization and configuration
-@pkgnotes freetype-msvc A Free, High-Quality, and Portable Font Engine
-@pkgnotes gpgme-qt-msvc Qt wrapper for gpgme library
-@pkgnotes kdebase-apps-msvc KDE base applicaton package 
-@pkgnotes kdebase-runtime-msvc KDE runtime package
-@pkgnotes kdebase-workspace-msvc parts of the KDE desktop package
-@pkgnotes kdeedu-msvc KDE education apps
-@pkgnotes kdegames-msvc KDE games
-@pkgnotes kdegraphics-msvc Graphics applications for KDE
-@pkgnotes kdelibs-msvc KDE libraries (support applications)
-@pkgnotes kdepim-msvc UNSTABLE KDE Personal Informations Suite
-@pkgnotes kdepimlibs-msvc UNSTABLE KDE PIM library
-@pkgnotes kdenetwork-msvc KDE Networking applications
-@pkgnotes kdesdk-msvc software development package (umbrello, kate)
-@pkgnotes kdetoys-msvc collection of several programs in KDE
-@pkgnotes kdeutils-msvc various desktop utilities (KGpg, Okteta)
-@pkgnotes kdewebdev-msvc KDE Web Development applications
-@pkgnotes kdewin32-msvc kde supplementary package for win32
-@pkgnotes kile-msvc UNSTABLE latex editor
-@pkgnotes kipi-plugins-msvc UNSTABLE plugins for graphics applications
-@pkgnotes koffice-msvc UNSTABLE KDE Office application suite
-@pkgnotes ktorrent-msvc UNSTABLE KDE Torrent client
-@pkgnotes libgmp-msvc devel-tools GNU MP library for abritary precision arithmetic
-@pkgnotes poppler-msvc PDF rendering library based on the xpdf-3.0
-@pkgnotes phonon-msvc KDE KDE4 multimedia API
-@pkgnotes pcre-msvc Perl-Compatible Regular Expressions (utilities)
-@pkgnotes qca-msvc Qt Cryptographic Architecture (QCA)
-@pkgnotes qimageblitz-msvc KDE image effect library
-@pkgnotes qt-msvc C++ GUI application framework
-@pkgnotes qt-static-msvc static release of qt package, which is used for build kdewin installer
-@pkgnotes soprano-msvc RDF storage solutions library
-@pkgnotes strigi-msvc desktop search engine
-@pkgnotes taglib-msvc audio meta-data library
 ; compiler independent
-@pkgnotes astyle source code formatter
 @pkgnotes aspell A powerful spell checker, designed to replace ispell
+@pkgnotes aspell-af Afrikaans spelling package
+@pkgnotes aspell-am Amharic spelling package
+@pkgnotes aspell-ar Arabic spelling package
+@pkgnotes aspell-az Azerbaijani spelling package
+@pkgnotes aspell-be Belarusian spelling package
+@pkgnotes aspell-bg Bulgarian spelling package
+@pkgnotes aspell-bn Bengali spelling package
+@pkgnotes aspell-br Breton spelling package
+@pkgnotes aspell-ca Catalan spelling package
+@pkgnotes aspell-csb Kashubian spelling package
+@pkgnotes aspell-cs Czech spelling package
+@pkgnotes aspell-cy Welsh spelling package
+@pkgnotes aspell-da Danish spelling package
+@pkgnotes aspell-de German spelling package
+@pkgnotes aspell-el Greek spelling package
+@pkgnotes aspell-en English spelling package
+@pkgnotes aspell-eo Esperanto spelling package
+@pkgnotes aspell-es Spanish spelling package
+@pkgnotes aspell-et Estonian spelling package
+@pkgnotes aspell-fa Farsi spelling package
+@pkgnotes aspell-fi Finnish spelling package
+@pkgnotes aspell-fo Faroese spelling package
+@pkgnotes aspell-fr French spelling package
+@pkgnotes aspell-ga Irish Gaelic spelling package
+@pkgnotes aspell-gd Scottish Gaelic spelling package
+@pkgnotes aspell-gl Galician spelling package
+@pkgnotes aspell-gv Manx Gaelic spelling package
+@pkgnotes aspell-he Hebrew spelling package
+@pkgnotes aspell-hi Hindi spelling package
+@pkgnotes aspell-hil Hiligaynon spelling package
+@pkgnotes aspell-hr Croatian spelling package
+@pkgnotes aspell-hsb Upper Sorbian spelling package
+@pkgnotes aspell-hu Hungarian spelling package
+@pkgnotes aspell-ia Interlingua spelling package
+@pkgnotes aspell-id Indonesian spelling package
+@pkgnotes aspell-is Icelandic spelling package
+@pkgnotes aspell-it Italian spelling package
+@pkgnotes aspell-ku Kurdish spelling package
+@pkgnotes aspell-la Latin spelling package
+@pkgnotes aspell-lt Lithuanian spelling package
+@pkgnotes aspell-lv Latvian spelling package
+@pkgnotes aspell-mg Malagasy spelling package
+@pkgnotes aspell-mi Maori spelling package
+@pkgnotes aspell-mk Macedonian spelling package
+@pkgnotes aspell-mn Mongolian spelling package
+@pkgnotes aspell-mr Marathi spelling package
+@pkgnotes aspell-ms Malay spelling package
+@pkgnotes aspell-mt Maltese spelling package
+@pkgnotes aspell-nb Norwegian Bokmal spelling package
+@pkgnotes aspell-nn Norwegian Nynorsk spelling package
+@pkgnotes aspell-no Norwegian spelling package
+@pkgnotes aspell-ny Chichewa spelling package
+@pkgnotes aspell-or Oriya spelling package
+@pkgnotes aspell-pa Panjabi/Punjabi spelling package
+@pkgnotes aspell-pl Polish spelling package
+@pkgnotes aspell-pt Portuguese spelling package
+@pkgnotes aspell-qu Quechua spelling package
+@pkgnotes aspell-ro Romanian spelling package
+@pkgnotes aspell-ru Russian spelling package
+@pkgnotes aspell-rw Kinyarwanda spelling package
+@pkgnotes aspell-sc Sardinian spelling package
+@pkgnotes aspell-sl Slovenian spelling package
+@pkgnotes aspell-sk Slovak spelling package
+@pkgnotes aspell-sr Serbian spelling package
+@pkgnotes aspell-sv Swedish spelling package
+@pkgnotes aspell-sw Swahili spelling package
+@pkgnotes aspell-ta Tamil spelling package
+@pkgnotes aspell-tet Tetum spelling package
+@pkgnotes aspell-tl Tagalog spelling package
+@pkgnotes aspell-tn Setswana  spelling package
+@pkgnotes aspell-tr Turkish spelling package
+@pkgnotes aspell-uk Ukrainian spelling package
+@pkgnotes aspell-uz Uzbek spelling package
+@pkgnotes aspell-vi Vietnamese spelling package
+@pkgnotes aspell-wa Walloon spelling package
+@pkgnotes aspell-yi Yiddish spelling package
+@pkgnotes aspell-zu Zulu spelling package
+@pkgnotes astyle source code formatter
 @pkgnotes boost-headers portable C++ libraries
 @pkgnotes byacc Berkeley parser generator
 @pkgnotes bzip2 Bzip compression utility
@@ -240,6 +250,49 @@
 @pkgnotes tiff TIFF image library (utilities)
 @pkgnotes wget Tool to get websites / files
 @pkgnotes zlib The zlib compression and decompression library
+; mingw/msvc related
+@pkgnotes akonadi-* KDE4 Personal Information Manager framework
+@pkgnotes amarok-* UNSTABLE media player
+@pkgnotes automoc-* build system application
+@pkgnotes digikam-* UNSTABLE a photo management application
+@pkgnotes digikam-support-* UNSTABLE digikam support package
+@pkgnotes exiv2-* an image metadata library
+@pkgnotes fontconfig-* library for font customization and configuration
+@pkgnotes freetype-* A Free, High-Quality, and Portable Font Engine
+@pkgnotes gpgme-qt-* Qt wrapper for gpgme library
+@pkgnotes kdebase-apps-* KDE base applicaton package 
+@pkgnotes kdebase-runtime-* KDE runtime package 
+@pkgnotes kdebase-workspace-* parts of the KDE desktop package
+@pkgnotes kdeedu-* KDE education apps
+@pkgnotes kdegames-* KDE games
+@pkgnotes kdegraphics-* Graphics applications for KDE
+@pkgnotes kdelibs-* KDE libraries (support applications)
+@pkgnotes kdepim-* UNSTABLE KDE Personal Informations Suite
+@pkgnotes kdepimlibs-* UNSTABLE KDE PIM library
+@pkgnotes kdemultimedia-* KDE multimedia applications (jux, kmix, kmixctrl, kscd)
+@pkgnotes kdenetwork-* KDE Networking applications
+@pkgnotes kdesdk-* software development package (umbrello, kate)
+@pkgnotes kdetoys-* collection of several programs in KDE
+@pkgnotes kdeutils-* various desktop utilities (KGpg, Okteta)
+@pkgnotes kdewebdev-* KDE Web Development applications
+@pkgnotes kdewin32-* kde supplementary package for win32
+@pkgnotes kile-* UNSTABLE latex editor
+@pkgnotes kipi-plugins-* UNSTABLE plugins for graphics applications
+@pkgnotes koffice-* UNSTABLE KDE Office application suite
+@pkgnotes ktorrent-* UNSTABLE KDE Torrent client
+@pkgnotes libgmp-* devel-tools GNU MP library for abritary precision arithmetic
+@pkgnotes openbabel-* program to convert the various file formats used in chemical software
+@pkgnotes phonon-* KDE KDE4 multimedia API
+@pkgnotes poppler-* PDF rendering library based on xpdf-3.0
+@pkgnotes pcre-* Perl-Compatible Regular Expressions (utilities)
+@pkgnotes qca-* Qt Cryptographic Architecture (QCA)
+@pkgnotes qimageblitz-* KDE image effect library
+@pkgnotes qt-* C++ GUI application framework
+@pkgnotes runtime-* Mingw runtime files
+@pkgnotes soprano-* RDF storage solutions library
+@pkgnotes strigi-* desktop search engine
+@pkgnotes subversion-* software revision system
+@pkgnotes taglib-* audio meda-data library
 ; language packages
 @pkgnotes kde-l10n-af Afrikaans language package
 @pkgnotes kde-l10n-ar Arabic language package
