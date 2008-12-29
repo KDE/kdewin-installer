@@ -1,5 +1,22 @@
 ChangeLog
 =========
+0.9.4 (r902722)
+-----------------
+
+- installer-gui:   
+                - in end user mode is it now possible to display packages from more than one package category (Ralf Habacker)
+                - migrated developer mode into a more clean package manager mode (Ralf Habacker)
+                - some fixes to local install mode (Ralf Habacker)
+                - fixed issues for installer self update (Ralf Habacker)
+                - added patch level to window title (Ralf Habacker)
+
+- common: 
+                - added aspell data packages (Ralf Habacker) 
+                - package notes in config files could now be defined for all compiler types together (Ralf Habacker)
+                - updated curl to 1.19.2 (Christian Ehrlicher)
+                - fixed bug not been able to unpack aspell binary packages packed with tar (Christian Ehrlicher)         
+                - added md5sum generating for all executables (Ralf Habacker)
+
 0.9.3-3 (r884546)
 -----------------
 
