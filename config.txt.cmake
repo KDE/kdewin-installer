@@ -109,9 +109,6 @@
 @deps poppler-msvc fontconfig-msvc freetype-msvc
 @deps qt-msvc dbus-msvc vcredist
 @deps strigi-msvc libbzip2 openssl zlib iconv libxml2
-; compiler independent
-@pkgnotes clucene high-performance, full-featured text search engine (required for compiling strigi) 
-@pkgnotes mysql-embedded the mysql libraries including the embedded
 ; mingw
 @pkgnotes akonadi-mingw KDE4 Personal Information Manager framework
 @pkgnotes amarok-mingw UNSTABLE media player
@@ -191,17 +188,20 @@
 @pkgnotes soprano-msvc RDF storage solutions library
 @pkgnotes strigi-msvc desktop search engine
 @pkgnotes taglib-msvc audio meta-data library
-;other
+; compiler independent
 @pkgnotes astyle source code formatter
 @pkgnotes aspell A powerful spell checker, designed to replace ispell
 @pkgnotes boost-headers portable C++ libraries
 @pkgnotes byacc Berkeley parser generator
 @pkgnotes bzip2 Bzip compression utility
 @pkgnotes cfitsio library for the FITS (Flexible Image Transport System) file format
+@pkgnotes clucene high-performance, full-featured text search engine (required for compiling strigi) 
 @pkgnotes diffutils Tools to find difference between two files
 @pkgnotes dbus-mingw Freedesktop message bus system (daemon and clients)
 @pkgnotes dbus-msvc Freedesktop message bus system (daemon and clients)
+@pkgnotes ebook-tools Tools for accessing and converting various ebook file formats 
 @pkgnotes eigen Lightweight C++ template library for vector and matrix math
+@pkgnotes eigen2 Lightweight C++ template library for vector and matrix math
 @pkgnotes expat XML parser library written in C (development/documentation package)
 @pkgnotes findutils Utilities to find files
 @pkgnotes flex Fast lexical analyzer generator
@@ -218,7 +218,8 @@
 @pkgnotes jpeg A library for manipulating JPEG image format files
 @pkgnotes lcms A small-footprint, speed optimized color management engine
 @pkgnotes libbzip2 shared libraries for bzip2 (runtime)
-@pkgnotes libgs a library for printing post script files
+@pkgnotes libgs-GPL a library for printing post script files
+@pkgnotes libical reference implementation of the icalendar data type and serialization format 
 @pkgnotes libidn internationalized domain names library
 @pkgnotes libintl native language support library
 @pkgnotes libpng PNG library (runtime)
@@ -228,6 +229,7 @@
 @pkgnotes libzip a zip library
 @pkgnotes md5sums md5 checksum tool
 @pkgnotes mingw-utils Mingw Utilities
+@pkgnotes mysql-embedded MySql embedded database library
 @pkgnotes openslp openslp client and libraries
 @pkgnotes openssl The OpenSSL runtime environment
 @pkgnotes patch Tool to merge diff files
@@ -342,7 +344,7 @@
 ; 3rdparty runtime packages 
 ;------------------------------------------------------
 @package oggcodecs
-@category KDE-3rdparty
+@category kde-3rdparty
 @notes Directshow Filters for Ogg Vorbis
 @version 0.9.9.5
 @url-bin http://www.free-codecs.com/download_soft.php?d=4151&s=58 OggDS0995.exe
