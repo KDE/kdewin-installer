@@ -170,14 +170,14 @@ bool Downloader::fetch ( const QUrl &url, const QString &fileName )
 
 bool Downloader::fetch ( const QUrl &url, QByteArray &ba )
 {
-	d->fileName = QString();
+    d->fileName = QString();
 
     if ( url.isEmpty() )
         return true;
     if ( d->progress )
         d->progress->setTitle ( url );
 
-	ba.clear();
+    ba.clear();
     d->ioDevice = new QBuffer ( &ba );
     if ( !d->ioDevice->open ( QIODevice::WriteOnly ) ) {
         setError ( tr ( "Internal error!" ) );

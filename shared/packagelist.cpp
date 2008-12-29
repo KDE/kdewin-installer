@@ -543,7 +543,7 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
                 p.setVersion(pkgVersion);
                 p.setName(pkgName);
                 Package::PackageItem item(pkgType);
-                item.setUrlAndFileName(m_baseURL.toString() + '/' + fileName,fileName);
+                item.setUrlAndFileName(m_baseURL.toString() + fileName,fileName);
                 p.add(item);
                 if(m_curSite)
                     p.setNotes(m_curSite->packageNote(pkgName));
@@ -559,7 +559,7 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
                 addPackage(p);
             } else {
                 Package::PackageItem item(pkgType);
-                item.setUrlAndFileName(m_baseURL.toString() + '/' + fileName,fileName);
+                item.setUrlAndFileName(m_baseURL.toString() + fileName,fileName);
                 pkg->add(item);
                 if (m_curSite)
                 {

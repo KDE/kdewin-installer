@@ -49,7 +49,7 @@ bool Releases::convertFromOldMirrorUrl(QUrl &url)
     int i = path.indexOf(QRegExp("/(unstable|stable)/(latest|[0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{1,2})"));
     if (i != -1)
     {
-        url.setPath(path.left(i));
+        url.setPath(path.left(i) + '/');
         return false;
     }
     return false;
@@ -63,7 +63,7 @@ bool Releases::useOldMirrorUrl(const QUrl &url)
     int i = path.indexOf(aString);
     if (i != -1)
     {
-        int k = path.indexOf("/",i+aString.size()+1);
+        int k = path.indexOf('/',i+aString.size()+1);
         QString version = path.mid(i+aString.size(),k-i-aString.size());
         ReleaseType release;
         release.name = version;
@@ -76,7 +76,7 @@ bool Releases::useOldMirrorUrl(const QUrl &url)
     i = path.indexOf(aString);
     if (i != -1)
     {
-        int k = path.indexOf("/",i+aString.size()+1);
+        int k = path.indexOf('/',i+aString.size()+1);
         QString version = path.mid(i+aString.size(),k-i-aString.size());
         ReleaseType release;
         release.name = version;
@@ -106,13 +106,12 @@ bool Releases::patchReleaseUrls(const QUrl &url)
     m_releases.clear();
     QByteArray out;
 
-    for (int i = 0; i < temp.size(); ++i) 
+    Q_FOREACH( ReleaseType r, temp )
     {
-        ReleaseType r = temp.at(i);
-        QUrl u = r.url.toString() + "/win32/config.txt";
+        QUrl u = r.url.toString() + "win32/config.txt";
         if (Downloader::instance()->fetch(u,out)) 
         {
-            r.url = r.url.toString() + "/win32/";
+            r.url = r.url.toString() + "win32/";
             m_releases.append(r);
         }
     }
@@ -155,7 +154,7 @@ bool Releases::fetch(const QUrl &_url)
     if (convertFromOldMirrorUrl(baseURL))
         return true;
 
-    QUrl url = baseURL.toString() + "/stable/";
+    QUrl url = baseURL.toString() + "stable/";
     qWarning() << "baseURL1:" << url;
     if (!Downloader::instance()->fetch(url,out))
     {
@@ -166,7 +165,7 @@ bool Releases::fetch(const QUrl &_url)
         qWarning() << "could not extract stable versions from directory list fetched from" << url;
     }
 
-    url = baseURL.toString() + "/unstable/";
+    url = baseURL.toString() + "unstable/";
     if (!Downloader::instance()->fetch(url,out))
     {
         qWarning() << "could not fetch unstable versions from" << url;
@@ -215,12 +214,12 @@ bool Releases::parse(QIODevice *ioDev, const QUrl &url, ReleaseType::Type type)
             if (start == -1)
                 continue;
                 
-            int end = line.indexOf("\"",start+6);
-            QString version = line.mid(start+6,end-start-6);
+            int end = line.indexOf('\"',start+6);
+            QString version = line.mid(start+6,end-start-6).remove('/');
             qDebug() << "line:" << line << version;
             ReleaseType release;
-            release.url = url.toString() + "/" + version;
-            release.name = version.replace("/","");
+            release.url = url.toString() + version + '/';
+            release.name = version;
             release.type = type;
             m_releases.append(release);
         }
@@ -231,21 +230,21 @@ bool Releases::parse(QIODevice *ioDev, const QUrl &url, ReleaseType::Type type)
         //drwxr-xr-x    4 emoenke  ftp          4096 May  6 22:06 4.0.4
         while (!ioDev->atEnd())
         {
-            const QString line = QString::fromUtf8(ioDev->readLine().replace("\n","").replace("\r",""));
+            const QString line = QString::fromUtf8(ioDev->readLine().replace("\n", "").replace("\r", ""));
             if (!line.startsWith(QLatin1Char('d')) ) 
                 continue;
             QStringList a = line.split(" ",QString::SkipEmptyParts);
             if (a.size() < 9)
                 continue;
-            QString version = a[8];
+            QString version = a[8].remove('/');
             
             // check syntax  x.y.z 
             if (version.indexOf(QRegExp("^[0-9]+\\.[0-9]+\\.[0-9]+$"), 0) == -1)   
                 continue;
                 
             ReleaseType release;
-            release.url = url.toString() + "/" + version;
-            release.name = version.replace("/","");
+            release.url = url.toString() + version + '/';
+            release.name = version;
             release.type = type;
             m_releases.append(release);
         }

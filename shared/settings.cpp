@@ -177,7 +177,8 @@ QString Settings::mirror() const
 
 void Settings::setMirror(const QString &mirror)
 {
-    m_settingsMain->setValue("mirror", mirror);
+    const QString m = mirror.endsWith('/') ? mirror : mirror + '/';
+    m_settingsMain->setValue("mirror", m);
     m_settingsMain->sync();
 }
 
@@ -188,7 +189,8 @@ QStringList Settings::localMirrors() const
 
 void Settings::addLocalMirror(const QString &locMirror)
 {
-    m_settingsMain->setValue("localMirrors", m_settings->value("localMirrors").toStringList() << locMirror);
+    const QString m = locMirror.endsWith('/') ? locMirror : locMirror + '/';
+    m_settingsMain->setValue("localMirrors", m_settings->value("localMirrors").toStringList() << m);
     m_settingsMain->sync();
 }
 
