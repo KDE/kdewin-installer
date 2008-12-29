@@ -112,5 +112,5 @@ set(main_all_headers
     ${md5_HEADERS}
 )
 
-add_subdirectory(themes/amarok)
+#add_subdirectory(themes/amarok)
 add_subdirectory(themes/main)
