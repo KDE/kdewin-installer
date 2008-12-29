@@ -432,14 +432,27 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     QString pkg = cmd[1];
                     cmd.removeFirst();
                     cmd.removeFirst();
-                    site->setPackageNote(pkg,cmd.join(" "));
+                    if (pkg.contains("-*")) 
+                    {
+                        site->setPackageNote(pkg.replace("*","msvc"),cmd.join(" "));
+                        site->setPackageNote(pkg.replace("*","mingw"),cmd.join(" "));
+                    }
+                    else
+                        site->setPackageNote(pkg,cmd.join(" "));
+
                 }
                 else if(keyword == "pkgdetails") {
                     QString pkg = cmd[1];
                     cmd.removeFirst();
                     cmd.removeFirst();
                     QString details = cmd.join(" ").replace("\\n","\n");
-                    site->setPackageLongNotes(pkg,details);
+                    if (pkg.contains("-*")) 
+                    {
+                        site->setPackageLongNotes(pkg.replace("*","msvc"),details);
+                        site->setPackageLongNotes(pkg.replace("*","mingw"),details);
+                    }
+                    else
+                        site->setPackageLongNotes(pkg,details);
                 }
                 else if(keyword == "pkgcategory") 
                 {
