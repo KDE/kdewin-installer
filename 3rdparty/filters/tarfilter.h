@@ -88,6 +88,8 @@ class TarFilter
     // convenience functions for addData()
     bool addFile(const QString &filename, const QString &filenameInArchive = QString());
     bool addData(const QString &filename, const QByteArray &data=QByteArray(), bool bIsDir = false);
+    // write empty header as end of stream marker
+    bool writeEOS();
 
     // read data from a tar stream
     bool getData(FileInformations &infos, QIODevice *out);

@@ -82,21 +82,29 @@ bool Packager::createTbzFile(const QString &zipFile, const QString &filesRootDir
   if(!bzip2.open(QIODevice::WriteOnly))
     ON_ERROR_S(qPrintable(QString("Error opening file %1 for writing (%2)").arg(zipFile + ".tar.bz2").arg(bzip2.errorString())));
 
+  TarFilter tf(&bzip2);
+  const QStringList paths = destRootDir.split('/', QString::SkipEmptyParts);
+  QString curPath;
+  Q_FOREACH(const QString &path, paths)
+  {
+    curPath = curPath.isEmpty() ? path + '/' : curPath + path + '/';
+    if(!tf.addFile(filesRootDir, curPath))
+      ON_ERROR_S(qPrintable(tf.lastError()));
+  }
   Q_FOREACH(const InstallFile &file, files)
   {
     QString in  = file.bAbsInputPath ? file.inputFile : filesRootDir + '/' + file.inputFile;
     QString out = destRootDir + (file.outputFile.isEmpty() ? file.inputFile : file.outputFile);
-    TarFilter tf(&bzip2);
     if(!tf.addFile(in, out))
       ON_ERROR_S(qPrintable(tf.lastError()));
   }
 
   Q_FOREACH(const MemFile &file, memFiles)
   {
-    TarFilter tf(&bzip2);
     if(!tf.addData(file.filename, file.data))
       ON_ERROR_S(qPrintable(tf.lastError()));
   }
+  tf.writeEOS();
 
   bzip2.close();
   f.close();
@@ -127,6 +135,9 @@ bool Packager::createZipFile(const QString &zipFile, const QString &filesRootDir
 
     Q_FOREACH(const InstallFile &file, files)
     {
+        // FIXME: how to add directories to zip archive?
+        if(file.inputFile.endsWith('/'))
+          continue;
         inFile.setFileName(file.bAbsInputPath ? file.inputFile : filesRootDir + '/' + file.inputFile);
 
         if(!inFile.open(QIODevice::ReadOnly))
@@ -160,7 +171,6 @@ bool Packager::createZipFile(const QString &zipFile, const QString &filesRootDir
         outFile.close();
         if(outFile.getZipError()!=UNZ_OK)
           ON_ERROR(outFile.getZipError());
-
     }
 
     zip.close();
@@ -326,15 +336,17 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
     out.setCodec(QTextCodec::codecForName("UTF-8"));
     Q_FOREACH(const InstallFile &file, fileList) {
         const QString &fn = file.inputFile;
-        QFile f(file.bAbsInputPath ? fn : rootDir + '/' + fn);
-        if(!f.open(QIODevice::ReadOnly)) {
-            qWarning("Can't open %s!", qPrintable(fn));
+        if(!fn.endsWith('/')) {
+          QFile f(file.bAbsInputPath ? fn : rootDir + '/' + fn);
+          if(!f.open(QIODevice::ReadOnly)) {
+            qWarning("Can't open '%s' !", qPrintable(fn));
             continue;
+          }
+          QByteArray md5 = md5Hash ( f );
+          QByteArray fnUtf8 = file.outputFile.isEmpty() ? file.inputFile.toUtf8() : file.outputFile.toUtf8();
+          fnUtf8.replace(' ', "\\ "); // escape ' '
+          out << md5.toHex() << "  " << fnUtf8 << '\n';
         }
-        QByteArray md5 = md5Hash ( f );
-        QByteArray fnUtf8 = file.outputFile.isEmpty() ? file.inputFile.toUtf8() : file.outputFile.toUtf8();
-        fnUtf8.replace(' ', "\\ "); // escape ' '
-        out << md5.toHex() << "  " << fnUtf8 << '\n';
     }
     // qt needs a specific config file
     if ((m_name.startsWith("qt") || m_name.startsWith("q++") || m_name.startsWith("q.."))
@@ -443,7 +455,9 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
         createManifestFiles(s, fileList, Packager::SRC, manifestFiles);
     else
         manifestFiles.clear();
-    if (fileList.size() > 0) 
+    Q_FOREACH(const InstallFile &f, fileList)
+      qDebug() << "file: " << f.inputFile << " | " << f.outputFile;
+    if (fileList.size() > 0)
     {
         if (m_verbose)
             qDebug() << "creating src package" << destdir + getBaseName(Packager::SRC);

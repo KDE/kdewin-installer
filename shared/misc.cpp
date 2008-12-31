@@ -204,7 +204,7 @@ bool generateFileList(QList<InstallFile> &fileList, const QString &root,const QS
    d.setNameFilters(filt);
    d.setSorting(QDir::Name);
 
-   QFileInfoList list = d.entryInfoList();
+   const QFileInfoList list = d.entryInfoList();
    QFileInfo fi;
 
    QStringList manifestList;
@@ -213,35 +213,38 @@ bool generateFileList(QList<InstallFile> &fileList, const QString &root,const QS
    Q_FOREACH( const QFileInfo &fi, list ) {
        QString fn = fi.fileName();
 
-       bool bFound = false;
-       Q_FOREACH( const QRegExp &rx, excludeList) {
-           if(rx.exactMatch(fn)) {
-               bFound = true;
-               break;
-           }
-       }
-       if (bFound)
-           continue;
-
        if (fi.isDir()) {
           if(!subdirs)
             continue;
           if(!subdir.isEmpty())
             fn = subdir + '/' + fn;
+          if(fn.startsWith(QLatin1String("./")))
+            fileList += fn.mid(2) + '/';
+          else
+            fileList += fn + '/';
           generateFileList(fileList, root, fn, filter, excludeList);
        }
        else {
+         bool bFound = false;
+         Q_FOREACH(const QRegExp &rx, excludeList) {
+           if(rx.exactMatch(fn)) {
+             bFound = true;
+             break;
+           }
+         }
+         if (bFound)
+           continue;
          QString toAdd;
          if(subdir.isEmpty())
-             toAdd = fn;
+           toAdd = fn;
          else
          if(subdir.startsWith(QLatin1String("./")))
-             toAdd = subdir.mid(2) + '/' + fn;
+           toAdd = subdir.mid(2) + '/' + fn;
          else
          if(subdir == QLatin1String("."))
-             toAdd = fn;
+           toAdd = fn;
          else
-             toAdd = subdir + '/' + fn;
+           toAdd = subdir + '/' + fn;
 
          if(toAdd.endsWith(QLatin1String(".manifest"))) {
            manifestList += toAdd;
@@ -256,7 +259,7 @@ bool generateFileList(QList<InstallFile> &fileList, const QString &root,const QS
        }
    }
    for(int i = 0; i < executableList.count(); i++) {
-     QString manifest = executableList[i] + QLatin1String(".manifest");
+     const QString manifest = executableList[i] + QLatin1String(".manifest");
      if(manifestList.contains(manifest))
        fileList += manifest;
    }

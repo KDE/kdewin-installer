@@ -367,6 +367,11 @@ bool TarFilter::addFile(const QString &filename, const QString &filenameInArchiv
   fInfos.mtime    = fi.lastModified().toTime_t();
   fInfos.fileType = fi.isDir() ? directory : regular;
 
+  if(fi.isDir()) {
+    QBuffer buf;
+    buf.open(QIODevice::ReadOnly);
+    return addData(fInfos, &buf);
+  }
   QFile f(filename);
   if(!f.open(QIODevice::ReadOnly)) {
     d->lastError = QString(QLatin1String("Error opening %1 for reading")).arg(filename);
@@ -421,6 +426,13 @@ bool TarFilter::addData(const FileInformations &fi, QIODevice *in)
     }
   }
   return true;
+}
+
+bool TarFilter::writeEOS()
+{
+  const int size = sizeof(TarFilter::Private::tar_posix_header);
+  QByteArray ba(size, '\0');
+  return(d->device->write(ba) == size);
 }
 
 bool TarFilter::getData(FileInformations &infos)
