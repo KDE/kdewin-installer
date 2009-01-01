@@ -1,6 +1,15 @@
 ChangeLog
 =========
-0.9.4 (r902722)
+0.9.4-1 (r902722)
+-----------------
+- installer-gui:   
+                - show long temp path name (Christian Ehrlicher)
+                - removed all double slashes in urls (Christian Ehrlicher)
+
+- packager:    
+                - fixed 7zip unpack problems (Christian Ehrlicher)
+                
+0.9.4-0 (r902722)
 -----------------
 
 - installer-gui:   
