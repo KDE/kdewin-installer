@@ -85,10 +85,15 @@ void InstallerUpdate::setNewVersion(const QString version)
 
 bool InstallerUpdate::isUpdateAvailable()
 {
-    return m_url.isValid() 
+    bool result = m_url.isValid() 
         && !m_newVersion.isEmpty()
         && !m_currentVersion.isEmpty() 
-        && m_newVersion != m_currentVersion;
+        && m_newVersion > m_currentVersion;
+    if (result)
+        qDebug() << "update found" << "- old" << m_currentVersion << "new" << m_newVersion;
+    else
+        qDebug() << "no update found";
+    return result;
 }
 
 void InstallerUpdate::setUrl(const QUrl &url)
