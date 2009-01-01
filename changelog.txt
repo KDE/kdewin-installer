@@ -1,6 +1,6 @@
 ChangeLog
 =========
-0.9.4-1 (r902722)
+0.9.4-1 (r904133)
 -----------------
 - installer-gui:   
                 - show long temp path name (Christian Ehrlicher)
