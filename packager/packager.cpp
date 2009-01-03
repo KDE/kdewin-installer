@@ -264,7 +264,11 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 generateFileList(fileList, dir, "lib",  "*.exe *.bat");
 #endif
                 generateFileList(fileList, dir, "manifest", "*-bin.cmd" );
+
                 generateFileList(fileList, dir, "share", "*.*");
+                // lib may have additional files provided  by at least aspell-xx and automoc4 
+                generateFileList(fileList, dir, "lib",      "*.*","*d.dll *.dll *.lib *.a");
+
                 generateFileList(fileList, dir, "data", "*.*");
                 generateFileList(fileList, dir, "etc",  "*.*");
                 return true;
@@ -419,7 +423,12 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
     if (fileList.size() > 0)
     {
         if (m_verbose)
+        {
             qDebug() << "creating bin package" << destdir + getBaseName(Packager::BIN);
+            Q_FOREACH(const InstallFile &f, fileList)
+                if (!f.inputFile.endsWith("/"))
+                    qDebug() << "\t" << f.inputFile << " -> " << f.outputFile;
+        }
         createManifestFiles(m_rootDir, fileList, Packager::BIN, manifestFiles);
         compressFiles(_destdir + getBaseName(Packager::BIN), m_rootDir, fileList, manifestFiles);
         createHashFile(_destdir + getBaseName(Packager::BIN) + getCompressedExtension(Packager::BIN) );
@@ -431,7 +440,12 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
     if (fileList.size() > 0) 
     {
         if (m_verbose)
+        {
             qDebug() << "creating lib package" << destdir + getBaseName(Packager::LIB);
+            Q_FOREACH(const InstallFile &f, fileList)
+                if (!f.inputFile.endsWith("/"))
+                    qDebug() << "\t" << f.inputFile << " -> " << f.outputFile;
+        }
         createManifestFiles(m_rootDir, fileList, Packager::LIB, manifestFiles);
         compressFiles(_destdir + getBaseName(Packager::LIB), m_rootDir, fileList, manifestFiles);
         createHashFile(_destdir + getBaseName(Packager::LIB) + getCompressedExtension(Packager::LIB));
@@ -441,7 +455,11 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
     if (fileList.size() > 0)
     {
         if (m_verbose)
+        {
             qDebug() << "creating doc package" << destdir + getBaseName(Packager::DOC);
+            Q_FOREACH(const InstallFile &f, fileList)
+                qDebug() << "\t" << f.inputFile << " -> " << f.outputFile;
+        }
         createManifestFiles(m_rootDir, fileList, Packager::DOC, manifestFiles);
         compressFiles(_destdir + getBaseName(Packager::DOC), m_rootDir, fileList, manifestFiles);
         createHashFile(_destdir + getBaseName(Packager::DOC) + getCompressedExtension(Packager::DOC));
@@ -455,12 +473,15 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
         createManifestFiles(s, fileList, Packager::SRC, manifestFiles);
     else
         manifestFiles.clear();
-    Q_FOREACH(const InstallFile &f, fileList)
-      qDebug() << "file: " << f.inputFile << " | " << f.outputFile;
     if (fileList.size() > 0)
     {
         if (m_verbose)
+        {
             qDebug() << "creating src package" << destdir + getBaseName(Packager::SRC);
+            Q_FOREACH(const InstallFile &f, fileList)
+                if (!f.inputFile.endsWith("/"))
+                    qDebug() << "\t" << f.inputFile << " -> " << f.outputFile;
+        }
         compressFiles(_destdir + getBaseName(Packager::SRC), s, fileList, manifestFiles, "src/" + m_name + "-" + m_version + "/");
         createHashFile(_destdir + getBaseName(Packager::SRC) + getCompressedExtension(Packager::SRC));
     }
@@ -469,7 +490,12 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
         if (fileList.size() > 0) 
         {
             if (m_verbose)
+            {
                 qDebug() << "creating complete package" << getBaseName(Packager::NONE);
+                Q_FOREACH(const InstallFile &f, fileList)
+                    if (!f.inputFile.endsWith("/"))
+                        qDebug() << "\t" << f.inputFile << " -> " << f.outputFile;
+            }
             createManifestFiles(m_rootDir, fileList, Packager::NONE, manifestFiles);
             compressFiles(_destdir + getBaseName(Packager::NONE), m_rootDir, fileList, manifestFiles);
             createHashFile(_destdir + getBaseName(Packager::NONE) + getCompressedExtension(Packager::NONE));
