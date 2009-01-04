@@ -214,14 +214,18 @@ bool generateFileList(QList<InstallFile> &fileList, const QString &root,const QS
        QString fn = fi.fileName();
 
        if (fi.isDir()) {
+          QString toAdd;
           if(!subdirs)
             continue;
           if(!subdir.isEmpty())
             fn = subdir + '/' + fn;
           if(fn.startsWith(QLatin1String("./")))
-            fileList += fn.mid(2) + '/';
+            toAdd += fn.mid(2) + '/';
           else
-            fileList += fn + '/';
+            toAdd += fn + '/';
+          //fileList += toAdd;
+          //qDebug() << "added ..." << toAdd;
+
           generateFileList(fileList, root, fn, filter, excludeList);
        }
        else {

@@ -45,7 +45,7 @@ struct InstallFile
     return (inputFile == o.inputFile && outputFile == o.outputFile);
   }
   friend QDebug operator<<(QDebug, const InstallFile &);
-  friend QDebug operator<<(QDebug, QList<InstallFile> &);
+  friend QDebug operator<<(QDebug, const QList<InstallFile> &);
 };
 
 bool parseQtIncludeFiles(QList<InstallFile> &fileList, const QString &root, const QString &subdir, const QString &filter, const QString &exclude);
