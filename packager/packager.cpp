@@ -340,16 +340,18 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
     out.setCodec(QTextCodec::codecForName("UTF-8"));
     Q_FOREACH(const InstallFile &file, fileList) {
         const QString &fn = file.inputFile;
-        if(!fn.endsWith('/')) {
-          QFile f(file.bAbsInputPath ? fn : rootDir + '/' + fn);
-          if(!f.open(QIODevice::ReadOnly)) {
-            qWarning("Can't open '%s' !", qPrintable(fn));
-            continue;
-          }
-          QByteArray md5 = md5Hash ( f );
-          QByteArray fnUtf8 = file.outputFile.isEmpty() ? file.inputFile.toUtf8() : file.outputFile.toUtf8();
-          fnUtf8.replace(' ', "\\ "); // escape ' '
-          out << md5.toHex() << "  " << fnUtf8 << '\n';
+        if(!fn.endsWith('/')) 
+        {
+            QFile f(file.bAbsInputPath ? fn : rootDir + '/' + fn);
+            if(!f.open(QIODevice::ReadOnly)) 
+            {
+                qWarning("Can't open '%s' !", qPrintable(fn));
+                continue;
+            }
+            QByteArray md5 = md5Hash ( f );
+            QByteArray fnUtf8 = file.outputFile.isEmpty() ? file.inputFile.toUtf8() : file.outputFile.toUtf8();
+            fnUtf8.replace(' ', "\\ "); // escape ' '
+            out << md5.toHex() << "  " << fnUtf8 << '\n';
         }
     }
     // qt needs a specific config file
