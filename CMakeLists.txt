@@ -1,7 +1,7 @@
 set (NAME kdewin-installer)
 project(${NAME})
 
-cmake_minimum_required(VERSION 2.4.5)
+cmake_minimum_required(VERSION 2.6.2)
 
 set (VERSION_MAJOR 0)
 set (VERSION_MINOR 9)
