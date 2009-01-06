@@ -22,6 +22,7 @@
 
 #include "debug.h"
 #include "database.h"
+#include "hash.h"
 #include "package.h"
 #include "packagelist.h"
 #include "misc.h"
@@ -218,8 +219,8 @@ bool Database::verifyFiles( const QString &pkgName, Package::Type pkgType )
         }
         if ( iPosFilename >= 0 && iPosHash >= 0) 
         {
-            QByteArray md5sum = md5Hash(parts[iPosFilename]).toHex();
-            if (parts[iPosHash] != md5sum)
+            QByteArray checkSum = md5Hash(parts[iPosFilename]).toHex();
+            if (parts[iPosHash] != checkSum)
                 printf("%s checksum failed\n",qPrintable(parts[iPosFilename]));
         }
     }

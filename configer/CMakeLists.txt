@@ -23,4 +23,4 @@ target_link_libraries(${TARGET} ${CONSOLE_LIBS})
 install_targets(/bin ${TARGET} )
 
 pack_target(${TARGET})
-create_md5sum_file(${TARGET})
+create_checksum_file(${TARGET})

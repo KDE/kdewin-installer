@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2007  Christian Ehrlicher <ch.ehrlicher@gmx.de>.
-** Copyright (C) 2007  Ralf Habacker
+** Copyright (C) 2009  Ralf Habacker
 ** All rights reserved.
 **
 ** This file is part of the KDE installer for windows
@@ -38,21 +38,23 @@ static void printHelp(const QString &addInfo)
     if(!addInfo.isEmpty())
         ts << ": " << addInfo;
     ts << "\n";
-    ts << "Options: \t" << "-name <packageName>"
-       << "\n\t\t"      << "-root <path to package files>"
-       << "\n\t\t"      << "-srcroot <path to source files>"
-       << "\n\t\t"      << "-srcexclude <patterns> path pattern to exclude from src package"
-       << "\n\t\t"      << "-version <package version>"
-       << "\n\t\t"      << "-strip <strip debug infos> (MinGW only)"
-       << "\n\t\t"      << "-notes <additional notes for manifest files>"
-       << "\n\t\t"      << "-type type of package (mingw, msvc)"
-       << "\n\t\t"      << "-debuglibs add debug libs to binary packages (currently only for Qt)"
-       << "\n\t\t"      << "-destdir directory where to store the zip files to"
-       << "\n\t\t"      << "-complete also create all-in-one package with all files"
-       << "\n\t\t"      << "-verbose display verbose processing informations"
+    ts << "Options:"
+       << "\n\t\t"      << "-complete create all-in-one package with all files"
+       << "\n\t\t"      << "-checksum <md5|sha1> - set checksum mode (default: md5)"
        << "\n\t\t"      << "-compression <1|2> - set compression mode to"
        << "\n\t\t\t"    << "1 - zip, default"
        << "\n\t\t\t"    << "2 - tar.bz2"
+       << "\n\t\t"      << "-debuglibs add debug libs to binary packages (currently only for Qt)"
+       << "\n\t\t"      << "-destdir directory where to store the zip files to"
+       << "\n\t\t"      << "-name <packageName>"
+       << "\n\t\t"      << "-notes <additional notes for manifest files>"
+       << "\n\t\t"      << "-root <path to package files>"
+       << "\n\t\t"      << "-srcroot <path to source files>"
+       << "\n\t\t"      << "-srcexclude <patterns> path pattern to exclude from src package"
+       << "\n\t\t"      << "-verbose display verbose processing informations"
+       << "\n\t\t"      << "-version <package version>"
+       << "\n\t\t"      << "-strip <strip debug infos> (MinGW only)"
+       << "\n\t\t"      << "-type type of package (mingw, msvc)"
        << "\n";
 
     ts.flush();
@@ -65,6 +67,7 @@ int main(int argc, char *argv[])
 
     QStringList args = app.arguments();
     QString name, root, srcRoot, srcExclude, version, notes, type, destdir;
+    QString checkSumMode = "md5";
     bool bComplete = false;
     QFileInfo rootDir;
     QFileInfo srcRootDir;
@@ -177,6 +180,14 @@ int main(int argc, char *argv[])
       if(compressionMode < 1 || compressionMode > 2)
         printHelp(QString("Unknown compression mode %1").arg(compressionMode));
     }
+    idx = args.indexOf("-checksum");
+    if(idx != -1 && idx < args.count() -1) {
+      checkSumMode = args[idx + 1];
+      args.removeAt(idx + 1);
+      args.removeAt(idx);
+      if(checkSumMode != "md5" && checkSumMode != "sha1")
+        printHelp(QString("Unknown checksum mode %1").arg(checkSumMode));
+    }
 
     // Qt-package needs '-type foo'
     if(type.isEmpty()) {
@@ -213,6 +224,7 @@ int main(int argc, char *argv[])
     packager.setVerbose(verbose);
     packager.setWithDebugLibs(debugLibs);
     packager.setCompressionMode(compressionMode);
+    packager.setCheckSumMode(checkSumMode);
 
     if (strip)
        packager.stripFiles(rootDir.filePath());

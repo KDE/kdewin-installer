@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2006-2007 Ralf Habacker. All rights reserved.
+** Copyright (C) 2006-2009 Ralf Habacker. All rights reserved.
 ** Copyright (C) 2006-2007 Christian Ehrlicher <ch.ehrlicher@gmx.de>
 **
 ** This file is part of the KDE installer for windows
@@ -35,7 +35,6 @@
 #include <initguid.h>
 #endif
 
-#include <QtCore/QCryptographicHash>
 #include <QDebug>
 #include <QDir>
 #include <QFileInfo>
@@ -311,26 +310,6 @@ bool deleteFile( const QString &root, const QString &filename )
 }
 
 #endif  // MISC_SMALL_VERSION
-
-QByteArray md5Hash(QFile &file)
-{
-    static const int bufSize = 1024*1024;
-    QCryptographicHash md5( QCryptographicHash::Md5 );
-    QByteArray ba;
-    ba.resize ( bufSize );
-    qint64 iBytesRead;
-    while ( ( iBytesRead = file.read ( ba.data(), bufSize ) ) > 0 )
-        md5.addData ( ba.data(), iBytesRead );
-    return md5.result();
-}
-
-QByteArray md5Hash(const QString &file)
-{
-    QFile f(file);
-    if(!f.open(QIODevice::ReadOnly))
-      return QByteArray();
-    return md5Hash(f);
-}
 
 QString exePath()
 {

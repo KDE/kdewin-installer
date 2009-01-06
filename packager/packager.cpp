@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2006-2007 Ralf Habacker. All rights reserved.
+** Copyright (C) 2006-2009 Ralf Habacker. All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
@@ -20,6 +20,15 @@
 **
 ****************************************************************************/
 
+#include "hashfile.h"
+#include "packager.h"
+#include "quazip.h"
+#include "quazipfile.h"
+#include "misc.h"
+
+#include "tarfilter.h"
+#include "bzip2iodevice.h"
+
 
 #include <QBuffer>
 #include <QDebug>
@@ -28,14 +37,6 @@
 #include <QFileInfo>
 #include <QProcess>
 #include <QTextStream>
-
-#include "packager.h"
-#include "quazip.h"
-#include "quazipfile.h"
-#include "misc.h"
-
-#include "tarfilter.h"
-#include "bzip2iodevice.h"
 
 #ifndef QZIP_BUFFER
 # define QZIP_BUFFER (1 * 1024 * 1024)
@@ -348,10 +349,12 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
                 qWarning("Can't open '%s' !", qPrintable(fn));
                 continue;
             }
-            QByteArray md5 = md5Hash ( f );
+            if (m_checkSumMode.isEmpty())
+                continue;
             QByteArray fnUtf8 = file.outputFile.isEmpty() ? file.inputFile.toUtf8() : file.outputFile.toUtf8();
             fnUtf8.replace(' ', "\\ "); // escape ' '
-            out << md5.toHex() << "  " << fnUtf8 << '\n';
+            HashFile hf(m_checkSumMode == "sha1" ? HashFile::SHA1 : HashFile::MD5,fnUtf8); 
+            out << hf.toHashFileContent();
         }
     }
     // qt needs a specific config file
@@ -385,26 +388,10 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
 
 bool Packager::createHashFile(const QString &packageFileName)
 {
-    QFile packageFile(packageFileName);
-    if (!packageFile.exists() || !packageFile.open(QIODevice::ReadOnly)) 
-    {
-        qCritical() << "could not open packageFile" << packageFileName;
-        return false;
-    }
-    
-    QString hashFileName = packageFileName + ".md5";
-    QFile hashFile(hashFileName);
-    if (!hashFile.open(QIODevice::WriteOnly)) 
-    {
-        qCritical() << "could not create hash file" << hashFileName;
-        return false;
-    }
-
-    QFileInfo packageFileInfo(packageFileName);
-    QByteArray hash = md5Hash(packageFile);
-    QByteArray hashFileContent = hash.toHex() + QByteArray("  ") + packageFileInfo.fileName().toUtf8() + QByteArray("\n");
-    hashFile.write(hashFileContent); 
-    hashFile.close();
+    HashFile hashFile(m_checkSumMode == "md5" ? HashFile::MD5 : HashFile::SHA1, packageFileName);
+    if (!hashFile.computeHash())
+        return false; 
+    hashFile.save();
 
     return true;
 }
@@ -433,7 +420,8 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
         }
         createManifestFiles(m_rootDir, fileList, Packager::BIN, manifestFiles);
         compressFiles(_destdir + getBaseName(Packager::BIN), m_rootDir, fileList, manifestFiles);
-        createHashFile(_destdir + getBaseName(Packager::BIN) + getCompressedExtension(Packager::BIN) );
+        if (!m_checkSumMode.isEmpty())
+            createHashFile(_destdir + getBaseName(Packager::BIN) + getCompressedExtension(Packager::BIN) );
     }
     else
         qDebug() << "no binary files found!";
@@ -450,7 +438,8 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
         }
         createManifestFiles(m_rootDir, fileList, Packager::LIB, manifestFiles);
         compressFiles(_destdir + getBaseName(Packager::LIB), m_rootDir, fileList, manifestFiles);
-        createHashFile(_destdir + getBaseName(Packager::LIB) + getCompressedExtension(Packager::LIB));
+        if (!m_checkSumMode.isEmpty())
+            createHashFile(_destdir + getBaseName(Packager::LIB) + getCompressedExtension(Packager::LIB));
     }
 
     generatePackageFileList(fileList, Packager::DOC);
@@ -464,7 +453,8 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
         }
         createManifestFiles(m_rootDir, fileList, Packager::DOC, manifestFiles);
         compressFiles(_destdir + getBaseName(Packager::DOC), m_rootDir, fileList, manifestFiles);
-        createHashFile(_destdir + getBaseName(Packager::DOC) + getCompressedExtension(Packager::DOC));
+        if (!m_checkSumMode.isEmpty())
+            createHashFile(_destdir + getBaseName(Packager::DOC) + getCompressedExtension(Packager::DOC));
     }
     
     generatePackageFileList(fileList, Packager::SRC);
@@ -485,7 +475,8 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
                     qDebug() << "\t" << f.inputFile << " -> " << f.outputFile;
         }
         compressFiles(_destdir + getBaseName(Packager::SRC), s, fileList, manifestFiles, "src/" + m_name + "-" + m_version + "/");
-        createHashFile(_destdir + getBaseName(Packager::SRC) + getCompressedExtension(Packager::SRC));
+        if (!m_checkSumMode.isEmpty())
+            createHashFile(_destdir + getBaseName(Packager::SRC) + getCompressedExtension(Packager::SRC));
     }
     if(bComplete) {
         generatePackageFileList(fileList, Packager::NONE);
@@ -500,7 +491,8 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
             }
             createManifestFiles(m_rootDir, fileList, Packager::NONE, manifestFiles);
             compressFiles(_destdir + getBaseName(Packager::NONE), m_rootDir, fileList, manifestFiles);
-            createHashFile(_destdir + getBaseName(Packager::NONE) + getCompressedExtension(Packager::NONE));
+            if (!m_checkSumMode.isEmpty())
+                createHashFile(_destdir + getBaseName(Packager::NONE) + getCompressedExtension(Packager::NONE));
         }
     }
 

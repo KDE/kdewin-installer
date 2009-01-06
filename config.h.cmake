@@ -7,7 +7,7 @@
 #cmakedefine SEVENZIP_UNPACK_SUPPORT 1
 #cmakedefine BZIP2_UNPACK_SUPPORT 1
 #cmakedefine BUILD_TRANSLATIONS "@BUILD_TRANSLATIONS@"
-
+#cmakedefine BUILD_WITH_SHA1_CHECKSUM 1
 #include "debug.h"
 
 #endif

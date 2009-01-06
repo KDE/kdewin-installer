@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2006-2007 Ralf Habacker. All rights reserved.
+** Copyright (C) 2006-2009 Ralf Habacker. All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
@@ -42,6 +42,7 @@ class Packager {
       void setSourceExcludes(const QString &excludes) { m_srcExcludes = excludes; }
       void setWithDebugLibs(bool mode) { m_debugLibs = mode; }
       void setCompressionMode(unsigned int mode) { m_compMode = (mode < 1 || mode > 2) ? 1 : mode; }
+      void setCheckSumMode(const QString mode) { m_checkSumMode = mode; }
 
       bool generatePackageFileList(QList<InstallFile> &result, Packager::Type type, const QString &dir=QString());
       bool createHashFile(const QString &packageFileName);
@@ -70,6 +71,7 @@ class Packager {
       QString m_rootDir;
       QString m_srcRoot;
       QString m_srcExcludes;
+      QString m_checkSumMode;
       bool m_verbose;
       bool m_debugLibs;
       unsigned int m_compMode;

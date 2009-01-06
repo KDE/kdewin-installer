@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
         QFile file(input);
         if (!file.open(QIODevice::ReadOnly))
         {
-            fprintf(stderr,"could not open md5sum file");
+            fprintf(stderr,"could not open sha1sum file");
             return -2;
         }
         QTextStream in(&file);
@@ -76,11 +76,16 @@ int main(int argc, char *argv[])
         }
         QByteArray givenHash = cols[0].toAscii();
         QFile inFile(cols[1]);
-        QByteArray computedHash = md5Hash(inFile).toHex();
+        if (!inFile.open(QIODevice::ReadOnly))
+        {
+            fprintf(stderr,"could not open file %s", cols[1].toAscii().data());
+            return -4;
+        }
+        QByteArray computedHash = sha1Hash(inFile).toHex();
         if (computedHash != givenHash)
         {
-            fprintf(stderr,"wrong hash");
-            return -4;
+            fprintf(stderr,"wrong hash computed %s reference %s",computedHash.data(), givenHash.data());
+            return -5;
         }   
         return 0;
     }
@@ -88,7 +93,7 @@ int main(int argc, char *argv[])
     else 
         input = QCoreApplication::arguments().at(1);
 
-    QByteArray hashValue = md5Hash(input);
+    QByteArray hashValue = sha1Hash(input);
     if (!output.isEmpty())
     {
         FILE *f = fopen(output.toAscii().data(),"w");

@@ -11,6 +11,8 @@ set(installer_shared_HEADERS
     downloaderprogress.h
     externalinstallercontrol.h
     globalconfig.h
+    hash.h
+    hashfile.h
     hintfile.h
     installer.h
     installerengine.h
@@ -40,6 +42,8 @@ set(installer_shared_SOURCES
     downloaderprogress.cpp
     externalinstallercontrol.cpp
     globalconfig.cpp
+    hash.cpp
+    hashfile.cpp
     hintfile.cpp
     installer.cpp
     installerengine.cpp

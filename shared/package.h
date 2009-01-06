@@ -118,8 +118,8 @@ public:
 
             bool setUrlAndFileName(const QUrl &url, const QString &fn);
 
-            void setMD5(const QString &md5) { m_md5 = md5; }
-            const QString &MD5() const { return m_md5; }
+            void setCheckSum(const QString &md5) { m_md5 = md5; }
+            const QString &checkSum() const { return m_md5; }
 
             void setInstalled(bool state) { m_installed = state; }
             bool installed() const { return m_installed; }
@@ -237,8 +237,8 @@ public:
     QT_DEPRECATED void setInstalled(const Package &other);
 
     /// enable/disable MD5 checking for this package 
-    void setMD5Check(bool mode) { m_MD5Check = mode; }
-    bool MD5Check() { return m_MD5Check; }
+    bool validateCheckSum() { return m_validateCheckSum; }
+    void setValidateCheckSum(bool mode) { m_validateCheckSum = mode; }
 
     /// save package to stream
     bool write(QTextStream &out) const;
@@ -306,7 +306,7 @@ protected:
     QStringList m_deps;
     StringHash m_pathRelocs;
     bool       m_handled;      // marker for several operations
-    bool       m_MD5Check;    // marker for md5 checking 
+    bool       m_validateCheckSum;    // marker for md5 checking 
     QString    m_lastError;    
     void       *m_userData[2];
     friend QDebug &operator<<(QDebug &, const Package &);

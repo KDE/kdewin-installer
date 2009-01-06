@@ -361,7 +361,7 @@ void Downloader::setError ( const QString &errStr )
     emit error ( errStr );
 }
 
-QByteArray Downloader::md5Sum() const
+QByteArray Downloader::checkSum() const
 {
     return d->crypt.result();
 }

@@ -307,7 +307,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 }
                 else if(keyword.startsWith("nomd5")) 
                 {
-                    pkg->setMD5Check(false); 
+                    pkg->setValidateCheckSum(false); 
                 }
                 else if(keyword.startsWith("md5-")) 
                 {
@@ -325,11 +325,37 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     if (!pkg->hasType(type))
                     {
                         Package::PackageItem item(type);
-                        item.setMD5(cmd[1]);
+                        item.setCheckSum(cmd[1]);
                         pkg->add(item);
                     }
                     else
-                        pkg->item(type).setMD5(cmd[1]);
+                        pkg->item(type).setCheckSum(cmd[1]);
+                }
+                else if(keyword.startsWith("nosha1")) 
+                {
+                    pkg->setValidateCheckSum(false); 
+                }
+                else if(keyword.startsWith("sha1-")) 
+                {
+                    Package::Type type;
+                    if(keyword == "sha1-bin")
+                        type = Package::BIN;
+                    else if(keyword == "sha1-lib")
+                        type = Package::LIB;
+                    else if(keyword == "sha1-doc")
+                        type = Package::DOC;
+                    else if(keyword == "sha1-src")
+                        type = Package::SRC;
+                    else
+                        continue;
+                    if (!pkg->hasType(type))
+                    {
+                        Package::PackageItem item(type);
+                        item.setCheckSum(cmd[1]);
+                        pkg->add(item);
+                    }
+                    else
+                        pkg->item(type).setCheckSum(cmd[1]);
                 }
                 else if(keyword == "require")
                 {

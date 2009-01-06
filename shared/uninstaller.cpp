@@ -22,6 +22,7 @@
 ****************************************************************************/
 
 #include "debug.h"
+#include "hash.h"
 #include "installerprogress.h"
 #include "misc.h"
 #include "uninstaller.h"

@@ -46,4 +46,4 @@ install_targets(/bin ${TARGET} )
 install(FILES ${EXECUTABLE_OUTPUT_PATH}/${TARGET}.bat DESTINATION bin)
 
 pack_target(${TARGET})
-create_md5sum_file(${TARGET})
+create_checksum_file(${TARGET})

@@ -61,8 +61,8 @@ public:
     QUrl       usedURL()   const {
         return m_usedURL;
     }
-    // calculated md5sum
-    QByteArray md5Sum() const;
+    // calculated checksum
+    QByteArray checkSum() const;
 
     
     
@@ -83,7 +83,7 @@ protected:
     ResultType  m_result;
     QString     m_resultString;
     QUrl        m_usedURL;
-    QByteArray  m_md5Sum;
+    QByteArray  m_checkSum;
     QEventLoop *m_loop;
     class Private;
     Private * const d;
