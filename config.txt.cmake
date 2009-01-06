@@ -76,7 +76,7 @@
 @deps kdepimlibs-mingw kdelibs-mingw
 @deps kdesdk-mingw kdebase-runtime-mingw kdelibs-mingw kdepimlibs-mingw astyle diffutils
 @deps kdetoys-mingw kdebase-runtime-mingw kdelibs-mingw
-@deps kdeutils-mingw kdebase-runtime-mingw kdelibs-mingw libzip
+@deps kdeutils-mingw kdebase-runtime-mingw kdelibs-mingw libzip libgmp-mingw
 @deps kdewebdev-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps kdewin-installer-mingw qt-mingw
 @deps kdewin32-mingw qt-mingw
@@ -109,7 +109,7 @@
 @deps kdepimlibs-msvc kdelibs-msvc
 @deps kdesdk-msvc kdebase-runtime-msvc kdelibs-msvc astyle diffutils
 @deps kdetoys-msvc kdebase-runtime-msvc kdelibs-msvc
-@deps kdeutils-msvc kdebase-runtime-msvc libzip
+@deps kdeutils-msvc kdebase-runtime-msvc libzip libgmp-msvc
 @deps kdewebdev-msvc kdebase-runtime-msvc kdelibs-msvc
 @deps kdewin-installer-msvc qt-msvc
 @deps kdewin32-msvc qt-msvc
