@@ -24,6 +24,10 @@
 ****************************************************************************/
 #define  QT_NO_DEBUG_OUTPUT
 
+#include "package.h"
+#include "hintfile.h"
+#include "hash.h"
+
 #include <QtDebug>
 #include <QCoreApplication>
 #include <QFileInfo>
@@ -31,10 +35,6 @@
 #include <QDateTime>
 #include <iostream>
 using namespace std;
-
-#include "package.h"
-#include "hintfile.h"
-#include "misc.h"
 
 
 static const QStringList g_fileFilter = QString("*.zip *.tbz *.tar.bz2").split(' ');
