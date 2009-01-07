@@ -29,13 +29,13 @@
 #include <QFileInfo>
 
 HashFile::HashFile(HashFile::Type type, const QString& originalFile) 
-    : m_type(type), m_originalFile(originalFile.toUtf8())
+    : Hash(type), m_originalFile(originalFile.toUtf8())
 {
    
 }
 
 HashFile::HashFile(HashFile::Type type, const QByteArray& originalFile) 
-    : m_type(type), m_originalFile(originalFile)
+    : Hash(type), m_originalFile(originalFile)
 {
    
 }

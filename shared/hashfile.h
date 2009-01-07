@@ -51,8 +51,7 @@ class HashFile : public Hash {
             appended with a hash type extension. 
         */
         bool save(const QString &fileName=QString());
-    private: 
-        HashFile::Type m_type;
+    protected: 
         QByteArray m_hash; 
         QByteArray m_originalFile;
 };
