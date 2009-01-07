@@ -91,7 +91,7 @@ void UIThread::run()
                 emit warning ( QString ( "Can't open %1 - not removing this file!" ).arg ( fileItem.fileName ) );
                 continue;
             }
-            QByteArray hash = md5Hash( f );
+            QByteArray hash = Hash::instance().hash( f );
             f.close();
 
             if ( fileItem.hash != hash ) {
@@ -108,20 +108,6 @@ void UIThread::run()
         }
     }
     m_bRet = true;
-}
-
-bool isHash ( const QByteArray &str )
-{
-    if ( str.length() != 32 )
-        return false;
-    for ( int i = 0; i < 32; i++ ) {
-        const char c = str[i];
-        if ( c < '0' || c > '9' ) {
-            if ( ( c < 'a' || c > 'f' ) && ( c < 'A' || c > 'F' ) )
-                return false;
-        }
-    }
-    return true;
 }
 
 bool UIThread::readManifestFile ( QList<FileItem> &fileList )
@@ -150,8 +136,8 @@ bool UIThread::readManifestFile ( QList<FileItem> &fileList )
         } else {
             hash = l.mid ( idx+1 );
             fileName = l.left ( idx ).trimmed();
-            if ( !isHash ( hash ) ) {
-                if ( !isHash ( fileName ) ) {
+            if ( !Hash::isHash ( hash ) ) {
+                if ( !Hash::isHash ( fileName ) ) {
                     emit warning ( QString ( "invalid entry in manifest file: '%1'" ).arg ( QString::fromUtf8 ( l ) ) );
                     continue;
                 }

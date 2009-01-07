@@ -102,6 +102,7 @@ void myMessageOutput(QtMsgType type, const char *msg)
 */
 void setMessageHandler()
 {
+#ifndef MISC_SMALL_VERSION
     QString file = __FILE__; 
     QString key = "kdewin-installer";
     int i = file.indexOf(key);
@@ -112,13 +113,16 @@ void setMessageHandler()
     logFile->open(QIODevice::WriteOnly);
 
     qInstallMsgHandler(myMessageOutput);
+#endif
 }
 
 void closeMessageHandler()
 {
+#ifndef MISC_SMALL_VERSION
     if (logFile)
     {
         qDebug() << "closed log file";
         logFile->close();
     }
+#endif
 }

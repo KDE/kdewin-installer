@@ -253,6 +253,14 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 cmd.removeFirst();
                 m_endUserCategories << cmd;
             }
+            else if (keyword == "usemd5")
+            {
+                m_hashType.setType(Hash::MD5);
+            }
+            else if (keyword == "usesha1")
+            {
+                m_hashType.setType(Hash::SHA1);
+            }
             else if(inPackage)
             {
                 if(keyword == "version")
@@ -486,6 +494,14 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     cmd.removeFirst();
                     cmd.removeFirst();
                     site->setPackageCategories(pkg,cmd);
+                }
+                else if (keyword == "usemd5")
+                {
+                    site->hashType().setType(Hash::MD5);
+                }
+                else if (keyword == "usesha1")
+                {
+                    site->hashType().setType(Hash::SHA1);
                 }
             }
             else if(keyword == "site")

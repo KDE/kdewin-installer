@@ -60,14 +60,6 @@ bool findHintFiles(const QString &dir, QStringList &files)
     return true;
 }
 
-QByteArray createMD5Hash(const QString &fileName)
-{
-    QFile file(fileName);
-    if (!file.open(QIODevice::ReadOnly))
-         return QByteArray();
-    return md5Hash(file).toHex();
-}
-
 bool createMD5Sums(const QStringList &hintFiles )
 {
     Q_FOREACH(const QFileInfo &hintFile, hintFiles) {
@@ -89,8 +81,8 @@ bool createMD5Sums(const QStringList &hintFiles )
         QFileInfoList list = d.entryInfoList();
         Q_FOREACH (const QFileInfo fi, list) {
             if (!fi.isDir()) {
-                out << createMD5Hash(fi.absoluteFilePath()) << " " << fi.size() << " " << fi.fileName() << "\n";
-                qDebug() << createMD5Hash(fi.absoluteFilePath()) << fi.fileName();
+                out << Hash::md5(fi.absoluteFilePath()) << " " << fi.size() << " " << fi.fileName() << "\n";
+                qDebug() << Hash::md5(fi.absoluteFilePath()) << fi.fileName();
             }
         }
     }
@@ -152,7 +144,7 @@ bool createCygwinLikeSetupIni(QTextStream &out, const QString &root, const QStri
                 else
                     postfix = ": ";
                 out << pkgType + postfix + fi.absoluteFilePath().toLower().replace(_root,"")
-                        + " " + QString::number(fi.size()) + " " + createMD5Hash(fi.absoluteFilePath()) + "\n";
+                        + " " + QString::number(fi.size()) + " " + Hash::md5(fi.absoluteFilePath()) + "\n";
             }
         }
     }
@@ -220,7 +212,7 @@ bool createConfigTxt(QTextStream &out, const QString &root, const QStringList &h
 */
             postfix = " ";
             out << "@url-" + pkgType + postfix 
-                    + " " + createMD5Hash(fi.absoluteFilePath()) 
+                    + " " + Hash::md5(fi.absoluteFilePath()) 
                     + " " + QString::number(fi.size()) 
                     + " " + fi.absoluteFilePath().toLower().replace(_root,"")
                     + "\n";

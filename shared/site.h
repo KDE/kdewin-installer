@@ -23,6 +23,8 @@
 #ifndef SITE_H
 #define SITE_H
 
+#include "hash.h"
+
 #include <QString>
 #include <QUrl>
 #include <QStringList>
@@ -78,6 +80,8 @@ public:
 
     bool setType(const QString &type);
 
+    Hash &hashType() { return m_hashType; }
+
     void addDependencies(const QString &package, const QStringList &deps);
     QStringList getDependencies(const QString &package);
 
@@ -111,6 +115,7 @@ private:
     QUrlList    m_mirrors;
     QStringList m_excludes;
     QStringList m_copies;
+    Hash        m_hashType;
     QHash<QString, QStringList> m_dependencies;
     QHash<QString, QStringList> m_packageCategories;
     QHash<QString, QString> m_packageNotes;

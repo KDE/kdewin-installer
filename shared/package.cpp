@@ -586,7 +586,7 @@ bool Package::downloadItem(Package::Type type)
             if (!ret || Downloader::instance()->result() != Downloader::Finished)
                 return setError(archiveDownloadError); 
         }
-        QByteArray checkSum = md5Hash(fn).toHex();
+        QByteArray checkSum = Hash::instance().hash(fn).toHex();
         if( checkSum == item(type).checkSum()) 
             return true;
 
@@ -595,7 +595,7 @@ bool Package::downloadItem(Package::Type type)
         if (!ret || Downloader::instance()->result() != Downloader::Finished)
             return setError(archiveDownloadError); 
 
-            QByteArray FileCheckSum = md5Hash(fn).toHex();
+            QByteArray FileCheckSum = Hash::instance().hash(fn).toHex();
         if( FileCheckSum == item(type).checkSum() ) 
             return true;
 
@@ -635,7 +635,7 @@ bool Package::downloadItem(Package::Type type)
             return setError(archiveDownloadError); 
     }
     
-    QByteArray checkSum = md5Hash( fn ).toHex();
+    QByteArray checkSum = Hash::instance().hash( fn ).toHex();
     if( checkSumFromFile == checkSum ) {
         qDebug() << __FUNCTION__ << "md5sum is correct - no need to redownload file";
         return true;

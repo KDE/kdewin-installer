@@ -23,6 +23,7 @@
 #ifndef GLOBALCONFIG_H
 #define GLOBALCONFIG_H
 
+#include "hash.h"
 #include "installerupdate.h"
 #include "site.h"
 #include "package.h"
@@ -100,6 +101,8 @@ class GlobalConfig {
         QDateTime m_timestamp;
         QByteArray m_minimalInstallerVersion;
         QStringList m_endUserCategories;
+        Hash m_hashType;
+
     Q_DISABLE_COPY(GlobalConfig)
 
     friend QDebug operator<<(QDebug, const GlobalConfig &);

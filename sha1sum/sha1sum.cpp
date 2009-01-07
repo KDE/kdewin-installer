@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
             fprintf(stderr,"could not open file %s", cols[1].toAscii().data());
             return -4;
         }
-        QByteArray computedHash = sha1Hash(inFile).toHex();
+        QByteArray computedHash = Hash::sha1(inFile).toHex();
         if (computedHash != givenHash)
         {
             fprintf(stderr,"wrong hash computed %s reference %s",computedHash.data(), givenHash.data());
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
     else 
         input = QCoreApplication::arguments().at(1);
 
-    QByteArray hashValue = sha1Hash(input);
+    QByteArray hashValue = Hash::sha1(input);
     if (!output.isEmpty())
     {
         FILE *f = fopen(output.toAscii().data(),"w");

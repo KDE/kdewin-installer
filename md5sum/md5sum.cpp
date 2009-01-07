@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
         }
         QByteArray givenHash = cols[0].toAscii();
         QFile inFile(cols[1]);
-        QByteArray computedHash = md5Hash(inFile).toHex();
+        QByteArray computedHash = Hash::md5(inFile).toHex();
         if (computedHash != givenHash)
         {
             fprintf(stderr,"wrong hash");
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
     else 
         input = QCoreApplication::arguments().at(1);
 
-    QByteArray hashValue = md5Hash(input);
+    QByteArray hashValue = Hash::md5(input);
     if (!output.isEmpty())
     {
         FILE *f = fopen(output.toAscii().data(),"w");

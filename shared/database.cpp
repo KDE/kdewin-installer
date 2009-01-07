@@ -156,7 +156,6 @@ void Database::listPackageFiles ( const QString &pkgName, Package::Type pkgType 
     qDebug() << files;
 }
 
-extern bool isHash ( const QByteArray &str );
 QStringList Database::getPackageFiles ( const QString &pkgName, Package::Type pkgType )
 {
     QStringList files;
@@ -179,7 +178,7 @@ QStringList Database::getPackageFiles ( const QString &pkgName, Package::Type pk
             continue;
         }
         for ( int i = 0; i < parts.count(); i++ ) {
-            if ( !isHash ( parts[i].toUtf8() ) ) {
+            if ( !Hash::isHash ( parts[i].toUtf8() ) ) {
                 iPosFilename = i;
                 files << parts[iPosFilename];
                 break;
@@ -211,7 +210,7 @@ bool Database::verifyFiles( const QString &pkgName, Package::Type pkgType )
         {
             for ( int i = 0; i < parts.count(); i++ ) 
             {
-                if ( isHash ( parts[i].toUtf8() ) ) 
+                if ( Hash::isHash ( parts[i].toUtf8() ) ) 
                     iPosHash = i;
                 else
                     iPosFilename = i;
@@ -219,7 +218,7 @@ bool Database::verifyFiles( const QString &pkgName, Package::Type pkgType )
         }
         if ( iPosFilename >= 0 && iPosHash >= 0) 
         {
-            QByteArray checkSum = md5Hash(parts[iPosFilename]).toHex();
+            QByteArray checkSum = Hash::instance().hash(parts[iPosFilename]).toHex();
             if (parts[iPosHash] != checkSum)
                 printf("%s checksum failed\n",qPrintable(parts[iPosFilename]));
         }
