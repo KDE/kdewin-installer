@@ -51,7 +51,7 @@ p, li { white-space: pre-wrap; }
    <item row="2" column="0" colspan="3" >
     <widget class="QLabel" name="label" >
      <property name="text" >
-      <string>Enter an HTTP, FTP or file URL, then click the "Add URL" button to add the URL to the list of available servers shown above. This URL will be selected by default. Please note that file URLs must be entered in the follwing form, in with the &lt;path> must start with a forward slash (/): file:///&lt;drive>:&lt;path>. For example, file:///C:/KDE4_offline_server</string>
+      <string>Enter an HTTP, FTP or file URL, then click the "Add URL" button to add the URL to the list of available servers shown above. This URL will be selected by default. Please note that file URLs must be entered in the follwing form, in which the &lt;path> must start with a forward slash (/): file:///&lt;drive>:&lt;path>. For example, file:///C:/KDE4_offline_server</string>
      </property>
      <property name="alignment" >
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
