@@ -51,7 +51,7 @@ p, li { white-space: pre-wrap; }
    <item row="2" column="0" colspan="3" >
     <widget class="QLabel" name="label" >
      <property name="text" >
-      <string>Enter an http, ftp or file url and click on the right button to add the url to the list of available servers. This url will be selected by default. Please note that file url's have to be entered in the form file:///&lt;drive>:&lt;path>. The path starts with a '/'. </string>
+      <string>Enter an HTTP, FTP or file URL, then click the "Add URL" button to add the URL to the list of available servers shown above. This URL will be selected by default. Please note that file URLs must be entered in the follwing form, in with the &lt;path> must start with a forward slash (/): file:///&lt;drive>:&lt;path>. For example, file:///C:/KDE4mirror.</string>
      </property>
      <property name="alignment" >
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -74,7 +74,7 @@ p, li { white-space: pre-wrap; }
    <item row="3" column="2" >
     <widget class="QPushButton" name="addMirrorButton" >
      <property name="text" >
-      <string>Add &amp;Url</string>
+      <string>Add &amp;URL</string>
      </property>
     </widget>
    </item>
