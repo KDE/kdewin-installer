@@ -37,7 +37,7 @@
 
 QString InstallerEngine::defaultConfigURL;
 QString InstallerEngine::fallBackURL = "http://downloads.sourceforge.net/kde-windows";
-bool InstallerEngine::m_localInstall = false;
+InstallerEngine::InstallMode InstallerEngine::m_installMode = InstallerEngine::onlineInstall;
 
 InstallerEngine::InstallerEngine(QObject *parent)
     : QObject(parent),

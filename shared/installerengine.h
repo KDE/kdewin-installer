@@ -86,13 +86,10 @@ public:
     /// number of really downloaded packages
     int downloadedPackages() { return m_downloadedPackages; }
 
-    /// set local install mode which means using a file url 
-    static void setLocalInstall(bool mode) { m_localInstall = mode; }
+    typedef enum { onlineInstall, localInstall, downloadOnly } InstallMode;
+    static void setInstallMode(InstallMode mode) { m_installMode = mode; }
 
-    /// return state of local install mode 
-    static bool isLocalInstall() { return m_localInstall; }
-
-
+    static InstallMode installMode() { return m_installMode; }
 
 Q_SIGNALS:
     void error ( const QString &error );
@@ -117,7 +114,7 @@ protected:
     int                 m_installedPackages;
     int                 m_downloadedPackages;
     int                 m_removedPackages;
-    static bool         m_localInstall;
+    static InstallMode  m_installMode;
     
     /// init all package definitions
     virtual bool init();

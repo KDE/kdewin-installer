@@ -94,3 +94,8 @@ bool HashFile::save(const QString &fileName)
     hashFile.close();
     return true;
 }
+
+bool HashFile::isHashFileName(const QString &fileName)
+{
+        return fileName.endsWith(".md5") || fileName.endsWith(".sha1");
+}

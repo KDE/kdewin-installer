@@ -129,7 +129,7 @@ bool MirrorSettingsPage::validatePage()
     qDebug() << data;
     if (data.scheme() == "file")
     {
-        InstallerEngine::setLocalInstall(true);
+        InstallerEngine::setInstallMode(InstallerEngine::localInstall);
         InstallerEngine::defaultConfigURL = data.toString();
         s.setMirrorWithReleasePath(data);
         qDebug() << "local install mirror set to" << data;

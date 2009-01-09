@@ -51,6 +51,12 @@ class HashFile : public Hash {
             appended with a hash type extension. 
         */
         bool save(const QString &fileName=QString());
+        
+        /** 
+            return true if the given filename is a valid name for 
+            a hash file
+        */
+        static bool isHashFileName(const QString &fileName);
     protected: 
         QByteArray m_hash; 
         QByteArray m_originalFile;

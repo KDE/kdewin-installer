@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
         // setup local install mode 
         if (param.startsWith("file:"))
         {
-            InstallerEngine::setLocalInstall(true);
+            InstallerEngine::setInstallMode(InstallerEngine::localInstall);
             Settings::instance().setDownloadDir(param.replace("file:///",""));
         }
     }

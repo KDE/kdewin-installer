@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2008 Ralf Habacker <ralf.habacker@freenet.de> 
+** Copyright (C) 2008-2009 Ralf Habacker <ralf.habacker@freenet.de> 
 ** All rights reserved.
 **
 ** This file is part of the KDE installer for windows
@@ -33,6 +33,12 @@ TitlePage::TitlePage()
     // do not move it to initializePage() - it destroys our layout (qt4.4.0)
     // could not reproduce it with qt examples, therefore no bugreport :(
     setPixmap(QWizard::WatermarkPixmap, QPixmap(":/watermark.png"));
+    // logical grouping isn't available in the designer yet :-P
+    QButtonGroup *groupA = new QButtonGroup(this);
+    groupA->addButton(ui.onlineInstallButton);
+    groupA->addButton(ui.localInstallButton);
+    groupA->addButton(ui.downloadOnlyButton);
+    ui.onlineInstallButton->setChecked(true);
 }
 
 void TitlePage::initializePage()
@@ -48,6 +54,16 @@ void TitlePage::initializePage()
 bool TitlePage::validatePage()
 {
     Settings &s = Settings::instance();
+    if (ui.localInstallButton->isChecked()) 
+    {
+        InstallerEngine::setInstallMode(InstallerEngine::localInstall);
+        InstallerEngine::defaultConfigURL = "file:///" + s.downloadDir().replace("\\","/");
+    }
+    else if (ui.downloadOnlyButton->isChecked()) 
+        InstallerEngine::setInstallMode(InstallerEngine::downloadOnly);
+    else 
+        InstallerEngine::setInstallMode(InstallerEngine::onlineInstall);
+
     s.setSkipBasicSettings(ui.skipBasicSettings->checkState() == Qt::Checked);
     return true;
 }

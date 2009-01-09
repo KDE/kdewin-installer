@@ -186,13 +186,22 @@ bool InstallWizard::skipSettings()
     return Settings::instance().isSkipBasicSettings()
         && !Settings::instance().installDir().isEmpty()
         && !Settings::instance().downloadDir().isEmpty()
-        && (InstallerEngine::isLocalInstall() || Settings::instance().mirrorWithReleasePath().isValid());
+        && (InstallerEngine::installMode() == InstallerEngine::localInstall || Settings::instance().mirrorWithReleasePath().isValid());
 }
 
 int InstallWizard::nextIdEndUser() const
 {
     switch (currentId()) {
     case titlePage:
+        if (InstallerEngine::installMode() == InstallerEngine::localInstall 
+            ||  InstallerEngine::installMode() == InstallerEngine::downloadOnly)
+        {
+            if (skipSettings())
+                return downloadSettingsPage;
+            else 
+                return installDirectoryPage;
+        }
+    
         if (skipSettings())
         {
             if (Database::isAnyPackageInstalled(Settings::instance().installDir()))
@@ -208,13 +217,15 @@ int InstallWizard::nextIdEndUser() const
             return installDirectoryPage;
 
     case installDirectoryPage: return userCompilerModePage;
-    case userCompilerModePage: 
-        if (InstallerEngine::isLocalInstall())
+    case userCompilerModePage: return downloadSettingsPage;
+    case downloadSettingsPage: 
+        if (InstallerEngine::installMode() == InstallerEngine::downloadOnly)
+            return endUserPackageSelectorPage;
+        if (InstallerEngine::installMode() == InstallerEngine::localInstall)
             return endUserInstallModePage;
         else
-            return downloadSettingsPage;
+            return internetSettingsPage;
 
-    case downloadSettingsPage: return internetSettingsPage;
     case internetSettingsPage: 
         if (!Settings::instance().isPackageManagerMode() && Database::isAnyPackageInstalled(Settings::instance().installDir()) )
             return endUserInstallModePage;
@@ -226,7 +237,7 @@ int InstallWizard::nextIdEndUser() const
         EndUserInstallModePage *_page = static_cast<EndUserInstallModePage*>(page(endUserInstallModePage));
         switch(_page->selectedInstallMode()) {
             case EndUserInstallModePage::Update:
-                if (skipSettings() || InstallerEngine::isLocalInstall())
+                if (skipSettings() || InstallerEngine::installMode() == InstallerEngine::localInstall)
                     return endUserPackageSelectorPage;
                 else
                     return mirrorSettingsPage;
@@ -240,7 +251,7 @@ int InstallWizard::nextIdEndUser() const
     }
 
     case mirrorSettingsPage: 
-        if (InstallerEngine::isLocalInstall())
+        if (InstallerEngine::installMode() == InstallerEngine::localInstall)
             return endUserPackageSelectorPage;
         else
             return releaseSelectionPage;
@@ -250,7 +261,11 @@ int InstallWizard::nextIdEndUser() const
 //    case endUserRemovePage:        return uninstallPage;
     case endUserPackageSelectorPage: return dependenciesPage;
     case dependenciesPage:           return downloadPage;
-    case downloadPage:               return uninstallPage;
+    case downloadPage:               
+        if (InstallerEngine::installMode() == InstallerEngine::downloadOnly)
+            return finishPage;
+        else
+            return uninstallPage;
     case uninstallPage:              return installPage;
     case installPage:                
         if (engine->installedPackages() > 0 || engine->removedPackages() > 0)
@@ -266,10 +281,18 @@ int InstallWizard::nextIdEndUser() const
 }
 
 
-int InstallWizard::nextIdDeveloper() const
+int InstallWizard::nextIdPackageManager() const
 {
     switch (currentId()) {
     case titlePage:
+        if (InstallerEngine::installMode() == InstallerEngine::localInstall 
+            ||  InstallerEngine::installMode() == InstallerEngine::downloadOnly)
+        {
+            if (skipSettings())
+                return downloadSettingsPage;
+            else 
+                return installDirectoryPage;
+        }
         if (skipSettings())
         {
             return packageSelectorPage;
@@ -279,21 +302,31 @@ int InstallWizard::nextIdDeveloper() const
 
     case installDirectoryPage: return userCompilerModePage;
     case userCompilerModePage: 
-        if (InstallerEngine::isLocalInstall())
+        if (InstallerEngine::installMode() == InstallerEngine::localInstall)
             return packageSelectorPage;
         else
             return downloadSettingsPage;
-    case downloadSettingsPage: return internetSettingsPage;
+    case downloadSettingsPage: 
+        if (skipSettings() 
+                && (InstallerEngine::installMode() == InstallerEngine::downloadOnly 
+                    || InstallerEngine::installMode() == InstallerEngine::localInstall))
+            return packageSelectorPage;
+        return internetSettingsPage;
+        
     case internetSettingsPage: return mirrorSettingsPage;
     case mirrorSettingsPage:           
-        if (InstallerEngine::isLocalInstall())
+        if (InstallerEngine::installMode() == InstallerEngine::localInstall)
             return endUserPackageSelectorPage;
         else
             return releaseSelectionPage;
     case releaseSelectionPage: return packageSelectorPage;
     case packageSelectorPage:  return dependenciesPage;
     case dependenciesPage:     return downloadPage;
-    case downloadPage:         return uninstallPage;
+    case downloadPage:
+        if (InstallerEngine::installMode() == InstallerEngine::downloadOnly)
+            return finishPage;
+        else
+            return uninstallPage;
     case uninstallPage:        return installPage;
     case installPage:        
         if (engine->installedPackages() > 0 || engine->removedPackages() > 0)
@@ -315,7 +348,7 @@ int InstallWizard::nextId() const
         return nextIdEndUser();
     else
 #endif
-        return nextIdDeveloper();
+        return nextIdPackageManager();
 }
 
 InstallWizardPage::InstallWizardPage(QWidget *parent) : QWizardPage(parent)

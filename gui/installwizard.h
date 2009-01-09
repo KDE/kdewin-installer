@@ -76,7 +76,7 @@ private slots:
 
 private:
     int nextIdEndUser() const;
-    int nextIdDeveloper() const;
+    int nextIdPackageManager() const;
 
     SettingsPage *_settingsPage;
     int m_lastId;
