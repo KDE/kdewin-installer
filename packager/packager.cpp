@@ -92,16 +92,23 @@ bool Packager::createTbzFile(const QString &zipFile, const QString &filesRootDir
     if(!tf.addFile(filesRootDir, curPath))
       ON_ERROR_S(qPrintable(tf.lastError()));
   }
+  
+  qint64 installedSize = 0;
   Q_FOREACH(const InstallFile &file, files)
   {
     QString in  = file.bAbsInputPath ? file.inputFile : filesRootDir + '/' + file.inputFile;
     QString out = destRootDir + (file.outputFile.isEmpty() ? file.inputFile : file.outputFile);
+    QFileInfo fi(in);
+
+    installedSize += fi.size();
+    
     if(!tf.addFile(in, out))
       ON_ERROR_S(qPrintable(tf.lastError()));
   }
 
   Q_FOREACH(const MemFile &file, memFiles)
   {
+    installedSize += file.data.size();
     if(!tf.addData(file.filename, file.data))
       ON_ERROR_S(qPrintable(tf.lastError()));
   }
@@ -109,6 +116,9 @@ bool Packager::createTbzFile(const QString &zipFile, const QString &filesRootDir
 
   bzip2.close();
   f.close();
+  
+  qDebug() << "installed size" << installedSize;
+  
   return true;
 }
 
