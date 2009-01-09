@@ -29,17 +29,19 @@ class QFile;
 
 class Hash {
     public:
-        typedef enum { MD5, SHA1 } Type; 
+        typedef enum { None, MD5, SHA1 } Type; 
         
         Hash();
         Hash(Type type);
         static Hash &instance();
         void setType(Type type) { m_type = type; }
+        bool setType(const QString &type);
         Hash::Type type() { return m_type; }
         QByteArray hash(QFile &f);
         QByteArray hash(const QString &file);
 
         static bool isHash (const QByteArray &str);
+        static Hash::Type isType(const QByteArray &str);
         
         static QByteArray md5(QFile &f);
         static QByteArray md5(const QString &f);

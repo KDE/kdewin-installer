@@ -65,6 +65,27 @@ QByteArray Hash::hash(const QString &file)
     return hash(f);
 }
 
+bool Hash::setType(const QString &type)
+{
+    if (type == "none")
+    {
+        m_type = None;
+        return true;
+    }
+    else if (type == "md5")
+    {
+        m_type = MD5;
+        return true;
+    }
+    else if (type == "sha1")
+    {
+        m_type = SHA1;
+        return true;
+    }
+    else
+        return false;
+}
+
 bool Hash::isHash (const QByteArray &str)
 {
     int len = str.length();
@@ -80,6 +101,20 @@ bool Hash::isHash (const QByteArray &str)
     return true;
 }
 
+Hash::Type Hash::isType(const QByteArray &str)
+{
+    int len = str.length();
+    if ( len != 32 && len != 40 )
+        return Hash::None;
+    for ( int i = 0; i < len; i++ ) {
+        const char c = str[i];
+        if ( c < '0' || c > '9' ) {
+            if ( ( c < 'a' || c > 'f' ) && ( c < 'A' || c > 'F' ) )
+                return Hash::None;
+        }
+    }
+    return len == 32 ? Hash::MD5 : Hash::SHA1;
+}
 
 QByteArray Hash::md5(QFile &f)
 {
