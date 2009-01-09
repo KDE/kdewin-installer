@@ -253,13 +253,10 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 cmd.removeFirst();
                 m_endUserCategories << cmd;
             }
-            else if (keyword == "usemd5")
+            else if (keyword == "hashtype")
             {
-                m_hashType.setType(Hash::MD5);
-            }
-            else if (keyword == "usesha1")
-            {
-                m_hashType.setType(Hash::SHA1);
+                if (!m_hashType.setType(cmd[1]))
+                    qCritical() << "line" << lineNr << "illegal hash type defined" << cmd[1];
             }
             else if(inPackage)
             {
@@ -313,20 +310,31 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     else
                         pkg->item(type).setFileName(cmd[1]);
                 }
-                else if(keyword.startsWith("nomd5")) 
+                else if(keyword.startsWith("nomd5"))
                 {
-                    pkg->setValidateCheckSum(false); 
+                    pkg->hashType().setType(Hash::None);
                 }
-                else if(keyword.startsWith("md5-")) 
+                else if(keyword.startsWith("hashtype"))
                 {
+                    if (!pkg->hashType().setType(cmd[1]))
+                        qCritical() << "line" << lineNr << "illegal hash type defined" << cmd[1];
+                }
+                else if(keyword.startsWith("hash-")) 
+                {
+                    // detect case when no type is set
+                    if (pkg->hashType().type() == Hash::None)
+                    {
+                        qCritical() << "line" << lineNr << "there is no hash type specified before";
+                        continue;
+                    }
                     Package::Type type;
-                    if(keyword == "md5-bin")
+                    if(keyword == "hash-bin")
                         type = Package::BIN;
-                    else if(keyword == "md5-lib")
+                    else if(keyword == "hash-lib")
                         type = Package::LIB;
-                    else if(keyword == "md5-doc")
+                    else if(keyword == "hash-doc")
                         type = Package::DOC;
-                    else if(keyword == "md5-src")
+                    else if(keyword == "hash-src")
                         type = Package::SRC;
                     else
                         continue;
@@ -339,20 +347,17 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     else
                         pkg->item(type).setCheckSum(cmd[1]);
                 }
-                else if(keyword.startsWith("nosha1")) 
+                else if(keyword.startsWith("md5-")) 
                 {
-                    pkg->setValidateCheckSum(false); 
-                }
-                else if(keyword.startsWith("sha1-")) 
-                {
+                    pkg->hashType().setType(Hash::MD5);
                     Package::Type type;
-                    if(keyword == "sha1-bin")
+                    if(keyword == "md5-bin")
                         type = Package::BIN;
-                    else if(keyword == "sha1-lib")
+                    else if(keyword == "md5-lib")
                         type = Package::LIB;
-                    else if(keyword == "sha1-doc")
+                    else if(keyword == "md5-doc")
                         type = Package::DOC;
-                    else if(keyword == "sha1-src")
+                    else if(keyword == "md5-src")
                         type = Package::SRC;
                     else
                         continue;
@@ -495,13 +500,10 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     cmd.removeFirst();
                     site->setPackageCategories(pkg,cmd);
                 }
-                else if (keyword == "usemd5")
+                else if (keyword == "hashtype")
                 {
-                    site->hashType().setType(Hash::MD5);
-                }
-                else if (keyword == "usesha1")
-                {
-                    site->hashType().setType(Hash::SHA1);
+                    if (!site->hashType().setType(cmd[1]))
+                        qCritical() << "line" << lineNr << "illegal hash type defined" << cmd[1];
                 }
             }
             else if(keyword == "site")

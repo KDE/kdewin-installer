@@ -291,7 +291,7 @@ QDebug &operator<<(QDebug &out, const Package::PackageItem &c)
 
 #ifndef PACKAGE_SMALL_VERSION
 
-Package::Package() : m_validateCheckSum(true)
+Package::Package() : m_hashType(Hash::None)
 {
     m_handled = false;
     m_userData[0] = 0;
@@ -310,7 +310,7 @@ Package::Package(const Package &other)
     m_notes      = other.m_notes;
     m_longNotes  = other.m_longNotes;
     m_installedversion = other.m_installedversion;
-    m_validateCheckSum = other.m_validateCheckSum;
+    m_hashType = other.m_hashType;
     m_userData[0] = other.m_userData[0];
     m_userData[1] = other.m_userData[1];
 }
@@ -553,7 +553,7 @@ bool Package::downloadItem(Package::Type type)
     QString download2Error = QObject::tr("downloaded archive not accessable").arg(fn);
     QString md5sumError = QObject::tr("archive checksum error").arg(url.toString());
 
-    if (!m_validateCheckSum) 
+    if (m_hashType.type() == Hash::None)
     {
         //  if archive is not present download it
         if (!QFile::exists(fn)) 

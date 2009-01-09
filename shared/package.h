@@ -22,13 +22,15 @@
 #ifndef PACKAGE_H
 #define PACKAGE_H
 
+#include "hash.h"
+#include "settings.h"
+
 #include <QString>
 #include <QUrl>
 #include <QStringList>
 #include <QHash>
 #include <QtDebug>
 
-#include "settings.h"
 
 class QTextStream;
 class Downloader;
@@ -236,9 +238,7 @@ public:
     /// set Install state of a package type (e.g. from gnuwin32 manifests)
     QT_DEPRECATED void setInstalled(const Package &other);
 
-    /// enable/disable MD5 checking for this package 
-    bool validateCheckSum() { return m_validateCheckSum; }
-    void setValidateCheckSum(bool mode) { m_validateCheckSum = mode; }
+    Hash &hashType() { return m_hashType; } 
 
     /// save package to stream
     bool write(QTextStream &out) const;
@@ -306,7 +306,7 @@ protected:
     QStringList m_deps;
     StringHash m_pathRelocs;
     bool       m_handled;      // marker for several operations
-    bool       m_validateCheckSum;    // marker for md5 checking 
+    Hash       m_hashType;     // contains the hash type for this package
     QString    m_lastError;    
     void       *m_userData[2];
     friend QDebug &operator<<(QDebug &, const Package &);

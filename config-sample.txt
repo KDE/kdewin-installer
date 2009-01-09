@@ -17,6 +17,14 @@
 ; define a category note
 @categorynotes qt Qt related packages 
 
+; define which package belongs to which category
+@categorypackages win32libs aspell ebook-tools ... 
+
+; define which categories are displayed in the end user mode
+@endusercategories KDE aspell-data kde-l10n
+
+; global define the hash type for package checksum verification (default = md5)
+@hashtype none|md5|sha1
 
 ;------------------------------------------------------
 ; example for site definition
@@ -28,7 +36,7 @@
 ; site note 
 @notes basic non kde related libraries
 ;
-; site scanner type: available types are 'apachemodindex' and 'sourceforge'
+; site scanner type: available types are 'apachemodindex' and 'sourceforge' (deprecated) 
 @type apachemodindex
 ;
 ; basic url for packages (relative or absolute)
@@ -37,7 +45,8 @@
 ; url of html page containing package links (relative or absolute)
 @url-list win32libs/zip/single/
 ;
-; package dependencies
+; package dependencies 
+; @deps <package> <dependency> <dependency> <dependency> ...
 @deps update-mime-database libintl libxml2 iconv
 @deps dbus libxml2
 ;
@@ -46,6 +55,9 @@
 ;
 ; exclude file from collecting
 @exclude config.txt
+
+; define the hash type for package checksum verification of the recent site (default = md5)
+@hashtype none|md5|sha1
 
 ;------------------------------------------------------
 ; example for package definition
@@ -77,18 +89,33 @@
 @require dbus
 ;
 ; disable md5 checksum checking for this package
+@hashtype none|md5|sha1
+;
+; checksum hash of binary/runtime package 
+@hash-bin 58cb5a282539da8ec2f67e4f96db7f6c
+;
+; checksum hash of development package including include headers, import libraries and tools for compiling applications/libraries against this package
+@hash-lib 58cb5a282539da8ec2f67e4f96db7f6c
+;
+; checksum hash of documentation package
+@hash-doc 58cb5a282539da8ec2f67e4f96db7f6c
+;
+; checksum hash of source package
+@hash-src 58cb5a282539da8ec2f67e4f96db7f6c
+;
+; disable md5 checksum checking for this package (deprecated)
 @nomd5
 ;
-; md5 checksum of binary/runtime package  (not implemented yet)
+; md5 checksum of binary/runtime package  (deprecated)
 @md5-bin 58cb5a282539da8ec2f67e4f96db7f6c
 ;
-; md5 checksum of development package including include headers, import libraries and tools for compiling applications/libraries against this package  (not implemented yet)
+; md5 checksum of development package including include headers, import libraries and tools for compiling applications/libraries against this package  (deprecated)
 @md5-lib 58cb5a282539da8ec2f67e4f96db7f6c
 ;
-; md5 checksum of documentation package (not implemented yet)
+; md5 checksum of documentation package (deprecated)
 @md5-doc 58cb5a282539da8ec2f67e4f96db7f6c
 ;
-; md5 checksum of source package (not implemented yet)
+; md5 checksum of source package (deprecated)
 @md5-src 58cb5a282539da8ec2f67e4f96db7f6c
 
 ;------------------------------------------------------

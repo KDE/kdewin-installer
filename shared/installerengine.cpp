@@ -291,6 +291,11 @@ bool InstallerEngine::addPackagesFromSites()
             // add categories defined in the config
             pkg->addCategories(site->packageCategories(pkg->name()));
 
+            // if the package hash type is not already set because a hash file was found,
+            //  apply site wite hash type settings to the package
+            if (pkg->hashType().type() == Hash::None)
+                pkg->hashType().setType(site->hashType().type());
+            
             m_packageResources->addPackage(*pkg);
             categoryCache.addPackage(pkg);
         }
