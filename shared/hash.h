@@ -33,18 +33,32 @@ class Hash {
         
         Hash();
         Hash(Type type);
+
         static Hash &instance();
+
+        /// set hash type
         void setType(Type type) { m_type = type; }
         bool setType(const QString &type);
+        
+        /// return hash type
         Hash::Type type() { return m_type; }
+
+        /// compute hash from file content 
         QByteArray hash(QFile &f);
+
+        /// compute hash from file content 
         QByteArray hash(const QString &file);
 
+        /// validate hash string
         static bool isHash (const QByteArray &str);
+
+        /// return type of hash
         static Hash::Type isType(const QByteArray &str);
         
+        /// return md5 hash 
         static QByteArray md5(QFile &f);
         static QByteArray md5(const QString &f);
+        /// return sha1 hash 
         static QByteArray sha1(QFile &f);
         static QByteArray sha1(const QString &f);
     protected: 

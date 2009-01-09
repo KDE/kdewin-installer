@@ -26,7 +26,7 @@
 #include "debug.h"
 #include "package.h"
 #include "downloader.h"
-#include "hash.h"
+#include "hashfile.h"
 #include "installer.h"
 #include "database.h"
 #include "misc.h"
@@ -544,14 +544,14 @@ bool Package::downloadItem(Package::Type type)
     int ret = 0; 
     QString fn = localFilePath(type, true);
     /*
-    There are three modes of md5 sum handling, which are handled in the following order: 
-        case 1. md5 sum checking is disabled, 
+    There are three modes of checksum sum handling, which are handled in the following order: 
+        case 1. checksum checking is disabled, 
             in this case only the archive is downloaded into the download directory if not present
-            and no further md5 sum checking is performed 
+            and no further checksum checking is performed 
     */
     QString archiveDownloadError = QObject::tr("could not download archive").arg(url.toString());
     QString download2Error = QObject::tr("downloaded archive not accessable").arg(fn);
-    QString md5sumError = QObject::tr("archive checksum error").arg(url.toString());
+    QString checkSumError = QObject::tr("archive checksum error").arg(url.toString());
 
     if (m_hashType.type() == Hash::None)
     {
@@ -570,11 +570,11 @@ bool Package::downloadItem(Package::Type type)
             
     }
     /*
-    case 2. an md5 sum is provided in the central package configuration
+    case 2. an md5 or sha1 checksum is provided in the central package configuration
             In this case the archive is downloaded into the download directory if not present,  
-            the md5 sum of the package will be computed and compared. If the md5 sum does not fit 
-            redownload the archive and compute an check the md5 sum again. If the md5 sum still does 
-            not fit delete the archive file and reports an md5 sum file error to the user. 
+            the checksum of the package will be computed and compared. If the checksum does not fit 
+            redownload the archive and check the checksum again. If the checksum still does 
+            not fit delete the archive file and reports an checksum file error to the user. 
     */
     if (!item(type).checkSum().isEmpty()) 
     {
@@ -586,7 +586,7 @@ bool Package::downloadItem(Package::Type type)
             if (!ret || Downloader::instance()->result() != Downloader::Finished)
                 return setError(archiveDownloadError); 
         }
-        QByteArray checkSum = Hash::instance().hash(fn).toHex();
+        QByteArray checkSum = m_hashType.hash(fn).toHex();
         if( checkSum == item(type).checkSum()) 
             return true;
 
@@ -595,36 +595,36 @@ bool Package::downloadItem(Package::Type type)
         if (!ret || Downloader::instance()->result() != Downloader::Finished)
             return setError(archiveDownloadError); 
 
-            QByteArray FileCheckSum = Hash::instance().hash(fn).toHex();
+        QByteArray FileCheckSum = m_hashType.hash(fn).toHex();
         if( FileCheckSum == item(type).checkSum() ) 
             return true;
 
-        qCritical() << __FUNCTION__ << "could not compute md5sum after two tries";
-        return setError(md5sumError); 
+        qCritical() << __FUNCTION__ << "could not compute checksum after two tries";
+        return setError(checkSumError); 
     }
     
     /*
-    case 3. on the mirror there are md5 sum files for the related package
-            In this case download the md5 sum file into the download dir if not present 
+    case 3. on the mirror there are checksum files for the related package
+            In this case download the checksum file into the download dir if not present 
         
          */
-    QString md5FileName = fn + QLatin1String(".md5");
-    QUrl md5url = url;
-    md5url.setPath(url.path() + ".md5");
-    QString md5DownloadError = QObject::tr("could not download archive integrity file").arg(md5url.toString());
-    QString md5FileError = QObject::tr("could not open archive integrity file").arg(md5url.toString());
+    HashFile hashFile(m_hashType.type(),fn);
+    QString hashFileName = fn + hashFile.fileNameExtension();
+    QUrl hashUrl = url;
+    hashUrl.setPath(url.path() + hashFile.fileNameExtension());
+    QString hashDownloadError = QObject::tr("could not download archive integrity file").arg(hashUrl.toString());
+    QString hashFileError = QObject::tr("could not open archive integrity file").arg(hashUrl.toString());
 
     // md5 sum may not be present from older downloads, try downloading first. 
-    // This prevents redownloading the archive unconditionally when no md5 sum is present 
-    if (!QFile::exists(md5FileName)) {
-        qDebug() << __FUNCTION__ << " downloading md5 sum file";
-        ret = Downloader::instance()->fetch(md5url, md5FileName);
+    // This prevents redownloading the archive unconditionally when no checksum is present 
+    if (!QFile::exists(hashFileName)) {
+        qDebug() << __FUNCTION__ << " downloading checksum file";
+        ret = Downloader::instance()->fetch(hashUrl, hashFileName);
         if (!ret || Downloader::instance()->result() != Downloader::Finished)
-            return setError(md5DownloadError); 
+            return setError(hashDownloadError); 
     }
-    QByteArray checkSumFromFile = readMD5SumFile(md5FileName);
-    if(checkSumFromFile.isEmpty()) 
-        return setError(md5FileError); 
+    if (!hashFile.readFromFile(hashFileName))
+        return setError(hashFileError); 
     
     //  if archive is not present download it
     if (!QFile::exists(fn)) 
@@ -635,38 +635,37 @@ bool Package::downloadItem(Package::Type type)
             return setError(archiveDownloadError); 
     }
     
-    QByteArray checkSum = Hash::instance().hash( fn ).toHex();
-    if( checkSumFromFile == checkSum ) {
+    QByteArray checkSum = m_hashType.hash( fn ).toHex();
+    if( hashFile.getHash() == checkSum ) {
         qDebug() << __FUNCTION__ << "md5sum is correct - no need to redownload file";
         return true;
     }
 
     qDebug() << __FUNCTION__ << "md5sum is not correct - need to download file again!";
     QFile::remove(fn);
-    QFile::remove(md5FileName);
+    QFile::remove(hashFileName);
 
-    qDebug() << __FUNCTION__ << " downloading md5 sum file";
-    Downloader::instance()->fetch(md5url, md5FileName);
+    qDebug() << __FUNCTION__ << " downloading checksum file";
+    Downloader::instance()->fetch(hashUrl, hashFileName);
     if (!ret || Downloader::instance()->result() != Downloader::Finished)
         return setError(archiveDownloadError); 
 
-    checkSumFromFile = readMD5SumFile( md5FileName );
-    if( checkSumFromFile.isEmpty() ) 
-        return setError(md5FileError); 
+    if (!hashFile.readFromFile(hashFileName))
+        return setError(hashFileError); 
 
     qDebug() << __FUNCTION__ << " downloading package file";
     ret = Downloader::instance()->fetch(url, fn);
     if (!ret || Downloader::instance()->result() != Downloader::Finished)
         return setError(archiveDownloadError); 
 
-    // we can use the md5sum directly from the downloader 
+    // we can use the checksum directly from the downloader 
     checkSum = Downloader::instance()->checkSum().toHex();
-    if( checkSumFromFile == checkSum ) {
+    if( hashFile.getHash() == checkSum ) {
         qDebug() << __FUNCTION__ << "md5sum is correct - no need to redownload file";
         return true;
     }
-    qCritical() << __FUNCTION__ << "could not verify md5 sum of archive after two tries";
-    return setError(md5sumError); 
+    qCritical() << __FUNCTION__ << "could not verify checksum of archive after two tries";
+    return setError(checkSumError); 
 }
 
 bool Package::installItem(Installer *installer, Package::Type type)

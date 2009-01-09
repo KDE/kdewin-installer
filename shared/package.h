@@ -120,8 +120,8 @@ public:
 
             bool setUrlAndFileName(const QUrl &url, const QString &fn);
 
-            void setCheckSum(const QString &md5) { m_md5 = md5; }
-            const QString &checkSum() const { return m_md5; }
+            void setCheckSum(const QString &hash) { m_hash = hash; }
+            const QString &checkSum() const { return m_hash; }
 
             void setInstalled(bool state) { m_installed = state; }
             bool installed() const { return m_installed; }
@@ -132,8 +132,8 @@ public:
         protected:
             QString m_fileName;       // filename only
             Type    m_contentType;    // BIN / LIB / DOC / SRC
-            bool    m_installed;     // true if already installed
-            QString m_md5;            /// md5 sum 
+            bool    m_installed;      // true if already installed
+            QString m_hash;           /// hash sum 
             QUrl    m_url;            // complete download url
             QT_DEPRECATED bool set(const QUrl &url, const QString &fn, Package::Type contentType=Package::NONE, bool bInstalled = false);
             QT_DEPRECATED bool set(const QUrl &url, const QString &fn, const QByteArray &contentType, bool bInstalled = false);

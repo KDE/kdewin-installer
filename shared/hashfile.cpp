@@ -27,6 +27,7 @@
 
 #include <QFile>
 #include <QFileInfo>
+#include <QStringList>
 
 HashFile::HashFile(HashFile::Type type, const QString& originalFile) 
     : Hash(type), m_originalFile(originalFile.toUtf8())
@@ -77,10 +78,10 @@ bool HashFile::save(const QString &fileName)
         if (!computeHash())
             return false;
     
-    QFile hashFile(!fileName.isEmpty() ? fileName : m_originalFile + (m_type == HashFile::Type::MD5 ? ".md5" : ".sha1"));
-    if (!hashFile.open(QIODevice::WriteOnly)) 
+    QFile f(!fileName.isEmpty() ? fileName : m_originalFile + fileNameExtension());
+    if (!f.open(QIODevice::WriteOnly)) 
     {
-        qCritical() << "could not create hash file" << hashFile.fileName();
+        qCritical() << "could not create hash file" << f.fileName();
         return false;
     }
     QFileInfo fi(m_originalFile);
@@ -90,12 +91,45 @@ bool HashFile::save(const QString &fileName)
         qCritical() << "could not create hash file content";
         return false;
     }
-    hashFile.write(hashFileContent); 
-    hashFile.close();
+    f.write(hashFileContent); 
+    f.close();
     return true;
 }
 
 bool HashFile::isHashFileName(const QString &fileName)
 {
         return fileName.endsWith(".md5") || fileName.endsWith(".sha1");
+}
+
+bool HashFile::readFromFile(const QString &fileName)
+{
+    QFile f(!fileName.isEmpty() ? fileName : m_originalFile + fileNameExtension());
+    if (!f.open(QIODevice::ReadOnly)) 
+        return false;
+    QList<QByteArray> parts = f.readLine().trimmed().split(' ');
+    if (parts.size() != 3)
+    {
+        qCritical() << "invalid hash file format" << f.fileName();
+        return false;
+    }
+    if (!isHash(parts[0]))
+        return false;
+
+    m_hash = parts[0];
+    return true;
+}
+
+QString HashFile::fileNameExtension()
+{
+    if (m_type == HashFile::MD5)
+        return ".md5";
+    else if (m_type == HashFile::SHA1)
+        return ".sha1";
+    else 
+        return ".none";
+}
+
+QByteArray HashFile::getHash()
+{   
+    return m_hash;
 }

@@ -40,17 +40,35 @@ class HashFile : public Hash {
         */
         bool computeHash();
 
+        /**
+            return internal stored hash value
+        */
+        QByteArray getHash();
+
         /** 
             return hash value as hashfile content 
         */
         QByteArray toHashFileContent();
         
         /**
+            read hash file from fileName and return 
+            true if the hash value could be read successfull. 
+            If fileName is ommitted the hash file name is 
+            build from the original file appended with an 
+            extension depending on the hash type. 
+        */
+        bool readFromFile(const QString &fileName=QString());
+        /**
             save computed hash value into a file. 
             If filename is ommitted use the original filename 
-            appended with a hash type extension. 
+            appended with an extension depending on the hash type. 
         */
         bool save(const QString &fileName=QString());
+        
+        /** 
+            return hash file extension for the currently used type
+        */
+        QString fileNameExtension();
         
         /** 
             return true if the given filename is a valid name for 
