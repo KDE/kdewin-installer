@@ -541,7 +541,7 @@ bool Package::downloadItem(Package::Type type)
         return setError(QObject::tr("server configuration error - invalid download URL %1").arg(url.toString()));
     }
 
-    int ret; 
+    int ret = 0; 
     QString fn = localFilePath(type, true);
     /*
     There are three modes of md5 sum handling, which are handled in the following order: 
