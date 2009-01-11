@@ -363,7 +363,7 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
                 continue;
             QByteArray fnUtf8 = file.outputFile.isEmpty() ? file.inputFile.toUtf8() : file.outputFile.toUtf8();
             fnUtf8.replace(' ', "\\ "); // escape ' '
-            HashFile hf(m_checkSumMode == "sha1" ? HashFile::Type::SHA1 : HashFile::Type::MD5,fnUtf8); 
+            HashFile hf(m_checkSumMode == "sha1" ? HashFile::SHA1 : HashFile::MD5,fnUtf8); 
             out << hf.toHashFileContent();
         }
     }

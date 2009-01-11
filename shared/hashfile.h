@@ -30,6 +30,7 @@
 
 class HashFile : public Hash {
     public: 
+        typedef Hash::Type Type; 
         /// create hash instance with the given type and based on the originalFile
         HashFile(Type type, const QString& originalFile);
         HashFile(Type type, const QByteArray& originalFile);
