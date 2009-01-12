@@ -3,16 +3,18 @@ TODO
 
 1 common
   1 add tool documentation
+  2 complete package descriptor format (separate build/runtime requirements) 
 
 2 installer 
   1 common 
     1 before installing check if all dependencies of installed packages are also installed and select them too for installing when not 
-    2 add mode for installing from local package directory
-    3 remove empty directories when removing packages 
-    4 how to handle packages which requires administrative access like vcredist and others (which package exactly ?)
+    2 complete sha1 checksum support 
+    3 add mode for installing from local package directory
+    4 remove empty directories when removing packages 
+    5 how to handle packages which requires administrative access like vcredist and others (which package exactly ?)
         -> running those application as admin user ? 
-    5 some msi files are started without displaying a gui like perl. This should be fixed
-    7 complete package descriptor format (separate build/runtime requirements) 
+    6 some msi files are started without displaying a gui like perl. This should be fixed
+    7 PackageList::readFromDirectory() - add package hash file autodetection
 
   2 command line installer 
   
