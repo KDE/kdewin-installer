@@ -32,16 +32,21 @@
  holds global options, which are stored in a local user specific config file
 */
 
+/**
+ holds system related proxy settings
+*/
+class ProxySettings {
+    public: 
+        ProxySettings() : port(0) {}
+        QString hostname;
+        int port;
+        QString user;
+        QString password;
+};
+
 class Settings : public QObject
 {
     Q_OBJECT
-public:
-  struct proxySettings {
-    QString hostname;
-    int port;
-    QString user;
-    QString password;
-  };
 public:
     Settings();
     ~Settings();
@@ -90,23 +95,13 @@ public:
     const bool isDeveloperInstallMode() { return false; }
     const bool setDeveloperInstallMode() {  }
 
-    enum ProxyMode { None = 0, InternetExplorer, FireFox, Environment, Manual };
+    typedef enum { None = 0, InternetExplorer, FireFox, Environment, Manual } ProxyMode;
     ProxyMode proxyMode() const { return (ProxyMode)m_settingsMain->value("proxyMode",0).toInt(); }
     void setProxyMode(ProxyMode mode) { m_settingsMain->setValue("proxyMode", mode); }
 
-    QString proxyHost() const { return m_settingsMain->value("proxyHost").toString(); }
-    int proxyPort() const { return m_settingsMain->value("proxyPort").toInt(); }
-    QString proxyUser() const { return m_settingsMain->value("proxyUser").toString(); }
-    QString proxyPassword() const { return m_settingsMain->value("proxyPassword").toString(); }
+    bool proxy(ProxyMode mode, const QString &url, ProxySettings &proxy);
 
-    bool proxy(const QString &url, proxySettings &proxy);
-    void setProxy(const QString &host, const QString &port) 
-    {
-        m_settingsMain->setValue("proxyHost",host);
-        m_settingsMain->setValue("proxyPort",port);
-        sync();
-    }
-    void setProxy(const proxySettings &proxy)
+    void setProxy(const ProxySettings &proxy)
     {
         m_settingsMain->setValue("proxyHost",proxy.hostname);
         m_settingsMain->setValue("proxyPort",proxy.port);
@@ -146,17 +141,28 @@ Q_SIGNALS:
     void compilerTypeChanged();
 
 protected:
+    void setProxy(const QString &host, const QString &port) 
+    {
+        m_settingsMain->setValue("proxyHost",host);
+        m_settingsMain->setValue("proxyPort",port);
+        sync();
+    }
+
+    QString proxyHost() const { return m_settingsMain->value("proxyHost").toString(); }
+    int proxyPort() const { return m_settingsMain->value("proxyPort").toInt(); }
+    QString proxyUser() const { return m_settingsMain->value("proxyUser").toString(); }
+    QString proxyPassword() const { return m_settingsMain->value("proxyPassword").toString(); }
+
 private:
     // stored in user profile
     QSettings *m_settingsMain;
     // stored in installroot 
     QSettings *m_settings;
-    proxySettings m_proxy;
 #ifdef Q_WS_WIN
-    bool getIEProxySettings(const QString &url, proxySettings &proxy);
+    bool getIEProxySettings(const QString &url, ProxySettings &proxy);
 #endif
-    bool getFireFoxProxySettings(const QString &url, proxySettings &proxy);
-    bool getEnvironmentProxySettings(const QString &url, proxySettings &proxy);
+    bool getFireFoxProxySettings(const QString &url, ProxySettings &proxy);
+    bool getEnvironmentProxySettings(const QString &url, ProxySettings &proxy);
     QString debug(void) { return m_settings->value("debug", "").toString(); }
     friend QDebug operator<<(QDebug, Settings &);
 };
@@ -164,7 +170,7 @@ private:
 
 #include <QDebug>
 
-inline QDebug operator<<(QDebug out, Settings::proxySettings &c)
+inline QDebug operator<<(QDebug out, ProxySettings &c)
 {
     out << "host:" << c.hostname << "port:" << c.port 
         << "user:" << c.user << "password:" << (c.password.isEmpty() ? "<empty>" : "****");

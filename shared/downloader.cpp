@@ -246,8 +246,8 @@ bool Downloader::fetchInternal ( const QUrl &url )
     }
 
     Settings &s = Settings::instance();
-    Settings::proxySettings ps;
-    s.proxy ( m_usedURL.scheme(), ps );
+    ProxySettings ps;
+    s.proxy ( s.proxyMode(), m_usedURL.scheme(), ps );
 
     d->encodedUrl = m_usedURL.toEncoded();
     curl_easy_setopt ( d->curlHandle, CURLOPT_URL, d->encodedUrl.constData() );

@@ -236,7 +236,7 @@ Settings &Settings::instance()
 }
 
 #ifdef Q_OS_WIN
-bool Settings::getIEProxySettings(const QString &url, proxySettings &proxy)
+bool Settings::getIEProxySettings(const QString &url, ProxySettings &proxy)
 {
     // @TODO how to retrieve user and passwort
     bool ok;
@@ -263,7 +263,7 @@ bool Settings::getIEProxySettings(const QString &url, proxySettings &proxy)
 }
 #endif
 
-bool Settings::getEnvironmentProxySettings(const QString &_url, proxySettings &proxy)
+bool Settings::getEnvironmentProxySettings(const QString &_url, ProxySettings &proxy)
 {
     QUrl url(qgetenv("http_proxy"));
 
@@ -278,7 +278,7 @@ bool Settings::getEnvironmentProxySettings(const QString &_url, proxySettings &p
     return false;
 }
 
-bool Settings::getFireFoxProxySettings(const QString &url, proxySettings &proxy)
+bool Settings::getFireFoxProxySettings(const QString &url, ProxySettings &proxy)
 {
     static QHash<QString,QString> prefs;
     static bool prefsRead = false;
@@ -347,10 +347,10 @@ bool Settings::getFireFoxProxySettings(const QString &url, proxySettings &proxy)
     return false;
 }
 
-bool Settings::proxy(const QString &url, proxySettings &proxy)
+bool Settings::proxy(ProxyMode mode, const QString &url, ProxySettings &proxy)
 {
     // FIXME: add support for different ftp proxy settings
-    switch(proxyMode()) {
+    switch(mode) {
 #ifdef Q_WS_WIN
         case InternetExplorer:
             return getIEProxySettings(url, proxy);

@@ -44,28 +44,36 @@ void InternetSettingsPage::initializePage()
 #ifndef Q_WS_WIN
     ui.proxyIE->setText(tr("Environment settings"));
 #endif
+    ProxySettings proxy;
     switch (s.proxyMode()) {
-        case Settings::InternetExplorer: ui.proxyIE->setChecked(true); break;
-        case Settings::Manual: ui.proxyManual->setChecked(true); break;
-        case Settings::FireFox: ui.proxyFireFox->setChecked(true); break;
-        case Settings::Environment: ui.proxyIE->setChecked(true); break;
+        case Settings::InternetExplorer: 
+            ui.proxyIE->setChecked(true); 
+            break;
+        case Settings::Manual: 
+            ui.proxyManual->setChecked(true); 
+            break;
+        case Settings::FireFox: 
+            ui.proxyFireFox->setChecked(true); 
+            break;
+        case Settings::Environment: 
+            ui.proxyIE->setChecked(true); 
+            break;
         case Settings::None:
-        default: ui.proxyOff->setChecked(true); break;
+        default: 
+            ui.proxyOff->setChecked(true); 
+            break;
     }
+    s.proxy(s.proxyMode(),"",proxy);
 
-    Settings::proxySettings proxy;
-    if (s.proxy("",proxy))
-    {
-        ui.proxyHost->setText(proxy.hostname);
-        ui.proxyPort->setText(QString("%1").arg(proxy.port));
-        ui.proxyUserName->setText(proxy.user);
-        ui.proxyPassword->setText(proxy.password);
-        ui.proxyHost->setEnabled(ui.proxyManual->isChecked());
-        ui.proxyPort->setEnabled(ui.proxyManual->isChecked());
-        ui.proxyUserName->setEnabled(ui.proxyManual->isChecked());
-        ui.proxyPassword->setEnabled(ui.proxyManual->isChecked());
-    }
-    switchProxyFields(false);
+    ui.proxyHost->setText(proxy.hostname);
+    ui.proxyPort->setText(proxy.port ? QString("%1").arg(proxy.port) : QString());
+    ui.proxyUserName->setText(proxy.user);
+    ui.proxyPassword->setText(proxy.password);
+
+    ui.proxyHost->setEnabled(ui.proxyManual->isChecked());
+    ui.proxyPort->setEnabled(ui.proxyManual->isChecked());
+    ui.proxyUserName->setEnabled(ui.proxyManual->isChecked());
+    ui.proxyPassword->setEnabled(ui.proxyManual->isChecked());
 }
 
 bool InternetSettingsPage::validatePage()
@@ -85,7 +93,7 @@ bool InternetSettingsPage::validatePage()
     s.setProxyMode(m);
     if (ui.proxyManual->isChecked())
     {
-        Settings::proxySettings proxy;
+        ProxySettings proxy;
         proxy.hostname = ui.proxyHost->text();
         proxy.port = ui.proxyPort->text().toInt();
         proxy.user = ui.proxyUserName->text();
@@ -108,5 +116,26 @@ void InternetSettingsPage::switchProxyFields(bool mode)
     ui.proxyPort->setEnabled(mode);
     ui.proxyUserName->setEnabled(mode);
     ui.proxyPassword->setEnabled(mode);
+        
+    Settings &s = Settings::instance();
+    ProxySettings proxy;
+    if(ui.proxyIE->isChecked())
+#ifdef Q_WS_WIN
+        s.proxy(Settings::InternetExplorer,"",proxy);
+#else
+        s.proxy(Settings::Environment"",proxy);
+#endif
+    else if(ui.proxyFireFox->isChecked())
+        s.proxy(Settings::FireFox,"",proxy);
+    else if(ui.proxyManual->isChecked())
+        s.proxy(Settings::Manual,"",proxy);
+    else
+        s.proxy(Settings::None,"",proxy);
+        
+    ui.proxyHost->setText(proxy.hostname);
+    ui.proxyPort->setText(proxy.port ? QString("%1").arg(proxy.port) : QString());
+    ui.proxyUserName->setText(proxy.user);
+    ui.proxyPassword->setText(proxy.password);
+
 }
 
