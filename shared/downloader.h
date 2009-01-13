@@ -24,6 +24,8 @@
 #ifndef DOWNLOADER_H
 #define DOWNLOADER_H
 
+#include "hash.h"
+
 #include <QtCore/QObject>
 #include <QtCore/QString>
 #include <QtCore/QUrl>
@@ -61,6 +63,9 @@ public:
     QUrl       usedURL()   const {
         return m_usedURL;
     }
+    // set checksum type
+    void setCheckSumType(Hash::Type type);
+    
     // calculated checksum
     QByteArray checkSum() const;
 

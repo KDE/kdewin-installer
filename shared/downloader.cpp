@@ -100,7 +100,8 @@ class Downloader::Private
 public:
     Private ()
             : curlHandle ( 0 ), thread ( NULL ), cancel ( false ), ret ( CURLE_OK ),
-            progress ( 0 ), ioDevice ( NULL ), crypt( QCryptographicHash::Md5 ) {}
+            progress ( 0 ), ioDevice ( NULL ) {}
+
     ~Private() {
         if ( thread )
             thread->terminate();
@@ -116,7 +117,7 @@ public:
     QString     fileName;         // holds filename in case target is a file
     QByteArray  encodedUrl;       // the encoded url for some (old?) curl versions
                                   // which don't copy the url to an own buffer
-    QCryptographicHash crypt;
+    Hash hash;
 };
 
 Downloader::Downloader ()
@@ -224,7 +225,7 @@ bool Downloader::fetchInternal ( const QUrl &url )
 
     m_usedURL = url;
     m_result = Undefined;
-    d->crypt.reset();
+    d->hash.reset();
     d->cancel = false;
 
     if ( !d->curlHandle ) {
@@ -320,7 +321,7 @@ void Downloader::threadFinished ()
 
 size_t Downloader::curlWrite ( const char * data, size_t size )
 {
-    d->crypt.addData( data, size );
+    d->hash.addData( data, size );
     return d->ioDevice->write ( data, size );
 }
 
@@ -361,9 +362,14 @@ void Downloader::setError ( const QString &errStr )
     emit error ( errStr );
 }
 
+void Downloader::setCheckSumType(Hash::Type type) 
+{
+    d->hash.setType(type);
+}
+
 QByteArray Downloader::checkSum() const
 {
-    return d->crypt.result();
+    return d->hash.result();
 }
 
 QDebug &operator<< ( QDebug &debug, const Downloader & )

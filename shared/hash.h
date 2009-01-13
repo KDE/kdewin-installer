@@ -24,8 +24,9 @@
 #define HASH_H
 
 class QFile;
+class QCryptographicHash;
 
-#include <QByteArray>
+#include <QtCore/QByteArray>
 
 class Hash {
     public:
@@ -33,10 +34,13 @@ class Hash {
         
         Hash();
         Hash(Type type);
-
-        static Hash &instance();
-
-        /// set hash type
+        ~Hash();
+        
+        /**
+            set hash type 
+            note that setting the type after already 
+            calling addData() will reset the internal hash value
+        */
         void setType(Type type) { m_type = type; }
         bool setType(const QString &type);
         
@@ -49,11 +53,21 @@ class Hash {
         /// compute hash from file content 
         QByteArray hash(const QString &file);
 
+        /// the following three methods supports adding partial data 
+        /// reset hash value
+        void reset();
+        /// Adds the first length chars of data to the cryptographic hash.
+        void addData( const char *data, int size );
+        /// Returns the final hash value.
+        QByteArray result() const;
+        
         /// validate hash string
         static bool isHash (const QByteArray &str);
 
         /// return type of hash
         static Hash::Type isType(const QByteArray &str);
+
+        static Hash &instance();
         
         /// return md5 hash 
         static QByteArray md5(QFile &f);
@@ -63,6 +77,7 @@ class Hash {
         static QByteArray sha1(const QString &f);
     protected: 
         Type m_type;
+        QCryptographicHash *m_cryptoHash;
 };
 
 #endif
