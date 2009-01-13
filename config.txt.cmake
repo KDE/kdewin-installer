@@ -73,7 +73,7 @@
 @deps kdemultimedia-mingw kdebase-runtime-mingw taglib-mingw
 @deps kdenetwork-mingw kdebase-runtime-mingw kdelibs-mingw sqlite libgmp-mingw
 @deps kdepim-mingw kdepimlibs-mingw kdebase-runtime-mingw gpgme-qt-mingw sqlite
-@deps kdepimlibs-mingw kdelibs-mingw boost
+@deps kdepimlibs-mingw kdelibs-mingw boost-mingw
 @deps kdesdk-mingw kdebase-runtime-mingw kdelibs-mingw kdepimlibs-mingw astyle diffutils
 @deps kdetoys-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps kdeutils-mingw kdebase-runtime-mingw kdelibs-mingw libzip libgmp-mingw
@@ -106,7 +106,7 @@
 @deps kdemultimedia-msvc kdebase-runtime-msvc taglib-msvc
 @deps kdenetwork-msvc kdebase-runtime-msvc kdelibs-msvc sqlite libgmp-msvc
 @deps kdepim-msvc kdepimlibs-msvc kdebase-runtime-msvc gpgme-qt-msvc sqlite
-@deps kdepimlibs-msvc kdelibs-msvc boost
+@deps kdepimlibs-msvc kdelibs-msvc boost-msvc
 @deps kdesdk-msvc kdebase-runtime-msvc kdelibs-msvc astyle diffutils
 @deps kdetoys-msvc kdebase-runtime-msvc kdelibs-msvc
 @deps kdeutils-msvc kdebase-runtime-msvc libzip libgmp-msvc
@@ -201,7 +201,7 @@
 @pkgnotes aspell-yi Yiddish spelling package
 @pkgnotes aspell-zu Zulu spelling package
 @pkgnotes astyle source code formatter
-@pkgnotes boost portable C++ libraries
+@pkgnotes boost-* portable C++ libraries
 @pkgnotes byacc Berkeley parser generator
 @pkgnotes bzip2 Bzip compression utility
 @pkgnotes cfitsio library for the FITS (Flexible Image Transport System) file format
