@@ -15,7 +15,7 @@
 @categorynotes qt Qt related packages 
 
 ; to which category packages belongs to
-@categorypackages win32libs aspell ebook-tools expat giflib iconv jasper jpeg lcms libbzip2 libgs libidn libintl libpng libxml2 libxslt libzip mysql-embedded openslp openssl tiff zlib shared-mime-info sqlite gpgme
+@categorypackages win32libs aspell ebook-tools expat giflib iconv jasper jpeg lcms libbzip2 libgs libidn gettext libpng libxml2 libxslt libzip mysql-embedded openslp openssl tiff zlib shared-mime-info sqlite gpgme
 @categorypackages win32libs pcre-msvc  dbus-msvc  exiv2-msvc  gpgme-qt-msvc  libgmp-msvc  libspectre-msvc
 @categorypackages win32libs pcre-mingw dbus-mingw exiv2-mingw gpgme-qt-mingw libgmp-mingw libspectre-mingw
 @categorypackages tools findutils grep mingw-utils diffutils patch
@@ -50,9 +50,9 @@
 @SITE_URL_LIST@
 @exclude config.txt
 ; compiler independent deps 
-@deps findutils libintl
+@deps findutils gettext
 @deps grep pcre-mingw
-@deps shared-mime-info libintl libxml2 iconv
+@deps shared-mime-info gettext libxml2 iconv
 @deps strigi-msvc libbzip2 openssl zlib iconv libxml2
 @deps ebook-tools libzip
 @deps libspectre libgs
@@ -63,7 +63,7 @@
 @deps digikam-mingw digikam-support-mingw kdeedu-mingw lcms
 @deps digikam-support-mingw exiv2-mingw
 @deps gpgme-qt-mingw gpgme qt-mingw
-@deps kdelibs-mingw qt-mingw phonon-mingw pcre-mingw dbus-mingw kdewin32-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw aspell libbzip2 expat giflib iconv jasper jpeg libintl libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
+@deps kdelibs-mingw qt-mingw phonon-mingw pcre-mingw dbus-mingw kdewin32-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
 @deps kdebase-apps-mingw kdebase-runtime-mingw
 @deps kdebase-runtime-mingw kdepimlibs-mingw kdelibs-mingw
 @deps kdebase-workspace-mingw kdebase-runtime-mingw
@@ -73,7 +73,7 @@
 @deps kdemultimedia-mingw kdebase-runtime-mingw taglib-mingw
 @deps kdenetwork-mingw kdebase-runtime-mingw kdelibs-mingw sqlite libgmp-mingw
 @deps kdepim-mingw kdepimlibs-mingw kdebase-runtime-mingw gpgme-qt-mingw sqlite
-@deps kdepimlibs-mingw kdelibs-mingw
+@deps kdepimlibs-mingw kdelibs-mingw boost
 @deps kdesdk-mingw kdebase-runtime-mingw kdelibs-mingw kdepimlibs-mingw astyle diffutils
 @deps kdetoys-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps kdeutils-mingw kdebase-runtime-mingw kdelibs-mingw libzip libgmp-mingw
@@ -102,11 +102,11 @@
 @deps kdeedu-msvc kdebase-runtime-msvc kdelibs-msvc
 @deps kdegames-msvc kdebase-runtime-msvc kdelibs-msvc phonon-msvc
 @deps kdegraphics-msvc kdebase-runtime-msvc kdelibs-msvc poppler-msvc ebook-tools libspectre exiv2-msvc
-@deps kdelibs-msvc qt-msvc phonon-msvc pcre-msvc vcredist qt-msvc dbus-msvc kdewin32-msvc qimageblitz-msvc qca-msvc strigi-msvc soprano-msvc taglib-msvc aspell libbzip2 expat giflib iconv jasper jpeg libintl libpng libxml2 libxslt openssl tiff zlib shared-mime-info
+@deps kdelibs-msvc qt-msvc phonon-msvc pcre-msvc vcredist qt-msvc dbus-msvc kdewin32-msvc qimageblitz-msvc qca-msvc strigi-msvc soprano-msvc taglib-msvc aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl tiff zlib shared-mime-info
 @deps kdemultimedia-msvc kdebase-runtime-msvc taglib-msvc
 @deps kdenetwork-msvc kdebase-runtime-msvc kdelibs-msvc sqlite libgmp-msvc
 @deps kdepim-msvc kdepimlibs-msvc kdebase-runtime-msvc gpgme-qt-msvc sqlite
-@deps kdepimlibs-msvc kdelibs-msvc
+@deps kdepimlibs-msvc kdelibs-msvc boost
 @deps kdesdk-msvc kdebase-runtime-msvc kdelibs-msvc astyle diffutils
 @deps kdetoys-msvc kdebase-runtime-msvc kdelibs-msvc
 @deps kdeutils-msvc kdebase-runtime-msvc libzip libgmp-msvc
@@ -201,7 +201,7 @@
 @pkgnotes aspell-yi Yiddish spelling package
 @pkgnotes aspell-zu Zulu spelling package
 @pkgnotes astyle source code formatter
-@pkgnotes boost-headers portable C++ libraries
+@pkgnotes boost portable C++ libraries
 @pkgnotes byacc Berkeley parser generator
 @pkgnotes bzip2 Bzip compression utility
 @pkgnotes cfitsio library for the FITS (Flexible Image Transport System) file format
@@ -230,7 +230,7 @@
 @pkgnotes libgs-GPL a library for printing post script files
 @pkgnotes libical reference implementation of the icalendar data type and serialization format 
 @pkgnotes libidn internationalized domain names library
-@pkgnotes libintl native language support library
+@pkgnotes gettext native language support library
 @pkgnotes libpng PNG library (runtime)
 @pkgnotes libspectre a wrapper library for libgs
 @pkgnotes libxml2 XML C parser and toolkit (runtime and applications)
