@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2005-2008 Ralf Habacker <ralf.habacker@freenet.de>
+** Copyright (C) 2005-2009 Ralf Habacker <ralf.habacker@freenet.de>
 ** Copyright (C) 2008 Christian Ehrlicher <ch.ehrlicher@gmx.de>
 ** All rights reserved.
 **
@@ -549,9 +549,9 @@ bool Package::downloadItem(Package::Type type)
             in this case only the archive is downloaded into the download directory if not present
             and no further checksum checking is performed 
     */
-    QString archiveDownloadError = QObject::tr("could not download archive").arg(url.toString());
-    QString download2Error = QObject::tr("downloaded archive not accessable").arg(fn);
-    QString checkSumError = QObject::tr("archive checksum error").arg(url.toString());
+    QString archiveDownloadError = QObject::tr("could not download archive %1").arg(url.toString());
+    QString download2Error = QObject::tr("downloaded archive %1 not accessable").arg(fn);
+    QString checkSumError = QObject::tr("archive downloaded from %1 checksum error").arg(url.toString());
 
     if (m_hashType.type() == Hash::None)
     {
@@ -569,6 +569,11 @@ bool Package::downloadItem(Package::Type type)
             return setError(download2Error); 
             
     }
+
+	// keep download checksum generating in sync with package
+	Downloader::instance()->setCheckSumType(m_hashType.type());
+	QByteArray archiveCheckSum;
+
     /*
     case 2. an md5 or sha1 checksum is provided in the central package configuration
             In this case the archive is downloaded into the download directory if not present,  
@@ -584,19 +589,22 @@ bool Package::downloadItem(Package::Type type)
             qDebug() << __FUNCTION__ << " downloading archive";
             ret = Downloader::instance()->fetch(url, fn);
             if (!ret || Downloader::instance()->result() != Downloader::Finished)
-                return setError(archiveDownloadError); 
+                return setError(archiveDownloadError);
+		    archiveCheckSum = Downloader::instance()->checkSum().toHex();
         }
-        QByteArray checkSum = m_hashType.hash(fn).toHex();
-        if( checkSum == item(type).checkSum()) 
+        else 
+        	archiveCheckSum = m_hashType.hash(fn).toHex();
+
+        if( archiveCheckSum == item(type).checkSum()) 
             return true;
 
-            QFile::remove(fn);
+        QFile::remove(fn);
         ret = Downloader::instance()->fetch(url, fn);
         if (!ret || Downloader::instance()->result() != Downloader::Finished)
             return setError(archiveDownloadError); 
+		archiveCheckSum = Downloader::instance()->checkSum().toHex();
 
-        QByteArray FileCheckSum = m_hashType.hash(fn).toHex();
-        if( FileCheckSum == item(type).checkSum() ) 
+        if( archiveCheckSum == item(type).checkSum() ) 
             return true;
 
         qCritical() << __FUNCTION__ << "could not compute checksum after two tries";
@@ -604,18 +612,20 @@ bool Package::downloadItem(Package::Type type)
     }
     
     /*
-    case 3. on the mirror there are checksum files for the related package
-            In this case download the checksum file into the download dir if not present 
-        
-         */
+    case 3. on the mirror there are checksum files for the related package. Here 
+            1. download the checksum file into the download dir if not present 
+            2. download the archive into the download dir if not present 
+            3. validate archive by the given hash file
+            4. if validation fails for the first time goto 1  else report error
+    */
     HashFile hashFile(m_hashType.type(),fn);
     QString hashFileName = fn + hashFile.fileNameExtension();
     QUrl hashUrl = url;
     hashUrl.setPath(url.path() + hashFile.fileNameExtension());
-    QString hashDownloadError = QObject::tr("could not download archive integrity file").arg(hashUrl.toString());
-    QString hashFileError = QObject::tr("could not open archive integrity file").arg(hashUrl.toString());
+    QString hashDownloadError = QObject::tr("could not download archive integrity file from %1").arg(hashUrl.toString());
+    QString hashFileError = QObject::tr("could not open archive integrity file %1").arg(hashFileName);
 
-    // md5 sum may not be present from older downloads, try downloading first. 
+    // the checksum sum may not be present from older downloads, try downloading first. 
     // This prevents redownloading the archive unconditionally when no checksum is present 
     if (!QFile::exists(hashFileName)) {
         qDebug() << __FUNCTION__ << " downloading checksum file";
@@ -633,15 +643,17 @@ bool Package::downloadItem(Package::Type type)
         ret = Downloader::instance()->fetch(url, fn);
         if (!ret || Downloader::instance()->result() != Downloader::Finished)
             return setError(archiveDownloadError); 
+	    archiveCheckSum = Downloader::instance()->checkSum().toHex();
     }
-    
-    QByteArray checkSum = m_hashType.hash( fn ).toHex();
-    if( hashFile.getHash() == checkSum ) {
-        qDebug() << __FUNCTION__ << "md5sum is correct - no need to redownload file";
+	else    
+    	archiveCheckSum = m_hashType.hash( fn ).toHex();
+ 
+    if( hashFile.getHash() == archiveCheckSum ) {
+        qDebug() << __FUNCTION__ << "checksum is correct - no need to redownload file";
         return true;
     }
 
-    qDebug() << __FUNCTION__ << "md5sum is not correct - need to download file again!";
+    qDebug() << __FUNCTION__ << "checksum is not correct - need to download file again!";
     QFile::remove(fn);
     QFile::remove(hashFileName);
 
@@ -657,10 +669,9 @@ bool Package::downloadItem(Package::Type type)
     ret = Downloader::instance()->fetch(url, fn);
     if (!ret || Downloader::instance()->result() != Downloader::Finished)
         return setError(archiveDownloadError); 
+    archiveCheckSum = Downloader::instance()->checkSum().toHex();
 
-    // we can use the checksum directly from the downloader 
-    checkSum = Downloader::instance()->checkSum().toHex();
-    if( hashFile.getHash() == checkSum ) {
+    if(hashFile.getHash() == archiveCheckSum) {
         qDebug() << __FUNCTION__ << "md5sum is correct - no need to redownload file";
         return true;
     }
