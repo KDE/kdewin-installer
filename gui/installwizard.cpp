@@ -227,11 +227,18 @@ int InstallWizard::nextIdEndUser() const
             return internetSettingsPage;
 
     case internetSettingsPage: 
-        if (!Settings::instance().isPackageManagerMode() && Database::isAnyPackageInstalled(Settings::instance().installDir()) )
-            return endUserInstallModePage;
-        else
-            return mirrorSettingsPage;
+        return mirrorSettingsPage;
         
+    case mirrorSettingsPage: 
+        if (InstallerEngine::installMode() == InstallerEngine::localInstall)
+            return endUserPackageSelectorPage;
+        else
+            return releaseSelectionPage;
+    case releaseSelectionPage: return endUserPackageSelectorPage;
+//    case endUserUpdatePage:        return dependenciesPage;
+//    case endUserRepairPage:        return uninstallPage;
+//    case endUserRemovePage:        return uninstallPage;
+
     case endUserInstallModePage:
     { 
         EndUserInstallModePage *_page = static_cast<EndUserInstallModePage*>(page(endUserInstallModePage));
@@ -250,15 +257,6 @@ int InstallWizard::nextIdEndUser() const
         }
     }
 
-    case mirrorSettingsPage: 
-        if (InstallerEngine::installMode() == InstallerEngine::localInstall)
-            return endUserPackageSelectorPage;
-        else
-            return releaseSelectionPage;
-    case releaseSelectionPage: return endUserPackageSelectorPage;
-//    case endUserUpdatePage:        return dependenciesPage;
-//    case endUserRepairPage:        return uninstallPage;
-//    case endUserRemovePage:        return uninstallPage;
     case endUserPackageSelectorPage: return dependenciesPage;
     case dependenciesPage:           return downloadPage;
     case downloadPage:               
