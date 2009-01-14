@@ -55,6 +55,9 @@ void ReleaseSelectionPage::initializePage()
         return;
     QUrl currentMirror = Settings::instance().mirrorWithReleasePath();
     int mirrorIndex = -1;
+    if (currentMirror.isEmpty())
+        currentMirror = releases.realBaseURL().toString() + "stable/latest/";
+    qDebug() << "current mirror with release" << currentMirror;
     
     Q_FOREACH(const ReleaseType &m, releases.releases())
     {
