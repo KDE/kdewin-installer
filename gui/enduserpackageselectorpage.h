@@ -46,8 +46,10 @@ protected:
 
 public slots:
     void itemClicked(QTreeWidgetItem *item, int column);
-
-    void installDirChanged(const QString &dir);
+    void selectAllClicked();
+    
+   	// deprecated
+	void installDirChanged(const QString &dir);
     void slotCompilerTypeChanged(void);
 
 private:

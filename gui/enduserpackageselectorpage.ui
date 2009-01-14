@@ -31,6 +31,13 @@
      </column>
     </widget>
    </item>
+   <item row="1" column="0" >
+    <widget class="QCheckBox" name="selectAllCheckBox" >
+     <property name="text" >
+      <string>Select/Unselect All (spelling and localization packages are excluded and have to be selected manually)</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>

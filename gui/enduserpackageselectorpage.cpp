@@ -65,7 +65,7 @@ void EndUserPackageSelectorPage::setWidgetData()
     tree->clear();
     QStringList labels;
     QList<QTreeWidgetItem *> items;
-    QString toolTip = "select this checkbox to install this package";
+    QString toolTip = "select this checkbox to install or update this package";
 
     labels 
     << tr ( "Action" )
@@ -158,8 +158,12 @@ void EndUserPackageSelectorPage::initializePage()
     engine->init();
     InstallerDialogs::instance().downloadProgressDialog(this,false);
     connect(ui.packageList,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
+    connect(ui.selectAllCheckBox,SIGNAL(clicked()),this,SLOT(selectAllClicked()));
+
+	// deprecated
     connect(&Settings::instance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
     connect(&Settings::instance(),SIGNAL(compilerTypeChanged()),this,SLOT(slotCompilerTypeChanged()));
+
     activeCategories = engine->globalConfig()->endUserCategories().size() > 0 ? engine->globalConfig()->endUserCategories() : QStringList() << "KDE";
     setWidgetData();
     // @TODO remove
@@ -188,6 +192,21 @@ void EndUserPackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
     // dependencies are selected later
 }
 
+void EndUserPackageSelectorPage::selectAllClicked()
+{
+    QTreeWidget *tree = ui.packageList;
+    int count = tree->topLevelItemCount();
+    for(int i = 0; i < count; i++)
+    {
+        QTreeWidgetItem *item = tree->topLevelItem(i);
+        QString name = item->text ( 1 );
+        if (name.startsWith("aspell-") || name.startsWith("kde-l10n"))
+            continue;
+        itemClicked(item,0);
+    }
+}
+
+/*
 void EndUserPackageSelectorPage::installDirChanged(const QString &dir)
 {
     engine->reload();
@@ -208,8 +227,11 @@ bool EndUserPackageSelectorPage::validatePage()
 void EndUserPackageSelectorPage::cleanupPage()
 {
     disconnect(ui.packageList,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
+    disconnect(ui.selectAllCheckBox,SIGNAL(clicked()),this,SLOT(selectAllClicked()));
+
     disconnect(&Settings::instance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
     disconnect(&Settings::instance(),SIGNAL(compilerTypeChanged()),this,SLOT(slotCompilerTypeChanged()));
+
     engine->unselectAllPackages();
 }
 
