@@ -36,24 +36,21 @@ int main(int argc, char *argv[])
     QString host; 
     bool ret;
     Settings &s = Settings::instance();
-    Settings::proxySettings ps;
+    ProxySettings ps;
 
-    s.setProxyMode(Settings::InternetExplorer);
-    ret = s.proxy(http, ps);
+    ret = s.proxy(Settings::InternetExplorer, http, ps);
     qDebug() << "IE settings for " << http << ":" << ret << ps;
-    ret = s.proxy(ftp, ps);
+    ret = s.proxy(Settings::InternetExplorer, ftp, ps);
     qDebug() << "IE settings for " << ftp << ":" << ret << ps;
 
-    s.setProxyMode(Settings::FireFox);
-    ret = s.proxy(http, ps);
+    ret = s.proxy(Settings::FireFox, http, ps);
     qDebug() << "Firefox settings for " << http << ":" << ret << ps;
-    ret = s.proxy(ftp, ps);
+    ret = s.proxy(Settings::FireFox, ftp, ps);
     qDebug() << "Firefox settings for " << ftp << ":" << ret << ps;
 
-    s.setProxyMode(Settings::Manual);
-    ret = s.proxy(http, ps);
+    ret = s.proxy(Settings::Manual, http, ps);
     qDebug() << "Manual settings for " << http << ":" << ret << ps;
-    ret = s.proxy(ftp, ps);
+    ret = s.proxy(Settings::Manual, ftp, ps);
     qDebug() << "Manual settings for " << ftp << ":" << ret << ps;
 
     return 0;
