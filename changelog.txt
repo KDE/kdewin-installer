@@ -1,5 +1,23 @@
 ChangeLog
 =========
+0.9.5-rc1 (....)
+-----------------
+- installer-gui: (Ralf Habacker)
+                - fixed bug not displaying all settings pages after first install in end user mode 
+                - show latest release link in release selection page. Using this link will 
+                  use always the lastest release 
+                - set default release to latest in the first run.
+                - in case of ie or firefox proxy settings display setting in the unused manual settings 
+                  fields to have a visible feedback about the currently used values
+
+0.9.5-rc0 (....)
+-----------------
+- installer-gui:   
+                - added install from local directory and download only option (Ralf Habacker)
+
+- common:    
+                - started sha1 hash support, in progress, needs more tests (Ralf Habacker)
+
 0.9.4-1 (r904133)
 -----------------
 - installer-gui:   
