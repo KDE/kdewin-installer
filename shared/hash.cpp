@@ -74,7 +74,7 @@ bool Hash::setType(const QString &type)
 
 QByteArray Hash::hash(QFile &file)
 {
-    qDebug() << "computing hash with type" << (m_type == MD5 ? "MD5" : "SHA1");
+//    qDebug() << "computing hash with type" << (m_type == MD5 ? "MD5" : "SHA1");
     static const int bufSize = 1024*1024;
     QCryptographicHash hash( m_type == MD5 ? QCryptographicHash::Md5 : QCryptographicHash::Sha1 );
     QByteArray ba;
