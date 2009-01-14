@@ -20,7 +20,8 @@ TODO
   
   3 gui 
     1 add reinstall package support -> currently by using a remove and install by hand 
-    2 add return to the package selector package after installing package 
+    2 add an option to let the user choose to cleanup the download directory
+    3 add return to the package selector package after installing package 
     4 only display firefox proxy option is firefox is installed 
     5 center checkboxes in package selector page -> not possible yet, see comment in source
 
