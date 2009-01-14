@@ -70,6 +70,14 @@ class Releases
         void add(const ReleaseType &release) { m_releases.append(release); }
         /// return list of detected releases
         ReleaseTypeList &releases() { return m_releases; }
+
+        /**
+            return the really used base url because the base url given to fetch 
+            may contain release informations, the return value is only valid 
+            after calling @ref fetch().
+        */
+        const QUrl &realBaseURL() const { return m_baseURL; }
+
         /// return singleton instance
         static Releases &instance();
     protected:
@@ -110,6 +118,7 @@ class Releases
         bool parse(QIODevice *ioDev, const QUrl &url, ReleaseType::Type type);
 
         ReleaseTypeList m_releases;
+        QUrl m_baseURL;
 };
 
 QDebug &operator<<(QDebug &,const ReleaseTypeList &);

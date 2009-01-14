@@ -149,12 +149,12 @@ bool Releases::fetch(const QUrl &_url)
 #endif
     }   
     m_releases.clear();
-    QUrl baseURL = _url;
+    m_baseURL = _url;
 
-    if (convertFromOldMirrorUrl(baseURL))
+    if (convertFromOldMirrorUrl(m_baseURL))
         return true;
 
-    QUrl url = baseURL.toString() + "stable/";
+    QUrl url = m_baseURL.toString() + "stable/";
     qWarning() << "baseURL1:" << url;
     if (!Downloader::instance()->fetch(url,out))
     {
@@ -165,7 +165,7 @@ bool Releases::fetch(const QUrl &_url)
         qWarning() << "could not extract stable versions from directory list fetched from" << url;
     }
 
-    url = baseURL.toString() + "unstable/";
+    url = m_baseURL.toString() + "unstable/";
     if (!Downloader::instance()->fetch(url,out))
     {
         qWarning() << "could not fetch unstable versions from" << url;
@@ -175,7 +175,7 @@ bool Releases::fetch(const QUrl &_url)
         qWarning() << "could not extract unstable versions from directory list fetched from" << url;
     }
 
-    return patchReleaseUrls(baseURL);
+    return patchReleaseUrls(m_baseURL);
 }
 
 bool Releases::parse(const QString &fileName, const QUrl &url, ReleaseType::Type type)
@@ -210,7 +210,7 @@ bool Releases::parse(QIODevice *ioDev, const QUrl &url, ReleaseType::Type type)
                 continue;
             if ( !line.contains("href=\""))
                 continue;
-            int start = line.indexOf(QRegExp("href=\"[0-9]+\\.[0-9]+\\.[0-9]+/"), 0);   
+            int start = line.indexOf(QRegExp("href=\"(latest|[0-9]+\\.[0-9]+\\.[0-9]+/)"), 0);   
             if (start == -1)
                 continue;
                 
