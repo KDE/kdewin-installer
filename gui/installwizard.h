@@ -24,12 +24,16 @@
 #ifndef InstallWizard_H
 #define InstallWizard_H
 
+#include "installwizardpage.h"
+#include "settingspage.h"
+
+#include "installerenginegui.h"
+extern InstallerEngineGui *engine;
+
 #include <QObject>
 #include <QWizard>
 
 class QLabel;
-
-#include "settingspage.h"
 
 class InstallWizard : public QWizard
 {
@@ -81,42 +85,6 @@ private:
     SettingsPage *_settingsPage;
     int m_lastId;
 };
-
-class InstallWizardPage : public QWizardPage
-{
-    Q_OBJECT 
-    
-public:
-    InstallWizardPage(QWidget *parent = 0);
-
-    /// setup page before it is displayed
-    virtual void initializePage();
-    /// return next page id, called when pressed next (not used) 
-    virtual int nextId() const;
-    /// check if page is complete
-    virtual bool isComplete();
-    /// cancel wizard 
-    virtual void cancel();
-    /// enable/disable settings button (deprecated )
-    void setSettingsButtonVisible(bool mode);
-
-public Q_SLOTS:
-    /// set status label
-    void setStatus(const QString &text);
-    /// slot for performing page action after page is displayed
-    virtual void performAction();
-
-protected:
-    QLabel *topLabel;
-    QLabel *statusLabel;
-
-protected slots:
-    void slotClearStatus();
-};
-
-#include "installerenginegui.h"
-
-extern InstallerEngineGui *engine;
 
 
 #endif
