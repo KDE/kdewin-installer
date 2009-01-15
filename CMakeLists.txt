@@ -6,12 +6,14 @@ cmake_minimum_required(VERSION 2.6.2)
 set (VERSION_MAJOR 0)
 set (VERSION_MINOR 9)
 set (VERSION_REVISION 5)
-set (VERSION_PATCH "rc1")
+set (VERSION_PATCH "rc2")
 set (VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REVISION}")
 set (VERSION_PATCH "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REVISION}-${VERSION_PATCH}")
 
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
+
+include(cmake/macros.cmake)
 
 #set (CMAKE_SUPPRESS_REGENERATION 1)
 find_package(Qt4 REQUIRED)
@@ -189,106 +191,17 @@ else(UNIX)
   endif (QT_VERSION_MAJOR EQUAL 4 AND QT_VERSION_MINOR GREATER 3) 
 endif (UNIX)
 
-if (BUILD_TRANSLATIONS)
-    # copied from cmake Modules dir because the original one does not support the _target_dir parameter
-    MACRO(QT4_CREATE_TRANSLATION _qm_files  _target_dir)
-      SET(_my_sources)
-      SET(_my_tsfiles)
-      FOREACH (_file ${ARGN})
-         GET_FILENAME_COMPONENT(_ext ${_file} EXT)
-         GET_FILENAME_COMPONENT(_abs_FILE ${_file} ABSOLUTE)
-         IF(_ext MATCHES "ts")
-           LIST(APPEND _my_tsfiles ${_abs_FILE})
-         ELSE(_ext MATCHES "ts")
-              LIST(APPEND _my_sources ${_abs_FILE})
-         ENDIF(_ext MATCHES "ts")
-      ENDFOREACH(_file)
-      FOREACH(_ts_file ${_my_tsfiles})
-        ADD_CUSTOM_COMMAND(OUTPUT ${_ts_file}
-           COMMAND ${QT_LUPDATE_EXECUTABLE}
-           ARGS ${_my_sources} -ts ${_ts_file}
-           DEPENDS ${_my_sources}
-           COMMENT "updating ${_ts_file}"
-       )
-      ENDFOREACH(_ts_file)
-      QT4_ADD_TRANSLATION(${_qm_files} ${_target_dir} ${_my_tsfiles})
-    ENDMACRO(QT4_CREATE_TRANSLATION)
-
-    MACRO(QT4_ADD_TRANSLATION _qm_files _target_dir)
-      IF(_target_dir STREQUAL "")
-         SET(_target_dir ${CMAKE_CURRENT_BINARY_DIR})
-      ENDIF(_target_dir STREQUAL "")
-      FOREACH (_current_FILE ${ARGN})
-         GET_FILENAME_COMPONENT(_abs_FILE ${_current_FILE} ABSOLUTE)
-         GET_FILENAME_COMPONENT(qm ${_abs_FILE} NAME_WE)
-         SET(qm "${_target_dir}/${qm}.qm")
-
-         ADD_CUSTOM_COMMAND(OUTPUT ${qm}
-            COMMAND ${QT_LRELEASE_EXECUTABLE}
-            ARGS ${_abs_FILE} -qm ${qm}
-            DEPENDS ${_abs_FILE}
-           COMMENT "creating ${qm}"
-         )
-         SET(${_qm_files} ${${_qm_files}} ${qm})
-      ENDFOREACH (_current_FILE)
-    ENDMACRO(QT4_ADD_TRANSLATION)
-endif(BUILD_TRANSLATIONS)
-
-macro (pack_target _target)
-    if (PACK_EXECUTABLE)
-        get_target_property( _filename ${_target} LOCATION )
-        add_custom_command(
-            TARGET ${_target}
-            POST_BUILD
-            COMMAND ${UPX_EXECUTABLE} --lzma -9 "${_filename}"
-            COMMENT "packing ${_target}"
-        )
-    endif (PACK_EXECUTABLE)
-endmacro (pack_target)
-
-if (BUILD_WITH_SHA1_CHECKSUM)
-macro (create_checksum_file _target)
-    if (SHA1SUM_EXECUTABLE)
-        get_target_property( _filename ${_target} LOCATION )
-        get_filename_component(_name ${_filename} NAME)
-        add_custom_command(
-            TARGET ${_target}
-            POST_BUILD
-            COMMAND ${SHA1SUM_EXECUTABLE}
-            ARGS -o ${_name}.sha1 ${_name}
-            WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
-            COMMENT "creating sha1sum file for ${_target}"
-        )
-        install(FILES ${_filename}.sha1 DESTINATION bin)
-    endif (SHA1SUM_EXECUTABLE)
-endmacro (create_checksum_file _target)
-else (BUILD_WITH_SHA1_CHECKSUM)
-macro (create_checksum_file _target)
-    if (MD5SUM_EXECUTABLE)
-        get_target_property( _filename ${_target} LOCATION )
-        get_filename_component(_name ${_filename} NAME)
-        add_custom_command(
-            TARGET ${_target}
-            POST_BUILD
-            COMMAND ${MD5SUM_EXECUTABLE}
-            ARGS -o ${_name}.md5 ${_name}
-            WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
-            COMMENT "creating md5sum file for ${_target}"
-        )
-        install(FILES ${_filename}.md5 DESTINATION bin)
-    endif (MD5SUM_EXECUTABLE)
-endmacro (create_checksum_file _target)
-endif (BUILD_WITH_SHA1_CHECKSUM)
-
 # our targets
 add_subdirectory(md5sum)
 add_subdirectory(sha1sum)
+set (MD5SUM_EXECUTABLE ${EXECUTABLE_OUTPUT_PATH}/md5sum.exe)
 set (SHA1SUM_EXECUTABLE ${EXECUTABLE_OUTPUT_PATH}/sha1sum.exe)
 
 add_subdirectory(shared)
 add_subdirectory(console)
 add_subdirectory(gui)
 #add_subdirectory(enduser)
+#add_subdirectory(package-manager)
 add_subdirectory(tests)
 add_subdirectory(packager)
 add_subdirectory(doc)
