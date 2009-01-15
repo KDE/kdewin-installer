@@ -29,8 +29,6 @@
 class InstallerEngineGui : public InstallerEngine
 {
 public:
-    // Install Type developer means bin/doc/lib together 
-    enum Type { BinaryOnly, Developer, Single  };
 
     InstallerEngineGui(QWidget *parent);
     /// init all package definitions 
@@ -48,7 +46,11 @@ public:
     bool downloadPackages(const QString &category=QString());
     bool installPackages(const QString &category=QString());
     bool removePackages(const QString &category=QString());
-    Type installMode() { return m_installMode; }
+
+    // display Type developer means bin/doc/lib together 
+    enum DisplayType { BinaryOnly, Developer, Single  };
+    DisplayType displayMode() { return m_displayMode; }
+    void setDisplayMode(DisplayType mode) { m_displayMode = mode; }
 
     /// @TODO: cleanup
     void setEndUserInitialState ( QTreeWidgetItem &item, Package *available, Package *installed, int column=0 );
@@ -60,7 +62,7 @@ protected:
     bool setDependencyState(Package *pkg, QTreeWidget *list);
 
 private:
-    Type    m_installMode;
+    DisplayType    m_displayMode;
     QWidget *m_parent;
     bool downloadPackageItem(Package *pkg, Package::Type type );
 };

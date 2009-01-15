@@ -212,8 +212,8 @@ void PackageSelectorPage::setLeftTreeData()
 
 void PackageSelectorPage::setWidgetData( QString categoryName )
 {
-    InstallerEngineGui::Type installMode = engine->installMode();
-    if (installMode == InstallerEngineGui::Single)
+    InstallerEngineGui::DisplayType displayMode = engine->displayMode();
+    if (displayMode == InstallerEngineGui::Single)
     {
         BINColumn = 3;
         LIBColumn = 4;
@@ -222,7 +222,7 @@ void PackageSelectorPage::setWidgetData( QString categoryName )
         NotesColumn = 7;
         ColumnCount = 8;
     }
-    else if (installMode == InstallerEngineGui::Developer)
+    else if (displayMode == InstallerEngineGui::Developer)
     {
         BINColumn = 3;
         SRCColumn = 4;
@@ -244,14 +244,14 @@ void PackageSelectorPage::setWidgetData( QString categoryName )
     << tr ( "Package" )
     << tr ( "Available" )
     << tr ( "Installed" );
-    if (installMode == InstallerEngineGui::Single)
+    if (displayMode == InstallerEngineGui::Single)
     {
         labels 
         << tr ( "Bin" ) 
         << tr ( "Devel" ) 
         << tr ( "Doc" );
     }
-    else if (installMode == InstallerEngineGui::Developer)
+    else if (displayMode == InstallerEngineGui::Developer)
     {
         labels
         << tr ( "Bin/Devel/Doc" );

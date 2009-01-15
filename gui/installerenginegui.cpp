@@ -203,7 +203,7 @@ void InstallerEngineGui::setInitialState ( QTreeWidgetItem &item, Package *avail
     {
         if (available->hasType(Package::BIN))
             setIcon(item,Package::BIN,packageStates.getState(available,Package::BIN),_nothing);
-        if (m_installMode == Developer)
+        if (m_displayMode == Developer)
         {
             if (available->hasType(Package::LIB))
                 setIcon(item,Package::BIN,packageStates.getState(available,Package::LIB),_nothing);
@@ -212,7 +212,7 @@ void InstallerEngineGui::setInitialState ( QTreeWidgetItem &item, Package *avail
             if (available->hasType(Package::SRC))
                 setIcon(item,Package::SRC,packageStates.getState(available,Package::SRC),_nothing);
         }
-        else if (m_installMode == Single)
+        else if (m_displayMode == Single)
         {
             if (available->hasType(Package::LIB))
                 setIcon(item,Package::LIB,packageStates.getState(available,Package::LIB),_nothing);
@@ -226,7 +226,7 @@ void InstallerEngineGui::setInitialState ( QTreeWidgetItem &item, Package *avail
     {
         if (installed->isInstalled(Package::BIN))
             setIcon(item,Package::BIN,packageStates.getState(installed,Package::BIN),_keepinstalled);
-        if (m_installMode == Developer)
+        if (m_displayMode == Developer)
         {
             if (installed->isInstalled(Package::LIB))
                 setIcon(item,Package::BIN,packageStates.getState(installed,Package::BIN),_keepinstalled);
@@ -235,7 +235,7 @@ void InstallerEngineGui::setInitialState ( QTreeWidgetItem &item, Package *avail
             if (installed->isInstalled(Package::SRC))
                 setIcon(item,Package::SRC,packageStates.getState(installed,Package::BIN),_keepinstalled);
         }
-        else if(m_installMode == Single)
+        else if(m_displayMode == Single)
         {
             if (installed->isInstalled(Package::LIB))
                 setIcon(item,Package::LIB,_keepinstalled);
@@ -255,12 +255,12 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
     bool isAvailable;
     bool isInstalled;
 
-    if (type == Package::BIN && m_installMode == Developer)
+    if (type == Package::BIN && m_displayMode == Developer)
     {
         isAvailable = available && (available->hasType(type) || available->hasType(Package::LIB) || available->hasType(Package::DOC));
         isInstalled = installed && (installed->isInstalled(type) || installed->hasType(Package::LIB) || installed->hasType(Package::DOC));
     }
-    else if (type == Package::BIN && m_installMode == BinaryOnly)
+    else if (type == Package::BIN && m_displayMode == BinaryOnly)
     {
         isAvailable = available && (available->hasType(type) /*|| available->hasType(Package::DOC)*/);
         isInstalled = installed && (installed->isInstalled(type) /*|| installed->hasType(Package::DOC)*/);
@@ -334,14 +334,14 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
         packageStates.setState(available,type,newState);
 
     // set additional package types for download/install/remove
-    if (type == Package::BIN && m_installMode == Developer)
+    if (type == Package::BIN && m_displayMode == Developer)
     {
         if (available->hasType(Package::LIB))
             packageStates.setState(available,Package::LIB,newState);
         if (available->hasType(Package::DOC))
             packageStates.setState(available,Package::DOC,newState);
     }
-    else if (type == Package::BIN && m_installMode == BinaryOnly)
+    else if (type == Package::BIN && m_displayMode == BinaryOnly)
     {
         ;//if (available->hasType(Package::DOC))
          //   packageStates.setState(available,Package::DOC,newState);
@@ -417,14 +417,14 @@ bool InstallerEngineGui::setDependencyState(Package *_package, QTreeWidget *list
             dependencyStates.setState(package,Package::BIN,newState);
 
             // set additional package types for download/install/remove
-            if (m_installMode == Developer)
+            if (m_displayMode == Developer)
             {
                 if (package->hasType(Package::LIB))
                     dependencyStates.setState(package,Package::LIB,newState);
                 if (package->hasType(Package::DOC))
                     dependencyStates.setState(package,Package::DOC,newState);
             }
-            else if (m_installMode == BinaryOnly)
+            else if (m_displayMode == BinaryOnly)
             {
                 ;//if (package->hasType(Package::DOC))
                  //   dependenciesStates.setState(package,Package::DOC,_Install);
@@ -471,7 +471,7 @@ InstallerEngineGui::InstallerEngineGui (QWidget *parent)
 
 bool InstallerEngineGui::init()
 {
-    m_installMode = Settings::instance().isPackageManagerMode() ? Single : BinaryOnly;
+    m_displayMode = Settings::instance().isPackageManagerMode() ? Single : BinaryOnly;
 
     initGlobalConfig();
     if (m_globalConfig->installerUpdate().isUpdateAvailable()) {
@@ -490,7 +490,7 @@ bool InstallerEngineGui::init()
 
 void InstallerEngineGui::reload()
 {
-    m_installMode = Settings::instance().isPackageManagerMode() ? Developer : BinaryOnly;
+    m_displayMode = Settings::instance().isPackageManagerMode() ? Developer : BinaryOnly;
     packageStates.clear();
     dependencyStates.clear();
     InstallerEngine::reload();
@@ -510,14 +510,14 @@ void InstallerEngineGui::selectAllPackagesForRemoval()
         if (installed->hasType(type))
             packageStates.setState(installed,type,newState);
         // set additional package types for download/install/remove
-        if (type == Package::BIN && m_installMode == Developer)
+        if (type == Package::BIN && m_displayMode == Developer)
         {
             if (installed->hasType(Package::LIB))
                 packageStates.setState(installed,Package::LIB,newState);
             if (installed->hasType(Package::DOC))
                 packageStates.setState(installed,Package::DOC,newState);
         }
-        else if (type == Package::BIN && m_installMode == BinaryOnly)
+        else if (type == Package::BIN && m_displayMode == BinaryOnly)
         {
             ;//if (installed->hasType(Package::DOC))
              //   packageStates.setState(available,Package::DOC,newState);
