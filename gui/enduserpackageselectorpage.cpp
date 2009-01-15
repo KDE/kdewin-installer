@@ -206,7 +206,6 @@ void EndUserPackageSelectorPage::selectAllClicked()
     }
 }
 
-/*
 void EndUserPackageSelectorPage::installDirChanged(const QString &dir)
 {
     engine->reload();
