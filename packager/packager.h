@@ -45,7 +45,7 @@ class Packager {
       void setCheckSumMode(const QString mode) { m_checkSumMode = mode; }
 
       bool generatePackageFileList(QList<InstallFile> &result, Packager::Type type, const QString &dir=QString());
-      bool createHashFile(const QString &packageFileName);
+      bool createHashFile(const QString &packageFileName, const QString &basePath);
 
       bool makePackage(const QString &dir, const QString &destdir=QString(), bool bComplete=false);
       void setVerbose(bool state) { m_verbose = state; }

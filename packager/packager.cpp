@@ -361,9 +361,9 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
             }
             if (m_checkSumMode.isEmpty())
                 continue;
-            QByteArray fnUtf8 = file.outputFile.isEmpty() ? file.inputFile.toUtf8() : file.outputFile.toUtf8();
-            fnUtf8.replace(' ', "\\ "); // escape ' '
-            HashFile hf(m_checkSumMode == "sha1" ? HashFile::SHA1 : HashFile::MD5,fnUtf8); 
+            QString fn = file.outputFile.isEmpty() ? file.inputFile : file.outputFile;
+            fn.replace(' ', "\\ "); // escape ' '
+            HashFile hf(m_checkSumMode == "sha1" ? HashFile::SHA1 : HashFile::MD5,fn,rootDir); 
             out << hf.toHashFileContent();
         }
     }
@@ -396,9 +396,9 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
     return true;
 }
 
-bool Packager::createHashFile(const QString &packageFileName)
+bool Packager::createHashFile(const QString &packageFileName, const QString &basePath)
 {
-    HashFile hashFile(m_checkSumMode == "md5" ? HashFile::MD5 : HashFile::SHA1, packageFileName);
+    HashFile hashFile(m_checkSumMode == "md5" ? HashFile::MD5 : HashFile::SHA1, packageFileName, basePath);
     if (!hashFile.computeHash())
         return false; 
     hashFile.save();
@@ -431,7 +431,7 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
         createManifestFiles(m_rootDir, fileList, Packager::BIN, manifestFiles);
         compressFiles(_destdir + getBaseName(Packager::BIN), m_rootDir, fileList, manifestFiles);
         if (!m_checkSumMode.isEmpty())
-            createHashFile(_destdir + getBaseName(Packager::BIN) + getCompressedExtension(Packager::BIN) );
+            createHashFile(getBaseName(Packager::BIN) + getCompressedExtension(Packager::BIN), _destdir);
     }
     else
         qDebug() << "no binary files found!";
@@ -449,7 +449,7 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
         createManifestFiles(m_rootDir, fileList, Packager::LIB, manifestFiles);
         compressFiles(_destdir + getBaseName(Packager::LIB), m_rootDir, fileList, manifestFiles);
         if (!m_checkSumMode.isEmpty())
-            createHashFile(_destdir + getBaseName(Packager::LIB) + getCompressedExtension(Packager::LIB));
+            createHashFile(getBaseName(Packager::LIB) + getCompressedExtension(Packager::LIB), _destdir);
     }
 
     generatePackageFileList(fileList, Packager::DOC);
@@ -464,7 +464,7 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
         createManifestFiles(m_rootDir, fileList, Packager::DOC, manifestFiles);
         compressFiles(_destdir + getBaseName(Packager::DOC), m_rootDir, fileList, manifestFiles);
         if (!m_checkSumMode.isEmpty())
-            createHashFile(_destdir + getBaseName(Packager::DOC) + getCompressedExtension(Packager::DOC));
+            createHashFile(getBaseName(Packager::DOC) + getCompressedExtension(Packager::DOC), _destdir);
     }
     
     generatePackageFileList(fileList, Packager::SRC);
@@ -486,7 +486,7 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
         }
         compressFiles(_destdir + getBaseName(Packager::SRC), s, fileList, manifestFiles, "src/" + m_name + "-" + m_version + "/");
         if (!m_checkSumMode.isEmpty())
-            createHashFile(_destdir + getBaseName(Packager::SRC) + getCompressedExtension(Packager::SRC));
+            createHashFile(getBaseName(Packager::SRC) + getCompressedExtension(Packager::SRC), _destdir);
     }
     if(bComplete) {
         generatePackageFileList(fileList, Packager::NONE);
@@ -502,7 +502,7 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
             createManifestFiles(m_rootDir, fileList, Packager::NONE, manifestFiles);
             compressFiles(_destdir + getBaseName(Packager::NONE), m_rootDir, fileList, manifestFiles);
             if (!m_checkSumMode.isEmpty())
-                createHashFile(_destdir + getBaseName(Packager::NONE) + getCompressedExtension(Packager::NONE));
+                createHashFile(getBaseName(Packager::NONE) + getCompressedExtension(Packager::NONE), _destdir);
         }
     }
 

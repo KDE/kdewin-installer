@@ -32,8 +32,7 @@ class Hash {
     public:
         typedef enum { None, MD5, SHA1 } Type; 
         
-        Hash();
-        Hash(Type type);
+        Hash(Type type = MD5);
         ~Hash();
         
         /**

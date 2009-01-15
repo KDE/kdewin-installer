@@ -32,8 +32,7 @@ class HashFile : public Hash {
     public: 
         typedef Hash::Type Type; 
         /// create hash instance with the given type and based on the originalFile
-        HashFile(Type type, const QString& originalFile);
-        HashFile(Type type, const QByteArray& originalFile);
+        HashFile(Type type, const QString &fileName, const QString &basePath = QString());
         ~HashFile();
 
         /**
@@ -44,7 +43,7 @@ class HashFile : public Hash {
         /**
             return internal stored hash value
         */
-        QByteArray getHash();
+        QByteArray getHash() const;
 
         /** 
             return hash value as hashfile content 
@@ -69,7 +68,7 @@ class HashFile : public Hash {
         /** 
             return hash file extension for the currently used type
         */
-        QString fileNameExtension();
+        QString fileNameExtension() const;
         
         /** 
             return true if the given filename is a valid name for 
@@ -78,7 +77,8 @@ class HashFile : public Hash {
         static bool isHashFileName(const QString &fileName);
     protected: 
         QByteArray m_hash; 
-        QByteArray m_originalFile;
+        QString m_fileName;
+        QString m_fullName;
 };
 
 #endif
