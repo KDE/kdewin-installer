@@ -19,8 +19,8 @@
 @categorypackages win32libs pcre-msvc  dbus-msvc  exiv2-msvc  gpgme-qt-msvc  libgmp-msvc  libspectre-msvc
 @categorypackages win32libs pcre-mingw dbus-mingw exiv2-mingw gpgme-qt-mingw libgmp-mingw libspectre-mingw
 @categorypackages tools findutils grep mingw-utils diffutils patch
-@categorypackages kdesupport kdewin32-msvc  kdewin-installer-msvc  vcredist      qimageblitz-msvc  qca-msvc  strigi-msvc  soprano-msvc  taglib-msvc  phonon-msvc  fontconfig-msvc  freetype-msvc  poppler-msvc  automoc-msvc  digikam-support-msvc
-@categorypackages kdesupport kdewin32-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw phonon-mingw fontconfig-mingw freetype-mingw poppler-mingw automoc-mingw digikam-support-mingw
+@categorypackages kdesupport kdewin32-msvc  kdewin-installer-msvc  vcredist      qimageblitz-msvc  qca-msvc  strigi-msvc  soprano-msvc  taglib-msvc  phonon-msvc  fontconfig-msvc  freetype-msvc  poppler-msvc  automoc-msvc
+@categorypackages kdesupport kdewin32-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw phonon-mingw fontconfig-mingw freetype-mingw poppler-mingw automoc-mingw
 @categorypackages KDE amarok-msvc  digikam-msvc  kdelibs-msvc  kdepimlibs-msvc  kdepim-msvc  kdebase-apps-msvc  kdebase-runtime-msvc  kdebase-workspace-msvc  kdeedu-msvc  kdegames-msvc  kdegraphics-msvc  kdenetwork-msvc  kdesdk-msvc  kdewebdev-msvc  kdeutils-msvc  kdeplasma-addons-msvc  kipi-plugins-msvc
 @categorypackages KDE amarok-mingw digikam-mingw kdelibs-mingw kdepimlibs-mingw kdepim-mingw kdebase-apps-mingw kdebase-runtime-mingw kdebase-workspace-mingw kdeedu-mingw kdegames-mingw kdegraphics-mingw kdenetwork-mingw kdesdk-mingw kdewebdev-mingw kdeutils-mingw kdeplasma-addons-mingw kipi-plugins-mingw
 @categorypackages KDE koffice-msvc  ktorrent-msvc  kile-msvc
@@ -60,8 +60,7 @@
 @deps amarok-mingw kdebase-runtime-mingw phonon-mingw taglib-mingw mysql-embedded
 @deps automoc-mingw qt-mingw
 @deps dbus-mingw expat 
-@deps digikam-mingw digikam-support-mingw kdeedu-mingw lcms
-@deps digikam-support-mingw exiv2-mingw
+@deps digikam-mingw kdegraphics-mingw kdeedu-mingw exiv2-mingw lcms
 @deps gpgme-qt-mingw gpgme qt-mingw
 @deps kdelibs-mingw qt-mingw phonon-mingw pcre-mingw dbus-mingw kdewin32-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
 @deps kdebase-apps-mingw kdebase-runtime-mingw
@@ -81,7 +80,7 @@
 @deps kdewin-installer-mingw qt-mingw
 @deps kdewin32-mingw qt-mingw
 @deps kile-mingw kdesdk-mingw
-@deps kipi-plugins-mingw digikam-support-mingw
+@deps kipi-plugins-mingw digikam-mingw
 @deps koffice-mingw kdebase-runtime-mingw kdelibs-mingw lcms
 @deps ktorrent-mingw libgmp-mingw kdelibs-mingw qca-mingw
 @deps phonon-mingw qt-mingw
@@ -93,8 +92,7 @@
 @deps automoc-msvc qt-msvc
 ; dbus may be compiled with libxml2 or expat, so use both dependencies
 @deps dbus-msvc libxml2 iconv expat
-@deps digikam-msvc digikam-support-msvc kdeedu-msvc lcms
-@deps digikam-support-msvc exiv2-msvc
+@deps digikam-msvc kdegraphics-msvc kdeedu-msvc exiv2-msvc lcms
 @deps gpgme-qt-msvc gpgme qt-msvc
 @deps kdebase-apps-msvc kdebase-runtime-msvc
 @deps kdebase-runtime-msvc kdepimlibs-msvc kdelibs-msvc
@@ -114,7 +112,7 @@
 @deps kdewin-installer-msvc qt-msvc
 @deps kdewin32-msvc qt-msvc
 @deps kile-msvc kdesdk-msvc
-@deps kipi-plugins-msvc digikam-support-msvc
+@deps kipi-plugins-msvc digikam-msvc
 @deps koffice-msvc kdebase-runtime-msvc kdelibs-msvc lcms
 @deps ktorrent-msvc libgmp-msvc kdelibs-msvc qca-msvc
 @deps phonon-msvc qt-msvc
@@ -251,10 +249,9 @@
 @pkgnotes zlib The zlib compression and decompression library
 ; mingw/msvc related
 @pkgnotes akonadi-* KDE4 Personal Information Manager framework
-@pkgnotes amarok-* UNSTABLE media player
+@pkgnotes amarok-* media player
 @pkgnotes automoc-* build system application
 @pkgnotes digikam-* UNSTABLE a photo management application
-@pkgnotes digikam-support-* UNSTABLE digikam support package
 @pkgnotes exiv2-* an image metadata library
 @pkgnotes fontconfig-* library for font customization and configuration
 @pkgnotes freetype-* A Free, High-Quality, and Portable Font Engine
