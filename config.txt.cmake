@@ -70,7 +70,7 @@
 @deps kdegames-mingw kdebase-runtime-mingw kdelibs-mingw phonon-mingw
 @deps kdegraphics-mingw kdebase-runtime-mingw kdelibs-mingw poppler-mingw ebook-tools libspectre exiv2-mingw
 @deps kdemultimedia-mingw kdebase-runtime-mingw taglib-mingw
-@deps kdenetwork-mingw kdebase-runtime-mingw kdelibs-mingw sqlite libgmp-mingw
+@deps kdenetwork-mingw kdebase-runtime-mingw kdelibs-mingw sqlite libgmp-mingw libidn
 @deps kdepim-mingw kdepimlibs-mingw kdebase-runtime-mingw gpgme-qt-mingw sqlite
 @deps kdepimlibs-mingw kdelibs-mingw boost-mingw
 @deps kdesdk-mingw kdebase-runtime-mingw kdelibs-mingw kdepimlibs-mingw astyle diffutils
@@ -102,7 +102,7 @@
 @deps kdegraphics-msvc kdebase-runtime-msvc kdelibs-msvc poppler-msvc ebook-tools libspectre exiv2-msvc
 @deps kdelibs-msvc qt-msvc phonon-msvc pcre-msvc vcredist qt-msvc dbus-msvc kdewin32-msvc qimageblitz-msvc qca-msvc strigi-msvc soprano-msvc taglib-msvc aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl tiff zlib shared-mime-info
 @deps kdemultimedia-msvc kdebase-runtime-msvc taglib-msvc
-@deps kdenetwork-msvc kdebase-runtime-msvc kdelibs-msvc sqlite libgmp-msvc
+@deps kdenetwork-msvc kdebase-runtime-msvc kdelibs-msvc sqlite libgmp-msvc libidn
 @deps kdepim-msvc kdepimlibs-msvc kdebase-runtime-msvc gpgme-qt-msvc sqlite
 @deps kdepimlibs-msvc kdelibs-msvc boost-msvc
 @deps kdesdk-msvc kdebase-runtime-msvc kdelibs-msvc astyle diffutils
