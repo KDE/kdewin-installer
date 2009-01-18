@@ -590,6 +590,44 @@ bool InstallerEngineGui::downloadPackages ( const QString &category )
     return true;
 }
 
+bool istAnyKDEProcessRunning()
+{
+    QString cmd = Settings::instance().installDir() +"/bin/kdeinit4.exe";
+    QStringList args = QStringList() << "--help";
+    QProcess p;
+    p.start(cmd, args);
+    if (!p.waitForStarted()) 
+    {
+        qCritical() << "could not start" << cmd << args;
+        return false;
+    }
+    if (!p.waitForFinished())
+    {
+        qCritical() << "failed to run" << cmd << args;
+        return false;
+    }
+    QByteArray _stdout = p.readAllStandardOutput();
+    args = QStringList() << "--list";
+
+    /// I got cases where files are not removed and resulted into "a could not remove file error on installing" 
+    p.start(cmd,args);
+    if (!p.waitForStarted()) 
+    {
+        qCritical() << "could not start" << cmd << args;
+        return false;
+    }
+    if (!p.waitForFinished())
+    {
+        qCritical() << "failed to run" << cmd << args;
+        return false;
+    }
+    _stdout = p.readAllStandardOutput();
+    qDebug() << "run" << cmd << args << "without errors" << _stdout; 
+    QList<QByteArray> lines = _stdout.split('\n');
+    // one line means ony kdeinit4 is running
+    return lines.size() <= 1;
+}
+
 bool killAllKDEApps()
 {
     QString cmd = Settings::instance().installDir() +"/bin/kdeinit4.exe";
@@ -607,7 +645,7 @@ bool killAllKDEApps()
         return false;
     }
     QByteArray _stdout = p.readAllStandardOutput();
-    args = QStringList() << (_stdout.contains("--shutdown") ? "--shutdown" : "--terminate");
+    args = QStringList() << "--terminate";
 
     /// I got cases where files are not removed and resulted into "a could not remove file error on installing" 
     p.start(cmd,args);
@@ -638,7 +676,12 @@ bool InstallerEngineGui::removePackages ( const QString &category )
     m_removedPackages = 0;    
 
     if (list.size() > 0) 
-        killAllKDEApps();
+    {
+        if (InstallerDialogs::instance().confirmKillKDEAppsDialog())
+            killAllKDEApps();
+        else 
+            return false;
+    }
 
     Q_FOREACH ( Package *pkg, list ) {
         if ( !pkg )
@@ -676,9 +719,14 @@ bool InstallerEngineGui::installPackages ( const QString &_category )
     int i = 0; 
     m_installedPackages = 0;
 
-    if (list.size() > 0 && m_removedPackages == 0) 
-        killAllKDEApps();
-
+    if (list.size() > 0 && m_removedPackages == 0)  
+    {
+        if (InstallerDialogs::instance().confirmKillKDEAppsDialog())
+            killAllKDEApps();
+        else
+            return false;
+    }
+            
     Q_FOREACH ( Package *pkg, list ) {
         if ( !pkg )
             continue;

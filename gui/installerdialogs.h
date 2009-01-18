@@ -43,6 +43,7 @@ class InstallerDialogs : public QObject
         void downloadProgressDialog(QWidget *parent,bool show, const QString &title=QString());
         bool confirmRemovalDialog();
         bool confirmRepairDialog();
+        bool confirmKillKDEAppsDialog();
 
         static InstallerDialogs &instance();
 

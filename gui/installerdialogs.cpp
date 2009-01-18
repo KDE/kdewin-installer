@@ -152,6 +152,23 @@ bool InstallerDialogs::confirmRepairDialog()
     return result == QMessageBox::Ok;
 }
 
+bool InstallerDialogs::confirmKillKDEAppsDialog()
+{
+    QString text = tr("There are KDE applications running, which need to be closed "
+        "before any package update, removal or installation could be performed.\n"
+        "Please save all unsaved work and then press Okay to continue the install process."
+        "If you press the Cancel button, the currently initiated installation will be aborted.");
+    QMessageBox::StandardButton result = QMessageBox::warning ( 
+            m_parent, 
+            m_title, 
+            text,
+            QMessageBox::Cancel | QMessageBox::Ok,
+            QMessageBox::Cancel
+        );
+    return result == QMessageBox::Ok;
+}
+
+
 InstallerDialogs &InstallerDialogs::instance()
 {
     static InstallerDialogs instance;
