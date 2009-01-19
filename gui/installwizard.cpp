@@ -179,6 +179,7 @@ void InstallWizard::slotEngineError(const QString &msg)
         msg,
         QMessageBox::Cancel
     );
+//    engine->setErrorAction(result = QMessageBox::Cancel ?  Cancel : Retry);
 }
 
 bool InstallWizard::skipSettings()

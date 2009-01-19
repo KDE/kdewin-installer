@@ -606,9 +606,9 @@ bool isAnyKDEProcessRunning()
         qCritical() << "failed to run" << cmd << args;
         return false;
     }
-    QByteArray _stdout = p.readAllStandardOutput();
-    qDebug() << "run" << cmd << args << "without errors" << _stdout; 
-    QList<QByteArray> lines = _stdout.split('\n');
+    QByteArray _stderr = p.readAllStandardError();
+    qDebug() << "run" << cmd << args << "without errors" << _stderr; 
+    QList<QByteArray> lines = _stderr.split('\n');
     int ret = lines.size();
     // one line means ony kdeinit4 is running
     return ret > 1;
