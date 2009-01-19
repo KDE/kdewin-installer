@@ -3,7 +3,9 @@ ChangeLog
 0.9.5-rc2 (913329)
 -----------------
 - installer-gui: 
-                - fixed bug not been able to update some package because dbus-daemon was running (Ralf Habacker)
+                - fixed bug not been able to update some packages because dbus-daemon was running (Ralf Habacker)
+                - if there is any kde process running a Messagebox is now be displayed to inform the user 
+                  before those process will be killed (Ralf Habacker)
 
 0.9.5-rc1 (....)
 -----------------
