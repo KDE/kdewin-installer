@@ -45,7 +45,7 @@ class InstallerEngine : public QObject
 {
     Q_OBJECT
 public:
-    InstallerEngine(QObject *parent);
+    InstallerEngine(QObject *parent=0);
     virtual ~InstallerEngine();
 
     void setConfigURL(const QUrl &url);
@@ -86,6 +86,9 @@ public:
     /// number of really downloaded packages
     int downloadedPackages() { return m_downloadedPackages; }
 
+    typedef enum { cancel, retry, ignore } ErrorAction;
+    void setErrorAction(ErrorAction action) { m_errorAction = action; }
+    
     typedef enum { onlineInstall, localInstall, downloadOnly } InstallMode;
     static void setInstallMode(InstallMode mode) { m_installMode = mode; }
 
@@ -115,6 +118,7 @@ protected:
     int                 m_downloadedPackages;
     int                 m_removedPackages;
     static InstallMode  m_installMode;
+    ErrorAction         m_errorAction;  // action required after errors
     
     /// init all package definitions
     virtual bool init();
