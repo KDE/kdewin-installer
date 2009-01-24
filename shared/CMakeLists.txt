@@ -21,6 +21,7 @@ set(installer_shared_HEADERS
     package.h
     packagecategorycache.h
     packagelist.h
+    qio.h
     site.h
     mirrors.h
     misc.h
@@ -54,6 +55,7 @@ set(installer_shared_SOURCES
     package.cpp
     packagecategorycache.cpp
     packagelist.cpp
+    qio.cpp
     site.cpp
     registry.cpp
     releases.cpp
