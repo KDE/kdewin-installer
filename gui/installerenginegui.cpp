@@ -609,7 +609,7 @@ bool isAnyKDEProcessRunning()
     QByteArray _stderr = p.readAllStandardError();
     qDebug() << "run" << cmd << args << "without errors" << _stderr; 
     QList<QByteArray> lines = _stderr.split('\n');
-    int ret = lines.size();
+    int ret = lines.size() - 1; // because of trailing '\n'
     // one line means ony kdeinit4 is running
     return ret > 1;
 }
