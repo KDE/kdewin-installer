@@ -98,7 +98,7 @@ bool InstallerEngine::initPackages()
         {
             categoryCache.addPackage(i.key(), name);
             // is this really required ? 
-            Package *pkg = m_packageResources->getPackage(name);
+            Package *pkg = m_packageResources->find(name);
             if (pkg)
                 pkg->addCategories(i.key());
         }
@@ -207,7 +207,7 @@ bool InstallerEngine::addPackagesFromGlobalConfig()
         if (pkg->name().contains("msvc"))
             pkg->addCategories("msvc");
 
-        m_packageResources->addPackage(*pkg);
+        m_packageResources->append(*pkg);
         categoryCache.addPackage(pkg);
     }
     if (Settings::hasDebug("InstallerEngine"))
@@ -296,7 +296,7 @@ bool InstallerEngine::addPackagesFromSites()
             if (pkg->hashType().type() == Hash::None)
                 pkg->hashType().setType(site->hashType().type());
             
-            m_packageResources->addPackage(*pkg);
+            m_packageResources->append(*pkg);
             categoryCache.addPackage(pkg);
         }
     }
@@ -308,15 +308,15 @@ bool InstallerEngine::addInstalledPackages()
 {
     foreach(Package *pkg, m_database->packages()) 
     {
-        if (!m_packageResources->getPackage(pkg->name(),pkg->version().toString().toLatin1()))
-            m_packageResources->addPackage(*pkg);
+        if (!m_packageResources->find(pkg->name(),pkg->version().toString().toLatin1()))
+            m_packageResources->append(*pkg);
     }
     return true;
 }
 
 Package *InstallerEngine::getPackageByName(const QString &name,const QString &version)
 {
-    return m_packageResources->getPackage(name,version.toAscii());
+    return m_packageResources->find(name,version.toAscii());
 }
 
 void InstallerEngine::stop()

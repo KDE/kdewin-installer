@@ -45,8 +45,18 @@ public:
 
     PackageList();
     virtual ~PackageList();
-    void addPackage(const Package &package);
+
+    QT_DEPRECATED bool addPackage(const Package &package) { return append(package); }
+    /// append package to the end of the list
+    bool append(const Package &package);
+    /// append package to the end of the list
+    bool append(Package &package);
+    /// append given packages to the end of the list
     bool append(const PackageList &packageList);
+
+    QT_DEPRECATED Package *getPackage(QString const &pkgName, const QByteArray &version = QByteArray()) { return find(pkgName, version); }
+    Package *find(QString const &pkgName, const QByteArray &version = QByteArray());
+
     QStringList listPackages();
     bool readFromFile(const QString &_fileName=QString());
     bool readFromFile(const QString &fileName, PackageList::Type type=PackageList::Default, bool append=false);
@@ -57,7 +67,6 @@ public:
     bool syncWithFile(const QString &_fileName=QString());
     bool syncWithDatabase(Database &database);
 
-    Package *getPackage(QString const &pkgName, const QByteArray &version = QByteArray());
     bool setInstalledPackage(const Package &pkg);
 
     int size() const

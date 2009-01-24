@@ -61,16 +61,28 @@ bool PackageList::hasConfig()
     return QFile::exists(m_root + m_configFile);
 }
 
-void PackageList::addPackage(const Package &package)
+bool PackageList::append(const Package &package)
 {
-#ifdef DEBUG
-    qDebug() << __FUNCTION__ << package.toString();
-#endif
-
     m_packageList.append(new Package(package));
+    return true;
 }
 
-Package *PackageList::getPackage(const QString &name, const QByteArray &version)
+bool PackageList::append(Package &package)
+{
+    m_packageList.append(new Package(package));
+    return true;
+}
+
+bool PackageList::append(const PackageList &src)
+{
+    Q_FOREACH ( const Package *p, src.m_packageList ) 
+    {
+        append(*p);
+    }
+    return true;
+}
+
+Package *PackageList::find(const QString &name, const QByteArray &version)
 {
 #ifdef DEBUG
     qDebug() << __FUNCTION__;
@@ -147,18 +159,10 @@ bool PackageList::readFromFile(const QString &_fileName)
         if (pkg.read(in))
         {
             if ( pkg.isInstalled(Package::BIN) || m_curSite && !m_curSite->isExclude(pkg.name()))
-                addPackage(pkg);
+                append(pkg);
         }
     }
     emit configLoaded();
-    return true;
-}
-
-bool PackageList::append(const PackageList &src)
-{
-    Q_FOREACH ( const Package *p, src.m_packageList ) {
-        addPackage(*p);
-    }
     return true;
 }
 
@@ -186,7 +190,7 @@ bool PackageList::syncWithFile(const QString &_fileName)
         Package pkg;
         if (pkg.read(in))
         {
-            apkg = getPackage(pkg.name());
+            apkg = find(pkg.name());
             if (apkg)
             {
                 if (pkg.isInstalled(Package::BIN))
@@ -199,7 +203,7 @@ bool PackageList::syncWithFile(const QString &_fileName)
                     apkg->setInstalled(Package::SRC);
             }
             else
-                addPackage(pkg);
+                append(pkg);
         }
     }
     emit configLoaded();
@@ -223,7 +227,7 @@ bool PackageList::syncWithDatabase(Database &database)
                 continue;
             // if this installed package is already in the package list
             // may be it comes later in the list, don't add it twice
-            Package *p = getPackage(pkg->name(),pkg->version().toString().toAscii());
+            Package *p = find(pkg->name(),pkg->version().toString().toAscii());
             if (p)
                 continue;
             newPackages += pkg;
@@ -476,7 +480,7 @@ bool PackageList::addPackageFromHintFile(const QString &fileName)
     HintFile hf;
     HintFileType hd;
     hf.parse(ba,hd);
-    Package *pkg = getPackage(pkgName);
+    Package *pkg = find(pkgName);
     if(!pkg) {
         Package p;
         p.setName(pkgName);
@@ -484,7 +488,7 @@ bool PackageList::addPackageFromHintFile(const QString &fileName)
         p.setLongNotes(hd.longDesc);
         p.addCategories(hd.categories);
         p.addDeps(hd.requires.split(QLatin1Char(' ')));
-        addPackage(p);
+        append(p);
     } else {
         pkg->setNotes(hd.shortDesc);
         pkg->setLongNotes(hd.longDesc);
@@ -512,7 +516,7 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
             // add package from globalconfig
             Q_FOREACH( const Package *pkg, *g.packages() )
             {
-                addPackage(*pkg);
+                append(*pkg);
             }
             // sites are not supported here
             m_parserConfigFileFound = true;
@@ -537,7 +541,7 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
             QString pkgFormat;
             if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgFormat))
                 continue;
-            Package *pkg = getPackage(pkgName, pkgVersion.toAscii());
+            Package *pkg = find(pkgName, pkgVersion.toAscii());
             if(!pkg) {
                 Package p;
                 p.setVersion(pkgVersion);
@@ -556,7 +560,7 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
 #endif
                     p.addDeps(m_curSite->getDependencies(pkgName));
                 }
-                addPackage(p);
+                append(p);
             } else {
                 Package::PackageItem item(pkgType);
                 item.setUrlAndFileName(m_baseURL.toString() + fileName,fileName);
@@ -609,7 +613,7 @@ bool PackageList::readFromFile(const QString &fileName, PackageList::Type type, 
 
 bool PackageList::setInstalledPackage(const Package &apkg)
 {
-    Package *pkg = getPackage(apkg.name());
+    Package *pkg = find(apkg.name());
     if (!pkg)
     {
         qDebug() << __FUNCTION__ << "package " << apkg.name() << " not found";

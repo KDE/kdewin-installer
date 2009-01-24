@@ -73,7 +73,7 @@ QList <Package *>PackageCategoryCache::packages(const QString &category, Package
         return packages;
     Q_FOREACH(const QString &pkgName, m_data[category].packages) 
     {
-        Package *p = list.getPackage(pkgName);
+        Package *p = list.find(pkgName);
         if (p)
             packages.append(p);
     }
