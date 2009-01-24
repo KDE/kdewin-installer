@@ -20,20 +20,21 @@
 **
 ****************************************************************************/
 
+#include "database.h"
+#include "downloader.h"
+#include "globalconfig.h"
+#include "installer.h"
+#include "installerengineconsole.h"
+#include "installerprogress.h"
+#include "package.h"
+#include "packagelist.h"
+#include "qio.h"
+
 #include <QtDebug>
 #include <QDir>
 #include <QTreeWidget>
 #include <QFlags>
 
-#include "installerengineconsole.h"
-
-#include "downloader.h"
-#include "installer.h"
-#include "installerprogress.h"
-#include "package.h"
-#include "packagelist.h"
-#include "globalconfig.h"
-#include "database.h"
 
 InstallerEngineConsole::InstallerEngineConsole()
 : InstallerEngine(0), done(false)
@@ -63,13 +64,13 @@ void InstallerEngineConsole::printPackage(Package *p)
     if (!p)
         return;
     if (p->isInstalled(Package::BIN))
-        printf("%s-bin-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
+        qprintf("%s-bin-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
     if (p->isInstalled(Package::LIB))
-        printf("%s-lib-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
+        qprintf("%s-lib-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
     if (p->isInstalled(Package::DOC))
-        printf("%s-doc-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
+        qprintf("%s-doc-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
     if (p->isInstalled(Package::SRC))
-        printf("%s-src-%s\n",qPrintable(p->name()), qPrintable(p->version().toString()));   
+        qprintf("%s-src-%s\n",qPrintable(p->name()), qPrintable(p->version().toString()));   
 }
 
 void InstallerEngineConsole::queryPackage()
@@ -103,22 +104,22 @@ void InstallerEngineConsole::queryPackageListFiles(const QString &pkgName)
     if ((info.type == Package::NONE || info.type == Package::BIN) && p->isInstalled(Package::BIN))
     {
         Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::BIN))
-            printf("%s%s\n", info.type == Package::NONE  ? "BIN: " : "", qPrintable(file));
+            qprintf("%s%s\n", info.type == Package::NONE  ? "BIN: " : "", qPrintable(file));
     }
     if ((info.type == Package::NONE || info.type == Package::LIB) && p->isInstalled(Package::LIB))
     {
         Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::LIB))
-            printf("%s%s\n", info.type == Package::NONE  ? "LIB: " : "", qPrintable(file));
+            qprintf("%s%s\n", info.type == Package::NONE  ? "LIB: " : "", qPrintable(file));
     }
     if ((info.type == Package::NONE || info.type == Package::DOC) && p->isInstalled(Package::DOC))
     {
         Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::DOC))
-            printf("%s%s\n", info.type == Package::NONE  ? "DOC: " : "", qPrintable(file));
+            qprintf("%s%s\n", info.type == Package::NONE  ? "DOC: " : "", qPrintable(file));
     }
     if ((info.type == Package::NONE || info.type == Package::SRC) && p->isInstalled(Package::SRC))
     {
         Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::SRC))
-            printf("%s%s\n", info.type == Package::NONE  ? "SRC: " : "", qPrintable(file));
+            qprintf("%s%s\n", info.type == Package::NONE  ? "SRC: " : "", qPrintable(file));
     }
 }
 
@@ -136,7 +137,7 @@ void InstallerEngineConsole::queryPackageWhatRequires(const QString &pkgName)
         return; 
 
     Q_FOREACH(const QString &dep, p->deps()) 
-        printf("%s\n", qPrintable(dep));
+        qprintf("%s\n", qPrintable(dep));
 }
 
 void InstallerEngineConsole::queryPackageWhatRequires(const QStringList &list)
@@ -174,7 +175,7 @@ void InstallerEngineConsole::queryPackageWhatRequiresAll(const QStringList &list
         queryPackageWhatRequiresAll(pkgName,result);
     result.sort();
     Q_FOREACH(const QString &dep, result) 
-        printf("%s\n", qPrintable(dep));    
+        qprintf("%s\n", qPrintable(dep));    
 }
 
 
@@ -224,20 +225,20 @@ void InstallerEngineConsole::printPackageURLs(Package *p)
     QUrl url;
     url = p->getUrl(Package::BIN);
     if (!url.isEmpty())
-        printf("%s\n",qPrintable(url.toString())); 
+        qprintf("%s\n",qPrintable(url.toString())); 
     
     if (!Settings::instance().isDeveloperInstallMode())
         return;
 
     url = p->getUrl(Package::LIB);
     if (!url.isEmpty())
-        printf("%s\n",qPrintable(url.toString())); 
+        qprintf("%s\n",qPrintable(url.toString())); 
     url = p->getUrl(Package::DOC);
     if (!url.isEmpty())
-        printf("%s\n",qPrintable(url.toString())); 
+        qprintf("%s\n",qPrintable(url.toString())); 
     url = p->getUrl(Package::SRC);
     if (!url.isEmpty())
-        printf("%s\n",qPrintable(url.toString())); 
+        qprintf("%s\n",qPrintable(url.toString())); 
 }
 
 void InstallerEngineConsole::listPackageURLs()
@@ -275,7 +276,7 @@ void InstallerEngineConsole::listPackageDescription(const QString &pkgName)
     Package *p = m_packageResources->getPackage(pkgName); 
     if (!p)
         return;
-    printf("%s\n",qPrintable(p->notes()));
+    qprintf("%s\n",qPrintable(p->notes()));
 }
 
 void InstallerEngineConsole::listPackageDescription(const QStringList &list)
@@ -291,7 +292,7 @@ void InstallerEngineConsole::listPackageCategories(const QString &pkgName)
     Package *p = m_packageResources->getPackage(pkgName); 
     if (!p)
         return;
-    printf("%s\n",qPrintable(p->categories().join("\n")));
+    qprintf("%s\n",qPrintable(p->categories().join("\n")));
 }
 
 void InstallerEngineConsole::listPackageCategories(const QStringList &list)
