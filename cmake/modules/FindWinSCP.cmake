@@ -55,9 +55,9 @@ option batch on
 # Disable overwrite confirmations that conflict with the previous
 option confirm off
 # Connect
-open kde-windows@download.cegit.de
+open ralf@www.winkde.org
 # Change remote directory
-cd /home/kde-windows/kde-windows/kdesupport/single/
+cd /pub/kde/ports/win32/installer/
 # Force binary mode transfer
 option transfer binary
 # upload files 
