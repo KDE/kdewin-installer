@@ -53,7 +53,6 @@
 @deps findutils gettext
 @deps grep pcre-mingw
 @deps shared-mime-info gettext libxml2 iconv
-@deps strigi-msvc libbzip2 openssl zlib iconv libxml2
 @deps ebook-tools libzip
 @deps libspectre libgs
 ; mingw dependencies
@@ -86,7 +85,7 @@
 @deps phonon-mingw qt-mingw
 @deps poppler-mingw fontconfig-mingw freetype-mingw
 @deps qt-mingw dbus-mingw runtime-mingw
-@deps strigi-mingw libbzip2 openssl zlib iconv libxml2
+@deps strigi-mingw libbzip2 openssl zlib iconv libxml2 exiv2-mingw
 ; msvc dependencies
 @deps amarok-msvc kdebase-runtime-msvc phonon-msvc taglib-msvc mysql-embedded
 @deps automoc-msvc qt-msvc
@@ -118,7 +117,7 @@
 @deps phonon-msvc qt-msvc
 @deps poppler-msvc fontconfig-msvc freetype-msvc
 @deps qt-msvc dbus-msvc vcredist
-@deps strigi-msvc libbzip2 openssl zlib iconv libxml2
+@deps strigi-msvc libbzip2 openssl zlib iconv libxml2 exiv2-msvc
 ; compiler independent
 @pkgnotes aspell A powerful spell checker, designed to replace ispell
 @pkgnotes aspell-af Afrikaans spelling package
