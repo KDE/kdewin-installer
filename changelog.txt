@@ -1,9 +1,11 @@
 ChangeLog
 =========
-0.9.5-0 (917233)
+0.9.5-0 (917235)
 -----------------
 - installer-gui: 
-                - fixed bug not been able to update some packages because dbus-daemon was running (Ralf Habacker)
+                - added "select/unselect all" button in end user package selector page (Ralf Habacker)
+                - fixed bug not been able to update some packages because dbus-daemon was running, 
+                  thanks to S Page for pointing this out (Ralf Habacker)
                 - if there is any kde process running a Messagebox is now be displayed to inform the user 
                   before those process will be killed (Ralf Habacker)
                 - fixed bug not displaying all settings pages after first install in end user mode (Ralf Habacker)
@@ -16,6 +18,7 @@ ChangeLog
 
 - common:    
                 - started sha1 hash support, in progress, needs more tests (Ralf Habacker)
+                - fixed some dependencies in the latest distribution config (Saro Engels)
 
 0.9.4-1 (r904133)
 -----------------
