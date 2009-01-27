@@ -16,8 +16,8 @@
 
 ; to which category packages belongs to
 @categorypackages win32libs aspell ebook-tools expat giflib iconv jasper jpeg lcms libbzip2 libgs libical libidn gettext libpng libxml2 libxslt libzip mysql-embedded openslp openssl tiff zlib shared-mime-info sqlite gpgme
-@categorypackages win32libs pcre-msvc  dbus-msvc  exiv2-msvc  gpgme-qt-msvc  libgmp-msvc  libspectre-msvc
-@categorypackages win32libs pcre-mingw dbus-mingw exiv2-mingw gpgme-qt-mingw libgmp-mingw libspectre-mingw
+@categorypackages win32libs pcre-msvc  dbus-msvc  exiv2-msvc  gpgme-qt-msvc  libgmp-msvc  libspectre-msvc  libmsn-msvc
+@categorypackages win32libs pcre-mingw dbus-mingw exiv2-mingw gpgme-qt-mingw libgmp-mingw libspectre-mingw libmsn-mingw
 @categorypackages tools findutils grep mingw-utils diffutils patch
 @categorypackages kdesupport kdewin32-msvc  kdewin-installer-msvc  vcredist      qimageblitz-msvc  qca-msvc  strigi-msvc  soprano-msvc  taglib-msvc  phonon-msvc  fontconfig-msvc  freetype-msvc  poppler-msvc  automoc-msvc
 @categorypackages kdesupport kdewin32-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw phonon-mingw fontconfig-mingw freetype-mingw poppler-mingw automoc-mingw
@@ -69,7 +69,7 @@
 @deps kdegames-mingw kdebase-runtime-mingw kdelibs-mingw phonon-mingw
 @deps kdegraphics-mingw kdebase-runtime-mingw kdelibs-mingw poppler-mingw ebook-tools libspectre exiv2-mingw
 @deps kdemultimedia-mingw kdebase-runtime-mingw taglib-mingw
-@deps kdenetwork-mingw kdebase-runtime-mingw kdelibs-mingw sqlite libgmp-mingw libidn
+@deps kdenetwork-mingw kdebase-runtime-mingw kdelibs-mingw sqlite libgmp-mingw libidn libmsn-mingw
 @deps kdepim-mingw kdepimlibs-mingw kdebase-runtime-mingw gpgme-qt-mingw sqlite
 @deps kdepimlibs-mingw kdelibs-mingw boost-mingw libical
 @deps kdesdk-mingw kdebase-runtime-mingw kdelibs-mingw kdepimlibs-mingw astyle diffutils
@@ -101,7 +101,7 @@
 @deps kdegraphics-msvc kdebase-runtime-msvc kdelibs-msvc poppler-msvc ebook-tools libspectre exiv2-msvc
 @deps kdelibs-msvc qt-msvc phonon-msvc pcre-msvc vcredist qt-msvc dbus-msvc kdewin32-msvc qimageblitz-msvc qca-msvc strigi-msvc soprano-msvc taglib-msvc aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl tiff zlib shared-mime-info
 @deps kdemultimedia-msvc kdebase-runtime-msvc taglib-msvc
-@deps kdenetwork-msvc kdebase-runtime-msvc kdelibs-msvc sqlite libgmp-msvc libidn
+@deps kdenetwork-msvc kdebase-runtime-msvc kdelibs-msvc sqlite libgmp-msvc libidn libmsn-msvc
 @deps kdepim-msvc kdepimlibs-msvc kdebase-runtime-msvc gpgme-qt-msvc sqlite
 @deps kdepimlibs-msvc kdelibs-msvc boost-msvc libical
 @deps kdesdk-msvc kdebase-runtime-msvc kdelibs-msvc astyle diffutils
