@@ -41,6 +41,10 @@ class QTreeWidget;
 class QTreeWidgetItem;
 class Database;
 
+/** 
+    The class InstallerEngine contains all relevant informations and actions to 
+    download, remove, install or update packages. 
+*/ 
 class InstallerEngine : public QObject
 {
     Q_OBJECT
