@@ -15,7 +15,7 @@
 @categorynotes qt Qt related packages 
 
 ; to which category packages belongs to
-@categorypackages win32libs aspell ebook-tools expat giflib iconv jasper jpeg lcms libbzip2 libgs libidn gettext libpng libxml2 libxslt libzip mysql-embedded openslp openssl tiff zlib shared-mime-info sqlite gpgme
+@categorypackages win32libs aspell ebook-tools expat giflib iconv jasper jpeg lcms libbzip2 libgs libical libidn gettext libpng libxml2 libxslt libzip mysql-embedded openslp openssl tiff zlib shared-mime-info sqlite gpgme
 @categorypackages win32libs pcre-msvc  dbus-msvc  exiv2-msvc  gpgme-qt-msvc  libgmp-msvc  libspectre-msvc
 @categorypackages win32libs pcre-mingw dbus-mingw exiv2-mingw gpgme-qt-mingw libgmp-mingw libspectre-mingw
 @categorypackages tools findutils grep mingw-utils diffutils patch
@@ -72,7 +72,7 @@
 @deps kdemultimedia-mingw kdebase-runtime-mingw taglib-mingw
 @deps kdenetwork-mingw kdebase-runtime-mingw kdelibs-mingw sqlite libgmp-mingw libidn
 @deps kdepim-mingw kdepimlibs-mingw kdebase-runtime-mingw gpgme-qt-mingw sqlite
-@deps kdepimlibs-mingw kdelibs-mingw boost-mingw
+@deps kdepimlibs-mingw kdelibs-mingw boost-mingw libical
 @deps kdesdk-mingw kdebase-runtime-mingw kdelibs-mingw kdepimlibs-mingw astyle diffutils
 @deps kdetoys-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps kdeutils-mingw kdebase-runtime-mingw kdelibs-mingw libzip libgmp-mingw
@@ -104,7 +104,7 @@
 @deps kdemultimedia-msvc kdebase-runtime-msvc taglib-msvc
 @deps kdenetwork-msvc kdebase-runtime-msvc kdelibs-msvc sqlite libgmp-msvc libidn
 @deps kdepim-msvc kdepimlibs-msvc kdebase-runtime-msvc gpgme-qt-msvc sqlite
-@deps kdepimlibs-msvc kdelibs-msvc boost-msvc
+@deps kdepimlibs-msvc kdelibs-msvc boost-msvc libical
 @deps kdesdk-msvc kdebase-runtime-msvc kdelibs-msvc astyle diffutils
 @deps kdetoys-msvc kdebase-runtime-msvc kdelibs-msvc
 @deps kdeutils-msvc kdebase-runtime-msvc libzip libgmp-msvc
