@@ -65,7 +65,7 @@
 @deps kdebase-apps-mingw kdebase-runtime-mingw
 @deps kdebase-runtime-mingw kdepimlibs-mingw kdelibs-mingw
 @deps kdebase-workspace-mingw kdebase-runtime-mingw
-@deps kdeedu-mingw kdebase-runtime-mingw kdelibs-mingw
+@deps kdeedu-mingw kdebase-runtime-mingw kdelibs-mingw openbabel-mingw cfitsio
 @deps kdegames-mingw kdebase-runtime-mingw kdelibs-mingw phonon-mingw
 @deps kdegraphics-mingw kdebase-runtime-mingw kdelibs-mingw poppler-mingw ebook-tools libspectre exiv2-mingw
 @deps kdemultimedia-mingw kdebase-runtime-mingw taglib-mingw
@@ -96,7 +96,7 @@
 @deps kdebase-apps-msvc kdebase-runtime-msvc
 @deps kdebase-runtime-msvc kdepimlibs-msvc kdelibs-msvc
 @deps kdebase-workspace-msvc kdebase-runtime-msvc
-@deps kdeedu-msvc kdebase-runtime-msvc kdelibs-msvc
+@deps kdeedu-msvc kdebase-runtime-msvc kdelibs-msvc openbabel-msvc cfitsio 
 @deps kdegames-msvc kdebase-runtime-msvc kdelibs-msvc phonon-msvc
 @deps kdegraphics-msvc kdebase-runtime-msvc kdelibs-msvc poppler-msvc ebook-tools libspectre exiv2-msvc
 @deps kdelibs-msvc qt-msvc phonon-msvc pcre-msvc vcredist qt-msvc dbus-msvc kdewin32-msvc qimageblitz-msvc qca-msvc strigi-msvc soprano-msvc taglib-msvc aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl tiff zlib shared-mime-info
