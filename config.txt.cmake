@@ -79,7 +79,7 @@
 @deps kdewin-installer-mingw qt-mingw
 @deps kdewin32-mingw qt-mingw
 @deps kile-mingw kdesdk-mingw
-@deps kipi-plugins-mingw kdegraphics-mingw
+@deps kipi-plugins-mingw kdegraphics-mingw kdepimlibs-mingw
 @deps koffice-mingw kdebase-runtime-mingw kdelibs-mingw lcms
 @deps ktorrent-mingw libgmp-mingw kdelibs-mingw qca-mingw
 @deps phonon-mingw qt-mingw
@@ -111,7 +111,7 @@
 @deps kdewin-installer-msvc qt-msvc
 @deps kdewin32-msvc qt-msvc
 @deps kile-msvc kdesdk-msvc
-@deps kipi-plugins-msvc kdegraphics-msvc
+@deps kipi-plugins-msvc kdegraphics-msvc kdepimlibs-msvc
 @deps koffice-msvc kdebase-runtime-msvc kdelibs-msvc lcms
 @deps ktorrent-msvc libgmp-msvc kdelibs-msvc qca-msvc
 @deps phonon-msvc qt-msvc
