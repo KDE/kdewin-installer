@@ -33,7 +33,6 @@ set(installer_shared_HEADERS
     unpacker.h
     unpacker_p.h
 #    installerbase.h
-    ${CMAKE_BINARY_DIR}/config.h
 )
 
 set(installer_shared_SOURCES
