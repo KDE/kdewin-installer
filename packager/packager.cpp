@@ -205,6 +205,7 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 generateFileList(fileList, dir, "plugins", "*.dll","*d.dll *d4.dll *d1.dll");
                 generateFileList(fileList, dir, "translations", "*.qm");
                 generateFileList(fileList, dir, "manifest", "*-bin.cmd" );
+                generateFileList(fileList, dir, QString(), "*.xml", "");
                 return true;
             case LIB:
                 if (m_debugLibs)
@@ -280,6 +281,7 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 // lib may have additional files provided  by at least aspell-xx and automoc4 
                 generateFileList(fileList, dir, "lib",      "*.*","*d.dll *.dll *.lib *.a");
 
+                generateFileList(fileList, dir, "plugins", "*.dll");
                 generateFileList(fileList, dir, "data", "*.*");
                 generateFileList(fileList, dir, "etc",  "*.*");
                 return true;
