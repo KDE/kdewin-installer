@@ -15,7 +15,7 @@
 @categorynotes qt Qt related packages 
 
 ; to which category packages belongs to
-@categorypackages win32libs aspell ebook-tools expat giflib iconv jasper jpeg lcms libbzip2 libgs libical libidn gettext libpng libxml2 libxslt libzip mysql-embedded openslp openssl tiff zlib shared-mime-info sqlite gpgme
+@categorypackages win32libs aspell cyrus-sasl ebook-tools expat giflib gpgme iconv jasper jpeg lcms libbzip2 libgs libical libidn gettext libpng libxml2 libxslt libzip mysql-embedded openslp openssl shared-mime-info sqlite tiff zlib
 @categorypackages win32libs pcre-msvc  dbus-msvc  exiv2-msvc  gpgme-qt-msvc  libgmp-msvc  libspectre-msvc  libmsn-msvc
 @categorypackages win32libs pcre-mingw dbus-mingw exiv2-mingw gpgme-qt-mingw libgmp-mingw libspectre-mingw libmsn-mingw
 @categorypackages tools findutils grep mingw-utils diffutils patch
@@ -71,7 +71,7 @@
 @deps kdemultimedia-mingw kdebase-runtime-mingw taglib-mingw
 @deps kdenetwork-mingw kdebase-runtime-mingw kdelibs-mingw sqlite libgmp-mingw libidn libmsn-mingw
 @deps kdepim-mingw kdepimlibs-mingw kdebase-runtime-mingw gpgme-qt-mingw sqlite
-@deps kdepimlibs-mingw kdelibs-mingw boost-mingw libical
+@deps kdepimlibs-mingw kdelibs-mingw boost-mingw libical cyrus-sasl
 @deps kdesdk-mingw kdebase-runtime-mingw kdelibs-mingw kdepimlibs-mingw astyle diffutils
 @deps kdetoys-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps kdeutils-mingw kdebase-runtime-mingw kdelibs-mingw libzip libgmp-mingw
@@ -84,6 +84,7 @@
 @deps ktorrent-mingw libgmp-mingw kdelibs-mingw qca-mingw
 @deps phonon-mingw qt-mingw
 @deps poppler-mingw fontconfig-mingw freetype-mingw
+@deps qca-mingw cyrus-sasl openssl
 @deps qt-mingw dbus-mingw runtime-mingw
 @deps strigi-mingw libbzip2 openssl zlib iconv libxml2 exiv2-mingw
 ; msvc dependencies
@@ -103,7 +104,7 @@
 @deps kdemultimedia-msvc kdebase-runtime-msvc taglib-msvc
 @deps kdenetwork-msvc kdebase-runtime-msvc kdelibs-msvc sqlite libgmp-msvc libidn libmsn-msvc
 @deps kdepim-msvc kdepimlibs-msvc kdebase-runtime-msvc gpgme-qt-msvc sqlite
-@deps kdepimlibs-msvc kdelibs-msvc boost-msvc libical
+@deps kdepimlibs-msvc kdelibs-msvc boost-msvc libical cyrus-sasl
 @deps kdesdk-msvc kdebase-runtime-msvc kdelibs-msvc astyle diffutils
 @deps kdetoys-msvc kdebase-runtime-msvc kdelibs-msvc
 @deps kdeutils-msvc kdebase-runtime-msvc libzip libgmp-msvc
@@ -116,6 +117,7 @@
 @deps ktorrent-msvc libgmp-msvc kdelibs-msvc qca-msvc
 @deps phonon-msvc qt-msvc
 @deps poppler-msvc fontconfig-msvc freetype-msvc
+@deps qca-msvc cyrus-sasl openssl
 @deps qt-msvc dbus-msvc vcredist
 @deps strigi-msvc libbzip2 openssl zlib iconv libxml2 exiv2-msvc
 ; compiler independent
@@ -203,6 +205,7 @@
 @pkgnotes bzip2 Bzip compression utility
 @pkgnotes cfitsio library for the FITS (Flexible Image Transport System) file format
 @pkgnotes clucene high-performance, full-featured text search engine (required for compiling strigi) 
+@pkgnotes cyrus-sasl security library
 @pkgnotes diffutils Tools to find difference between two files
 @pkgnotes dbus-* Freedesktop message bus system (daemon and clients)
 @pkgnotes ebook-tools Tools for accessing and converting various ebook file formats 
