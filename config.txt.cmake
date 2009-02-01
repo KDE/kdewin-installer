@@ -15,7 +15,7 @@
 @categorynotes qt Qt related packages 
 
 ; to which category packages belongs to
-@categorypackages win32libs aspell cyrus-sasl ebook-tools expat giflib gettext gpgme iconv jasper jpeg lcms libbzip2 libgs libical libidn libgmp libpng libxml2 libxslt libzip mysql-embedded openslp openssl shared-mime-info sqlite tiff zlib
+@categorypackages win32libs aspell cyrus-sasl ebook-tools expat gettext giflib gpgme iconv jasper jpeg lcms libbzip2 libgmp libgs libical libidn libpng libxml2 libxslt libzip mysql-embedded openslp openssl shared-mime-info sqlite tiff zlib
 @categorypackages win32libs pcre-msvc  dbus-msvc  exiv2-msvc  gpgme-qt-msvc  libspectre-msvc  libmsn-msvc
 @categorypackages win32libs pcre-mingw dbus-mingw exiv2-mingw gpgme-qt-mingw libspectre-mingw libmsn-mingw
 @categorypackages tools findutils grep mingw-utils diffutils patch
