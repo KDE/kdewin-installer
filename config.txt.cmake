@@ -15,16 +15,16 @@
 @categorynotes qt Qt related packages 
 
 ; to which category packages belongs to
-@categorypackages win32libs aspell cyrus-sasl ebook-tools expat giflib gpgme iconv jasper jpeg lcms libbzip2 libgs libical libidn gettext libpng libxml2 libxslt libzip mysql-embedded openslp openssl shared-mime-info sqlite tiff zlib
-@categorypackages win32libs pcre-msvc  dbus-msvc  exiv2-msvc  gpgme-qt-msvc  libgmp-msvc  libspectre-msvc  libmsn-msvc
-@categorypackages win32libs pcre-mingw dbus-mingw exiv2-mingw gpgme-qt-mingw libgmp-mingw libspectre-mingw libmsn-mingw
+@categorypackages win32libs aspell cyrus-sasl ebook-tools expat giflib gettext gpgme iconv jasper jpeg lcms libbzip2 libgs libical libidn libgmp libpng libxml2 libxslt libzip mysql-embedded openslp openssl shared-mime-info sqlite tiff zlib
+@categorypackages win32libs pcre-msvc  dbus-msvc  exiv2-msvc  gpgme-qt-msvc  libspectre-msvc  libmsn-msvc
+@categorypackages win32libs pcre-mingw dbus-mingw exiv2-mingw gpgme-qt-mingw libspectre-mingw libmsn-mingw
 @categorypackages tools findutils grep mingw-utils diffutils patch
 @categorypackages kdesupport kdewin32-msvc  kdewin-installer-msvc  vcredist      qimageblitz-msvc  qca-msvc  strigi-msvc  soprano-msvc  taglib-msvc  phonon-msvc  fontconfig-msvc  freetype-msvc  poppler-msvc  automoc-msvc
 @categorypackages kdesupport kdewin32-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw phonon-mingw fontconfig-mingw freetype-mingw poppler-mingw automoc-mingw
 @categorypackages KDE amarok-msvc  digikam-msvc  kdelibs-msvc  kdepimlibs-msvc  kdepim-msvc  kdebase-apps-msvc  kdebase-runtime-msvc  kdebase-workspace-msvc  kdeedu-msvc  kdegames-msvc  kdegraphics-msvc  kdenetwork-msvc  kdesdk-msvc  kdewebdev-msvc  kdeutils-msvc  kdeplasma-addons-msvc  kipi-plugins-msvc
 @categorypackages KDE amarok-mingw digikam-mingw kdelibs-mingw kdepimlibs-mingw kdepim-mingw kdebase-apps-mingw kdebase-runtime-mingw kdebase-workspace-mingw kdeedu-mingw kdegames-mingw kdegraphics-mingw kdenetwork-mingw kdesdk-mingw kdewebdev-mingw kdeutils-mingw kdeplasma-addons-mingw kipi-plugins-mingw
-@categorypackages KDE koffice-msvc  ktorrent-msvc  kile-msvc
-@categorypackages KDE koffice-mingw ktorrent-mingw kile-mingw
+@categorypackages KDE koffice-msvc  ktorrent-msvc  kile-msvc  kdevplatform-msvc  kdevelop-msvc
+@categorypackages KDE koffice-mingw ktorrent-mingw kile-mingw kdevplatform-mingw kdevelop-mingw
 @categorypackages qt qt-msvc qt-mingw qt-static-msvc
 @categorypackages kde-l10n kde-l10n-af kde-l10n-ar kde-l10n-be kde-l10n-bg kde-l10n-bn kde-l10n-bn_IN kde-l10n-br kde-l10n-ca kde-l10n-cs kde-l10n-csb kde-l10n-cy kde-l10n-da kde-l10n-de kde-l10n-el kde-l10n-en_GB 
 @categorypackages kde-l10n kde-l10n-eo kde-l10n-es kde-l10n-et kde-l10n-eu kde-l10n-fa kde-l10n-fi kde-l10n-fr kde-l10n-fy kde-l10n-ga kde-l10n-gl kde-l10n-gu kde-l10n-ha kde-l10n-he kde-l10n-hi kde-l10n-hr kde-l10n-hsb 
@@ -69,19 +69,21 @@
 @deps kdegames-mingw kdebase-runtime-mingw kdelibs-mingw phonon-mingw
 @deps kdegraphics-mingw kdebase-runtime-mingw kdelibs-mingw poppler-mingw ebook-tools libspectre exiv2-mingw
 @deps kdemultimedia-mingw kdebase-runtime-mingw taglib-mingw
-@deps kdenetwork-mingw kdebase-runtime-mingw kdelibs-mingw sqlite libgmp-mingw libidn libmsn-mingw
+@deps kdenetwork-mingw kdebase-runtime-mingw kdelibs-mingw sqlite libgmp libidn libmsn-mingw
 @deps kdepim-mingw kdepimlibs-mingw kdebase-runtime-mingw gpgme-qt-mingw sqlite
 @deps kdepimlibs-mingw kdelibs-mingw boost-mingw libical cyrus-sasl
 @deps kdesdk-mingw kdebase-runtime-mingw kdelibs-mingw kdepimlibs-mingw astyle diffutils
 @deps kdetoys-mingw kdebase-runtime-mingw kdelibs-mingw
-@deps kdeutils-mingw kdebase-runtime-mingw kdelibs-mingw libzip libgmp-mingw
+@deps kdeutils-mingw kdebase-runtime-mingw kdelibs-mingw libzip libgmp
+@deps kdevplatform-mingw kdebase-runtime-mingw
+@deps kdevelop-mingw kdevplatform-mingw
 @deps kdewebdev-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps kdewin-installer-mingw qt-mingw
 @deps kdewin32-mingw qt-mingw
 @deps kile-mingw kdesdk-mingw
 @deps kipi-plugins-mingw kdegraphics-mingw kdepimlibs-mingw
 @deps koffice-mingw kdebase-runtime-mingw kdelibs-mingw lcms
-@deps ktorrent-mingw libgmp-mingw kdelibs-mingw qca-mingw
+@deps ktorrent-mingw libgmp kdelibs-mingw qca-mingw
 @deps phonon-mingw qt-mingw
 @deps poppler-mingw fontconfig-mingw freetype-mingw
 @deps qca-mingw cyrus-sasl openssl
@@ -102,19 +104,21 @@
 @deps kdegraphics-msvc kdebase-runtime-msvc kdelibs-msvc poppler-msvc ebook-tools libspectre exiv2-msvc
 @deps kdelibs-msvc qt-msvc phonon-msvc pcre-msvc vcredist qt-msvc dbus-msvc kdewin32-msvc qimageblitz-msvc qca-msvc strigi-msvc soprano-msvc taglib-msvc aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl tiff zlib shared-mime-info
 @deps kdemultimedia-msvc kdebase-runtime-msvc taglib-msvc
-@deps kdenetwork-msvc kdebase-runtime-msvc kdelibs-msvc sqlite libgmp-msvc libidn libmsn-msvc
+@deps kdenetwork-msvc kdebase-runtime-msvc kdelibs-msvc sqlite libgmp libidn libmsn-msvc
 @deps kdepim-msvc kdepimlibs-msvc kdebase-runtime-msvc gpgme-qt-msvc sqlite
 @deps kdepimlibs-msvc kdelibs-msvc boost-msvc libical cyrus-sasl
 @deps kdesdk-msvc kdebase-runtime-msvc kdelibs-msvc astyle diffutils
 @deps kdetoys-msvc kdebase-runtime-msvc kdelibs-msvc
-@deps kdeutils-msvc kdebase-runtime-msvc libzip libgmp-msvc
+@deps kdeutils-msvc kdebase-runtime-msvc libzip libgmp
+@deps kdevplatform-msvc kdebase-runtime-msvc
+@deps kdevelop-msvc kdevplatform-msvc
 @deps kdewebdev-msvc kdebase-runtime-msvc kdelibs-msvc
 @deps kdewin-installer-msvc qt-msvc
 @deps kdewin32-msvc qt-msvc
 @deps kile-msvc kdesdk-msvc
 @deps kipi-plugins-msvc kdegraphics-msvc kdepimlibs-msvc
 @deps koffice-msvc kdebase-runtime-msvc kdelibs-msvc lcms
-@deps ktorrent-msvc libgmp-msvc kdelibs-msvc qca-msvc
+@deps ktorrent-msvc libgmp kdelibs-msvc qca-msvc
 @deps phonon-msvc qt-msvc
 @deps poppler-msvc fontconfig-msvc freetype-msvc
 @deps qca-msvc cyrus-sasl openssl
@@ -266,19 +270,21 @@
 @pkgnotes kdegraphics-* Graphics applications for KDE
 @pkgnotes kdelibs-* KDE libraries (support applications)
 @pkgnotes kdepim-* UNSTABLE KDE Personal Informations Suite
-@pkgnotes kdepimlibs-* UNSTABLE KDE PIM library
+@pkgnotes kdepimlibs-* UNSTABLE KDE PIM libraries
 @pkgnotes kdemultimedia-* KDE multimedia applications (jux, kmix, kmixctrl, kscd)
 @pkgnotes kdenetwork-* KDE Networking applications
 @pkgnotes kdesdk-* software development package (umbrello, kate)
 @pkgnotes kdetoys-* collection of several programs in KDE
 @pkgnotes kdeutils-* various desktop utilities (KGpg, Okteta)
+@pkgnotes kdevelop-* UNSTABLE KDevelop integrated development environment
+@pkgnotes kdevplatform-* UNSTABLE KDevelop reusable libraries
 @pkgnotes kdewebdev-* KDE Web Development applications
 @pkgnotes kdewin32-* kde supplementary package for win32
 @pkgnotes kile-* UNSTABLE latex editor
 @pkgnotes kipi-plugins-* UNSTABLE plugins for graphics applications
 @pkgnotes koffice-* UNSTABLE KDE Office application suite
 @pkgnotes ktorrent-* UNSTABLE KDE Torrent client
-@pkgnotes libgmp-* devel-tools GNU MP library for abritary precision arithmetic
+@pkgnotes libgmp devel-tools GNU MP library for abritary precision arithmetic
 @pkgnotes openbabel-* program to convert the various file formats used in chemical software
 @pkgnotes phonon-* KDE KDE4 multimedia API
 @pkgnotes poppler-* PDF rendering library based on xpdf-3.0
