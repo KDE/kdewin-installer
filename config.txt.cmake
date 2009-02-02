@@ -83,7 +83,7 @@
 @deps kile-mingw kdesdk-mingw
 @deps kipi-plugins-mingw kdegraphics-mingw kdepimlibs-mingw
 @deps koffice-mingw kdebase-runtime-mingw kdelibs-mingw lcms
-@deps ktorrent-mingw libgmp kdelibs-mingw qca-mingw
+@deps ktorrent-mingw libgmp kdebase-runtime-mingw qca-mingw
 @deps phonon-mingw qt-mingw
 @deps poppler-mingw fontconfig-mingw freetype-mingw
 @deps qca-mingw cyrus-sasl openssl
@@ -118,7 +118,7 @@
 @deps kile-msvc kdesdk-msvc
 @deps kipi-plugins-msvc kdegraphics-msvc kdepimlibs-msvc
 @deps koffice-msvc kdebase-runtime-msvc kdelibs-msvc lcms
-@deps ktorrent-msvc libgmp kdelibs-msvc qca-msvc
+@deps ktorrent-msvc libgmp kdebase-runtime-msvc qca-msvc
 @deps phonon-msvc qt-msvc
 @deps poppler-msvc fontconfig-msvc freetype-msvc
 @deps qca-msvc cyrus-sasl openssl
