@@ -55,7 +55,7 @@
      <property name="sizeType" >
       <enum>QSizePolicy::Fixed</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0" >
       <size>
        <width>51</width>
        <height>20</height>
@@ -103,7 +103,11 @@
       <widget class="QLineEdit" name="proxyUserName" />
      </item>
      <item row="3" column="1" >
-      <widget class="QLineEdit" name="proxyPassword" />
+      <widget class="QLineEdit" name="proxyPassword" >
+       <property name="echoMode" >
+        <enum>QLineEdit::Password</enum>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -112,7 +116,7 @@
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0" >
       <size>
        <width>20</width>
        <height>40</height>
