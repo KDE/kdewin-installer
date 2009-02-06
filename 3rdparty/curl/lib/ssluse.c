@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: ssluse.c,v 1.212 2008-10-23 11:49:19 bagder Exp $
+ * $Id: ssluse.c,v 1.213 2008-12-28 22:00:36 bagder Exp $
  ***************************************************************************/
 
 /*
@@ -922,10 +922,6 @@ static int asn1_output(const ASN1_UTCTIME *tm,
   int gmt=FALSE;
   int i;
   int year=0,month=0,day=0,hour=0,minute=0,second=0;
-
-#ifdef CURL_DISABLE_VERBOSE_STRINGS
-  (void)prefix;
-#endif
 
   i=tm->length;
   asn1_string=(const char *)tm->data;

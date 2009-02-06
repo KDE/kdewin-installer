@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: setup.h,v 1.161 2008-09-24 12:22:16 yangtse Exp $
+ * $Id: setup.h,v 1.162 2008-11-17 14:24:15 yangtse Exp $
  ***************************************************************************/
 
 /*
@@ -355,7 +355,6 @@
 #    define sclose(x)         close_s(x)
 #    define select(n,r,w,x,t) select_s(n,r,w,x,t)
 #    define ioctl(x,y,z) ioctlsocket(x,y,(char *)(z))
-#    define IOCTL_3_ARGS
 #    include <tcp.h>
 #    ifdef word
 #      undef word
@@ -428,10 +427,6 @@
 #if !defined(HAVE_WINSOCK2_H) || ((_MSC_VER < 1300) && !defined(IPPROTO_ESP))
 #undef HAVE_STRUCT_SOCKADDR_STORAGE
 #endif
-#endif
-
-#ifdef mpeix
-#define IOCTL_3_ARGS
 #endif
 
 #ifdef NETWARE

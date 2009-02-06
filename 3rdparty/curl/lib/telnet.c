@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: telnet.c,v 1.106 2008-10-23 11:49:19 bagder Exp $
+ * $Id: telnet.c,v 1.108 2008-12-19 21:14:52 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -52,7 +52,9 @@
 #ifdef HAVE_NET_IF_H
 #include <net/if.h>
 #endif
+#ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
+#endif
 
 #ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
@@ -191,6 +193,7 @@ const struct Curl_handler Curl_handler_telnet = {
   ZERO_NULL,                            /* doing */
   ZERO_NULL,                            /* proto_getsock */
   ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* perform_getsock */
   ZERO_NULL,                            /* disconnect */
   PORT_TELNET,                          /* defport */
   PROT_TELNET                           /* protocol */

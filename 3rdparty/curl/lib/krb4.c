@@ -37,7 +37,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: krb4.c,v 1.50 2008-09-23 19:16:56 yangtse Exp $
+ * $Id: krb4.c,v 1.51 2008-11-16 12:26:50 bagder Exp $
  */
 
 #include "setup.h"
@@ -153,6 +153,8 @@ krb4_encode(void *app_data, const void *from, int length, int level, void **to,
 {
   struct krb4_data *d = app_data;
   *to = malloc(length + 31);
+  if(!*to)
+    return -1;
   if(level == prot_safe)
     /* NOTE that the void* cast is safe, krb_mk_safe/priv don't modify the
      * input buffer

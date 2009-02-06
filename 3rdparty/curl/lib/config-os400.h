@@ -42,6 +42,9 @@
 /* Define if you want to enable IPv6 support */
 #define ENABLE_IPV6
 
+/* Define if struct sockaddr_in6 has the sin6_scope_id member */
+#define HAVE_SOCKADDR_IN6_SIN6_SCOPE_ID 1
+
 /* Define this to 'int' if ssize_t is not an available typedefed type */
 #undef ssize_t
 
@@ -82,8 +85,8 @@
 #define HAVE_FCNTL_H
 
 /* Define if getaddrinfo exists and works */
-/* OS400 has no ASCII version of this procedure. */
-#undef HAVE_GETADDRINFO
+/* OS400 has no ASCII version of this procedure: wrapped in setup-os400.h. */
+#define HAVE_GETADDRINFO
 
 /* Define if you have the `geteuid' function. */
 #define HAVE_GETEUID
@@ -283,6 +286,9 @@
 /* Define if you have the `strlcpy' function. */
 #undef HAVE_STRLCPY
 
+/* Define if you have the <stropts.h> header file. */
+#undef HAVE_STROPTS_H
+
 /* Define if you have the `strstr' function. */
 #define HAVE_STRSTR
 
@@ -392,19 +398,30 @@
 /* Define to `unsigned' if <sys/types.h> does not define. */
 #undef size_t
 
-#define IOCTL_3_ARGS
+/* Define if you have the ioctl function. */
+#define HAVE_IOCTL
 
-#define HAVE_FIONBIO
+/* Define if you have a working ioctl FIONBIO function. */
+#define HAVE_IOCTL_FIONBIO
 
-/* to disable LDAP */
+/* Define if you have a working ioctl SIOCGIFADDR function. */
+#define HAVE_IOCTL_SIOCGIFADDR
+
+/* To disable LDAP */
 #undef CURL_DISABLE_LDAP
+
+/* To avoid external use of library hidden symbols */
+#define CURL_HIDDEN_SYMBOLS
+
+/* External symbols need no special keyword. */
+#define CURL_EXTERN_SYMBOL
 
 /* Define if you have the ldap_url_parse procedure. */
 /* #define HAVE_LDAP_URL_PARSE */    /* Disabled because of an IBM bug. */
 
 /* Define if you have the getnameinfo function. */
-/* OS400 has no ASCII version of this procedure. */
-#undef HAVE_GETNAMEINFO
+/* OS400 has no ASCII version of this procedure: wrapped in setup-os400.h. */
+#define HAVE_GETNAMEINFO
 
 /* Define to the type qualifier of arg 1 for getnameinfo. */
 #define GETNAMEINFO_QUAL_ARG1 const

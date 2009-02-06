@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: formdata.c,v 1.112 2008-10-20 21:56:35 bagder Exp $
+ * $Id: formdata.c,v 1.116 2008-12-20 22:51:57 bagder Exp $
  ***************************************************************************/
 
 /*
@@ -222,9 +222,8 @@ static FormInfo * AddFormInfo(char *value,
                               FormInfo *parent_form_info)
 {
   FormInfo *form_info;
-  form_info = malloc(sizeof(FormInfo));
+  form_info = calloc(sizeof(FormInfo), 1);
   if(form_info) {
-    memset(form_info, 0, sizeof(FormInfo));
     if(value)
       form_info->value = value;
     if(contenttype)
@@ -267,7 +266,7 @@ static const char * ContentTypeForFilename (const char *filename,
    * extensions and pick the first we match!
    */
   struct ContentType {
-    const char *extension;
+    char extension[6];
     const char *type;
   };
   static const struct ContentType ctts[]={
@@ -275,7 +274,8 @@ static const char * ContentTypeForFilename (const char *filename,
     {".jpg",  "image/jpeg"},
     {".jpeg", "image/jpeg"},
     {".txt",  "text/plain"},
-    {".html", "text/html"}
+    {".html", "text/html"},
+    {".xml", "application/xml"}
   };
 
   if(prevtype)
@@ -1100,7 +1100,7 @@ static char *strippath(const char *fullfile)
 
   free(filename); /* free temporary buffer */
 
-  return base; /* returns an allocated string! */
+  return base; /* returns an allocated string or NULL ! */
 }
 
 /*
@@ -1207,8 +1207,15 @@ CURLcode Curl_getFormData(struct FormData **finalform,
 
       if(post->more) {
         /* if multiple-file */
-        char *filebasename=
-          (!file->showfilename)?strippath(file->contents):NULL;
+        char *filebasename= NULL;
+        if(!file->showfilename) {
+          filebasename = strippath(file->contents);
+          if(!filebasename) {
+            Curl_formclean(&firstform);
+            free(boundary);
+            return CURLE_OUT_OF_MEMORY;
+          }
+        }
 
         result = AddFormDataf(&form, &size,
                               "\r\n--%s\r\nContent-Disposition: "
@@ -1729,7 +1736,7 @@ char *Curl_FormBoundary(void)
                               the same form won't be identical */
   size_t i;
 
-  static const char table16[]="abcdef0123456789";
+  static const char table16[]="0123456789abcdef";
 
   retstring = malloc(BOUNDARY_LENGTH+1);
 

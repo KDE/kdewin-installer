@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: tftp.c,v 1.73 2008-09-29 21:44:50 danf Exp $
+ * $Id: tftp.c,v 1.76 2009-01-13 23:24:06 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -52,7 +52,9 @@
 #ifdef HAVE_NET_IF_H
 #include <net/if.h>
 #endif
+#ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
+#endif
 
 #ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
@@ -172,6 +174,7 @@ const struct Curl_handler Curl_handler_tftp = {
   ZERO_NULL,                            /* doing */
   ZERO_NULL,                            /* proto_getsock */
   ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* perform_getsock */
   ZERO_NULL,                            /* disconnect */
   PORT_TFTP,                            /* defport */
   PROT_TFTP                             /* protocol */
@@ -192,11 +195,12 @@ static CURLcode tftp_set_timeouts(tftp_state_data_t *state)
 {
   time_t maxtime, timeout;
   long timeout_ms;
+  const bool start = (state->state == TFTP_STATE_START);
 
   time(&state->start_time);
 
   /* Compute drop-dead time */
-  timeout_ms = Curl_timeleft(state->conn, NULL, TRUE);
+  timeout_ms = Curl_timeleft(state->conn, NULL, start);
 
   if(timeout_ms < 0) {
     /* time-out, bail out, go home */
@@ -204,7 +208,7 @@ static CURLcode tftp_set_timeouts(tftp_state_data_t *state)
     return CURLE_OPERATION_TIMEDOUT;
   }
 
-  if(state->state == TFTP_STATE_START) {
+  if(start) {
 
     maxtime = (time_t)(timeout_ms + 500) / 1000;
     state->max_time = state->start_time+maxtime;

@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: urldata.h,v 1.395 2008-11-03 16:24:56 bagder Exp $
+ * $Id: urldata.h,v 1.401 2009-01-13 06:44:03 bagder Exp $
  ***************************************************************************/
 
 /* This file is for lib internal stuff */
@@ -150,9 +150,11 @@
 
 #define CURLEASY_MAGIC_NUMBER 0xc0dedbadU
 
-/* Just a convenience macro to get the larger value out of two given.
+/* Some convenience macros to get the larger/smaller value out of two given.
    We prefix with CURL to prevent name collisions. */
 #define CURLMAX(x,y) ((x)>(y)?(x):(y))
+#define CURLMIN(x,y) ((x)<(y)?(x):(y))
+
 
 #if defined(HAVE_KRB4) || defined(HAVE_GSSAPI)
 /* Types needed for krb4/5-ftp connections */
@@ -222,9 +224,9 @@ struct ssl_config_data {
                             1: check that CN exists
                             2: CN must match hostname */
   char *CApath;          /* certificate dir (doesn't work on windows) */
-  char *CAfile;          /* cerficate to verify peer against */
-  const char *CRLfile;   /* CRL to check cerficate revocation */
-  const char *issuercert;/* optional issuer cerficate filename */
+  char *CAfile;          /* certificate to verify peer against */
+  const char *CRLfile;   /* CRL to check certificate revocation */
+  const char *issuercert;/* optional issuer certificate filename */
   char *random_file;     /* path to file containing "random" data */
   char *egdsocket;       /* path to file containing the EGD daemon socket */
   char *cipher_list;     /* list of ciphers to use */
@@ -232,7 +234,7 @@ struct ssl_config_data {
   curl_ssl_ctx_callback fsslctx; /* function to initialize ssl ctx */
   void *fsslctxp;        /* parameter for call back */
   bool sessionid;        /* cache session IDs or not */
-  bool certinfo;         /* gather lots of cert info */
+  bool certinfo;         /* gather lots of certificate info */
 };
 
 /* information stored about one single SSL session */
@@ -299,6 +301,9 @@ struct ntlmdata {
 
 #ifdef HAVE_GSSAPI
 struct negotiatedata {
+  /* when doing Negotiate we first need to receive an auth token and then we
+     need to send our header */
+  enum { GSS_AUTHNONE, GSS_AUTHRECV, GSS_AUTHSENT } state;
   bool gss; /* Whether we're processing GSS-Negotiate or Negotiate */
   const char* protocol; /* "GSS-Negotiate" or "Negotiate" */
   OM_uint32 status;
@@ -410,7 +415,7 @@ struct FTP {
   curl_off_t downloadsize;
 };
 
-/* ftp_conn is used for striuct connection-oriented data in the connectdata
+/* ftp_conn is used for struct connection-oriented data in the connectdata
    struct */
 struct ftp_conn {
   char *entrypath; /* the PWD reply when we logged on */
@@ -525,7 +530,7 @@ struct SSHPROTO {
 struct ssh_conn {
   const char *authlist;       /* List of auth. methods, managed by libssh2 */
 #ifdef USE_LIBSSH2
-  const char *passphrase;     /* passphrase to use */
+  const char *passphrase;     /* pass-phrase to use */
   char *rsa_pub;              /* path name */
   char *rsa;                  /* path name */
   bool authed;                /* the connection has been authenticated fine */
@@ -556,6 +561,8 @@ struct ssh_conn {
   LIBSSH2_CHANNEL *ssh_channel; /* Secure Shell channel handle */
   LIBSSH2_SFTP *sftp_session;   /* SFTP handle */
   LIBSSH2_SFTP_HANDLE *sftp_handle;
+  int waitfor;                  /* current READ/WRITE bits to wait for */
+  int orig_waitfor;             /* default READ/WRITE bits wait for */
 #endif /* USE_LIBSSH2 */
 };
 
@@ -587,7 +594,7 @@ struct ConnectBits {
   bool do_more; /* this is set TRUE if the ->curl_do_more() function is
                    supposed to be called, after ->curl_do() */
 
-  bool tcpconnect;    /* the TCP layer (or simimlar) is connected, this is set
+  bool tcpconnect;    /* the TCP layer (or similar) is connected, this is set
                          the first time on the first connect function call */
   bool protoconnstart;/* the protocol layer has STARTED its operation after
                          the TCP layer connect */
@@ -749,7 +756,7 @@ struct SingleRequest {
   int content_encoding;         /* What content encoding. sec 3.5, RFC2616. */
 
 #define IDENTITY 0              /* No encoding */
-#define DEFLATE 1               /* zlib delfate [RFC 1950 & 1951] */
+#define DEFLATE 1               /* zlib deflate [RFC 1950 & 1951] */
 #define GZIP 2                  /* gzip algorithm [RFC 1952] */
 #define COMPRESS 3              /* Not handled, added for completeness */
 
@@ -846,6 +853,13 @@ struct Curl_handler {
   int (*doing_getsock)(struct connectdata *conn,
                        curl_socket_t *socks,
                        int numsocks);
+
+  /* Called from the multi interface during the DO_DONE, PERFORM and
+     WAITPERFORM phases, and it should then return a proper fd set. Not setting
+     this will make libcurl use the generic default one. */
+  int (*perform_getsock)(const struct connectdata *conn,
+                         curl_socket_t *socks,
+                         int numsocks);
 
   /* This function *MAY* be set to a protocol-dependent function that is run
    * by the curl_disconnect(), as a step in the disconnection.
@@ -977,6 +991,10 @@ struct connectdata {
   const struct Curl_sec_client_mech *mech;
   struct sockaddr_in local_addr;
 #endif
+
+  /* the two following *_inuse fields are only flags, not counters in any way.
+     If TRUE it means the channel is in use, and if FALSE it means the channel
+     is up for grabs by one. */
 
   bool readchannel_inuse;  /* whether the read channel is in use by an easy
                               handle */
@@ -1132,7 +1150,8 @@ struct auth {
                  request */
   bool multi; /* TRUE if this is not yet authenticated but within the auth
                  multipass negotiation */
-
+  bool iestyle; /* TRUE if digest should be done IE-style or FALSE if it should
+                   be RFC compliant */
 };
 
 struct conncache {
@@ -1217,7 +1236,7 @@ struct UrlState {
   struct timeval expiretime; /* set this with Curl_expire() only */
   struct Curl_tree timenode; /* for the splay stuff */
 
-  /* a place to store the most recenlty set FTP entrypath */
+  /* a place to store the most recently set FTP entrypath */
   char *most_recent_ftp_entrypath;
 
   /* set after initial USER failure, to prevent an authentication loop */
@@ -1263,7 +1282,7 @@ struct UrlState {
    *************************************************************************
    * Note that this data will be REMOVED after each request, so anything that
    * should be kept/stored on a per-connection basis and thus live for the
-   * next requst on the same connection MUST be put in the connectdata struct!
+   * next request on the same connection MUST be put in the connectdata struct!
    *************************************************************************/
   union {
     struct HTTP *http;

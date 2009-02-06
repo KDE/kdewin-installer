@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: url.c,v 1.771 2008-11-05 21:46:40 bagder Exp $
+ * $Id: url.c,v 1.780 2009-01-08 00:31:49 danf Exp $
  ***************************************************************************/
 
 /* -- WIN32 approved -- */
@@ -218,6 +218,7 @@ static const struct Curl_handler Curl_handler_dummy = {
   ZERO_NULL,                            /* doing */
   ZERO_NULL,                            /* proto_getsock */
   ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* perform_getsock */
   ZERO_NULL,                            /* disconnect */
   0,                                    /* defport */
   0                                     /* protocol */
@@ -621,6 +622,77 @@ void Curl_rm_connc(struct conncache *c)
   free(c);
 }
 
+/*
+ * Initialize the UserDefined fields within a SessionHandle.
+ * This may be safely called on a new or existing SessionHandle.
+ */
+CURLcode Curl_init_userdefined(struct UserDefined *set)
+{
+  CURLcode res = CURLE_OK;
+
+  set->out = stdout; /* default output to stdout */
+  set->in  = stdin;  /* default input from stdin */
+  set->err  = stderr;  /* default stderr to stderr */
+
+  /* use fwrite as default function to store output */
+  set->fwrite_func = (curl_write_callback)fwrite;
+
+  /* use fread as default function to read input */
+  set->fread_func = (curl_read_callback)fread;
+
+  set->seek_func = ZERO_NULL;
+  set->seek_client = ZERO_NULL;
+
+  /* conversion callbacks for non-ASCII hosts */
+  set->convfromnetwork = ZERO_NULL;
+  set->convtonetwork   = ZERO_NULL;
+  set->convfromutf8    = ZERO_NULL;
+
+  set->infilesize = -1;      /* we don't know any size */
+  set->postfieldsize = -1;   /* unknown size */
+  set->maxredirs = -1;       /* allow any amount by default */
+
+  set->httpreq = HTTPREQ_GET; /* Default HTTP request */
+  set->ftp_use_epsv = TRUE;   /* FTP defaults to EPSV operations */
+  set->ftp_use_eprt = TRUE;   /* FTP defaults to EPRT operations */
+  set->ftp_filemethod = FTPFILE_MULTICWD;
+
+  set->dns_cache_timeout = 60; /* Timeout every 60 seconds by default */
+
+  /* Set the default size of the SSL session ID cache */
+  set->ssl.numsessions = 5;
+
+  set->proxyport = CURL_DEFAULT_PROXY_PORT; /* from url.h */
+  set->proxytype = CURLPROXY_HTTP; /* defaults to HTTP proxy */
+  set->httpauth = CURLAUTH_BASIC;  /* defaults to basic */
+  set->proxyauth = CURLAUTH_BASIC; /* defaults to basic */
+
+  /* make libcurl quiet by default: */
+  set->hide_progress = TRUE;  /* CURLOPT_NOPROGRESS changes these */
+
+  /*
+   * libcurl 7.10 introduced SSL verification *by default*! This needs to be
+   * switched off unless wanted.
+   */
+  set->ssl.verifypeer = TRUE;
+  set->ssl.verifyhost = 2;
+  set->ssh_auth_types = CURLSSH_AUTH_DEFAULT; /* defaults to any auth
+                                                      type */
+  set->ssl.sessionid = TRUE; /* session ID caching enabled by default */
+
+  set->new_file_perms = 0644;    /* Default permissions */
+  set->new_directory_perms = 0755; /* Default permissions */
+
+  /* This is our preferred CA cert bundle/path since install time */
+#if defined(CURL_CA_BUNDLE)
+  res = setstropt(&set->str[STRING_SSL_CAFILE], (char *) CURL_CA_BUNDLE);
+#elif defined(CURL_CA_PATH)
+  res = setstropt(&set->str[STRING_SSL_CAPATH], (char *) CURL_CA_PATH);
+#endif
+
+  return res;
+}
+
 /**
  * Curl_open()
  *
@@ -668,26 +740,10 @@ CURLcode Curl_open(struct SessionHandle **curl)
     res = CURLE_OUT_OF_MEMORY;
   }
   else {
+    Curl_easy_initHandleData(data);
+    res = Curl_init_userdefined(&data->set);
+
     data->state.headersize=HEADERSIZE;
-
-    data->set.out = stdout; /* default output to stdout */
-    data->set.in  = stdin;  /* default input from stdin */
-    data->set.err  = stderr;  /* default stderr to stderr */
-
-    /* use fwrite as default function to store output */
-    data->set.fwrite_func = (curl_write_callback)fwrite;
-
-    /* use fread as default function to read input */
-    data->set.fread_func = (curl_read_callback)fread;
-
-    /* don't use a seek function by default */
-    data->set.seek_func = ZERO_NULL;
-    data->set.seek_client = ZERO_NULL;
-
-    /* conversion callbacks for non-ASCII hosts */
-    data->set.convfromnetwork = ZERO_NULL;
-    data->set.convtonetwork   = ZERO_NULL;
-    data->set.convfromutf8    = ZERO_NULL;
 
 #if defined(CURL_DOES_CONVERSIONS) && defined(HAVE_ICONV)
     /* conversion descriptors for iconv calls */
@@ -696,57 +752,15 @@ CURLcode Curl_open(struct SessionHandle **curl)
     data->utf8_cd     = (iconv_t)-1;
 #endif /* CURL_DOES_CONVERSIONS && HAVE_ICONV */
 
-    data->set.infilesize = -1; /* we don't know any size */
-    data->set.postfieldsize = -1;
-    data->set.maxredirs = -1; /* allow any amount by default */
-    data->state.current_speed = -1; /* init to negative == impossible */
+    /* most recent connection is not yet defined */
+    data->state.lastconnect = -1;
 
-    data->set.httpreq = HTTPREQ_GET; /* Default HTTP request */
-    data->set.ftp_use_epsv = TRUE;   /* FTP defaults to EPSV operations */
-    data->set.ftp_use_eprt = TRUE;   /* FTP defaults to EPRT operations */
-    data->set.ftp_filemethod = FTPFILE_MULTICWD;
-    data->set.dns_cache_timeout = 60; /* Timeout every 60 seconds by default */
-
-    /* make libcurl quiet by default: */
-    data->set.hide_progress = TRUE;  /* CURLOPT_NOPROGRESS changes these */
     data->progress.flags |= PGRS_HIDE;
-
-    /* Set the default size of the SSL session ID cache */
-    data->set.ssl.numsessions = 5;
-
-    data->set.proxyport = CURL_DEFAULT_PROXY_PORT; /* from url.h */
-    data->set.proxytype = CURLPROXY_HTTP; /* defaults to HTTP proxy */
-    data->set.httpauth = CURLAUTH_BASIC;  /* defaults to basic */
-    data->set.proxyauth = CURLAUTH_BASIC; /* defaults to basic */
+    data->state.current_speed = -1; /* init to negative == impossible */
 
     /* This no longer creates a connection cache here. It is instead made on
        the first call to curl_easy_perform() or when the handle is added to a
        multi stack. */
-
-    data->set.ssh_auth_types = CURLSSH_AUTH_DEFAULT; /* defaults to any auth
-                                                        type */
-    data->set.new_file_perms = 0644;    /* Default permissions */
-    data->set.new_directory_perms = 0755; /* Default permissions */
-
-    /* most recent connection is not yet defined */
-    data->state.lastconnect = -1;
-
-    Curl_easy_initHandleData(data);
-
-    /*
-     * libcurl 7.10 introduced SSL verification *by default*! This needs to be
-     * switched off unless wanted.
-     */
-    data->set.ssl.verifypeer = TRUE;
-    data->set.ssl.verifyhost = 2;
-    data->set.ssl.sessionid = TRUE; /* session ID caching enabled by default */
-    /* This is our preferred CA cert bundle/path since install time */
-#if defined(CURL_CA_BUNDLE)
-    res = setstropt(&data->set.str[STRING_SSL_CAFILE],
-                         (char *) CURL_CA_BUNDLE);
-#elif defined(CURL_CA_PATH)
-    res = setstropt(&data->set.str[STRING_SSL_CAPATH], (char *) CURL_CA_PATH);
-#endif
   }
 
   if(res) {
@@ -1319,6 +1333,16 @@ CURLcode Curl_setopt(struct SessionHandle *data, CURLoption option,
      */
   {
     long auth = va_arg(param, long);
+
+    /* the DIGEST_IE bit is only used to set a special marker, for all the
+       rest we need to handle it as normal DIGEST */
+    data->state.authhost.iestyle = (auth & CURLAUTH_DIGEST_IE)?TRUE:FALSE;
+
+    if(auth & CURLAUTH_DIGEST_IE) {
+      auth |= CURLAUTH_DIGEST; /* set standard digest bit */
+      auth &= ~CURLAUTH_DIGEST_IE; /* unset ie digest bit */
+    }
+
     /* switch off bits we can't support */
 #ifndef USE_NTLM
     auth &= ~CURLAUTH_NTLM; /* no NTLM without SSL */
@@ -1354,6 +1378,15 @@ CURLcode Curl_setopt(struct SessionHandle *data, CURLoption option,
      */
   {
     long auth = va_arg(param, long);
+
+    /* the DIGEST_IE bit is only used to set a special marker, for all the
+       rest we need to handle it as normal DIGEST */
+    data->state.authproxy.iestyle = (auth & CURLAUTH_DIGEST_IE)?TRUE:FALSE;
+
+    if(auth & CURLAUTH_DIGEST_IE) {
+      auth |= CURLAUTH_DIGEST; /* set standard digest bit */
+      auth &= ~CURLAUTH_DIGEST_IE; /* unset ie digest bit */
+    }
     /* switch off bits we can't support */
 #ifndef USE_NTLM
     auth &= ~CURLAUTH_NTLM; /* no NTLM without SSL */
@@ -2383,6 +2416,24 @@ static struct SessionHandle* gethandleathead(struct curl_llist *pipeline)
   return NULL;
 }
 
+/* remove the specified connection from all (possible) pipelines and related
+   queues */
+void Curl_getoff_all_pipelines(struct SessionHandle *data,
+                               struct connectdata *conn)
+{
+  bool recv_head = conn->readchannel_inuse &&
+    (gethandleathead(conn->recv_pipe) == data);
+
+  bool send_head = conn->writechannel_inuse &&
+    (gethandleathead(conn->send_pipe) == data);
+
+  if(Curl_removeHandleFromPipeline(data, conn->recv_pipe) && recv_head)
+    conn->readchannel_inuse = FALSE;
+  if(Curl_removeHandleFromPipeline(data, conn->send_pipe) && send_head)
+    conn->writechannel_inuse = FALSE;
+  Curl_removeHandleFromPipeline(data, conn->pend_pipe);
+}
+
 static void signalPipeClose(struct curl_llist *pipeline)
 {
   struct curl_llist_element *curr;
@@ -2507,6 +2558,11 @@ ConnectionExists(struct SessionHandle *data,
 
     if(needle->bits.proxy != check->bits.proxy)
       /* don't do mixed proxy and non-proxy connections */
+      continue;
+
+    if(!canPipeline && check->inuse)
+      /* this request can't be pipelined but the checked connection is already
+         in use so we skip it */
       continue;
 
     if(!needle->bits.httpproxy || needle->protocol&PROT_SSL ||
@@ -3686,7 +3742,11 @@ static CURLcode parse_remote_port(struct SessionHandle *data,
   char *portptr;
   char endbracket;
 
-  if((1 == sscanf(conn->host.name, "[%*39[0123456789abcdefABCDEF:.%]%c", &endbracket)) &&
+  /* Note that at this point, the IPv6 address cannot contain any scope
+     suffix as that has already been removed in the ParseURLAndFillConnection()
+     function */
+  if((1 == sscanf(conn->host.name, "[%*45[0123456789abcdefABCDEF:.]%c",
+                  &endbracket)) &&
      (']' == endbracket)) {
     /* this is a RFC2732-style specified IP-address */
     conn->bits.ipv6_ip = TRUE;
@@ -4476,22 +4536,28 @@ CURLcode Curl_connect(struct SessionHandle *data,
 
   if(CURLE_OK == code) {
     /* no error */
-    if((*in_connect)->send_pipe->size +
-       (*in_connect)->recv_pipe->size != 0)
+    if((*in_connect)->send_pipe->size || (*in_connect)->recv_pipe->size)
       /* pipelining */
       *protocol_done = TRUE;
     else {
+
       if(dns || !*asyncp)
         /* If an address is available it means that we already have the name
            resolved, OR it isn't async. if this is a re-used connection 'dns'
            will be NULL here. Continue connecting from here */
         code = setup_conn(*in_connect, dns, protocol_done);
-      /* else
-         response will be received and treated async wise */
+
+      if(dns && code) {
+        /* We have the dns entry info already but failed to connect to the
+         * host and thus we must make sure to unlock the dns entry again
+         * before returning failure from here.
+         */
+        Curl_resolv_unlock(data, dns);
+      }
     }
   }
 
-  if(CURLE_OK != code && *in_connect) {
+  if(code && *in_connect) {
     /* We're not allowed to return failure with memory left allocated
        in the connectdata struct, free those here */
     Curl_disconnect(*in_connect); /* close the connection */
@@ -4543,13 +4609,7 @@ CURLcode Curl_done(struct connectdata **connp,
 
   Curl_expire(data, 0); /* stop timer */
 
-  if(Curl_removeHandleFromPipeline(data, conn->recv_pipe) &&
-     conn->readchannel_inuse)
-    conn->readchannel_inuse = FALSE;
-  if(Curl_removeHandleFromPipeline(data, conn->send_pipe) &&
-     conn->writechannel_inuse)
-    conn->writechannel_inuse = FALSE;
-  Curl_removeHandleFromPipeline(data, conn->pend_pipe);
+  Curl_getoff_all_pipelines(data, conn);
 
   if(conn->bits.done ||
      (conn->send_pipe->size + conn->recv_pipe->size != 0 &&

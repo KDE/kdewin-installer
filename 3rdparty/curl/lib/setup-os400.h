@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: setup-os400.h,v 1.4 2008-09-24 12:22:16 yangtse Exp $
+ * $Id: setup-os400.h,v 1.5 2008-11-17 19:08:35 yangtse Exp $
  ***************************************************************************/
 
 
@@ -29,9 +29,6 @@
 
 /* OS/400 netdb.h does not define NI_MAXSERV. */
 #define NI_MAXSERV      32
-
-/* OS/400 does not define the ifr_dstaddr union member. */
-#define ifr_dstaddr     ifr_addr
 
 /* No OS/400 header file defines u_int32_t. */
 typedef unsigned long   u_int32_t;

@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: http.c,v 1.404 2008-11-11 22:19:27 bagder Exp $
+ * $Id: http.c,v 1.409 2008-12-20 22:47:49 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -137,6 +137,7 @@ const struct Curl_handler Curl_handler_http = {
   ZERO_NULL,                            /* doing */
   ZERO_NULL,                            /* proto_getsock */
   http_getsock_do,                      /* doing_getsock */
+  ZERO_NULL,                            /* perform_getsock */
   ZERO_NULL,                            /* disconnect */
   PORT_HTTP,                            /* defport */
   PROT_HTTP,                            /* protocol */
@@ -157,6 +158,7 @@ const struct Curl_handler Curl_handler_https = {
   ZERO_NULL,                            /* doing */
   https_getsock,                        /* proto_getsock */
   http_getsock_do,                      /* doing_getsock */
+  ZERO_NULL,                            /* perform_getsock */
   ZERO_NULL,                            /* disconnect */
   PORT_HTTPS,                           /* defport */
   PROT_HTTP | PROT_HTTPS | PROT_SSL     /* protocol */
@@ -458,6 +460,10 @@ CURLcode Curl_http_auth_act(struct connectdata *conn)
   }
 
   if(pickhost || pickproxy) {
+    /* In case this is GSS auth, the newurl field is already allocated so
+       we must make sure to free it before allocating a new one. As figured
+       out in bug #2284386 */
+    Curl_safefree(data->req.newurl);
     data->req.newurl = strdup(data->change.url); /* clone URL */
     if(!data->req.newurl)
       return CURLE_OUT_OF_MEMORY;
@@ -503,8 +509,8 @@ CURLcode Curl_http_auth_act(struct connectdata *conn)
 static CURLcode
 output_auth_headers(struct connectdata *conn,
                     struct auth *authstatus,
-		    const char *request,
-		    const char *path,
+                    const char *request,
+                    const char *path,
                     bool proxy)
 {
   struct SessionHandle *data = conn->data;
@@ -525,6 +531,7 @@ output_auth_headers(struct connectdata *conn,
     if(result)
       return result;
     authstatus->done = TRUE;
+    data->state.negotiate.state = GSS_AUTHSENT;
   }
   else
 #endif
@@ -541,9 +548,9 @@ output_auth_headers(struct connectdata *conn,
   if(authstatus->picked == CURLAUTH_DIGEST) {
     auth="Digest";
     result = Curl_output_digest(conn,
-				proxy,
-				(const unsigned char *)request,
-				(const unsigned char *)path);
+                                proxy,
+                                (const unsigned char *)request,
+                                (const unsigned char *)path);
     if(result)
       return result;
   }
@@ -558,7 +565,7 @@ output_auth_headers(struct connectdata *conn,
       auth="Basic";
       result = http_output_basic(conn, proxy);
       if(result)
-	return result;
+        return result;
     }
     /* NOTE: this function should set 'done' TRUE, as the other auth
        functions work that way */
@@ -567,9 +574,9 @@ output_auth_headers(struct connectdata *conn,
 
   if(auth) {
     infof(data, "%s auth using %s with user '%s'\n",
-	  proxy?"Proxy":"Server", auth,
-	  proxy?(conn->proxyuser?conn->proxyuser:""):
-	        (conn->user?conn->user:""));
+          proxy?"Proxy":"Server", auth,
+          proxy?(conn->proxyuser?conn->proxyuser:""):
+                (conn->user?conn->user:""));
     authstatus->multi = (bool)(!authstatus->done);
   }
   else
@@ -703,24 +710,39 @@ CURLcode Curl_http_input_auth(struct connectdata *conn,
    * If the provided authentication is wanted as one out of several accepted
    * types (using &), we OR this authentication type to the authavail
    * variable.
+   *
+   * Note:
+   *
+   * ->picked is first set to the 'want' value (one or more bits) before the
+   * request is sent, and then it is again set _after_ all response 401/407
+   * headers have been received but then only to a single preferred method
+   * (bit).
+   *
    */
 
 #ifdef HAVE_GSSAPI
   if(checkprefix("GSS-Negotiate", start) ||
       checkprefix("Negotiate", start)) {
+    int neg;
     *availp |= CURLAUTH_GSSNEGOTIATE;
     authp->avail |= CURLAUTH_GSSNEGOTIATE;
-    if(authp->picked == CURLAUTH_GSSNEGOTIATE) {
-      /* if exactly this is wanted, go */
-      int neg = Curl_input_negotiate(conn, (bool)(httpcode == 407), start);
+
+    if(data->state.negotiate.state == GSS_AUTHSENT) {
+      /* if we sent GSS authentication in the outgoing request and we get this
+         back, we're in trouble */
+      infof(data, "Authentication problem. Ignoring this.\n");
+      data->state.authproblem = TRUE;
+    }
+    else {
+      neg = Curl_input_negotiate(conn, (bool)(httpcode == 407), start);
       if(neg == 0) {
         DEBUGASSERT(!data->req.newurl);
         data->req.newurl = strdup(data->change.url);
-        data->state.authproblem = (data->req.newurl == NULL);
-      }
-      else {
-        infof(data, "Authentication problem. Ignoring this.\n");
-        data->state.authproblem = TRUE;
+        if(!data->req.newurl)
+          return CURLE_OUT_OF_MEMORY;
+        data->state.authproblem = FALSE;
+        /* we received GSS auth info and we dealt with it fine */
+        data->state.negotiate.state = GSS_AUTHRECV;
       }
     }
   }
@@ -953,13 +975,7 @@ static CURLcode
 static
 send_buffer *add_buffer_init(void)
 {
-  send_buffer *blonk;
-  blonk = malloc(sizeof(send_buffer));
-  if(blonk) {
-    memset(blonk, 0, sizeof(send_buffer));
-    return blonk;
-  }
-  return NULL; /* failed, go home */
+  return calloc(sizeof(send_buffer), 1);
 }
 
 /*
@@ -2286,11 +2302,6 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
   }
 
 
-  http->p_pragma =
-    (!checkheaders(data, "Pragma:") &&
-     (conn->bits.httpproxy && !conn->bits.tunnel_proxy) )?
-    "Pragma: no-cache\r\n":NULL;
-
   http->p_accept = checkheaders(data, "Accept:")?NULL:"Accept: */*\r\n";
 
   if(( (HTTPREQ_POST == httpreq) ||
@@ -2436,7 +2447,6 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
                 "%s" /* range */
                 "%s" /* user agent */
                 "%s" /* host */
-                "%s" /* pragma */
                 "%s" /* accept */
                 "%s" /* accept-encoding */
                 "%s" /* referer */
@@ -2456,7 +2466,6 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
                  *data->set.str[STRING_USERAGENT] && conn->allocptr.uagent)?
                 conn->allocptr.uagent:"",
                 (conn->allocptr.host?conn->allocptr.host:""), /* Host: host */
-                http->p_pragma?http->p_pragma:"",
                 http->p_accept?http->p_accept:"",
                 (data->set.str[STRING_ENCODING] &&
                  *data->set.str[STRING_ENCODING] &&

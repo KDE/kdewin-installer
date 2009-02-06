@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: transfer.c,v 1.421 2008-10-29 19:06:48 danf Exp $
+ * $Id: transfer.c,v 1.424 2009-01-07 19:39:35 danf Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -63,7 +63,9 @@
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
 #endif
+#ifdef HAVE_SIGNAL_H
 #include <signal.h>
+#endif
 
 #ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
@@ -321,10 +323,6 @@ static int data_pending(const struct connectdata *conn)
     Curl_ssl_data_pending(conn, FIRSTSOCKET);
 }
 
-#ifndef MIN
-#define MIN(a,b) (a < b ? a : b)
-#endif
-
 static void read_rewind(struct connectdata *conn,
                         size_t thismuch)
 {
@@ -336,7 +334,7 @@ static void read_rewind(struct connectdata *conn,
     char buf[512 + 1];
     size_t show;
 
-    show = MIN(conn->buf_len - conn->read_pos, sizeof(buf)-1);
+    show = CURLMIN(conn->buf_len - conn->read_pos, sizeof(buf)-1);
     if(conn->master_buffer) {
         memcpy(buf, conn->master_buffer + conn->read_pos, show);
         buf[show] = '\0';
@@ -1522,6 +1520,7 @@ static CURLcode readwrite_upload(struct SessionHandle *data,
 			data->req.upload_fromhere, /* buffer pointer */
 			data->req.upload_present,  /* buffer size */
 			&bytes_written);       /* actually send away */
+
     if(result)
       return result;
 
@@ -1741,6 +1740,9 @@ int Curl_single_getsock(const struct connectdata *conn,
   const struct SessionHandle *data = conn->data;
   int bitmap = GETSOCK_BLANK;
   unsigned sockindex = 0;
+
+  if(conn->handler->perform_getsock)
+    return conn->handler->perform_getsock(conn, sock, numsocks);
 
   if(numsocks < 2)
     /* simple check but we might need two slots */

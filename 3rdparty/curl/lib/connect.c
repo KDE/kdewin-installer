@@ -18,13 +18,11 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: connect.c,v 1.207 2008-11-06 17:19:57 yangtse Exp $
+ * $Id: connect.c,v 1.211 2008-12-30 08:05:38 gknauf Exp $
  ***************************************************************************/
 
 #include "setup.h"
 
-#ifndef WIN32
-/* headers for non-win32 */
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
@@ -59,7 +57,7 @@
 #include <stdlib.h> /* required for free() prototype, without it, this crashes */
 #endif              /* on macos 68K */
 
-#if (defined(HAVE_FIONBIO) && defined(NETWARE))
+#if (defined(HAVE_IOCTL_FIONBIO) && defined(NETWARE))
 #include <sys/filio.h>
 #endif
 #ifdef NETWARE
@@ -70,8 +68,6 @@
 #include <in.h>
 #include <inet.h>
 #endif
-
-#endif  /* !WIN32 */
 
 #include <stdio.h>
 #include <errno.h>
@@ -189,64 +185,47 @@ long Curl_timeleft(struct connectdata *conn,
 int Curl_nonblock(curl_socket_t sockfd,    /* operate on this */
                   int nonblock   /* TRUE or FALSE */)
 {
-#undef SETBLOCK
-#define SETBLOCK 0
-#ifdef HAVE_O_NONBLOCK
+#if defined(USE_BLOCKING_SOCKETS)
+
+  return 0; /* returns success */
+
+#elif defined(HAVE_FCNTL_O_NONBLOCK)
+
   /* most recent unix versions */
   int flags;
-
   flags = fcntl(sockfd, F_GETFL, 0);
   if(FALSE != nonblock)
     return fcntl(sockfd, F_SETFL, flags | O_NONBLOCK);
   else
     return fcntl(sockfd, F_SETFL, flags & (~O_NONBLOCK));
-#undef SETBLOCK
-#define SETBLOCK 1
-#endif
 
-#if defined(HAVE_FIONBIO) && (SETBLOCK == 0)
+#elif defined(HAVE_IOCTL_FIONBIO)
+
   /* older unix versions */
   int flags;
-
   flags = nonblock;
   return ioctl(sockfd, FIONBIO, &flags);
-#undef SETBLOCK
-#define SETBLOCK 2
-#endif
 
-#if defined(HAVE_IOCTLSOCKET) && (SETBLOCK == 0)
-  /* Windows? */
+#elif defined(HAVE_IOCTLSOCKET_FIONBIO)
+
+  /* Windows */
   unsigned long flags;
   flags = nonblock;
-
   return ioctlsocket(sockfd, FIONBIO, &flags);
-#undef SETBLOCK
-#define SETBLOCK 3
-#endif
 
-#if defined(HAVE_IOCTLSOCKET_CASE) && (SETBLOCK == 0)
-  /* presumably for Amiga */
+#elif defined(HAVE_IOCTLSOCKET_CAMEL_FIONBIO)
+
+  /* Amiga */
   return IoctlSocket(sockfd, FIONBIO, (long)nonblock);
-#undef SETBLOCK
-#define SETBLOCK 4
-#endif
 
-#if defined(HAVE_SO_NONBLOCK) && (SETBLOCK == 0)
+#elif defined(HAVE_SETSOCKOPT_SO_NONBLOCK)
+
   /* BeOS */
   long b = nonblock ? 1 : 0;
   return setsockopt(sockfd, SOL_SOCKET, SO_NONBLOCK, &b, sizeof(b));
-#undef SETBLOCK
-#define SETBLOCK 5
-#endif
 
-#ifdef HAVE_DISABLED_NONBLOCKING
-  return 0; /* returns success */
-#undef SETBLOCK
-#define SETBLOCK 6
-#endif
-
-#if(SETBLOCK == 0)
-#error "no non-blocking method was found/used/set"
+#else
+#  error "no non-blocking method was found/used/set"
 #endif
 }
 
@@ -790,7 +769,7 @@ singleipconnect(struct connectdata *conn,
     /* no socket, no connection */
     return CURL_SOCKET_BAD;
 
-#ifdef ENABLE_IPV6
+#if defined(ENABLE_IPV6) && defined(HAVE_SOCKADDR_IN6_SIN6_SCOPE_ID)
   if (conn->scope && (addr.family == AF_INET6))
     sa6->sin6_scope_id = conn->scope;
 #endif
@@ -865,12 +844,14 @@ singleipconnect(struct connectdata *conn,
     switch (error) {
     case EINPROGRESS:
     case EWOULDBLOCK:
-#if defined(EAGAIN) && EAGAIN != EWOULDBLOCK
+#if defined(EAGAIN)
+#if (EAGAIN) != (EWOULDBLOCK)
       /* On some platforms EAGAIN and EWOULDBLOCK are the
        * same value, and on others they are different, hence
        * the odd #if
        */
     case EAGAIN:
+#endif
 #endif
       rc = waitconnect(sockfd, timeout_ms);
       break;

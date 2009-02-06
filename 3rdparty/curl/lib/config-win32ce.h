@@ -145,8 +145,11 @@
 /* Define if you have the inet_addr function.  */
 #define HAVE_INET_ADDR 1
 
-/* Define if you have the ioctlsocket function.  */
+/* Define if you have the ioctlsocket function. */
 #define HAVE_IOCTLSOCKET 1
+
+/* Define if you have a working ioctlsocket FIONBIO function. */
+#define HAVE_IOCTLSOCKET_FIONBIO 1
 
 /* Define if you have the perror function.  */
 #define HAVE_PERROR 1
@@ -319,6 +322,9 @@
 
 /* Define this if you have struct timeval */
 #define HAVE_STRUCT_TIMEVAL 1
+
+/* Define this if struct sockaddr_in6 has the sin6_scope_id member */
+#define HAVE_SOCKADDR_IN6_SIN6_SCOPE_ID 1
 
 /* ---------------------------------------------------------------- */
 /*                        COMPILER SPECIFIC                         */

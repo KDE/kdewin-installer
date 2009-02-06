@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: multi.c,v 1.187 2008-10-30 13:45:26 yangtse Exp $
+ * $Id: multi.c,v 1.193 2009-01-10 22:10:58 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -587,6 +587,8 @@ CURLMcode curl_multi_remove_handle(CURLM *multi_handle,
 
   if(easy) {
     bool premature = (bool)(easy->state != CURLM_STATE_COMPLETED);
+    bool easy_owns_conn = (bool)(easy->easy_conn &&
+                                 (easy->easy_conn->data == easy->easy_handle));
 
     /* If the 'state' is not INIT or COMPLETED, we might need to do something
        nice to put the easy_handle in a good known state when this returns. */
@@ -620,22 +622,27 @@ CURLMcode curl_multi_remove_handle(CURLM *multi_handle,
       easy->easy_handle->dns.hostcachetype = HCACHE_NONE;
     }
 
-    /* we must call Curl_done() here (if we still "own it") so that we don't
-       leave a half-baked one around */
-    if(easy->easy_conn &&
-       (easy->easy_conn->data == easy->easy_handle)) {
+    if(easy->easy_conn) {
 
-      /* Curl_done() clears the conn->data field to lose the association
-         between the easy handle and the connection
+      /* we must call Curl_done() here (if we still "own it") so that we don't
+         leave a half-baked one around */
+      if (easy_owns_conn) {
 
-         Note that this ignores the return code simply because there's nothing
-         really useful to do with it anyway! */
-      (void)Curl_done(&easy->easy_conn, easy->result, premature);
+        /* Curl_done() clears the conn->data field to lose the association
+           between the easy handle and the connection
 
-      if(easy->easy_conn)
-        /* the connection is still alive, set back the association to enable
-           the check below to trigger TRUE */
-        easy->easy_conn->data = easy->easy_handle;
+           Note that this ignores the return code simply because there's
+           nothing really useful to do with it anyway! */
+        (void)Curl_done(&easy->easy_conn, easy->result, premature);
+
+        if(easy->easy_conn)
+          /* the connection is still alive, set back the association to enable
+             the check below to trigger TRUE */
+          easy->easy_conn->data = easy->easy_handle;
+      }
+      else
+        /* Clear connection pipelines, if Curl_done above was not called */
+        Curl_getoff_all_pipelines(easy->easy_handle, easy->easy_conn);
     }
 
     /* If this easy_handle was the last one in charge for one or more
@@ -671,9 +678,15 @@ CURLMcode curl_multi_remove_handle(CURLM *multi_handle,
          to that since we're not part of that handle anymore */
       easy->easy_handle->state.connc = NULL;
 
-      /* and modify the connectindex since this handle can't point to the
-         connection cache anymore */
-      if(easy->easy_conn &&
+      /* Modify the connectindex since this handle can't point to the
+         connection cache anymore.
+
+         TODO: consider if this is really what we want. The connection cache
+         is within the multi handle and that owns the connections so we should
+         not need to touch connections like this when we just remove an easy
+         handle...
+      */
+      if(easy->easy_conn && easy_owns_conn &&
          (easy->easy_conn->send_pipe->size +
           easy->easy_conn->recv_pipe->size == 0))
         easy->easy_conn->connectindex = -1;
@@ -773,11 +786,8 @@ static int multi_getsock(struct Curl_one_easy *easy,
      happen when this is called from curl_multi_remove_handle() =>
      singlesocket() => multi_getsock().
   */
-
-  if(easy->easy_handle->state.pipe_broke ||
-      !easy->easy_conn) {
+  if(easy->easy_handle->state.pipe_broke || !easy->easy_conn)
     return 0;
-  }
 
   if(easy->state > CURLM_STATE_CONNECT &&
       easy->state < CURLM_STATE_COMPLETED) {
@@ -1361,7 +1371,6 @@ static CURLMcode multi_runsingle(struct Curl_multi *multi,
             easy->result = Curl_follow(easy->easy_handle, newurl, FOLLOW_FAKE);
             if (easy->result)
               free(newurl);
-            break;
           }
 
           multistate(easy, CURLM_STATE_DONE);
@@ -1531,6 +1540,7 @@ CURLMcode curl_multi_perform(CURLM *multi_handle, int *running_handles)
 
   if( CURLM_OK >= returncode )
     update_timer(multi);
+
   return returncode;
 }
 
@@ -1657,6 +1667,8 @@ static void singlesocket(struct Curl_multi *multi,
   curl_socket_t s;
   int num;
   unsigned int curraction;
+  struct Curl_one_easy *easy_by_hash;
+  bool remove_sock_from_hash;
 
   memset(&socks, 0, sizeof(socks));
   for(i=0; i< MAX_SOCKSPEREASYHANDLE; i++)
@@ -1724,21 +1736,69 @@ static void singlesocket(struct Curl_multi *multi,
       }
     }
     if(s != CURL_SOCKET_BAD) {
-      /* this socket has been removed. Remove it */
+
+      /* this socket has been removed. Tell the app to remove it */
+      remove_sock_from_hash = TRUE;
 
       entry = Curl_hash_pick(multi->sockhash, (char *)&s, sizeof(s));
       if(entry) {
+        /* check if the socket to be removed serves a connection which has
+           other easy-s in a pipeline. In this case the socket should not be
+           removed. */
+        struct connectdata *easy_conn;
+
+        easy_by_hash = entry->easy->multi_pos;
+        easy_conn = easy_by_hash->easy_conn;
+        if(easy_conn) {
+          if (easy_conn->recv_pipe && easy_conn->recv_pipe->size > 1) {
+            /* the handle should not be removed from the pipe yet */
+            remove_sock_from_hash = FALSE;
+
+            /* Update the sockhash entry to instead point to the next in line
+               for the recv_pipe, or the first (in case this particular easy
+               isn't already) */
+            if (entry->easy == easy->easy_handle) {
+              if (isHandleAtHead(easy->easy_handle, easy_conn->recv_pipe))
+                entry->easy = easy_conn->recv_pipe->head->next->ptr;
+              else
+                entry->easy = easy_conn->recv_pipe->head->ptr;
+            }
+          }
+          if (easy_conn->send_pipe  && easy_conn->send_pipe->size > 1) {
+            /* the handle should not be removed from the pipe yet */
+            remove_sock_from_hash = FALSE;
+
+            /* Update the sockhash entry to instead point to the next in line
+               for the send_pipe, or the first (in case this particular easy
+               isn't already) */
+            if (entry->easy == easy->easy_handle) {
+              if (isHandleAtHead(easy->easy_handle, easy_conn->send_pipe))
+                entry->easy = easy_conn->send_pipe->head->next->ptr;
+              else
+                entry->easy = easy_conn->send_pipe->head->ptr;
+            }
+          }
+          /* Don't worry about overwriting recv_pipe head with send_pipe_head,
+             when action will be asked on the socket (see multi_socket()), the
+             head of the correct pipe will be taken according to the
+             action. */
+        }
+      }
+      else
         /* just a precaution, this socket really SHOULD be in the hash already
            but in case it isn't, we don't have to tell the app to remove it
            either since it never got to know about it */
+        remove_sock_from_hash = FALSE;
+
+      if (remove_sock_from_hash) {
         multi->socket_cb(easy->easy_handle,
                          s,
                          CURL_POLL_REMOVE,
                          multi->socket_userp,
                          entry ? entry->socketp : NULL);
-
         sh_delentry(multi->sockhash, s);
       }
+
     }
   }
 
@@ -1790,6 +1850,21 @@ static CURLMcode multi_socket(struct Curl_multi *multi,
       if(data->magic != CURLEASY_MAGIC_NUMBER)
         /* bad bad bad bad bad bad bad */
         return CURLM_INTERNAL_ERROR;
+
+      /* If the pipeline is enabled, take the handle which is in the head of
+         the pipeline. If we should write into the socket, take the send_pipe
+         head.  If we should read from the socket, take the recv_pipe head. */
+      if(data->set.one_easy->easy_conn) {
+        if ((ev_bitmask & CURL_POLL_OUT) &&
+            data->set.one_easy->easy_conn->send_pipe &&
+            data->set.one_easy->easy_conn->send_pipe->head)
+          data = data->set.one_easy->easy_conn->send_pipe->head->ptr;
+        else
+        if ((ev_bitmask & CURL_POLL_IN) &&
+            data->set.one_easy->easy_conn->recv_pipe &&
+            data->set.one_easy->easy_conn->recv_pipe->head)
+          data = data->set.one_easy->easy_conn->recv_pipe->head->ptr;
+      }
 
       if(data->set.one_easy->easy_conn)  /* set socket event bitmask */
         data->set.one_easy->easy_conn->cselect_bits = ev_bitmask;
@@ -1941,9 +2016,19 @@ static CURLMcode multi_timeout(struct Curl_multi *multi,
     /* splay the lowest to the bottom */
     multi->timetree = Curl_splay(tv_zero, multi->timetree);
 
-    if(Curl_splaycomparekeys(multi->timetree->key, now) > 0)
+    if(Curl_splaycomparekeys(multi->timetree->key, now) > 0) {
       /* some time left before expiration */
       *timeout_ms = curlx_tvdiff(multi->timetree->key, now);
+      if(!*timeout_ms)
+        /*
+         * Since we only provide millisecond resolution on the returned value
+         * and the diff might be less than one millisecond here, we don't
+         * return zero as that may cause short bursts of busyloops on fast
+         * processors while the diff is still present but less than one
+         * millisecond! instead we return 1 until the time is ripe.
+         */
+        *timeout_ms=1;
+    }
     else
       /* 0 means immediately */
       *timeout_ms = 0;
@@ -2095,7 +2180,10 @@ static bool isHandleAtHead(struct SessionHandle *handle,
 }
 
 /* given a number of milliseconds from now to use to set the 'act before
-   this'-time for the transfer, to be extracted by curl_multi_timeout() */
+   this'-time for the transfer, to be extracted by curl_multi_timeout()
+
+   Pass zero to clear the timeout value for this handle.
+*/
 void Curl_expire(struct SessionHandle *data, long milli)
 {
   struct Curl_multi *multi = data->multi;

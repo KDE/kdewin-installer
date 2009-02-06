@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: cookie.c,v 1.98 2008-10-23 11:49:19 bagder Exp $
+ * $Id: cookie.c,v 1.101 2009-01-15 08:32:58 bagder Exp $
  ***************************************************************************/
 
 /***
@@ -439,7 +439,7 @@ Curl_cookie_add(struct SessionHandle *data,
        reading the odd netscape cookies-file format here */
     char *ptr;
     char *firstptr;
-    char *tok_buf;
+    char *tok_buf=NULL;
     int fields;
 
     /* IE introduced HTTP-only cookies to prevent XSS attacks. Cookies
@@ -453,7 +453,6 @@ Curl_cookie_add(struct SessionHandle *data,
       lineptr += 10;
       co->httponly = TRUE;
     }
-
 
     if(lineptr[0]=='#') {
       /* don't even try the comments */
@@ -878,7 +877,7 @@ void Curl_cookie_clearsess(struct CookieInfo *cookies)
 {
   struct Cookie *first, *curr, *next, *prev = NULL;
 
-  if(!cookies->cookies)
+  if(!cookies->cookies || !cookies->cookies)
     return;
 
   first = curr = prev = cookies->cookies;
@@ -1003,7 +1002,8 @@ int Curl_cookie_output(struct CookieInfo *c, const char *dumphere)
       format_ptr = get_netscape_format(co);
       if(format_ptr == NULL) {
         fprintf(out, "#\n# Fatal libcurl error\n");
-        fclose(out);
+        if(!use_stdout)
+          fclose(out);
         return 1;
       }
       fprintf(out, "%s\n", format_ptr);

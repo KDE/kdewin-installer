@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: sendf.c,v 1.153 2008-11-13 08:20:25 mmarek Exp $
+ * $Id: sendf.c,v 1.155 2009-01-07 19:39:35 danf Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -47,7 +47,8 @@
 #define _MPRINTF_REPLACE /* use the internal *printf() functions */
 #include <curl/mprintf.h>
 
-#if defined(HAVE_KRB4) || defined(HAVE_GSSAPI)
+/* the krb4 functions only exists for FTP and if krb4 or gssapi is defined */
+#if !defined(CURL_DISABLE_FTP) && (defined(HAVE_KRB4) || defined(HAVE_GSSAPI))
 #include "krb4.h"
 #else
 #define Curl_sec_send(a,b,c,d) -1
@@ -558,10 +559,6 @@ int Curl_read_plain(curl_socket_t sockfd,
   return CURLE_OK;
 }
 
-#ifndef MIN
-#define MIN(a,b) ((a) < (b) ? (a) : (b))
-#endif
-
 /*
  * Internal read-from-socket function. This is meant to deal with plain
  * sockets, SSL sockets and kerberos sockets.
@@ -590,7 +587,7 @@ int Curl_read(struct connectdata *conn, /* connection data */
 
   /* If session can pipeline, check connection buffer  */
   if(pipelining) {
-    size_t bytestocopy = MIN(conn->buf_len - conn->read_pos, sizerequested);
+    size_t bytestocopy = CURLMIN(conn->buf_len - conn->read_pos, sizerequested);
 
     /* Copy from our master buffer first if we have some unread data there*/
     if(bytestocopy > 0) {
@@ -603,11 +600,11 @@ int Curl_read(struct connectdata *conn, /* connection data */
     }
     /* If we come here, it means that there is no data to read from the buffer,
      * so we read from the socket */
-    bytesfromsocket = MIN(sizerequested, BUFSIZE * sizeof (char));
+    bytesfromsocket = CURLMIN(sizerequested, BUFSIZE * sizeof (char));
     buffertofill = conn->master_buffer;
   }
   else {
-    bytesfromsocket = MIN((long)sizerequested, conn->data->set.buffer_size ?
+    bytesfromsocket = CURLMIN((long)sizerequested, conn->data->set.buffer_size ?
                           conn->data->set.buffer_size : BUFSIZE);
     buffertofill = buf;
   }

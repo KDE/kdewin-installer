@@ -38,6 +38,9 @@
 /* Define if you want to enable IPv6 support */
 #undef ENABLE_IPV6
 
+/* Define if struct sockaddr_in6 has the sin6_scope_id member */
+#define HAVE_SOCKADDR_IN6_SIN6_SCOPE_ID 1
+
 /* Define this to 'int' if ssize_t is not an available typedefed type */
 #undef ssize_t
 
@@ -378,12 +381,11 @@
 /* Define to `int' if <sys/types.h> does not define. */
 #undef ssize_t
 
-/* this is a quick hack.  I hope it's correct. */
-#define ifr_dstaddr ifr_addr
+/* Define if you have the ioctl function. */
+#define HAVE_IOCTL
 
-#define IOCTL_3_ARGS
-
-#define HAVE_FIONBIO
+/* Define if you have a working ioctl FIONBIO function. */
+#define HAVE_IOCTL_FIONBIO
 
 /* to disable LDAP */
 #define CURL_DISABLE_LDAP

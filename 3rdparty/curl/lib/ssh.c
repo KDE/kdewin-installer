@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: ssh.c,v 1.118 2008-10-23 01:20:57 danf Exp $
+ * $Id: ssh.c,v 1.127 2008-12-28 05:49:39 gknauf Exp $
  ***************************************************************************/
 
 /* #define CURL_LIBSSH2_DEBUG */
@@ -35,10 +35,6 @@
 
 #include <libssh2.h>
 #include <libssh2_sftp.h>
-
-#if !defined(LIBSSH2_VERSION_NUM) || (LIBSSH2_VERSION_NUM < 0x001000)
-#error "this requires libssh2 0.16 or later"
-#endif
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -103,6 +99,7 @@
 #include "sockaddr.h" /* required for Curl_sockaddr_storage */
 #include "strtoofft.h"
 #include "multiif.h"
+#include "select.h"
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -147,6 +144,17 @@ static
 CURLcode sftp_perform(struct connectdata *conn,
                       bool *connected,
                       bool *dophase_done);
+
+static int ssh_getsock(struct connectdata *conn,
+                       curl_socket_t *sock, /* points to numsocks number
+                                               of sockets */
+                       int numsocks);
+
+static int ssh_perform_getsock(const struct connectdata *conn,
+                               curl_socket_t *sock, /* points to numsocks
+                                                       number of sockets */
+                               int numsocks);
+
 /*
  * SCP protocol handler.
  */
@@ -160,8 +168,9 @@ const struct Curl_handler Curl_handler_scp = {
   ssh_connect,                          /* connect_it */
   ssh_multi_statemach,                  /* connecting */
   scp_doing,                            /* doing */
-  ZERO_NULL,                            /* proto_getsock */
-  ZERO_NULL,                            /* doing_getsock */
+  ssh_getsock,                          /* proto_getsock */
+  ssh_getsock,                          /* doing_getsock */
+  ssh_perform_getsock,                  /* perform_getsock */
   scp_disconnect,                       /* disconnect */
   PORT_SSH,                             /* defport */
   PROT_SCP                              /* protocol */
@@ -181,8 +190,9 @@ const struct Curl_handler Curl_handler_sftp = {
   ssh_connect,                          /* connect_it */
   ssh_multi_statemach,                  /* connecting */
   sftp_doing,                           /* doing */
-  ZERO_NULL,                            /* proto_getsock */
-  ZERO_NULL,                            /* doing_getsock */
+  ssh_getsock,                          /* proto_getsock */
+  ssh_getsock,                          /* doing_getsock */
+  ssh_perform_getsock,                  /* perform_getsock */
   sftp_disconnect,                      /* disconnect */
   PORT_SSH,                             /* defport */
   PROT_SFTP                             /* protocol */
@@ -421,7 +431,24 @@ static CURLcode ssh_getworkingpath(struct connectdata *conn,
   return CURLE_OK;
 }
 
-static CURLcode ssh_statemach_act(struct connectdata *conn)
+/*
+ * Earlier libssh2 versions didn't have the ability to seek to 64bit positions
+ * with 32bit size_t.
+ */
+#ifdef HAVE_LIBSSH2_SFTP_SEEK64
+#define SFTP_SEEK(x,y) libssh2_sftp_seek64(x, (libssh2_uint64_t)y)
+#else
+#define SFTP_SEEK(x,y) libssh2_sftp_seek(x, y)
+#endif
+
+/*
+ * ssh_statemach_act() runs the SSH statemachine "one round" and returns.  The
+ * data the pointer 'block' points to will be set to TRUE if the libssh2
+ * function returns LIBSSH2_ERROR_EAGAIN meaning it wants to be called again
+ * when the socket is ready
+ */
+
+static CURLcode ssh_statemach_act(struct connectdata *conn, bool *block)
 {
   CURLcode result = CURLE_OK;
   struct SessionHandle *data = conn->data;
@@ -432,8 +459,9 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
   const char *fingerprint;
 #endif /* CURL_LIBSSH2_DEBUG */
   const char *host_public_key_md5;
-  int rc,i;
+  int rc = LIBSSH2_ERROR_NONE, i;
   int err;
+  *block = 0; /* we're not blocking by default */
 
   switch(sshc->state) {
   case SSH_S_STARTUP:
@@ -519,6 +547,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
     if(!sshc->authlist) {
       if((err = libssh2_session_last_errno(sshc->ssh_session)) ==
          LIBSSH2_ERROR_EAGAIN) {
+        rc = LIBSSH2_ERROR_EAGAIN;
         break;
       }
       else {
@@ -729,6 +758,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
     if(!sshc->sftp_session) {
       if(libssh2_session_last_errno(sshc->ssh_session) ==
          LIBSSH2_ERROR_EAGAIN) {
+        rc = LIBSSH2_ERROR_EAGAIN;
         break;
       }
       else {
@@ -771,6 +801,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
       /* Return the error type */
       err = libssh2_sftp_last_error(sshc->sftp_session);
       result = sftp_libssh2_error_to_CURLE(err);
+      sshc->actualcode = result?result:CURLE_SSH;
       DEBUGF(infof(data, "error = %d makes libcurl = %d\n", err, result));
       state(conn, SSH_STOP);
       break;
@@ -996,21 +1027,21 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
        * This takes an extra protocol round trip.
        */
       rc = libssh2_sftp_stat(sshc->sftp_session, sshc->quote_path2,
-			     &sshc->quote_attrs);
+                             &sshc->quote_attrs);
       if(rc == LIBSSH2_ERROR_EAGAIN) {
-	break;
+        break;
       }
       else if(rc != 0) { /* get those attributes */
-	err = libssh2_sftp_last_error(sshc->sftp_session);
-	Curl_safefree(sshc->quote_path1);
-	sshc->quote_path1 = NULL;
-	Curl_safefree(sshc->quote_path2);
-	sshc->quote_path2 = NULL;
-	failf(data, "Attempt to get SFTP stats failed: %s",
-	      sftp_libssh2_strerror(err));
-	state(conn, SSH_SFTP_CLOSE);
-	sshc->actualcode = CURLE_QUOTE_ERROR;
-	break;
+        err = libssh2_sftp_last_error(sshc->sftp_session);
+        Curl_safefree(sshc->quote_path1);
+        sshc->quote_path1 = NULL;
+        Curl_safefree(sshc->quote_path2);
+        sshc->quote_path2 = NULL;
+        failf(data, "Attempt to get SFTP stats failed: %s",
+              sftp_libssh2_strerror(err));
+        state(conn, SSH_SFTP_CLOSE);
+        sshc->actualcode = CURLE_QUOTE_ERROR;
+        break;
       }
     }
 
@@ -1231,15 +1262,22 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
                         flags, data->set.new_file_perms);
 
     if(!sshc->sftp_handle) {
-      if(libssh2_session_last_errno(sshc->ssh_session) ==
-         LIBSSH2_ERROR_EAGAIN) {
+      rc = libssh2_session_last_errno(sshc->ssh_session);
+
+      if(LIBSSH2_ERROR_EAGAIN == rc)
         break;
-      }
       else {
-        err = libssh2_sftp_last_error(sshc->sftp_session);
+        if(LIBSSH2_ERROR_SFTP_PROTOCOL == rc)
+          /* only when there was an SFTP protocol error can we extract
+             the sftp error! */
+          err = libssh2_sftp_last_error(sshc->sftp_session);
+        else
+          err = -1; /* not an sftp error at all */
+
         if(sshc->secondCreateDirs) {
           state(conn, SSH_SFTP_CLOSE);
-          sshc->actualcode = sftp_libssh2_error_to_CURLE(err);
+          sshc->actualcode = err>= LIBSSH2_FX_OK?
+            sftp_libssh2_error_to_CURLE(err):CURLE_SSH;
           failf(data, "Creating the dir/file failed: %s",
                 sftp_libssh2_strerror(err));
           break;
@@ -1255,8 +1293,18 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
           break;
         }
         state(conn, SSH_SFTP_CLOSE);
-        sshc->actualcode = sftp_libssh2_error_to_CURLE(err);
-        failf(data, "Upload failed: %s", sftp_libssh2_strerror(err));
+        sshc->actualcode = err>= LIBSSH2_FX_OK?
+          sftp_libssh2_error_to_CURLE(err):CURLE_SSH;
+        if(!sshc->actualcode) {
+          /* Sometimes, for some reason libssh2_sftp_last_error() returns zero
+             even though libssh2_sftp_open() failed previously! We need to
+             work around that! */
+          sshc->actualcode = CURLE_SSH;
+          err=-1;
+        }
+        failf(data, "Upload failed: %s (%d/%d)",
+              err>= LIBSSH2_FX_OK?sftp_libssh2_strerror(err):"ssh error",
+              err, rc);
         break;
       }
     }
@@ -1305,7 +1353,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
         Curl_pgrsSetUploadSize(data, data->set.infilesize);
       }
 
-      libssh2_sftp_seek(sshc->sftp_handle, data->state.resume_from);
+      SFTP_SEEK(sshc->sftp_handle, data->state.resume_from);
     }
     if(data->set.infilesize>0) {
       data->req.size = data->set.infilesize;
@@ -1320,6 +1368,10 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
       sshc->actualcode = result;
     }
     else {
+      /* store this original bitmask setup to use later on if we can't figure
+         out a "real" bitmask */
+      sshc->orig_waitfor = data->req.keepon;
+
       state(conn, SSH_STOP);
     }
     break;
@@ -1370,7 +1422,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
          (sftp_err != LIBSSH2_FX_PERMISSION_DENIED)) {
         result = sftp_libssh2_error_to_CURLE(sftp_err);
         state(conn, SSH_SFTP_CLOSE);
-        sshc->actualcode = result;
+        sshc->actualcode = result?result:CURLE_SSH;
         break;
       }
     }
@@ -1387,6 +1439,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
     if(!sshc->sftp_handle) {
       if(libssh2_session_last_errno(sshc->ssh_session) ==
          LIBSSH2_ERROR_EAGAIN) {
+        rc = LIBSSH2_ERROR_EAGAIN;
         break;
       }
       else {
@@ -1394,7 +1447,8 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
         failf(data, "Could not open directory for reading: %s",
               sftp_libssh2_strerror(err));
         state(conn, SSH_SFTP_CLOSE);
-        sshc->actualcode = sftp_libssh2_error_to_CURLE(err);
+        result = sftp_libssh2_error_to_CURLE(err);
+        sshc->actualcode = result?result:CURLE_SSH;
         break;
       }
     }
@@ -1421,6 +1475,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
                                                 PATH_MAX,
                                                 &sshc->readdir_attrs);
     if(sshc->readdir_len == LIBSSH2_ERROR_EAGAIN) {
+      rc = LIBSSH2_ERROR_EAGAIN;
       break;
     }
     if(sshc->readdir_len > 0) {
@@ -1502,7 +1557,8 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
     }
     else if(sshc->readdir_len <= 0) {
       err = libssh2_sftp_last_error(sshc->sftp_session);
-      sshc->actualcode = sftp_libssh2_error_to_CURLE(err);
+      result = sftp_libssh2_error_to_CURLE(err);
+      sshc->actualcode = result?result:CURLE_SSH;
       failf(data, "Could not open remote file for reading: %s :: %d",
             sftp_libssh2_strerror(err),
             libssh2_session_last_errno(sshc->ssh_session));
@@ -1521,6 +1577,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
                                               sshc->readdir_filename,
                                               PATH_MAX);
     if(sshc->readdir_len == LIBSSH2_ERROR_EAGAIN) {
+      rc = LIBSSH2_ERROR_EAGAIN;
       break;
     }
     Curl_safefree(sshc->readdir_linkPath);
@@ -1578,6 +1635,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
   case SSH_SFTP_READDIR_DONE:
     if(libssh2_sftp_closedir(sshc->sftp_handle) ==
        LIBSSH2_ERROR_EAGAIN) {
+      rc = LIBSSH2_ERROR_EAGAIN;
       break;
     }
     sshc->sftp_handle = NULL;
@@ -1601,6 +1659,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
     if(!sshc->sftp_handle) {
       if(libssh2_session_last_errno(sshc->ssh_session) ==
          LIBSSH2_ERROR_EAGAIN) {
+        rc = LIBSSH2_ERROR_EAGAIN;
         break;
       }
       else {
@@ -1608,7 +1667,8 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
         failf(data, "Could not open remote file for reading: %s",
               sftp_libssh2_strerror(err));
         state(conn, SSH_SFTP_CLOSE);
-        sshc->actualcode = sftp_libssh2_error_to_CURLE(err);
+        result = sftp_libssh2_error_to_CURLE(err);
+        sshc->actualcode = result?result:CURLE_SSH;
         break;
       }
     }
@@ -1666,7 +1726,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
           size = to - from + 1;
         }
 
-        libssh2_sftp_seek(conn->proto.sshc.sftp_handle, from);
+        SFTP_SEEK(conn->proto.sshc.sftp_handle, from);
       }
       data->req.size = size;
       data->req.maxdownload = size;
@@ -1700,7 +1760,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
       data->req.maxdownload = attrs.filesize - data->state.resume_from;
       Curl_pgrsSetDownloadSize(data,
                                attrs.filesize - data->state.resume_from);
-      libssh2_sftp_seek(sshc->sftp_handle, data->state.resume_from);
+      SFTP_SEEK(sshc->sftp_handle, data->state.resume_from);
     }
   }
   /* Setup the actual download */
@@ -1814,6 +1874,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
     if(!sshc->ssh_channel) {
       if(libssh2_session_last_errno(sshc->ssh_session) ==
          LIBSSH2_ERROR_EAGAIN) {
+        rc = LIBSSH2_ERROR_EAGAIN;
         break;
       }
       else {
@@ -1860,6 +1921,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
     if(!sshc->ssh_channel) {
       if(libssh2_session_last_errno(sshc->ssh_session) ==
          LIBSSH2_ERROR_EAGAIN) {
+        rc = LIBSSH2_ERROR_EAGAIN;
         break;
       }
       else {
@@ -2011,17 +2073,101 @@ static CURLcode ssh_statemach_act(struct connectdata *conn)
     break;
   }
 
+  if(rc == LIBSSH2_ERROR_EAGAIN) {
+    /* we would block, we need to wait for the socket to be ready (in the
+       right direction too)! */
+    *block = TRUE;
+  }
+
   return result;
 }
+
+/* called by the multi interface to figure out what socket(s) to wait for and
+   for what actions in the DO_DONE, PERFORM and WAITPERFORM states */
+static int ssh_perform_getsock(const struct connectdata *conn,
+                               curl_socket_t *sock, /* points to numsocks
+                                                       number of sockets */
+                               int numsocks)
+{
+#ifdef HAVE_LIBSSH2_SESSION_BLOCK_DIRECTIONS
+  int bitmap = GETSOCK_BLANK;
+  (void)numsocks;
+
+  sock[0] = conn->sock[FIRSTSOCKET];
+
+  if(conn->proto.sshc.waitfor & KEEP_READ)
+    bitmap |= GETSOCK_READSOCK(FIRSTSOCKET);
+
+  if(conn->proto.sshc.waitfor & KEEP_WRITE)
+    bitmap |= GETSOCK_WRITESOCK(FIRSTSOCKET);
+
+  return bitmap;
+#else
+  /* if we don't know the direction we can use the generic *_getsock()
+     function even for the protocol_connect and doing states */
+  return Curl_single_getsock(conn, sock, numsocks);
+#endif
+}
+
+/* Generic function called by the multi interface to figure out what socket(s)
+   to wait for and for what actions during the DOING and PROTOCONNECT states*/
+static int ssh_getsock(struct connectdata *conn,
+                       curl_socket_t *sock, /* points to numsocks number
+                                               of sockets */
+                       int numsocks)
+{
+#ifndef HAVE_LIBSSH2_SESSION_BLOCK_DIRECTIONS
+  (void)conn;
+  (void)sock;
+  (void)numsocks;
+  /* if we don't know any direction we can just play along as we used to and
+     not provide any sensible info */
+  return GETSOCK_BLANK;
+#else
+  /* if we know the direction we can use the generic *_getsock() function even
+     for the protocol_connect and doing states */
+  return ssh_perform_getsock(conn, sock, numsocks);
+#endif
+}
+
+#ifdef HAVE_LIBSSH2_SESSION_BLOCK_DIRECTIONS
+/*
+ * When one of the libssh2 functions has returned LIBSSH2_ERROR_EAGAIN this
+ * function is used to figure out in what direction and stores this info so
+ * that the multi interface can take advantage of it. Make sure to call this
+ * function in all cases so that when it _doesn't_ return EAGAIN we can
+ * restore the default wait bits.
+ */
+static void ssh_block2waitfor(struct connectdata *conn, bool block)
+{
+  struct ssh_conn *sshc = &conn->proto.sshc;
+  int dir;
+  if(block && (dir = libssh2_session_block_directions(sshc->ssh_session))) {
+    /* translate the libssh2 define bits into our own bit defines */
+    sshc->waitfor = ((dir&LIBSSH2_SESSION_BLOCK_INBOUND)?KEEP_READ:0) |
+      ((dir&LIBSSH2_SESSION_BLOCK_OUTBOUND)?KEEP_WRITE:0);
+  }
+  else
+    /* It didn't block or libssh2 didn't reveal in which direction, put back
+       the original set */
+    sshc->waitfor = sshc->orig_waitfor;
+}
+#else
+  /* no libssh2 directional support so we simply don't know */
+#define ssh_block2waitfor(x,y)
+#endif
 
 /* called repeatedly until done from multi.c */
 static CURLcode ssh_multi_statemach(struct connectdata *conn, bool *done)
 {
   struct ssh_conn *sshc = &conn->proto.sshc;
   CURLcode result = CURLE_OK;
+  bool block; /* we store the status and use that to provide a ssh_getsock()
+                 implementation */
 
-  result = ssh_statemach_act(conn);
+  result = ssh_statemach_act(conn, &block);
   *done = (bool)(sshc->state == SSH_STOP);
+  ssh_block2waitfor(conn, block);
 
   return result;
 }
@@ -2031,8 +2177,28 @@ static CURLcode ssh_easy_statemach(struct connectdata *conn)
   struct ssh_conn *sshc = &conn->proto.sshc;
   CURLcode result = CURLE_OK;
 
-  while((sshc->state != SSH_STOP) && !result)
-    result = ssh_statemach_act(conn);
+  while((sshc->state != SSH_STOP) && !result) {
+    bool block;
+    result = ssh_statemach_act(conn, &block);
+
+#ifdef HAVE_LIBSSH2_SESSION_BLOCK_DIRECTIONS
+    if((CURLE_OK == result) && block) {
+      int dir = libssh2_session_block_directions(sshc->ssh_session);
+      curl_socket_t sock = conn->sock[FIRSTSOCKET];
+      curl_socket_t fd_read = CURL_SOCKET_BAD;
+      curl_socket_t fd_write = CURL_SOCKET_BAD;
+      if (LIBSSH2_SESSION_BLOCK_INBOUND & dir) {
+        fd_read = sock;
+      }
+      if (LIBSSH2_SESSION_BLOCK_OUTBOUND & dir) {
+        fd_write = sock;
+      }
+      /* wait for the socket to become ready */
+      Curl_socket_ready(fd_read, fd_write, 1000); /* ignore result */
+    }
+#endif
+
+  }
 
   return result;
 }
@@ -2106,10 +2272,7 @@ static CURLcode ssh_connect(struct connectdata *conn, bool *done)
   }
 
 #ifdef CURL_LIBSSH2_DEBUG
-  libssh2_trace(ssh->ssh_session, LIBSSH2_TRACE_CONN|LIBSSH2_TRACE_TRANS|
-                LIBSSH2_TRACE_KEX|LIBSSH2_TRACE_AUTH|LIBSSH2_TRACE_SCP|
-                LIBSSH2_TRACE_SFTP|LIBSSH2_TRACE_ERROR|
-                LIBSSH2_TRACE_PUBLICKEY);
+  libssh2_trace(ssh->ssh_session, ~0);
   infof(data, "SSH socket: %d\n", sock);
 #endif /* CURL_LIBSSH2_DEBUG */
 
@@ -2245,31 +2408,26 @@ static CURLcode scp_disconnect(struct connectdata *conn)
 static CURLcode ssh_done(struct connectdata *conn, CURLcode status)
 {
   CURLcode result = CURLE_OK;
-  bool done = FALSE;
+  struct SSHPROTO *sftp_scp = conn->data->state.proto.ssh;
 
   if(status == CURLE_OK) {
-    /* run the state-machine */
-    if(conn->data->state.used_interface == Curl_if_multi) {
-      result = ssh_multi_statemach(conn, &done);
-    }
-    else {
-      result = ssh_easy_statemach(conn);
-      done = TRUE;
-    }
+    /* run the state-machine
+
+       TODO: when the multi interface this _really_ should be using the
+       ssh_multi_statemach function but we have no general support for
+       non-blocking DONE operations, not in the multi state machine and with
+       Curl_done() invokes on several places in the code!
+    */
+    result = ssh_easy_statemach(conn);
   }
-  else {
+  else
     result = status;
-    done = TRUE;
-  }
 
-  if(done) {
-    struct SSHPROTO *sftp_scp = conn->data->state.proto.ssh;
+  Curl_safefree(sftp_scp->path);
+  sftp_scp->path = NULL;
+  Curl_pgrsDone(conn);
 
-    Curl_safefree(sftp_scp->path);
-    sftp_scp->path = NULL;
-    Curl_pgrsDone(conn);
-  }
-
+  conn->data->req.keepon = 0; /* clear all bits */
   return result;
 }
 
@@ -2296,6 +2454,9 @@ ssize_t Curl_scp_send(struct connectdata *conn, int sockindex,
   /* libssh2_channel_write() returns int! */
   nwrite = (ssize_t)
     libssh2_channel_write(conn->proto.sshc.ssh_channel, mem, len);
+
+  ssh_block2waitfor(conn, (nwrite == LIBSSH2_ERROR_EAGAIN)?TRUE:FALSE);
+
   if(nwrite == LIBSSH2_ERROR_EAGAIN)
     return 0;
 
@@ -2315,6 +2476,9 @@ ssize_t Curl_scp_recv(struct connectdata *conn, int sockindex,
   /* libssh2_channel_read() returns int */
   nread = (ssize_t)
     libssh2_channel_read(conn->proto.sshc.ssh_channel, mem, len);
+
+  ssh_block2waitfor(conn, (nread == LIBSSH2_ERROR_EAGAIN)?TRUE:FALSE);
+
   return nread;
 }
 
@@ -2426,6 +2590,9 @@ ssize_t Curl_sftp_send(struct connectdata *conn, int sockindex,
   (void)sockindex;
 
   nwrite = libssh2_sftp_write(conn->proto.sshc.sftp_handle, mem, len);
+
+  ssh_block2waitfor(conn, (nwrite == LIBSSH2_ERROR_EAGAIN)?TRUE:FALSE);
+
   if(nwrite == LIBSSH2_ERROR_EAGAIN)
     return 0;
 
@@ -2442,6 +2609,8 @@ ssize_t Curl_sftp_recv(struct connectdata *conn, int sockindex,
   (void)sockindex;
 
   nread = libssh2_sftp_read(conn->proto.sshc.sftp_handle, mem, len);
+
+  ssh_block2waitfor(conn, (nread == LIBSSH2_ERROR_EAGAIN)?TRUE:FALSE);
 
   return nread;
 }

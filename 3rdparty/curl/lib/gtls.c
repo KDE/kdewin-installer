@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: gtls.c,v 1.51 2008-11-11 22:19:27 bagder Exp $
+ * $Id: gtls.c,v 1.53 2008-11-18 09:11:34 danf Exp $
  ***************************************************************************/
 
 /*
@@ -49,6 +49,8 @@
 #include "parsedate.h"
 #include "connect.h" /* for the connect timeout */
 #include "select.h"
+#include "rawstr.h"
+
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
 #include "memory.h"
@@ -343,7 +345,7 @@ Curl_gtls_connect(struct connectdata *conn,
     return CURLE_SSL_CONNECT_ERROR;
 
   if(data->set.ssl.version == CURL_SSLVERSION_SSLv3) {
-    int protocol_priority[] = { GNUTLS_SSL3, 0 };
+    static const int protocol_priority[] = { GNUTLS_SSL3, 0 };
     gnutls_protocol_set_priority(session, protocol_priority);
     if(rc < 0)
       return CURLE_SSL_CONNECT_ERROR;

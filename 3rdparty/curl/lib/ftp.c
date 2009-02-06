@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: ftp.c,v 1.490 2008-11-06 17:19:57 yangtse Exp $
+ * $Id: ftp.c,v 1.494 2008-12-19 21:14:52 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -34,7 +34,6 @@
 #include <unistd.h>
 #endif
 
-#ifndef WIN32
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
@@ -54,7 +53,6 @@
 #include <in.h>
 #include <inet.h>
 #endif
-#endif  /* !WIN32 */
 
 #if (defined(NETWARE) && defined(__NOVELL_LIBC__))
 #undef in_addr_t
@@ -150,9 +148,6 @@ static int ftp_getsock(struct connectdata *conn,
 static CURLcode ftp_doing(struct connectdata *conn,
                                bool *dophase_done);
 static CURLcode ftp_setup_connection(struct connectdata * conn);
-#ifdef USE_SSL
-static CURLcode ftps_setup_connection(struct connectdata * conn);
-#endif
 
 /* easy-to-use macro: */
 #define FTPSENDF(x,y,z)    if((result = Curl_ftpsendf(x,y,z)) != CURLE_OK) \
@@ -176,9 +171,10 @@ const struct Curl_handler Curl_handler_ftp = {
   ftp_doing,                       /* doing */
   ftp_getsock,                     /* proto_getsock */
   ftp_getsock,                     /* doing_getsock */
+  ZERO_NULL,                       /* perform_getsock */
   ftp_disconnect,                  /* disconnect */
-  PORT_FTP,                             /* defport */
-  PROT_FTP                              /* protocol */
+  PORT_FTP,                        /* defport */
+  PROT_FTP                         /* protocol */
 };
 
 
@@ -189,7 +185,7 @@ const struct Curl_handler Curl_handler_ftp = {
 
 const struct Curl_handler Curl_handler_ftps = {
   "FTPS",                               /* scheme */
-  ftps_setup_connection,           /* setup_connection */
+  ftp_setup_connection,            /* setup_connection */
   ftp_do,                          /* do_it */
   ftp_done,                        /* done */
   ftp_nextconnect,                 /* do_more */
@@ -198,9 +194,10 @@ const struct Curl_handler Curl_handler_ftps = {
   ftp_doing,                       /* doing */
   ftp_getsock,                     /* proto_getsock */
   ftp_getsock,                     /* doing_getsock */
+  ZERO_NULL,                       /* perform_getsock */
   ftp_disconnect,                  /* disconnect */
-  PORT_FTPS,                            /* defport */
-  PROT_FTP | PROT_FTPS | PROT_SSL       /* protocol */
+  PORT_FTPS,                       /* defport */
+  PROT_FTP | PROT_FTPS | PROT_SSL  /* protocol */
 };
 #endif
 
@@ -220,6 +217,7 @@ const struct Curl_handler Curl_handler_ftp_proxy = {
   ZERO_NULL,                            /* doing */
   ZERO_NULL,                            /* proto_getsock */
   ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* perform_getsock */
   ZERO_NULL,                            /* disconnect */
   PORT_FTP,                             /* defport */
   PROT_HTTP                             /* protocol */
@@ -242,6 +240,7 @@ const struct Curl_handler Curl_handler_ftps_proxy = {
   ZERO_NULL,                            /* doing */
   ZERO_NULL,                            /* proto_getsock */
   ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* perform_getsock */
   ZERO_NULL,                            /* disconnect */
   PORT_FTPS,                            /* defport */
   PROT_HTTP                             /* protocol */
@@ -2190,10 +2189,6 @@ static CURLcode ftp_state_size_resp(struct connectdata *conn,
   curl_off_t filesize;
   char *buf = data->state.buffer;
 
-  if((instate != FTP_STOR_SIZE) && (ftpcode == 550))
-    /* the file doesn't exist and we're not about to upload */
-    return CURLE_REMOTE_FILE_NOT_FOUND;
-
   /* get the size from the ascii string: */
   filesize = (ftpcode == 213)?curlx_strtoofft(buf+4, NULL, 0):-1;
 
@@ -2687,24 +2682,9 @@ static CURLcode ftp_statemach_act(struct connectdata *conn)
       break;
 
     case FTP_PBSZ:
-      /* FIX: check response code */
-
-      /* For TLS, the data connection can have one of two security levels.
-
-      1) Clear (requested by 'PROT C')
-
-      2)Private (requested by 'PROT P')
-      */
-      if(!conn->ssl[SECONDARYSOCKET].use) {
-        NBFTPSENDF(conn, "PROT %c",
-                   data->set.ftp_ssl == CURLUSESSL_CONTROL ? 'C' : 'P');
-        state(conn, FTP_PROT);
-      }
-      else {
-        result = ftp_state_pwd(conn);
-        if(result)
-          return result;
-      }
+      NBFTPSENDF(conn, "PROT %c",
+                 data->set.ftp_ssl == CURLUSESSL_CONTROL ? 'C' : 'P');
+      state(conn, FTP_PROT);
 
       break;
 
@@ -3169,7 +3149,6 @@ static CURLcode ftp_done(struct connectdata *conn, CURLcode status,
   case CURLE_UPLOAD_FAILED:
   case CURLE_REMOTE_ACCESS_DENIED:
   case CURLE_FILESIZE_EXCEEDED:
-  case CURLE_REMOTE_FILE_NOT_FOUND:
     /* the connection stays alive fine even though this happened */
     /* fall-through */
   case CURLE_OK: /* doesn't affect the control connection's status */
@@ -4183,15 +4162,5 @@ static CURLcode ftp_setup_connection(struct connectdata * conn)
 
   return CURLE_OK;
 }
-
-#ifdef USE_SSL
-static CURLcode ftps_setup_connection(struct connectdata * conn)
-{
-  struct SessionHandle *data = conn->data;
-
-  conn->ssl[SECONDARYSOCKET].use = data->set.ftp_ssl != CURLUSESSL_CONTROL;
-  return ftp_setup_connection(conn);
-}
-#endif
 
 #endif /* CURL_DISABLE_FTP */
