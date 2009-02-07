@@ -267,7 +267,7 @@
 @pkgnotes kdebase-workspace-* parts of the KDE desktop package
 @pkgnotes kdeedu-* KDE education apps
 @pkgnotes kdegames-* KDE games
-@pkgnotes kdegraphics-* Graphics applications for KDE
+@pkgnotes kdegraphics-* Graphics applications (including Okular)
 @pkgnotes kdelibs-* KDE libraries (support applications)
 @pkgnotes kdepim-* UNSTABLE KDE Personal Informations Suite
 @pkgnotes kdepimlibs-* UNSTABLE KDE PIM libraries
