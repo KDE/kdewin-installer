@@ -88,9 +88,9 @@ QMessageBox::StandardButton InstallerDialogs::downloadFailed(const QString &url,
 
 bool InstallerDialogs::downloadMirrorListFailed(const QUrl &url1, const QUrl &url2)
 {
-    QString text = tr("<p>The mirror list could not be download from any of the following locations:"
+    QString text = tr("<p>The mirror list could not be downloaded from any of the following locations:"
         "<ul><li><a href=\"%1\">%1</a></li><li><a href=\"%2\">%2</a></li></ul></p>"
-        "<p>You max check your proxy settings"
+        "<p>You may check your proxy settings"
         " and/or inspect the installer log file located at<br><a href=\"%3\">%3</a></p>").arg(url1.toString()).arg(url2.toString()).arg(Settings::instance().logFile());
     return QMessageBox::critical ( 
                 m_parent, 
