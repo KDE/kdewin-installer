@@ -39,16 +39,16 @@ class BZip2IODevice::Private
     Private(BZip2IODevice *parent_, QIODevice *dev, int bs)
   : parent(parent_),
     device(dev),
-    iBufSize(1024*1024),
+    iMaxBufSize(1024*1024),
     initialized(false),
     decomressStreamEnd(false),
     blocksize(bs),
-    data(0)
-    {}
-    ~Private()
+    iCurPos(0)
     {
-      delete[] data;
+       buffer.resize(iMaxBufSize);
     }
+    ~Private()
+    {}
 
     bool initializeCompress();
     qint64 doCompress(const char *in, qint64 iLen);
@@ -60,12 +60,13 @@ class BZip2IODevice::Private
 
     BZip2IODevice  *parent;
     QIODevice      *device;
-    unsigned int    iBufSize;
+    QByteArray      buffer;
+    unsigned int    iCurPos;
+    unsigned int    iMaxBufSize;
     bool            initialized;
     bool            decomressStreamEnd;
     unsigned int    blocksize;
     bz_stream       stream;
-    char           *data;
 };
 
 bool BZip2IODevice::Private::initializeCompress()
@@ -73,7 +74,7 @@ bool BZip2IODevice::Private::initializeCompress()
   if(initialized)
     return true;
   memset(&stream, 0, sizeof(stream));
-  int blockSize = (blocksize > 0 && blocksize < 10) ? blocksize : 5;
+  int blockSize = (blocksize > 0 && blocksize < 10) ? blocksize : 10;
   int ret = BZ2_bzCompressInit (&stream, blockSize, 0, 0);
   if(ret != BZ_OK) {
     parent->setErrorString(QString(QLatin1String("Error initializing bzip2: %1")).arg(bzipError2String(ret)));
@@ -100,13 +101,12 @@ qint64 BZip2IODevice::Private::doCompress(const char *in, qint64 iMaxLen)
     return -1;
   }
 
-  QByteArray outBuf(iBufSize, '\0');
   stream.next_in  = const_cast<char*>(in);
   stream.avail_in = iMaxLen;
 
   do {
-    stream.next_out = outBuf.data();
-    stream.avail_out = outBuf.size();
+    stream.next_out = buffer.data();
+    stream.avail_out = buffer.size();
 
     ret = BZ2_bzCompress(&stream, BZ_RUN);
     if(ret != BZ_RUN_OK) {
@@ -114,9 +114,9 @@ qint64 BZip2IODevice::Private::doCompress(const char *in, qint64 iMaxLen)
       parent->setErrorString(QString(QLatin1String("Error executing BZ2_bzCompress: %1")).arg(bzipError2String(ret)));
       return false;
     }
-    int iBytesToWrite = outBuf.size() - stream.avail_out;
+    int iBytesToWrite = buffer.size() - stream.avail_out;
     if(iBytesToWrite) {
-      if(device->write(outBuf.constData(), iBytesToWrite) != iBytesToWrite) {
+      if(device->write(buffer.constData(), iBytesToWrite) != iBytesToWrite) {
         finishCompress();
         parent->setErrorString(QLatin1String("Error writing to QIODevice"));
         return -1;
@@ -133,18 +133,18 @@ bool BZip2IODevice::Private::finishCompress()
     return true;
 
   int ret = -1;
-  QByteArray outBuf(iBufSize, '\0');
+
   do {
-    stream.next_out = outBuf.data();
-    stream.avail_out = outBuf.size();
+    stream.next_out = buffer.data();
+    stream.avail_out = buffer.size();
     ret = BZ2_bzCompress(&stream, BZ_FINISH);
     if(ret != BZ_FINISH_OK && ret != BZ_STREAM_END) {
       finishCompress();
       parent->setErrorString(QString(QLatin1String("Error executing BZ2_bzCompress: %1")).arg(bzipError2String(ret)));
       return false;
     }
-    int iBytesToWrite = outBuf.size() - stream.avail_out;
-    if(device->write(outBuf.constData(), iBytesToWrite) != iBytesToWrite) {
+    int iBytesToWrite = buffer.size() - stream.avail_out;
+    if(device->write(buffer.constData(), iBytesToWrite) != iBytesToWrite) {
       finishCompress();
       parent->setErrorString(QLatin1String("Error writing to QIODevice"));
       return false;
@@ -192,14 +192,13 @@ qint64 BZip2IODevice::Private::doDecompress(char *out, qint64 iMaxLen)
 
   stream.next_out  = out;
   stream.avail_out = iMaxLen;
-  if(!data)
-    data = new char[iBufSize];
+
   do {
     if(ret != BZ_STREAM_END && stream.avail_in == 0) {
-      qint64 iReadCnt = device->read(data, iBufSize);
+      qint64 iReadCnt = device->read(buffer.data(), buffer.size());
       if(iReadCnt <= 0)
         return -1;
-      stream.next_in = data;
+      stream.next_in = buffer.data();
       stream.avail_in = iReadCnt;
     }
 
@@ -266,7 +265,8 @@ BZip2IODevice::~BZip2IODevice()
 
 void BZip2IODevice::setBufferSize(unsigned int size)
 {
-  d->iBufSize = size > 1024 ? size : 1024;
+  d->iMaxBufSize = size > 1024 ? size : 1024;
+  d->buffer.resize(d->iMaxBufSize);
 }
 
 void BZip2IODevice::setBlockSize(unsigned int size)

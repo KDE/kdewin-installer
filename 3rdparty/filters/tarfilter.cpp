@@ -255,8 +255,7 @@ bool TarFilter::Private::getHeader(FileInformations &infos)
     if(!tph2fi(infos))
       return false;
     int len = qstrlen(fn);
-    QString fileName = codec->toUnicode(fn.constData(), len);
-    infos.fileName = fileName;
+    infos.fileName = codec->toUnicode(fn.constData(), len);
   }
 
   return true;
@@ -293,7 +292,7 @@ bool TarFilter::Private::copyData(QIODevice *in, QIODevice *out, qint64 iSize)
   while(iSize > 0) {
     iBytesToRead = iSize > iBufSize ? iBufSize : iSize;
 
-    QByteArray ba = in->read(iBytesToRead);
+    const QByteArray ba = in->read(iBytesToRead);
     if(ba.size() == 0) {
       lastError = QString(QLatin1String("Could not read %1 bytes from QIODevice")).arg(iBytesToRead);
       return false;
