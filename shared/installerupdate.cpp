@@ -145,7 +145,7 @@ bool InstallerUpdate::run()
         QProcess::startDetached(m_localFilePath,QStringList() << "--finish-update" << m_currentInstallerFilePath << processID);
         QCoreApplication::quit();
         exit(0);
-		// never reached;
+        // never reached;
     }
     return false;
 }

@@ -312,25 +312,25 @@ bool PackageList::readFromDirectory(const QString &dir, bool append)
     if (!append)
         m_packageList.clear();
 
-	QStringList files;
-	QDir d(dir);
+    QStringList files;
+    QDir d(dir);
 
-	if (!d.exists())
-		return false;
+    if (!d.exists())
+        return false;
 
-	d.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
-	d.setSorting(QDir::Size | QDir::Reversed);
+    d.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
+    d.setSorting(QDir::Size | QDir::Reversed);
 
-	QFileInfoList list = d.entryInfoList();
-	for (int i = 0; i < list.size(); ++i) 
-	{
-		QFileInfo fi = list.at(i);
-		files << fi.fileName();
-	}
+    QFileInfoList list = d.entryInfoList();
+    for (int i = 0; i < list.size(); ++i) 
+    {
+        QFileInfo fi = list.at(i);
+        files << fi.fileName();
+    }
     files = filterFileName(files);
     addPackagesFromFileNames(files);
 
-	emit configLoaded();
+    emit configLoaded();
     m_parserConfigFileFound = false;
     return true;
 }

@@ -570,9 +570,9 @@ bool Package::downloadItem(Package::Type type)
             
     }
 
-	// keep download checksum generating in sync with package
-	Downloader::instance()->setCheckSumType(m_hashType.type());
-	QByteArray archiveCheckSum;
+    // keep download checksum generating in sync with package
+    Downloader::instance()->setCheckSumType(m_hashType.type());
+    QByteArray archiveCheckSum;
 
     /*
     case 2. an md5 or sha1 checksum is provided in the central package configuration
@@ -590,10 +590,10 @@ bool Package::downloadItem(Package::Type type)
             ret = Downloader::instance()->fetch(url, fn);
             if (!ret || Downloader::instance()->result() != Downloader::Finished)
                 return setError(archiveDownloadError);
-		    archiveCheckSum = Downloader::instance()->checkSum().toHex();
+            archiveCheckSum = Downloader::instance()->checkSum().toHex();
         }
         else 
-        	archiveCheckSum = m_hashType.hash(fn).toHex();
+            archiveCheckSum = m_hashType.hash(fn).toHex();
 
         if( archiveCheckSum == item(type).checkSum()) 
             return true;
@@ -602,7 +602,7 @@ bool Package::downloadItem(Package::Type type)
         ret = Downloader::instance()->fetch(url, fn);
         if (!ret || Downloader::instance()->result() != Downloader::Finished)
             return setError(archiveDownloadError); 
-		archiveCheckSum = Downloader::instance()->checkSum().toHex();
+        archiveCheckSum = Downloader::instance()->checkSum().toHex();
 
         if( archiveCheckSum == item(type).checkSum() ) 
             return true;
@@ -627,8 +627,7 @@ bool Package::downloadItem(Package::Type type)
 
     // the checksum sum may not be present from older downloads, try downloading first. 
     // This prevents redownloading the archive unconditionally when no checksum is present 
-    if (!QFile::exists(hashFileName)) {
-        qDebug() << __FUNCTION__ << " downloading checksum file";
+    if (!QFile::exists(hashFileName)) {        qDebug() << __FUNCTION__ << " downloading checksum file";
         ret = Downloader::instance()->fetch(hashUrl, hashFileName);
         if (!ret || Downloader::instance()->result() != Downloader::Finished)
             return setError(hashDownloadError); 
@@ -643,10 +642,10 @@ bool Package::downloadItem(Package::Type type)
         ret = Downloader::instance()->fetch(url, fn);
         if (!ret || Downloader::instance()->result() != Downloader::Finished)
             return setError(archiveDownloadError); 
-	    archiveCheckSum = Downloader::instance()->checkSum().toHex();
+        archiveCheckSum = Downloader::instance()->checkSum().toHex();
     }
-	else    
-    	archiveCheckSum = m_hashType.hash( fn ).toHex();
+    else    
+        archiveCheckSum = m_hashType.hash( fn ).toHex();
  
     if( hashFile.getHash() == archiveCheckSum ) {
         qDebug() << __FUNCTION__ << "checksum is correct - no need to redownload file";
