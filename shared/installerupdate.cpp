@@ -67,7 +67,7 @@ InstallerUpdate::~InstallerUpdate()
 {
 }
 
-void InstallerUpdate::setCurrentVersion(const QString version)
+void InstallerUpdate::setCurrentVersion(const QString &version)
 { 
     if (!version.contains("-"))
         m_currentVersion = version + "-0";
@@ -75,7 +75,7 @@ void InstallerUpdate::setCurrentVersion(const QString version)
         m_currentVersion = version;
 }
 
-void InstallerUpdate::setNewVersion(const QString version) 
+void InstallerUpdate::setNewVersion(const QString &version) 
 {
     if (!version.contains("-"))
         m_newVersion = version + "-0";

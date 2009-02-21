@@ -35,9 +35,9 @@ class InstallerUpdate
         ~InstallerUpdate();
 
         /// set current installer version
-        void setCurrentVersion(const QString version);
+        void setCurrentVersion(const QString &version);
         /// set new installer version
-        void setNewVersion(const QString version);
+        void setNewVersion(const QString &version);
         /// set url for new update
         void setUrl(const QUrl &url);
         /// check if the provided version is newer 
