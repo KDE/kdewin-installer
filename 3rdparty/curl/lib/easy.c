@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: easy.c,v 1.132 2009-01-08 00:31:49 danf Exp $
+ * $Id: easy.c,v 1.133 2009-01-29 20:32:31 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -111,7 +111,7 @@ static void win32_cleanup(void)
   WSACleanup();
 #endif
 #ifdef USE_WINDOWS_SSPI
-  Curl_ntlm_global_cleanup();
+  Curl_sspi_global_cleanup();
 #endif
 }
 
@@ -156,7 +156,7 @@ static CURLcode win32_init(void)
 
 #ifdef USE_WINDOWS_SSPI
   {
-    CURLcode err = Curl_ntlm_global_init();
+    CURLcode err = Curl_sspi_global_init();
     if (err != CURLE_OK)
       return err;
   }

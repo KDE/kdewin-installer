@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: http.c,v 1.409 2008-12-20 22:47:49 bagder Exp $
+ * $Id: http.c,v 1.412 2009-02-24 08:30:09 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -516,6 +516,10 @@ output_auth_headers(struct connectdata *conn,
   struct SessionHandle *data = conn->data;
   const char *auth=NULL;
   CURLcode result = CURLE_OK;
+#ifdef HAVE_GSSAPI
+  struct negotiatedata *negdata = proxy?
+    &data->state.proxyneg:&data->state.negotiate;
+#endif
 
 #ifndef CURL_DISABLE_CRYPTO_AUTH
   (void)request;
@@ -524,14 +528,13 @@ output_auth_headers(struct connectdata *conn,
 
 #ifdef HAVE_GSSAPI
   if((authstatus->picked == CURLAUTH_GSSNEGOTIATE) &&
-     data->state.negotiate.context &&
-     !GSS_ERROR(data->state.negotiate.status)) {
+     negdata->context && !GSS_ERROR(negdata->status)) {
     auth="GSS-Negotiate";
     result = Curl_output_negotiate(conn, proxy);
     if(result)
       return result;
     authstatus->done = TRUE;
-    data->state.negotiate.state = GSS_AUTHSENT;
+    negdata->state = GSS_AUTHSENT;
   }
   else
 #endif
@@ -1343,6 +1346,8 @@ CURLcode Curl_proxyCONNECT(struct connectdata *conn,
         char *host=(char *)"";
         const char *proxyconn="";
         const char *useragent="";
+        const char *http = (conn->proxytype == CURLPROXY_HTTP_1_0) ?
+          "1.0" : "1.1";
 
         if(!checkheaders(data, "Host:")) {
           host = aprintf("Host: %s\r\n", host_port);
@@ -1363,12 +1368,12 @@ CURLcode Curl_proxyCONNECT(struct connectdata *conn,
         /* BLOCKING */
         result =
           add_bufferf(req_buffer,
-                      "CONNECT %s:%d HTTP/1.0\r\n"
+                      "CONNECT %s:%d HTTP/%s\r\n"
                       "%s"  /* Host: */
                       "%s"  /* Proxy-Authorization */
                       "%s"  /* User-Agent */
                       "%s", /* Proxy-Connection */
-                      hostname, remote_port,
+                      hostname, remote_port, http,
                       host,
                       conn->allocptr.proxyuserpwd?
                       conn->allocptr.proxyuserpwd:"",
@@ -2271,7 +2276,7 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
       if(checkprefix("ftp://", ppath) || checkprefix("ftps://", ppath)) {
         char *p = strstr(ppath, ";type=");
         if(p && p[6] && p[7] == 0) {
-          switch (toupper((int)((unsigned char)p[6]))) {
+          switch (Curl_raw_toupper(p[6])) {
           case 'A':
           case 'D':
           case 'I':

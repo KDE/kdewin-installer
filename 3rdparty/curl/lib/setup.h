@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: setup.h,v 1.162 2008-11-17 14:24:15 yangtse Exp $
+ * $Id: setup.h,v 1.163 2009-02-12 20:48:44 danf Exp $
  ***************************************************************************/
 
 /*
@@ -455,7 +455,7 @@ int netware_init(void);
 #endif
 
 #if !defined(CURL_DISABLE_HTTP) && !defined(CURL_DISABLE_NTLM)
-#if defined(USE_SSLEAY) || defined(USE_WINDOWS_SSPI)
+#if defined(USE_SSLEAY) || defined(USE_WINDOWS_SSPI) || defined(USE_GNUTLS)
 #define USE_NTLM
 #endif
 #endif

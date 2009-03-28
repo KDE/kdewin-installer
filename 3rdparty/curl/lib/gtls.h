@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: gtls.h,v 1.9 2008-10-17 22:33:08 danf Exp $
+ * $Id: gtls.h,v 1.10 2009-02-12 20:48:43 danf Exp $
  ***************************************************************************/
 
 #ifdef USE_GNUTLS
@@ -47,6 +47,7 @@ ssize_t Curl_gtls_recv(struct connectdata *conn, /* connection data */
 void Curl_gtls_session_free(void *ptr);
 size_t Curl_gtls_version(char *buffer, size_t size);
 int Curl_gtls_shutdown(struct connectdata *conn, int sockindex);
+int Curl_gtls_seed(struct SessionHandle *data);
 
 /* API setup for GnuTLS */
 #define curlssl_init Curl_gtls_init

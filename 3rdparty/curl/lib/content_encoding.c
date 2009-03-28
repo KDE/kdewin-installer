@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: content_encoding.c,v 1.28 2008-09-06 05:29:05 yangtse Exp $
+ * $Id: content_encoding.c,v 1.31 2009-02-17 12:14:52 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -133,9 +133,10 @@ inflate_stream(struct connectdata *conn,
       /* some servers seem to not generate zlib headers, so this is an attempt
          to fix and continue anyway */
 
-      (void) inflateEnd(z);	/* don't care about the return code */
+      (void) inflateEnd(z);     /* don't care about the return code */
       if(inflateInit2(z, -MAX_WBITS) != Z_OK) {
-        return process_zlib_error(conn, z);
+        free(decomp);
+        return exit_zlib(z, &k->zlib_init, process_zlib_error(conn, z));
       }
       z->next_in = orig_in;
       z->avail_in = nread;

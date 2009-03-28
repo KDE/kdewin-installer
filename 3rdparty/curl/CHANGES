@@ -6,6 +6,228 @@
 
                                   Changelog
 
+Version 7.19.4 (3 March 2009)
+
+Daniel Stenberg (3 Mar 2009)
+- David Kierznowski notified us about a security flaw
+  (http://curl.haxx.se/docs/adv_20090303.html also known as CVE-2009-0037) in
+  which previous libcurl versions (by design) can be tricked to access an
+  arbitrary local/different file instead of a remote one when
+  CURLOPT_FOLLOWLOCATION is enabled. This flaw is now fixed in this release
+  together this the addition of two new setopt options for controlling this
+  new behavior:
+
+  o CURLOPT_REDIR_PROTOCOLS controls what protocols libcurl is allowed to
+  follow to when CURLOPT_FOLLOWLOCATION is enabled. By default, this option
+  excludes the FILE and SCP protocols and thus you nee to explicitly allow
+  them in your app if you really want that behavior.
+
+  o CURLOPT_PROTOCOLS controls what protocol(s) libcurl is allowed to fetch
+  using the primary URL option. This is useful if you want to allow a user or
+  other outsiders control what URL to pass to libcurl and yet not allow all
+  protocols libcurl may have been built to support.
+
+Daniel Stenberg (27 Feb 2009)
+- Senthil Raja Velu reported a problem when CURLOPT_INTERFACE and
+  CURLOPT_LOCALPORT were used together (the local port bind failed), and
+  Markus Koetter provided the fix!
+
+Daniel Stenberg (25 Feb 2009)
+- As Daniel Fandrich figured out, we must do the GnuTLS initing in the
+  curl_global_init() function to properly maintain the performing functions
+  thread-safe. We've previously (28 April 2007) moved the init to a later time
+  just to avoid it to fail very early when libgcrypt dislikes the situation,
+  but that move was bad and the fix should rather be in libgcrypt or
+  elsewhere.
+  
+Daniel Stenberg (24 Feb 2009)
+- Brian J. Murrell found out that Negotiate proxy authentication didn't work.
+  It happened because the code used the struct for server-based auth all the
+  time for both proxy and server auth which of course was wrong.
+
+Daniel Stenberg (23 Feb 2009)
+- After a bug reported by James Cheng I've made curl_easy_getinfo() for
+  CURLINFO_CONTENT_LENGTH_DOWNLOAD and CURLINFO_CONTENT_LENGTH_UPLOAD return
+  -1 if the sizes aren't know. Previously these returned 0, make it impossible
+  to detect the difference between actually zero and unknown.
+
+Yang Tse (23 Feb 2009)
+- Daniel Johnson provided a shell script that will perform all the steps needed
+  to build a Mac OS X fat ppc/i386 or ppc64/x86_64 libcurl.framework
+
+Daniel Stenberg (23 Feb 2009)
+- I renamed everything in the windows builds files that used the name 'curllib'
+  to the proper 'libcurl' as clearly this caused confusion.
+
+Yang Tse (20 Feb 2009)
+- Do not halt compilation when using VS2008 to build a Windows 2000 target.
+
+Daniel Stenberg (20 Feb 2009)
+- Linus Nielsen Feltzing reported and helped me repeat and fix a problem with
+  FTP with the multi interface: when a transfer fails, like when aborted by a
+  write callback, the control connection was wrongly closed and thus not
+  re-used properly.
+
+  This change is also an attempt to cleanup the code somewhat in this area, as
+  now the FTP code attempts to keep (better) track on pending responses
+  necessary to get read in ftp_done().
+
+Daniel Stenberg (19 Feb 2009)
+- Patrik Thunstrom reported a problem and helped me repeat it. It turned out 
+  libcurl did a superfluous 1000ms wait when doing SFTP downloads!
+
+  We read data with libssh2 while doing the "DO" operation for SFTP and then
+  when we were about to start getting data for the actual file part, the
+  "TRANSFER" part, we waited for socket action (in 1000ms) before doing a
+  libssh2-read. But in this case libssh2 had already read and buffered the
+  data so we ended up always just waiting 1000ms before we get working on the
+  data!
+
+Patrick Monnerat (18 Feb 2009)
+- FTP downloads (i.e.: RETR) ending with code 550 now return error
+  CURLE_REMOTE_FILE_NOT_FOUND instead of CURLE_FTP_COULDNT_RETR_FILE.
+
+Daniel Stenberg (17 Feb 2009)
+- Kamil Dudka made NSS-powered builds compile and run again!
+
+- A second follow-up change by Andre Guibert de Bruet to fix a related memory
+  leak like that fixed on the 14th. When zlib returns failure, we need to
+  cleanup properly before returning error.
+
+- CURLOPT_FTP_CREATE_MISSING_DIRS can now be set to 2 in addition to 1 for
+  plain FTP connections, and it will then allow MKD to fail once and retry the
+  CWD afterwards. This is especially useful if you're doing many simultanoes
+  connections against the same server and they all have this option enabled,
+  as then CWD may first fail but then another connection does MKD before this
+  connection and thus MKD fails but trying CWD works! The numbers can
+  (should?) now be set with the convenience enums now called
+  CURLFTP_CREATE_DIR and CURLFTP_CREATE_DIR_RETRY.
+
+  Tests has proven that if you're making an application that uploads a set of
+  files to an ftp server, you will get a noticable gain in speed if you're
+  using multiple connections and this option will be then be very useful.
+
+Daniel Stenberg (14 Feb 2009)
+- Andre Guibert de Bruet found and fixed a memory leak in the content encoding
+  code, which could happen on libz errors.
+
+Daniel Fandrich (12 Feb 2009)
+- Added support for Digest and NTLM authentication using GnuTLS.
+
+Daniel Stenberg (11 Feb 2009)
+- CURLINFO_CONDITION_UNMET was added to allow an application to get to know if
+  the condition in the previous request was unmet. This is typically a time
+  condition set with CURLOPT_TIMECONDITION and was previously not possible to
+  reliably figure out. From bug report #2565128
+  (http://curl.haxx.se/bug/view.cgi?id=2565128) filed by Jocelyn Jaubert.
+
+Daniel Fandrich (4 Feb 2009)
+- Don't add the standard /usr/lib or /usr/include paths to LDFLAGS and CPPFLAGS
+  (respectively) when --with-ssl=/usr is used (patch based on FreeBSD).
+
+- Added an explicit buffer limit check in msdosify() (patch based on FreeBSD).
+  This couldn't ever overflow in curl, but might if the code were used
+  elsewhere or under different conditions.
+
+Daniel Stenberg (3 Feb 2009)
+- Hidemoto Nakada provided a small fix that makes it possible to get the
+  CURLINFO_CONTENT_LENGTH_DOWNLOAD size from file:// "transfers" with
+  CURLOPT_NOBODY set true.
+
+Daniel Stenberg (2 Feb 2009)
+- Patrick Scott found a rather large memory leak when using the multi
+  interface and setting CURLMOPT_MAXCONNECTS to something less than the number
+  of handles you add to the multi handle. All the connections that didn't fit
+  in the cache would not be properly disconnected nor freed!
+
+- Craig A West brought us: libcurl now defaults to do CONNECT with HTTP
+  version 1.1 instead of 1.0 like before. This change also introduces the new
+  proxy type for libcurl called 'CURLPROXY_HTTP_1_0' that then allows apps to
+  switch (back) to CONNECT 1.0 requests. The curl tool also got a --proxy1.0
+  option that works exactly like --proxy but sets CURLPROXY_HTTP_1_0.
+
+  I updated all test cases cases that use CONNECT and I tried to do some using
+  --proxy1.0 and some updated to do CONNECT 1.1 to get both versions run.
+
+Daniel Stenberg (31 Jan 2009)
+- When building with c-ares 1.6.1 (not yet released) or later and IPv6 support
+  enabled, we can now take advantage of its brand new AF_UNSPEC support in
+  ares_gethostbyname(). This makes test case 241 finally run fine for me with
+  this setup since it now parses the "::1 ip6-localhost" line fine in my
+  /etc/hosts file!
+
+Daniel Stenberg (30 Jan 2009)
+- Scott Cantor filed bug report #2550061
+  (http://curl.haxx.se/bug/view.cgi?id=2550061) mentioning that I failed to
+  properly make sure that the VC9 makefiles got included in the latest
+  release. I've now fixed the release script and verified it so next release
+  will hopefully include them properly!
+
+Daniel Fandrich (30 Jan 2009)
+- Fixed --disable-proxy for FTP and SOCKS. Thanks to Daniel Egger for
+  reporting.
+
+Yang Tse (29 Jan 2009)
+- Introduced curl_sspi.c and curl_sspi.h for the implementation of functions
+  Curl_sspi_global_init() and Curl_sspi_global_cleanup() which previously were
+  named Curl_ntlm_global_init() and Curl_ntlm_global_cleanup() in http_ntlm.c
+  Also adjusted socks_sspi.c to remove the link-time dependency on the Windows
+  SSPI library using it now in the same way as it was done in http_ntlm.c.
+
+Daniel Stenberg (28 Jan 2009)
+- Markus Moeller introduced two new options to libcurl:
+  CURLOPT_SOCKS5_GSSAPI_SERVICE and CURLOPT_SOCKS5_GSSAPI_NEC to allow libcurl
+  to do GSS-style authentication with SOCKS5 proxies. The curl tool got the
+  options called --socks5-gssapi-service and --socks5-gssapi-nec to enable
+  these.
+
+Daniel Stenberg (26 Jan 2009)
+- Chad Monroe provided the new CURLOPT_TFTP_BLKSIZE option that allows an app
+  to set desired block size to use for TFTP transfers instead of the default
+  512 bytes.
+
+- The "-no_ticket" option was introduced in Openssl0.9.8j. It's a flag to
+  disable "rfc4507bis session ticket support".  rfc4507bis was later turned
+  into the proper RFC5077 it seems: http://tools.ietf.org/html/rfc5077
+
+  The enabled extension concerns the session management. I wonder how often
+  libcurl stops a connection and then resumes a TLS session. also, sending the
+  session data is some overhead. .I suggest that you just use your proposed
+  patch (which explicitly disables TICKET).
+
+  If someone writes an application with libcurl and openssl who wants to
+  enable the feature, one can do this in the SSL callback.
+
+  Sharad Gupta brought this to my attention. Peter Sylvester helped me decide
+  on the proper action.
+
+- Alexey Borzov filed bug report #2535504
+  (http://curl.haxx.se/bug/view.cgi?id=2535504) pointing out that realms with
+  quoted quotation marks in HTTP Digest headers didn't work. I've now added 
+  test case 1095 that verifies my fix.
+
+- Craig A West brought CURLOPT_NOPROXY and the corresponding --noproxy option.
+  They basically offer the same thing the NO_PROXY environment variable only
+  offered previously: list a set of host names that shall not use the proxy
+  even if one is specified.
+
+Daniel Fandrich (20 Jan 2009)
+- Call setlocale() for libtest tests to test the effects of locale-induced
+  libc changes on libcurl.
+
+- Fixed a couple more locale-dependent toupper conversions, mainly for
+  clarity.  This does fix one problem that causes ;type=i FTP URLs
+  to fail in the Turkish locale when CURLOPT_PROXY_TRANSFER_MODE is
+  used (test case 561)
+
+- Added tests 561 and 1091 through 1094 to test various combinations
+  of ;type= and ;mode= URLs that could potentially fail in the Turkish
+  locale.
+
+Daniel Stenberg (20 Jan 2009)
+- Lisa Xu pointed out that the ssh.obj file was missing from the
+  lib/Makefile.vc6 file (and thus from the vc8 and vc9 ones too).
+
 Version 7.19.3 (19 January 2009)
 
 Daniel Stenberg (16 Jan 2009)

@@ -449,7 +449,7 @@
 /* if you have the function PK11_CreateGenericObject */
 #undef HAVE_PK11_CREATEGENERICOBJECT
 
-/* Define to 1 if you have the `poll' function. */
+/* Define to 1 if you have a working poll function. */
 #undef HAVE_POLL
 
 /* If you have a fine poll */

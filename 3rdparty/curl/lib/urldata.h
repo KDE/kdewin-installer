@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: urldata.h,v 1.401 2009-01-13 06:44:03 bagder Exp $
+ * $Id: urldata.h,v 1.409 2009-03-02 23:05:31 bagder Exp $
  ***************************************************************************/
 
 /* This file is for lib internal stuff */
@@ -269,13 +269,7 @@ typedef enum {
 } curlntlm;
 
 #ifdef USE_WINDOWS_SSPI
-/* When including these headers, you must define either SECURITY_WIN32
- * or SECURITY_KERNEL, indicating who is compiling the code.
- */
-#define SECURITY_WIN32 1
-#include <security.h>
-#include <sspi.h>
-#include <rpc.h>
+#include "curl_sspi.h"
 #endif
 
 #if defined(CURL_DOES_CONVERSIONS) && defined(HAVE_ICONV)
@@ -444,6 +438,9 @@ struct ftp_conn {
   size_t nread_resp; /* number of bytes currently read of a server response */
   char *linestart_resp; /* line start pointer for the FTP server response
                            reader function */
+  bool pending_resp;  /* set TRUE when a server response is pending or in
+                         progress, and is cleared once the last response is
+                         read */
 
   int count1; /* general purpose counter for the state machine */
   int count2; /* general purpose counter for the state machine */
@@ -894,22 +891,30 @@ struct connectdata {
   long connectindex; /* what index in the connection cache connects index this
                         particular struct has */
   long protocol; /* PROT_* flags concerning the protocol set */
-#define PROT_MISSING (1<<0)
-#define PROT_HTTP    (1<<2)
-#define PROT_HTTPS   (1<<3)
-#define PROT_FTP     (1<<4)
-#define PROT_TELNET  (1<<5)
-#define PROT_DICT    (1<<6)
-#define PROT_LDAP    (1<<7)
-#define PROT_FILE    (1<<8)
-#define PROT_FTPS    (1<<9)
-#define PROT_SSL     (1<<10) /* protocol requires SSL */
-#define PROT_TFTP    (1<<11)
-#define PROT_SCP     (1<<12)
-#define PROT_SFTP    (1<<13)
+#define PROT_HTTP    CURLPROTO_HTTP
+#define PROT_HTTPS   CURLPROTO_HTTPS
+#define PROT_FTP     CURLPROTO_FTP
+#define PROT_TELNET  CURLPROTO_TELNET
+#define PROT_DICT    CURLPROTO_DICT
+#define PROT_LDAP    CURLPROTO_LDAP
+#define PROT_FILE    CURLPROTO_FILE
+#define PROT_FTPS    CURLPROTO_FTPS
+#define PROT_TFTP    CURLPROTO_TFTP
+#define PROT_SCP     CURLPROTO_SCP
+#define PROT_SFTP    CURLPROTO_SFTP
+
+/* CURLPROTO_TFTP (1<<11) is currently the highest used bit in the public
+   bitmask. We make sure we use "private bits" above the first 16 to make
+   things easier. */
+
+#define PROT_EXTMASK 0xffff
+
+#define PROT_SSL     (1<<22) /* protocol requires SSL */
+#define PROT_MISSING (1<<23)
 
 #define PROT_CLOSEACTION PROT_FTP /* these ones need action before socket
                                      close */
+#define PROT_DUALCHANNEL PROT_FTP /* these protocols use two connections */
 
   /* 'dns_entry' is the particular host we use. This points to an entry in the
      DNS cache and it will not get pruned while locked. It gets unlocked in
@@ -1047,9 +1052,13 @@ struct connectdata {
   union {
     struct ftp_conn ftpc;
     struct ssh_conn sshc;
+    struct tftp_state_data *tftpc;
   } proto;
 
   int cselect_bits; /* bitmask of socket events */
+#if defined(HAVE_GSSAPI) || defined(USE_WINDOWS_SSPI)
+  int socks5_gssapi_enctype;
+#endif
 };
 
 /* The end of connectdata. */
@@ -1065,6 +1074,8 @@ struct PureInfo {
                     was unretrievable. We cannot have this of type time_t,
                     since time_t is unsigned on several platforms such as
                     OpenVMS. */
+  bool timecond;  /* set to TRUE if the time condition didn't match, which
+                     thus made the document NOT get fetched */
   long header_size;  /* size of read header(s) in bytes */
   long request_size; /* the amount of bytes sent in the request(s) */
   long proxyauthavail; /* what proxy auth types were announced */
@@ -1288,7 +1299,7 @@ struct UrlState {
     struct HTTP *http;
     struct HTTP *https;  /* alias, just for the sake of being more readable */
     struct FTP *ftp;
-    void *tftp;        /* private for tftp.c-eyes only */
+    /* void *tftp;    not used */
     struct FILEPROTO *file;
     void *telnet;        /* private for telnet.c-eyes only */
     void *generic;
@@ -1363,6 +1374,11 @@ enum dupstring {
   STRING_PASSWORD,        /* <password>, if used */
   STRING_PROXYUSERNAME,   /* Proxy <username>, if used */
   STRING_PROXYPASSWORD,   /* Proxy <password>, if used */
+  STRING_NOPROXY,         /* List of hosts which should not use the proxy, if
+                             used */
+#if defined(HAVE_GSSAPI) || defined(USE_WINDOWS_SSPI)
+  STRING_SOCKS5_GSSAPI_SERVICE,  /* GSSAPI service name */
+#endif
 
   /* -- end of strings -- */
   STRING_LAST /* not used, just an end-of-list marker */
@@ -1423,6 +1439,7 @@ struct UserDefined {
   long timeout;         /* in milliseconds, 0 means no timeout */
   long connecttimeout;  /* in milliseconds, 0 means no timeout */
   long ftp_response_timeout; /* in milliseconds, 0 means no timeout */
+  long tftp_blksize ; /* in bytes, 0 means use default */
   curl_off_t infilesize;      /* size of file to upload, -1 means unknown */
   long low_speed_limit; /* bytes/second */
   long low_speed_time;  /* number of seconds */
@@ -1468,6 +1485,10 @@ struct UserDefined {
 
   curl_ftpfile ftp_filemethod; /* how to get to a file when FTP is used  */
 
+  int ftp_create_missing_dirs; /* 1 - create directories that don't exist
+                                  2 - the same but also allow MKD to fail once
+                               */
+
 /* Here follows boolean settings that define how to behave during
    this session. They are STATIC, set by libcurl users or at least initially
    and they don't change during operations. */
@@ -1478,7 +1499,6 @@ struct UserDefined {
   bool prefer_ascii;     /* ASCII rather than binary */
   bool ftp_append;       /* append, not overwrite, on upload */
   bool ftp_list_only;    /* switch FTP command for listing directories */
-  bool ftp_create_missing_dirs; /* create directories that don't exist */
   bool ftp_use_port;     /* use the FTP PORT command */
   bool hide_progress;    /* don't use the progress meter */
   bool http_fail_on_error;  /* fail on HTTP error codes >= 300 */
@@ -1520,6 +1540,11 @@ struct UserDefined {
                                via an HTTP proxy */
   char *str[STRING_LAST]; /* array of strings, pointing to allocated memory */
   unsigned int scope;    /* address scope for IPv6 */
+  long allowed_protocols;
+  long redir_protocols;
+#if defined(HAVE_GSSAPI) || defined(USE_WINDOWS_SSPI)
+  long socks5_gssapi_nec; /* flag to support nec socks5 server */
+#endif
 };
 
 struct Names {

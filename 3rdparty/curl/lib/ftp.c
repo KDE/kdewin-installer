@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: ftp.c,v 1.494 2008-12-19 21:14:52 bagder Exp $
+ * $Id: ftp.c,v 1.502 2009-02-20 08:16:03 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -89,6 +89,7 @@
 #include "sockaddr.h" /* required for Curl_sockaddr_storage */
 #include "multiif.h"
 #include "url.h"
+#include "rawstr.h"
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -362,6 +363,7 @@ static void ftp_respinit(struct connectdata *conn)
   struct ftp_conn *ftpc = &conn->proto.ftpc;
   ftpc->nread_resp = 0;
   ftpc->linestart_resp = conn->data->state.buffer;
+  ftpc->pending_resp = TRUE;
 }
 
 /* macro to check for a three-digit ftp status code at the start of the
@@ -589,6 +591,8 @@ static CURLcode ftp_readresp(curl_socket_t sockfd,
   /* store the latest code for later retrieval */
   conn->data->info.httpcode=code;
 
+  ftpc->pending_resp = FALSE;
+
   return result;
 }
 
@@ -714,6 +718,8 @@ CURLcode Curl_GetFTPResponse(ssize_t *nreadp, /* return number of bytes read */
 
   } /* while there's buffer left and loop is requested */
 
+  ftpc->pending_resp = FALSE;
+
   return result;
 }
 
@@ -814,7 +820,7 @@ static int ftp_getsock(struct connectdata *conn,
 
 /* This is called after the FTP_QUOTE state is passed.
 
-   ftp_state_cwd() sends the range of PWD commands to the server to change to
+   ftp_state_cwd() sends the range of CWD commands to the server to change to
    the correct directory. It may also need to send MKD commands to create
    missing ones, if that option is enabled.
 */
@@ -827,7 +833,13 @@ static CURLcode ftp_state_cwd(struct connectdata *conn)
     /* already done and fine */
     result = ftp_state_post_cwd(conn);
   else {
-    ftpc->count2 = 0;
+    ftpc->count2 = 0; /* count2 counts failed CWDs */
+
+    /* count3 is set to allow a MKD to fail once. In the case when first CWD
+       fails and then MKD fails (due to another session raced it to create the
+       dir) this then allows for a second try to CWD to it */
+    ftpc->count3 = (conn->data->set.ftp_create_missing_dirs==2)?1:0;
+
     if(conn->bits.reuse && ftpc->entrypath) {
       /* This is a re-used connection. Since we change directory to where the
          transfer is taking place, we must first get back to the original dir
@@ -1893,6 +1905,7 @@ static CURLcode ftp_state_pasv_resp(struct connectdata *conn,
     break;
 #endif /* CURL_DISABLE_PROXY */
   case CURLPROXY_HTTP:
+  case CURLPROXY_HTTP_1_0:
     /* do nothing here. handled later. */
     break;
   default:
@@ -1900,7 +1913,7 @@ static CURLcode ftp_state_pasv_resp(struct connectdata *conn,
     result = CURLE_COULDNT_CONNECT;
     break;
   }
-#ifndef CURL_DISABLE_HTTP
+#if !defined(CURL_DISABLE_HTTP) && !defined(CURL_DISABLE_PROXY)
   if(conn->bits.tunnel_proxy && conn->bits.httpproxy) {
     /* FIX: this MUST wait for a proper connect first if 'connected' is
      * FALSE */
@@ -1926,7 +1939,7 @@ static CURLcode ftp_state_pasv_resp(struct connectdata *conn,
     if(CURLE_OK != result)
       return result;
   }
-#endif   /* CURL_DISABLE_HTTP */
+#endif /* !CURL_DISABLE_HTTP && !CURL_DISABLE_PROXY */
 
   state(conn, FTP_STOP); /* this phase is completed */
 
@@ -2043,6 +2056,7 @@ static CURLcode ftp_state_mdtm_resp(struct connectdata *conn,
         if(data->info.filetime <= data->set.timevalue) {
           infof(data, "The requested document is not new enough\n");
           ftp->transfer = FTPTRANSFER_NONE; /* mark this to not transfer data */
+          data->info.timecond = TRUE;
           state(conn, FTP_STOP);
           return CURLE_OK;
         }
@@ -2051,6 +2065,7 @@ static CURLcode ftp_state_mdtm_resp(struct connectdata *conn,
         if(data->info.filetime > data->set.timevalue) {
           infof(data, "The requested document is not old enough\n");
           ftp->transfer = FTPTRANSFER_NONE; /* mark this to not transfer data */
+          data->info.timecond = TRUE;
           state(conn, FTP_STOP);
           return CURLE_OK;
         }
@@ -2295,6 +2310,8 @@ static CURLcode ftp_state_stor_resp(struct connectdata *conn,
                                SECONDARYSOCKET, ftp->bytecountp);
   state(conn, FTP_STOP);
 
+  conn->proto.ftpc.pending_resp = TRUE; /* we expect a server response more */
+
   return result;
 }
 
@@ -2407,6 +2424,7 @@ static CURLcode ftp_state_get_resp(struct connectdata *conn,
     if(result)
       return result;
 
+    conn->proto.ftpc.pending_resp = TRUE; /* we expect a server response more */
     state(conn, FTP_STOP);
   }
   else {
@@ -2417,7 +2435,8 @@ static CURLcode ftp_state_get_resp(struct connectdata *conn,
     }
     else {
       failf(data, "RETR response: %03d", ftpcode);
-      return CURLE_FTP_COULDNT_RETR_FILE;
+      return instate == FTP_RETR && ftpcode == 550? CURLE_REMOTE_FILE_NOT_FOUND:
+                                                    CURLE_FTP_COULDNT_RETR_FILE;
     }
   }
 
@@ -2830,7 +2849,7 @@ static CURLcode ftp_statemach_act(struct connectdata *conn)
       break;
 
     case FTP_MKD:
-      if(ftpcode/100 != 2) {
+      if((ftpcode/100 != 2) && !ftpc->count3--) {
         /* failure to MKD the dir */
         failf(data, "Failed to MKD dir: %03d", ftpcode);
         return CURLE_REMOTE_ACCESS_DENIED;
@@ -3059,7 +3078,7 @@ static CURLcode ftp_connect(struct connectdata *conn,
 
   ftpc->response_time = RESP_TIMEOUT; /* set default response time-out */
 
-#ifndef CURL_DISABLE_HTTP
+#if !defined(CURL_DISABLE_HTTP) && !defined(CURL_DISABLE_PROXY)
   if(conn->bits.tunnel_proxy && conn->bits.httpproxy) {
     /* BLOCKING */
     /* We want "seamless" FTP operations through HTTP proxy tunnel */
@@ -3082,7 +3101,7 @@ static CURLcode ftp_connect(struct connectdata *conn,
     if(CURLE_OK != result)
       return result;
   }
-#endif   /* CURL_DISABLE_HTTP */
+#endif /* !CURL_DISABLE_HTTP && !CURL_DISABLE_PROXY */
 
   if(conn->protocol & PROT_FTPS) {
     /* BLOCKING */
@@ -3149,6 +3168,8 @@ static CURLcode ftp_done(struct connectdata *conn, CURLcode status,
   case CURLE_UPLOAD_FAILED:
   case CURLE_REMOTE_ACCESS_DENIED:
   case CURLE_FILESIZE_EXCEEDED:
+  case CURLE_REMOTE_FILE_NOT_FOUND:
+  case CURLE_WRITE_ERROR:
     /* the connection stays alive fine even though this happened */
     /* fall-through */
   case CURLE_OK: /* doesn't affect the control connection's status */
@@ -3227,7 +3248,8 @@ static CURLcode ftp_done(struct connectdata *conn, CURLcode status,
     conn->sock[SECONDARYSOCKET] = CURL_SOCKET_BAD;
   }
 
-  if((ftp->transfer == FTPTRANSFER_BODY) && !status && !premature) {
+  if((ftp->transfer == FTPTRANSFER_BODY) && ftpc->ctl_valid &&
+     ftpc->pending_resp && !premature) {
     /*
      * Let's see what the server says about the transfer we just performed,
      * but lower the timeout as sometimes this connection has died while the
@@ -4141,7 +4163,7 @@ static CURLcode ftp_setup_connection(struct connectdata * conn)
 
   if(type) {
     *type = 0;                     /* it was in the middle of the hostname */
-    command = (char) toupper((int) type[6]);
+    command = Curl_raw_toupper(type[6]);
 
     switch (command) {
     case 'A': /* ASCII mode */

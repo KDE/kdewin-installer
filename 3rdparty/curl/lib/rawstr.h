@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: rawstr.h,v 1.1 2008-10-23 11:49:19 bagder Exp $
+ * $Id: rawstr.h,v 1.3 2009-02-07 22:53:37 bagder Exp $
  ***************************************************************************/
 
 #include <curl/curl.h>
@@ -35,8 +35,11 @@
 int Curl_raw_equal(const char *first, const char *second);
 int Curl_raw_nequal(const char *first, const char *second, size_t max);
 
+char Curl_raw_toupper(char in);
+
 /* checkprefix() is a shorter version of the above, used when the first
    argument is zero-byte terminated */
 #define checkprefix(a,b)    Curl_raw_nequal(a,b,strlen(a))
 
 #endif
+void Curl_strntoupper(char *dest, const char *src, size_t n);
