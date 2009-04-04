@@ -186,9 +186,12 @@ else(UNIX)
   set (GUI_LIBS shared-gui ${QUAZIP_LIBRARIES} ${BZIP2_LIBRARIES} ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} ${QT_QTGUI_LIBRARY} ${CURL_LIBRARIES} gdi32 comdlg32 oleaut32 imm32 winmm winspool ws2_32 ole32 uuid user32 advapi32 shlwapi psapi)
   # when qt 4.4 is build with directx support dxguid is required 
   # how to detect that qt 4.4 is build with directx ? 
-  if (QT_VERSION_MAJOR EQUAL 4 AND QT_VERSION_MINOR GREATER 3) 
-      list(APPEND GUI_LIBS dxguid)
-  endif (QT_VERSION_MAJOR EQUAL 4 AND QT_VERSION_MINOR GREATER 3) 
+  if (STATIC_BUILD)
+    if (QT_VERSION_MAJOR EQUAL 4 AND QT_VERSION_MINOR GREATER 3) 
+        list(APPEND GUI_LIBS dxguid)
+    endif (QT_VERSION_MAJOR EQUAL 4 AND QT_VERSION_MINOR GREATER 3) 
+  endif (STATIC_BUILD)
+
 endif (UNIX)
 
 # our targets
