@@ -2,7 +2,7 @@
 @format 1.3
 ; this format is *prelimary* and may be changed without prior notice
 @minversion 0.9.2
-@timestamp 200811031800
+@timestamp 200904060100
 
 ; category notes 
 @categorynotes aspell-data Spelling packages 
@@ -16,15 +16,15 @@
 
 ; to which category packages belongs to
 @categorypackages win32libs aspell cyrus-sasl ebook-tools expat gettext giflib gpgme iconv jasper jpeg lcms libbzip2 libgmp libgs libical libidn libpng libxml2 libxslt libzip mysql-embedded openslp openssl shared-mime-info sqlite tiff zlib
-@categorypackages win32libs pcre-msvc  dbus-msvc  exiv2-msvc  gpgme-qt-msvc  libspectre-msvc  libmsn-msvc
-@categorypackages win32libs pcre-mingw dbus-mingw exiv2-mingw gpgme-qt-mingw libspectre-mingw libmsn-mingw
+@categorypackages win32libs pcre-msvc  dbus-msvc  exiv2-msvc  gpgme-qt-msvc  libspectre-msvc  libmsn-msvc  libdvdcss-msvc  libsamplerate-msvc
+@categorypackages win32libs pcre-mingw dbus-mingw exiv2-mingw gpgme-qt-mingw libspectre-mingw libmsn-mingw libdvdcss-mingw libsamplerate-mingw
 @categorypackages tools findutils grep mingw-utils diffutils patch
 @categorypackages kdesupport kdewin32-msvc  kdewin-installer-msvc  vcredist      qimageblitz-msvc  qca-msvc  strigi-msvc  soprano-msvc  taglib-msvc  phonon-msvc  fontconfig-msvc  freetype-msvc  poppler-msvc  automoc-msvc
 @categorypackages kdesupport kdewin32-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw phonon-mingw fontconfig-mingw freetype-mingw poppler-mingw automoc-mingw
 @categorypackages KDE amarok-msvc  digikam-msvc  kdelibs-msvc  kdepimlibs-msvc  kdepim-msvc  kdebase-apps-msvc  kdebase-runtime-msvc  kdebase-workspace-msvc  kdeedu-msvc  kdegames-msvc  kdegraphics-msvc  kdenetwork-msvc  kdesdk-msvc  kdewebdev-msvc  kdeutils-msvc  kdeplasma-addons-msvc  kipi-plugins-msvc
 @categorypackages KDE amarok-mingw digikam-mingw kdelibs-mingw kdepimlibs-mingw kdepim-mingw kdebase-apps-mingw kdebase-runtime-mingw kdebase-workspace-mingw kdeedu-mingw kdegames-mingw kdegraphics-mingw kdenetwork-mingw kdesdk-mingw kdewebdev-mingw kdeutils-mingw kdeplasma-addons-mingw kipi-plugins-mingw
-@categorypackages KDE koffice-msvc  ktorrent-msvc  kile-msvc  kdevplatform-msvc  kdevelop-msvc
-@categorypackages KDE koffice-mingw ktorrent-mingw kile-mingw kdevplatform-mingw kdevelop-mingw
+@categorypackages KDE koffice-msvc  ktorrent-msvc  kile-msvc  kdevplatform-msvc  kdevelop-msvc  k3b-msvc
+@categorypackages KDE koffice-mingw ktorrent-mingw kile-mingw kdevplatform-mingw kdevelop-mingw k3b-mingw
 @categorypackages qt qt-msvc qt-mingw qt-static-msvc
 @categorypackages kde-l10n kde-l10n-af kde-l10n-ar kde-l10n-be kde-l10n-bg kde-l10n-bn kde-l10n-bn_IN kde-l10n-br kde-l10n-ca kde-l10n-cs kde-l10n-csb kde-l10n-cy kde-l10n-da kde-l10n-de kde-l10n-el kde-l10n-en_GB 
 @categorypackages kde-l10n kde-l10n-eo kde-l10n-es kde-l10n-et kde-l10n-eu kde-l10n-fa kde-l10n-fi kde-l10n-fr kde-l10n-fy kde-l10n-ga kde-l10n-gl kde-l10n-gu kde-l10n-ha kde-l10n-he kde-l10n-hi kde-l10n-hr kde-l10n-hsb 
@@ -61,6 +61,7 @@
 @deps dbus-mingw expat 
 @deps digikam-mingw kdegraphics-mingw kdeedu-mingw exiv2-mingw lcms
 @deps gpgme-qt-mingw gpgme qt-mingw
+@deps k3b-mingw kdelibs-mingw libdvdcss-mingw
 @deps kdelibs-mingw qt-mingw phonon-mingw pcre-mingw dbus-mingw kdewin32-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
 @deps kdebase-apps-mingw kdebase-runtime-mingw
 @deps kdebase-runtime-mingw kdepimlibs-mingw kdelibs-mingw
@@ -96,6 +97,7 @@
 @deps dbus-msvc libxml2 iconv expat
 @deps digikam-msvc kdegraphics-msvc kdeedu-msvc exiv2-msvc lcms
 @deps gpgme-qt-msvc gpgme qt-msvc
+@deps k3b-msvc kdelibs-msvc libdvdcss-msvc
 @deps kdebase-apps-msvc kdebase-runtime-msvc
 @deps kdebase-runtime-msvc kdepimlibs-msvc kdelibs-msvc
 @deps kdebase-workspace-msvc kdebase-runtime-msvc
@@ -231,11 +233,13 @@
 @pkgnotes jpeg A library for manipulating JPEG image format files
 @pkgnotes lcms A small-footprint, speed optimized color management engine
 @pkgnotes libbzip2 shared libraries for bzip2 (runtime)
+@pkgnotes libdvdcss-* simple library to access encrypted dvds
 @pkgnotes libgs-GPL a library for printing post script files
 @pkgnotes libical reference implementation of the icalendar data type and serialization format 
 @pkgnotes libidn internationalized domain names library
 @pkgnotes gettext native language support library
 @pkgnotes libpng PNG library (runtime)
+@pkgnotes libsamplerate-* an audio sample rate converter library
 @pkgnotes libspectre a wrapper library for libgs
 @pkgnotes libxml2 XML C parser and toolkit (runtime and applications)
 @pkgnotes libxslt The GNOME XSLT C library and tools
@@ -262,6 +266,7 @@
 @pkgnotes fontconfig-* library for font customization and configuration
 @pkgnotes freetype-* A Free, High-Quality, and Portable Font Engine
 @pkgnotes gpgme-qt-* Qt wrapper for gpgme library
+@pkgnotes k3b-* the KDE CD/DVD burning application
 @pkgnotes kdebase-apps-* KDE base applicaton package 
 @pkgnotes kdebase-runtime-* KDE runtime package 
 @pkgnotes kdebase-workspace-* parts of the KDE desktop package
