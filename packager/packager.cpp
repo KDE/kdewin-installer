@@ -52,6 +52,7 @@ Packager::Packager(const QString &packageName, const QString &packageVersion, co
     m_notes(packageNotes),
     m_verbose(false),
     m_debugLibs(false),
+    m_special(false),
     m_compMode(1)
 {
 }
@@ -197,7 +198,8 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
     QString exclude;
     fileList.clear();
     QString lName = m_name.toLower();
-    if (lName.startsWith("qt") || lName.startsWith("q++") || lName.startsWith("q.."))
+    // special packaging for Qt
+    if (m_special)
         switch (type) {
             case BIN:
                 // assistant.exe can be used separatly from qt doc - better in bin than doc package

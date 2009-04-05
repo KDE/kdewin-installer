@@ -55,7 +55,8 @@ static void printHelp(const QString &addInfo)
        << "\n\t\t"      << "-verbose display verbose processing informations"
        << "\n\t\t"      << "-version <package version>"
        << "\n\t\t"      << "-strip <strip debug infos> (MinGW only)"
-       << "\n\t\t"      << "-type type of package (mingw, msvc)"
+       << "\n\t\t"      << "-special make special assumptions about package content (only for Qt)"
+       << "\n\t\t"      << "-type <type of package> (mingw, msvc)"
        << "\n";
 
     qerr.flush();
@@ -76,6 +77,7 @@ int main(int argc, char *argv[])
     bool verbose = false;
     bool debugLibs = false;
     bool hashFirst = true;
+    bool specialPackage = false;
     unsigned int compressionMode = 1; // zip
 
     args.removeAt(0);   // name of executable
@@ -150,6 +152,12 @@ int main(int argc, char *argv[])
     idx = args.indexOf("-debuglibs");
     if(idx != -1) {
         debugLibs = 1;
+        args.removeAt(idx);
+    }
+    
+    idx = args.indexOf("-special");
+    if(idx != -1) {
+        specialPackage = true;
         args.removeAt(idx);
     }
 
@@ -227,6 +235,8 @@ int main(int argc, char *argv[])
     packager.setCompressionMode(compressionMode);
     packager.setCheckSumMode(checkSumMode);
 
+    if (specialPackage)
+        packager.setSpecialPackageMode( true );
     if (strip)
        packager.stripFiles(rootDir.filePath());
 

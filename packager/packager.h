@@ -49,6 +49,7 @@ class Packager {
 
       bool makePackage(const QString &dir, const QString &destdir=QString(), bool bComplete=false);
       void setVerbose(bool state) { m_verbose = state; }
+      void setSpecialPackageMode(bool special) { m_special = special; }
 
     protected:
         struct MemFile {
@@ -74,6 +75,7 @@ class Packager {
       QString m_checkSumMode;
       bool m_verbose;
       bool m_debugLibs;
+      bool m_special;
       unsigned int m_compMode;
 };
 
