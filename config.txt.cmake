@@ -61,7 +61,7 @@
 @deps dbus-mingw expat 
 @deps digikam-mingw kdegraphics-mingw kdeedu-mingw exiv2-mingw lcms
 @deps gpgme-qt-mingw gpgme qt-mingw
-@deps k3b-mingw kdelibs-mingw libdvdcss-mingw
+@deps k3b-mingw kdemultimedia-mingw libdvdcss-mingw
 @deps kdelibs-mingw qt-mingw phonon-mingw pcre-mingw dbus-mingw kdewin32-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
 @deps kdebase-apps-mingw kdebase-runtime-mingw
 @deps kdebase-runtime-mingw kdepimlibs-mingw kdelibs-mingw
@@ -97,7 +97,7 @@
 @deps dbus-msvc libxml2 iconv expat
 @deps digikam-msvc kdegraphics-msvc kdeedu-msvc exiv2-msvc lcms
 @deps gpgme-qt-msvc gpgme qt-msvc
-@deps k3b-msvc kdelibs-msvc libdvdcss-msvc
+@deps k3b-msvc kdemultimedia-msvc libdvdcss-msvc
 @deps kdebase-apps-msvc kdebase-runtime-msvc
 @deps kdebase-runtime-msvc kdepimlibs-msvc kdelibs-msvc
 @deps kdebase-workspace-msvc kdebase-runtime-msvc
