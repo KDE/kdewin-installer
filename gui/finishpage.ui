@@ -33,19 +33,19 @@ In future versions of this installer it will also be possible to start kde appli
     <widget class="QLabel" name="label2" >
      <property name="text" >
       <string>
-If you &lt;ul>
-&lt;li>like to see the KDE on windows project web site see &lt;a href=http://windows.kde.org>http://windows.kde.org&lt;/a>&lt;/li>
-&lt;li>like to get community support for this installer and/or running kde applications please contact 
+Links:&lt;ul>
+&lt;li>Visit the KDE on Windows project web site at &lt;a href=http://windows.kde.org>http://windows.kde.org&lt;/a>&lt;/li>
+&lt;li>Get community support for this installer and/or running KDE applications from 
 the &lt;a href=http://mail.kde.org/mailman/listinfo/kde-windows>kde-windows@kde.org&lt;/a> mailing list.&lt;/li>
-&lt;li>like to contribute time and/or money to this project contact also the above mentioned list.
-There are always interesting projects where you can join.&lt;/li>
+&lt;li>To contribute time and/or money to this project, also contact the mailing list.
+There are always interesting projects you can join in with.&lt;/li>
 &lt;/ul>
 
 Have fun using KDE on windows.
 
 &lt;b>The KDE on Windows team&lt;/b>
 
-This software is designed to provide a powerfull and flexible network based install system using a modern gui toolkit. 
+This software is designed to provide a powerful and flexible network based install system using a modern GUI toolkit. 
 </string>
      </property>
      <property name="alignment" >
