@@ -15,7 +15,7 @@
 @categorynotes qt Qt related packages 
 
 ; to which category packages belongs to
-@categorypackages win32libs aspell cyrus-sasl ebook-tools expat gettext giflib gpgme iconv jasper jpeg lcms libbzip2 libgmp libgs libical libidn libpng libxml2 libxslt libzip mysql-embedded openslp openssl shared-mime-info sqlite tiff zlib
+@categorypackages win32libs aspell cyrus-sasl ebook-tools expat gettext giflib gpgme iconv jasper jpeg lcms libbzip2 libgmp libgs libical libidn libpng libxml2 libxslt libzip mysql-embedded openslp openssl poppler-data shared-mime-info sqlite tiff zlib
 @categorypackages win32libs pcre-msvc  dbus-msvc  exiv2-msvc  gpgme-qt-msvc  libspectre-msvc  libmsn-msvc  libdvdcss-msvc  libsamplerate-msvc
 @categorypackages win32libs pcre-mingw dbus-mingw exiv2-mingw gpgme-qt-mingw libspectre-mingw libmsn-mingw libdvdcss-mingw libsamplerate-mingw
 @categorypackages tools findutils grep mingw-utils diffutils patch
@@ -86,7 +86,7 @@
 @deps koffice-mingw kdebase-runtime-mingw kdelibs-mingw lcms
 @deps ktorrent-mingw libgmp kdebase-runtime-mingw qca-mingw
 @deps phonon-mingw qt-mingw
-@deps poppler-mingw fontconfig-mingw freetype-mingw
+@deps poppler-mingw fontconfig-mingw freetype-mingw poppler-data
 @deps qca-mingw cyrus-sasl openssl
 @deps qt-mingw dbus-mingw runtime-mingw
 @deps strigi-mingw libbzip2 openssl zlib iconv libxml2 exiv2-mingw
@@ -122,7 +122,7 @@
 @deps koffice-msvc kdebase-runtime-msvc kdelibs-msvc lcms
 @deps ktorrent-msvc libgmp kdebase-runtime-msvc qca-msvc
 @deps phonon-msvc qt-msvc
-@deps poppler-msvc fontconfig-msvc freetype-msvc
+@deps poppler-msvc fontconfig-msvc freetype-msvc poppler-data
 @deps qca-msvc cyrus-sasl openssl
 @deps qt-msvc dbus-msvc vcredist
 @deps strigi-msvc libbzip2 openssl zlib iconv libxml2 exiv2-msvc
@@ -292,7 +292,9 @@
 @pkgnotes libgmp devel-tools GNU MP library for abritary precision arithmetic
 @pkgnotes openbabel-* program to convert the various file formats used in chemical software
 @pkgnotes phonon-* KDE KDE4 multimedia API
-@pkgnotes poppler-* PDF rendering library based on xpdf-3.0
+@pkgnotes poppler-data font data for poppler library
+@pkgnotes poppler-mingw PDF rendering library based on xpdf-3.0
+@pkgnotes poppler-msvc PDF rendering library based on xpdf-3.0
 @pkgnotes pcre-* Perl-Compatible Regular Expressions (utilities)
 @pkgnotes qca-* Qt Cryptographic Architecture (QCA)
 @pkgnotes qimageblitz-* KDE image effect library
