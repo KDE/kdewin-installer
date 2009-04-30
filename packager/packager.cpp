@@ -392,7 +392,7 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
     b.open(QIODevice::WriteOnly);
     out.setDevice(&b);
     out << m_name + ' ' + m_version + ' ' + descr << '\n'
-        << m_name + ": " + m_notes + '\n';
+        << m_notes + '\n';
     b.close();
     mf.filename = "manifest/" + fileNameBase + ".ver";
     manifestFiles += mf;
