@@ -30,7 +30,7 @@
 
 class Packager {
     public:
-      enum Type { NONE = 0, BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8, ALL = 15};
+      enum Type { NONE = 0, BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8, DEBUG = 16, ALL = 15};
 
       Packager(const QString &packageName, const QString &packageVersion,const QString &notes=QString());
 
@@ -40,7 +40,7 @@ class Packager {
       bool createDebugFiles(const QString &dir);
       void setSourceRoot(const QString &dir) { m_srcRoot = dir; }
       void setSourceExcludes(const QString &excludes) { m_srcExcludes = excludes; }
-      void setWithDebugLibs(bool mode) { m_debugLibs = mode; }
+      void setWithDebugPackage(bool mode) { m_debugPackage = mode; }
       void setCompressionMode(unsigned int mode) { m_compMode = (mode < 1 || mode > 2) ? 1 : mode; }
       void setCheckSumMode(const QString mode) { m_checkSumMode = mode; }
 
@@ -74,7 +74,7 @@ class Packager {
       QString m_srcExcludes;
       QString m_checkSumMode;
       bool m_verbose;
-      bool m_debugLibs;
+      bool m_debugPackage;
       bool m_special;
       unsigned int m_compMode;
 };

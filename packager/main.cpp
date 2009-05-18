@@ -45,7 +45,8 @@ static void printHelp(const QString &addInfo)
        << "\n\t\t"      << "-compression <1|2> - set compression mode to"
        << "\n\t\t\t"    << "1 - zip, default"
        << "\n\t\t\t"    << "2 - tar.bz2"
-       << "\n\t\t"      << "-debuglibs add debug libs to binary packages (currently only for Qt)"
+// not enabled yet
+//       << "\n\t\t"      << "-debug-package create also debug package"
        << "\n\t\t"      << "-destdir directory where to store the zip files to"
        << "\n\t\t"      << "-name <packageName>"
        << "\n\t\t"      << "-notes <additional notes for manifest files>"
@@ -75,7 +76,7 @@ int main(int argc, char *argv[])
     QFileInfo srcRootDir;
     bool strip = false;
     bool verbose = false;
-    bool debugLibs = false;
+    bool debugPackage = false;
     bool hashFirst = true;
     bool specialPackage = false;
     unsigned int compressionMode = 1; // zip
@@ -149,9 +150,9 @@ int main(int argc, char *argv[])
         args.removeAt(idx);
     }
 
-    idx = args.indexOf("-debuglibs");
+    idx = args.indexOf("-debug-package");
     if(idx != -1) {
-        debugLibs = 1;
+        debugPackage = 1;
         args.removeAt(idx);
     }
     
@@ -231,7 +232,7 @@ int main(int argc, char *argv[])
         packager.setSourceExcludes(srcExclude);
 
     packager.setVerbose(verbose);
-    packager.setWithDebugLibs(debugLibs);
+    packager.setWithDebugPackage(debugPackage);
     packager.setCompressionMode(compressionMode);
     packager.setCheckSumMode(checkSumMode);
 

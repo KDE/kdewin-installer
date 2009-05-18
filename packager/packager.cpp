@@ -51,7 +51,7 @@ Packager::Packager(const QString &packageName, const QString &packageVersion, co
     m_version(packageVersion),
     m_notes(packageNotes),
     m_verbose(false),
-    m_debugLibs(false),
+    m_debugPackage(false),
     m_special(false),
     m_compMode(1)
 {
@@ -209,12 +209,17 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 generateFileList(fileList, dir, "manifest", "*-bin.cmd" );
                 generateFileList(fileList, dir, QString(), "*.xml", "");
                 return true;
+            case DEBUG:
+                generateFileList(fileList, dir, "bin",  "*d4.dll", "");
+                generateFileList(fileList, dir, "lib",  "d4*.pdb", "");
+                generateFileList(fileList, dir, "plugins", "*d.dll *d4.dll *d1.dll");
+                generateFileList(fileList, dir, "plugins", "*d.pdb *d4.pdb *d1.pdb");
+                if (m_name.endsWith("mingw"))
+                    generateFileList(fileList, dir, "lib",      "*d4.a *d.a");
+                else
+                    generateFileList(fileList, dir, "lib",      "*d4.lib *d.lib");
+                return true;
             case LIB:
-                if (m_debugLibs)
-                {
-                    generateFileList(fileList, dir, "bin",  "*d4.dll", "");
-                    generateFileList(fileList, dir, "plugins", "*d.dll *d4.dll *d1.dll");
-                }
                 generateFileList(fileList, dir, "bin",  "*.exe *.bat", "assistant.exe qtdemo.exe qdbus.exe qdbusviewer.exe");
                 generateFileList(fileList, dir, "", ".qmake.cache");
                 // trolltech installs whole mkspecs folder too
@@ -225,17 +230,9 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 generateFileList(fileList, dir, "phrasebooks", "*.qph");
 
                 if (m_name.endsWith("mingw"))
-                {
                     generateFileList(fileList, dir, "lib",      "*.a", "*d4.a *d.a");
-                    if (m_debugLibs)
-                        generateFileList(fileList, dir, "lib",      "*d4.a *d.a");
-                }
                 else
-                {
                     generateFileList(fileList, dir, "lib",      "*.lib",  "*d4.lib *d.lib");
-                    if (m_debugLibs)
-                        generateFileList(fileList, dir, "lib",      "*d4.lib *d.lib");
-                }
                 parseQtIncludeFiles(fileList, dir, "include", "*", "private *_p.h *.pr* .svn CVS");
                 return true;
             case DOC:
@@ -262,9 +259,6 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
         }
     else
     {
-        if (m_debugLibs)
-            qWarning() << "adding debug library not supported for this package";
-
         switch (type) {
             case BIN:
                 generateFileList(fileList, dir, "bin",  "*.exe *.bat");
@@ -372,6 +366,9 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
         }
     }
     // qt needs a specific config file
+    // \todo: move qt.conf creation one level above tobe able to 
+    // move createManifestFiles into a generic ManifestFile class usable 
+    // by installer too 
     if ((m_name.startsWith("qt") || m_name.startsWith("q++") || m_name.startsWith("q.."))
             && type == Packager::BIN)
     {
