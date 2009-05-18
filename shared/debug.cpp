@@ -62,6 +62,18 @@ QDebug _qFatal(const char *file, int line)
     return a; 
 }
 
+QTextStream &qOut() 
+{ 
+    static QTextStream a(stdout);
+    return a; 
+}
+
+QTextStream &qError() 
+{ 
+    static QTextStream a(stderr);
+    return a; 
+}
+
 static QFile *logFile = 0;
 
 void myMessageOutput(QtMsgType type, const char *msg)

@@ -39,7 +39,16 @@ QDebug _qFatal(const char *file, int line);
 #define qCritical() _qCritical(__FILE__,__LINE__)
 #define qFatal() _qFatal(__FILE__,__LINE__)
 
+/// return stdout stream
+QTextStream &qOut();
+/// return stderr stream
+QTextStream &qError();
+
+
+/// set message handler
 void setMessageHandler();
+
+/// close message handler
 void closeMessageHandler();
 
 
