@@ -50,6 +50,7 @@ static struct Options
     bool categories;
     bool requires;
     bool verbose;
+    bool debug;
     QString url;
     QString rootdir;
 }
@@ -61,6 +62,8 @@ static void usage()
     << "\nRelease: " << VERSION
     << "\nOptions: "
     << "\n -v|--verbose                                   print detailed process informations"
+    << "\n --debug                                        print debug informations"
+    << "\n"
     << "\n -u|--url                                       use download server <url> [1]"
     << "\n -r|--root <path>                               use install <root> [1]"
     << "\n"
@@ -152,13 +155,14 @@ int main(int argc, char *argv[])
                 options.rootdir = option.replace("--root=","");
             else if (option == "-v" || option == "--verbose")
                 options.verbose = true;
+            else if (option == "--debug")
+                options.debug = true;
         }
         else
             packages << app.arguments().at(i);
     }
 
-    if (!options.verbose)
-        setMessageHandler();
+    setMessageHandler();
 
     InstallerEngineConsole engine;
 
@@ -171,7 +175,7 @@ int main(int argc, char *argv[])
         InstallerEngine::defaultConfigURL = Settings::instance().mirrorWithReleasePath().toString();
 
     if (options.verbose)
-        qDebug() << "using url" << InstallerEngine::defaultConfigURL;
+        qOut() << "using url" << InstallerEngine::defaultConfigURL;
 
     if (!options.rootdir.isEmpty())
         Settings::instance().setInstallDir(options.rootdir);
