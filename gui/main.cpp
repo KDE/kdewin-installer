@@ -25,6 +25,7 @@
 #include "installwizard.h"
 #include "installerengine.h"
 #include "installerupdate.h"
+#include "selfinstaller.h"
 #include "debug.h"
 #include "misc.h"
 
@@ -54,6 +55,10 @@ int main(int argc, char *argv[])
         {
             InstallerUpdate::instance().finish(QApplication::arguments(),2);
         }
+        else if (param.startsWith("--handle-control-panel"))
+        {
+            InstallWizard::setTitlePage(InstallWizard::endUserInstallModePage);
+        }
         else if (param.startsWith("file:") || param.startsWith("http:") || param.startsWith("ftp:"))
             InstallerEngine::defaultConfigURL = param;
 
@@ -64,6 +69,18 @@ int main(int argc, char *argv[])
             Settings::instance().setDownloadDir(param.replace("file:///",""));
         }
     }
+
+    //
+    // when installer is located in install root dir run it from a temporary location 
+    // to avoid installer executable acess problem for update and removal, 
+    //
+    if (SelfInstaller::instance().isInstalled() && SelfInstaller::instance().isRunningFromInstallRoot())
+    {
+        QStringList args = QApplication::arguments(); 
+        args.removeFirst();
+        SelfInstaller::instance().runFromTemporayLocation(args);
+    }
+
     setMessageHandler();
 
     InstallWizard *wizard = new InstallWizard();

@@ -27,6 +27,7 @@ set(installer_shared_HEADERS
     misc.h
     registry.h
     releases.h
+    selfinstaller.h
     settings.h
     uninstaller.h
     uninstaller_p.h
@@ -56,6 +57,7 @@ set(installer_shared_SOURCES
     packagelist.cpp
     qio.cpp
     site.cpp
+    selfinstaller.cpp
     registry.cpp
     releases.cpp
     settings.cpp

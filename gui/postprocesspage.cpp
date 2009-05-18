@@ -25,6 +25,7 @@
 #include "config.h"
 #include "debug.h"
 #include "postprocesspage.h"
+#include "selfinstaller.h"
 
 #include <QProcess>
 
@@ -54,6 +55,9 @@ void PostProcessPage::initializePage()
 
 void PostProcessPage::performAction()
 {
+    if (!SelfInstall::instance().isInstalled())
+        SelfInstall::instance().installExecutable();
+
     ui.progressBar->setMaximum(4);
     ui.progressBar->setValue(0);
     runCommand("updating mime database","update-mime-database",QStringList() << Settings::instance().installDir()+ "/share/mime");
