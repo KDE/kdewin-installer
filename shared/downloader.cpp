@@ -283,6 +283,12 @@ bool Downloader::fetchInternal ( const QUrl &url )
     if ( d->progress )
         d->progress->hide();
     qDebug() << __FUNCTION__ << "ret: " << ( d->ret == 0 );
+
+	char *p =0;
+    if (curl_easy_getinfo ( d->curlHandle, CURLINFO_EFFECTIVE_URL, &p) == CURLE_OK) 
+    {
+        m_usedURL = p;
+    }
     return ( d->ret == 0 );
 }
 

@@ -68,8 +68,6 @@ public:
     
     // calculated checksum
     QByteArray checkSum() const;
-
-    
     
 Q_SIGNALS:
     void done ( bool error );
