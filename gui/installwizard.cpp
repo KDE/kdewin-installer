@@ -61,6 +61,8 @@
 
 InstallerEngineGui *engine;
 
+InstallWizard::WizardPageType InstallWizard::m_titlePage = WizardPageType::titlePage;
+
 InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     engine = new InstallerEngineGui(this);
     // default settings from stored values, they may be overrided by the  wizard pages 
@@ -113,13 +115,18 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     d.setTitle(windowTitle);
     d.setParent(this);
 
-    setStartId(titlePage);
+    setStartId(m_titlePage);
     connect(this, SIGNAL(currentIdChanged(int)), this, SLOT(slotCurrentIdChanged(int)) );
     readSettings();
 }
 
 InstallWizard::~InstallWizard()
 {
+}
+
+void InstallWizard::setTitlePage(WizardPageType pageType)
+{
+    m_titlePage = pageType;
 }
 
 void InstallWizard::reject()

@@ -39,7 +39,7 @@ class InstallWizard : public QWizard
 {
     Q_OBJECT
 public:
-    enum {
+    typedef enum {
         titlePage,
         userCompilerModePage,
         endUserPackageSelectorPage,
@@ -60,14 +60,17 @@ public:
         installPage,
         finishPage,
         settingsPage
-     };
+     } WizardPageType;
 
     InstallWizard(QWidget *parent = 0);
     virtual ~InstallWizard();
 
     /// check if settings should really skipped - this depends on present install dir, downlod dir full mirror release 
     static bool skipSettings();
-    
+
+    /// 
+    static void setTitlePage(WizardPageType pageType);
+
 protected:
     void writeSettings();
     void readSettings();
@@ -84,6 +87,7 @@ private:
 
     SettingsPage *_settingsPage;
     int m_lastId;
+    static WizardPageType m_titlePage;
 };
 
 
