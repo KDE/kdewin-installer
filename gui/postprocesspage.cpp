@@ -55,19 +55,28 @@ void PostProcessPage::initializePage()
 
 void PostProcessPage::performAction()
 {
-    if (!SelfInstall::instance().isInstalled())
-        SelfInstall::instance().installExecutable();
+    if (engine->installedPackages() == 0 && engine->removedPackages() > 0)
+    {
+        ui.progressBar->setMaximum(4);
+        ui.progressBar->setValue(0);
+        runCommand("deleting windows start menu entries","kwinstartmenu",QStringList() <<  "--remove");
+    }
+    else 
+    {
+        if (!SelfInstaller::instance().isInstalled())
+            SelfInstaller::instance().install();
 
-    ui.progressBar->setMaximum(4);
-    ui.progressBar->setValue(0);
-    runCommand("updating mime database","update-mime-database",QStringList() << Settings::instance().installDir()+ "/share/mime");
-    ui.progressBar->setValue(1);
-    runCommand("updating system configuration database","kbuildsycoca4");
-    ui.progressBar->setValue(2);
-    runCommand("deleting old windows start menu entries","kwinstartmenu",QStringList() <<  "--remove");
-    ui.progressBar->setValue(3);
-    runCommand("creating new windows start menu entries","kwinstartmenu");
-    ui.progressBar->setValue(4);
+        ui.progressBar->setMaximum(4);
+        ui.progressBar->setValue(0);
+        runCommand("updating mime database","update-mime-database",QStringList() << Settings::instance().installDir()+ "/share/mime");
+        ui.progressBar->setValue(1);
+        runCommand("updating system configuration database","kbuildsycoca4");
+        ui.progressBar->setValue(2);
+        runCommand("deleting old windows start menu entries","kwinstartmenu",QStringList() <<  "--remove");
+        ui.progressBar->setValue(3);
+        runCommand("creating new windows start menu entries","kwinstartmenu");
+        ui.progressBar->setValue(4);
+    }
 
     if (Settings::instance().autoNextStep())
         wizard()->next();
