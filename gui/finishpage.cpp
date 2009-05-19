@@ -28,26 +28,9 @@ FinishPage::FinishPage()
 {
     setTitle(tr("Installation/Update Finished"));
     setSubTitle(tr(" "));
-
-    label = new QLabel(tr(
-         "<p>Now you should be able to run KDE applications. In the start menu you will find entries for the installed kde applications.</p>"
-        ));
-
-    label2 = new QLabel(tr(
-         "<p>If you <ul>"
-         "<li>like to see the KDE on Windows project web site see <a href=\"http://windows.kde.org\">http://windows.kde.org</a></li>"
-         "<li>like to get community support for this installer and/or running KDE applications please contact "
-            "the <a href=\"http://mail.kde.org/mailman/listinfo/kde-windows\">kde-windows@kde.org</a> mailing list.</li>"
-         "<li>like to contribute time and/or money to this project contact the above mentioned list."
-            "There are always interesting projects where you can join.</li>"
-         "</ul></p>"
-         "<p>Have fun using KDE on windows.</p>" 
-         "<p> </p>"
-         "<p><b>The KDE on Windows team</b></p>"
-         "<p>&nbsp;</p>"
-         "<p>&nbsp;</p>"
-         "<p>This software is designed to provide a powerfull and flexible network based install system using a modern gui toolkit.</p>"
-         ));
+    
+    label = new QLabel;
+    label2 = new QLabel;
 
     label->setOpenExternalLinks (true);
     label->setWordWrap(true);
@@ -63,12 +46,45 @@ FinishPage::FinishPage()
 
 void FinishPage::initializePage()
 {
-    if (engine->installedPackages() == 0 && engine->removedPackages() > 0)
+    QString funText;
+    if (engine->installedPackages() > 0)
+    {
+        setTitle(tr("Installation/Update Finished"));
+
+        label->setText(tr(
+             "<p>Now you should be able to run KDE applications. In the start menu you will find entries for the installed kde applications.</p>"
+            ));
+
+        funText = tr("<p>Have fun using KDE on windows.</p>");
+    }
+    else if (engine->removedPackages() > 0)
     {
         setTitle(tr("Package removal Finished"));
         label->setVisible(false);
     }
-    
+    else if (engine->installedPackages() == 0)
+    {
+        label->setText(tr(
+             "<p>Thank you for using KDE on windows.</p>"
+            ));
+    }
+
+    label2->setText(tr(
+         "<p>If you <ul>"
+         "<li>like to see the KDE on Windows project web site see <a href=\"http://windows.kde.org\">http://windows.kde.org</a></li>"
+         "<li>like to get community support for this installer and/or running KDE applications please contact "
+            "the <a href=\"http://mail.kde.org/mailman/listinfo/kde-windows\">kde-windows@kde.org</a> mailing list.</li>"
+         "<li>like to contribute time and/or money to this project contact the above mentioned list."
+            "There are always interesting projects where you can join.</li>"
+         "</ul></p>"
+         ) + funText + tr(
+         "<p> </p>"
+         "<p><b>The KDE on Windows team</b></p>"
+         "<p>&nbsp;</p>"
+         "<p>&nbsp;</p>"
+         "<p>This software is designed to provide a powerfull and flexible network based install system using a modern gui toolkit.</p>"
+         ));
+
     setFinalPage(true);
     //wizard()->setOption(QWizard::NoCancelButton,true);
     wizard()->button(QWizard::CancelButton)->setEnabled(false);
