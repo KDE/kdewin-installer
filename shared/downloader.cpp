@@ -299,9 +299,11 @@ void Downloader::threadFinished ()
     bool bRet = ( d->ret == CURLE_OK );
     m_result = d->cancel ? Aborted : bRet ? Finished : Failed;
 
+    QString fn;
     if ( bRet && !d->fileName.isEmpty() ) {
         QTemporaryFile *tf = static_cast<QTemporaryFile*> ( d->ioDevice );
-        QString fn = tf->fileName();
+        fn = tf->fileName();
+        tf->setAutoRemove( false );
         tf->close();
         if ( QFile::exists ( d->fileName ) ) {
             if ( !QFile::remove ( d->fileName ) ) {
@@ -309,14 +311,17 @@ void Downloader::threadFinished ()
                 bRet = false;
             }
         }
-        if ( !QFile::rename ( fn, d->fileName ) ) {
-            setError ( tr ( "Error renaming %1 to %2" ).arg ( fn ).arg ( d->fileName ) );
-            bRet = false;
-        }
     } else {
         d->ioDevice->close();
     }
     delete d->ioDevice;
+
+    // temporary files must be deleted before they can be renamed
+    if ( bRet && !d->fileName.isEmpty() && !QFile::rename ( fn, d->fileName ) ) {
+        setError ( tr ( "Error renaming %1 to %2" ).arg ( fn ).arg ( d->fileName ) );
+        bRet = false;
+    }
+
     d->ioDevice = 0;
     m_resultString = QString ( curl_easy_strerror ( d->ret ) );
     if ( d->ret )
