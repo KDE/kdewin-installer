@@ -57,7 +57,7 @@ static void printHelp(const QString &addInfo)
        << "\n\t\t"      << "-version <package version>"
        << "\n\t\t"      << "-strip <strip debug infos> (MinGW only)"
        << "\n\t\t"      << "-special make special assumptions about package content (only for Qt)"
-       << "\n\t\t"      << "-type <type of package> (mingw, msvc)"
+       << "\n\t\t"      << "-type <type of package> (mingw, msvc{=vc80}, vc90)"
        << "\n";
 
     qerr.flush();
