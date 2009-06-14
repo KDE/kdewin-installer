@@ -83,8 +83,7 @@ int main(int argc, char *argv[])
 
     setMessageHandler();
 
-    InstallWizard *wizard = new InstallWizard();
-    int ret = wizard->exec();
-    delete wizard;
-    return ret;
+    InstallWizard wizard;
+    wizard.show();
+    return app.exec();
 }
