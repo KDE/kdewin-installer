@@ -85,6 +85,12 @@
 ; url of source package (absolute or relative)
 @url-src http://ftp.iasi.roedu.net/mirrors/ftp.trolltech.com/qt/source/qt-win-opensource-src-4.3.0beta.zip qt-msvc-4.3.0b-src.zip
 ;
+; local filename (same types as the relating url- attribute)  
+@filename-bin qt-msvc-4.3-bin.zip
+@filename-lib qt-msvc-4.3-lib.zip
+@filename-doc qt-msvc-4.3-doc.zip
+@filename-src qt-msvc-4.3-src.zip 
+
 ; package dependencies
 @require dbus
 ;
