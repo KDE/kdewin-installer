@@ -61,7 +61,7 @@
 
 InstallerEngineGui *engine;
 
-InstallWizard::WizardPageType InstallWizard::m_titlePage = WizardPageType::titlePage;
+InstallWizard::WizardPageType InstallWizard::m_titlePage = titlePage;
 
 InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     engine = new InstallerEngineGui(this);
