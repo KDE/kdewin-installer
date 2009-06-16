@@ -26,7 +26,9 @@
 #include <QDateTime>
 #include <QFile>
 
+#ifdef Q_WS_WIN
 #include <windows.h>
+#endif
 
 static int fileOffset = 0;
 
@@ -94,7 +96,7 @@ void myMessageOutput(QtMsgType type, const char *msg)
          break;
     }
     QString data = QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ") + QLatin1String(msgtype) + msg + QLatin1String("\n");
-#ifdef QT_DEBUG
+#if defined(Q_WS_WIN) && defined(QT_DEBUG)
     OutputDebugString(data.toLocal8Bit().data());
 #endif
     if (logFile)
