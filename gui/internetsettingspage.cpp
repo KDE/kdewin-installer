@@ -123,7 +123,7 @@ void InternetSettingsPage::switchProxyFields(bool mode)
 #ifdef Q_WS_WIN
         s.proxy(Settings::InternetExplorer,"",proxy);
 #else
-        s.proxy(Settings::Environment"",proxy);
+        s.proxy(Settings::Environment,"",proxy);
 #endif
     else if(ui.proxyFireFox->isChecked())
         s.proxy(Settings::FireFox,"",proxy);
