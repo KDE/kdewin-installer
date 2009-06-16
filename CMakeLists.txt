@@ -166,8 +166,8 @@ configure_file(${CMAKE_SOURCE_DIR}/mirrors.lst.cmake ${CMAKE_BINARY_DIR}/config/
 
 #FIXME: ${BZIP2_LIBRARIES} -> 3rdparty
 if (UNIX)
-  set (CONSOLE_LIBS pthread dl z rt ${BZIP2_LIBRARIES} ${CURL_LIBRARIES} shared-console)
-  set (GUI_LIBS pthread dl z rt ${BZIP2_LIBRARIES} ${CURL_LIBRARIES} shared-gui)
+  set (CONSOLE_LIBS pthread dl z rt ${QUAZIP_LIBRARIES} ${BZIP2_LIBRARIES} ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} ${CURL_LIBRARIES} shared-console)
+  set (GUI_LIBS pthread dl z rt ${QUAZIP_LIBRARIES} ${BZIP2_LIBRARIES} ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} ${CURL_LIBRARIES} shared-gui)
   if (STATIC_BUILD)
     find_package(X11)
     find_package(Freetype)
