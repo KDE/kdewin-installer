@@ -74,4 +74,7 @@ QString getStartMenuPath(bool bAllUsers);
 /// return path of executable
 QString exePath();
 
+/// wait 
+void qsleep(int ms);
+
 #endif

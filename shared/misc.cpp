@@ -35,6 +35,7 @@
 #include <initguid.h>
 #endif
 
+#include <QCoreApplication>
 #include <QDebug>
 #include <QDir>
 #include <QFileInfo>
@@ -313,8 +314,16 @@ bool deleteFile( const QString &root, const QString &filename )
 
 QString exePath()
 {
-    char installerExePath[MAX_PATH+1];
-    GetModuleFileNameA(NULL, installerExePath, MAX_PATH);
-    QFileInfo pi(installerExePath); 
-    return pi.absolutePath();
+    return QCoreApplication::applicationDirPath();    
 }
+
+void qsleep(int ms)
+{
+#ifdef Q_OS_WIN
+    Sleep(ms);
+#else
+#warning implement nanosleep
+    //nanosleep(ms);
+#endif
+}
+
