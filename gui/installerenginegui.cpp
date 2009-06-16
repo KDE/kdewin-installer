@@ -28,7 +28,7 @@
 #include "installerenginegui.h"
 #include "downloader.h"
 #include "installwizard.h"
-
+#include "misc.h"
 
 //#include "downloader.h"
 #include "installer.h"
@@ -39,8 +39,9 @@
 #include "database.h"
 #include "packagestates.h"
 #include "installerdialogs.h"
-
+#ifdef Q_OS_WIN
 #include <windows.h>
+#endif
 
 #include <QtGui/QTreeWidget>
 
@@ -647,7 +648,7 @@ bool killAllKDEApps()
     }
     qDebug() << "run" << cmd << args << "without errors"; 
     // give applications some time to really be terminated
-    Sleep(1000);
+    qsleep(1000);
     return true;
 }
 
