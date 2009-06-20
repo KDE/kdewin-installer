@@ -5,10 +5,12 @@ set (VER_PATCH 0)
 set (packager_SOURCES
   main.cpp
   packager.cpp
+  ../shared/filelistgenerator.cpp
 )
 
 set (packager_HEADERS
   packager.h
+  ../shared/filelistgenerator.h
 )
 
 include_directories(
@@ -20,10 +22,12 @@ add_definitions(-DPACKAGER_VERSION=${VER_MAJ}.${VER_MIN}.${VER_PATCH})
 
 qt4_automoc(${packager_SOURCES})
 
+QT4_ADD_RESOURCES(packager_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/packager.qrc)
+
 set (TARGET kdewin-packager)
 
 add_executable(${TARGET} ${packager_SOURCES} ${packager_HEADERS})
-target_link_libraries(${TARGET} ${CONSOLE_LIBS})
+target_link_libraries(${TARGET} ${CONSOLE_LIBS} ${QT_QTXML_LIBRARIES})
 
 install_targets(/bin ${TARGET} )
 

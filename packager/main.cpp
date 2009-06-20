@@ -25,12 +25,72 @@
 
 #include "packager.h"
 #include "qio.h"
+#include "../shared/filelistgenerator.h"
 
 #include <QtDebug>
 #include <QCoreApplication>
 #include <QFileInfo>
 #include <QUrl>
 #include <QDir>
+
+QString name, root, srcRoot, srcExclude, version, notes, type, destdir;
+QString checkSumMode = "md5";
+bool bComplete = false;
+QFileInfo rootDir;
+QFileInfo srcRootDir;
+bool strip = false;
+bool verbose = false;
+bool debugPackage = false;
+bool hashFirst = true;
+bool specialPackage = false;
+unsigned int compressionMode = 1; // zip
+
+#if 0
+class _MyXmlHandler : public QXmlDefaultHandler
+{
+public:
+	bool startElement ( const QString & namespaceURI, const QString & localName, const QString & qName, const QXmlAttributes & atts ) 
+	{
+		inElement = true;
+		element = qName;
+		if (qName == "package")
+			name = atts.value("name");
+		return true;
+	}
+	
+	bool endElement ( const QString & namespaceURI, const QString & localName, const QString & qName )
+	{
+		inElement = false;
+		return true;
+	}
+
+	bool characters ( const QString & ch )  
+	{
+		if  (!inElement)	
+			return true;
+		if (element == "regexp")
+			qDebug() << "regexp-data" << ch;
+		else 
+			qDebug() << "data" << ch;
+
+		return true;
+	}
+
+	QString element;
+	bool inElement;
+};
+
+#endif
+
+void printBuildInTemplate()
+{
+	QFile file(":/template.xml");
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+		return;
+
+     while (!file.atEnd())
+         qout << file.readLine();
+}
 
 
 static void printHelp(const QString &addInfo)
@@ -40,24 +100,27 @@ static void printHelp(const QString &addInfo)
         qerr << ": " << addInfo;
     qerr << "\n";
     qerr << "Options:"
-       << "\n\t\t"      << "-complete create all-in-one package with all files"
-       << "\n\t\t"      << "-checksum <md5|sha1> - set checksum mode (default: md5)"
-       << "\n\t\t"      << "-compression <1|2> - set compression mode to"
-       << "\n\t\t\t"    << "1 - zip, default"
-       << "\n\t\t\t"    << "2 - tar.bz2"
+       << "\n\t\t"      << "-complete              create all-in-one package with all files"
+       << "\n\t\t"      << "-checksum <md5|sha1>   set checksum mode (default: md5)"
+       << "\n\t\t"      << "-compression <1|2>     set compression mode to"
+       << "\n\t\t"      << "                            1 - zip, default"
+       << "\n\t\t"      << "                            2 - tar.bz2"
 // not enabled yet
 //       << "\n\t\t"      << "-debug-package create also debug package"
-       << "\n\t\t"      << "-destdir directory where to store the zip files to"
-       << "\n\t\t"      << "-name <packageName>"
-       << "\n\t\t"      << "-notes <additional notes for manifest files>"
-       << "\n\t\t"      << "-root <path to package files>"
-       << "\n\t\t"      << "-srcroot <path to source files>"
-       << "\n\t\t"      << "-srcexclude <patterns> path pattern to exclude from src package"
-       << "\n\t\t"      << "-verbose display verbose processing informations"
-       << "\n\t\t"      << "-version <package version>"
-       << "\n\t\t"      << "-strip <strip debug infos> (MinGW only)"
-       << "\n\t\t"      << "-special make special assumptions about package content (only for Qt)"
-       << "\n\t\t"      << "-type <type of package> (mingw, msvc{=vc80}, vc90)"
+       << "\n\t\t"      << "-destdir <path>        directory where to store the zip files to"
+       << "\n\t\t"      << "-name <packageName>    specify package name"
+       << "\n\t\t"      << "-notes <text>          specify additional notes for manifest files"
+       << "\n\t\t"      << "-root <path>           specify path to root directory of installed files"
+       << "\n\t\t"      << "-srcroot <path>        specify path to source root"
+       << "\n\t\t"      << "-srcexclude <pattern>  path pattern to exclude from src package"
+       << "\n\t\t"      << "-verbose               display verbose processing informations"
+       << "\n\t\t"      << "-version <version>     specify package version (e.g. 1.2.3 or 1.3.4-5)"
+       << "\n\t\t"      << "-strip                 strip debug infos (MinGW only)"
+//       << "\n\t\t"      << "-special               make special assumptions about package content (only for Qt)"
+       << "\n\t\t"      << "-type <type>           specify type of package (mingw, msvc{=vc80}, vc90)"
+       << "\n\t\t"      << "-template <filepath>   use xml template <filepath> for generating file lists (default is use internal default template)"
+       << "\n\t\t"      << "-package-scheme <scheme> select package scheme in template (default is \"default\")"
+       << "\n\t\t"      << "-print-template        print internal default xml template"
        << "\n";
 
     qerr.flush();
@@ -69,21 +132,24 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
 
     QStringList args = app.arguments();
-    QString name, root, srcRoot, srcExclude, version, notes, type, destdir;
-    QString checkSumMode = "md5";
-    bool bComplete = false;
-    QFileInfo rootDir;
-    QFileInfo srcRootDir;
-    bool strip = false;
-    bool verbose = false;
-    bool debugPackage = false;
-    bool hashFirst = true;
-    bool specialPackage = false;
-    unsigned int compressionMode = 1; // zip
+	QString templateFile = ":/template.xml";
 
     args.removeAt(0);   // name of executable
 
-    int idx = args.indexOf("-name");
+    int idx = args.indexOf("-print-template");
+    if(idx != -1 ) {
+        printBuildInTemplate();
+		return 0;
+    }
+
+    idx = args.indexOf("-template");
+    if(idx != -1 && idx < args.count() -1) {
+        templateFile = args[idx + 1];
+        args.removeAt(idx + 1);
+        args.removeAt(idx);
+    }
+
+    idx = args.indexOf("-name");
     if(idx != -1 && idx < args.count() -1) {
         name = args[idx + 1];
         args.removeAt(idx + 1);
@@ -208,6 +274,15 @@ int main(int argc, char *argv[])
 
     if(args.count() > 0)
         printHelp(QString("unknown command line parameter(s): '%1'").arg(args.join(" ")));
+		
+			/*
+	QList<InstallFile> fileList;
+
+		generator.generateList(fileList,Packager::BIN,"mingw","C:/Programme/kde");
+		qDebug() << fileList;
+		return 0;
+	}
+*/
     if(name.isEmpty())
        printHelp("-name not specified");
     if(root.isEmpty())
@@ -225,7 +300,8 @@ int main(int argc, char *argv[])
         name += '-' + type;
 
     Packager packager(name, version, notes);
-    if (!srcRoot.isEmpty())
+
+	if (!srcRoot.isEmpty())
         packager.setSourceRoot(srcRootDir.filePath());
 
     if (!srcExclude.isEmpty())
@@ -236,10 +312,15 @@ int main(int argc, char *argv[])
     packager.setCompressionMode(compressionMode);
     packager.setCheckSumMode(checkSumMode);
 
-    if (specialPackage)
+	// todo: choose package style 
+	if (specialPackage)
         packager.setSpecialPackageMode( true );
     if (strip)
        packager.stripFiles(rootDir.filePath());
+
+	FileListGenerator generator;
+	generator.parse(templateFile);
+	packager.setFileListGenerator(&generator);
 
     packager.makePackage(rootDir.filePath(), destdir, bComplete);
 

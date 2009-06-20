@@ -1,0 +1,6 @@
+ <!DOCTYPE RCC><RCC version="1.0">
+ <qresource>
+     <file alias="template.xml">template.xml</file>
+ </qresource>
+ </RCC>
+

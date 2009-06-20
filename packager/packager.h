@@ -22,11 +22,14 @@
 #ifndef PACKAGER_H
 #define PACKAGER_H
 
+#include "package.h"
+#include "misc.h"
+
 #include <QStringList>
 #include <QList>
 #include <QRegExp>
-#include "package.h"
-#include "misc.h"
+
+class FileListGenerator;
 
 class Packager {
     public:
@@ -43,6 +46,7 @@ class Packager {
       void setWithDebugPackage(bool mode) { m_debugPackage = mode; }
       void setCompressionMode(unsigned int mode) { m_compMode = (mode < 1 || mode > 2) ? 1 : mode; }
       void setCheckSumMode(const QString mode) { m_checkSumMode = mode; }
+      void setFileListGenerator(FileListGenerator *generator) { m_generator = generator; }
 
       bool generatePackageFileList(QList<InstallFile> &result, Packager::Type type, const QString &dir=QString());
       bool createHashFile(const QString &packageFileName, const QString &basePath);
@@ -61,6 +65,7 @@ class Packager {
         bool compressFiles(const QString &zipFile, const QString &filesRootDir, const QList<InstallFile> &files, const QList<MemFile> &memFiles=QList<MemFile>(), const QString &destRootDir=QString() );
         bool createManifestFiles(const QString &rootdir, QList<InstallFile> &fileList, Packager::Type type, QList<MemFile> &manifestFiles);
       bool createQtConfig(QList<InstallFile> &fileList, QList<MemFile> &manifestFiles);
+      bool generatePackageFileListDefault(QList<InstallFile> &result, Packager::Type type, const QString &dir=QString());
 
       QString getBaseName(Packager::Type type);
       QString getCompressedExtension(Packager::Type type);
@@ -77,6 +82,7 @@ class Packager {
       bool m_debugPackage;
       bool m_special;
       unsigned int m_compMode;
+      FileListGenerator *m_generator;
 };
 
 #endif

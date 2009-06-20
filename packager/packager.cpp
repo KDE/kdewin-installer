@@ -25,6 +25,7 @@
 #include "quazip.h"
 #include "quazipfile.h"
 #include "misc.h"
+#include "../shared/filelistgenerator.h"
 
 #include "tarfilter.h"
 #include "bzip2iodevice.h"
@@ -53,7 +54,8 @@ Packager::Packager(const QString &packageName, const QString &packageVersion, co
     m_verbose(false),
     m_debugPackage(false),
     m_special(false),
-    m_compMode(1)
+    m_compMode(1),
+	m_generator(0)
 {
 }
 
@@ -194,7 +196,26 @@ bool Packager::createZipFile(const QString &zipFile, const QString &filesRootDir
 
 bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::Type type, const QString &root)
 {
-    QString dir = root.isEmpty() ? m_rootDir : root;
+	QString dir = root.isEmpty() ? m_rootDir : root;
+	if (m_generator)
+	{
+		QString compilerType; 
+		if (m_name.endsWith("mingw"))
+			compilerType = "mingw";
+		else if (m_name.endsWith("vc90"))
+			compilerType = "vc90";
+		else 
+			compilerType = "vc80";
+	
+		return m_generator->generatePackageFileList(fileList, type, compilerType, dir);
+	}
+	else
+		return generatePackageFileListDefault(fileList, type, dir);
+}
+
+bool Packager::generatePackageFileListDefault(QList<InstallFile> &fileList, Packager::Type type, const QString &root)
+{	
+	QString dir = root.isEmpty() ? m_rootDir : root;
     QString exclude;
     fileList.clear();
     QString lName = m_name.toLower();
