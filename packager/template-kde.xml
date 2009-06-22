@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="kde">
+	<package name="default">
+	    <shortDescription>the default package</shortDescription>
+		<part name="runtime">
+			<compiler name="all">
+				<files directory="bin" pattern="*.exe *.bat"/>
+				<files directory="bin" pattern="*.dll"/>
+				<files directory="lib" pattern="*.dll"/>
+				<files directory="lib" pattern="*.exe *.bat"/>
+				<files directory="manifest" pattern="*-bin.cmd"/>
+				<files directory="share" pattern="*.*"/>
+				<files directory="lib" pattern="*.*" exclude="*d.dll *.dll *.lib *.a"/>
+				<files directory="plugins" pattern="*.dll"/>
+				<files directory="data" pattern="*.*"/>
+				<files directory="etc" pattern="*.*"/>
+			</compiler>
+		</part>
+		<part name="development">
+			<compiler name="all">
+				<files directory="manifest" pattern="*-lib.cmd"/>
+				<files directory="lib" pattern="*.lib"/>
+				<files directory="lib" pattern="*.a"/>
+				<files directory="include" pattern="*.*"/>
+			</compiler>
+			<compiler name="mingw">
+				<files directory="lib" pattern="*.a"/>
+			</compiler>
+			<compiler name="vc80">
+				<files directory="lib" pattern="*.lib"/>
+			</compiler>
+			<compiler name="vc90">
+				<files directory="lib" pattern="*.lib"/>
+			</compiler>
+		</part>
+		<part name="documentation">
+			<compiler name="all">
+				<files directory="manifest" pattern="*-doc.cmd"/>
+				<files directory="doc" pattern="*.*"/>
+				<files directory="man" pattern="*.*"/>
+			</compiler>
+		</part>
+	</package>
+</module>

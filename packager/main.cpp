@@ -84,12 +84,26 @@ public:
 
 void printBuildInTemplate()
 {
-	QFile file(":/template.xml");
+	{
+	qout << "------- kdewin-packager module template: kde -------";
+
+	QFile file(":/template-kde.xml");
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 		return;
-
+    
      while (!file.atEnd())
          qout << file.readLine();
+	}
+	{
+	qout << "------- kdewin-packager module template: qt -------";
+
+	QFile file(":/template-qt.xml");
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+		return;
+    
+     while (!file.atEnd())
+         qout << file.readLine();
+	}
 }
 
 
@@ -118,9 +132,9 @@ static void printHelp(const QString &addInfo)
        << "\n\t\t"      << "-strip                 strip debug infos (MinGW only)"
 //       << "\n\t\t"      << "-special               make special assumptions about package content (only for Qt)"
        << "\n\t\t"      << "-type <type>           specify type of package (mingw, msvc{=vc80}, vc90)"
-       << "\n\t\t"      << "-template <filepath>   use xml template <filepath> for generating file lists (default is use internal default template)"
-       << "\n\t\t"      << "-package-scheme <scheme> select package scheme in template (default is \"default\")"
-       << "\n\t\t"      << "-print-template        print internal default xml template"
+       << "\n\t\t"      << "-template <filepath>   use xml template <filepath> for generating modules (default is use internal kde template)"
+       << "\n\t\t"      << "-module <name>         select module template (default is \"kde\")"
+       << "\n\t\t"      << "-print-templates       print internal default xml templates (kde,qt)"
        << "\n";
 
     qerr.flush();
@@ -132,11 +146,11 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
 
     QStringList args = app.arguments();
-	QString templateFile = ":/template.xml";
+	QString templateFile = ":/template-kde.xml";
 
     args.removeAt(0);   // name of executable
 
-    int idx = args.indexOf("-print-template");
+    int idx = args.indexOf("-print-templates");
     if(idx != -1 ) {
         printBuildInTemplate();
 		return 0;

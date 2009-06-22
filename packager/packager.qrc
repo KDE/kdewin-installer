@@ -1,6 +1,7 @@
  <!DOCTYPE RCC><RCC version="1.0">
  <qresource>
-     <file alias="template.xml">template.xml</file>
+     <file alias="template-qt.xml">template-qt.xml</file>
+     <file alias="template-kde.xml">template-kde.xml</file>
  </qresource>
  </RCC>
 
