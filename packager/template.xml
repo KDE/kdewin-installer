@@ -1,88 +1,93 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<packagescheme name="kde">
-    <package type="runtime">
-        <compiler name="all">
-            <files directory="bin" pattern="*.exe *.bat"/>
-            <files directory="bin" pattern="*.dll"/>
-            <files directory="lib" pattern="*.dll"/>
-            <files directory="lib" pattern="*.exe *.bat"/>
-            <files directory="manifest" pattern="*-bin.cmd"/>
-            <files directory="share" pattern="*.*"/>
-            <files directory="lib" pattern="*.*" exclude="*d.dll *.dll *.lib *.a"/>
-            <files directory="plugins" pattern="*.dll"/>
-            <files directory="data" pattern="*.*"/>
-            <files directory="etc" pattern="*.*"/>
-        </compiler>
-    </package>
-    <package type="development">
-        <compiler name="all">
-            <files directory="manifest" pattern="*-lib.cmd"/>
-            <files directory="lib" pattern="*.lib"/>
-            <files directory="lib" pattern="*.a"/>
-            <files directory="include" pattern="*.*"/>
-        </compiler>
-        <compiler name="mingw">
-            <files directory="lib" pattern="*.a"/>
-        </compiler>
-        <compiler name="vc80">
-            <files directory="lib" pattern="*.lib"/>
-        </compiler>
-        <compiler name="vc90">
-            <files directory="lib" pattern="*.lib"/>
-        </compiler>
-    </package>
-    <package type="documentation">
-        <compiler name="all">
-            <files directory="manifest" pattern="*-doc.cmd"/>
-            <files directory="doc" pattern="*.*"/>
-            <files directory="man" pattern="*.*"/>
-        </compiler>
-    </package>
-<packagescheme/>
-<packagescheme name="qt">
-    <package type="runtime">
-         <compiler name="all">
-           <!-- assistant.exe can be used separatly from qt doc - better in bin than doc package -->
-            <files directory="bin" pattern="*.dll assistant.exe qdbus.exe qdbusviewer.exe" exclude="*d.dll *d4.dll"/>
-            <files directory="plugins" pattern="*.dll" exclude="*d.dll *d4.dll *d1.dll"/>
-            <files directory="translations" pattern="*.qm"/>
-            <files directory="lib" pattern="*.exe *.bat"/>
-            <files directory="manifest" pattern="*-bin.cmd"/>
-            <files directory="" pattern="*.xml"/>
-        </compiler>
-    </package>
-    <package type="development">
-        <compiler name="all">
-            <files directory="bin" pattern="*.exe *.bat" exclude="assistant.exe qtdemo.exe qdbus.exe qdbusviewer.exe"/>
-            <files directory="" pattern=".qmake.cache"/>
-            <!-- trolltech installs whole mkspecs folder too -->
-            <files directory="mkspecs" pattern="*.*" exclude=".svn CVS"/>
-            <files directory="tools/linguist/phrasebooks" pattern="*.qph"/>
-            <files directory="phrasebooks" pattern="*.qph"/>
-            <files handler="parseQtIncludeFiles" directory="include" pattern="*" exclude="private *_p.h *.pr* .svn CVS"/>
-            <files directory="manifest" pattern="*-lib.cmd"/>
-        </compiler>
-        <compiler name="mingw">
-            <files directory="lib" pattern="*.a" exclude="*d4.a *d.a"/>
-        </compiler>
-        <compiler name="vc80">
-            <files directory="lib" pattern="*.lib" exclude="*d4.lib *d.lib"/>
-        </compiler>
-        <compiler name="vc90">
-            <files directory="lib" pattern="*.lib" exclude="*d4.lib *d.lib"/>
-        </compiler>
-    </package>
-    <package type="documentation">
-        <compiler name="all">
-            <files directory="bin" pattern="qtdemo.exe"/>
-            <files directory="manifest" pattern="*-doc.cmd"/>
-            <files directory="doc" pattern="*.*" exclude=".svn CVS"/>
-        </compiler>
-    </package>
-    <package type="source">
-        <compiler name="all">
-            <files directory="" pattern="*.*" exclude=".svn CVS *.bak *.orig"/>
-        </compiler>
-    </package>
-<packagescheme/>
-<packagescheme name="default" alias="kde"/>
+<module name="kde">
+	<package name="default">
+	    <shortDescription>the default package</shortDescription>
+		<part name="runtime">
+			<compiler name="all">
+				<files directory="bin" pattern="*.exe *.bat"/>
+				<files directory="bin" pattern="*.dll"/>
+				<files directory="lib" pattern="*.dll"/>
+				<files directory="lib" pattern="*.exe *.bat"/>
+				<files directory="manifest" pattern="*-bin.cmd"/>
+				<files directory="share" pattern="*.*"/>
+				<files directory="lib" pattern="*.*" exclude="*d.dll *.dll *.lib *.a"/>
+				<files directory="plugins" pattern="*.dll"/>
+				<files directory="data" pattern="*.*"/>
+				<files directory="etc" pattern="*.*"/>
+			</compiler>
+		</part>
+		<part name="development">
+			<compiler name="all">
+				<files directory="manifest" pattern="*-lib.cmd"/>
+				<files directory="lib" pattern="*.lib"/>
+				<files directory="lib" pattern="*.a"/>
+				<files directory="include" pattern="*.*"/>
+			</compiler>
+			<compiler name="mingw">
+				<files directory="lib" pattern="*.a"/>
+			</compiler>
+			<compiler name="vc80">
+				<files directory="lib" pattern="*.lib"/>
+			</compiler>
+			<compiler name="vc90">
+				<files directory="lib" pattern="*.lib"/>
+			</compiler>
+		</part>
+		<part name="documentation">
+			<compiler name="all">
+				<files directory="manifest" pattern="*-doc.cmd"/>
+				<files directory="doc" pattern="*.*"/>
+				<files directory="man" pattern="*.*"/>
+			</compiler>
+		</part>
+	<package/>
+<module>
+<module name="qt">
+	<package name="default">
+		<part name="runtime">
+			 <compiler name="all">
+			   <!-- assistant.exe can be used separatly from qt doc - better in bin than doc package -->
+				<files directory="bin" pattern="*.dll assistant.exe qdbus.exe qdbusviewer.exe" exclude="*d.dll *d4.dll"/>
+				<files directory="plugins" pattern="*.dll" exclude="*d.dll *d4.dll *d1.dll"/>
+				<files directory="translations" pattern="*.qm"/>
+				<files directory="lib" pattern="*.exe *.bat"/>
+				<files directory="manifest" pattern="*-bin.cmd"/>
+				<files directory="" pattern="*.xml"/>
+			</compiler>
+		</part>
+		<part name="development">
+			<compiler name="all">
+				<files directory="bin" pattern="*.exe *.bat" exclude="assistant.exe qtdemo.exe qdbus.exe qdbusviewer.exe"/>
+				<files directory="" pattern=".qmake.cache"/>
+				<!-- trolltech installs whole mkspecs folder too -->
+				<files directory="mkspecs" pattern="*.*" exclude=".svn CVS"/>
+				<files directory="tools/linguist/phrasebooks" pattern="*.qph"/>
+				<files directory="phrasebooks" pattern="*.qph"/>
+				<files handler="parseQtIncludeFiles" directory="include" pattern="*" exclude="private *_p.h *.pr* .svn CVS"/>
+				<files directory="manifest" pattern="*-lib.cmd"/>
+			</compiler>
+			<compiler name="mingw">
+				<files directory="lib" pattern="*.a" exclude="*d4.a *d.a"/>
+			</compiler>
+			<compiler name="vc80">
+				<files directory="lib" pattern="*.lib" exclude="*d4.lib *d.lib"/>
+			</compiler>
+			<compiler name="vc90">
+				<files directory="lib" pattern="*.lib" exclude="*d4.lib *d.lib"/>
+			</compiler>
+		</part>
+		<part name="documentation">
+			<compiler name="all">
+				<files directory="bin" pattern="qtdemo.exe"/>
+				<files directory="manifest" pattern="*-doc.cmd"/>
+				<files directory="doc" pattern="*.*" exclude=".svn CVS"/>
+			</compiler>
+		</part>
+		<part name="source">
+			<compiler name="all">
+				<files directory="" pattern="*.*" exclude=".svn CVS *.bak *.orig"/>
+			</compiler>
+		</part>
+	<package/>
+</module>
+<module name="default" alias="kde"/>

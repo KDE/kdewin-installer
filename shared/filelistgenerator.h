@@ -35,6 +35,7 @@ public:
 	~FileListGenerator();
 	bool parse(const QString &fileName);
 	bool generatePackageFileList(QList<InstallFile> &fileList, Packager::Type type, const QString compilerType, const QString &root);
+	QString getDescription(Packager::Type type);
 
 protected:
 	XmlData *m_data;

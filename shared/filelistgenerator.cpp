@@ -32,6 +32,7 @@ public:
 		: directory(atts.value("directory"))
 		, pattern(atts.value("pattern"))
 		, exclude(atts.value("exclude"))
+		, regexp(atts.value("regexp"))
 		, handler(atts.value("handler"))
 	{
 	}
@@ -40,6 +41,7 @@ public:
 	QString pattern;
 	QString exclude;
 	QString handler;
+	QString regexp;
 	friend QDebug operator<<(QDebug, const XmlFiles &);
 };
 
@@ -48,6 +50,7 @@ QDebug operator<<(QDebug out, const XmlFiles &c)
 	out << "\nXmlFiles ("
 		<< "directory:" << c.directory
 		<< "pattern:" << c.pattern
+		<< "regexp:" << c.regexp
 		<< "exclude:" << c.exclude
 		<< "handler:" << c.handler
 		<< ")";
@@ -85,61 +88,99 @@ QDebug operator<<(QDebug out,const XmlCompiler &c)
 	return out;
 }
 
-class XmlPackage 
+class XmlPart
 {
 public:
-	XmlPackage(const QString &_type) : type(_type)
+	XmlPart(const QString &_name) : name(_name)
 	{
 	}
 
-	XmlPackage(const QXmlAttributes & atts) : type(atts.value("type"))
+	XmlPart(const QXmlAttributes & atts) : name(atts.value("name"))
+	{
+	}
+
+	~XmlPart()
+	{
+		qDeleteAll(compilerList);
+		qDeleteAll(fileList);
+	}
+
+	QString name; // runtime, development, documentation, source
+	// compiler is optional 
+	QMap<QString,XmlCompiler*> compilerList;
+	QList<XmlFiles*> fileList;
+	friend QDebug operator<<(QDebug out,const XmlPart &c);
+};
+
+QDebug operator<<(QDebug out,const XmlPart &c)
+{
+	out << "\nXmlPart ("
+		<< "name:" << c.name
+	;
+	foreach(XmlCompiler *m, c.compilerList)
+		out << *m;
+	foreach(XmlFiles *m, c.fileList)
+		out << *m;
+	out << ")";
+	return out;
+}
+
+class XmlPackage 
+{
+public:
+	XmlPackage(const QString &_name) : name(_name)
+	{
+	}
+
+	XmlPackage(const QXmlAttributes & atts) : name(atts.value("name"))
 	{
 	}
 
 	~XmlPackage()
 	{
-		qDeleteAll(compilerList);
+		qDeleteAll(partList);
 	}
 
-	QString type; // runtime, development, documentation, source
-	QMap<QString,XmlCompiler*> compilerList;
+	QString name; 
+	QString description; 
+	QMap<QString,XmlPart*> partList;
 	friend QDebug operator<<(QDebug out,const XmlPackage &c);
 };
 
 QDebug operator<<(QDebug out,const XmlPackage &c)
 {
 	out << "\nXmlPackage ("
-		<< "type:" << c.type
+		<< "name:" << c.name
 	;
-	foreach(XmlCompiler *m, c.compilerList)
+	foreach(XmlPart *m, c.partList)
 		out << *m;
 	out << ")";
 	return out;
 }
 
-class XmlPackageScheme
+class XmlModule
 {
 public:
-	XmlPackageScheme(const QString &_name) : name(_name)
+	XmlModule(const QString &_name) : name(_name)
 	{
 	}
-	XmlPackageScheme(const QXmlAttributes & atts) 
+	XmlModule(const QXmlAttributes & atts) 
 		: name(atts.value("name")), alias(atts.value("alias"))
 	{
 	}
-	~XmlPackageScheme()
+	~XmlModule()
 	{
 		qDeleteAll(packageList);
 	}
 	QString name; // kde,qt
 	QString alias; // kde,qt
 	QMap<QString,XmlPackage*> packageList;
-	friend QDebug operator<<(QDebug,const XmlPackageScheme &);
+	friend QDebug operator<<(QDebug,const XmlModule &);
 };
 
-QDebug operator<<(QDebug out,const XmlPackageScheme &c)
+QDebug operator<<(QDebug out,const XmlModule &c)
 {
-	out << "\nXmlPackageScheme ("
+	out << "\nXmlModule ("
 		<< "name:" << c.name
 	;
 	foreach(XmlPackage *m, c.packageList)
@@ -153,16 +194,16 @@ class XmlData
 public:
 	~XmlData()
 	{
-		qDeleteAll(schemeList);
+		qDeleteAll(moduleList);
 	}
-	QMap<QString,XmlPackageScheme*> schemeList;
+	QMap<QString,XmlModule*> moduleList;
 };
 
 QDebug operator<<(QDebug out,const XmlData &c)
 {
 	out << "\nXmlData ("
 	;
-	foreach(XmlPackageScheme *m, c.schemeList)
+	foreach(XmlModule *m, c.moduleList)
 		out << *m;
 	out << ")";
 	return out;
@@ -179,26 +220,36 @@ public:
 	{
 		inElement = true;
 		element = qName;
-		if (qName == "packagescheme")
+		if (qName == "module")
 		{
-			m_scheme = new XmlPackageScheme(atts);
-			m_data->schemeList[atts.value("name")] = m_scheme;
+			m_module = new XmlModule(atts);
+			m_data->moduleList[atts.value("name")] = m_module;
 		}
 		else if (qName == "package")
 		{
+			m_parent = m_last;
 			m_package = new XmlPackage(atts);
-			m_scheme->packageList[atts.value("type")] = m_package;
+			m_module->packageList[atts.value("name")] = m_package;
+		}
+		else if (qName == "part")
+		{
+			m_parent = m_last;
+			m_part = new XmlPart(atts);
+			m_package->partList[atts.value("name")] = m_part;
 		}
 		else if (qName == "compiler")
 		{
+			m_parent = m_last;
 			m_compiler = new XmlCompiler(atts);
-			m_package->compilerList[atts.value("name")] = m_compiler;
+			m_part->compilerList[atts.value("name")] = m_compiler;
 		}
 		else if (qName == "files")
 		{
+			m_parent = m_last;
 			m_files = new XmlFiles(atts);
 			m_compiler->fileList.append(m_files);
 		}
+		m_last = qName;
 		return true;
 	}
 	
@@ -213,14 +264,42 @@ public:
 		if  (!inElement)	
 			return true;
 		// handle in element data
+		if (element == "shortDescription")
+			m_package->description = ch;
+	
 		return true;
+	}
+
+	bool error( const QXmlParseException & exception )
+	{
+		qDebug() << exception.lineNumber() << exception.columnNumber() << exception.message();
+		return  true;
+	}
+
+	QString errorString ()
+	{
+	}
+
+	bool fatalError ( const QXmlParseException & exception )
+	{
+		qCritical() << exception.lineNumber() << exception.columnNumber() << exception.message();
+		return  false;
+	}
+
+	bool warning ( const QXmlParseException & exception )
+	{
+		qWarning() << exception.lineNumber() << exception.columnNumber() << exception.message();
+		return  true;
 	}
 
 	protected:
 		QString element;
 		bool inElement;
-		XmlPackageScheme *m_scheme;
+		QString m_parent;
+		QString m_last;
+		XmlModule *m_module;
 		XmlPackage *m_package;
+		XmlPart *m_part;
 		XmlCompiler *m_compiler;
 		XmlFiles *m_files;
 		XmlData *m_data;
@@ -236,7 +315,6 @@ FileListGenerator::~FileListGenerator()
 	delete m_data;
 }
 
-
 bool FileListGenerator::parse(const QString &fileName)
 {
 	QXmlDefaultHandler *handler = new MyXmlHandler(m_data);	
@@ -247,6 +325,7 @@ bool FileListGenerator::parse(const QString &fileName)
 
 	QXmlInputSource *source = new QXmlInputSource(&file);
 	bool ok = xmlReader.parse(source);
+	qDebug() << *m_data;
 	return ok;
 }
 	
@@ -266,30 +345,32 @@ bool FileListGenerator::generatePackageFileList(QList<InstallFile> &fileList, Pa
 		packageType = "all";
 
 	// find aliased entry 
-	XmlPackageScheme *ps = m_data->schemeList["default"];
-	if (!ps->alias.isEmpty())
-		ps = m_data->schemeList[ps->alias];
+	XmlModule *m = m_data->moduleList["kde"];
+	if (!m->alias.isEmpty())
+		m = m_data->moduleList[m->alias];
 
-	// add compiler independent files
-	XmlPackage *p = ps->packageList[packageType];
+	// add compiler independent file
+	XmlPackage *p = m->packageList["default"];
 	if (!p)
 		return false;
-	XmlCompiler *c = p->compilerList["all"];
+
+	XmlPart *part = p->partList[packageType];
+	if (!part)
+		return false;
+		
+	XmlCompiler *c = part->compilerList["all"];
 	foreach(XmlFiles *f, c->fileList)
 	{
 		if (m_verbose)
 			qDebug() << *f;					
-		if (!f->handler.isEmpty())
+		if (f->handler == "parseQtIncludeFiles")
 			parseQtIncludeFiles(fileList, root, f->directory,  f->pattern, f->exclude);
 		else
 			generateFileList(fileList, root, f->directory,  f->pattern, f->exclude);
 	}
 
 	// add compiler specific files 
-	p = ps->packageList[packageType];
-	if (!p)
-		return false;
-	c = p->compilerList[compilerType];
+	c = part->compilerList[compilerType];
 	if (!c)
 	{
 		qDebug() << fileList;
