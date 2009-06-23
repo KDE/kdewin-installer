@@ -278,7 +278,7 @@ XmlTemplatePackager::~XmlTemplatePackager()
 	delete m_data;
 }
 
-bool XmlTemplatePackager::parse(const QString &fileName)
+bool XmlTemplatePackager::parseConfig(const QString &fileName)
 {
 	QXmlDefaultHandler *handler = new MyXmlHandler(m_data);	
 	QXmlSimpleReader xmlReader;

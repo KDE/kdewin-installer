@@ -35,28 +35,29 @@ class Packager {
 
       Packager(const QString &packageName, const QString &packageVersion,const QString &notes=QString());
 
-      /// mingw only: strip all debugging symbols from files to reduce size
-      bool stripFiles(const QString &dir);
-      /// mingw only: extract debuginformations from dll's
-      bool createDebugFiles(const QString &dir);
       void setSourceRoot(const QString &dir) { m_srcRoot = dir; }
       void setSourceExcludes(const QString &excludes) { m_srcExcludes = excludes; }
       void setWithDebugPackage(bool mode) { m_debugPackage = mode; }
       void setCompressionMode(unsigned int mode) { m_compMode = (mode < 1 || mode > 2) ? 1 : mode; }
       void setCheckSumMode(const QString mode) { m_checkSumMode = mode; }
-
-      virtual bool generatePackageFileList(QList<InstallFile> &result, Packager::Type type, const QString &dir=QString());
-      bool createHashFile(const QString &packageFileName, const QString &basePath);
-
-      virtual bool makePackage(const QString &dir, const QString &destdir=QString(), bool bComplete=false);
       void setVerbose(bool state) { m_verbose = state; }
       void setSpecialPackageMode(bool special) { m_special = special; }
+
+      /// mingw only: strip all debugging symbols from files to reduce size
+      bool stripFiles(const QString &dir);
+
+      virtual bool generatePackageFileList(QList<InstallFile> &result, Packager::Type type, const QString &dir=QString());
+      virtual bool makePackage(const QString &dir, const QString &destdir=QString(), bool bComplete=false);
+      virtual bool parseConfig(const QString &fileName) { return false; }
 
     protected:
         struct MemFile {
             QString    filename;
             QByteArray data;
         };
+        /// mingw only: extract debuginformations from dll's
+        bool createDebugFiles(const QString &dir);
+        bool createHashFile(const QString &packageFileName, const QString &basePath);
         bool createZipFile(const QString &zipFile, const QString &filesRootDir, const QList<InstallFile> &files, const QList<MemFile> &memFiles=QList<MemFile>(), const QString &destRootDir=QString() );
         bool createTbzFile(const QString &zipFile, const QString &filesRootDir,const QList<InstallFile> &files, const QList<MemFile> &memFiles=QList<MemFile>(), const QString &destRootDir=QString() );
         bool compressFiles(const QString &zipFile, const QString &filesRootDir, const QList<InstallFile> &files, const QList<MemFile> &memFiles=QList<MemFile>(), const QString &destRootDir=QString() );

@@ -88,15 +88,15 @@ static void printHelp(const QString &addInfo)
        << "\n\t\t"      << "-notes <text>          specify additional notes for manifest files"
        << "\n\t\t"      << "-root <path>           specify path to root directory of installed files"
        << "\n\t\t"      << "-srcroot <path>        specify path to source root"
-       << "\n\t\t"      << "-srcexclude <pattern>  path pattern to exclude from src package"
+       << "\n\t\t"      << "-srcexclude <pattern>  path pattern to exclude from src package (deprecated, use template)"
        << "\n\t\t"      << "-verbose               display verbose processing informations"
        << "\n\t\t"      << "-version <version>     specify package version (e.g. 1.2.3 or 1.3.4-5)"
        << "\n\t\t"      << "-strip                 strip debug infos (MinGW only)"
-//       << "\n\t\t"      << "-special               make special assumptions about package content (only for Qt)"
        << "\n\t\t"      << "-type <type>           specify type of package (mingw, msvc{=vc80}, vc90)"
-       << "\n\t\t"      << "-template <filepath>   use xml template <filepath> for generating modules (default is use internal kde template)"
-       << "\n\t\t"      << "-module <name>         select module template (default is \"kde\")"
-       << "\n\t\t"      << "-print-templates       print internal default xml templates (kde,qt)"
+       << "\n"
+       << "\n\t\t"      << "-print-templates       print internal xml templates (kde,qt)"
+       << "\n\t\t"      << "-template <filepath>   use xml template <filepath> for generating modules"
+       << "\n\t\t"      << "-template kde | qt     choose internal template (default is to use the old implementation"
        << "\n";
 
     qerr.flush();
@@ -108,7 +108,9 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
 
     QStringList args = app.arguments();
-	QString templateFile = ":/template-kde.xml";
+    QString templateFile;
+    bool useTemplate = false;
+    bool internalTemplate = false;
 
     args.removeAt(0);   // name of executable
 
@@ -179,8 +181,7 @@ int main(int argc, char *argv[])
     if(idx != -1) {
         hashFirst = true;
         args.removeAt(idx);
-        if (verbose) 
-        {
+        if (verbose) {
             QTextStream qerr(stderr);
             qerr << "-hashfirst switch ignored, hashes are written always at first\n";
         }
@@ -198,10 +199,12 @@ int main(int argc, char *argv[])
         args.removeAt(idx);
     }
     
-    idx = args.indexOf("-special");
-    if(idx != -1) {
-        specialPackage = true;
-        args.removeAt(idx);
+    if (!useTemplate) {
+        idx = args.indexOf("-special");
+        if(idx != -1) {
+            specialPackage = true;
+            args.removeAt(idx);
+        }
     }
 
     idx = args.indexOf("-notes");
@@ -251,21 +254,12 @@ int main(int argc, char *argv[])
     if(args.count() > 0)
         printHelp(QString("unknown command line parameter(s): '%1'").arg(args.join(" ")));
 		
-			/*
-	QList<InstallFile> fileList;
-
-		generator.generateList(fileList,Packager::BIN,"mingw","C:/Programme/kde");
-		qDebug() << fileList;
-		return 0;
-	}
-*/
     if(root.isEmpty())
        printHelp("-root not specified");
 
-/*
-    if(name.isEmpty())
+    if((!useTemplate || internalTemplate) && name.isEmpty())
        printHelp("-name not specified");
-*/
+
     if(version.isEmpty())
        printHelp("-version not specified");
 
@@ -278,27 +272,28 @@ int main(int argc, char *argv[])
     if (!type.isEmpty())
         name += '-' + type;
 
-    XmlTemplatePackager packager(name, version, notes);
+    Packager *packager = useTemplate ?  new XmlTemplatePackager(name, version, notes) : new Packager(name, version, notes);
 
-	if (!srcRoot.isEmpty())
-        packager.setSourceRoot(srcRootDir.filePath());
+    if (!srcRoot.isEmpty())
+        packager->setSourceRoot(srcRootDir.filePath());
 
     if (!srcExclude.isEmpty())
-        packager.setSourceExcludes(srcExclude);
+        packager->setSourceExcludes(srcExclude);
 
-    packager.setVerbose(verbose);
-    packager.setWithDebugPackage(debugPackage);
-    packager.setCompressionMode(compressionMode);
-    packager.setCheckSumMode(checkSumMode);
+    packager->setVerbose(verbose);
+    packager->setWithDebugPackage(debugPackage);
+    packager->setCompressionMode(compressionMode);
+    packager->setCheckSumMode(checkSumMode);
 
-	// todo: choose package style 
-	if (specialPackage)
-        packager.setSpecialPackageMode( true );
+	if (!useTemplate && specialPackage)
+       packager.setSpecialPackageMode( true );
     if (strip)
-       packager.stripFiles(rootDir.filePath());
+       packager->stripFiles(rootDir.filePath());
 
-	packager.parse(templateFile);
-    packager.makePackage(rootDir.filePath(), destdir, bComplete);
+    if (useTemplate)
+        packager->parseConfig(templateFile);
+
+    packager->makePackage(rootDir.filePath(), destdir, bComplete);
 
     return 0;
 }
