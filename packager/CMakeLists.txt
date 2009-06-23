@@ -5,12 +5,12 @@ set (VER_PATCH 0)
 set (packager_SOURCES
   main.cpp
   packager.cpp
-  ../shared/filelistgenerator.cpp
+  ../shared/xmltemplatepackager.cpp
 )
 
 set (packager_HEADERS
   packager.h
-  ../shared/filelistgenerator.h
+  ../shared/xmltemplatepackager.h
 )
 
 include_directories(

@@ -29,8 +29,6 @@
 #include <QList>
 #include <QRegExp>
 
-class FileListGenerator;
-
 class Packager {
     public:
       enum Type { NONE = 0, BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8, DEBUG = 16, ALL = 15};
@@ -46,12 +44,11 @@ class Packager {
       void setWithDebugPackage(bool mode) { m_debugPackage = mode; }
       void setCompressionMode(unsigned int mode) { m_compMode = (mode < 1 || mode > 2) ? 1 : mode; }
       void setCheckSumMode(const QString mode) { m_checkSumMode = mode; }
-      void setFileListGenerator(FileListGenerator *generator) { m_generator = generator; }
 
-      bool generatePackageFileList(QList<InstallFile> &result, Packager::Type type, const QString &dir=QString());
+      virtual bool generatePackageFileList(QList<InstallFile> &result, Packager::Type type, const QString &dir=QString());
       bool createHashFile(const QString &packageFileName, const QString &basePath);
 
-      bool makePackage(const QString &dir, const QString &destdir=QString(), bool bComplete=false);
+      virtual bool makePackage(const QString &dir, const QString &destdir=QString(), bool bComplete=false);
       void setVerbose(bool state) { m_verbose = state; }
       void setSpecialPackageMode(bool special) { m_special = special; }
 
@@ -65,12 +62,10 @@ class Packager {
         bool compressFiles(const QString &zipFile, const QString &filesRootDir, const QList<InstallFile> &files, const QList<MemFile> &memFiles=QList<MemFile>(), const QString &destRootDir=QString() );
         bool createManifestFiles(const QString &rootdir, QList<InstallFile> &fileList, Packager::Type type, QList<MemFile> &manifestFiles);
       bool createQtConfig(QList<InstallFile> &fileList, QList<MemFile> &manifestFiles);
-      bool generatePackageFileListDefault(QList<InstallFile> &result, Packager::Type type, const QString &dir=QString());
 
       QString getBaseName(Packager::Type type);
       QString getCompressedExtension(Packager::Type type);
 
-    private:
       QString m_name;
       QString m_version;
       QString m_notes;
@@ -82,7 +77,6 @@ class Packager {
       bool m_debugPackage;
       bool m_special;
       unsigned int m_compMode;
-      FileListGenerator *m_generator;
 };
 
 #endif

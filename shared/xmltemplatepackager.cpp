@@ -20,7 +20,7 @@
 **
 ****************************************************************************/
 
-#include "filelistgenerator.h"
+#include "xmltemplatepackager.h"
 
 #include <QFile>
 #include <QtXml>
@@ -267,17 +267,18 @@ public:
 		XmlData *m_data;
 };
 
-FileListGenerator::FileListGenerator() : m_verbose(false)
+XmlTemplatePackager::XmlTemplatePackager(const QString &packageName, const QString &packageVersion,const QString &notes)
+    : Packager(packageName, packageVersion, notes), m_verbose(false)
 {
 	m_data = new XmlData;
 }
 
-FileListGenerator::~FileListGenerator()
+XmlTemplatePackager::~XmlTemplatePackager()
 {
 	delete m_data;
 }
 
-bool FileListGenerator::parse(const QString &fileName)
+bool XmlTemplatePackager::parse(const QString &fileName)
 {
 	QXmlDefaultHandler *handler = new MyXmlHandler(m_data);	
 	QXmlSimpleReader xmlReader;
@@ -288,13 +289,47 @@ bool FileListGenerator::parse(const QString &fileName)
 	QXmlInputSource *source = new QXmlInputSource(&file);
 	bool ok = xmlReader.parse(source);
     if (m_verbose)
-        qDebug() << *m_data;
+        qDebug() << "parsed xml schema\n" << *m_data;
 	return ok;
 }
-	
-bool FileListGenerator::generatePackageFileList(QList<InstallFile> &fileList, Packager::Type type, const QString compilerType, const QString &root)
+
+bool XmlTemplatePackager::makePackage(const QString &dir, const QString &destdir, bool bComplete)
 {
-	fileList.clear();
+    QStringList modules = m_data->moduleList.keys();
+    if (modules.size() == 0)
+        return false;
+
+	// get fist module entry regaredless of name
+    XmlModule *m = m_data->moduleList[modules[0]];
+
+    // iterate through all defined packages
+    foreach(const QString &key, m->packageList.keys())
+    {
+        XmlPackage *p = m->packageList[key];
+        if (key != "default")
+        {
+            m_name = p->name;
+            m_notes = p->description;
+        }
+        m_currentPackage = p;
+        if (!Packager::makePackage(dir,destdir,bComplete))
+            return false;
+    }
+    return true;
+}
+	
+bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, Packager::Type type, const QString &root)
+{
+	QString dir = root.isEmpty() ? m_rootDir : root;
+
+    QString compilerType; 
+    if (m_name.endsWith("mingw"))
+        compilerType = "mingw";
+    else if (m_name.endsWith("vc90"))
+        compilerType = "vc90";
+    else 
+        compilerType = "vc80";
+	
 	QString packageType;
 	if (type == Packager::BIN)
 		packageType = "runtime";
@@ -306,17 +341,10 @@ bool FileListGenerator::generatePackageFileList(QList<InstallFile> &fileList, Pa
 		packageType = "source";
 	else if (type == Packager::ALL)
 		packageType = "all";
+            
+    fileList.clear();
 
-	// find aliased entry 
-	XmlModule *m = m_data->moduleList["kde"];
-	if (!m->alias.isEmpty())
-		m = m_data->moduleList[m->alias];
-
-	XmlPackage *p = m->packageList["default"];
-	if (!p)
-		return false;
-
-	XmlPart *part = p->partList[packageType];
+	XmlPart *part = m_currentPackage->partList[packageType];
 	if (!part)
 		return false;
 		
@@ -332,14 +360,17 @@ bool FileListGenerator::generatePackageFileList(QList<InstallFile> &fileList, Pa
             }
             if (m_verbose)
                 qDebug() << *f << "added"; 
-            if (f->handler == "parseQtIncludeFiles")
-                parseQtIncludeFiles(fileList, root, f->directory,  f->pattern, f->exclude);
+
+            if (!f->regexp.isEmpty())
+                ;// call_regexp_handler(filelist,dir,f->regexp); 
+            else if (f->handler == "parseQtIncludeFiles")
+                parseQtIncludeFiles(fileList, dir, f->directory,  f->pattern, f->exclude);
             else
-                generateFileList(fileList, root, f->directory,  f->pattern, f->exclude);
+                generateFileList(fileList, dir, f->directory,  f->pattern, f->exclude);
         }
     }
     if (m_verbose) 
-        qDebug() << fileList;
+        qDebug() << "generated filelist\n" << fileList;
 	return true;
 }
 

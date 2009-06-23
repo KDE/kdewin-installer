@@ -25,7 +25,7 @@
 
 #include "packager.h"
 #include "qio.h"
-#include "../shared/filelistgenerator.h"
+#include "../shared/xmltemplatepackager.h"
 
 #include <QtDebug>
 #include <QCoreApplication>
@@ -44,43 +44,6 @@ bool debugPackage = false;
 bool hashFirst = true;
 bool specialPackage = false;
 unsigned int compressionMode = 1; // zip
-
-#if 0
-class _MyXmlHandler : public QXmlDefaultHandler
-{
-public:
-	bool startElement ( const QString & namespaceURI, const QString & localName, const QString & qName, const QXmlAttributes & atts ) 
-	{
-		inElement = true;
-		element = qName;
-		if (qName == "package")
-			name = atts.value("name");
-		return true;
-	}
-	
-	bool endElement ( const QString & namespaceURI, const QString & localName, const QString & qName )
-	{
-		inElement = false;
-		return true;
-	}
-
-	bool characters ( const QString & ch )  
-	{
-		if  (!inElement)	
-			return true;
-		if (element == "regexp")
-			qDebug() << "regexp-data" << ch;
-		else 
-			qDebug() << "data" << ch;
-
-		return true;
-	}
-
-	QString element;
-	bool inElement;
-};
-
-#endif
 
 void printBuildInTemplate()
 {
@@ -105,7 +68,6 @@ void printBuildInTemplate()
          qout << file.readLine();
 	}
 }
-
 
 static void printHelp(const QString &addInfo)
 {
@@ -297,10 +259,13 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 */
-    if(name.isEmpty())
-       printHelp("-name not specified");
     if(root.isEmpty())
        printHelp("-root not specified");
+
+/*
+    if(name.isEmpty())
+       printHelp("-name not specified");
+*/
     if(version.isEmpty())
        printHelp("-version not specified");
 
@@ -313,7 +278,7 @@ int main(int argc, char *argv[])
     if (!type.isEmpty())
         name += '-' + type;
 
-    Packager packager(name, version, notes);
+    XmlTemplatePackager packager(name, version, notes);
 
 	if (!srcRoot.isEmpty())
         packager.setSourceRoot(srcRootDir.filePath());
@@ -332,10 +297,7 @@ int main(int argc, char *argv[])
     if (strip)
        packager.stripFiles(rootDir.filePath());
 
-	FileListGenerator generator;
-	generator.parse(templateFile);
-	packager.setFileListGenerator(&generator);
-
+	packager.parse(templateFile);
     packager.makePackage(rootDir.filePath(), destdir, bComplete);
 
     return 0;

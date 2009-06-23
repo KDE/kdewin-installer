@@ -20,28 +20,30 @@
 **
 ****************************************************************************/
 
-#ifndef FILELIST_GENERATOR_H
-#define FILELIST_GENERATOR_H
+#ifndef XMLTEMPLATEPACKAGER_H
+#define XMLTEMPLATEPACKAGER_H
 
 #include "misc.h"
 #include "packager.h"
 
-#include <QtXml>
 class XmlData;
+class XmlPackage;
 
-class FileListGenerator 
+class XmlTemplatePackager: public Packager
 {
 public:
-	FileListGenerator();	
-	~FileListGenerator();
+	XmlTemplatePackager(const QString &packageName, const QString &packageVersion,const QString &notes=QString());
+	~XmlTemplatePackager();
 	bool parse(const QString &fileName);
-	bool generatePackageFileList(QList<InstallFile> &fileList, Packager::Type type, const QString compilerType, const QString &root);
+	virtual bool generatePackageFileList(QList<InstallFile> &fileList, Packager::Type type, const QString &root);
+    virtual bool makePackage(const QString &dir, const QString &destdir=QString(), bool bComplete=false);
 	QString getDescription(Packager::Type type);
+	void setVerbose(bool verbose) { m_verbose = verbose; }
 
 protected:
 	XmlData *m_data;
 	bool m_verbose;
+    XmlPackage *m_currentPackage;
 };
 
 #endif
-
