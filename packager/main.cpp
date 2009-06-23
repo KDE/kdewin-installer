@@ -286,7 +286,7 @@ int main(int argc, char *argv[])
     packager->setCheckSumMode(checkSumMode);
 
 	if (!useTemplate && specialPackage)
-       packager.setSpecialPackageMode( true );
+       packager->setSpecialPackageMode( true );
     if (strip)
        packager->stripFiles(rootDir.filePath());
 
