@@ -29,21 +29,24 @@
 class XmlData;
 class XmlPackage;
 
+#include <QList>
+
 class XmlTemplatePackager: public Packager
 {
 public:
-	XmlTemplatePackager(const QString &packageName, const QString &packageVersion,const QString &notes=QString());
-	~XmlTemplatePackager();
-	virtual bool parseConfig(const QString &fileName);
-	virtual bool generatePackageFileList(QList<InstallFile> &fileList, Packager::Type type, const QString &root);
+    XmlTemplatePackager(const QString &packageName, const QString &packageVersion,const QString &notes=QString());
+    ~XmlTemplatePackager();
+    virtual bool parseConfig(const QString &fileName);
+    virtual bool generatePackageFileList(QList<InstallFile> &fileList, Packager::Type type, const QString &root);
     virtual bool makePackage(const QString &dir, const QString &destdir=QString(), bool bComplete=false);
-	QString getDescription(Packager::Type type);
-	void setVerbose(bool verbose) { m_verbose = verbose; }
+    QString getDescription(Packager::Type type);
+    void setVerbose(bool verbose) { m_verbose = verbose; }
 
 protected:
-	XmlData *m_data;
-	bool m_verbose;
+    XmlData *m_data;
+    bool m_verbose;
     XmlPackage *m_currentPackage;
+    QList<InstallFile> m_fileList;
 };
 
 #endif
