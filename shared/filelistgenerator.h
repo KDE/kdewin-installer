@@ -26,6 +26,7 @@
 #include "misc.h"
 #include "packager.h"
 
+#include <QtXml>
 class XmlData;
 
 class FileListGenerator 

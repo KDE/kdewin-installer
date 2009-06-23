@@ -22,6 +22,7 @@
 
 #include "filelistgenerator.h"
 
+#include <QFile>
 #include <QtXml>
 #include <QtDebug>
 
@@ -29,18 +30,20 @@ class XmlFiles
 {
 public:
 	XmlFiles(const QXmlAttributes & atts) 
-		: directory(atts.value("directory"))
-		, pattern(atts.value("pattern"))
+		: compiler(atts.value("compiler"))
+		, directory(atts.value("directory"))
 		, exclude(atts.value("exclude"))
-		, regexp(atts.value("regexp"))
 		, handler(atts.value("handler"))
+		, pattern(atts.value("pattern"))
+		, regexp(atts.value("regexp"))
 	{
 	}
 
+	QString compiler;
 	QString directory;
-	QString pattern;
 	QString exclude;
 	QString handler;
+	QString pattern;
 	QString regexp;
 	friend QDebug operator<<(QDebug, const XmlFiles &);
 };
@@ -48,43 +51,13 @@ public:
 QDebug operator<<(QDebug out, const XmlFiles &c)
 {
 	out << "\nXmlFiles ("
+		<< "compiler:" << c.compiler
 		<< "directory:" << c.directory
-		<< "pattern:" << c.pattern
-		<< "regexp:" << c.regexp
 		<< "exclude:" << c.exclude
 		<< "handler:" << c.handler
+		<< "pattern:" << c.pattern
+		<< "regexp:" << c.regexp
 		<< ")";
-	return out;
-}
-
-class XmlCompiler
-{
-public:
-	XmlCompiler(const QString &_name) : name(_name)
-	{
-	}
-
-	XmlCompiler(const QXmlAttributes & atts) : name(atts.value("name"))
-	{
-	}
-
-	~XmlCompiler()
-	{
-		qDeleteAll(fileList);
-	}
-	QString name;// all,mingw,vc80,vc90
-	QList<XmlFiles*> fileList;
-	friend QDebug operator<<(QDebug,const XmlCompiler &);
-};
-
-QDebug operator<<(QDebug out,const XmlCompiler &c)
-{
-	out << "\nXmlCompiler ("
-		<< "name:" << c.name
-	;
-	foreach(XmlFiles *m, c.fileList)
-		out << *m;
-	out << ")";
 	return out;
 }
 
@@ -101,13 +74,10 @@ public:
 
 	~XmlPart()
 	{
-		qDeleteAll(compilerList);
 		qDeleteAll(fileList);
 	}
 
 	QString name; // runtime, development, documentation, source
-	// compiler is optional 
-	QMap<QString,XmlCompiler*> compilerList;
 	QList<XmlFiles*> fileList;
 	friend QDebug operator<<(QDebug out,const XmlPart &c);
 };
@@ -117,8 +87,6 @@ QDebug operator<<(QDebug out,const XmlPart &c)
 	out << "\nXmlPart ("
 		<< "name:" << c.name
 	;
-	foreach(XmlCompiler *m, c.compilerList)
-		out << *m;
 	foreach(XmlFiles *m, c.fileList)
 		out << *m;
 	out << ")";
@@ -237,18 +205,13 @@ public:
 			m_part = new XmlPart(atts);
 			m_package->partList[atts.value("name")] = m_part;
 		}
-		else if (qName == "compiler")
-		{
-			m_parent = m_last;
-			m_compiler = new XmlCompiler(atts);
-			m_part->compilerList[atts.value("name")] = m_compiler;
-		}
 		else if (qName == "files")
 		{
 			m_parent = m_last;
 			m_files = new XmlFiles(atts);
-			m_compiler->fileList.append(m_files);
+			m_part->fileList.append(m_files);
 		}
+
 		m_last = qName;
 		return true;
 	}
@@ -300,7 +263,6 @@ public:
 		XmlModule *m_module;
 		XmlPackage *m_package;
 		XmlPart *m_part;
-		XmlCompiler *m_compiler;
 		XmlFiles *m_files;
 		XmlData *m_data;
 };
@@ -325,7 +287,8 @@ bool FileListGenerator::parse(const QString &fileName)
 
 	QXmlInputSource *source = new QXmlInputSource(&file);
 	bool ok = xmlReader.parse(source);
-	qDebug() << *m_data;
+    if (m_verbose)
+        qDebug() << *m_data;
 	return ok;
 }
 	
@@ -349,7 +312,6 @@ bool FileListGenerator::generatePackageFileList(QList<InstallFile> &fileList, Pa
 	if (!m->alias.isEmpty())
 		m = m_data->moduleList[m->alias];
 
-	// add compiler independent file
 	XmlPackage *p = m->packageList["default"];
 	if (!p)
 		return false;
@@ -358,36 +320,26 @@ bool FileListGenerator::generatePackageFileList(QList<InstallFile> &fileList, Pa
 	if (!part)
 		return false;
 		
-	XmlCompiler *c = part->compilerList["all"];
-	foreach(XmlFiles *f, c->fileList)
-	{
-		if (m_verbose)
-			qDebug() << *f;					
-		if (f->handler == "parseQtIncludeFiles")
-			parseQtIncludeFiles(fileList, root, f->directory,  f->pattern, f->exclude);
-		else
-			generateFileList(fileList, root, f->directory,  f->pattern, f->exclude);
-	}
-
-	// add compiler specific files 
-	c = part->compilerList[compilerType];
-	if (!c)
-	{
-		qDebug() << fileList;
-		return true;
-	}
-
-	foreach(XmlFiles *f, c->fileList)
-	{
-		if (m_verbose)
-			qDebug() << *f;					
-
-		if (!f->handler.isEmpty())
-			parseQtIncludeFiles(fileList, root, f->directory,  f->pattern, f->exclude);
-		else
-			generateFileList(fileList, root, f->directory,  f->pattern, f->exclude);
-	}
-	qDebug() << fileList;
+	if (part->fileList.size() > 0)
+    {
+        foreach(XmlFiles *f, part->fileList)
+        {
+            if (!f->compiler.isEmpty() && compilerType != f->compiler)
+            {
+                if (m_verbose)
+                    qDebug() << *f << "ignored";					
+                continue;
+            }
+            if (m_verbose)
+                qDebug() << *f << "added"; 
+            if (f->handler == "parseQtIncludeFiles")
+                parseQtIncludeFiles(fileList, root, f->directory,  f->pattern, f->exclude);
+            else
+                generateFileList(fileList, root, f->directory,  f->pattern, f->exclude);
+        }
+    }
+    if (m_verbose) 
+        qDebug() << fileList;
 	return true;
 }
 
