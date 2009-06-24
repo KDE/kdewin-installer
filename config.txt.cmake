@@ -67,8 +67,8 @@
 @deps k3b-mingw kdemultimedia-mingw libdvdcss-mingw cdrtools dvd+rw-tools
 @deps kdelibs-mingw qt-mingw phonon-mingw pcre-mingw dbus-mingw kdewin32-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
 @deps kdebase-apps-mingw kdebase-runtime-mingw
-@deps kdebase-runtime-mingw kdepimlibs-mingw kdelibs-mingw
-@deps kdebase-workspace-mingw kdebase-runtime-mingw
+@deps kdebase-runtime-mingw kdelibs-mingw
+@deps kdebase-workspace-mingw kdebase-runtime-mingw kdepimlibs-mingw
 @deps kdeedu-mingw kdebase-runtime-mingw kdelibs-mingw openbabel-mingw cfitsio
 @deps kdegames-mingw kdebase-runtime-mingw kdelibs-mingw phonon-mingw
 @deps kdegraphics-mingw kdebase-runtime-mingw kdelibs-mingw poppler-mingw ebook-tools libspectre exiv2-mingw
@@ -105,8 +105,8 @@
 @deps gpgme-qt-msvc gpgme qt-msvc
 @deps k3b-msvc kdemultimedia-msvc libdvdcss-msvc cdrtools dvd+rw-tools
 @deps kdebase-apps-msvc kdebase-runtime-msvc
-@deps kdebase-runtime-msvc kdepimlibs-msvc kdelibs-msvc
-@deps kdebase-workspace-msvc kdebase-runtime-msvc
+@deps kdebase-runtime-msvc kdelibs-msvc
+@deps kdebase-workspace-msvc kdebase-runtime-msvc kdepimlibs-msvc
 @deps kdeedu-msvc kdebase-runtime-msvc kdelibs-msvc openbabel-msvc cfitsio
 @deps kdegames-msvc kdebase-runtime-msvc kdelibs-msvc phonon-msvc
 @deps kdegraphics-msvc kdebase-runtime-msvc kdelibs-msvc poppler-msvc ebook-tools libspectre exiv2-msvc
