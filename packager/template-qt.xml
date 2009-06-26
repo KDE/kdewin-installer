@@ -3,32 +3,32 @@
 	<package name="default">
 		<part name="runtime">
            <!-- assistant.exe can be used separatly from qt doc - better in bin than doc package -->
-            <files directory="bin" pattern="*.dll assistant.exe qdbus.exe qdbusviewer.exe" exclude="*d.dll *d4.dll"/>
-            <files directory="plugins" pattern="*.dll" exclude="*d.dll *d4.dll *d1.dll"/>
-            <files directory="translations" pattern="*.qm"/>
-            <files directory="lib" pattern="*.exe *.bat"/>
-            <files directory="manifest" pattern="*-bin.cmd"/>
-            <files directory="" pattern="*.xml"/>
+            <files directory="bin" include="*.dll assistant.exe qdbus.exe qdbusviewer.exe" exclude="*d.dll *d4.dll"/>
+            <files directory="plugins" include="*.dll" exclude="*d.dll *d4.dll *d1.dll"/>
+            <files directory="translations" include="*.qm"/>
+            <files directory="lib" include="*.exe *.bat"/>
+            <files directory="manifest" include="*-bin.cmd"/>
+            <files directory="" include="*.xml"/>
 		</part>
 		<part name="development">
-            <files directory="bin" pattern="*.exe *.bat" exclude="assistant.exe qtdemo.exe qdbus.exe qdbusviewer.exe"/>
-            <files directory="" pattern=".qmake.cache"/>
-            <files directory="mkspecs" pattern="*.*" exclude=".svn CVS"/>
-            <files directory="tools/linguist/phrasebooks" pattern="*.qph"/>
-            <files directory="phrasebooks" pattern="*.qph"/>
-            <files handler="parseQtIncludeFiles" directory="include" pattern="*" exclude="private *_p.h *.pr* .svn CVS"/>
-            <files directory="manifest" pattern="*-lib.cmd"/>
-            <files compiler="mingw" directory="lib" pattern="*.a" exclude="*d4.a *d.a"/>
-            <files compiler="vc80" directory="lib" pattern="*.lib" exclude="*d4.lib *d.lib"/>
-			<files compiler="vc90" directory="lib" pattern="*.lib" exclude="*d4.lib *d.lib"/>
+            <files directory="bin" include="*.exe *.bat" exclude="assistant.exe qtdemo.exe qdbus.exe qdbusviewer.exe"/>
+            <files directory="" include=".qmake.cache"/>
+            <files directory="mkspecs" include="*.*" exclude=".svn CVS"/>
+            <files directory="tools/linguist/phrasebooks" include="*.qph"/>
+            <files directory="phrasebooks" include="*.qph"/>
+            <files handler="parseQtIncludeFiles" directory="include" include="*" exclude="private *_p.h *.pr* .svn CVS"/>
+            <files directory="manifest" include="*-lib.cmd"/>
+            <files compiler="mingw" directory="lib" include="*.a" exclude="*d4.a *d.a"/>
+            <files compiler="vc80" directory="lib" include="*.lib" exclude="*d4.lib *d.lib"/>
+			<files compiler="vc90" directory="lib" include="*.lib" exclude="*d4.lib *d.lib"/>
 		</part>
 		<part name="documentation">
-            <files directory="bin" pattern="qtdemo.exe"/>
-            <files directory="manifest" pattern="*-doc.cmd"/>
-            <files directory="doc" pattern="*.*" exclude=".svn CVS"/>
+            <files directory="bin" include="qtdemo.exe"/>
+            <files directory="manifest" include="*-doc.cmd"/>
+            <files directory="doc" include="*.*" exclude=".svn CVS"/>
 		</part>
 		<part name="source">
-			<files directory="" pattern="*.*" exclude=".svn CVS *.bak *.orig"/>
+			<files directory="" include="*.*" exclude=".svn CVS *.bak *.orig"/>
 		</part>
 	</package>
 </module>

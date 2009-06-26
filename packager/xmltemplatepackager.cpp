@@ -34,8 +34,7 @@ public:
 		, directory(atts.value("directory"))
 		, exclude(atts.value("exclude"))
 		, handler(atts.value("handler"))
-		, pattern(atts.value("pattern"))
-		, regexp(atts.value("regexp"))
+		, include(atts.value("include"))
 	{
 	}
 
@@ -43,8 +42,7 @@ public:
 	QString directory;
 	QString exclude;
 	QString handler;
-	QString pattern;
-	QString regexp;
+	QString include;
 	friend QDebug operator<<(QDebug, const XmlFiles &);
 };
 
@@ -53,10 +51,9 @@ QDebug operator<<(QDebug out, const XmlFiles &c)
 	out << "\nXmlFiles ("
 		<< "compiler:" << c.compiler
 		<< "directory:" << c.directory
+		<< "include:" << c.include
 		<< "exclude:" << c.exclude
 		<< "handler:" << c.handler
-		<< "pattern:" << c.pattern
-		<< "regexp:" << c.regexp
 		<< ")";
 	return out;
 }
@@ -111,6 +108,7 @@ public:
 
 	QString name; 
 	QString description; 
+	QStringList dependencies; 
 	QMap<QString,XmlPart*> partList;
 	friend QDebug operator<<(QDebug out,const XmlPackage &c);
 };
@@ -229,7 +227,12 @@ public:
 		// handle in element data
 		if (element == "shortDescription")
 			m_package->description = ch;
-	
+        else if (element == "dependency")
+        {
+            if (!m_package->dependencies.contains(ch))
+                m_package->dependencies.append(ch.toLower());
+        }
+        	
 		return true;
 	}
 
@@ -268,7 +271,7 @@ public:
 };
 
 XmlTemplatePackager::XmlTemplatePackager(const QString &packageName, const QString &packageVersion,const QString &notes)
-    : Packager(packageName, packageVersion, notes), m_verbose(false)
+    : Packager(packageName, packageVersion, notes)
 {
 	m_data = new XmlData;
 }
@@ -361,12 +364,14 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
             if (m_verbose)
                 qDebug() << *f << "added"; 
 
-            if (!f->regexp.isEmpty())
-                ;// call_regexp_handler(filelist,dir,f->regexp); 
+            if (!f->include.isEmpty())
+            {
+                ;// call_regexp_handler(filelist,dir,f->include); 
+            }
             else if (f->handler == "parseQtIncludeFiles")
-                parseQtIncludeFiles(fileList, dir, f->directory,  f->pattern, f->exclude);
+                parseQtIncludeFiles(fileList, dir, f->directory,  f->include, f->exclude);
             else
-                generateFileList(fileList, dir, f->directory,  f->pattern, f->exclude);
+                generateFileList(fileList, dir, f->directory,  f->include, f->exclude);
         }
     }
     if (m_verbose) 

@@ -3,28 +3,28 @@
 	<package name="default">
 	    <shortDescription>a package</shortDescription>
 		<part name="runtime">
-            <files directory="bin" pattern="*.exe *.bat"/>
-            <files directory="bin" pattern="*.dll"/>
-            <files directory="lib" pattern="*.dll"/>
-            <files directory="lib" pattern="*.exe *.bat"/>
-            <files directory="lib" pattern="*.*" exclude="*d.dll *.dll *.lib *.a"/>
-            <files directory="manifest" pattern="*-bin.cmd"/>
-            <files directory="share" pattern="*.*"/>
-            <files directory="plugins" pattern="*.dll"/>
-            <files directory="data" pattern="*.*"/>
-            <files directory="etc" pattern="*.*"/>
+            <files directory="bin" include="*.exe *.bat"/>
+            <files directory="bin" include="*.dll"/>
+            <files directory="lib" include="*.dll"/>
+            <files directory="lib" include="*.exe *.bat"/>
+            <files directory="lib" include="*.*" exclude="*d.dll *.dll *.lib *.a"/>
+            <files directory="manifest" include="*-bin.cmd"/>
+            <files directory="share" include="*.*"/>
+            <files directory="plugins" include="*.dll"/>
+            <files directory="data" include="*.*"/>
+            <files directory="etc" include="*.*"/>
 		</part>
 		<part name="development">
-            <files directory="manifest" pattern="*-lib.cmd"/>
-            <files directory="include" pattern="*.*"/>
-			<files compiler="mingw" directory="lib" pattern="*.a"/>
-			<files compiler="vc80" directory="lib" pattern="*.lib"/>
-			<files compiler="vc90" directory="lib" pattern="*.lib"/>
+            <files directory="manifest" include="*-lib.cmd"/>
+            <files directory="include" include="*.*"/>
+			<files compiler="mingw" directory="lib" include="*.a"/>
+			<files compiler="vc80" directory="lib" include="*.lib"/>
+			<files compiler="vc90" directory="lib" include="*.lib"/>
 		</part>
 		<part name="documentation">
-            <files directory="manifest" pattern="*-doc.cmd"/>
-            <files directory="doc" pattern="*.*"/>
-            <files directory="man" pattern="*.*"/>
+            <files directory="manifest" include="*-doc.cmd"/>
+            <files directory="doc" include="*.*"/>
+            <files directory="man" include="*.*"/>
 		</part>
 	</package>
 </module>
