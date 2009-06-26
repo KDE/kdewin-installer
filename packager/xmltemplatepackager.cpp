@@ -171,7 +171,7 @@ QDebug operator<<(QDebug out,const XmlData &c)
 class MyXmlHandler : public QXmlDefaultHandler
 {
 public:
-    MyXmlHandler(XmlData *data) : m_data(data)
+    MyXmlHandler(XmlData *data) : m_data(data), m_level(0)
     {
     }
     
@@ -183,24 +183,30 @@ public:
         {
             m_module = new XmlModule(atts);
             m_data->moduleList[atts.value("name")] = m_module;
+			m_level++;
         }
         else if (qName == "package")
         {
             m_parent = m_last;
             m_package = new XmlPackage(atts);
             m_module->packageList[atts.value("name")] = m_package;
+			m_level++;
         }
         else if (qName == "part")
         {
             m_parent = m_last;
             m_part = new XmlPart(atts);
             m_package->partList[atts.value("name")] = m_part;
+			m_level++;
         }
         else if (qName == "files")
         {
+			if (m_level == 1)
+				qDebug() << "module level";
             m_parent = m_last;
             m_files = new XmlFiles(atts);
             m_part->fileList.append(m_files);
+			m_level++;
             // add case for files outside of part 
         }
 
@@ -211,6 +217,7 @@ public:
     bool endElement ( const QString & namespaceURI, const QString & localName, const QString & qName )
     {
         inElement = false;
+		m_level--;
         return true;
     }
 
@@ -229,7 +236,11 @@ public:
         else if (element == "files" & !ch.isEmpty())
         {
             // ch contains content for tag <files>file; file </files>
-            m_files->fileList.append(ch.split(";"));
+			foreach(const QString &file, ch.split(ch.contains(';') ? ';': '\x0a',QString::SkipEmptyParts))
+			{
+				if (!file.trimmed().isEmpty())
+					m_files->fileList.append(file.trimmed());
+			}
         } 
             
         return true;
@@ -267,6 +278,7 @@ public:
         XmlPart *m_part;
         XmlFiles *m_files;
         XmlData *m_data;
+		int m_level;
 };
 
 bool findFiles(QList<InstallFile> &fileList, const QString& aDir, const QString &root)
@@ -428,7 +440,14 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
             else if (!f->directory.isEmpty())
                 generateFileList(fileList, dir, f->directory,  f->include, f->exclude);
             else 
-                ;// check <files>file; file; </files> from f->fileList
+			{
+				foreach(const QString &file, f->fileList)
+				{
+					qDebug() << file;
+					if (!file.isEmpty())
+						fileList.append(file);
+				}
+			}
         }
     }
 	
