@@ -364,9 +364,9 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
             if (m_verbose)
                 qDebug() << *f << "added"; 
 
-            if (!f->include.isEmpty())
+            if (!f->include.isEmpty() && f->directory.isEmpty())
             {
-                ;// call_regexp_handler(filelist,dir,f->include); 
+                ;// call_regexp_handler(filelist,dir,f->include, f->exclude); 
             }
             else if (f->handler == "parseQtIncludeFiles")
                 parseQtIncludeFiles(fileList, dir, f->directory,  f->include, f->exclude);
