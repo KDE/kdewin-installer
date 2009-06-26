@@ -43,6 +43,7 @@ public:
 	QString exclude;
 	QString handler;
 	QString include;
+	QStringList fileList;
 	friend QDebug operator<<(QDebug, const XmlFiles &);
 };
 
@@ -208,6 +209,7 @@ public:
 			m_parent = m_last;
 			m_files = new XmlFiles(atts);
 			m_part->fileList.append(m_files);
+            // add case for files outside of part 
 		}
 
 		m_last = qName;
@@ -232,6 +234,11 @@ public:
             if (!m_package->dependencies.contains(ch))
                 m_package->dependencies.append(ch.toLower());
         }
+        else if (element == "files" & !ch.isEmpty())
+        {
+            // ch contains content for tag <files>file; file </files>
+            m_files->fileList.append(ch.split(";"));
+        } 
         	
 		return true;
 	}
@@ -370,8 +377,10 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
             }
             else if (f->handler == "parseQtIncludeFiles")
                 parseQtIncludeFiles(fileList, dir, f->directory,  f->include, f->exclude);
-            else
+            else if (!f->directory.isEmpty())
                 generateFileList(fileList, dir, f->directory,  f->include, f->exclude);
+            else 
+                ;// check <files>file; file; </files> from f->fileList
         }
     }
     if (m_verbose) 
