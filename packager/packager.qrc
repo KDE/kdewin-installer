@@ -2,6 +2,7 @@
  <qresource>
      <file alias="template-qt.xml">template-qt.xml</file>
      <file alias="template-kde.xml">template-kde.xml</file>
+     <file alias="template-example.xml">template-example.xml</file>
  </qresource>
  </RCC>
 

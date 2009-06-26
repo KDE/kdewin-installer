@@ -45,27 +45,28 @@ bool hashFirst = true;
 bool specialPackage = false;
 unsigned int compressionMode = 1; // zip
 
+QMap<QString, QString> internalTemplateList;
+
+void initTemplateList()
+{
+    internalTemplateList["kde"] = ":/template-kde.xml";
+    internalTemplateList["qt"] = ":/template-qt.xml";
+    internalTemplateList["example"] = ":/template-example.xml";
+}
+
+
 void printBuildInTemplate()
 {
-	{
-	qout << "------- kdewin-packager module template: kde -------";
-
-	QFile file(":/template-kde.xml");
-	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-		return;
-    
-     while (!file.atEnd())
-         qout << file.readLine();
-	}
-	{
-	qout << "------- kdewin-packager module template: qt -------";
-
-	QFile file(":/template-qt.xml");
-	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-		return;
-    
-     while (!file.atEnd())
-         qout << file.readLine();
+    QMap<QString, QString>::iterator i;
+    for (i = internalTemplateList.begin(); i != internalTemplateList.end(); ++i)
+    {
+        qout << "------- kdewin-packager module template: " << i.key() << "-------\n";
+        QFile file(i.value());
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+            continue;
+        
+         while (!file.atEnd())
+             qout << file.readLine();
 	}
 }
 
@@ -106,6 +107,8 @@ static void printHelp(const QString &addInfo)
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
+    initTemplateList();
+    
 
     QStringList args = app.arguments();
     QString templateFile;
@@ -125,6 +128,9 @@ int main(int argc, char *argv[])
         templateFile = args[idx + 1];
         args.removeAt(idx + 1);
         args.removeAt(idx);
+        useTemplate = true;
+        if (internalTemplateList.contains(templateFile))
+            internalTemplate = true;
     }
 
     idx = args.indexOf("-name");

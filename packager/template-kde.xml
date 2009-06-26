@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module name="kde">
-	<package name="default">
-	    <shortDescription>a package</shortDescription>
-		<part name="runtime">
+    <package name="default">
+        <shortDescription>a package</shortDescription>
+        <part name="runtime">
             <files directory="bin" include="*.exe *.bat"/>
             <files directory="bin" include="*.dll"/>
             <files directory="lib" include="*.dll"/>
@@ -13,18 +13,18 @@
             <files directory="plugins" include="*.dll"/>
             <files directory="data" include="*.*"/>
             <files directory="etc" include="*.*"/>
-		</part>
-		<part name="development">
+        </part>
+        <part name="development">
             <files directory="manifest" include="*-lib.cmd"/>
             <files directory="include" include="*.*"/>
-			<files compiler="mingw" directory="lib" include="*.a"/>
-			<files compiler="vc80" directory="lib" include="*.lib"/>
-			<files compiler="vc90" directory="lib" include="*.lib"/>
-		</part>
-		<part name="documentation">
+            <files compiler="mingw" directory="lib" include="*.a"/>
+            <files compiler="vc80" directory="lib" include="*.lib"/>
+            <files compiler="vc90" directory="lib" include="*.lib"/>
+        </part>
+        <part name="documentation">
             <files directory="manifest" include="*-doc.cmd"/>
             <files directory="doc" include="*.*"/>
             <files directory="man" include="*.*"/>
-		</part>
-	</package>
+        </part>
+    </package>
 </module>
