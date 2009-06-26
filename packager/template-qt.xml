@@ -8,11 +8,11 @@
             <files directory="translations" include="*.qm"/>
             <files directory="lib" include="*.exe *.bat"/>
             <files directory="manifest" include="*-bin.cmd"/>
-            <files directory="" include="*.xml"/>
+            <files directory="." include="*.xml"/>
         </part>
         <part name="development">
             <files directory="bin" include="*.exe *.bat" exclude="assistant.exe qtdemo.exe qdbus.exe qdbusviewer.exe"/>
-            <files directory="" include=".qmake.cache"/>
+            <files directory="." include=".qmake.cache"/>
             <files directory="mkspecs" include="*.*" exclude=".svn CVS"/>
             <files directory="tools/linguist/phrasebooks" include="*.qph"/>
             <files directory="phrasebooks" include="*.qph"/>
@@ -28,7 +28,7 @@
             <files directory="doc" include="*.*" exclude=".svn CVS"/>
         </part>
         <part name="source">
-            <files directory="" include="*.*" exclude=".svn CVS *.bak *.orig"/>
+            <files directory="." include="*.*" exclude=".svn CVS *.bak *.orig"/>
         </part>
     </package>
 </module>
