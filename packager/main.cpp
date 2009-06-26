@@ -126,6 +126,7 @@ int main(int argc, char *argv[])
     idx = args.indexOf("-template");
     if(idx != -1 && idx < args.count() -1) {
         templateFile = args[idx + 1];
+		useTemplate = true;
         args.removeAt(idx + 1);
         args.removeAt(idx);
         useTemplate = true;

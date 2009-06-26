@@ -29,6 +29,8 @@
 class XmlData;
 class XmlPackage;
 
+#include <QList>
+
 class XmlTemplatePackager: public Packager
 {
 public:
@@ -42,6 +44,7 @@ public:
 protected:
     XmlData *m_data;
     XmlPackage *m_currentPackage;
+    QList<InstallFile> m_fileList;
 };
 
 #endif
