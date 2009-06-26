@@ -140,3 +140,7 @@ void closeMessageHandler()
     }
 #endif
 }
+
+int qDebug_indention = 0;
+char *qDebug_indentBuf ="                                                                                                               ";
+ 
