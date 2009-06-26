@@ -25,7 +25,7 @@
 
 #include "packager.h"
 #include "qio.h"
-#include "../shared/xmltemplatepackager.h"
+#include "xmltemplatepackager.h"
 
 #include <QtDebug>
 #include <QCoreApplication>

@@ -5,12 +5,12 @@ set (VER_PATCH 0)
 set (packager_SOURCES
   main.cpp
   packager.cpp
-  ../shared/xmltemplatepackager.cpp
+  xmltemplatepackager.cpp
 )
 
 set (packager_HEADERS
   packager.h
-  ../shared/xmltemplatepackager.h
+  xmltemplatepackager.h
 )
 
 include_directories(
