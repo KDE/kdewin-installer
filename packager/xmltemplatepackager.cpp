@@ -266,10 +266,36 @@ public:
         XmlData *m_data;
 };
 
+bool findFiles(QList<InstallFile> &fileList, const QString& aDir, const QString &root)
+{
+    QDir dir( aDir );
+    if (dir.exists())//QDir::NoDotAndDotDot
+    {
+        QFileInfoList entries = dir.entryInfoList(QDir::NoDotAndDotDot | 
+        QDir::Dirs | QDir::Files);
+        int count = entries.size();
+        foreach(QFileInfo entryInfo, entries)
+        {
+            QString path = entryInfo.absoluteFilePath();
+            if (entryInfo.isDir())
+            {
+                findFiles(fileList,path,root);
+            }
+            else
+            {
+                InstallFile aFile(path.remove(root));
+                fileList.append(aFile);
+            }
+        }
+    }
+    return true;
+}
+
 XmlTemplatePackager::XmlTemplatePackager(const QString &packageName, const QString &packageVersion,const QString &notes)
     : Packager(packageName, packageVersion, notes)
 {
     m_data = new XmlData;
+    m_debug = !qgetenv("DEBUG").isEmpty();
 }
 
 XmlTemplatePackager::~XmlTemplatePackager()
@@ -287,13 +313,19 @@ bool XmlTemplatePackager::parseConfig(const QString &fileName)
 
     QXmlInputSource *source = new QXmlInputSource(&file);
     bool ok = xmlReader.parse(source);
-    if (m_verbose)
+    if (m_debug)
         qDebug() << "parsed xml schema\n" << *m_data;
     return ok;
 }
 
 bool XmlTemplatePackager::makePackage(const QString &dir, const QString &destdir, bool bComplete)
 {
+    QFileInfo fi(dir);
+    findFiles(m_fileList, dir, fi.absoluteFilePath()+'/');
+
+    if (m_debug)
+        qDebug() << dir << m_fileList;
+
     QStringList modules = m_data->moduleList.keys();
     if (modules.size() == 0)
         return false;
@@ -314,6 +346,13 @@ bool XmlTemplatePackager::makePackage(const QString &dir, const QString &destdir
         if (!Packager::makePackage(dir,destdir,bComplete))
             return false;
     }
+    qOut() << "----------- unused files -----------\n";
+    foreach(const InstallFile &file, m_fileList)
+    {
+        if (!file.usedFile)
+            qOut() << file.inputFile << "\n";
+    }
+
     return true;
 }
     
@@ -353,16 +392,30 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
         {
             if (!f->compiler.isEmpty() && compilerType != f->compiler)
             {
-                if (m_verbose)
+                if (m_debug)
                     qDebug() << *f << "ignored";                    
                 continue;
             }
-            if (m_verbose)
+            if (m_debug)
                 qDebug() << *f << "added"; 
 
             if (!f->include.isEmpty() && f->directory.isEmpty())
             {
-                ;// call_regexp_handler(filelist,dir,f->include, f->exclude); 
+                if (m_debug)
+                    qOut() << f->include << "----------------------";
+                QRegExp rx(f->include);
+                for (QList<InstallFile>::iterator i = m_fileList.begin(); i != m_fileList.end(); ++i)
+                {
+                    InstallFile &file = *i;
+                    int pos = 0;
+                    if (rx.indexIn(file.inputFile,pos) != -1)
+                    {
+                        fileList.append(file);
+                        file.usedFile = true;
+                        if (m_debug)
+                            qOut() << file.inputFile << "added";
+                    }
+                }            
             }
             else if (f->handler == "parseQtIncludeFiles")
                 parseQtIncludeFiles(fileList, dir, f->directory,  f->include, f->exclude);
@@ -372,8 +425,8 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
                 ;// check <files>file; file; </files> from f->fileList
         }
     }
-    if (m_verbose) 
-        qDebug() << "generated filelist\n" << fileList;
+    if (m_debug) 
+        qOut() << "generated filelist\n" << fileList;
     return true;
 }
 

@@ -45,6 +45,7 @@ protected:
     XmlData *m_data;
     XmlPackage *m_currentPackage;
     QList<InstallFile> m_fileList;
+    bool m_debug;
 };
 
 #endif
