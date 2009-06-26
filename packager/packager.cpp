@@ -434,7 +434,7 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
             createHashFile(getBaseName(Packager::BIN) + getCompressedExtension(Packager::BIN), _destdir);
     }
     else
-        qDebug() << "no binary files found!";
+        qDebug() << "no binary files found for package" << m_name;
 
     generatePackageFileList(fileList, Packager::LIB);
     if (fileList.size() > 0) 
