@@ -30,6 +30,7 @@
 #include <QSettings>
 class QFile;
 class QIODevice;
+class QTextStream;
 
 struct InstallFile
 {
@@ -47,6 +48,8 @@ struct InstallFile
   }
   friend QDebug operator<<(QDebug, const InstallFile &);
   friend QDebug operator<<(QDebug, const QList<InstallFile> &);
+  friend QTextStream &operator<<(QTextStream &, const InstallFile &);
+  friend QTextStream &operator<<(QTextStream &, const QList<InstallFile> &);
 };
 
 bool parseQtIncludeFiles(QList<InstallFile> &fileList, const QString &root, const QString &subdir, const QString &filter, const QString &exclude);

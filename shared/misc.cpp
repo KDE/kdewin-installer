@@ -67,6 +67,25 @@ QDebug operator<<(QDebug out, const QList<InstallFile> &c)
     return out;
 }
 
+QTextStream &operator<<(QTextStream &out, const InstallFile &c)
+{
+    out << "InstallFile ("
+        << "inputFile" << c.inputFile
+        << "outputFile" << c.outputFile
+        << "bAbsInputPath" << c.bAbsInputPath
+        << ")";
+    return out;
+}
+
+QTextStream &operator<<(QTextStream &out, const QList<InstallFile> &c)
+{
+    out << "QList<InstallFile> ("
+        << "size:" << c.size();
+    Q_FOREACH(const InstallFile &p, c)
+        out << p;
+    out << ")";
+    return out;
+}
 
 #ifdef Q_WS_WIN
 /*
@@ -166,7 +185,7 @@ bool findExecutables(QList<InstallFile> &fileList, const QString &root, const QS
 bool generateFileList(QList<InstallFile> &fileList, const QString &root, const QString &subdir, const QString &filter, const QString &exclude, bool verbose)
 {
    // create a QListQRegExp
-   QStringList sl = exclude.split(' ');
+	QStringList sl = exclude.split(' ');
    QList<QRegExp> rxList;
 
    if(!sl.contains(QLatin1String("*.bak")))
