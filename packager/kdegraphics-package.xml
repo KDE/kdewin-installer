@@ -73,8 +73,7 @@
     </package>
     <package name="kdegraphics" comment="kdegraphics meta package">
         <shortDescription>Graphics applications (including Okular)</shortDescription>
-		<part name="runtime">
-            <files exclude=".*manifest/.*"/>
+		<part name="runtime" >
 		</part>
         <dependency>okular</dependency> 
         <dependency>gwenview</dependency>
@@ -82,4 +81,5 @@
         <dependency>kcolorchooser</dependency> 
         <dependency>kruler</dependency>
     </package>
+    <files exclude=".*manifest/.*"/>
 </module>
