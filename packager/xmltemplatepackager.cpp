@@ -20,6 +20,9 @@
 **
 ****************************************************************************/
 
+// check for double used files 
+// fix  
+
 #include "xmltemplatepackager.h"
 
 #include <QFile>
@@ -425,8 +428,20 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
                 ;// check <files>file; file; </files> from f->fileList
         }
     }
+    if(fileList.size() == 0) 
+    {
+        QFile f(dir + "/"+m_name);
+        if(f.open(QIODevice::WriteOnly))
+        {
+            f.write(QByteArray());
+            f.close();
+            fileList.append(InstallFile(m_name));
+        }
+    }
+    
     if (m_debug) 
         qOut() << "generated filelist\n" << fileList;
+    
     return true;
 }
 
