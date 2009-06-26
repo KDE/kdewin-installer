@@ -27,6 +27,7 @@
 #include "packager.h"
 
 class XmlData;
+class XmlModule;
 class XmlPackage;
 
 #include <QList>
@@ -44,6 +45,7 @@ public:
 protected:
     XmlData *m_data;
     XmlPackage *m_currentPackage;
+    XmlModule *m_currentModel;
     QList<InstallFile> m_fileList;
     bool m_debug;
 };

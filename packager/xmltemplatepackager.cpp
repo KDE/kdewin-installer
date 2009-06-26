@@ -335,6 +335,7 @@ bool XmlTemplatePackager::makePackage(const QString &dir, const QString &destdir
 
     // get fist module entry regaredless of name
     XmlModule *m = m_data->moduleList[modules[0]];
+	m_currentModel = m;
 
     // iterate through all defined packages
     foreach(const QString &key, m->packageList.keys())
@@ -349,6 +350,8 @@ bool XmlTemplatePackager::makePackage(const QString &dir, const QString &destdir
         if (!Packager::makePackage(dir,destdir,bComplete))
             return false;
     }
+
+	// print a list of unused files 
     qOut() << "----------- unused files -----------\n";
     foreach(const InstallFile &file, m_fileList)
     {
@@ -428,12 +431,19 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
                 ;// check <files>file; file; </files> from f->fileList
         }
     }
-    if(fileList.size() == 0) 
+	
+	// create the meta package
+    if(type == Packager::BIN && m_currentModel->name == m_currentPackage->name
+		&& fileList.size() == 0)
     {
-        QFile f(dir + "/"+m_name);
+		qDebug() << "create the meta package";
+		QFileInfo fi(dir + "/share/doc/"+m_name+"/readme.txt");
+		QDir d;
+		d.mkpath(fi.absolutePath());
+		QFile f(fi.absoluteFilePath());
         if(f.open(QIODevice::WriteOnly))
         {
-            f.write(QByteArray());
+            f.write(QByteArray("This package is a meta package\n"));
             f.close();
             fileList.append(InstallFile(m_name));
         }
