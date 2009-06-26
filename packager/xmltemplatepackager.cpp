@@ -24,7 +24,7 @@
 
 #include <QFile>
 #include <QtXml>
-#include <QtDebug>
+#include <debug.h>
 
 class XmlFiles 
 {
@@ -49,14 +49,13 @@ public:
 
 QDebug operator<<(QDebug out, const XmlFiles &c)
 {
-	out << "\nXmlFiles ("
-		<< "compiler:" << c.compiler
-		<< "directory:" << c.directory
-		<< "include:" << c.include
-		<< "exclude:" << c.exclude
-		<< "handler:" << c.handler
-		<< ")";
-	return out;
+    QDEBUG_CLASS_START(out,XmlFiles,c)
+    QDEBUG_CLASS_MEMBER(compiler)
+    QDEBUG_CLASS_MEMBER(directory)
+    QDEBUG_CLASS_MEMBER(include)
+    QDEBUG_CLASS_MEMBER(exclude)
+    QDEBUG_CLASS_MEMBER(handler)
+    QDEBUG_CLASS_END()
 }
 
 class XmlPart
@@ -82,13 +81,10 @@ public:
 
 QDebug operator<<(QDebug out,const XmlPart &c)
 {
-	out << "\nXmlPart ("
-		<< "name:" << c.name
-	;
-	foreach(XmlFiles *m, c.fileList)
-		out << *m;
-	out << ")";
-	return out;
+    QDEBUG_CLASS_START(out,XmlPart,c)
+    QDEBUG_CLASS_MEMBER(name)
+    QDEBUG_CLASS_LIST(XmlFiles,fileList)
+    QDEBUG_CLASS_END()
 }
 
 class XmlPackage 
@@ -116,13 +112,12 @@ public:
 
 QDebug operator<<(QDebug out,const XmlPackage &c)
 {
-	out << "\nXmlPackage ("
-		<< "name:" << c.name
-	;
-	foreach(XmlPart *m, c.partList)
-		out << *m;
-	out << ")";
-	return out;
+    QDEBUG_CLASS_START(out,XmlPackage,c)
+    QDEBUG_CLASS_MEMBER(name)
+    QDEBUG_CLASS_MEMBER(description)
+    QDEBUG_CLASS_MEMBER(dependencies)
+    QDEBUG_CLASS_LIST(XmlPart,partList)
+    QDEBUG_CLASS_END()
 }
 
 class XmlModule
@@ -147,13 +142,10 @@ public:
 
 QDebug operator<<(QDebug out,const XmlModule &c)
 {
-	out << "\nXmlModule ("
-		<< "name:" << c.name
-	;
-	foreach(XmlPackage *m, c.packageList)
-		out << *m;
-	out << ")";
-	return out;
+    QDEBUG_CLASS_START(out,XmlModule,c)
+    QDEBUG_CLASS_MEMBER(name)
+    QDEBUG_CLASS_LIST(XmlPackage,packageList)
+    QDEBUG_CLASS_END()
 }
 
 class XmlData 
@@ -168,12 +160,9 @@ public:
 
 QDebug operator<<(QDebug out,const XmlData &c)
 {
-	out << "\nXmlData ("
-	;
-	foreach(XmlModule *m, c.moduleList)
-		out << *m;
-	out << ")";
-	return out;
+    QDEBUG_CLASS_START(out,XmlData,c)
+    QDEBUG_CLASS_LIST(XmlModule,moduleList)
+    QDEBUG_CLASS_END()
 }
 
 class MyXmlHandler : public QXmlDefaultHandler

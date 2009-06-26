@@ -6,6 +6,7 @@ set (packager_SOURCES
   main.cpp
   packager.cpp
   xmltemplatepackager.cpp
+  ../shared/debug.cpp
 )
 
 set (packager_HEADERS
