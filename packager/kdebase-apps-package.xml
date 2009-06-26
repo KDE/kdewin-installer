@@ -189,8 +189,8 @@ share/templates/.source/CAMERA-Device.desktop
 share/templates/.source/NFS.desktop
 share/templates/.source/CDWRITER-Device.desktop
 share/templates/.source/MO-Device.desktop
-		</files>
-	</part>
+			</files>
+		</part>
 	</package>
     <package name="kwrite" >
 		<part name="runtime" >
