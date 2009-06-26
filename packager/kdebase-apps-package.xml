@@ -191,8 +191,7 @@ share/templates/.source/CDWRITER-Device.desktop
 share/templates/.source/MO-Device.desktop
 		</files>
 	</part>
-		<part name="development" >
-			<files>
+	</package>
     <package name="kwrite" >
 		<part name="runtime" >
 			<files>
