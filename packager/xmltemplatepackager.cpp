@@ -446,7 +446,11 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
 				{
 					qDebug() << file;
 					if (!file.isEmpty())
-						fileList.append(file);
+					{
+						InstallFile aFile(file);
+						aFile.usedFile = true;
+						fileList.append(aFile);
+					}
 				}
 			}
         }
