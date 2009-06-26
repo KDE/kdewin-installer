@@ -201,9 +201,11 @@ public:
         }
         else if (qName == "files")
         {
+#if 0 
 			if (m_level == 1)
 				qDebug() << "module level";
-            m_parent = m_last;
+#endif
+			m_parent = m_last;
             m_files = new XmlFiles(atts);
             m_part->fileList.append(m_files);
 			m_level++;
@@ -442,14 +444,13 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
                 generateFileList(fileList, dir, f->directory,  f->include, f->exclude);
             else 
 			{
-				foreach(const QString &file, f->fileList)
+                for (QList<InstallFile>::iterator i = m_fileList.begin(); i != m_fileList.end(); ++i)
 				{
-					qDebug() << file;
-					if (!file.isEmpty())
+                    InstallFile &file = *i;
+					if (f->fileList.contains(file.inputFile))
 					{
-						InstallFile aFile(file);
-						aFile.usedFile = true;
-						fileList.append(aFile);
+						file.usedFile = true;
+						fileList.append(file);
 					}
 				}
 			}
