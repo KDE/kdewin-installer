@@ -213,7 +213,7 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 generateFileList(fileList, dir, "lib",  "d4*.pdb", "");
                 generateFileList(fileList, dir, "plugins", "*d.dll *d4.dll *d1.dll");
                 generateFileList(fileList, dir, "plugins", "*d.pdb *d4.pdb *d1.pdb");
-                if (m_name.endsWith("mingw"))
+                if (m_type == "mingw")
                     generateFileList(fileList, dir, "lib",      "*d4.a *d.a");
                 else
                     generateFileList(fileList, dir, "lib",      "*d4.lib *d.lib");
@@ -228,7 +228,7 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 generateFileList(fileList, dir, "tools/linguist/phrasebooks", "*.qph");
                 generateFileList(fileList, dir, "phrasebooks", "*.qph");
 
-                if (m_name.endsWith("mingw"))
+                if (m_type == "mingw")
                     generateFileList(fileList, dir, "lib",      "*.a", "*d4.a *d.a");
                 else
                     generateFileList(fileList, dir, "lib",      "*.lib",  "*d4.lib *d.lib");
@@ -387,7 +387,7 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
     b.setBuffer(&mf.data);
     b.open(QIODevice::WriteOnly);
     out.setDevice(&b);
-    out << m_name + ' ' + m_version + ' ' + descr << '\n'
+	out << m_nameType + ' ' + m_version + ' ' + descr << '\n'
         << m_notes + '\n';
     b.close();
     mf.filename = "manifest/" + fileNameBase + ".ver";
@@ -484,7 +484,7 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
                 if (!f.inputFile.endsWith("/"))
                     qDebug() << "\t" << f.inputFile << " -> " << f.outputFile;
         }
-        compressFiles(_destdir + getBaseName(Packager::SRC), s, fileList, manifestFiles, "src/" + m_name + "-" + m_version + "/");
+        compressFiles(_destdir + getBaseName(Packager::SRC), s, fileList, manifestFiles, "src/" + m_nameType + "-" + m_version + "/");
         if (!m_checkSumMode.isEmpty())
             createHashFile(getBaseName(Packager::SRC) + getCompressedExtension(Packager::SRC), _destdir);
     }
@@ -522,7 +522,7 @@ QString Packager::getCompressedExtension(Packager::Type type)
 
 QString Packager::getBaseName(Packager::Type type)
 {
-    QString name = m_name + '-' + m_version;
+    QString name = m_nameType + '-' + m_version;
 
     switch(type) {
         case BIN:

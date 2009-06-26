@@ -276,10 +276,10 @@ int main(int argc, char *argv[])
     if(!srcRoot.isEmpty() &&(!srcRootDir.isDir() || !srcRootDir.isReadable()))
        printHelp(QString("Source Root path %1 is not accessible").arg(srcRoot));
 
-    if (!type.isEmpty())
-        name += '-' + type;
 
     Packager *packager = useTemplate ?  new XmlTemplatePackager(name, version, notes) : new Packager(name, version, notes);
+    if (!type.isEmpty())
+		packager->setType(type);
 
     if (!srcRoot.isEmpty())
         packager->setSourceRoot(srcRootDir.filePath());

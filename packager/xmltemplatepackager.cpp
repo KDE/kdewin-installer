@@ -356,6 +356,7 @@ bool XmlTemplatePackager::makePackage(const QString &dir, const QString &destdir
         if (key != "default")
         {
             m_name = p->name;
+            m_nameType = p->name + '-' + m_type;
             m_notes = p->description;
         }
         m_currentPackage = p;

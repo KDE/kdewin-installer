@@ -42,6 +42,7 @@ class Packager {
       void setCheckSumMode(const QString mode) { m_checkSumMode = mode; }
       void setVerbose(bool state) { m_verbose = state; }
       void setSpecialPackageMode(bool special) { m_special = special; }
+      void setType(const QString &type) { m_type = type; m_name += '-' + type; }
 
       /// mingw only: strip all debugging symbols from files to reduce size
       bool stripFiles(const QString &dir);
@@ -74,6 +75,8 @@ class Packager {
       QString m_srcRoot;
       QString m_srcExcludes;
       QString m_checkSumMode;
+      QString m_type;
+      QString m_nameType;
       bool m_verbose;
       bool m_debugPackage;
       bool m_special;
