@@ -38,11 +38,9 @@ public:
 	virtual bool generatePackageFileList(QList<InstallFile> &fileList, Packager::Type type, const QString &root);
     virtual bool makePackage(const QString &dir, const QString &destdir=QString(), bool bComplete=false);
 	QString getDescription(Packager::Type type);
-	void setVerbose(bool verbose) { m_verbose = verbose; }
 
 protected:
 	XmlData *m_data;
-	bool m_verbose;
     XmlPackage *m_currentPackage;
 };
 
