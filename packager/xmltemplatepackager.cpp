@@ -403,9 +403,24 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
             
     fileList.clear();
 
+    // try package shortcuts 
     XmlPart *part = m_currentPackage->partList[packageType];
     if (!part)
-        return false;
+    {
+        if (type == Packager::BIN)
+            packageType = "bin";
+        else if (type == Packager::LIB)
+            packageType = "lib";
+        else if (type == Packager::DOC)
+            packageType = "doc";
+        else if (type == Packager::SRC)
+            packageType = "src";
+        else if (type == Packager::ALL)
+            packageType = "all";
+        part = m_currentPackage->partList[packageType];
+        if (!part)
+            return false;
+    }    
         
     if (part->fileList.size() > 0)
     {
