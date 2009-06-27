@@ -338,10 +338,10 @@ bool XmlTemplatePackager::parseConfig(const QString &fileName)
 bool XmlTemplatePackager::makePackage(const QString &dir, const QString &destdir, bool bComplete)
 {
     QFileInfo fi(dir);
-    findFiles(m_fileList, dir, fi.absoluteFilePath()+'/');
+    findFiles(m_fileList, dir, fi.absoluteFilePath()+ (!dir.endsWith('/') ? "/" : "") );
 
     if (m_debug)
-        qDebug() << dir << m_fileList;
+        qDebug() << "rootdir:" << dir << m_fileList;
 
     QStringList modules = m_data->moduleList.keys();
     if (modules.size() == 0)
