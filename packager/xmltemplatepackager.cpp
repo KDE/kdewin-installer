@@ -420,6 +420,7 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
             if (m_debug)
                 qDebug() << *f << "added"; 
 
+            // new style regex 
             if (!f->include.isEmpty() && f->directory.isEmpty())
             {
                 if (m_debug)
@@ -431,10 +432,12 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
                     int pos = 0;
                     if (rx.indexIn(file.inputFile,pos) != -1)
                     {
+                        if (file.usedFile) {
+                            qError() << file.inputFile << " already used, ignored\n";
+                            continue;
+                        }
                         fileList.append(file);
                         file.usedFile = true;
-                        if (m_debug)
-                            qOut() << file.inputFile << "added";
                     }
                 }            
             }
@@ -449,6 +452,10 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
                     InstallFile &file = *i;
                     if (f->fileList.contains(file.inputFile))
                     {
+                        if (file.usedFile) {
+                            qError() << file.inputFile << " already used, ignored\n";
+                            continue;
+                        }
                         file.usedFile = true;
                         fileList.append(file);
                     }
