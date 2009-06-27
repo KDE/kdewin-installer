@@ -456,7 +456,8 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
             }
         }
     }
-    
+
+#if 0    
     // create the meta package
     if(type == Packager::BIN && m_currentModel->name == m_currentPackage->name
         && fileList.size() == 0)
@@ -473,6 +474,7 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
             fileList.append(InstallFile(m_name));
         }
     }
+#endif
     
     if (m_debug) 
         qOut() << "generated filelist\n" << fileList;
