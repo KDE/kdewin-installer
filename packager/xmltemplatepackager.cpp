@@ -183,32 +183,32 @@ public:
         {
             m_module = new XmlModule(atts);
             m_data->moduleList[atts.value("name")] = m_module;
-			m_level++;
+            m_level++;
         }
         else if (qName == "package")
         {
             m_parent = m_last;
             m_package = new XmlPackage(atts);
             m_module->packageList[atts.value("name")] = m_package;
-			m_level++;
+            m_level++;
         }
         else if (qName == "part")
         {
             m_parent = m_last;
             m_part = new XmlPart(atts);
             m_package->partList[atts.value("name")] = m_part;
-			m_level++;
+            m_level++;
         }
         else if (qName == "files")
         {
 #if 0 
-			if (m_level == 1)
-				qDebug() << "module level";
+            if (m_level == 1)
+                qDebug() << "module level";
 #endif
-			m_parent = m_last;
+            m_parent = m_last;
             m_files = new XmlFiles(atts);
             m_part->fileList.append(m_files);
-			m_level++;
+            m_level++;
             // add case for files outside of part 
         }
 
@@ -219,7 +219,7 @@ public:
     bool endElement ( const QString & namespaceURI, const QString & localName, const QString & qName )
     {
         inElement = false;
-		m_level--;
+        m_level--;
         return true;
     }
 
@@ -238,11 +238,11 @@ public:
         else if (element == "files" & !ch.isEmpty())
         {
             // ch contains content for tag <files>file; file </files>
-			foreach(const QString &file, ch.split(ch.contains(';') ? ';': '\x0a',QString::SkipEmptyParts))
-			{
-				if (!file.trimmed().isEmpty())
-					m_files->fileList.append(file.trimmed());
-			}
+            foreach(const QString &file, ch.split(ch.contains(';') ? ';': '\x0a',QString::SkipEmptyParts))
+            {
+                if (!file.trimmed().isEmpty())
+                    m_files->fileList.append(file.trimmed());
+            }
         } 
             
         return true;
@@ -280,7 +280,7 @@ public:
         XmlPart *m_part;
         XmlFiles *m_files;
         XmlData *m_data;
-		int m_level;
+        int m_level;
 };
 
 bool findFiles(QList<InstallFile> &fileList, const QString& aDir, const QString &root)
@@ -349,7 +349,7 @@ bool XmlTemplatePackager::makePackage(const QString &dir, const QString &destdir
 
     // get fist module entry regaredless of name
     XmlModule *m = m_data->moduleList[modules[0]];
-	m_currentModel = m;
+    m_currentModel = m;
 
     // iterate through all defined packages
     foreach(const QString &key, m->packageList.keys())
@@ -366,7 +366,7 @@ bool XmlTemplatePackager::makePackage(const QString &dir, const QString &destdir
             return false;
     }
 
-	// print a list of unused files 
+    // print a list of unused files 
     qOut() << "----------- unused files -----------\n";
     foreach(const InstallFile &file, m_fileList)
     {
@@ -443,29 +443,29 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
             else if (!f->directory.isEmpty())
                 generateFileList(fileList, dir, f->directory,  f->include, f->exclude);
             else 
-			{
+            {
                 for (QList<InstallFile>::iterator i = m_fileList.begin(); i != m_fileList.end(); ++i)
-				{
+                {
                     InstallFile &file = *i;
-					if (f->fileList.contains(file.inputFile))
-					{
-						file.usedFile = true;
-						fileList.append(file);
-					}
-				}
-			}
+                    if (f->fileList.contains(file.inputFile))
+                    {
+                        file.usedFile = true;
+                        fileList.append(file);
+                    }
+                }
+            }
         }
     }
-	
-	// create the meta package
+    
+    // create the meta package
     if(type == Packager::BIN && m_currentModel->name == m_currentPackage->name
-		&& fileList.size() == 0)
+        && fileList.size() == 0)
     {
-		qDebug() << "create the meta package";
-		QFileInfo fi(dir + "/share/doc/"+m_name+"/readme.txt");
-		QDir d;
-		d.mkpath(fi.absolutePath());
-		QFile f(fi.absoluteFilePath());
+        qDebug() << "create the meta package";
+        QFileInfo fi(dir + "/share/doc/"+m_name+"/readme.txt");
+        QDir d;
+        d.mkpath(fi.absolutePath());
+        QFile f(fi.absoluteFilePath());
         if(f.open(QIODevice::WriteOnly))
         {
             f.write(QByteArray("This package is a meta package\n"));
