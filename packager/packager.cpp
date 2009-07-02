@@ -387,7 +387,7 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
     b.setBuffer(&mf.data);
     b.open(QIODevice::WriteOnly);
     out.setDevice(&b);
-	out << m_nameType + ' ' + m_version + ' ' + descr << '\n'
+	out << m_name + ' ' + m_version + ' ' + descr << '\n'
         << m_notes + '\n';
     b.close();
     mf.filename = "manifest/" + fileNameBase + ".ver";
@@ -484,7 +484,7 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
                 if (!f.inputFile.endsWith("/"))
                     qDebug() << "\t" << f.inputFile << " -> " << f.outputFile;
         }
-        compressFiles(_destdir + getBaseName(Packager::SRC), s, fileList, manifestFiles, "src/" + m_nameType + "-" + m_version + "/");
+        compressFiles(_destdir + getBaseName(Packager::SRC), s, fileList, manifestFiles, "src/" + m_name + "-" + m_version + "/");
         if (!m_checkSumMode.isEmpty())
             createHashFile(getBaseName(Packager::SRC) + getCompressedExtension(Packager::SRC), _destdir);
     }
@@ -522,7 +522,7 @@ QString Packager::getCompressedExtension(Packager::Type type)
 
 QString Packager::getBaseName(Packager::Type type)
 {
-    QString name = m_nameType + '-' + m_version;
+    QString name = m_name + '-' + m_version;
 
     switch(type) {
         case BIN:
