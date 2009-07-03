@@ -27,6 +27,7 @@ class QFile;
 class QCryptographicHash;
 
 #include <QtCore/QByteArray>
+#include <QtCore/QString>
 
 class Hash {
     public:
@@ -77,6 +78,26 @@ class Hash {
     protected: 
         Type m_type;
         QCryptographicHash *m_cryptoHash;
+};
+
+/**
+ holds a hash value and type
+*/ 
+class HashValue
+{
+public:
+    HashValue(Hash::Type type = Hash::MD5, QByteArray &value=QByteArray())
+        : m_type(type), m_value(value)
+    {
+    }
+    
+    Hash::Type type() { return m_type; }
+    QString typeAsString() { return m_type == Hash::MD5 ? QLatin1String("md5") : QLatin1String("sha1"); }
+    QByteArray value() { return m_value; }
+
+private:
+    Hash::Type m_type;
+    QByteArray m_value;
 };
 
 #endif
