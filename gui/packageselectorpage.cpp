@@ -37,6 +37,7 @@
 #include "unpacker.h"
 #include "packageselectorpage.h"
 
+#include <QLineEdit>
 #include <QListWidget>
 #include <QSplitter>
 #include <QTextEdit>
@@ -101,15 +102,21 @@ PackageSelectorPage::PackageSelectorPage()  : InstallWizardPage(0)
     // left side of splitter 
     leftTree  = new QTreeWidget(splitter);
 
-    categoryInfo = new QLabel();
+    categoryInfo = new QLabel;
     //categoryInfo->setReadOnly(true);
     categoryInfo->setWordWrap(true);
+
+    QHBoxLayout *filterLayout = new QHBoxLayout;
+    filterEdit = new QLineEdit;
+    filterLayout->addWidget(new QLabel("Filter"));
+    filterLayout->addWidget(filterEdit);
     
     QWidget *gridLayoutLeft = new QWidget(splitter);
     gridLayoutLeft->setContentsMargins(0, 0, 0, 0);
     QVBoxLayout *vboxLayoutLeft = new QVBoxLayout(gridLayoutLeft);
     vboxLayoutLeft->addWidget(leftTree,4);
     vboxLayoutLeft->addWidget(categoryInfo,1);
+    vboxLayoutLeft->addLayout(filterLayout,1);
     vboxLayoutLeft->setContentsMargins(0, 0, 0, 0);
 
     // right side of splitter 
@@ -387,6 +394,7 @@ void PackageSelectorPage::initializePage()
     InstallerDialogs::instance().downloadProgressDialog(this,false);
     connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
     connect(leftTree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(on_leftTree_itemClicked(QTreeWidgetItem *, int)));
+    connect(filterEdit,SIGNAL(textChanged(const QString &)),this,SLOT(slotFilterTextChanged(const QString &)));
     connect(&Settings::instance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
     connect(&Settings::instance(),SIGNAL(compilerTypeChanged()),this,SLOT(slotCompilerTypeChanged()));
     setLeftTreeData();
@@ -464,6 +472,30 @@ void PackageSelectorPage::slotCompilerTypeChanged()
     setWidgetData();
 }
 
+void PackageSelectorPage::slotFilterTextChanged(const QString &text)
+{
+    if (text.isEmpty())
+    {
+        for(int i = 0; i < tree->topLevelItemCount(); i++)
+        {
+            QTreeWidgetItem *item = tree->topLevelItem (i);
+            item->setHidden(false);
+        }
+        return; 
+    }
+    QList<QTreeWidgetItem *> list = tree->findItems (text, Qt::MatchContains, NameColumn );
+    foreach(QTreeWidgetItem *item, tree->findItems (text, Qt::MatchContains, NotesColumn ))
+    {
+        if (!list.contains(item))
+            list.append(item);
+    }       
+    for(int i = 0; i < tree->topLevelItemCount(); i++)
+    {
+        QTreeWidgetItem *item = tree->topLevelItem (i);
+        item->setHidden(!list.contains(item));
+    }
+}
+
 bool PackageSelectorPage::validatePage()
 {
     setSettingsButtonVisible(false);
@@ -474,6 +506,7 @@ void PackageSelectorPage::cleanupPage()
 {
     disconnect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
     disconnect(leftTree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(on_leftTree_itemClicked(QTreeWidgetItem *, int)));
+    disconnect(filterEdit,SIGNAL(textChanged(const QString &)),this,SLOT(slotFilterTextChanged(const QString &)));
     disconnect(&Settings::instance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
     disconnect(&Settings::instance(),SIGNAL(compilerTypeChanged()),this,SLOT(slotCompilerTypeChanged()));
     engine->unselectAllPackages();

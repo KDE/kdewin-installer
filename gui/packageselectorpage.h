@@ -27,6 +27,7 @@
 
 class QTabWidget;
 class QTextEdit;
+class QLineEdit;
 
 #include "installwizard.h"
 //#include "ui_packageselectorpage.h"
@@ -53,6 +54,7 @@ public slots:
 
     void installDirChanged(const QString &dir);
     void slotCompilerTypeChanged(void);
+    void slotFilterTextChanged(const QString &text);
 
 protected: 
     void updatePackageInfo(const Package *availablePackage, const Package *installedPackage);
@@ -60,9 +62,11 @@ protected:
     void setLeftTreeData();
     void setWidgetData( QString categoryName=QString());
 
+
 private:
     QTabWidget *packageInfo;
     QLabel *categoryInfo;
+    QLineEdit *filterEdit;
 };
 
 #endif
