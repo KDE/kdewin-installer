@@ -440,7 +440,7 @@ bool Packager::makePackagePart(const QString &root, QList<InstallFile> &fileList
     {
         if (m_verbose)
         {
-            qDebug() << "creating bin package" << destdir + getBaseFileName(type);
+            qDebug() << "creating" << type << "of package" << destdir + getBaseFileName(type);
             Q_FOREACH(const InstallFile &f, fileList)
                 if (!f.inputFile.endsWith("/"))
                     qDebug() << "\t" << f.inputFile << " -> " << f.outputFile;
@@ -452,7 +452,9 @@ bool Packager::makePackagePart(const QString &root, QList<InstallFile> &fileList
         info->writeToFile(destdir + "/" + getBaseFileName(type) + ".xml");
         return true;
     }
-    qDebug() << "no binary files found for package" << m_name;
+    // \todo this message should not be printed when in xml mode
+    if  (m_verbose)
+        qDebug() << "no files found for part" << type << "of package" << m_name;
     return false;
 }       
 

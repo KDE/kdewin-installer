@@ -126,6 +126,30 @@ class Packager {
       bool m_special;
       unsigned int m_compMode;
       QMap<Packager::Type,PackagerInfo*> m_packagerInfo;
+	  friend QDebug operator<<(QDebug, Packager::Type);
 };
 
+inline QDebug operator<<(QDebug out, Packager::Type c)
+{
+    switch(c) {
+        case Packager::BIN:
+            out << "runtime";
+            break;
+        case Packager::LIB:
+            out << "development";
+            break;
+        case Packager::DOC:
+            out << "documentation";
+            break;
+        case Packager::SRC:
+            out << "source";
+            break;
+        case Packager::NONE:
+            out << "complete package";
+            break;
+        default:
+            break;
+	}
+	return out;
+}
 #endif
