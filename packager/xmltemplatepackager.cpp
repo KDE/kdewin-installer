@@ -381,9 +381,9 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
     QString dir = root.isEmpty() ? m_rootDir : root;
 
     QString compilerType; 
-    if (m_name.endsWith("mingw"))
+    if (m_type == "mingw")
         compilerType = "mingw";
-    else if (m_name.endsWith("vc90"))
+    else if (m_type == "vc90")
         compilerType = "vc90";
     else 
         compilerType = "vc80";
@@ -447,7 +447,7 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
                     if (rx.indexIn(file.inputFile,pos) != -1)
                     {
                         if (file.usedFile) {
-                            qError() << file.inputFile << " already used, ignored\n";
+                            qError() << "while creating " << m_currentPackage->name << " part " << part->name  << " file " <<  file.inputFile <<" ignored, because it was already used\n";
                             continue;
                         }
                         fileList.append(file);
@@ -467,7 +467,7 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
                     if (f->fileList.contains(file.inputFile))
                     {
                         if (file.usedFile) {
-                            qError() << file.inputFile << " already used, ignored\n";
+                            qError() << "while creating " << m_currentPackage->name << " part " << part->name  << " file " <<  file.inputFile <<" ignored, because it was already used\n";
                             continue;
                         }
                         file.usedFile = true;
