@@ -5,9 +5,9 @@
 		<part name="runtime">
 			<files include="bin/.*(kdcraw|kexiv|kipi).*"/>
 			<files include="lib/strigi.*"/>
-			<files include="lib/kde4/.*(gsthumbnail|gvpart|msits|mobithumbnail|svgpart).*"/>
+			<files include="lib/kde4/.*(gsthumbnail|gvpart|msits|mobithumbnail|rawthumbnail|svgpart).*"/>
 			<files include="share/.*(kdcraw|kexiv|kipi).*"/>
-			<files include="share/.*(gsthumbnail|gvpart|msits|mobithumbnail|svgpart|KSane).*"/>
+			<files include="share/.*(gsthumbnail|gvpart|msits|mobithumbnail|rawthumbnail|svgpart|KSane).*"/>
 		</part>
 		<part name="development">
 			<files include="lib/.*(kdcraw|kexiv|kipi).*"/>
