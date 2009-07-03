@@ -15,19 +15,18 @@
 @categorynotes qt Qt related packages 
 
 ; to which category packages belongs to
-@categorypackages win32libs aspell cyrus-sasl ebook-tools expat gettext giflib gpgme iconv jasper jpeg lcms libbzip2 libgmp libgs libical libidn libpng libxml2 libxslt libzip mysql-embedded openslp openssl poppler-data shared-mime-info sqlite tiff zlib
-@categorypackages win32libs pcre-msvc  dbus-msvc  exiv2-msvc  gpgme-qt-msvc  libspectre-msvc  libmsn-msvc  libdvdcss-msvc  libsamplerate-msvc
+@categorypackages win32libs aspell cyrus-sasl ebook-tools expat gettext giflib gpgme iconv jasper jpeg lcms libbzip2 libgmp libgs libical libidn libpng libxml2 libxslt libzip mysql-embedded openslp openssl shared-mime-info sqlite tiff zlib
+@categorypackages win32libs pcre-vc90  dbus-vc90  exiv2-vc90  gpgme-qt-vc90  libspectre-vc90  libmsn-vc90  libdvdcss-vc90  libsamplerate-vc90
 @categorypackages win32libs pcre-mingw dbus-mingw exiv2-mingw gpgme-qt-mingw libspectre-mingw libmsn-mingw libdvdcss-mingw libsamplerate-mingw
 @categorypackages tools findutils grep mingw-utils diffutils patch
-@categorypackages other cdrtools dvd+rw-tools
-@categorypackages kdesupport kdewin32-msvc  kdewin-installer-msvc  vcredist      qimageblitz-msvc  qca-msvc  strigi-msvc  soprano-msvc  taglib-msvc  phonon-msvc  fontconfig-msvc  freetype-msvc  poppler-msvc  automoc-msvc
-@categorypackages kdesupport kdewin32-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw phonon-mingw fontconfig-mingw freetype-mingw poppler-mingw automoc-mingw
-@categorypackages KDE amarok-msvc  digikam-msvc  kdelibs-msvc  kdepimlibs-msvc  kdepim-msvc  kdebase-apps-msvc  kdebase-runtime-msvc  kdebase-workspace-msvc  kdeedu-msvc  kdegames-msvc  kdegraphics-msvc  kdenetwork-msvc  kdesdk-msvc  kdewebdev-msvc  kdeutils-msvc  kdeplasma-addons-msvc  kipi-plugins-msvc
+@categorypackages kdesupport kdewin-vc90  kdewin-installer-vc90  vcredist      qimageblitz-vc90  qca-vc90  strigi-vc90  soprano-vc90  taglib-vc90  phonon-vc90  fontconfig-vc90  freetype-vc90  poppler-vc90  automoc-vc90  oxygen-icons-vc90
+@categorypackages kdesupport kdewin-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw phonon-mingw fontconfig-mingw freetype-mingw poppler-mingw automoc-mingw oxygen-icons-mingw
+@categorypackages KDE amarok-vc90  digikam-vc90  kdelibs-vc90  kdepimlibs-vc90  kdepim-vc90  kdebase-apps-vc90  kdebase-runtime-vc90  kdebase-workspace-vc90  kdeedu-vc90  kdegames-vc90  kdegraphics-vc90  kdenetwork-vc90  kdesdk-vc90  kdewebdev-vc90  kdeutils-vc90  kdeplasma-addons-vc90  kipi-plugins-vc90
 @categorypackages KDE amarok-mingw digikam-mingw kdelibs-mingw kdepimlibs-mingw kdepim-mingw kdebase-apps-mingw kdebase-runtime-mingw kdebase-workspace-mingw kdeedu-mingw kdegames-mingw kdegraphics-mingw kdenetwork-mingw kdesdk-mingw kdewebdev-mingw kdeutils-mingw kdeplasma-addons-mingw kipi-plugins-mingw
-@categorypackages KDE koffice-msvc  ktorrent-msvc  kile-msvc  kde-additional-msvc  kdevelop-msvc  kdevplatform-msvc  choqok-msvc
-@categorypackages KDE koffice-mingw ktorrent-mingw kile-mingw kde-additional-mingw kdevelop-mingw kdevplatform-mingw choqok-mingw
-@categorypackages KDEUNSTABLE konversation4-msvc konversation4-mingw k3b-msvc k3b-mingw
-@categorypackages qt qt-msvc qt-mingw qt-static-msvc
+@categorypackages KDE koffice-vc90  ktorrent-vc90  kile-vc90  kde-additional-vc90  kdevelop-vc90  kdevplatform-vc90
+@categorypackages KDE koffice-mingw ktorrent-mingw kile-mingw kde-additional-mingw kdevelop-mingw kdevplatform-mingw
+@categorypackages KDEUNSTABLE konversation-vc90 konversation-mingw k3b-vc90 k3b-mingw  yakuake-vc90  yakuake-mingw
+@categorypackages qt qt-vc90 qt-mingw qt-static-vc90
 @categorypackages kde-l10n kde-l10n-af kde-l10n-ar kde-l10n-be kde-l10n-bg kde-l10n-bn kde-l10n-bn_IN kde-l10n-br kde-l10n-ca kde-l10n-cs kde-l10n-csb kde-l10n-cy kde-l10n-da kde-l10n-de kde-l10n-el kde-l10n-en_GB 
 @categorypackages kde-l10n kde-l10n-eo kde-l10n-es kde-l10n-et kde-l10n-eu kde-l10n-fa kde-l10n-fi kde-l10n-fr kde-l10n-fy kde-l10n-ga kde-l10n-gl kde-l10n-gu kde-l10n-ha kde-l10n-he kde-l10n-hi kde-l10n-hr kde-l10n-hsb 
 @categorypackages kde-l10n kde-l10n-hu kde-l10n-hy kde-l10n-is kde-l10n-it kde-l10n-ja kde-l10n-ka kde-l10n-kk kde-l10n-km kde-l10n-kn kde-l10n-ko kde-l10n-ku kde-l10n-lb kde-l10n-lt kde-l10n-lv kde-l10n-ml kde-l10n-mk 
@@ -41,7 +40,7 @@
 @categorypackages aspell-data aspell-nb aspell-nn aspell-no aspell-ny aspell-or aspell-pa aspell-pl aspell-pt aspell-qu aspell-ro aspell-ru aspell-rw aspell-sc aspell-sk aspell-sl aspell-sr 
 @categorypackages aspell-data aspell-sv aspell-sw aspell-ta aspell-tet aspell-tl aspell-tn aspell-tr aspell-uk aspell-uz aspell-vi aspell-wa aspell-yi aspell-zu
 
-@endusercategories KDE KDEUNSTABLE aspell-data kde-l10n 
+@endusercategories KDE aspell-data kde-l10n
 
 ;------------------------------------------------------
 ; all packages on the mirror
@@ -65,9 +64,9 @@
 @deps digikam-mingw kdegraphics-mingw kdeedu-mingw exiv2-mingw lcms
 @deps gpgme-qt-mingw gpgme qt-mingw
 @deps k3b-mingw kdemultimedia-mingw libdvdcss-mingw cdrtools dvd+rw-tools
-@deps kdelibs-mingw qt-mingw phonon-mingw pcre-mingw dbus-mingw kdewin32-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
+@deps kdelibs-mingw qt-mingw phonon-mingw pcre-mingw dbus-mingw kdewin-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
 @deps kdebase-apps-mingw kdebase-runtime-mingw
-@deps kdebase-runtime-mingw kdelibs-mingw
+@deps kdebase-runtime-mingw kdepimlibs-mingw kdelibs-mingw oxygen-icons-mingw
 @deps kdebase-workspace-mingw kdebase-runtime-mingw kdepimlibs-mingw
 @deps kdeedu-mingw kdebase-runtime-mingw kdelibs-mingw openbabel-mingw cfitsio
 @deps kdegames-mingw kdebase-runtime-mingw kdelibs-mingw phonon-mingw
@@ -83,57 +82,90 @@
 @deps kdevelop-mingw kdevplatform-mingw
 @deps kdewebdev-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps kdewin-installer-mingw qt-mingw
-@deps kdewin32-mingw qt-mingw
+@deps kdewin-mingw qt-mingw
 @deps kde-additional-mingw kdebase-runtime-mingw
 @deps kile-mingw kdesdk-mingw
 @deps kipi-plugins-mingw kdegraphics-mingw kdepimlibs-mingw
 @deps koffice-mingw kdebase-runtime-mingw kdelibs-mingw lcms
-@deps konversation4-mingw kdebase-runtime-mingw kdelibs-mingw
+@deps konversation-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps ktorrent-mingw libgmp kdebase-runtime-mingw qca-mingw
 @deps phonon-mingw qt-mingw
 @deps poppler-mingw fontconfig-mingw freetype-mingw poppler-data
 @deps qca-mingw cyrus-sasl openssl
 @deps qt-mingw dbus-mingw runtime-mingw
 @deps strigi-mingw libbzip2 openssl zlib iconv libxml2 exiv2-mingw
+@deps yakuake-mingw kdebase-apps-mingw
 ; msvc dependencies
-@deps amarok-msvc kdebase-runtime-msvc phonon-msvc taglib-msvc mysql-embedded
-@deps automoc-msvc qt-msvc
-@deps choqok-msvc kdelibs-msvc
+@deps amarok-vc90 kdebase-runtime-vc90 phonon-vc90 taglib-vc90 mysql-embedded
+@deps automoc-vc90 qt-vc90
 ; dbus may be compiled with libxml2 or expat, so use both dependencies
-@deps dbus-msvc libxml2 iconv expat
-@deps digikam-msvc kdegraphics-msvc kdeedu-msvc exiv2-msvc lcms
-@deps gpgme-qt-msvc gpgme qt-msvc
-@deps k3b-msvc kdemultimedia-msvc libdvdcss-msvc cdrtools dvd+rw-tools
-@deps kdebase-apps-msvc kdebase-runtime-msvc
-@deps kdebase-runtime-msvc kdelibs-msvc
-@deps kdebase-workspace-msvc kdebase-runtime-msvc kdepimlibs-msvc
-@deps kdeedu-msvc kdebase-runtime-msvc kdelibs-msvc openbabel-msvc cfitsio
-@deps kdegames-msvc kdebase-runtime-msvc kdelibs-msvc phonon-msvc
-@deps kdegraphics-msvc kdebase-runtime-msvc kdelibs-msvc poppler-msvc ebook-tools libspectre exiv2-msvc
-@deps kdelibs-msvc qt-msvc phonon-msvc pcre-msvc vcredist qt-msvc dbus-msvc kdewin32-msvc qimageblitz-msvc qca-msvc strigi-msvc soprano-msvc taglib-msvc aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl tiff zlib shared-mime-info
-@deps kdemultimedia-msvc kdebase-runtime-msvc taglib-msvc
-@deps kdenetwork-msvc kdebase-runtime-msvc kdelibs-msvc sqlite libgmp libidn libmsn-msvc
-@deps kdepim-msvc kdepimlibs-msvc kdebase-runtime-msvc gpgme-qt-msvc sqlite
-@deps kdepimlibs-msvc kdelibs-msvc boost-msvc libical cyrus-sasl
-@deps kdesdk-msvc kdebase-runtime-msvc kdelibs-msvc astyle diffutils
-@deps kdetoys-msvc kdebase-runtime-msvc kdelibs-msvc
-@deps kdeutils-msvc kdebase-runtime-msvc libzip libgmp
-@deps kdevplatform-msvc kdebase-runtime-msvc
-@deps kdevelop-msvc kdevplatform-msvc
-@deps kdewebdev-msvc kdebase-runtime-msvc kdelibs-msvc
-@deps kdewin-installer-msvc qt-msvc
-@deps kdewin32-msvc qt-msvc
-@deps kde-additional-msvc kdebase-runtime-msvc
-@deps kile-msvc kdesdk-msvc
-@deps kipi-plugins-msvc kdegraphics-msvc kdepimlibs-msvc
-@deps koffice-msvc kdebase-runtime-msvc kdelibs-msvc lcms
-@deps konversation4-msvc kdebase-runtime-msvc kdelibs-msvc
-@deps ktorrent-msvc libgmp kdebase-runtime-msvc qca-msvc
-@deps phonon-msvc qt-msvc
-@deps poppler-msvc fontconfig-msvc freetype-msvc poppler-data
-@deps qca-msvc cyrus-sasl openssl
-@deps qt-msvc dbus-msvc vcredist
-@deps strigi-msvc libbzip2 openssl zlib iconv libxml2 exiv2-msvc
+@deps dbus-vc90 libxml2 iconv expat
+@deps digikam-vc90 kdegraphics-vc90 kdeedu-vc90 exiv2-vc90 lcms
+@deps gpgme-qt-vc90 gpgme qt-vc90
+@deps k3b-vc90 kdemultimedia-vc90 libdvdcss-vc90 cdrtools dvd+rw-tools
+@deps kdebase-apps-vc90 kdebase-runtime-vc90
+@deps kdebase-runtime-vc90 kdepimlibs-vc90 kdelibs-vc90 oxygen-icons-vc90
+@deps kdebase-workspace-vc90 kdebase-runtime-vc90
+@deps kdeedu-vc90 kdebase-runtime-vc90 kdelibs-vc90 openbabel-vc90 cfitsio
+@deps kdegames-vc90 kdebase-runtime-vc90 kdelibs-vc90 phonon-vc90
+@deps kdegraphics-vc90 kdebase-runtime-vc90 kdelibs-vc90 poppler-vc90 ebook-tools libspectre exiv2-vc90
+@deps kdelibs-vc90 qt-vc90 phonon-vc90 pcre-vc90 vcredist qt-vc90 dbus-vc90 kdewin-vc90 qimageblitz-vc90 qca-vc90 strigi-vc90 soprano-vc90 taglib-vc90 aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl tiff zlib shared-mime-info
+@deps kdemultimedia-vc90 kdebase-runtime-vc90 taglib-vc90
+@deps kdenetwork-vc90 kdebase-runtime-vc90 kdelibs-vc90 sqlite libgmp libidn libmsn-vc90
+@deps kdepim-vc90 kdepimlibs-vc90 kdebase-runtime-vc90 gpgme-qt-vc90 sqlite
+@deps kdepimlibs-vc90 kdelibs-vc90 boost-vc90 libical cyrus-sasl
+@deps kdesdk-vc90 kdebase-runtime-vc90 kdelibs-vc90 astyle diffutils
+@deps kdetoys-vc90 kdebase-runtime-vc90 kdelibs-vc90
+@deps kdeutils-vc90 kdebase-runtime-vc90 libzip libgmp
+@deps kdevplatform-vc90 kdebase-runtime-vc90
+@deps kdevelop-vc90 kdevplatform-vc90
+@deps kdewebdev-vc90 kdebase-runtime-vc90 kdelibs-vc90
+@deps kdewin-installer-vc90 qt-vc90
+@deps kdewin-vc90 qt-vc90
+@deps kde-additional-vc90 kdebase-runtime-vc90
+@deps kile-vc90 kdesdk-vc90
+@deps kipi-plugins-vc90 kdegraphics-vc90 kdepimlibs-vc90
+@deps koffice-vc90 kdebase-runtime-vc90 kdelibs-vc90 lcms
+@deps konversation-vc90 kdebase-runtime-vc90 kdelibs-vc90
+@deps ktorrent-vc90 libgmp kdebase-runtime-vc90 qca-vc90
+@deps phonon-vc90 qt-vc90
+@deps poppler-vc90 fontconfig-vc90 freetype-vc90 poppler-data
+@deps qca-vc90 cyrus-sasl openssl
+@deps qt-vc90 dbus-vc90 vcredist
+@deps strigi-vc90 libbzip2 openssl zlib iconv libxml2 exiv2-vc90
+@deps yakuake-vc90 kdebase-apps-vc90
+;------------------------------------------------------
+; kdegraphics
+;------------------------------------------------------
+@categorypackages KDE libkdegraphics-vc90  kcolorchooser-vc90  kruler-vc90  kolourpaint-vc90  gwenview-vc90  okular-vc90
+@categorypackages KDE libkdegraphics-mingw kcolorchooser-mingw kruler-mingw kolourpaint-mingw gwenview-mingw okular-mingw
+@deps libkdegraphics-vc90  kdebase-runtime-vc90  kdelibs-vc90  poppler-vc90  ebook-tools libspectre exiv2-vc90
+@deps libkdegraphics-mingw kdebase-runtime-mingw kdelibs-mingw poppler-mingw ebook-tools libspectre exiv2-mingw
+@deps kcolorchooser-vc90 libkdegraphics-vc90
+@deps kcolorchooser-mingw libkdegraphics-mingw
+@deps kruler-vc90  libkdegraphics-vc90
+@deps kruler-mingw libkdegraphics-mingw
+@deps kolourpaint-vc90  libkdegraphics-vc90
+@deps kolourpaint-mingw libkdegraphics-mingw
+@deps okular-vc90  libkdegraphics-vc90
+@deps okular-mingw libkdegraphics-mingw
+;------------------------------------------------------
+; kdesdk
+;------------------------------------------------------
+@categorypackages KDE umbrello-vc90  lokalize-vc90  kbugbuster-vc90  kate-vc90  kompare-vc90  kdesdk-vc90
+@categorypackages KDE umbrello-mingw lokalize-mingw kbugbuster-mingw kate-mingw kompare-mingw kdesdk-mingw
+@deps kdesdk-vc90  umbrello-vc90  lokalize-vc90  kbugbuster-vc90  kate-vc90  kompare-vc90
+@deps kdesdk-mingw umbrello-mingw lokalize-mingw kbugbuster-mingw kate-mingw kompare-mingw
+@deps umbrello-vc90 kdebase-runtime-vc90
+@deps umbrello-mingw kdebase-runtime-mingw
+@deps lokalize-vc90  kdebase-runtime-vc90
+@deps lokalize-mingw kdebase-runtime-mingw
+@deps kbugbuster-vc90  kdebase-runtime-vc90
+@deps kbugbuster-mingw kdebase-runtime-mingw
+@deps kate-vc90  kdebase-runtime-vc90
+@deps kate-mingw kdebase-runtime-mingw
+@deps kompare-vc90  kdebase-runtime-vc90
+@deps kompare-mingw kdebase-runtime-mingw
 ; compiler independent
 @pkgnotes aspell A powerful spell checker, designed to replace ispell
 @pkgnotes aspell-af Afrikaans spelling package
@@ -277,7 +309,7 @@
 @pkgnotes fontconfig-* library for font customization and configuration
 @pkgnotes freetype-* A Free, High-Quality, and Portable Font Engine
 @pkgnotes gpgme-qt-* Qt wrapper for gpgme library
-@pkgnotes k3b-* UNSTABLE the KDE CD/DVD burning application
+@pkgnotes k3b-* the KDE CD/DVD burning application
 @pkgnotes kdebase-apps-* KDE base applicaton package 
 @pkgnotes kdebase-runtime-* KDE runtime package 
 @pkgnotes kdebase-workspace-* parts of the KDE desktop package
@@ -295,12 +327,12 @@
 @pkgnotes kdevelop-* UNSTABLE KDevelop integrated development environment
 @pkgnotes kdevplatform-* UNSTABLE KDevelop reusable libraries
 @pkgnotes kdewebdev-* KDE Web Development applications
-@pkgnotes kdewin32-* kde supplementary package for win32
+@pkgnotes kdewin-* kde supplementary package for win32
 @pkgnotes kde-additional-* Cursors and Platform KCM Module
 @pkgnotes kile-* UNSTABLE latex editor
 @pkgnotes kipi-plugins-* UNSTABLE plugins for graphics applications
 @pkgnotes koffice-* UNSTABLE KDE Office application suite
-@pkgnotes konversation4-* UNSTABLE KDE irc client
+@pkgnotes konversation-* UNSTABLE KDE irc client
 @pkgnotes ktorrent-* UNSTABLE KDE Torrent client
 @pkgnotes libgmp devel-tools GNU MP library for abritary precision arithmetic
 @pkgnotes openbabel-* program to convert the various file formats used in chemical software
@@ -601,8 +633,8 @@
 @package vcredist
 @category devel-tools
 @version 8.0.50727.762
-@notes Microsoft Visual C++ 2005 SP1 Redistributable Package (x86)
-@url-bin http://download.microsoft.com/download/e/1/c/e1c773de-73ba-494a-a5ba-f24906ecf088/vcredist_x86.exe
+@notes Microsoft Visual C++ 2008 Redistributable Package (x86)
+@url-bin http://download.microsoft.com/download/1/1/1/1116b75a-9ec3-481a-a3c8-1777b5381140/vcredist_x86.exe
 @nomd5
 
 @package winscp
