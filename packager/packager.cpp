@@ -56,16 +56,21 @@ Packager::Packager(const QString &packageName, const QString &packageVersion, co
 {
 }
 
+Packager::~Packager()
+{
+    qDeleteAll(m_packagerInfo);
+}
+
 bool Packager::compressFiles(const QString &zipFile, const QString &filesRootDir,
                              const QList<InstallFile> &files, const QList<MemFile> &memFiles,
-                             const QString &destRootDir , qint64 &installedSize)
+                             const QString &destRootDir , FileSizeInfo &sizeInfo)
 {
   switch(m_compMode) {
     default:
     case 1:
-      return createZipFile(zipFile, filesRootDir, files, memFiles, destRootDir, installedSize);
+      return createZipFile(zipFile, filesRootDir, files, memFiles, destRootDir, sizeInfo);
     case 2:
-      return createTbzFile(zipFile, filesRootDir, files, memFiles, destRootDir, installedSize);
+      return createTbzFile(zipFile, filesRootDir, files, memFiles, destRootDir, sizeInfo);
   }
 }
 
@@ -73,7 +78,7 @@ bool Packager::compressFiles(const QString &zipFile, const QString &filesRootDir
 #define ON_ERROR_S(s) { qWarning("Error in %s():%d - %s", __PRETTY_FUNCTION__, __LINE__, s); return false; }
 bool Packager::createTbzFile(const QString &zipFile, const QString &filesRootDir,
                               const QList<InstallFile> &files, const QList<MemFile> &memFiles,
-                              const QString &destRootDir, qint64 &installedSize )
+                              const QString &destRootDir, FileSizeInfo &sizeInfo )
 {
   QFile f(zipFile + ".tar.bz2");
   if(!f.open(QIODevice::WriteOnly))
@@ -93,14 +98,14 @@ bool Packager::createTbzFile(const QString &zipFile, const QString &filesRootDir
       ON_ERROR_S(qPrintable(tf.lastError()));
   }
   
-  installedSize = 0;
+  sizeInfo.installedSize = 0;
   Q_FOREACH(const InstallFile &file, files)
   {
     QString in  = file.bAbsInputPath ? file.inputFile : filesRootDir + '/' + file.inputFile;
     QString out = destRootDir + (file.outputFile.isEmpty() ? file.inputFile : file.outputFile);
     QFileInfo fi(in);
 
-    installedSize += fi.size();
+    sizeInfo.installedSize += fi.size();
     
     if(!tf.addFile(in, out))
       ON_ERROR_S(qPrintable(tf.lastError()));
@@ -108,7 +113,7 @@ bool Packager::createTbzFile(const QString &zipFile, const QString &filesRootDir
 
   Q_FOREACH(const MemFile &file, memFiles)
   {
-    installedSize += file.data.size();
+    sizeInfo.installedSize += file.data.size();
     if(!tf.addData(file.filename, file.data))
       ON_ERROR_S(qPrintable(tf.lastError()));
   }
@@ -116,7 +121,7 @@ bool Packager::createTbzFile(const QString &zipFile, const QString &filesRootDir
 
   bzip2.close();
   f.close();
-  
+  sizeInfo.compressedSize = f.size();
   return true;
 }
 
@@ -130,7 +135,7 @@ bool Packager::createTbzFile(const QString &zipFile, const QString &filesRootDir
 */
 bool Packager::createZipFile(const QString &zipFile, const QString &filesRootDir,
                              const QList<InstallFile> &files, const QList<MemFile> &memFiles,
-                             const QString &destRootDir , qint64 &installedSize)
+                             const QString &destRootDir , FileSizeInfo &sizeInfo)
 {
     QuaZip zip(zipFile + ".zip");
     if(!zip.open(QuaZip::mdCreate))
@@ -141,7 +146,7 @@ bool Packager::createZipFile(const QString &zipFile, const QString &filesRootDir
     qint64 iBytesRead;
     QByteArray ba;
     ba.resize(QZIP_BUFFER);
-    installedSize = 0;
+    sizeInfo.installedSize = 0;
 
     Q_FOREACH(const InstallFile &file, files)
     {
@@ -167,13 +172,15 @@ bool Packager::createZipFile(const QString &zipFile, const QString &filesRootDir
           ON_ERROR(outFile.getZipError());
 
         inFile.close();
-        installedSize += inFile.size();
+        sizeInfo.installedSize += inFile.size();
     }
 
     Q_FOREACH(const MemFile &file, memFiles)
     {
         if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(file.filename)))
           ON_ERROR(outFile.getZipError());
+
+        sizeInfo.installedSize += file.data.size();
 
         outFile.write(file.data, file.data.size());
         if(outFile.getZipError()!=UNZ_OK)
@@ -187,6 +194,9 @@ bool Packager::createZipFile(const QString &zipFile, const QString &filesRootDir
     zip.close();
     if(zip.getZipError()!=UNZ_OK)
       ON_ERROR(zip.getZipError());
+
+    QFileInfo fi(zip.getZipName());
+    sizeInfo.compressedSize = fi.size();
 
     return true;
 }
@@ -317,7 +327,7 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
 
 bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &fileList, Packager::Type type, QList<MemFile> &manifestFiles)
 {
-    QString fileNameBase = getBaseName(type);
+    QString fileNameBase = getBaseFileName(type);
     QString descr;
     MemFile mf;
 
@@ -387,7 +397,7 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
     b.setBuffer(&mf.data);
     b.open(QIODevice::WriteOnly);
     out.setDevice(&b);
-	out << m_name + ' ' + m_version + ' ' + descr << '\n'
+	out << getBaseName(Packager::NONE,' ') + ' ' + descr << '\n'
         << m_notes + '\n';
     b.close();
     mf.filename = "manifest/" + fileNameBase + ".ver";
@@ -413,26 +423,33 @@ bool Packager::makePackagePart(const QString &root, QList<InstallFile> &fileList
     if (!destdir.isEmpty() && !destdir.endsWith("/") && !destdir.endsWith("\\"))
         _destdir += "/";
 
-    qint64 installedSize;
-    QString hashValue;
-    PackagerInfo info;
-
+    PackagerInfo *info;
+    if (!m_packagerInfo[type])
+    {
+        info = new PackagerInfo;
+        m_packagerInfo[type] = info;
+    }
+    else 
+        info = m_packagerInfo[type];
+    info->version = m_version;
+    info->name = m_name;
+    info->compilerType = m_type;
+    
     generatePackageFileList(fileList, type);
     if (fileList.size() > 0)
     {
         if (m_verbose)
         {
-            qDebug() << "creating bin package" << destdir + getBaseName(type);
+            qDebug() << "creating bin package" << destdir + getBaseFileName(type);
             Q_FOREACH(const InstallFile &f, fileList)
                 if (!f.inputFile.endsWith("/"))
                     qDebug() << "\t" << f.inputFile << " -> " << f.outputFile;
         }
         createManifestFiles(root, fileList, type, manifestFiles);
-        compressFiles(_destdir + getBaseName(type), root, fileList, manifestFiles, QString(), installedSize);
+        compressFiles(_destdir + getBaseFileName(type), root, fileList, manifestFiles, QString(), info->size);
         if (!m_checkSumMode.isEmpty())
-            createHashFile(getBaseName(type) + getCompressedExtension(type), _destdir, info.hash);
-	    info.installedSize = installedSize;
-        info.writeToFile(destdir + "/" + getBaseName(type) + ".xml");
+            createHashFile(getBaseFileName(type) + getCompressedExtension(type), _destdir, info->hash);
+        info->writeToFile(destdir + "/" + getBaseFileName(type) + ".xml");
         return true;
     }
     qDebug() << "no binary files found for package" << m_name;
@@ -447,7 +464,7 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
     m_rootDir = root;
     QList<InstallFile> fileList;
     QList<MemFile> manifestFiles;
-
+        
     makePackagePart(root, fileList, manifestFiles, Packager::BIN, destdir);
     makePackagePart(root, fileList, manifestFiles, Packager::LIB, destdir);
     makePackagePart(root, fileList, manifestFiles, Packager::DOC, destdir);    
@@ -469,10 +486,15 @@ QString Packager::getCompressedExtension(Packager::Type type)
             return ".tar.bz2";
     }
 }
-
-QString Packager::getBaseName(Packager::Type type)
+QString Packager::getBaseName(Packager::Type type, const QChar &versionDelimiter)
 {
-    QString name = m_name + '-' + m_version;
+    QString nameType = m_type.isEmpty() ? m_name : m_name + '-' + m_type;
+    return nameType + versionDelimiter + m_version;
+}
+
+QString Packager::getBaseFileName(Packager::Type type)
+{
+    QString name = getBaseName(type);
 
     switch(type) {
         case BIN:

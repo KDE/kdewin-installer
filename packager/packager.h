@@ -29,35 +29,44 @@
 #include <QFile>
 #include <QStringList>
 #include <QList>
+#include <QMap>
 #include <QRegExp>
 
+class FileSizeInfo
+{
+public:
+    int installedSize; 
+    int compressedSize; 
+};
 
 class PackagerInfo
 {
 public:
     bool writeToFile(const QString &file)
-    {    
-        QString checksum; 
-        int size; 
-        
+    {            
         QFile f(file);
         if (!f.open(QIODevice::WriteOnly))
             return false;
         QString line;
         line += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-        line += "<package type=\"runtime\">\n";
+        line += "<package name=\"" + name + "\" type=\"runtime\">\n";
         line += "  <version>" + version + "</version>\n";
+        line += "  <compiler>" + compilerType + "</version>\n";
         line += "  <checksum type=\"" + hash.typeAsString() + "\">" + hash.value().toHex() + "</checksum>\n";
-        line += "  <size type=\"installed\">" + QString::number(installedSize) + "</size>\n";
+        line += "  <size type=\"installed\">" + QString::number(size.installedSize) + "</size>\n";
+        line += "  <size type=\"compressed\">" + QString::number(size.compressedSize) + "</size>\n";
         line += "  <dependencies>" + dependencies.join(" ") + "</dependencies>\n";
         line += "</package>\n";
         f.write(line.toUtf8());
         f.close();
+        return true;
     }
 
-    qint64 installedSize;
+    FileSizeInfo size;
     HashValue hash;
 	QString version;
+	QString name;
+	QString compilerType;
     QStringList dependencies; 
 }; 
 
@@ -66,7 +75,8 @@ class Packager {
       enum Type { NONE = 0, BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8, DEBUG = 16, ALL = 15};
 
       Packager(const QString &packageName, const QString &packageVersion,const QString &notes=QString());
-
+      ~Packager();
+      
       void setSourceRoot(const QString &dir) { m_srcRoot = dir; }
       void setSourceExcludes(const QString &excludes) { m_srcExcludes = excludes; }
       void setWithDebugPackage(bool mode) { m_debugPackage = mode; }
@@ -74,7 +84,7 @@ class Packager {
       void setCheckSumMode(const QString mode) { m_checkSumMode = mode; }
       void setVerbose(bool state) { m_verbose = state; }
       void setSpecialPackageMode(bool special) { m_special = special; }
-      void setType(const QString &type) { m_type = type; m_name += '-' + type; }
+      void setType(const QString &type) { m_type = type; }
 
       /// mingw only: strip all debugging symbols from files to reduce size
       bool stripFiles(const QString &dir);
@@ -91,15 +101,16 @@ class Packager {
         /// mingw only: extract debuginformations from dll's
         bool createDebugFiles(const QString &dir);
         bool createHashFile(const QString &packageFileName, const QString &basePath, HashValue &hashValue);
-        bool createZipFile(const QString &zipFile, const QString &filesRootDir, const QList<InstallFile> &files, const QList<MemFile> &memFiles, const QString &destRootDir, qint64 &installedSize );
-        bool createTbzFile(const QString &zipFile, const QString &filesRootDir,const QList<InstallFile> &files, const QList<MemFile> &memFiles, const QString &destRootDir, qint64 &installedSize );
-        bool compressFiles(const QString &zipFile, const QString &filesRootDir, const QList<InstallFile> &files, const QList<MemFile> &memFiles, const QString &destRootDir, qint64 &installedSize );
+        bool createZipFile(const QString &zipFile, const QString &filesRootDir, const QList<InstallFile> &files, const QList<MemFile> &memFiles, const QString &destRootDir, FileSizeInfo &sizeInfo );
+        bool createTbzFile(const QString &zipFile, const QString &filesRootDir,const QList<InstallFile> &files, const QList<MemFile> &memFiles, const QString &destRootDir, FileSizeInfo &sizeInfo );
+        bool compressFiles(const QString &zipFile, const QString &filesRootDir, const QList<InstallFile> &files, const QList<MemFile> &memFiles, const QString &destRootDir, FileSizeInfo &sizeInfo );
         bool createManifestFiles(const QString &rootdir, QList<InstallFile> &fileList, Packager::Type type, QList<MemFile> &manifestFiles);
         bool createQtConfig(QList<InstallFile> &fileList, QList<MemFile> &manifestFiles);
         bool makePackagePart(const QString &root, QList<InstallFile> &fileList, QList<MemFile> &manifestFiles, Packager::Type, QString destdir);
 
 
-      QString getBaseName(Packager::Type type);
+      QString getBaseName(Packager::Type type=Packager::NONE, const QChar &versionDelimiter='-');
+      QString getBaseFileName(Packager::Type type);
       QString getCompressedExtension(Packager::Type type);
 
       QString m_name;
@@ -110,11 +121,11 @@ class Packager {
       QString m_srcExcludes;
       QString m_checkSumMode;
       QString m_type;
-      QString m_nameType;
       bool m_verbose;
       bool m_debugPackage;
       bool m_special;
       unsigned int m_compMode;
+      QMap<Packager::Type,PackagerInfo*> m_packagerInfo;
 };
 
 #endif
