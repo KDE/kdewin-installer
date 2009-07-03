@@ -1,42 +1,74 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>EndUserPackageSelectorPage</class>
- <widget class="QWidget" name="EndUserPackageSelectorPage" >
-  <property name="geometry" >
+ <widget class="QWidget" name="EndUserPackageSelectorPage">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1236</width>
+    <width>757</width>
     <height>327</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Package Selection</string>
   </property>
-  <property name="statusTip" >
+  <property name="statusTip">
    <string>Please select the packages you would like to install.</string>
   </property>
-  <layout class="QGridLayout" >
-   <item row="0" column="0" >
-    <widget class="QTreeWidget" name="packageList" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTreeWidget" name="packageList">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>4</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <column>
-      <property name="text" >
+      <property name="text">
        <string>1</string>
       </property>
      </column>
     </widget>
    </item>
-   <item row="1" column="0" >
-    <widget class="QCheckBox" name="selectAllCheckBox" >
-     <property name="text" >
-      <string>Select/Unselect All (spelling and localization packages are excluded and have to be selected manually)</string>
-     </property>
-    </widget>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QCheckBox" name="selectAllCheckBox">
+       <property name="text">
+        <string>Select/Unselect All (spelling and localization packages are excluded and have to be selected manually)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Filter</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="filterEdit"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

@@ -56,7 +56,6 @@ EndUserPackageSelectorPage::EndUserPackageSelectorPage()  : InstallWizardPage(0)
         );
     else
         setSubTitle(statusTip());
-    
 }
 
 void EndUserPackageSelectorPage::setWidgetData()
@@ -163,6 +162,7 @@ void EndUserPackageSelectorPage::initializePage()
 	// deprecated
     connect(&Settings::instance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
     connect(&Settings::instance(),SIGNAL(compilerTypeChanged()),this,SLOT(slotCompilerTypeChanged()));
+    connect(ui.filterEdit,SIGNAL(textChanged(const QString &)),this,SLOT(slotFilterTextChanged(const QString &)));
 
     activeCategories = engine->globalConfig()->endUserCategories().size() > 0 ? engine->globalConfig()->endUserCategories() : QStringList() << "KDE";
     setWidgetData();
@@ -218,6 +218,31 @@ void EndUserPackageSelectorPage::slotCompilerTypeChanged()
     setWidgetData();
 }
 
+void EndUserPackageSelectorPage::slotFilterTextChanged(const QString &text)
+{
+    QTreeWidget *tree = ui.packageList;
+    if (text.isEmpty())
+    {
+        for(int i = 0; i < tree->topLevelItemCount(); i++)
+        {
+            QTreeWidgetItem *item = tree->topLevelItem (i);
+            item->setHidden(false);
+        }
+        return; 
+    }
+    QList<QTreeWidgetItem *> list = tree->findItems (text, Qt::MatchContains, 1 );
+    foreach(QTreeWidgetItem *item, tree->findItems (text, Qt::MatchContains, 4 ))
+    {
+        if (!list.contains(item))
+            list.append(item);
+    }       
+    for(int i = 0; i < tree->topLevelItemCount(); i++)
+    {
+        QTreeWidgetItem *item = tree->topLevelItem (i);
+        item->setHidden(!list.contains(item));
+    }
+}
+
 bool EndUserPackageSelectorPage::validatePage()
 {
     return true;
@@ -230,6 +255,7 @@ void EndUserPackageSelectorPage::cleanupPage()
 
     disconnect(&Settings::instance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
     disconnect(&Settings::instance(),SIGNAL(compilerTypeChanged()),this,SLOT(slotCompilerTypeChanged()));
+    disconnect(ui.filterEdit,SIGNAL(textChanged(const QString &)),this,SLOT(slotFilterTextChanged(const QString &)));
 
     engine->unselectAllPackages();
 }

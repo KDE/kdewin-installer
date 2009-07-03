@@ -51,6 +51,7 @@ public slots:
    	// deprecated
 	void installDirChanged(const QString &dir);
     void slotCompilerTypeChanged(void);
+    void slotFilterTextChanged(const QString &text);
 
 private:
     Ui::EndUserPackageSelectorPage ui;
