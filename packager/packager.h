@@ -24,10 +24,42 @@
 
 #include "package.h"
 #include "misc.h"
+#include "hash.h"
 
+#include <QFile>
 #include <QStringList>
 #include <QList>
 #include <QRegExp>
+
+
+class PackagerInfo
+{
+public:
+    bool writeToFile(const QString &file)
+    {    
+        QString checksum; 
+        int size; 
+        
+        QFile f(file);
+        if (!f.open(QIODevice::WriteOnly))
+            return false;
+        QString line;
+        line += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+        line += "<package type=\"runtime\">\n";
+        line += "  <version>" + version + "</version>\n";
+        line += "  <checksum type=\"" + hash.typeAsString() + "\">" + hash.value().toHex() + "</checksum>\n";
+        line += "  <size type=\"installed\">" + QString::number(installedSize) + "</size>\n";
+        line += "  <dependencies>" + dependencies.join(" ") + "</dependencies>\n";
+        line += "</package>\n";
+        f.write(line.toUtf8());
+        f.close();
+    }
+
+    qint64 installedSize;
+    HashValue hash;
+	QString version;
+    QStringList dependencies; 
+}; 
 
 class Packager {
     public:
@@ -58,12 +90,14 @@ class Packager {
         };
         /// mingw only: extract debuginformations from dll's
         bool createDebugFiles(const QString &dir);
-        bool createHashFile(const QString &packageFileName, const QString &basePath);
-        bool createZipFile(const QString &zipFile, const QString &filesRootDir, const QList<InstallFile> &files, const QList<MemFile> &memFiles=QList<MemFile>(), const QString &destRootDir=QString() );
-        bool createTbzFile(const QString &zipFile, const QString &filesRootDir,const QList<InstallFile> &files, const QList<MemFile> &memFiles=QList<MemFile>(), const QString &destRootDir=QString() );
-        bool compressFiles(const QString &zipFile, const QString &filesRootDir, const QList<InstallFile> &files, const QList<MemFile> &memFiles=QList<MemFile>(), const QString &destRootDir=QString() );
+        bool createHashFile(const QString &packageFileName, const QString &basePath, HashValue &hashValue);
+        bool createZipFile(const QString &zipFile, const QString &filesRootDir, const QList<InstallFile> &files, const QList<MemFile> &memFiles, const QString &destRootDir, qint64 &installedSize );
+        bool createTbzFile(const QString &zipFile, const QString &filesRootDir,const QList<InstallFile> &files, const QList<MemFile> &memFiles, const QString &destRootDir, qint64 &installedSize );
+        bool compressFiles(const QString &zipFile, const QString &filesRootDir, const QList<InstallFile> &files, const QList<MemFile> &memFiles, const QString &destRootDir, qint64 &installedSize );
         bool createManifestFiles(const QString &rootdir, QList<InstallFile> &fileList, Packager::Type type, QList<MemFile> &manifestFiles);
-      bool createQtConfig(QList<InstallFile> &fileList, QList<MemFile> &manifestFiles);
+        bool createQtConfig(QList<InstallFile> &fileList, QList<MemFile> &manifestFiles);
+        bool makePackagePart(const QString &root, QList<InstallFile> &fileList, QList<MemFile> &manifestFiles, Packager::Type, QString destdir);
+
 
       QString getBaseName(Packager::Type type);
       QString getCompressedExtension(Packager::Type type);

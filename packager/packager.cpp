@@ -58,14 +58,14 @@ Packager::Packager(const QString &packageName, const QString &packageVersion, co
 
 bool Packager::compressFiles(const QString &zipFile, const QString &filesRootDir,
                              const QList<InstallFile> &files, const QList<MemFile> &memFiles,
-                             const QString &destRootDir )
+                             const QString &destRootDir , qint64 &installedSize)
 {
   switch(m_compMode) {
     default:
     case 1:
-      return createZipFile(zipFile, filesRootDir, files, memFiles, destRootDir);
+      return createZipFile(zipFile, filesRootDir, files, memFiles, destRootDir, installedSize);
     case 2:
-      return createTbzFile(zipFile, filesRootDir, files, memFiles, destRootDir);
+      return createTbzFile(zipFile, filesRootDir, files, memFiles, destRootDir, installedSize);
   }
 }
 
@@ -73,7 +73,7 @@ bool Packager::compressFiles(const QString &zipFile, const QString &filesRootDir
 #define ON_ERROR_S(s) { qWarning("Error in %s():%d - %s", __PRETTY_FUNCTION__, __LINE__, s); return false; }
 bool Packager::createTbzFile(const QString &zipFile, const QString &filesRootDir,
                               const QList<InstallFile> &files, const QList<MemFile> &memFiles,
-                              const QString &destRootDir )
+                              const QString &destRootDir, qint64 &installedSize )
 {
   QFile f(zipFile + ".tar.bz2");
   if(!f.open(QIODevice::WriteOnly))
@@ -93,7 +93,7 @@ bool Packager::createTbzFile(const QString &zipFile, const QString &filesRootDir
       ON_ERROR_S(qPrintable(tf.lastError()));
   }
   
-  qint64 installedSize = 0;
+  installedSize = 0;
   Q_FOREACH(const InstallFile &file, files)
   {
     QString in  = file.bAbsInputPath ? file.inputFile : filesRootDir + '/' + file.inputFile;
@@ -117,8 +117,6 @@ bool Packager::createTbzFile(const QString &zipFile, const QString &filesRootDir
   bzip2.close();
   f.close();
   
-  qDebug() << "installed size" << installedSize;
-  
   return true;
 }
 
@@ -132,7 +130,7 @@ bool Packager::createTbzFile(const QString &zipFile, const QString &filesRootDir
 */
 bool Packager::createZipFile(const QString &zipFile, const QString &filesRootDir,
                              const QList<InstallFile> &files, const QList<MemFile> &memFiles,
-                             const QString &destRootDir )
+                             const QString &destRootDir , qint64 &installedSize)
 {
     QuaZip zip(zipFile + ".zip");
     if(!zip.open(QuaZip::mdCreate))
@@ -143,6 +141,7 @@ bool Packager::createZipFile(const QString &zipFile, const QString &filesRootDir
     qint64 iBytesRead;
     QByteArray ba;
     ba.resize(QZIP_BUFFER);
+    installedSize = 0;
 
     Q_FOREACH(const InstallFile &file, files)
     {
@@ -168,6 +167,7 @@ bool Packager::createZipFile(const QString &zipFile, const QString &filesRootDir
           ON_ERROR(outFile.getZipError());
 
         inFile.close();
+        installedSize += inFile.size();
     }
 
     Q_FOREACH(const MemFile &file, memFiles)
@@ -396,15 +396,48 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
     return true;
 }
 
-bool Packager::createHashFile(const QString &packageFileName, const QString &basePath)
+bool Packager::createHashFile(const QString &packageFileName, const QString &basePath, HashValue &hash)
 {
     HashFile hashFile(m_checkSumMode == "md5" ? HashFile::MD5 : HashFile::SHA1, packageFileName, basePath);
     if (!hashFile.computeHash())
         return false; 
+    hash = HashValue(hashFile.type(), hashFile.getHash());
     hashFile.save();
 
     return true;
 }
+
+bool Packager::makePackagePart(const QString &root, QList<InstallFile> &fileList, QList<MemFile> &manifestFiles, Packager::Type type, QString destdir)
+{
+    QString _destdir = destdir;
+    if (!destdir.isEmpty() && !destdir.endsWith("/") && !destdir.endsWith("\\"))
+        _destdir += "/";
+
+    qint64 installedSize;
+    QString hashValue;
+    PackagerInfo info;
+
+    generatePackageFileList(fileList, type);
+    if (fileList.size() > 0)
+    {
+        if (m_verbose)
+        {
+            qDebug() << "creating bin package" << destdir + getBaseName(type);
+            Q_FOREACH(const InstallFile &f, fileList)
+                if (!f.inputFile.endsWith("/"))
+                    qDebug() << "\t" << f.inputFile << " -> " << f.outputFile;
+        }
+        createManifestFiles(root, fileList, type, manifestFiles);
+        compressFiles(_destdir + getBaseName(type), root, fileList, manifestFiles, QString(), installedSize);
+        if (!m_checkSumMode.isEmpty())
+            createHashFile(getBaseName(type) + getCompressedExtension(type), _destdir, info.hash);
+	    info.installedSize = installedSize;
+        info.writeToFile(destdir + "/" + getBaseName(type) + ".xml");
+        return true;
+    }
+    qDebug() << "no binary files found for package" << m_name;
+    return false;
+}       
 
 bool Packager::makePackage(const QString &root, const QString &destdir, bool bComplete)
 {
@@ -414,96 +447,13 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
     m_rootDir = root;
     QList<InstallFile> fileList;
     QList<MemFile> manifestFiles;
-    QString _destdir = destdir;
-    if (!destdir.isEmpty() && !destdir.endsWith("/") && !destdir.endsWith("\\"))
-        _destdir += "/";
 
-    generatePackageFileList(fileList, Packager::BIN);
-    if (fileList.size() > 0)
-    {
-        if (m_verbose)
-        {
-            qDebug() << "creating bin package" << destdir + getBaseName(Packager::BIN);
-            Q_FOREACH(const InstallFile &f, fileList)
-                if (!f.inputFile.endsWith("/"))
-                    qDebug() << "\t" << f.inputFile << " -> " << f.outputFile;
-        }
-        createManifestFiles(m_rootDir, fileList, Packager::BIN, manifestFiles);
-        compressFiles(_destdir + getBaseName(Packager::BIN), m_rootDir, fileList, manifestFiles);
-        if (!m_checkSumMode.isEmpty())
-            createHashFile(getBaseName(Packager::BIN) + getCompressedExtension(Packager::BIN), _destdir);
-    }
-    else
-        qDebug() << "no binary files found for package" << m_name;
-
-    generatePackageFileList(fileList, Packager::LIB);
-    if (fileList.size() > 0) 
-    {
-        if (m_verbose)
-        {
-            qDebug() << "creating lib package" << destdir + getBaseName(Packager::LIB);
-            Q_FOREACH(const InstallFile &f, fileList)
-                if (!f.inputFile.endsWith("/"))
-                    qDebug() << "\t" << f.inputFile << " -> " << f.outputFile;
-        }
-        createManifestFiles(m_rootDir, fileList, Packager::LIB, manifestFiles);
-        compressFiles(_destdir + getBaseName(Packager::LIB), m_rootDir, fileList, manifestFiles);
-        if (!m_checkSumMode.isEmpty())
-            createHashFile(getBaseName(Packager::LIB) + getCompressedExtension(Packager::LIB), _destdir);
-    }
-
-    generatePackageFileList(fileList, Packager::DOC);
-    if (fileList.size() > 0)
-    {
-        if (m_verbose)
-        {
-            qDebug() << "creating doc package" << destdir + getBaseName(Packager::DOC);
-            Q_FOREACH(const InstallFile &f, fileList)
-                qDebug() << "\t" << f.inputFile << " -> " << f.outputFile;
-        }
-        createManifestFiles(m_rootDir, fileList, Packager::DOC, manifestFiles);
-        compressFiles(_destdir + getBaseName(Packager::DOC), m_rootDir, fileList, manifestFiles);
-        if (!m_checkSumMode.isEmpty())
-            createHashFile(getBaseName(Packager::DOC) + getCompressedExtension(Packager::DOC), _destdir);
-    }
-    
-    generatePackageFileList(fileList, Packager::SRC);
-    QString s = m_srcRoot.isEmpty() ? m_rootDir : m_srcRoot;
-    // FIXME fix manifest file creating if src root is given
-    // currently they do not have to special root set
-    if (m_srcRoot.isEmpty())
-        createManifestFiles(s, fileList, Packager::SRC, manifestFiles);
-    else
-        manifestFiles.clear();
-    if (fileList.size() > 0)
-    {
-        if (m_verbose)
-        {
-            qDebug() << "creating src package" << destdir + getBaseName(Packager::SRC);
-            Q_FOREACH(const InstallFile &f, fileList)
-                if (!f.inputFile.endsWith("/"))
-                    qDebug() << "\t" << f.inputFile << " -> " << f.outputFile;
-        }
-        compressFiles(_destdir + getBaseName(Packager::SRC), s, fileList, manifestFiles, "src/" + m_name + "-" + m_version + "/");
-        if (!m_checkSumMode.isEmpty())
-            createHashFile(getBaseName(Packager::SRC) + getCompressedExtension(Packager::SRC), _destdir);
-    }
+    makePackagePart(root, fileList, manifestFiles, Packager::BIN, destdir);
+    makePackagePart(root, fileList, manifestFiles, Packager::LIB, destdir);
+    makePackagePart(root, fileList, manifestFiles, Packager::DOC, destdir);    
+    makePackagePart(m_srcRoot.isEmpty() ? m_rootDir : m_srcRoot, fileList, manifestFiles, Packager::SRC, destdir);
     if(bComplete) {
-        generatePackageFileList(fileList, Packager::NONE);
-        if (fileList.size() > 0) 
-        {
-            if (m_verbose)
-            {
-                qDebug() << "creating complete package" << getBaseName(Packager::NONE);
-                Q_FOREACH(const InstallFile &f, fileList)
-                    if (!f.inputFile.endsWith("/"))
-                        qDebug() << "\t" << f.inputFile << " -> " << f.outputFile;
-            }
-            createManifestFiles(m_rootDir, fileList, Packager::NONE, manifestFiles);
-            compressFiles(_destdir + getBaseName(Packager::NONE), m_rootDir, fileList, manifestFiles);
-            if (!m_checkSumMode.isEmpty())
-                createHashFile(getBaseName(Packager::NONE) + getCompressedExtension(Packager::NONE), _destdir);
-        }
+        makePackagePart(root, fileList, manifestFiles, Packager::NONE, destdir);
     }
 
     return true;
