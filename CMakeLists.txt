@@ -209,7 +209,7 @@ add_subdirectory(tests)
 add_subdirectory(packager)
 add_subdirectory(doc)
 # not supported yet
-#add_subdirectory(configer)
+add_subdirectory(configer)
 if(WIN32)
 #  add_subdirectory(menubuilder)
 endif(WIN32)

@@ -47,10 +47,15 @@ public:
             line.replace("\n","");
             line = line.trimmed();
             
-            if (line.contains("<package"))
+            if (line.contains("<package") )
             {
                 //"<package name=\"" + name + "\" type=\"runtime\">\n";
-                ;
+                // only runtime package supported yet
+                if (!line.contains("runtime"))
+                    return false;
+                line.replace("<package name=\"","");
+                line.replace("\" type=\"runtime\">","");
+                name = line;
             }
             else if (line.contains("<version>"))
             {
@@ -80,9 +85,10 @@ public:
             }
             else if (line.contains("<dependencies>"))
             {
-                //"  <dependencies>" + dependencies.join(" ") + "</dependencies>\n";
-                //"  <size type=\"compressed\">" + QString::number(size.compressedSize) + "</size>\n";
-                ;
+                line.replace("<dependencies>","");
+                line.replace("</dependencies>","");
+                QString a = line;
+                dependencies = a.split(' ');
             }
         }
         f.close();
