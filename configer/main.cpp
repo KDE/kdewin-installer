@@ -42,7 +42,7 @@ bool findPackagerInfoFiles(const QString &dir, QStringList &files)
 {
     QDir d(dir);
     QStringList filters;
-    filters << "*.xml";
+    filters << "*-bin.xml";
     d.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries | QDir::AllDirs);
     d.setNameFilters(filters);
     d.setSorting(QDir::Name);
