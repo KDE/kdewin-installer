@@ -23,52 +23,9 @@
 #define PACKAGER_H
 
 #include "package.h"
+#include "../shared/packagerinfo.h"
 #include "misc.h"
 #include "hash.h"
-
-#include <QFile>
-#include <QStringList>
-#include <QList>
-#include <QMap>
-#include <QRegExp>
-
-class FileSizeInfo
-{
-public:
-    int installedSize; 
-    int compressedSize; 
-};
-
-class PackagerInfo
-{
-public:
-    bool writeToFile(const QString &file)
-    {            
-        QFile f(file);
-        if (!f.open(QIODevice::WriteOnly))
-            return false;
-        QString line;
-        line += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-        line += "<package name=\"" + name + "\" type=\"runtime\">\n";
-        line += "  <version>" + version + "</version>\n";
-        line += "  <compiler>" + compilerType + "</version>\n";
-        line += "  <checksum type=\"" + hash.typeAsString() + "\">" + hash.value().toHex() + "</checksum>\n";
-        line += "  <size type=\"installed\">" + QString::number(size.installedSize) + "</size>\n";
-        line += "  <size type=\"compressed\">" + QString::number(size.compressedSize) + "</size>\n";
-        line += "  <dependencies>" + dependencies.join(" ") + "</dependencies>\n";
-        line += "</package>\n";
-        f.write(line.toUtf8());
-        f.close();
-        return true;
-    }
-
-    FileSizeInfo size;
-    HashValue hash;
-	QString version;
-	QString name;
-	QString compilerType;
-    QStringList dependencies; 
-}; 
 
 class Packager {
     public:
