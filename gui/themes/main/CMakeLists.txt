@@ -1,7 +1,7 @@
 set (APPNAME kdewin)
-
 set (TARGET ${APPNAME}-installer-gui)
 set (TARGET_FILENAME ${APPNAME}-installer-gui-${VERSION_PATCH})
+set (DESKTOP_APPNAME "KDE Installer")
 
 configure_file(gui.qrc.cmake ${CMAKE_CURRENT_BINARY_DIR}/gui.qrc)
 configure_file(installer.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/installer.desktop)
