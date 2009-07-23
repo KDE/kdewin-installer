@@ -19,7 +19,7 @@
 @categorypackages win32libs pcre-vc90  dbus-vc90  exiv2-vc90  gpgme-qt-vc90  libspectre-vc90  libmsn-vc90  libdvdcss-vc90  libsamplerate-vc90
 @categorypackages win32libs pcre-mingw dbus-mingw exiv2-mingw gpgme-qt-mingw libspectre-mingw libmsn-mingw libdvdcss-mingw libsamplerate-mingw
 @categorypackages tools findutils grep mingw-utils diffutils patch
-@categorypackages kdesupport kdewin-vc90  kdewin-installer-vc90  vcredist      qimageblitz-vc90  qca-vc90  strigi-vc90  soprano-vc90  taglib-vc90  phonon-vc90  fontconfig-vc90  freetype-vc90  poppler-vc90  automoc-vc90  oxygen-icons-vc90
+@categorypackages kdesupport kdewin-vc90  kdewin-installer-vc90  runtime-vc90  qimageblitz-vc90  qca-vc90  strigi-vc90  soprano-vc90  taglib-vc90  phonon-vc90  fontconfig-vc90  freetype-vc90  poppler-vc90  automoc-vc90  oxygen-icons-vc90
 @categorypackages kdesupport kdewin-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw phonon-mingw fontconfig-mingw freetype-mingw poppler-mingw automoc-mingw oxygen-icons-mingw
 @categorypackages KDE amarok-vc90  digikam-vc90  kdelibs-vc90  kdepimlibs-vc90  kdepim-vc90  kdebase-apps-vc90  kdebase-runtime-vc90  kdebase-workspace-vc90  kdeedu-vc90  kdegames-vc90  kdegraphics-vc90  kdenetwork-vc90  kdesdk-vc90  kdewebdev-vc90  kdeutils-vc90  kdeplasma-addons-vc90  kipi-plugins-vc90
 @categorypackages KDE amarok-mingw digikam-mingw kdelibs-mingw kdepimlibs-mingw kdepim-mingw kdebase-apps-mingw kdebase-runtime-mingw kdebase-workspace-mingw kdeedu-mingw kdegames-mingw kdegraphics-mingw kdenetwork-mingw kdesdk-mingw kdewebdev-mingw kdeutils-mingw kdeplasma-addons-mingw kipi-plugins-mingw
@@ -109,7 +109,7 @@
 @deps kdeedu-vc90 kdebase-runtime-vc90 kdelibs-vc90 openbabel-vc90 cfitsio
 @deps kdegames-vc90 kdebase-runtime-vc90 kdelibs-vc90 phonon-vc90
 @deps kdegraphics-vc90 kdebase-runtime-vc90 kdelibs-vc90 poppler-vc90 ebook-tools libspectre exiv2-vc90
-@deps kdelibs-vc90 qt-vc90 phonon-vc90 pcre-vc90 vcredist qt-vc90 dbus-vc90 kdewin-vc90 qimageblitz-vc90 qca-vc90 strigi-vc90 soprano-vc90 taglib-vc90 aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl tiff zlib shared-mime-info
+@deps kdelibs-vc90 qt-vc90 phonon-vc90 pcre-vc90 runtime-vc90 qt-vc90 dbus-vc90 kdewin-vc90 qimageblitz-vc90 qca-vc90 strigi-vc90 soprano-vc90 taglib-vc90 aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl tiff zlib shared-mime-info
 @deps kdemultimedia-vc90 kdebase-runtime-vc90 taglib-vc90
 @deps kdenetwork-vc90 kdebase-runtime-vc90 kdelibs-vc90 sqlite libgmp libidn libmsn-vc90
 @deps kdepim-vc90 kdepimlibs-vc90 kdebase-runtime-vc90 gpgme-qt-vc90 sqlite
@@ -131,7 +131,7 @@
 @deps phonon-vc90 qt-vc90
 @deps poppler-vc90 fontconfig-vc90 freetype-vc90 poppler-data
 @deps qca-vc90 cyrus-sasl openssl
-@deps qt-vc90 dbus-vc90 vcredist
+@deps qt-vc90 dbus-vc90 runtime-vc90
 @deps strigi-vc90 libbzip2 openssl zlib iconv libxml2 exiv2-vc90
 @deps yakuake-vc90 kdebase-apps-vc90
 ;------------------------------------------------------
@@ -630,11 +630,12 @@
 @url-bin http://download.microsoft.com/download/8/3/a/83aad8f9-38ba-4503-b3cd-ba28c360c27b/DEU/vcsetup.exe
 @nomd5
 
-@package vcredist
+@package runtime-vc90
 @category devel-tools
 @version 8.0.50727.762
 @notes Microsoft Visual C++ 2008 Redistributable Package (x86)
 @url-bin http://download.microsoft.com/download/1/1/1/1116b75a-9ec3-481a-a3c8-1777b5381140/vcredist_x86.exe
+@filename-bin vcredist_x86-vc90.exe
 @nomd5
 
 @package winscp
