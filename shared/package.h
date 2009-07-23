@@ -342,5 +342,18 @@ class PackageInfo {
         }
 
         static PackageInfo fromString(const QString &name, const QString &version=QString());
+
+        /// return package name from string without optional compiler 
+        static QString baseName(const QString &_name)
+        {
+            QString name = _name;
+            if (name.endsWith("-msvc"))
+                name.remove("-msvc");
+            if (name.endsWith("-vc90"))
+                name.remove("-vc90");
+            if (name.endsWith("-mingw"))
+                name.remove("-mingw");
+            return name;
+        }
 };
 #endif
