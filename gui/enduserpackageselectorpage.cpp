@@ -131,11 +131,13 @@ void EndUserPackageSelectorPage::setWidgetData()
             continue;
         data 
             << ""
-            << availablePackage->name()
+            << PackageInfo::baseName(availablePackage->name())
             << (availableVersion != installedVersion ? availableVersion.toString() : "")
             << installedVersion.toString()
             << QString();
         QTreeWidgetItem *item = new QTreeWidgetItem ( ( QTreeWidgetItem* ) 0, data );
+        // save real package name for selection code
+        item->setData(0,Qt::StatusTipRole,availablePackage->name());
         engine->setEndUserInitialState( *item,availablePackage,installedPackage,0);
         item->setText ( 4, availablePackage->notes() );
         item->setToolTip ( 0, toolTip );
@@ -174,7 +176,7 @@ void EndUserPackageSelectorPage::initializePage()
 
 void EndUserPackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
 {
-    QString name = item->text ( 1 );
+    QString name = item->data(0, Qt::StatusTipRole).toString();
     QString installedVersion = item->text ( 3 );
     QString availableVersion = item->text ( 2 );
 
@@ -199,7 +201,7 @@ void EndUserPackageSelectorPage::selectAllClicked()
     for(int i = 0; i < count; i++)
     {
         QTreeWidgetItem *item = tree->topLevelItem(i);
-        QString name = item->text ( 1 );
+        QString name = item->data(0, Qt::StatusTipRole).toString();
         if (name.startsWith("aspell-") || name.startsWith("kde-l10n"))
             continue;
         itemClicked(item,0);

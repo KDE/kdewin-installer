@@ -1,5 +1,17 @@
 ChangeLog
 =========
+0.9.6-0 (917235)
+-----------------
+- installer-gui: 
+                 - added filter edit field to be able to limit displayed packages (Ralf Habacker)
+                 - installer will be installed into KDE install root, if not already there (Ralf Habacker)
+                 - added shortcut entry for installer in KDE .... menu (Ralf Habacker)#
+                 - added checkbox on last page for running KDE system settings application if installed (Ralf Habacker)
+                 - hide package compiler postfix in end user package selector and package dependencies page (Ralf Habacker)
+
+- packager:      
+                 - added single application package generator using a xml configuration file. (Ralf Habacker)
+
 0.9.5-0 (917235)
 -----------------
 - installer-gui: 
