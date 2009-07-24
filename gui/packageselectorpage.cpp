@@ -413,6 +413,7 @@ void PackageSelectorPage::on_leftTree_itemClicked(QTreeWidgetItem *item, int col
     QString category = item->text ( 0 );
     setWidgetData( category );
     packageInfo->hide();
+    slotFilterTextChanged(filterEdit->text());
 }
 
 void PackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
