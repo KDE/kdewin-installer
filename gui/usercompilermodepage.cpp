@@ -85,8 +85,8 @@ void UserCompilerModePage::setCompilerMode(bool EndUserMode)
     if (EndUserMode)
     {
         ui.compilerMSVC->setChecked(true);        
-        ui.compilerMinGW->setEnabled(false);
-        ui.compilerMSVC->setEnabled(false);
+        ui.compilerMinGW->setEnabled(true);
+        ui.compilerMSVC->setEnabled(true);
     }
     else 
     {
