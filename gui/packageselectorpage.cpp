@@ -293,7 +293,7 @@ void PackageSelectorPage::setWidgetData( QString categoryName )
     {
         QString name = availablePackage->name();
         if ( ( categoryName == "mingw"  || s.compilerType() == Settings::MinGW )
-                && ( name.endsWith ( QLatin1String( "-msvc" ) ) ) )
+                && ( name.endsWith ( QLatin1String( "-msvc" ) ) || name.endsWith ( QLatin1String( "-vc90" ) ) ) )
             continue;
         else if ( ( categoryName == "msvc"  || s.compilerType() == Settings::MSVC )
                   && ( name.endsWith ( QLatin1String ( "-mingw" ) ) ) )
