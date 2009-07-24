@@ -54,6 +54,7 @@ public:
 
     void setConfigURL(const QUrl &url);
     
+    QString root() { return m_root; }
     void setRoot(const QString &root);
     
     // read in global config 
