@@ -52,7 +52,7 @@ OPTION(STATIC_BUILD "enable static build support" ON)
 OPTION(INSTALL_SYSTEM_LIBS "install required system libraries too (only in shared mode)" OFF)
 OPTION(BUILD_TESTS "build test applications " OFF)
 OPTION(BUILD_TRANSLATIONS "build translations" OFF)
-OPTION(BUILD_WITH_SHA1_CHECKSUM "build apps with sha1 checksum support (if off md5 checksum support is used)" OFF)
+OPTION(BUILD_WITH_SHA1_CHECKSUM "build apps with sha1 checksum support (if off md5 checksum support is used)" ON)
 
 ENABLE_TESTING()
 
