@@ -311,12 +311,14 @@ void PackageSelectorPage::setWidgetData( QString categoryName )
         availablePackage->setInstalledVersion(installedVersion);
 
         /// @TODO add version format check to be sure available package is really newer
-        data << availablePackage->name()
+        data << PackageInfo::baseName(availablePackage->name())
             << (availableVersion != installedVersion ? availablePackage->version().toString() : "")
             << installedVersion.toString()
             << QString();
         QTreeWidgetItem *item = new QTreeWidgetItem ( ( QTreeWidgetItem* ) 0, data );
         engine->setInitialState ( *item,availablePackage,installedPackage,0);
+        // save real package name for selection code
+        item->setData(NameColumn,Qt::StatusTipRole,availablePackage->name());
 
         /// @TODO add printing notes from ver file
         item->setText ( NotesColumn, availablePackage->notes() );
@@ -427,7 +429,7 @@ void PackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
     else 
         packageInfo->hide();
 
-    QString name = item->text ( NameColumn );
+    QString name = item->data(NameColumn, Qt::StatusTipRole).toString();
     QString installedVersion = item->text ( installedVersionColumn );
     QString availableVersion = item->text ( availableVersionColumn );
 
