@@ -187,9 +187,9 @@ else(UNIX)
   # when qt 4.4 is build with directx support dxguid is required 
   # how to detect that qt 4.4 is build with directx ? 
   if (STATIC_BUILD)
-    if (QT_VERSION_MAJOR EQUAL 4 AND QT_VERSION_MINOR GREATER 3) 
+    if (QT_VERSION_MAJOR EQUAL 4 AND QT_VERSION_MINOR GREATER 3 AND QT_VERSION_MINOR LESS 5) 
         list(APPEND GUI_LIBS dxguid)
-    endif (QT_VERSION_MAJOR EQUAL 4 AND QT_VERSION_MINOR GREATER 3) 
+    endif (QT_VERSION_MAJOR EQUAL 4 AND QT_VERSION_MINOR GREATER 3  AND QT_VERSION_MINOR LESS 5) 
   endif (STATIC_BUILD)
 
 endif (UNIX)
