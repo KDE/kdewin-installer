@@ -35,10 +35,12 @@ public:
 
     void initializePage();
     bool isComplete();
+    bool validatePage();
 
 protected:
     QLabel *label;
     QLabel *label2;
+    QCheckBox *runSystemSettingsBox;
 //    Ui::FinishPage ui;
 };
 

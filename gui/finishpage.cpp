@@ -24,6 +24,8 @@
 
 #include "finishpage.h"
 
+#include <QProcess>
+
 FinishPage::FinishPage()
 {
     setTitle(tr("Installation/Update Finished"));
@@ -37,9 +39,13 @@ FinishPage::FinishPage()
     label2->setOpenExternalLinks (true);
     label2->setWordWrap(true);
     
+    QLabel *label3 = new QLabel("");
+    runSystemSettingsBox = new QCheckBox("run system settings after exit");
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(label);
     layout->addWidget(label2);
+    layout->addWidget(label3);
+    layout->addWidget(runSystemSettingsBox);
     layout->addStretch(1);
     setLayout(layout);
 }
@@ -94,9 +100,18 @@ void FinishPage::initializePage()
 #endif
     wizard()->setOption(QWizard::NoBackButtonOnLastPage,true);
     Settings::instance().setFirstRun(false);
+    runSystemSettingsBox->setVisible(QFile::exists(engine->root() + "/bin/systemsettings.exe"));
 }
 
 bool FinishPage::isComplete()
-{
+{   
     return true;
 }
+
+bool FinishPage::validatePage()
+{    
+    if (runSystemSettingsBox->isChecked())
+        QProcess::startDetached( engine->root() + "/bin/systemsettings.exe",QStringList(), engine->root() + "/bin");
+    return true;
+}
+
