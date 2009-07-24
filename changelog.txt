@@ -3,12 +3,12 @@ ChangeLog
 0.9.6-0 (1002035)
 -----------------
 - installer-gui: 
-                 - enabled mingw packages for end user installation (Ralf Habacker)
                  - added filter edit field to be able to limit displayed packages (Ralf Habacker)
                  - installer will be installed into recent KDE install root, if not already there (Ralf Habacker)
-                 - added shortcut entry for installer in KDE startmenu menu (Ralf Habacker)
+                 - added shortcut entry for installer in KDE start menu (Ralf Habacker)
                  - added checkbox on last page for running KDE system settings application if installed (Ralf Habacker)
                  - hide package compiler postfix in package selector and package dependencies pages (Ralf Habacker)
+                 - enabled mingw packages for end user installation (Ralf Habacker)
 
 - packager:      
                  - added single application package generator using a xml configuration file. (Ralf Habacker)
