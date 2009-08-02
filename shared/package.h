@@ -351,6 +351,8 @@ class PackageInfo {
                 name.remove("-msvc");
             if (name.endsWith("-vc90"))
                 name.remove("-vc90");
+            if (name.endsWith("-mingw4"))
+                name.remove("-mingw4");
             if (name.endsWith("-mingw"))
                 name.remove("-mingw");
             return name;
