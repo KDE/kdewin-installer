@@ -19,6 +19,7 @@
             <files handler="parseQtIncludeFiles" directory="include" include="*" exclude="private *_p.h *.pr* .svn CVS"/>
             <files directory="manifest" include="*-lib.cmd"/>
             <files compiler="mingw" directory="lib" include="*.a" exclude="*d4.a *d.a"/>
+            <files compiler="mingw4" directory="lib" include="*.a" exclude="*d4.a *d.a"/>
             <files compiler="vc80" directory="lib" include="*.lib" exclude="*d4.lib *d.lib"/>
             <files compiler="vc90" directory="lib" include="*.lib" exclude="*d4.lib *d.lib"/>
         </part>
