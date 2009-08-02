@@ -223,7 +223,7 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 generateFileList(fileList, dir, "lib",  "d4*.pdb", "");
                 generateFileList(fileList, dir, "plugins", "*d.dll *d4.dll *d1.dll");
                 generateFileList(fileList, dir, "plugins", "*d.pdb *d4.pdb *d1.pdb");
-                if (m_type == "mingw")
+                if (m_type == "mingw" || m_type == "mingw4")
                     generateFileList(fileList, dir, "lib",      "*d4.a *d.a");
                 else
                     generateFileList(fileList, dir, "lib",      "*d4.lib *d.lib");
@@ -238,7 +238,7 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 generateFileList(fileList, dir, "tools/linguist/phrasebooks", "*.qph");
                 generateFileList(fileList, dir, "phrasebooks", "*.qph");
 
-                if (m_type == "mingw")
+                if (m_type == "mingw" || m_type == "mingw4")
                     generateFileList(fileList, dir, "lib",      "*.a", "*d4.a *d.a");
                 else
                     generateFileList(fileList, dir, "lib",      "*.lib",  "*d4.lib *d.lib");
