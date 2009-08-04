@@ -86,7 +86,7 @@ class Hash {
 class HashValue
 {
 public:
-    HashValue(Hash::Type type = Hash::MD5, QByteArray &value=QByteArray())
+    HashValue(Hash::Type type = Hash::MD5, QByteArray value=QByteArray())
         : m_type(type), m_value(value)
     {
     }
