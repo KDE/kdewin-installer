@@ -44,6 +44,11 @@ HashFile::~HashFile()
 
 bool HashFile::computeHash()
 {
+    if(m_fullName.contains("\\ ")) 
+    {
+        m_fullName.replace("\\ ", " ");
+    }
+    
     QFile f(m_fullName);
     if (!f.open(QIODevice::ReadOnly)) 
     {
