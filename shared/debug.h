@@ -83,9 +83,9 @@ inline char *qDebug_indentdecrease()
     qDebug_indention--;
     return qDebug_indent();
 }
-#define QDEBUG_CLASS_START(out,_class, object) QDebug &_out =out;  const _class &_c = object; _out << qDebug_indentIncrease() << #_class##" ("
-#define QDEBUG_CLASS_MEMBER(member) << #member##":" << _c.member
-#define QDEBUG_CLASS_LIST(_class,member) ; _out << #member##":\n"; foreach(_class *m, _c.member) _out << *m; 
+#define QDEBUG_CLASS_START(out,_class, object) QDebug &_out =out;  const _class &_c = object; _out << qDebug_indentIncrease() << #_class << " ("
+#define QDEBUG_CLASS_MEMBER(member) << #member << ":" << _c.member
+#define QDEBUG_CLASS_LIST(_class,member) ; _out << #member << ":\n"; foreach(_class *m, _c.member) _out << *m; 
 #define QDEBUG_CLASS_END() ; _out << qDebug_indentdecrease() << "  )\n";  return _out;
 #else
 #define QDEBUG_CLASS_START(out,_class, object) return out;
