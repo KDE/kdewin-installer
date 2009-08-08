@@ -231,6 +231,15 @@ bool generateFileList(QList<InstallFile> &fileList, const QString &root,const QS
 
    Q_FOREACH( const QFileInfo &fi, list ) {
        QString fn = fi.fileName();
+       bool bFound = false;
+       Q_FOREACH(const QRegExp &rx, excludeList) {
+         if(rx.exactMatch(fn)) {
+           bFound = true;
+           break;
+         }
+       }
+       if (bFound)
+         continue;
 
        if (fi.isDir()) {
           QString toAdd;
@@ -248,15 +257,6 @@ bool generateFileList(QList<InstallFile> &fileList, const QString &root,const QS
           generateFileList(fileList, root, fn, filter, excludeList);
        }
        else {
-         bool bFound = false;
-         Q_FOREACH(const QRegExp &rx, excludeList) {
-           if(rx.exactMatch(fn)) {
-             bFound = true;
-             break;
-           }
-         }
-         if (bFound)
-           continue;
          QString toAdd;
          if(subdir.isEmpty())
            toAdd = fn;
