@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>UserCompilerModePage</class>
- <widget class="QWidget" name="UserCompilerModePage" >
-  <property name="geometry" >
+ <widget class="QWidget" name="UserCompilerModePage">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,45 +10,45 @@
     <height>399</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Install Mode</string>
   </property>
-  <property name="statusTip" >
+  <property name="statusTip">
    <string>Select in which mode the installer should work and which compiler should be used.</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_5" >
+  <layout class="QVBoxLayout" name="verticalLayout_5">
    <item>
-    <widget class="QLabel" name="label_2" >
-     <property name="text" >
-      <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
-&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">The install mode determines which package components are installable. &lt;span style=" font-weight:600;">End-User mode&lt;/span> only provides application binaries and their dependencies. &lt;span style=" font-weight:600;">Package Manager mode&lt;/span> provides development files and sources, as well as binaries.&lt;/p>&lt;/body>&lt;/html></string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;The install mode determines which package components are installable. &lt;span style=&quot; font-weight:600;&quot;&gt;End-User mode&lt;/span&gt; only provides application binaries and their dependencies. &lt;span style=&quot; font-weight:600;&quot;&gt;Package Manager mode&lt;/span&gt; provides development files and sources, as well as binaries.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
-     <property name="scaledContents" >
+     <property name="scaledContents">
       <bool>true</bool>
      </property>
-     <property name="alignment" >
+     <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
      </property>
-     <property name="wordWrap" >
+     <property name="wordWrap">
       <bool>true</bool>
      </property>
-     <property name="openExternalLinks" >
+     <property name="openExternalLinks">
       <bool>true</bool>
      </property>
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer_3" >
-     <property name="orientation" >
+    <spacer name="verticalSpacer_3">
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeType" >
+     <property name="sizeType">
       <enum>QSizePolicy::Minimum</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
        <height>5</height>
@@ -56,43 +57,43 @@ p, li { white-space: pre-wrap; }
     </spacer>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3" >
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <layout class="QGridLayout" name="gridLayout" >
-       <item row="0" column="1" colspan="3" >
-        <widget class="QLabel" name="label_4" >
-         <property name="text" >
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="1" colspan="3">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
           <string>Install Mode</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="3" >
-        <layout class="QVBoxLayout" name="verticalLayout_3" >
+       <item row="1" column="3">
+        <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
-          <widget class="QRadioButton" name="installModeEndUser" >
-           <property name="text" >
+          <widget class="QRadioButton" name="installModeEndUser">
+           <property name="text">
             <string>End User</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QRadioButton" name="installModePackageManager" >
-           <property name="text" >
+          <widget class="QRadioButton" name="installModePackageManager">
+           <property name="text">
             <string>Package Manager</string>
            </property>
-           <property name="checked" >
+           <property name="checked">
             <bool>false</bool>
            </property>
           </widget>
          </item>
         </layout>
        </item>
-       <item rowspan="2" row="1" column="4" >
-        <spacer name="horizontalSpacer" >
-         <property name="orientation" >
+       <item row="1" column="4" rowspan="2">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>40</width>
            <height>20</height>
@@ -100,15 +101,15 @@ p, li { white-space: pre-wrap; }
          </property>
         </spacer>
        </item>
-       <item row="1" column="2" >
-        <spacer name="horizontalSpacer_6" >
-         <property name="orientation" >
+       <item row="1" column="2">
+        <spacer name="horizontalSpacer_6">
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeType" >
+         <property name="sizeType">
           <enum>QSizePolicy::Fixed</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>25</width>
            <height>20</height>
@@ -116,15 +117,15 @@ p, li { white-space: pre-wrap; }
          </property>
         </spacer>
        </item>
-       <item row="2" column="3" >
-        <spacer name="verticalSpacer" >
-         <property name="orientation" >
+       <item row="2" column="3">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeType" >
+         <property name="sizeType">
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
            <height>5</height>
@@ -135,13 +136,13 @@ p, li { white-space: pre-wrap; }
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout" >
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>38</width>
            <height>20</height>
@@ -150,40 +151,40 @@ p, li { white-space: pre-wrap; }
         </spacer>
        </item>
        <item>
-        <widget class="QLabel" name="label_8" >
-         <property name="text" >
+        <widget class="QLabel" name="label_8">
+         <property name="text">
           <string>Note:</string>
          </property>
-         <property name="alignment" >
+         <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
          </property>
         </widget>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout" >
+        <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="QLabel" name="label" >
-           <property name="text" >
-            <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
-&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Since the Package Manager Mode allows you to install many different types of packages, it may be more complicated to use than End-User Mode. &lt;span style=" font-weight:600;">If you are unsure which one to pick, it's probably best to choose End-User Mode.&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;Since the Package Manager Mode allows you to install many different types of packages, it may be more complicated to use than End-User Mode. &lt;span style=&quot; font-weight:600;&quot;&gt;If you are unsure which one to pick, it's probably best to choose End-User Mode.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
-           <property name="alignment" >
+           <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
            </property>
-           <property name="wordWrap" >
+           <property name="wordWrap">
             <bool>true</bool>
            </property>
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_2" >
-           <property name="orientation" >
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>298</width>
              <height>20</height>
@@ -198,40 +199,40 @@ p, li { white-space: pre-wrap; }
     </layout>
    </item>
    <item>
-    <widget class="QLabel" name="label_3" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+    <widget class="QLabel" name="label_3">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>1</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="text" >
-      <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
-&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+     <property name="text">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:8pt;">KDE on Windows supports the MinGW, and MSVC compilers. This option lets you select the type of compiler you want to use because packages containing C++ code are binary-incompatible between compilers. If a specific compiler is selected, packages built for the other compiler are invisible. Please note that the End-User Mode only supports the MSVC compiler.&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;KDE on Windows supports the MinGW, and MSVC compilers. This option lets you select the type of compiler you want to use because packages containing C++ code are binary-incompatible between compilers. If a specific compiler is selected, packages built for the other compiler are invisible. Please note that the End-User Mode only supports the MSVC compiler.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
-     <property name="alignment" >
+     <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
      </property>
-     <property name="wordWrap" >
+     <property name="wordWrap">
       <bool>true</bool>
      </property>
-     <property name="indent" >
+     <property name="indent">
       <number>0</number>
      </property>
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer_4" >
-     <property name="orientation" >
+    <spacer name="verticalSpacer_4">
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeType" >
+     <property name="sizeType">
       <enum>QSizePolicy::Minimum</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
        <height>5</height>
@@ -240,40 +241,47 @@ p, li { white-space: pre-wrap; }
     </spacer>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4" >
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
-      <layout class="QGridLayout" name="gridLayout_2" >
-       <item row="0" column="1" colspan="4" >
-        <widget class="QLabel" name="label_5" >
-         <property name="text" >
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="1" colspan="4">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
           <string>Compiler Mode</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="3" >
-        <layout class="QVBoxLayout" name="verticalLayout_4" >
+       <item row="1" column="3">
+        <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
-          <widget class="QRadioButton" name="compilerMinGW" >
-           <property name="text" >
+          <widget class="QRadioButton" name="compilerMinGW4">
+           <property name="text">
+            <string>MinGW4</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="compilerMinGW">
+           <property name="text">
             <string>MinGW</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QRadioButton" name="compilerMSVC" >
-           <property name="text" >
+          <widget class="QRadioButton" name="compilerMSVC">
+           <property name="text">
             <string>MSVC</string>
            </property>
           </widget>
          </item>
         </layout>
        </item>
-       <item row="1" column="4" >
-        <spacer name="horizontalSpacer_4" >
-         <property name="orientation" >
+       <item row="1" column="4">
+        <spacer name="horizontalSpacer_4">
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>40</width>
            <height>20</height>
@@ -281,12 +289,12 @@ p, li { white-space: pre-wrap; }
          </property>
         </spacer>
        </item>
-       <item row="2" column="3" >
-        <spacer name="verticalSpacer_2" >
-         <property name="orientation" >
+       <item row="2" column="3">
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
            <height>40</height>
@@ -294,15 +302,15 @@ p, li { white-space: pre-wrap; }
          </property>
         </spacer>
        </item>
-       <item row="1" column="2" >
-        <spacer name="horizontalSpacer_5" >
-         <property name="orientation" >
+       <item row="1" column="2">
+        <spacer name="horizontalSpacer_5">
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeType" >
+         <property name="sizeType">
           <enum>QSizePolicy::Fixed</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>25</width>
            <height>20</height>
@@ -313,13 +321,13 @@ p, li { white-space: pre-wrap; }
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2" >
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>38</width>
            <height>85</height>
@@ -328,40 +336,40 @@ p, li { white-space: pre-wrap; }
         </spacer>
        </item>
        <item>
-        <widget class="QLabel" name="label_9" >
-         <property name="text" >
+        <widget class="QLabel" name="label_9">
+         <property name="text">
           <string>Note:</string>
          </property>
-         <property name="alignment" >
+         <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
          </property>
         </widget>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_2" >
+        <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="QLabel" name="label_6" >
-           <property name="text" >
-            <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
-&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:8pt;">You cannot change the compiler mode for a given install directory if you have installed any packages into it. To install packages for a different compiler please go back one page and choose a different installation directory, or uninstall all packages in the current directory and restart the KDE on Windows installer.&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;You cannot change the compiler mode for a given install directory if you have installed any packages into it. To install packages for a different compiler please go back one page and choose a different installation directory, or uninstall all packages in the current directory and restart the KDE on Windows installer.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
-           <property name="alignment" >
+           <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
            </property>
-           <property name="wordWrap" >
+           <property name="wordWrap">
             <bool>true</bool>
            </property>
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_3" >
-           <property name="orientation" >
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>298</width>
              <height>20</height>
@@ -377,13 +385,13 @@ p, li { white-space: pre-wrap; }
    </item>
    <item>
     <spacer>
-     <property name="orientation" >
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeType" >
+     <property name="sizeType">
       <enum>QSizePolicy::Minimum</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>218</width>
        <height>13</height>

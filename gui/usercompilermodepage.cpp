@@ -37,6 +37,7 @@ UserCompilerModePage::UserCompilerModePage() : InstallWizardPage(0)
 
     // logical grouping isn't available in the designer yet :-P
     QButtonGroup *groupA = new QButtonGroup(this);
+    groupA->addButton(ui.compilerMinGW4);
     groupA->addButton(ui.compilerMinGW);
     groupA->addButton(ui.compilerMSVC);
 
@@ -74,6 +75,8 @@ bool UserCompilerModePage::validatePage()
 
     if (ui.compilerMinGW->isChecked())
         s.setCompilerType(Settings::MinGW);
+    if (ui.compilerMinGW4->isChecked())
+        s.setCompilerType(Settings::MinGW4);
     if (ui.compilerMSVC->isChecked())
         s.setCompilerType(Settings::MSVC);
     return true;
@@ -85,6 +88,7 @@ void UserCompilerModePage::setCompilerMode(bool EndUserMode)
     if (EndUserMode)
     {
         ui.compilerMSVC->setChecked(true);        
+        ui.compilerMinGW4->setEnabled(true);
         ui.compilerMinGW->setEnabled(true);
         ui.compilerMSVC->setEnabled(true);
     }
@@ -92,17 +96,20 @@ void UserCompilerModePage::setCompilerMode(bool EndUserMode)
     {
         switch (s.compilerType()) 
         {
+            case Settings::MinGW4: ui.compilerMinGW4->setChecked(true); break;
             case Settings::MinGW: ui.compilerMinGW->setChecked(true); break;
             case Settings::MSVC: ui.compilerMSVC->setChecked(true); break;
             default: ui.compilerMinGW->setChecked(true); break;
         }
         if (Database::isAnyPackageInstalled(s.installDir()))
         {
+            ui.compilerMinGW4->setEnabled(false);
             ui.compilerMinGW->setEnabled(false);
             ui.compilerMSVC->setEnabled(false);
         }
         else
         {
+            ui.compilerMinGW4->setEnabled(true);
             ui.compilerMinGW->setEnabled(true);
             ui.compilerMSVC->setEnabled(true);
         }
