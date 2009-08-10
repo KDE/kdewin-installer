@@ -20,12 +20,12 @@
 @categorypackages win32libs pcre-mingw dbus-mingw exiv2-mingw gpgme-qt-mingw libspectre-mingw libmsn-mingw libdvdcss-mingw libsamplerate-mingw
 @categorypackages win32libs pcre-mingw4 dbus-mingw4 exiv2-mingw4 gpgme-qt-mingw4 libspectre-mingw4 libmsn-mingw4 libdvdcss-mingw4 libsamplerate-mingw4
 @categorypackages tools findutils grep mingw-utils diffutils patch
-@categorypackages kdesupport kdewin-vc90  kdewin-installer-vc90  runtime-vc90  qimageblitz-vc90  qca-vc90  strigi-vc90  soprano-vc90  taglib-vc90  phonon-vc90  fontconfig-vc90  freetype-vc90  poppler-vc90  automoc-vc90  oxygen-icons-vc90
-@categorypackages kdesupport kdewin-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw phonon-mingw fontconfig-mingw freetype-mingw poppler-mingw automoc-mingw oxygen-icons-mingw
-@categorypackages kdesupport kdewin-mingw4 kdewin-installer-mingw4 runtime-mingw4 qimageblitz-mingw4 qca-mingw4 strigi-mingw4 soprano-mingw4 taglib-mingw4 phonon-mingw4 fontconfig-mingw4 freetype-mingw4 poppler-mingw4 automoc-mingw4 oxygen-icons-mingw4
-@categorypackages KDE amarok-vc90  digikam-vc90  kdelibs-vc90  kdepimlibs-vc90  kdepim-vc90  kdebase-apps-vc90  kdebase-runtime-vc90  kdebase-workspace-vc90  kdeedu-vc90  kdegames-vc90  kdegraphics-vc90  kdenetwork-vc90  kdesdk-vc90  kdewebdev-vc90  kdeutils-vc90  kdeplasma-addons-vc90  kipi-plugins-vc90
-@categorypackages KDE amarok-mingw digikam-mingw kdelibs-mingw kdepimlibs-mingw kdepim-mingw kdebase-apps-mingw kdebase-runtime-mingw kdebase-workspace-mingw kdeedu-mingw kdegames-mingw kdegraphics-mingw kdenetwork-mingw kdesdk-mingw kdewebdev-mingw kdeutils-mingw kdeplasma-addons-mingw kipi-plugins-mingw
-@categorypackages KDE amarok-mingw4 digikam-mingw4 kdelibs-mingw4 kdepimlibs-mingw4 kdepim-mingw4 kdebase-apps-mingw4 kdebase-runtime-mingw4 kdebase-workspace-mingw4 kdeedu-mingw4 kdegames-mingw4 kdegraphics-mingw4 kdenetwork-mingw4 kdesdk-mingw4 kdewebdev-mingw4 kdeutils-mingw4 kdeplasma-addons-mingw4 kipi-plugins-mingw4
+@categorypackages kdesupport kdewin-vc90  kdewin-installer-vc90  runtime-vc90  qimageblitz-vc90  qca-vc90  strigi-vc90  soprano-vc90  taglib-vc90  phonon-vc90  fontconfig-vc90  freetype-vc90  poppler-vc90  automoc-vc90  oxygen-icons
+@categorypackages kdesupport kdewin-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw phonon-mingw fontconfig-mingw freetype-mingw poppler-mingw automoc-mingw oxygen-icons
+@categorypackages kdesupport kdewin-mingw4 kdewin-installer-mingw4 runtime-mingw4 qimageblitz-mingw4 qca-mingw4 strigi-mingw4 soprano-mingw4 taglib-mingw4 phonon-mingw4 fontconfig-mingw4 freetype-mingw4 poppler-mingw4 automoc-mingw4 oxygen-icons
+@categorypackages KDE amarok-vc90  digikam-vc90  kdelibs-vc90  kdepimlibs-vc90  kdepim-vc90  kdepim-runtime-vc90  kdebase-apps-vc90  kdebase-runtime-vc90  kdebase-workspace-vc90  kdeedu-vc90  kdegames-vc90  kdegraphics-vc90  kdenetwork-vc90  kdesdk-vc90  kdewebdev-vc90  kdeutils-vc90  kdeplasma-addons-vc90  kipi-plugins-vc90
+@categorypackages KDE amarok-mingw digikam-mingw kdelibs-mingw kdepimlibs-mingw kdepim-mingw kdepim-runtime-mingw kdebase-apps-mingw kdebase-runtime-mingw kdebase-workspace-mingw kdeedu-mingw kdegames-mingw kdegraphics-mingw kdenetwork-mingw kdesdk-mingw kdewebdev-mingw kdeutils-mingw kdeplasma-addons-mingw kipi-plugins-mingw
+@categorypackages KDE amarok-mingw4 digikam-mingw4 kdelibs-mingw4 kdepimlibs-mingw4 kdepim-mingw4 kdepim-runtime-mingw4 kdebase-apps-mingw4 kdebase-runtime-mingw4 kdebase-workspace-mingw4 kdeedu-mingw4 kdegames-mingw4 kdegraphics-mingw4 kdenetwork-mingw4 kdesdk-mingw4 kdewebdev-mingw4 kdeutils-mingw4 kdeplasma-addons-mingw4 kipi-plugins-mingw4
 @categorypackages KDE koffice-vc90  ktorrent-vc90  kile-vc90  kde-additional-vc90  kdevelop-vc90  kdevplatform-vc90
 @categorypackages KDE koffice-mingw ktorrent-mingw kile-mingw kde-additional-mingw kdevelop-mingw kdevplatform-mingw
 @categorypackages KDE koffice-mingw4 ktorrent-mingw4 kile-mingw4 kde-additional-mingw4 kdevelop-mingw4 kdevplatform-mingw4
@@ -70,14 +70,14 @@
 @deps k3b-mingw kdemultimedia-mingw libdvdcss-mingw cdrtools dvd+rw-tools
 @deps kdelibs-mingw qt-mingw phonon-mingw pcre-mingw dbus-mingw kdewin-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
 @deps kdebase-apps-mingw kdebase-runtime-mingw
-@deps kdebase-runtime-mingw kdepimlibs-mingw kdelibs-mingw oxygen-icons-mingw
+@deps kdebase-runtime-mingw kdepimlibs-mingw kdelibs-mingw oxygen-icons
 @deps kdebase-workspace-mingw kdebase-runtime-mingw kdepimlibs-mingw
 @deps kdeedu-mingw kdebase-runtime-mingw kdelibs-mingw openbabel-mingw cfitsio
 @deps kdegames-mingw kdebase-runtime-mingw kdelibs-mingw phonon-mingw
 @deps kdegraphics-mingw kdebase-runtime-mingw kdelibs-mingw poppler-mingw ebook-tools libspectre exiv2-mingw
 @deps kdemultimedia-mingw kdebase-runtime-mingw taglib-mingw
 @deps kdenetwork-mingw kdebase-runtime-mingw kdelibs-mingw sqlite libgmp libidn libmsn-mingw
-@deps kdepim-mingw kdepimlibs-mingw kdebase-runtime-mingw gpgme-qt-mingw sqlite
+@deps kdepim-mingw kdepim-runtime-mingw kdepimlibs-mingw kdebase-runtime-mingw gpgme-qt-mingw sqlite
 @deps kdepimlibs-mingw kdelibs-mingw boost-mingw libical cyrus-sasl
 @deps kdesdk-mingw kdebase-runtime-mingw kdelibs-mingw kdepimlibs-mingw astyle diffutils
 @deps kdetoys-mingw kdebase-runtime-mingw kdelibs-mingw
@@ -109,14 +109,14 @@
 @deps k3b-mingw4 kdemultimedia-mingw4 libdvdcss-mingw4 cdrtools dvd+rw-tools
 @deps kdelibs-mingw4 qt-mingw4 phonon-mingw4 pcre-mingw4 dbus-mingw4 kdewin-mingw4 qimageblitz-mingw4 qca-mingw4 strigi-mingw4 soprano-mingw4 taglib-mingw4 aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
 @deps kdebase-apps-mingw4 kdebase-runtime-mingw4
-@deps kdebase-runtime-mingw4 kdepimlibs-mingw4 kdelibs-mingw4 oxygen-icons-mingw4
+@deps kdebase-runtime-mingw4 kdepimlibs-mingw4 kdelibs-mingw4 oxygen-icons
 @deps kdebase-workspace-mingw4 kdebase-runtime-mingw4 kdepimlibs-mingw4
 @deps kdeedu-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4 openbabel-mingw4 cfitsio
 @deps kdegames-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4 phonon-mingw4
 @deps kdegraphics-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4 poppler-mingw4 ebook-tools libspectre exiv2-mingw4
 @deps kdemultimedia-mingw4 kdebase-runtime-mingw4 taglib-mingw4
 @deps kdenetwork-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4 sqlite libgmp libidn libmsn-mingw4
-@deps kdepim-mingw4 kdepimlibs-mingw4 kdebase-runtime-mingw4 gpgme-qt-mingw4 sqlite
+@deps kdepim-mingw4 kdepim-runtime-mingw4 kdepim-runtime-mingw4 kdepimlibs-mingw4 kdebase-runtime-mingw4 gpgme-qt-mingw4 sqlite
 @deps kdepimlibs-mingw4 kdelibs-mingw4 boost-mingw4 libical cyrus-sasl
 @deps kdesdk-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4 kdepimlibs-mingw4 astyle diffutils
 @deps kdetoys-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4
@@ -147,7 +147,7 @@
 @deps gpgme-qt-vc90 gpgme qt-vc90
 @deps k3b-vc90 kdemultimedia-vc90 libdvdcss-vc90 cdrtools dvd+rw-tools
 @deps kdebase-apps-vc90 kdebase-runtime-vc90
-@deps kdebase-runtime-vc90 kdepimlibs-vc90 kdelibs-vc90 oxygen-icons-vc90
+@deps kdebase-runtime-vc90 kdepimlibs-vc90 kdelibs-vc90 oxygen-icons
 @deps kdebase-workspace-vc90 kdebase-runtime-vc90
 @deps kdeedu-vc90 kdebase-runtime-vc90 kdelibs-vc90 openbabel-vc90 cfitsio
 @deps kdegames-vc90 kdebase-runtime-vc90 kdelibs-vc90 phonon-vc90
@@ -155,7 +155,7 @@
 @deps kdelibs-vc90 qt-vc90 phonon-vc90 pcre-vc90 runtime-vc90 qt-vc90 dbus-vc90 kdewin-vc90 qimageblitz-vc90 qca-vc90 strigi-vc90 soprano-vc90 taglib-vc90 aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl tiff zlib shared-mime-info
 @deps kdemultimedia-vc90 kdebase-runtime-vc90 taglib-vc90
 @deps kdenetwork-vc90 kdebase-runtime-vc90 kdelibs-vc90 sqlite libgmp libidn libmsn-vc90
-@deps kdepim-vc90 kdepimlibs-vc90 kdebase-runtime-vc90 gpgme-qt-vc90 sqlite
+@deps kdepim-vc90 kdepim-runtime-vc90 kdepimlibs-vc90 kdebase-runtime-vc90 gpgme-qt-vc90 sqlite
 @deps kdepimlibs-vc90 kdelibs-vc90 boost-vc90 libical cyrus-sasl
 @deps kdesdk-vc90 kdebase-runtime-vc90 kdelibs-vc90 astyle diffutils
 @deps kdetoys-vc90 kdebase-runtime-vc90 kdelibs-vc90
