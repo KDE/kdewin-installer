@@ -152,6 +152,7 @@ static void printHelp(const QString &addInfo)
     ts << "Options: "
        << "\n\t\t"      << "-root <path to package files>"
        << "\n\t\t"      << "-header <file> use <file> as config header"
+       << "\n\t\t"      << "-footer <file> use <file> as config footer"
        << "\n\t\t"      << "-printdeps list dependencies of all packages"
        << "\n\t\t"      << "-o <filename> save output into <filename> instead printing on stdout"
        << "\n\t\t"      << "-verbose display verbose processing informations"
@@ -169,6 +170,7 @@ int main(int argc, char *argv[])
     QString root;
     QString outFile;
     QString headerFile;
+    QString footerFile;
     QFileInfo rootDir;
     bool verbose = false;
     bool printDeps = false;
@@ -184,6 +186,9 @@ int main(int argc, char *argv[])
         }
         else if (args[i] == "-header" && hasValue) {
             headerFile = args[++i];
+        }
+        else if (args[i] == "-footer" && hasValue) {
+            footerFile = args[++i];
         }
         else if (args[i] == "-o" && hasValue) {
             outFile = args[++i];
@@ -232,6 +237,13 @@ int main(int argc, char *argv[])
     findPackagerInfoFiles(root,files);
 
     createConfigTxt(*out,root,files,headerFile.isEmpty());
+
+    if (!footerFile.isEmpty()) {
+        QFile footer(footerFile);
+        footer.open(QFile::ReadOnly);
+        *out << footer.readAll();
+        footer.close();
+    }
 
     delete out;
     delete f;
