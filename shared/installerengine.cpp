@@ -58,7 +58,8 @@ InstallerEngine::InstallerEngine(QObject *parent)
     m_globalConfig = new GlobalConfig();
     m_packageResources = new PackageList();
 
-    connect(&Settings::instance(),SIGNAL(installDirChanged(const QString&)),this,SLOT(installDirChanged(const QString&)));
+
+//    connect(&Settings::instance(),SIGNAL(installDirChanged(const QString&)),this,SLOT(installDirChanged(const QString&)));
     connect(m_installer,SIGNAL(error(const QString &)),this,SLOT(slotError(const QString &)));
 
 }
