@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  module 
+The root element.  It can have an attribute 'name' which contains the name 
+ of the module. The name could be used for the -template parameter to select internals templates. 
+There has to be one xml file per KDE-module 
+-->
+<module name="kde">
+    <!-- package 
+    defines a  package for a given application or library. A package may contain one 
+    or more package components (parts). The  attribute 'name' is used for the base name 
+    of created archive files for this package. 
+    There can be  multiple 'package' tags per 'module'
+    -->                 
+    <package name="apackage">
+
+        <!-- shortdescription 
+        the description of the package stored in the .ver manifest file  
+        -->                 
+        <shortDescription>a package</shortdescription>
+        <!-- longdescription 
+        a detailed description of the package displayed in the installer  
+        -->                 
+        <longdescription>This package contains ....</longdescription>
+        <!-- dependency
+        the dependency tag describes the dependencies for this package. 
+        This tag  will be used in the future to ease the process of dependency 
+        collection for release creating
+        -->                 
+        <dependency>kdelibs</dependency>
+        <dependency>qt</dependency>
+        <!-- part 
+         describes a package components. The attribute name specify the type of the part. 
+         Currently there are defined: "runtime", "development",  "documentation", "source". 
+         There can be  multiple 'parts' tags per 'package'
+         -->                 
+        <part name="runtime">
+            <!-- files 
+            specify a set of files or rules for collecting files. There are three forms of this tag
+            1. <files include='<regexp>' exclude='<regexp'> // new style 
+            -->
+            <files include="bin/*.dll"/>
+            <files include="bin/*.*" exclude="bin/xyz.dll"/>
+            <!--
+            2. <files directory='<dir>' include='<pattern>' exclude='<pattern'> // old style (deprecated)
+                the top level directory is specified by directory='.'
+            -->
+            <files directory="bin" include="*.*"/>
+            <!--
+            3. <files>filea; fileb</files>
+            -->
+             <files>bin/test.exe lib/libtest.dll</files>
+            <!-- The files tag support other optional attributes 
+                - compiler limit the file collection to a specific compiler 
+                     <files compiler= "mingw" | "mingw4" | "vc80" | "vc90">  
+            -->
+             <files compiler="vc90" directory="bin" include="*.dll"/>
+             <!--
+                - handler specifies an internal handler for performing non easy transformations. 
+                  Currently only "parseQtIncludeFiles" for performing special actions for  qt include files is available
+                     <files handler="parseQtIncludeFiles" 
+            -->                 
+            <files handler="parseQtIncludeFiles" directory="include" include="*" exclude="private *_p.h *.pr* .svn CVS"/>
+        </part>
+    </package>
+</module>
