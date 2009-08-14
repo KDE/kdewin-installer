@@ -16,7 +16,7 @@
             <files directory="mkspecs" include="*.*" exclude=".svn CVS"/>
             <files directory="tools/linguist/phrasebooks" include="*.qph"/>
             <files directory="phrasebooks" include="*.qph"/>
-            <files handler="parseQtIncludeFiles" directory="include" include="*" exclude="private *_p.h *.pr* .svn CVS"/>
+            <files handler="parseQtIncludeFiles" directory="include" include="*" exclude="private *_p.h *.pr* .svn .git CVS"/>
             <files directory="manifest" include="*-lib.cmd"/>
             <files compiler="mingw" directory="lib" include="*.a" exclude="*d4.a *d.a"/>
             <files compiler="mingw4" directory="lib" include="*.a" exclude="*d4.a *d.a"/>
@@ -26,7 +26,7 @@
         <part name="documentation">
             <files directory="bin" include="qtdemo.exe"/>
             <files directory="manifest" include="*-doc.cmd"/>
-            <files directory="doc" include="*.*" exclude=".svn CVS"/>
+            <files directory="doc" include="*.*" exclude=".svn .git CVS"/>
         </part>
         <part name="source">
             <files directory="." include="*.*" exclude=".git .svn CVS *.bak *.orig"/>
