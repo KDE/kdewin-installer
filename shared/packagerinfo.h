@@ -25,6 +25,7 @@ public:
         QString line;
         line += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         line += "<package name=\"" + name + "\" type=\"runtime\">\n";
+        line += "  <shortdescription>" + shortDescription + "</shortdescription>\n";
         line += "  <version>" + version + "</version>\n";
         line += "  <compiler>" + compilerType + "</compiler>\n";
         line += "  <checksum type=\"" + hash.typeAsString() + "\">" + hash.value().toHex() + "</checksum>\n";
@@ -100,6 +101,7 @@ public:
 	QString version;
 	QString name;
 	QString compilerType;
+	QString shortDescription;
     QStringList dependencies; 
 }; 
 
