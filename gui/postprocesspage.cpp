@@ -24,10 +24,13 @@
 
 #include "config.h"
 #include "debug.h"
+#include "misc.h"
 #include "postprocesspage.h"
 #include "selfinstaller.h"
 
 #include <QProcess>
+
+
 
 bool PostProcessPage::runCommand(const QString &msg, const QString &app, const QStringList &params)
 {
@@ -59,7 +62,8 @@ void PostProcessPage::performAction()
     {
         ui.progressBar->setMaximum(4);
         ui.progressBar->setValue(0);
-        runCommand("deleting windows start menu entries","kwinstartmenu",QStringList() <<  "--remove");
+        ui.listWidget->addItem("deleting windows start menu entries");
+        removeDirectory(engine->startMenuRootPath);
     }
     else 
     {

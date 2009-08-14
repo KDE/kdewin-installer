@@ -306,10 +306,6 @@ QString getStartMenuPath(bool bAllUsers)
 }
 #endif  // Q_WS_WIN
 
-/*
-  tries to delete a file named filename
-  if it's not possible, move them to root/tmp/removeme
-*/
 bool deleteFile( const QString &root, const QString &filename )
 {
     QT_STATBUF statBuf;
@@ -346,3 +342,31 @@ void qsleep(int ms)
 #endif
 }
 
+bool removeDirectory(const QString& aDir)
+{
+    QDir dir( aDir );
+    bool has_err = false;
+    if (dir.exists())//QDir::NoDotAndDotDot
+    {
+        QFileInfoList entries = dir.entryInfoList(QDir::NoDotAndDotDot | 
+        QDir::Dirs | QDir::Files);
+        int count = entries.size();
+        foreach(QFileInfo entryInfo, entries)
+        {
+            QString path = entryInfo.absoluteFilePath();
+            if (entryInfo.isDir())
+            {
+                has_err = removeDirectory(path);
+            }
+            else
+            {
+                QFile file(path);
+                if (!file.remove())
+                    has_err = true;
+            }
+        }
+        if (!dir.rmdir(dir.absolutePath()))
+            has_err = true;
+    }
+    return(has_err);
+}

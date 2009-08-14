@@ -81,4 +81,7 @@ QString exePath();
 /// wait 
 void qsleep(int ms);
 
+/// remove a non empty directory structure
+bool removeDirectory(const QString& aDir);
+
 #endif

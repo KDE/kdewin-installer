@@ -109,6 +109,10 @@ bool InstallerEngine::initPackages()
         }
     }
     m_addedPackages = true;
+
+    // retrieve start menu path of recent kde installation
+    getStartMenuRootPath();
+
     m_initFinished = true;
     return true;
 }
@@ -329,6 +333,21 @@ void InstallerEngine::stop()
     Downloader::instance()->cancel();
     m_canceled = true;
 }
+
+bool InstallerEngine::getStartMenuRootPath()
+{
+    QProcess myProcess;
+    myProcess.start(m_root + "\\bin\\kwinstartmenu", QStringList() << "--query-path");
+    myProcess.waitForFinished(3000);
+    QByteArray data = myProcess.readAllStandardOutput();
+    if (data.size() > 0) 
+    {
+        startMenuRootPath = data;
+        return true;
+    }
+    return false;
+}
+
 
 QDebug &operator<<(QDebug &out, const InstallerEngine &c)
 {

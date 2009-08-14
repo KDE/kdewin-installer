@@ -91,6 +91,8 @@ public:
     /// number of really downloaded packages
     int downloadedPackages() { return m_downloadedPackages; }
 
+    QString startMenuRootPath;
+
     typedef enum { cancel, retry, ignore } ErrorAction;
     void setErrorAction(ErrorAction action) { m_errorAction = action; }
     
@@ -144,6 +146,14 @@ protected:
     
     /// add installed packages for which no package is available
     bool addInstalledPackages();
+
+    bool getStartMenuRootPath();
+    
+    /**
+        in case that dependencies are updated, this method
+        can be used to find which additional packages has to be installed
+    */
+    bool checkInstalledDependencies();
 
     friend QDebug &operator<<(QDebug &, const InstallerEngine &);
 };
