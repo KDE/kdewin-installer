@@ -370,3 +370,17 @@ bool removeDirectory(const QString& aDir)
     }
     return(has_err);
 }
+
+bool isX64Windows()
+{
+#if defined(_WIN64)
+    return true;  // 64-bit programs run only on Win64
+#elif defined(_WIN32)
+    // 32-bit programs run on both 32-bit and 64-bit Windows
+    // so must sniff
+    BOOL f64 = false;
+    return IsWow64Process(GetCurrentProcess(), &f64) && f64;
+#else
+    return false; // Win64 does not support Win16
+#endif
+}

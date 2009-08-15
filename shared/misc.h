@@ -84,4 +84,7 @@ void qsleep(int ms);
 /// remove a non empty directory structure
 bool removeDirectory(const QString& aDir);
 
+/// check if system is 64 bit Windows
+bool isX64Windows()
+
 #endif
