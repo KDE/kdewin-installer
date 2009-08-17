@@ -371,6 +371,27 @@ bool removeDirectory(const QString& aDir)
     return(has_err);
 }
 
+
+
+static BOOL IsWow64()
+{
+    typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
+    BOOL bIsWow64 = FALSE;
+    LPFN_ISWOW64PROCESS fnIsWow64Process;
+
+    fnIsWow64Process = (LPFN_ISWOW64PROCESS) GetProcAddress(
+        GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
+  
+    if (NULL != fnIsWow64Process)
+    {
+        if (!fnIsWow64Process(GetCurrentProcess(),&bIsWow64))
+        {
+            // handle error
+        }
+    }
+    return bIsWow64;
+}
+
 bool isX64Windows()
 {
 #if defined(_WIN64)
@@ -379,7 +400,7 @@ bool isX64Windows()
     // 32-bit programs run on both 32-bit and 64-bit Windows
     // so must sniff
     BOOL f64 = false;
-    return IsWow64Process(GetCurrentProcess(), &f64) && f64;
+    return IsWow64();
 #else
     return false; // Win64 does not support Win16
 #endif
