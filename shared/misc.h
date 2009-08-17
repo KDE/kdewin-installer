@@ -85,6 +85,6 @@ void qsleep(int ms);
 bool removeDirectory(const QString& aDir);
 
 /// check if system is 64 bit Windows
-bool isX64Windows()
+bool isX64Windows();
 
 #endif
