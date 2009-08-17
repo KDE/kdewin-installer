@@ -43,7 +43,7 @@ UserCompilerModePage::UserCompilerModePage() : InstallWizardPage(0)
     QButtonGroup *groupA = new QButtonGroup(this);
     groupA->addButton(ui.compilerMinGW4);
     groupA->addButton(ui.compilerMinGW);
-    groupA->addButton(ui.compilerMSVCX86);
+    groupA->addButton(ui.compilerMSVC);
     if (isX64Windows())
         groupA->addButton(ui.compilerMSVCX64);
 
@@ -83,7 +83,7 @@ bool UserCompilerModePage::validatePage()
         s.setCompilerType(Settings::MinGW);
     if (ui.compilerMinGW4->isChecked())
         s.setCompilerType(Settings::MinGW4);
-    if (ui.compilerMSVCX86->isChecked())
+    if (ui.compilerMSVC->isChecked())
         s.setCompilerType(Settings::MSVC);
     if (isX64Windows() && ui.compilerMSVCX64->isChecked())
         s.setCompilerType(Settings::MSVC_X64);

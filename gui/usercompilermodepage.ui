@@ -270,10 +270,17 @@ p, li { white-space: pre-wrap; }
          <item>
           <widget class="QRadioButton" name="compilerMSVC">
            <property name="text">
-            <string>MSVC</string>
+            <string>MSVC 32Bit</string>
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QRadioButton" name="compilerMSVCX64">
+           <property name="text">
+            <string>MSVC 64Bit</string>
+           </property>
+          </widget>
+        </item>
         </layout>
        </item>
        <item row="1" column="4">
