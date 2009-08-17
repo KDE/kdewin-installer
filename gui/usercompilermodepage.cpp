@@ -23,6 +23,7 @@
 ****************************************************************************/
 
 #include "database.h"
+#include "misc.h"
 #include "usercompilermodepage.h"
 
 #include <QDir>
@@ -35,11 +36,16 @@ UserCompilerModePage::UserCompilerModePage() : InstallWizardPage(0)
     setTitle(windowTitle());
     setSubTitle(statusTip());
 
+    if (!isX64Windows())
+        ui.compilerMSVCX64->setVisible(false);
+
     // logical grouping isn't available in the designer yet :-P
     QButtonGroup *groupA = new QButtonGroup(this);
     groupA->addButton(ui.compilerMinGW4);
     groupA->addButton(ui.compilerMinGW);
-    groupA->addButton(ui.compilerMSVC);
+    groupA->addButton(ui.compilerMSVCX86);
+    if (isX64Windows())
+        groupA->addButton(ui.compilerMSVCX64);
 
     QButtonGroup *groupB = new QButtonGroup(this);
     groupB->addButton(ui.installModeEndUser);
@@ -77,42 +83,39 @@ bool UserCompilerModePage::validatePage()
         s.setCompilerType(Settings::MinGW);
     if (ui.compilerMinGW4->isChecked())
         s.setCompilerType(Settings::MinGW4);
-    if (ui.compilerMSVC->isChecked())
+    if (ui.compilerMSVCX86->isChecked())
         s.setCompilerType(Settings::MSVC);
+    if (isX64Windows() && ui.compilerMSVCX64->isChecked())
+        s.setCompilerType(Settings::MSVC_X64);
     return true;
 }
 
 void UserCompilerModePage::setCompilerMode(bool EndUserMode)
 {
     Settings &s = Settings::instance();
-    if (EndUserMode)
+    switch (s.compilerType()) 
     {
-        ui.compilerMSVC->setChecked(true);        
+        case Settings::MinGW4: ui.compilerMinGW4->setChecked(true); break;
+        case Settings::MinGW: ui.compilerMinGW->setChecked(true); break;
+        case Settings::MSVC: ui.compilerMSVC->setChecked(true); break;
+        case Settings::MSVC_X64: ui.compilerMSVCX64->setChecked(true); break;
+        default: ui.compilerMSVC->setChecked(true); break;
+    }
+    if (Database::isAnyPackageInstalled(s.installDir()))
+    {
+        ui.compilerMinGW4->setEnabled(false);
+        ui.compilerMinGW->setEnabled(false);
+        ui.compilerMSVC->setEnabled(false);
+        ui.compilerMSVCX64->setEnabled(false);
+    }
+    else
+    {
         ui.compilerMinGW4->setEnabled(true);
         ui.compilerMinGW->setEnabled(true);
         ui.compilerMSVC->setEnabled(true);
-    }
-    else 
-    {
-        switch (s.compilerType()) 
-        {
-            case Settings::MinGW4: ui.compilerMinGW4->setChecked(true); break;
-            case Settings::MinGW: ui.compilerMinGW->setChecked(true); break;
-            case Settings::MSVC: ui.compilerMSVC->setChecked(true); break;
-            default: ui.compilerMinGW->setChecked(true); break;
-        }
-        if (Database::isAnyPackageInstalled(s.installDir()))
-        {
-            ui.compilerMinGW4->setEnabled(false);
-            ui.compilerMinGW->setEnabled(false);
-            ui.compilerMSVC->setEnabled(false);
-        }
-        else
-        {
-            ui.compilerMinGW4->setEnabled(true);
-            ui.compilerMinGW->setEnabled(true);
-            ui.compilerMSVC->setEnabled(true);
-        }
+        if (isX64Windows())
+            ui.compilerMSVCX64->setEnabled(true);
+        ui.compilerMSVC->setChecked(true);        
     }
 }
 
