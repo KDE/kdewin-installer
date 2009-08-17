@@ -23,6 +23,7 @@
 #define PACKAGE_H
 
 #include "hash.h"
+#include "misc.h"
 #include "settings.h"
 
 #include <QString>
@@ -321,6 +322,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(Package::Types);
 class PackageInfo {
    public: 
         QString name; 
+        QString architecture;
         Package::Type type;
         QString version; 
         /// separate package name and version from a string
@@ -355,6 +357,12 @@ class PackageInfo {
                 name.remove("-mingw4");
             if (name.endsWith("-mingw"))
                 name.remove("-mingw");
+            if (isX64Windows())
+                if (name.endsWith("-x64"))
+                    name.remove("-x64");
+            if (name.endsWith("-x86"))
+                name.remove("-x86");
+                    
             return name;
         }
 };
