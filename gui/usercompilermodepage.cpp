@@ -101,22 +101,12 @@ void UserCompilerModePage::setCompilerMode(bool EndUserMode)
         case Settings::MSVC_X64: ui.compilerMSVCX64->setChecked(true); break;
         default: ui.compilerMSVC->setChecked(true); break;
     }
-    if (Database::isAnyPackageInstalled(s.installDir()))
-    {
-        ui.compilerMinGW4->setEnabled(false);
-        ui.compilerMinGW->setEnabled(false);
-        ui.compilerMSVC->setEnabled(false);
-        ui.compilerMSVCX64->setEnabled(false);
-    }
-    else
-    {
-        ui.compilerMinGW4->setEnabled(true);
-        ui.compilerMinGW->setEnabled(true);
-        ui.compilerMSVC->setEnabled(true);
-        if (isX64Windows())
-            ui.compilerMSVCX64->setEnabled(true);
-        ui.compilerMSVC->setChecked(true);        
-    }
+    bool state = !Database::isAnyPackageInstalled(s.installDir());
+    ui.compilerMinGW4->setEnabled(state);
+    ui.compilerMinGW->setEnabled(state);
+    ui.compilerMSVC->setEnabled(state);
+    if (isX64Windows())
+    	ui.compilerMSVCX64->setEnabled(state);
 }
 
 void UserCompilerModePage::slotModeButtonClicked(int id)
