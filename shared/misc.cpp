@@ -399,7 +399,6 @@ bool isX64Windows()
 #elif defined(_WIN32)
     // 32-bit programs run on both 32-bit and 64-bit Windows
     // so must sniff
-    BOOL f64 = false;
     return IsWow64();
 #else
     return false; // Win64 does not support Win16

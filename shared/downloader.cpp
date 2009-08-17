@@ -43,7 +43,6 @@
 #include <QtCore/QFile>
 #include <QtCore/QTemporaryFile>
 #include <QtCore/QThread>
-#include <QtNetwork/QNetworkProxy>
 #include <QtCore/QCryptographicHash>
 
 MyThread::MyThread ( CURL *handle, QObject *parent )
