@@ -86,7 +86,6 @@ macro (pack_target _target)
     endif (PACK_EXECUTABLE)
 endmacro (pack_target)
 
-if (BUILD_WITH_SHA1_CHECKSUM)
 macro (create_checksum_file _target)
     if (SHA1SUM_EXECUTABLE)
         get_target_property( _filename ${_target} LOCATION )
@@ -102,20 +101,3 @@ macro (create_checksum_file _target)
         install(FILES ${_filename}.sha1 DESTINATION bin)
     endif (SHA1SUM_EXECUTABLE)
 endmacro (create_checksum_file _target)
-else (BUILD_WITH_SHA1_CHECKSUM)
-macro (create_checksum_file _target)
-    if (MD5SUM_EXECUTABLE)
-        get_target_property( _filename ${_target} LOCATION )
-        get_filename_component(_name ${_filename} NAME)
-        add_custom_command(
-            TARGET ${_target}
-            POST_BUILD
-            COMMAND ${MD5SUM_EXECUTABLE}
-            ARGS -o ${_name}.md5 ${_name}
-            WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
-            COMMENT "creating md5sum file for ${_target}"
-        )
-        install(FILES ${_filename}.md5 DESTINATION bin)
-    endif (MD5SUM_EXECUTABLE)
-endmacro (create_checksum_file _target)
-endif (BUILD_WITH_SHA1_CHECKSUM)
