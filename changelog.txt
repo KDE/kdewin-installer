@@ -1,5 +1,9 @@
 ChangeLog
 =========
+0.9.6-3 (1013123)
+-----------------
+- installer-gui: - added suppport for release independent installer update check  (Ralf Habacker)
+
 0.9.6-2 (1012690)
 -----------------
 - installer-gui: - fixed bug not disabling compiler type radio buttons when package are already installed (Ralf Habacker)
