@@ -1,5 +1,16 @@
 ChangeLog
 =========
+0.9.6-2 (1012690)
+-----------------
+- installer-gui: - fixed bug not disabling compiler type radio buttons when package are already installed (Ralf Habacker)
+                 - when uninstalling and no more packages are installed remove start menu entries too (Ralf Habacker)
+                 - unified initial setting of compiler type between end user and packager mode (Ralf Habacker)
+                 - initial support for 64 bit installations - need to be tested on a real 64 bit system (Ralf Habacker)
+
+0.9.6-1 (1009724)
+-----------------
+- installer-gui: - added mingw4 as additional compiler type (Patrick Spendrin)
+
 0.9.6-0 (1002035)
 -----------------
 - installer-gui: 
