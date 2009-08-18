@@ -28,6 +28,7 @@
 #include "installerenginegui.h"
 #include "downloader.h"
 #include "installwizard.h"
+#include "installerupdate.h"
 #include "misc.h"
 
 //#include "downloader.h"
@@ -468,6 +469,14 @@ bool isMarkedForRemoval ( Package *pkg,Package::Type type )
 InstallerEngineGui::InstallerEngineGui (QWidget *parent)
         : InstallerEngine ( parent ), m_parent(parent)
 {
+    InstallerUpdate &iu = InstallerUpdate::instance();
+    if (iu.isUpdateAvailable()) {
+        if (InstallerDialogs::instance().newInstallerAvailable())
+            if (iu.fetch())
+                iu.run();
+            else 
+                InstallerDialogs::instance().newInstallerDownloadError();
+    }
 }
 
 bool InstallerEngineGui::init()
@@ -475,17 +484,11 @@ bool InstallerEngineGui::init()
     m_displayMode = Settings::instance().isPackageManagerMode() ? Single : BinaryOnly;
 
     initGlobalConfig();
-    if (m_globalConfig->installerUpdate().isUpdateAvailable()) {
-        if (InstallerDialogs::instance().newInstallerAvailable())
-            if (m_globalConfig->installerUpdate().fetch())
-                m_globalConfig->installerUpdate().run();
-            else 
-                InstallerDialogs::instance().newInstallerDownloadError();
-    }
-    else if (isInstallerVersionOutdated())
+    
+    if (isInstallerVersionOutdated())
         InstallerDialogs::instance().installerOutdated();
-    return initPackages();
 
+    return initPackages();
     /// @TODO add updates to category cache
 }
 

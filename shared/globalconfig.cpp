@@ -203,9 +203,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 m_minimalInstallerVersion = cmdBA[1];
             else if (keyword == "newversion")
             {
-                m_installerUpdate.setNewVersion(cmd[1]);
-                m_installerUpdate.setCurrentVersion(VERSION_PATCH);
-                m_installerUpdate.setUrl(cmd[2]);
+                // deprecated
             }
             else if (keyword == "timestamp")
             {

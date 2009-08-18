@@ -34,14 +34,9 @@ class InstallerUpdate
         InstallerUpdate();
         ~InstallerUpdate();
 
-        /// set current installer version
-        void setCurrentVersion(const QString &version);
-        /// set new installer version
-        void setNewVersion(const QString &version);
-        /// set url for new update
-        void setUrl(const QUrl &url);
         /// check if the provided version is newer 
         bool isUpdateAvailable();
+        
         /// fetch new installer 
         bool fetch();
 
@@ -53,7 +48,15 @@ class InstallerUpdate
 
         /// return singleton instance
         static InstallerUpdate &instance();
+        
     protected:
+        /// set current installer version
+        void setCurrentVersion(const QString &version);
+        /// set new installer version
+        void setNewVersion(const QString &version);
+        /// set url for new update
+        void setUrl(const QUrl &url);
+
         QUrl m_url;
         QString m_newVersion;
         QString m_currentVersion;

@@ -21,6 +21,7 @@
 **
 ****************************************************************************/
 
+#include "config.h"
 #include "debug.h"
 #include "downloader.h"
 #include "downloaderprogress.h"
@@ -35,6 +36,9 @@
 #include <QFileInfo>
 
 #include <psapi.h>
+
+QUrl installerUpdateUrl("http://www.winkde.org/pub/kde/ports/win32/installer/");
+QByteArray installerName ="kdewin-installer-gui-";
 
 bool isProcessRunning(int pid)
 {
@@ -61,6 +65,7 @@ bool isProcessRunning(int pid)
 
 InstallerUpdate::InstallerUpdate()
 {
+    setCurrentVersion(VERSION_PATCH);
 }
 
 InstallerUpdate::~InstallerUpdate()
@@ -85,12 +90,42 @@ void InstallerUpdate::setNewVersion(const QString &version)
 
 bool InstallerUpdate::isUpdateAvailable()
 {
+    QByteArray data;
+    if (!Downloader::instance()->fetch(installerUpdateUrl,data))
+        return false;
+   
+    QByteArray tempVersion;
+    QByteArray tempName;
+    foreach(QByteArray line, data.split('\n')) {
+        if (!line.contains(installerName ) || line.contains(installerName + "latest"))
+            continue;
+        int a = line.indexOf("href=\"") + 6;
+        int b = line.indexOf("\">",a);
+        const QByteArray name = line.mid(a,b-a);
+        if (name.endsWith(".exe")) {
+            QByteArray version = name;
+            version.replace(installerName,"");
+            version.replace(".exe","");
+            // set highest version
+            if (tempVersion < version) 
+            {
+                tempVersion = version;
+                tempName =  name;
+            }
+        }
+    }
+    if (tempVersion > m_currentVersion)
+    {
+        setNewVersion(tempVersion);
+        setUrl(installerUpdateUrl.toString() + tempName);
+    }
+
     bool result = m_url.isValid() 
         && !m_newVersion.isEmpty()
         && !m_currentVersion.isEmpty() 
         && m_newVersion > m_currentVersion;
     if (result)
-        qDebug() << "update found" << "- old" << m_currentVersion << "new" << m_newVersion;
+        qDebug() << "update" << m_newVersion << "at" << m_url << "found";
     else
         qDebug() << "no update found";
     return result;
