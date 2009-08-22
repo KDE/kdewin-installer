@@ -32,9 +32,9 @@
 @categorypackages KDEUNSTABLE konversation-vc90 konversation-mingw konversation-mingw4 k3b-vc90 k3b-mingw k3b-mingw4 yakuake-vc90  yakuake-mingw  yakuake-mingw4
 @categorypackages qt qt-vc90 qt-mingw qt-mingw4 qt-static-vc90
 @categorypackages kde-l10n kde-l10n-af kde-l10n-ar kde-l10n-be kde-l10n-bg kde-l10n-bn kde-l10n-bn_IN kde-l10n-br kde-l10n-ca kde-l10n-cs kde-l10n-csb kde-l10n-cy kde-l10n-da kde-l10n-de kde-l10n-el kde-l10n-en_GB 
-@categorypackages kde-l10n kde-l10n-eo kde-l10n-es kde-l10n-et kde-l10n-eu kde-l10n-fa kde-l10n-fi kde-l10n-fr kde-l10n-fy kde-l10n-ga kde-l10n-gl kde-l10n-gu kde-l10n-ha kde-l10n-he kde-l10n-hi kde-l10n-hr kde-l10n-hsb 
-@categorypackages kde-l10n kde-l10n-hu kde-l10n-hy kde-l10n-is kde-l10n-it kde-l10n-ja kde-l10n-ka kde-l10n-kk kde-l10n-km kde-l10n-kn kde-l10n-ko kde-l10n-ku kde-l10n-lb kde-l10n-lt kde-l10n-lv kde-l10n-ml kde-l10n-mk 
-@categorypackages kde-l10n kde-l10n-ms kde-l10n-mt kde-l10n-nb kde-l10n-nds kde-l10n-ne kde-l10n-nl kde-l10n-nn kde-l10n-nso kde-l10n-oc kde-l10n-pa kde-l10n-pl kde-l10n-pt kde-l10n-pt_BR kde-l10n-ro kde-l10n-ru 
+@categorypackages kde-l10n kde-l10n-eo kde-l10n-es kde-l10n-et kde-l10n-eu kde-l10n-fa kde-l10n-fi kde-l10n-fr kde-l10n-fy kde-l10n-ga kde-l10n-gl kde-l10n-gu kde-l10n-ha kde-l10n-he kde-l10n-hi kde-l10n-hne kde-l10n-hr kde-l10n-hsb 
+@categorypackages kde-l10n kde-l10n-hu kde-l10n-hy kde-l10n-is kde-l10n-it kde-l10n-ja kde-l10n-ka kde-l10n-kk kde-l10n-km kde-l10n-kn kde-l10n-ko kde-l10n-ku kde-l10n-lb kde-l10n-lt kde-l10n-lv kde-l10n-mai kde-l10n-ml kde-l10n-mk 
+@categorypackages kde-l10n kde-l10n-mr kde-l10n-ms kde-l10n-mt kde-l10n-nb kde-l10n-nds kde-l10n-ne kde-l10n-nl kde-l10n-nn kde-l10n-nso kde-l10n-oc kde-l10n-pa kde-l10n-pl kde-l10n-pt kde-l10n-pt_BR kde-l10n-ro kde-l10n-ru 
 @categorypackages kde-l10n kde-l10n-rw kde-l10n-se kde-l10n-sk kde-l10n-sl kde-l10n-sr kde-l10n-sr@latin kde-l10n-sv kde-l10n-ta kde-l10n-te kde-l10n-tg kde-l10n-th kde-l10n-tr kde-l10n-uk kde-l10n-uz kde-l10n-vi 
 @categorypackages kde-l10n kde-l10n-wa kde-l10n-xh kde-l10n-x-test kde-l10n-zh_CN kde-l10n-zh_HK kde-l10n-zh_TW
 
@@ -595,6 +595,7 @@
 @pkgnotes kde-l10n-ha Hausa language package
 @pkgnotes kde-l10n-he Hebrew language package
 @pkgnotes kde-l10n-hi Hindi language package
+@pkgnotes kde-l10n-hne Chhattisgarhi language package
 @pkgnotes kde-l10n-hr Croatian language package
 @pkgnotes kde-l10n-hsb Upper Sorbian language package
 @pkgnotes kde-l10n-hu Hungarian language package
@@ -613,10 +614,12 @@
 @pkgnotes kde-l10n-lo Lao language package
 @pkgnotes kde-l10n-lt Lithuanian language package
 @pkgnotes kde-l10n-lv Latvian language package
+@pkgnotes kde-l10n-mai Maithili language package
 @pkgnotes kde-l10n-mi Maori language package
 @pkgnotes kde-l10n-ml Malayalam language package
 @pkgnotes kde-l10n-mk Macedonian language package
 @pkgnotes kde-l10n-mn Mongolian language package
+@pkgnotes kde-l10n-mr Marathi language package
 @pkgnotes kde-l10n-ms Malay language package
 @pkgnotes kde-l10n-mt Maltese language package
 @pkgnotes kde-l10n-ne Nepali language package
