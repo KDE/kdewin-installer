@@ -73,8 +73,7 @@ QStringList GlobalConfig::fetch(const QString &baseURL)
     else if (url.scheme() == "http" || url.scheme() == "ftp")
     {
         QFileInfo cfr(Settings::instance().downloadDir()+"/config-remote.txt");
-        if (Settings::hasDebug("GlobalConfig"))
-            qDebug() << "Check if a copy of the remote config file is available at" << cfr.absoluteFilePath() << (cfr.exists() ? "... found" : "... not found");
+        qDebug() << "Check if a copy of the remote config file is available at" << cfr.absoluteFilePath() << (cfr.exists() ? "... found" : "... not found");
         if (cfr.exists())
         {
             configFiles << cfr.absoluteFilePath();
@@ -83,8 +82,7 @@ QStringList GlobalConfig::fetch(const QString &baseURL)
         {
             QFileInfo cfi(Settings::instance().downloadDir()+"/config.txt");
             bool ret = Downloader::instance()->fetch(url,cfi.absoluteFilePath());
-            if (Settings::hasDebug("GlobalConfig"))
-                qDebug() << "download remote config file from" <<  url << "to" << cfi.absoluteFilePath() << "..." << (ret ? "okay" : "failure") ;
+            qDebug() << "download remote config file from" <<  url << "to" << cfi.absoluteFilePath() << "..." << (ret ? "okay" : "failure") ;
             if (ret)
                 configFiles << cfi.absoluteFilePath();
             else 
@@ -92,12 +90,13 @@ QStringList GlobalConfig::fetch(const QString &baseURL)
         }
 
         QFileInfo fi(Settings::instance().downloadDir()+"/config-local.txt");
-        if (Settings::hasDebug("GlobalConfig"))
-            qDebug() << "Check if a local config file is available at" << fi.absoluteFilePath() << (fi.exists() ? "... found" : "... not found");
+        qDebug() << "Check if a local config file is available at" << fi.absoluteFilePath() << (fi.exists() ? "... found" : "... not found");
         if (fi.exists())
             configFiles << fi.absoluteFilePath();
 
     }
+    qDebug() << "using config file(s)" << configFiles;
+    
     return configFiles;
 }
 
