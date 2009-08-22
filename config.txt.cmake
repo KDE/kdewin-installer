@@ -336,8 +336,6 @@
 @deps lskat-mingw libkdegames-mingw 
 @deps lskat-mingw4 libkdegames-mingw4 
 @deps lskat-vc90 libkdegames-vc90 
-
-
 ; compiler independent
 @pkgnotes aspell A powerful spell checker, designed to replace ispell
 @pkgnotes aspell-af Afrikaans spelling package
@@ -476,12 +474,24 @@
 @pkgnotes akonadi-* KDE4 Personal Information Manager framework
 @pkgnotes amarok-* media player
 @pkgnotes automoc-* build system application
+@pkgnotes bovo-* Bovo is a "Five in a row" game for two players
+@pkgnotes bomber-* Bomber is a single player arcade game
 @pkgnotes digikam-* UNSTABLE a photo management application
 @pkgnotes exiv2-* an image metadata library
 @pkgnotes fontconfig-* library for font customization and configuration
 @pkgnotes freetype-* A Free, High-Quality, and Portable Font Engine
 @pkgnotes gpgme-qt-* Qt wrapper for gpgme library
 @pkgnotes k3b-* the KDE CD/DVD burning application
+@pkgnotes kapman-* kapman is a pack man clone
+@pkgnotes kate-* 
+@pkgnotes katomic-* 
+@pkgnotes kbattleship-*
+@pkgnotes kblackbox-*
+@pkgnotes kblocks-*
+@pkgnotes kbounce-*
+@pkgnotes kbreakout-*
+@pkgnotes kbugbuster-*
+@pkgnotes kcolorchooser-*
 @pkgnotes kdebase-apps-* KDE base applicaton package 
 @pkgnotes kdebase-runtime-* KDE runtime package 
 @pkgnotes kdebase-workspace-* parts of the KDE desktop package
@@ -500,13 +510,40 @@
 @pkgnotes kdevplatform-* UNSTABLE KDevelop reusable libraries
 @pkgnotes kdewebdev-* KDE Web Development applications
 @pkgnotes kdewin-* kde supplementary package for win32
-@pkgnotes kde-additional-* Cursors and Platform KCM Module
+@pkgnotes kde-additional Oxygen Cursors
+@pkgnotes kdiamond-*
+@pkgnotes kfourinline-*
+@pkgnotes kgoldrunner-*
 @pkgnotes kile-* UNSTABLE latex editor
+@pkgnotes killbots-*
 @pkgnotes kipi-plugins-* UNSTABLE plugins for graphics applications
+@pkgnotes kiriki-*
+@pkgnotes kjumpingcube-*
+@pkgnotes klines-*
+@pkgnotes kmahjongg-*
+@pkgnotes kmines-*
+@pkgnotes knetwalk-*
 @pkgnotes koffice-* UNSTABLE KDE Office application suite
+@pkgnotes kolf-*
+@pkgnotes kollision-*
+@pkgnotes kompare-*
+@pkgnotes konquest-*
 @pkgnotes konversation-* UNSTABLE KDE irc client
+@pkgnotes kpat-*
+@pkgnotes kreversi-*
+@pkgnotes ksame-*
+@pkgnotes kshisen-*
+@pkgnotes ksirk-*
+@pkgnotes kspaceduel-*
+@pkgnotes ksquares-*
+@pkgnotes ksudoku-*
 @pkgnotes ktorrent-* UNSTABLE KDE Torrent client
+@pkgnotes ktuberling-*
+@pkgnotes kubrick-*
 @pkgnotes libgmp devel-tools GNU MP library for abritary precision arithmetic
+@pkgnotes lokalize-*
+@pkgnotes lskat-*
+@pkgnotes okular-*
 @pkgnotes openbabel-* program to convert the various file formats used in chemical software
 @pkgnotes phonon-* KDE KDE4 multimedia API
 @pkgnotes poppler-data font data for poppler library
@@ -520,6 +557,7 @@
 @pkgnotes strigi-* desktop search engine
 @pkgnotes subversion-* software revision system
 @pkgnotes taglib-* audio meda-data library
+@pkgnotes umbrello-* an UML modeling tool for KDE
 ; language packages
 @pkgnotes kde-l10n-af Afrikaans language package
 @pkgnotes kde-l10n-ar Arabic language package
@@ -616,6 +654,8 @@
 @pkgnotes kde-l10n-zh_HK Chinese (Hong Kong) language package
 @pkgnotes kde-l10n-zh_TW Chinese Traditional language package
 @pkgnotes kde-l10n-zu Zulu language package
+
+@pkghomeurl http://games.kde.org/game.php?game=katomic
 
 ;======================================================
 ; external packages
