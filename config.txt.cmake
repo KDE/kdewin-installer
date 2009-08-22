@@ -543,11 +543,11 @@
 @pkgnotes kubrick-*
 @pkgnotes libgmp devel-tools GNU MP library for abritary precision arithmetic
 @pkgnotes libkdegraphics-* basic libraries for KDE graphics packages
-@pkgnotes lokalize-*
+@pkgnotes lokalize-* a computer-aided translation system that focuses on productivity and performance
 @pkgnotes lskat-*
-@pkgnotes okular-*
+@pkgnotes okular-* KDE document viewer
 @pkgnotes openbabel-* program to convert the various file formats used in chemical software
-@pkgnotes oxygen-icons-* icons and bitmaps for the oxygen style
+@pkgnotes oxygen-icons icons and bitmaps for the oxygen style
 @pkgnotes phonon-* KDE KDE4 multimedia API
 @pkgnotes poppler-data font data for poppler library
 @pkgnotes poppler-* PDF rendering library based on xpdf-3.0
@@ -657,8 +657,9 @@
 @pkgnotes kde-l10n-zh_HK Chinese (Hong Kong) language package
 @pkgnotes kde-l10n-zh_TW Chinese Traditional language package
 @pkgnotes kde-l10n-zu Zulu language package
-
-@pkghomeurl http://games.kde.org/game.php?game=katomic
+; experimental
+@pkghomeurl bovo http://games.kde.org/game.php?game=bovo
+@pkghomeurl katomic http://games.kde.org/game.php?game=katomic
 
 ;======================================================
 ; external packages
