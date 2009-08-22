@@ -470,8 +470,11 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     cmd.removeFirst();
                     if (pkg.contains("-*")) 
                     {
-                        site->setPackageNote(pkg.replace("*","msvc"),cmd.join(" "));
-                        site->setPackageNote(pkg.replace("*","mingw"),cmd.join(" "));
+                        pkg.replace("-*","-%1");
+                        site->setPackageNote(pkg.arg("msvc"),cmd.join(" "));
+                        site->setPackageNote(pkg.arg("mingw"),cmd.join(" "));
+                        site->setPackageNote(pkg.arg("vc90"),cmd.join(" "));
+                        site->setPackageNote(pkg.arg("mingw4"),cmd.join(" "));
                     }
                     else
                         site->setPackageNote(pkg,cmd.join(" "));
