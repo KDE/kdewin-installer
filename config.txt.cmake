@@ -500,6 +500,7 @@
 @pkgnotes kdegraphics-* Graphics applications (including Okular)
 @pkgnotes kdelibs-* KDE libraries (support applications)
 @pkgnotes kdepim-* UNSTABLE KDE Personal Informations Suite
+@pkgnotes kdepim-runtime-* UNSTABLE KDE Pim basic libraries
 @pkgnotes kdepimlibs-* UNSTABLE KDE PIM libraries
 @pkgnotes kdemultimedia-* KDE multimedia applications (jux, kmix, kmixctrl, kscd)
 @pkgnotes kdenetwork-* KDE Networking applications
@@ -541,10 +542,12 @@
 @pkgnotes ktuberling-*
 @pkgnotes kubrick-*
 @pkgnotes libgmp devel-tools GNU MP library for abritary precision arithmetic
+@pkgnotes libkdegraphics-* basic libraries for KDE graphics packages
 @pkgnotes lokalize-*
 @pkgnotes lskat-*
 @pkgnotes okular-*
 @pkgnotes openbabel-* program to convert the various file formats used in chemical software
+@pkgnotes oxygen-icons-* icons and bitmaps for the oxygen style
 @pkgnotes phonon-* KDE KDE4 multimedia API
 @pkgnotes poppler-data font data for poppler library
 @pkgnotes poppler-* PDF rendering library based on xpdf-3.0
