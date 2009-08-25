@@ -198,6 +198,11 @@ void InstallerEngineGui::setEndUserInitialState ( QTreeWidgetItem &item, Package
     }
 }
 
+bool InstallerEngineGui::isPackageSelected ( Package *available, Package::Type type )
+{
+    return packageStates.getState(available,type) == _Install;
+}
+
 
 void InstallerEngineGui::setInitialState ( QTreeWidgetItem &item, Package *available, Package *installed, int column )
 {

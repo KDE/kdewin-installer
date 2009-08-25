@@ -45,6 +45,7 @@ public:
 protected:
     void setWidgetData();
     void setPackageDisplayType(PackageDisplayType type);
+    void preSelectPackages(const QString &package);
 
 protected slots:
     void itemClicked(QTreeWidgetItem *item, int column);

@@ -194,9 +194,42 @@ void EndUserPackageSelectorPage::initializePage()
     }
 }
 
+void EndUserPackageSelectorPage::preSelectPackages(const QString &package)
+{
+    QTreeWidget *tree = ui.packageList;
+    QString systemCode = QLocale::system().name();
+    QStringList b = systemCode.split('_');
+    QString languageCode = b[0];
+    QStringList searchCodes = QStringList() << systemCode << languageCode;
+    QString pattern = package + "-%1";
+  
+    bool found = false;
+    foreach(QString code, searchCodes)
+    {
+        QList<QTreeWidgetItem *> list = tree->findItems (QString(pattern).arg(code), Qt::MatchContains, 1 );
+        foreach(QTreeWidgetItem *item, list)
+        {
+            QString name = item->data(0, Qt::StatusTipRole).toString();
+            QString availableVersion = item->text ( 2 );
+            Package *availablePackage = engine->getPackageByName ( name,availableVersion  );
+            if (!engine->isPackageSelected(availablePackage,Package::BIN))
+            {
+                QString installedVersion = item->text ( 3 );
+                Package *installedPackage = engine->database()->getPackage( name,installedVersion.toAscii() );
+                engine->setNextState(*item, availablePackage, installedPackage, Package::BIN, 0 );
+                qDebug() << "found" << QString(pattern).arg(code);
+            }   
+            found = true;
+        }
+        if (found)
+            break;
+    }
+}
+
 void EndUserPackageSelectorPage::setPackageDisplayType(PackageDisplayType type)
 {
     m_displayType = type;
+    setWidgetData();
     if (type == Application) 
     {
         ui.applicationPackageButton->setEnabled(false);
@@ -210,6 +243,8 @@ void EndUserPackageSelectorPage::setPackageDisplayType(PackageDisplayType type)
         ui.languagePackageButton->setEnabled(false);
         ui.spellingPackageButton->setEnabled(true);
         ui.selectAllCheckBox->setEnabled(false);
+        if (!Database::isAnyPackageInstalled(Settings::instance().installDir())) 
+            preSelectPackages("kde-l10n");
     }
     else if (type == Spelling) 
     {
@@ -217,8 +252,9 @@ void EndUserPackageSelectorPage::setPackageDisplayType(PackageDisplayType type)
         ui.languagePackageButton->setEnabled(true);
         ui.spellingPackageButton->setEnabled(false);
         ui.selectAllCheckBox->setEnabled(false);
+        if (!Database::isAnyPackageInstalled(Settings::instance().installDir())) 
+            preSelectPackages("aspell");
     }
-    setWidgetData();
 }
 
 void EndUserPackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
