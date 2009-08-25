@@ -126,11 +126,18 @@ void EndUserPackageSelectorPage::setWidgetData()
     
     Q_FOREACH(Package *availablePackage,packageList)
     {
-        if (m_displayType == Language && !availablePackage->name().contains("kde-l10n"))
+        QString name = availablePackage->name();
+        if (m_displayType == Language && !name.contains("kde-l10n"))
             continue;
-        else if (m_displayType == Spelling && !availablePackage->name().contains("aspell"))
+        else if (m_displayType == Spelling && !name.contains("aspell"))
             continue;
-        else if (m_displayType == Application && (availablePackage->name().contains("aspell") || availablePackage->name().contains("kde-l10n")))
+        else if (m_displayType == Application 
+                && ( name.contains("aspell") 
+                    || name.contains("kde-l10n") 
+                    || name.contains("lib") 
+                    || name.contains("runtime")
+                    ) 
+                )
             continue;
             
         QStringList data;
