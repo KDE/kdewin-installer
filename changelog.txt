@@ -1,10 +1,11 @@
 ChangeLog
 =========
-0.9.6-4 (1015565)
+0.9.6-4 (1015570)
 -----------------
 - installer-gui: - splitted packages in end user package list into an application, a language 
                    package and a spelling view (Ralf Habacker)
                  - excluded lib and runtime packages from application list in end user package list (Ralf Habacker)
+                 - limited select all checkbox in end user package list to applications (Ralf Habacker)
 
 0.9.6-3 (1013123)
 -----------------
