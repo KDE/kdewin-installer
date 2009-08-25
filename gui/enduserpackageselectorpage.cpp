@@ -148,7 +148,7 @@ void EndUserPackageSelectorPage::setWidgetData()
 
         if (installedPackage && availableVersion == installedVersion)
             continue;
-        data 
+        data    
             << ""
             << PackageInfo::baseName(availablePackage->name())
             << (availableVersion != installedVersion ? availableVersion.toString() : "")
@@ -202,18 +202,21 @@ void EndUserPackageSelectorPage::setPackageDisplayType(PackageDisplayType type)
         ui.applicationPackageButton->setEnabled(false);
         ui.languagePackageButton->setEnabled(true);
         ui.spellingPackageButton->setEnabled(true);
+        ui.selectAllCheckBox->setEnabled(true);
     }
     else if (type == Language) 
     {
         ui.applicationPackageButton->setEnabled(true);
         ui.languagePackageButton->setEnabled(false);
         ui.spellingPackageButton->setEnabled(true);
+        ui.selectAllCheckBox->setEnabled(false);
     }
     else if (type == Spelling) 
     {
         ui.applicationPackageButton->setEnabled(true);
         ui.languagePackageButton->setEnabled(true);
         ui.spellingPackageButton->setEnabled(false);
+        ui.selectAllCheckBox->setEnabled(false);
     }
     setWidgetData();
 }

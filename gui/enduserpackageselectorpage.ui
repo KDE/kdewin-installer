@@ -79,7 +79,7 @@
      <item>
       <widget class="QCheckBox" name="selectAllCheckBox">
        <property name="text">
-        <string>Select/Unselect All (spelling and localization packages are excluded and have to be selected manually)</string>
+        <string>Select/Unselect All               </string>
        </property>
       </widget>
      </item>
