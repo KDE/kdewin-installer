@@ -126,6 +126,13 @@ void EndUserPackageSelectorPage::setWidgetData()
     
     Q_FOREACH(Package *availablePackage,packageList)
     {
+        if (m_displayType == Language && !availablePackage->name().contains("kde-l10n"))
+            continue;
+        else if (m_displayType == Spelling && !availablePackage->name().contains("aspell"))
+            continue;
+        else if (m_displayType == Application && (availablePackage->name().contains("aspell") || availablePackage->name().contains("kde-l10n")))
+            continue;
+            
         QStringList data;
         Package *installedPackage = engine->database()->getPackage(availablePackage->name());
         Package::PackageVersion installedVersion = installedPackage ? installedPackage->installedVersion() : Package::PackageVersion();
@@ -166,17 +173,42 @@ void EndUserPackageSelectorPage::initializePage()
     connect(ui.packageList,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
     connect(ui.selectAllCheckBox,SIGNAL(clicked()),this,SLOT(selectAllClicked()));
 
-	// deprecated
-    connect(&Settings::instance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
-    connect(&Settings::instance(),SIGNAL(compilerTypeChanged()),this,SLOT(slotCompilerTypeChanged()));
+    connect(ui.applicationPackageButton,SIGNAL(clicked()),this,SLOT(slotApplicationPackageButton()));
+    connect(ui.languagePackageButton,SIGNAL(clicked()),this,SLOT(slotLanguagePackageButton()));
+    connect(ui.spellingPackageButton,SIGNAL(clicked()),this,SLOT(slotSpellingPackageButton()));
+
     connect(ui.filterEdit,SIGNAL(textChanged(const QString &)),this,SLOT(slotFilterTextChanged(const QString &)));
 
     activeCategories = engine->globalConfig()->endUserCategories().size() > 0 ? engine->globalConfig()->endUserCategories() : QStringList() << "KDE";
-    setWidgetData();
+    setPackageDisplayType(Application);
     // @TODO remove
     if (ui.packageList->topLevelItemCount() == 0) {
         // no items skip page
     }
+}
+
+void EndUserPackageSelectorPage::setPackageDisplayType(PackageDisplayType type)
+{
+    m_displayType = type;
+    if (type == Application) 
+    {
+        ui.applicationPackageButton->setEnabled(false);
+        ui.languagePackageButton->setEnabled(true);
+        ui.spellingPackageButton->setEnabled(true);
+    }
+    else if (type == Language) 
+    {
+        ui.applicationPackageButton->setEnabled(true);
+        ui.languagePackageButton->setEnabled(false);
+        ui.spellingPackageButton->setEnabled(true);
+    }
+    else if (type == Spelling) 
+    {
+        ui.applicationPackageButton->setEnabled(true);
+        ui.languagePackageButton->setEnabled(true);
+        ui.spellingPackageButton->setEnabled(false);
+    }
+    setWidgetData();
 }
 
 void EndUserPackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
@@ -213,16 +245,19 @@ void EndUserPackageSelectorPage::selectAllClicked()
     }
 }
 
-void EndUserPackageSelectorPage::installDirChanged(const QString &dir)
+void EndUserPackageSelectorPage::slotApplicationPackageButton()
 {
-    engine->reload();
-    activeCategories = engine->globalConfig()->endUserCategories().size() > 0 ? engine->globalConfig()->endUserCategories() : QStringList() << "KDE";
-    setWidgetData();
+    setPackageDisplayType(Application);
 }
 
-void EndUserPackageSelectorPage::slotCompilerTypeChanged()
+void EndUserPackageSelectorPage::slotLanguagePackageButton()
 {
-    setWidgetData();
+    setPackageDisplayType(Language);
+}
+
+void EndUserPackageSelectorPage::slotSpellingPackageButton()
+{
+    setPackageDisplayType(Spelling);
 }
 
 void EndUserPackageSelectorPage::slotFilterTextChanged(const QString &text)
@@ -260,9 +295,11 @@ void EndUserPackageSelectorPage::cleanupPage()
     disconnect(ui.packageList,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
     disconnect(ui.selectAllCheckBox,SIGNAL(clicked()),this,SLOT(selectAllClicked()));
 
-    disconnect(&Settings::instance(),SIGNAL(installDirChanged(const QString &)),this,SLOT(installDirChanged(const QString &)));
-    disconnect(&Settings::instance(),SIGNAL(compilerTypeChanged()),this,SLOT(slotCompilerTypeChanged()));
     disconnect(ui.filterEdit,SIGNAL(textChanged(const QString &)),this,SLOT(slotFilterTextChanged(const QString &)));
+
+    disconnect(ui.applicationPackageButton,SIGNAL(clicked()),this,SLOT(slotApplicationPackageButton()));
+    disconnect(ui.languagePackageButton,SIGNAL(clicked()),this,SLOT(slotLanguagePackageButton()));
+    disconnect(ui.spellingPackageButton,SIGNAL(clicked()),this,SLOT(slotSpellingPackageButton()));
 
     engine->unselectAllPackages();
 }

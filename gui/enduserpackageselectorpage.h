@@ -34,6 +34,7 @@ class EndUserPackageSelectorPage : public InstallWizardPage
     Q_OBJECT
 
 public:
+    typedef enum { Application, Language, Spelling } PackageDisplayType;
     EndUserPackageSelectorPage();
 
     void initializePage();
@@ -43,19 +44,21 @@ public:
 
 protected:
     void setWidgetData();
+    void setPackageDisplayType(PackageDisplayType type);
 
-public slots:
+protected slots:
     void itemClicked(QTreeWidgetItem *item, int column);
     void selectAllClicked();
     
-   	// deprecated
-	void installDirChanged(const QString &dir);
-    void slotCompilerTypeChanged(void);
+    void slotApplicationPackageButton();
+    void slotLanguagePackageButton();
+    void slotSpellingPackageButton();
     void slotFilterTextChanged(const QString &text);
 
 private:
     Ui::EndUserPackageSelectorPage ui;
     QStringList activeCategories;
+    PackageDisplayType m_displayType;
 };
 
 #endif
