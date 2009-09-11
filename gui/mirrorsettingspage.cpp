@@ -49,6 +49,8 @@ Mirrors::Config winkde_org_mirrorConfigOld(
 #define fallBackConfig winkde_org_mirrorConfigOld
 
 
+QString fallBackHost = "www.winkde.org";
+
 MirrorSettingsPage::MirrorSettingsPage() : InstallWizardPage(0)
 {
     ui.setupUi(this);
@@ -90,6 +92,13 @@ void MirrorSettingsPage::initializePage()
         qDebug() << m.toString();
         QListWidgetItem *item = new QListWidgetItem(m.toString());
         item->setData(Qt::UserRole, m.url);
+        if (m.url.host() == fallBackHost) 
+        {
+            QFont font = item->font();
+            font.setBold(true);
+            item->setFont(font);
+            qDebug() << "identified fall back host" << m.url.host();
+        }
         ui.downloadMirror->addItem(item);
         if (!currentMirror.isEmpty() && m.url == currentMirror)
             mirrorIndex = ui.downloadMirror->count()-1;
