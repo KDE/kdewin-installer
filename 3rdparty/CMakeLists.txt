@@ -82,6 +82,7 @@ set(curl_SOURCES
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/mprintf.c
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/multi.c
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/netrc.c
+    ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/nonblock.c
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/nss.c
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/parsedate.c
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/progress.c
@@ -91,6 +92,7 @@ set(curl_SOURCES
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/select.c
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/sendf.c
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/share.c
+    ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/slist.c
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/socks.c
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/speedcheck.c
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/lib/splay.c
