@@ -5,7 +5,7 @@
  *                | (__| |_| |  _ <| |___
  *                 \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: ldap.c,v 1.95 2008-12-19 21:14:52 bagder Exp $
+ * $Id: ldap.c,v 1.98 2009-04-21 11:46:17 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -30,9 +30,6 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <ctype.h>
-#ifdef NEED_MALLOC_H
-#include <malloc.h>
-#endif
 #include <errno.h>
 
 #ifdef CURL_LDAP_HYBRID         /* If W$ definitions are needed. */
@@ -46,7 +43,7 @@
 #ifdef CURL_LDAP_WIN            /* Use W$ LDAP implementation. */
 # include <winldap.h>
 # ifndef LDAP_VENDOR_NAME
-#  error Your Platform SDK is NOT sufficient for LDAP support! Update your Platform SDK, or disable LDAP LDAP support!
+#  error Your Platform SDK is NOT sufficient for LDAP support! Update your Platform SDK, or disable LDAP support!
 # else
 #  include <winber.h>
 # endif
@@ -73,7 +70,7 @@
 #include "strequal.h"
 #include "strtok.h"
 #include "curl_ldap.h"
-#include "memory.h"
+#include "curl_memory.h"
 #include "curl_base64.h"
 #include "rawstr.h"
 

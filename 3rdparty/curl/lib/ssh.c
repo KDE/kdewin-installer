@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: ssh.c,v 1.127 2008-12-28 05:49:39 gknauf Exp $
+ * $Id: ssh.c,v 1.136 2009-07-23 02:15:00 gknauf Exp $
  ***************************************************************************/
 
 /* #define CURL_LIBSSH2_DEBUG */
@@ -31,7 +31,9 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <ctype.h>
-#include <limits.h>
+#ifdef HAVE_LIMITS_H
+#  include <limits.h>
+#endif
 
 #include <libssh2.h>
 #include <libssh2_sftp.h>
@@ -104,7 +106,7 @@
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
 
-#include "memory.h"
+#include "curl_memory.h"
 /* The last #include file should be: */
 #include "memdebug.h"
 
@@ -299,11 +301,12 @@ static LIBSSH2_FREE_FUNC(libssh2_free)
 /* This is the ONLY way to change SSH state! */
 static void state(struct connectdata *conn, sshstate nowstate)
 {
-#if defined(CURLDEBUG) && !defined(CURL_DISABLE_VERBOSE_STRINGS)
+#if defined(DEBUGBUILD) && !defined(CURL_DISABLE_VERBOSE_STRINGS)
   /* for debug purposes */
   static const char * const names[] = {
     "SSH_STOP",
     "SSH_S_STARTUP",
+    "SSH_HOSTKEY",
     "SSH_AUTHLIST",
     "SSH_AUTH_PKEY_INIT",
     "SSH_AUTH_PKEY",
@@ -356,7 +359,7 @@ static void state(struct connectdata *conn, sshstate nowstate)
 #endif
   struct ssh_conn *sshc = &conn->proto.sshc;
 
-#if defined(CURLDEBUG) && !defined(CURL_DISABLE_VERBOSE_STRINGS)
+#if defined(DEBUGBUILD) && !defined(CURL_DISABLE_VERBOSE_STRINGS)
   if(sshc->state != nowstate) {
     infof(conn->data, "SFTP %p state change from %s to %s\n",
           sshc, names[sshc->state], names[nowstate]);
@@ -431,6 +434,23 @@ static CURLcode ssh_getworkingpath(struct connectdata *conn,
   return CURLE_OK;
 }
 
+#ifdef HAVE_LIBSSH2_KNOWNHOST_API
+static int sshkeycallback(CURL *easy,
+                          const struct curl_khkey *knownkey, /* known */
+                          const struct curl_khkey *foundkey, /* found */
+                          enum curl_khmatch match,
+                          void *clientp)
+{
+  (void)easy;
+  (void)knownkey;
+  (void)foundkey;
+  (void)clientp;
+
+  /* we only allow perfect matches, and we reject everything else */
+  return (match != CURLKHMATCH_OK)?CURLKHSTAT_REJECT:CURLKHSTAT_FINE;
+}
+#endif
+
 /*
  * Earlier libssh2 versions didn't have the ability to seek to 64bit positions
  * with 32bit size_t.
@@ -461,6 +481,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn, bool *block)
   const char *host_public_key_md5;
   int rc = LIBSSH2_ERROR_NONE, i;
   int err;
+  int seekerr = CURL_SEEKFUNC_OK;
   *block = 0; /* we're not blocking by default */
 
   switch(sshc->state) {
@@ -480,8 +501,14 @@ static CURLcode ssh_statemach_act(struct connectdata *conn, bool *block)
       break;
     }
 
-    /* Set libssh2 to non-blocking, since cURL is all non-blocking */
+    /* Set libssh2 to non-blocking, since everything internally is
+       non-blocking */
     libssh2_session_set_blocking(sshc->ssh_session, 0);
+
+    state(conn, SSH_HOSTKEY);
+
+    /* fall-through */
+  case SSH_HOSTKEY:
 
 #ifdef CURL_LIBSSH2_DEBUG
     /*
@@ -524,12 +551,121 @@ static CURLcode ssh_statemach_act(struct connectdata *conn, bool *block)
       }
     }
 
+#ifdef HAVE_LIBSSH2_KNOWNHOST_API
+    if(data->set.str[STRING_SSH_KNOWNHOSTS]) {
+      /* we're asked to verify the host against a file */
+      int keytype;
+      size_t keylen;
+      const char *remotekey = libssh2_session_hostkey(sshc->ssh_session,
+                                                      &keylen, &keytype);
+      int keycheck;
+      int keybit;
+
+      if(remotekey) {
+        /*
+         * A subject to figure out is what host name we need to pass in here.
+         * What host name does OpenSSH store in its file if an IDN name is
+         * used?
+         */
+        struct libssh2_knownhost *host;
+        enum curl_khmatch keymatch;
+        curl_sshkeycallback func =
+          data->set.ssh_keyfunc?data->set.ssh_keyfunc:sshkeycallback;
+        struct curl_khkey knownkey;
+        struct curl_khkey *knownkeyp = NULL;
+        struct curl_khkey foundkey;
+
+        keybit = (keytype == LIBSSH2_HOSTKEY_TYPE_RSA)?
+          LIBSSH2_KNOWNHOST_KEY_SSHRSA:LIBSSH2_KNOWNHOST_KEY_SSHDSS;
+
+        keycheck = libssh2_knownhost_check(sshc->kh,
+                                           conn->host.name,
+                                           remotekey, keylen,
+                                           LIBSSH2_KNOWNHOST_TYPE_PLAIN|
+                                           LIBSSH2_KNOWNHOST_KEYENC_RAW|
+                                           keybit,
+                                           &host);
+
+        infof(data, "SSH host check: %d, key: %s\n", keycheck,
+              (keycheck <= LIBSSH2_KNOWNHOST_CHECK_MISMATCH)?
+              host->key:"<none>");
+
+        /* setup 'knownkey' */
+        if(keycheck <= LIBSSH2_KNOWNHOST_CHECK_MISMATCH) {
+          knownkey.key = host->key;
+          knownkey.len = 0;
+          knownkey.keytype = (keytype == LIBSSH2_HOSTKEY_TYPE_RSA)?
+            CURLKHTYPE_RSA : CURLKHTYPE_DSS;
+          knownkeyp = &knownkey;
+        }
+
+        /* setup 'foundkey' */
+        foundkey.key = remotekey;
+        foundkey.len = keylen;
+        foundkey.keytype = (keytype == LIBSSH2_HOSTKEY_TYPE_RSA)?
+          CURLKHTYPE_RSA : CURLKHTYPE_DSS;
+
+        /*
+         * if any of the LIBSSH2_KNOWNHOST_CHECK_* defines and the
+         * curl_khmatch enum are ever modified, we need to introduce a
+         * translation table here!
+         */
+        keymatch = (enum curl_khmatch)keycheck;
+
+        /* Ask the callback how to behave */
+        rc = func(data, knownkeyp, /* from the knownhosts file */
+                  &foundkey, /* from the remote host */
+                  keymatch, data->set.ssh_keyfunc_userp);
+      }
+      else
+        /* no remotekey means failure! */
+        rc = CURLKHSTAT_REJECT;
+
+      switch(rc) {
+      default: /* unknown return codes will equal reject */
+      case CURLKHSTAT_REJECT:
+        state(conn, SSH_SESSION_FREE);
+      case CURLKHSTAT_DEFER:
+        /* DEFER means bail out but keep the SSH_HOSTKEY state */
+        result = sshc->actualcode = CURLE_PEER_FAILED_VERIFICATION;
+        break;
+      case CURLKHSTAT_FINE:
+      case CURLKHSTAT_FINE_ADD_TO_FILE:
+        /* proceed */
+        if(keycheck != LIBSSH2_KNOWNHOST_CHECK_MATCH) {
+          /* the found host+key didn't match but has been told to be fine
+             anyway so we add it in memory */
+          int addrc = libssh2_knownhost_add(sshc->kh,
+                                            conn->host.name, NULL,
+                                            remotekey, keylen,
+                                            LIBSSH2_KNOWNHOST_TYPE_PLAIN|
+                                            LIBSSH2_KNOWNHOST_KEYENC_RAW|
+                                            keybit, NULL);
+          if(addrc)
+            infof(data, "Warning adding the known host %s failed!\n",
+                  conn->host.name);
+          else if(rc == CURLKHSTAT_FINE_ADD_TO_FILE) {
+            /* now we write the entire in-memory list of known hosts to the
+               known_hosts file */
+            int wrc =
+              libssh2_knownhost_writefile(sshc->kh,
+                                          data->set.str[STRING_SSH_KNOWNHOSTS],
+                                          LIBSSH2_KNOWNHOST_FILE_OPENSSH);
+            if(wrc) {
+              infof(data, "Warning, writing %s failed!\n",
+                    data->set.str[STRING_SSH_KNOWNHOSTS]);
+            }
+          }
+        }
+        break;
+      }
+    }
+#endif /* HAVE_LIBSSH2_KNOWNHOST_API */
+
     state(conn, SSH_AUTHLIST);
     break;
 
   case SSH_AUTHLIST:
-    /* TBD - methods to check the host keys need to be done */
-
     /*
      * Figure out authentication methods
      * NB: As soon as we have provided a username to an openssh server we
@@ -1313,37 +1449,41 @@ static CURLcode ssh_statemach_act(struct connectdata *conn, bool *block)
     if(data->state.resume_from > 0) {
       /* Let's read off the proper amount of bytes from the input. */
       if(conn->seek_func) {
-        curl_off_t readthisamountnow = data->state.resume_from;
+        seekerr = conn->seek_func(conn->seek_client, data->state.resume_from,
+                                  SEEK_SET);
+      }
 
-        if(conn->seek_func(conn->seek_client,
-                           readthisamountnow, SEEK_SET) != 0) {
+      if(seekerr != CURL_SEEKFUNC_OK){
+
+        if(seekerr != CURL_SEEKFUNC_CANTSEEK) {
           failf(data, "Could not seek stream");
           return CURLE_FTP_COULDNT_USE_REST;
         }
-      }
-      else {
-        curl_off_t passed=0;
-        curl_off_t readthisamountnow;
-        curl_off_t actuallyread;
-        do {
-          readthisamountnow = (data->state.resume_from - passed);
+        /* seekerr == CURL_SEEKFUNC_CANTSEEK (can't seek to offset) */
+        else {
+          curl_off_t passed=0;
+          curl_off_t readthisamountnow;
+          curl_off_t actuallyread;
+          do {
+            readthisamountnow = (data->state.resume_from - passed);
 
-          if(readthisamountnow > BUFSIZE)
-            readthisamountnow = BUFSIZE;
+            if(readthisamountnow > BUFSIZE)
+              readthisamountnow = BUFSIZE;
 
-          actuallyread =
-            (curl_off_t) conn->fread_func(data->state.buffer, 1,
-                                          (size_t)readthisamountnow,
-                                          conn->fread_in);
+            actuallyread =
+              (curl_off_t) conn->fread_func(data->state.buffer, 1,
+                                            (size_t)readthisamountnow,
+                                            conn->fread_in);
 
-          passed += actuallyread;
-          if((actuallyread <= 0) || (actuallyread > readthisamountnow)) {
-            /* this checks for greater-than only to make sure that the
-               CURL_READFUNC_ABORT return code still aborts */
-             failf(data, "Failed to read data");
-            return CURLE_FTP_COULDNT_USE_REST;
-          }
-        } while(passed < data->state.resume_from);
+            passed += actuallyread;
+            if((actuallyread <= 0) || (actuallyread > readthisamountnow)) {
+              /* this checks for greater-than only to make sure that the
+                 CURL_READFUNC_ABORT return code still aborts */
+              failf(data, "Failed to read data");
+              return CURLE_FTP_COULDNT_USE_REST;
+            }
+          } while(passed < data->state.resume_from);
+        }
       }
 
       /* now, decrease the size of the read */
@@ -1870,7 +2010,7 @@ static CURLcode ssh_statemach_act(struct connectdata *conn, bool *block)
     sshc->ssh_channel =
       libssh2_scp_send_ex(sshc->ssh_session, sftp_scp->path,
                           data->set.new_file_perms,
-                          data->set.infilesize, 0, 0);
+                          (size_t)data->set.infilesize, 0, 0);
     if(!sshc->ssh_channel) {
       if(libssh2_session_last_errno(sshc->ssh_session) ==
          LIBSSH2_ERROR_EAGAIN) {
@@ -2089,16 +2229,16 @@ static int ssh_perform_getsock(const struct connectdata *conn,
                                                        number of sockets */
                                int numsocks)
 {
-#ifdef HAVE_LIBSSH2_SESSION_BLOCK_DIRECTIONS
+#ifdef HAVE_LIBSSH2_SESSION_BLOCK_DIRECTION
   int bitmap = GETSOCK_BLANK;
   (void)numsocks;
 
   sock[0] = conn->sock[FIRSTSOCKET];
 
-  if(conn->proto.sshc.waitfor & KEEP_READ)
+  if(conn->proto.sshc.waitfor & KEEP_RECV)
     bitmap |= GETSOCK_READSOCK(FIRSTSOCKET);
 
-  if(conn->proto.sshc.waitfor & KEEP_WRITE)
+  if(conn->proto.sshc.waitfor & KEEP_SEND)
     bitmap |= GETSOCK_WRITESOCK(FIRSTSOCKET);
 
   return bitmap;
@@ -2116,7 +2256,7 @@ static int ssh_getsock(struct connectdata *conn,
                                                of sockets */
                        int numsocks)
 {
-#ifndef HAVE_LIBSSH2_SESSION_BLOCK_DIRECTIONS
+#ifndef HAVE_LIBSSH2_SESSION_BLOCK_DIRECTION
   (void)conn;
   (void)sock;
   (void)numsocks;
@@ -2130,7 +2270,7 @@ static int ssh_getsock(struct connectdata *conn,
 #endif
 }
 
-#ifdef HAVE_LIBSSH2_SESSION_BLOCK_DIRECTIONS
+#ifdef HAVE_LIBSSH2_SESSION_BLOCK_DIRECTION
 /*
  * When one of the libssh2 functions has returned LIBSSH2_ERROR_EAGAIN this
  * function is used to figure out in what direction and stores this info so
@@ -2144,8 +2284,8 @@ static void ssh_block2waitfor(struct connectdata *conn, bool block)
   int dir;
   if(block && (dir = libssh2_session_block_directions(sshc->ssh_session))) {
     /* translate the libssh2 define bits into our own bit defines */
-    sshc->waitfor = ((dir&LIBSSH2_SESSION_BLOCK_INBOUND)?KEEP_READ:0) |
-      ((dir&LIBSSH2_SESSION_BLOCK_OUTBOUND)?KEEP_WRITE:0);
+    sshc->waitfor = ((dir&LIBSSH2_SESSION_BLOCK_INBOUND)?KEEP_RECV:0) |
+      ((dir&LIBSSH2_SESSION_BLOCK_OUTBOUND)?KEEP_SEND:0);
   }
   else
     /* It didn't block or libssh2 didn't reveal in which direction, put back
@@ -2181,7 +2321,7 @@ static CURLcode ssh_easy_statemach(struct connectdata *conn)
     bool block;
     result = ssh_statemach_act(conn, &block);
 
-#ifdef HAVE_LIBSSH2_SESSION_BLOCK_DIRECTIONS
+#ifdef HAVE_LIBSSH2_SESSION_BLOCK_DIRECTION
     if((CURLE_OK == result) && block) {
       int dir = libssh2_session_block_directions(sshc->ssh_session);
       curl_socket_t sock = conn->sock[FIRSTSOCKET];
@@ -2270,6 +2410,26 @@ static CURLcode ssh_connect(struct connectdata *conn, bool *done)
     failf(data, "Failure initialising ssh session");
     return CURLE_FAILED_INIT;
   }
+
+#ifdef HAVE_LIBSSH2_KNOWNHOST_API
+  if(data->set.str[STRING_SSH_KNOWNHOSTS]) {
+    int rc;
+    ssh->kh = libssh2_knownhost_init(ssh->ssh_session);
+    if(!ssh->kh) {
+      /* eeek. TODO: free the ssh_session! */
+      return CURLE_FAILED_INIT;
+    }
+
+    /* read all known hosts from there */
+    rc = libssh2_knownhost_readfile(ssh->kh,
+                                    data->set.str[STRING_SSH_KNOWNHOSTS],
+                                    LIBSSH2_KNOWNHOST_FILE_OPENSSH);
+    if(rc) {
+      infof(data, "Failed to read known hosts from %s\n",
+            data->set.str[STRING_SSH_KNOWNHOSTS]);
+    }
+  }
+#endif /* HAVE_LIBSSH2_KNOWNHOST_API */
 
 #ifdef CURL_LIBSSH2_DEBUG
   libssh2_trace(ssh->ssh_session, ~0);

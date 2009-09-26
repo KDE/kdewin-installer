@@ -21,7 +21,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: formdata.h,v 1.27 2008-03-31 10:02:25 bagder Exp $
+ * $Id: formdata.h,v 1.28 2009-06-15 10:15:28 patrickm Exp $
  ***************************************************************************/
 
 enum formtype {
@@ -96,6 +96,9 @@ char *Curl_FormBoundary(void);
 void Curl_formclean(struct FormData **);
 
 CURLcode Curl_formconvert(struct SessionHandle *, struct FormData *);
+
+void Curl_srand(void);
+unsigned int Curl_rand(void);
 
 #endif
 

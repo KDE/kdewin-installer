@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: content_encoding.c,v 1.31 2009-02-17 12:14:52 bagder Exp $
+ * $Id: content_encoding.c,v 1.33 2009-05-11 09:55:28 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -32,7 +32,7 @@
 #include <curl/curl.h>
 #include "sendf.h"
 #include "content_encoding.h"
-#include "memory.h"
+#include "curl_memory.h"
 
 #include "memdebug.h"
 
@@ -414,4 +414,14 @@ Curl_unencode_gzip_write(struct connectdata *conn,
   return inflate_stream(conn, k);
 #endif
 }
+
+void Curl_unencode_cleanup(struct connectdata *conn)
+{
+  struct SessionHandle *data = conn->data;
+  struct SingleRequest *k = &data->req;
+  z_stream *z = &k->z;
+  if(k->zlib_init != ZLIB_UNINIT)
+    (void) exit_zlib(z, &k->zlib_init, CURLE_OK);
+}
+
 #endif /* HAVE_LIBZ */

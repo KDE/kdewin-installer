@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: formdata.c,v 1.116 2008-12-20 22:51:57 bagder Exp $
+ * $Id: formdata.c,v 1.119 2009-06-15 10:15:28 patrickm Exp $
  ***************************************************************************/
 
 /*
@@ -108,6 +108,12 @@ Content-Disposition: form-data; name="FILECONTENT"
 /* Length of the random boundary string. */
 #define BOUNDARY_LENGTH 40
 
+/* Private pseudo-random number seed. Unsigned integer >= 32bit. Threads
+   mutual exclusion is not implemented to acess it since we do not require
+   high quality random numbers (only used in form boudary generation). */
+
+static unsigned int     randseed;
+
 #if !defined(CURL_DISABLE_HTTP) || defined(USE_SSLEAY)
 
 #include <stdio.h>
@@ -122,7 +128,7 @@ Content-Disposition: form-data; name="FILECONTENT"
 #include "easyif.h" /* for Curl_convert_... prototypes */
 #include "formdata.h"
 #include "strequal.h"
-#include "memory.h"
+#include "curl_memory.h"
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -1425,6 +1431,7 @@ int Curl_FormInit(struct Form *form, struct FormData *formdata )
   form->data = formdata;
   form->sent = 0;
   form->fp = NULL;
+  form->fread_func = ZERO_NULL;
 
   return 0;
 }
@@ -1596,6 +1603,8 @@ int main(int argc, argv_item_t argv[])
   (void) argc;
   (void) argv;
 
+  Curl_srand();         /* Because we do not call curl_global_init() here. */
+
   if(FormAddTest("simple COPYCONTENTS test", &httppost, &last_post,
                   CURLFORM_COPYNAME, name1, CURLFORM_COPYCONTENTS, value1,
                   CURLFORM_END))
@@ -1732,8 +1741,6 @@ void curl_formfree(struct curl_httppost *form)
 char *Curl_FormBoundary(void)
 {
   char *retstring;
-  static int randomizer;   /* this is just so that two boundaries within
-                              the same form won't be identical */
   size_t i;
 
   static const char table16[]="0123456789abcdef";
@@ -1743,12 +1750,10 @@ char *Curl_FormBoundary(void)
   if(!retstring)
     return NULL; /* failed */
 
-  srand((unsigned int)time(NULL)+randomizer++); /* seed */
-
   strcpy(retstring, "----------------------------");
 
   for(i=strlen(retstring); i<BOUNDARY_LENGTH; i++)
-    retstring[i] = table16[rand()%16];
+    retstring[i] = table16[Curl_rand()%16];
 
   /* 28 dashes and 12 hexadecimal digits makes 12^16 (184884258895036416)
      combinations */
@@ -1758,3 +1763,24 @@ char *Curl_FormBoundary(void)
 }
 
 #endif  /* !defined(CURL_DISABLE_HTTP) || defined(USE_SSLEAY) */
+
+/* Pseudo-random number support. This is always enabled, since called from
+   curl_global_init(). */
+
+unsigned int Curl_rand(void)
+{
+  unsigned int r;
+  /* Return an unsigned 32-bit pseudo-random number. */
+  r = randseed = randseed * 1103515245 + 12345;
+  return (r << 16) | ((r >> 16) & 0xFFFF);
+}
+
+void Curl_srand(void)
+{
+  /* Randomize pseudo-random number sequence. */
+
+  randseed = (unsigned int) time(NULL);
+  Curl_rand();
+  Curl_rand();
+  Curl_rand();
+}

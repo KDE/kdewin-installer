@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: cookie.c,v 1.101 2009-01-15 08:32:58 bagder Exp $
+ * $Id: cookie.c,v 1.105 2009-06-15 02:29:49 yangtse Exp $
  ***************************************************************************/
 
 /***
@@ -93,15 +93,13 @@ Example set of cookies:
 #include "strequal.h"
 #include "strtok.h"
 #include "sendf.h"
-#include "memory.h"
+#include "curl_memory.h"
 #include "share.h"
 #include "strtoofft.h"
 #include "rawstr.h"
 
 /* The last #include file should be: */
-#ifdef CURLDEBUG
 #include "memdebug.h"
-#endif
 
 
 static void freecookie(struct Cookie *co)
@@ -154,6 +152,19 @@ void Curl_cookie_loadfiles(struct SessionHandle *data)
     curl_slist_free_all(data->change.cookielist); /* clean up list */
     data->change.cookielist = NULL; /* don't do this again! */
   }
+}
+
+/*
+ * strstore() makes a strdup() on the 'newstr' and if '*str' is non-NULL
+ * that will be freed before the allocated string is stored there.
+ *
+ * It is meant to easily replace strdup()
+ */
+static void strstore(char **str, const char *newstr)
+{
+  if(*str)
+    free(*str);
+  *str = strdup(newstr);
 }
 
 /****************************************************************************
@@ -227,7 +238,9 @@ Curl_cookie_add(struct SessionHandle *data,
         if(1 <= sscanf(ptr, "%" MAX_NAME_TXT "[^;=]=%"
                        MAX_COOKIE_LINE_TXT "[^;\r\n]",
                        name, what)) {
-          /* this is a <name>=<what> pair */
+          /* this is a <name>=<what> pair. We use strstore() below to properly
+             deal with received cookie headers that have the same string
+             property set more than once, and then we use the last one. */
 
           const char *whatptr;
 
@@ -245,7 +258,7 @@ Curl_cookie_add(struct SessionHandle *data,
           }
 
           if(Curl_raw_equal("path", name)) {
-            co->path=strdup(whatptr);
+            strstore(&co->path, whatptr);
             if(!co->path) {
               badcookie = TRUE; /* out of memory bad */
               break;
@@ -297,8 +310,8 @@ Curl_cookie_add(struct SessionHandle *data,
                 const char *tailptr=whatptr;
                 if(tailptr[0] == '.')
                   tailptr++;
-                co->domain=strdup(tailptr); /* don't prefix w/dots
-                                               internally */
+                strstore(&co->domain, tailptr); /* don't prefix w/dots
+                                                   internally */
                 if(!co->domain) {
                   badcookie = TRUE;
                   break;
@@ -317,7 +330,7 @@ Curl_cookie_add(struct SessionHandle *data,
             }
           }
           else if(Curl_raw_equal("version", name)) {
-            co->version=strdup(whatptr);
+            strstore(&co->version, whatptr);
             if(!co->version) {
               badcookie = TRUE;
               break;
@@ -333,7 +346,7 @@ Curl_cookie_add(struct SessionHandle *data,
                cookie should be discarded immediately.
 
              */
-            co->maxage = strdup(whatptr);
+            strstore(&co->maxage, whatptr);
             if(!co->maxage) {
               badcookie = TRUE;
               break;
@@ -343,7 +356,7 @@ Curl_cookie_add(struct SessionHandle *data,
               (long)now;
           }
           else if(Curl_raw_equal("expires", name)) {
-            co->expirestr=strdup(whatptr);
+            strstore(&co->expirestr, whatptr);
             if(!co->expirestr) {
               badcookie = TRUE;
               break;
@@ -390,7 +403,7 @@ Curl_cookie_add(struct SessionHandle *data,
       }
 
       ptr=semiptr+1;
-      while(ptr && *ptr && ISBLANK(*ptr))
+      while(*ptr && ISBLANK(*ptr))
         ptr++;
       semiptr=strchr(ptr, ';'); /* now, find the next semicolon */
 

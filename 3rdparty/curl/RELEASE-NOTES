@@ -1,57 +1,50 @@
-Curl and libcurl 7.19.4
+Curl and libcurl 7.19.6
 
- Public curl releases:         110
+ Public curl releases:         112
  Command line options:         132
  curl_easy_setopt() options:   163
  Public functions in libcurl:  58
  Known libcurl bindings:       38
- Contributors:                 700
-
-This release includes the following security-related fix:
-
- o CVE-2009-0037 with the curl advisory here:
-   http://curl.haxx.se/docs/adv_20090303.html
+ Contributors:                 715
 
 This release includes the following changes:
 
- o Added CURLOPT_NOPROXY and the corresponding --noproxy
- o the OpenSSL-specific code disables TICKET (rfc5077) which is enabled by
-   default in openssl 0.9.8j
- o Added CURLOPT_TFTP_BLKSIZE
- o Added CURLOPT_SOCKS5_GSSAPI_SERVICE and CURLOPT_SOCKS5_GSSAPI_NEC - with
-   the corresponding curl options --socks5-gssapi-service and
-   --socks5-gssapi-nec
- o Improved IPv6 support when built with with c-ares >= 1.6.1
- o Added CURLPROXY_HTTP_1_0 and --proxy1.0
- o Added docs/libcurl/symbols-in-versions
- o Added CURLINFO_CONDITION_UNMET
- o Added support for Digest and NTLM authentication using GnuTLS
- o CURLOPT_FTP_CREATE_MISSING_DIRS can now be set to 2 to retry the CWD even
-   when MKD fails
- o GnuTLS initing moved to curl_global_init()
- o Added CURLOPT_REDIR_PROTOCOLS and CURLOPT_PROTOCOLS
+ o CURLOPT_FTPPORT (and curl's -P/--ftpport) support port ranges
+ o Added CURLOPT_SSH_KNOWNHOSTS, CURLOPT_SSH_KEYFUNCTION, CURLOPT_SSH_KEYDATA
+ o CURLOPT_QUOTE, CURLOPT_POSTQUOTE and CURLOPT_PREQUOTE can be told to ignore
+   error responses when used with FTP
 
 This release includes the following bugfixes:
 
- o missing ssh.obj in VS makefiles
- o FTP ;type=i URLs now work with CURLOPT_PROXY_TRANSFER_MODE in Turkish
-   locale 
- o realms with quoted quotation marks in HTTP Digest headers
- o VC9 makefiles are now really included
- o multi interface memory leak with CURLMOPT_MAXCONNECTS set
- o CURLINFO_CONTENT_LENGTH_DOWNLOAD size from file:// "transfers" with
-   CURLOPT_NOBODY set true
- o memory leak on some libz errors for content encodings
- o NSS-enabled build is repaired
- o superfluous wait in SFTP downloads removed
- o FTP with the multi interface no longer kills the control connection as
-   easily on transfer failures
- o compilation halting when using VS2008 to build a Windows 2000 target
- o ease creation of libcurl Mac OS X Framework
- o CURLINFO_CONTENT_LENGTH_DOWNLOAD and CURLINFO_CONTENT_LENGTH_UPLOAD are -1
-   if unknown
- o Negotiate proxy authentication
- o CURLOPT_INTERFACE and CURLOPT_LOCALPORT used together
+ o crash on bad socket close with FTP
+ o leaking cookie memory when duplicate domains or paths were used
+ o build fix for Symbian
+ o CURLOPT_USERPWD set to NULL clears auth credentials
+ o libcurl-NSS build fixes
+ o configure script fixed for VMS
+ o set Content-Length: with POST and PUT failed with NTLM auth
+ o allow building libcurl for VxWorks
+ o curl tool exit codes fixed for VMS
+ o --no-buffer treated correctly
+ o djgpp build fix
+ o configure detection of GnuTLS now based on pkg-config as well
+ o libcurl-NSS client cert handling segfaults
+ o curl uploading from stdin/pipes now works in non-blocking way so that it
+   continues the downloading even when the read stalls
+ o ftp credentials are added to the url if needed for http proxies
+ o curl -o - sends data to stdout using binary mode on windows
+ o fixed the separators for "array" style string that CURLINFO_CERTINFO returns
+ o auth problem over several hosts with re-used connection
+ o improved the support for client certificates in libcurl+NSS
+ o fix leak in gtls code
+ o missing algorithms in libcurl+OpenSSL
+ o with noproxy set you could still get a proxy if a proxy env was set
+ o rand seeding on libcurl on windows built with OpenSSL was not thread-safe
+ o fixed the zero byte inserted in cert name flaw in libcurl+OpenSSL
+ o don't try SNI with SSLv2 or SSLv3 (OpenSSL and GnuTLS builds)
+ o libcurl+OpenSSL would wrongly acknowledge a cert if CN matched but
+   subjectAltName didn't
+ o TFTP upload sent illegal TSIZE packets
 
 This release includes the following known bugs:
 
@@ -60,11 +53,12 @@ This release includes the following known bugs:
 This release would not have looked like this without help, code, reports and
 advice from friends like these:
 
- Lisa Xu, Daniel Fandrich, Craig A West, Alexey Borzov, Sharad Gupta,
- Peter Sylvester, Chad Monroe, Markus Moeller, Yang Tse, Scott Cantor,
- Patrick Scott, Hidemoto Nakada, Jocelyn Jaubert, Andre Guibert de Bruet,
- Kamil Dudka, Patrik Thunstrom, Linus Nielsen Feltzing, Mark Incley,
- Daniel Johnson, James Cheng, Brian J. Murrell, Senthil Raja Velu,
- Markus Koetter, David Kierznowski, Michal Marek
+ Yang Tse, Daniel Fandrich, Kamil Dudka, Caolan McNamara, Frank McGeough,
+ Andre Guibert de Bruet, Mike Crowe, Claes Jakobsson, John E. Malmberg,
+ Aaron Oneal, Igor Novoseltsev, Eric Wong, Bill Hoffman, Daniel Steinberg,
+ Fabian Keil, Michal Marek, Reuven Wachtfogel, Markus Koetter,
+ Constantine Sapuntzakis, David Binderman, Johan van Selst, Alexander Beedie,
+ Tanguy Fautre, Scott Cantor, Curt Bogmine, Peter Sylvester, Benbuck Nason,
+ Carsten Lange
 
         Thanks! (and sorry if I forgot to mention someone)
