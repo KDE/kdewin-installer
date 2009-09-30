@@ -175,6 +175,15 @@ bool Releases::fetch(const QUrl &_url)
         qWarning() << "could not extract unstable versions from directory list fetched from" << url;
     }
 
+    url = m_baseURL.toString() + "nightly/";
+    if (!Downloader::instance()->fetch(url,out))
+    {
+        qWarning() << "could not fetch nightly versions from" << url;
+    }
+    else if (!parse(out,url,ReleaseType::Nightly))
+    {
+        qWarning() << "could not extract unstable versions from directory list fetched from" << url;
+    }
     return patchReleaseUrls(m_baseURL);
 }
 
@@ -212,7 +221,12 @@ bool Releases::parse(QIODevice *ioDev, const QUrl &url, ReleaseType::Type type)
                 continue;
             int start = line.indexOf(QRegExp("href=\"(latest|[0-9]+\\.[0-9]+\\.[0-9]+/)"), 0);   
             if (start == -1)
-                continue;
+			{
+				// check nightly builds
+				start = line.indexOf(QRegExp("href=\"(latest|[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]/)"), 0);   
+				if (start == -1)
+					continue;
+			}
                 
             int end = line.indexOf('\"',start+6);
             QString version = line.mid(start+6,end-start-6).remove('/');

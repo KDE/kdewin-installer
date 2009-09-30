@@ -24,6 +24,7 @@
 
 #include <QtCore/QString>
 #include <QtCore/QUrl>
+#include <QtDebug>
 class QByteArray;
 
 /**    
@@ -31,13 +32,22 @@ class QByteArray;
    */
 class ReleaseType {
     public:
-        typedef enum { Stable, Unstable } Type;
+        typedef enum { Stable, Unstable, Nightly } Type;
 
         ReleaseType() { }
         const QString toString() const 
         { 
-            QString t = type == Stable ? "stable " : "unstable ";
-            return t + name; 
+            if (type == Stable)
+				return "stable " + name;
+            else if (type == Unstable)
+				return "unstable " + name;
+            else if (type == Nightly)
+				return "nightly " + name;
+			else 
+			{
+				qWarning() << "unknown release type for " << name;
+				return "unknown " + name; 
+			}
         }
         QUrl url;
         QString name; 
