@@ -182,7 +182,7 @@ bool Releases::fetch(const QUrl &_url)
     }
     else if (!parse(out,url,ReleaseType::Nightly))
     {
-        qWarning() << "could not extract unstable versions from directory list fetched from" << url;
+        qWarning() << "could not extract nightly versions from directory list fetched from" << url;
     }
     return patchReleaseUrls(m_baseURL);
 }
