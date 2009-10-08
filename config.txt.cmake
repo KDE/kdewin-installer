@@ -16,9 +16,9 @@
 
 ; to which category packages belongs to
 @categorypackages win32libs aspell cyrus-sasl ebook-tools expat gettext giflib gpgme iconv jasper jpeg lcms libbzip2 libgmp libgs libical libidn libpng libxml2 libxslt libzip mysql-embedded openslp openssl shared-mime-info sqlite tiff zlib
-@categorypackages win32libs pcre-vc90  dbus-vc90  exiv2-vc90  gpgme-qt-vc90  libspectre-vc90  libmsn-vc90  libdvdcss-vc90  libsamplerate-vc90
-@categorypackages win32libs pcre-mingw dbus-mingw exiv2-mingw gpgme-qt-mingw libspectre-mingw libmsn-mingw libdvdcss-mingw libsamplerate-mingw
-@categorypackages win32libs pcre-mingw4 dbus-mingw4 exiv2-mingw4 gpgme-qt-mingw4 libspectre-mingw4 libmsn-mingw4 libdvdcss-mingw4 libsamplerate-mingw4
+@categorypackages win32libs pcre-vc90  dbus-vc90  exiv2-vc90  libspectre-vc90  libmsn-vc90  libdvdcss-vc90  libsamplerate-vc90
+@categorypackages win32libs pcre-mingw dbus-mingw exiv2-mingw libspectre-mingw libmsn-mingw libdvdcss-mingw libsamplerate-mingw
+@categorypackages win32libs pcre-mingw4 dbus-mingw4 exiv2-mingw4 libspectre-mingw4 libmsn-mingw4 libdvdcss-mingw4 libsamplerate-mingw4
 @categorypackages tools findutils grep mingw-utils diffutils patch
 @categorypackages kdesupport kdewin-vc90  kdewin-installer-vc90  runtime-vc90  qimageblitz-vc90  qca-vc90  strigi-vc90  soprano-vc90  taglib-vc90  phonon-vc90  fontconfig-vc90  freetype-vc90  poppler-vc90  automoc-vc90  oxygen-icons
 @categorypackages kdesupport kdewin-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw phonon-mingw fontconfig-mingw freetype-mingw poppler-mingw automoc-mingw oxygen-icons
@@ -66,7 +66,6 @@
 @deps choqok-mingw kdelibs-mingw
 @deps dbus-mingw expat 
 @deps digikam-mingw kdegraphics-mingw kdeedu-mingw exiv2-mingw lcms
-@deps gpgme-qt-mingw gpgme qt-mingw
 @deps k3b-mingw kdemultimedia-mingw libdvdcss-mingw cdrtools dvd+rw-tools
 @deps kdelibs-mingw qt-mingw phonon-mingw pcre-mingw dbus-mingw kdewin-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
 @deps kdebase-apps-mingw kdebase-runtime-mingw
@@ -77,7 +76,7 @@
 @deps kdegraphics-mingw kdebase-runtime-mingw kdelibs-mingw poppler-mingw ebook-tools libspectre exiv2-mingw
 @deps kdemultimedia-mingw kdebase-runtime-mingw taglib-mingw
 @deps kdenetwork-mingw kdebase-runtime-mingw kdelibs-mingw sqlite libgmp libidn libmsn-mingw
-@deps kdepim-mingw kdepim-runtime-mingw kdepimlibs-mingw kdebase-runtime-mingw gpgme-qt-mingw sqlite
+@deps kdepim-mingw kdepim-runtime-mingw kdepimlibs-mingw kdebase-runtime-mingw gpgme sqlite
 @deps kdepimlibs-mingw kdelibs-mingw boost-mingw libical cyrus-sasl
 @deps kdesdk-mingw kdebase-runtime-mingw kdelibs-mingw kdepimlibs-mingw astyle diffutils
 @deps kdetoys-mingw kdebase-runtime-mingw kdelibs-mingw
@@ -105,7 +104,6 @@
 @deps choqok-mingw4 kdelibs-mingw4
 @deps dbus-mingw4 expat 
 @deps digikam-mingw4 kdegraphics-mingw4 kdeedu-mingw4 exiv2-mingw4 lcms
-@deps gpgme-qt-mingw4 gpgme qt-mingw4
 @deps k3b-mingw4 kdemultimedia-mingw4 libdvdcss-mingw4 cdrtools dvd+rw-tools
 @deps kdelibs-mingw4 qt-mingw4 phonon-mingw4 pcre-mingw4 dbus-mingw4 kdewin-mingw4 qimageblitz-mingw4 qca-mingw4 strigi-mingw4 soprano-mingw4 taglib-mingw4 aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
 @deps kdebase-apps-mingw4 kdebase-runtime-mingw4
@@ -116,7 +114,7 @@
 @deps kdegraphics-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4 poppler-mingw4 ebook-tools libspectre exiv2-mingw4
 @deps kdemultimedia-mingw4 kdebase-runtime-mingw4 taglib-mingw4
 @deps kdenetwork-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4 sqlite libgmp libidn libmsn-mingw4
-@deps kdepim-mingw4 kdepim-runtime-mingw4 kdepim-runtime-mingw4 kdepimlibs-mingw4 kdebase-runtime-mingw4 gpgme-qt-mingw4 sqlite
+@deps kdepim-mingw4 kdepim-runtime-mingw4 kdepim-runtime-mingw4 kdepimlibs-mingw4 kdebase-runtime-mingw4 gpgme sqlite
 @deps kdepimlibs-mingw4 kdelibs-mingw4 boost-mingw4 libical cyrus-sasl
 @deps kdesdk-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4 kdepimlibs-mingw4 astyle diffutils
 @deps kdetoys-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4
@@ -144,7 +142,6 @@
 ; dbus may be compiled with libxml2 or expat, so use both dependencies
 @deps dbus-vc90 libxml2 iconv expat
 @deps digikam-vc90 kdegraphics-vc90 kdeedu-vc90 exiv2-vc90 lcms
-@deps gpgme-qt-vc90 gpgme qt-vc90
 @deps k3b-vc90 kdemultimedia-vc90 libdvdcss-vc90 cdrtools dvd+rw-tools
 @deps kdebase-apps-vc90 kdebase-runtime-vc90
 @deps kdebase-runtime-vc90 kdepimlibs-vc90 kdelibs-vc90 oxygen-icons
@@ -155,7 +152,7 @@
 @deps kdelibs-vc90 qt-vc90 phonon-vc90 pcre-vc90 runtime-vc90 qt-vc90 dbus-vc90 kdewin-vc90 qimageblitz-vc90 qca-vc90 strigi-vc90 soprano-vc90 taglib-vc90 aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl tiff zlib shared-mime-info
 @deps kdemultimedia-vc90 kdebase-runtime-vc90 taglib-vc90
 @deps kdenetwork-vc90 kdebase-runtime-vc90 kdelibs-vc90 sqlite libgmp libidn libmsn-vc90
-@deps kdepim-vc90 kdepim-runtime-vc90 kdepimlibs-vc90 kdebase-runtime-vc90 gpgme-qt-vc90 sqlite
+@deps kdepim-vc90 kdepim-runtime-vc90 kdepimlibs-vc90 kdebase-runtime-vc90 gpgme sqlite
 @deps kdepimlibs-vc90 kdelibs-vc90 boost-vc90 libical cyrus-sasl
 @deps kdesdk-vc90 kdebase-runtime-vc90 kdelibs-vc90 astyle diffutils
 @deps kdetoys-vc90 kdebase-runtime-vc90 kdelibs-vc90
@@ -480,7 +477,6 @@
 @pkgnotes exiv2-* an image metadata library
 @pkgnotes fontconfig-* library for font customization and configuration
 @pkgnotes freetype-* A Free, High-Quality, and Portable Font Engine
-@pkgnotes gpgme-qt-* Qt wrapper for gpgme library
 @pkgnotes k3b-* the KDE CD/DVD burning application
 @pkgnotes kapman-* kapman is a pack man clone
 @pkgnotes kate-* 
