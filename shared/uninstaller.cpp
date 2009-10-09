@@ -33,7 +33,6 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QList>
 #include <QtCore/QEventLoop>
-#include <qplatformdefs.h>
 
 UIThread::UIThread ( QObject *parent )
         : QThread ( parent ), m_bCancel ( false ), m_bRet ( false )
@@ -65,7 +64,6 @@ bool UIThread::retCode() const
 void UIThread::run()
 {
     QList<FileItem> files;
-    QT_STATBUF statBuf;
     QFile f;
 
     if ( !readManifestFile ( files ) ) {
@@ -79,7 +77,7 @@ void UIThread::run()
             return;
         }
 
-        if ( QT_STAT ( fileItem.fileName.toLocal8Bit(), &statBuf ) == -1 ) {
+        if ( !QFile::exists ( fileItem.fileName) ) {
             emit warning ( QString ( "Can't remove %1 - not found" ).arg ( fileItem.fileName ) );
             continue;
         }

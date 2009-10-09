@@ -43,7 +43,6 @@
 #include <QFile>
 #include <QDateTime>
 #include <QBuffer>
-#include <qplatformdefs.h>
 
 #ifndef MISC_SMALL_VERSION
 
@@ -308,8 +307,7 @@ QString getStartMenuPath(bool bAllUsers)
 
 bool deleteFile( const QString &root, const QString &filename )
 {
-    QT_STATBUF statBuf;
-    if (QT_STAT( filename.toLocal8Bit(), &statBuf ) != -1) {
+    if ( QFile::exists( filename ) ) {
         if( QFile::remove( filename ) )
             return true;
         // file already exists - rename old one
