@@ -477,7 +477,7 @@
 @pkgnotes automoc-* build system application
 @pkgnotes bovo-* Bovo is a "Five in a row" game for two players
 @pkgnotes bomber-* Bomber is a single player arcade game
-@pkgnotes digikam-* UNSTABLE a photo management application
+@pkgnotes digikam-* a photo management application
 @pkgnotes exiv2-* an image metadata library
 @pkgnotes fontconfig-* library for font customization and configuration
 @pkgnotes freetype-* A Free, High-Quality, and Portable Font Engine
@@ -501,7 +501,7 @@
 @pkgnotes kdelibs-* KDE libraries (support applications)
 @pkgnotes kdepim-* UNSTABLE KDE Personal Informations Suite
 @pkgnotes kdepim-runtime-* UNSTABLE KDE Pim basic libraries
-@pkgnotes kdepimlibs-* UNSTABLE KDE PIM libraries
+@pkgnotes kdepimlibs-* KDE PIM libraries
 @pkgnotes kdemultimedia-* KDE multimedia applications (jux, kmix, kmixctrl, kscd)
 @pkgnotes kdenetwork-* KDE Networking applications
 @pkgnotes kdesdk-* software development package (umbrello, kate)
@@ -517,7 +517,7 @@
 @pkgnotes kgoldrunner-*
 @pkgnotes kile-* UNSTABLE latex editor
 @pkgnotes killbots-*
-@pkgnotes kipi-plugins-* UNSTABLE plugins for graphics applications
+@pkgnotes kipi-plugins-* plugins for graphics applications
 @pkgnotes kiriki-*
 @pkgnotes kjumpingcube-*
 @pkgnotes klines-*
@@ -529,7 +529,7 @@
 @pkgnotes kollision-*
 @pkgnotes kompare-*
 @pkgnotes konquest-*
-@pkgnotes konversation-* UNSTABLE KDE irc client
+@pkgnotes konversation-* KDE irc client
 @pkgnotes kpat-*
 @pkgnotes kreversi-*
 @pkgnotes ksame-*
@@ -538,7 +538,7 @@
 @pkgnotes kspaceduel-*
 @pkgnotes ksquares-*
 @pkgnotes ksudoku-*
-@pkgnotes ktorrent-* UNSTABLE KDE Torrent client
+@pkgnotes ktorrent-* KDE Torrent client
 @pkgnotes ktuberling-*
 @pkgnotes kubrick-*
 @pkgnotes libgmp devel-tools GNU MP library for abritary precision arithmetic
