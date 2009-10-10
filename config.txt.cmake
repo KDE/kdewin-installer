@@ -65,7 +65,7 @@
 @deps automoc-mingw qt-mingw
 @deps choqok-mingw kdelibs-mingw
 @deps dbus-mingw expat 
-@deps digikam-mingw kdegraphics-mingw kdeedu-mingw exiv2-mingw lcms
+@deps digikam-mingw kdegraphics-mingw kdeedu-mingw exiv2-mingw lcms libkdegraphics-mingw
 @deps k3b-mingw kdemultimedia-mingw libdvdcss-mingw cdrtools dvd+rw-tools
 @deps kdelibs-mingw qt-mingw phonon-mingw pcre-mingw dbus-mingw kdewin-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
 @deps kdebase-apps-mingw kdebase-runtime-mingw
@@ -88,7 +88,7 @@
 @deps kdewin-mingw qt-mingw
 @deps kde-additional-mingw kdebase-runtime-mingw
 @deps kile-mingw kdesdk-mingw
-@deps kipi-plugins-mingw kdegraphics-mingw kdepimlibs-mingw
+@deps kipi-plugins-mingw kdegraphics-mingw kdepimlibs-mingw libkdegraphics-mingw
 @deps koffice-mingw kdebase-runtime-mingw kdelibs-mingw lcms
 @deps konversation-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps krecipes-mingw mysql-embedded mysql-server sqlite
@@ -104,7 +104,7 @@
 @deps automoc-mingw4 qt-mingw4
 @deps choqok-mingw4 kdelibs-mingw4
 @deps dbus-mingw4 expat 
-@deps digikam-mingw4 kdegraphics-mingw4 kdeedu-mingw4 exiv2-mingw4 lcms
+@deps digikam-mingw4 kdegraphics-mingw4 kdeedu-mingw4 exiv2-mingw4 lcms libkdegraphics-mingw4
 @deps k3b-mingw4 kdemultimedia-mingw4 libdvdcss-mingw4 cdrtools dvd+rw-tools
 @deps kdelibs-mingw4 qt-mingw4 phonon-mingw4 pcre-mingw4 dbus-mingw4 kdewin-mingw4 qimageblitz-mingw4 qca-mingw4 strigi-mingw4 soprano-mingw4 taglib-mingw4 aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
 @deps kdebase-apps-mingw4 kdebase-runtime-mingw4
@@ -127,7 +127,7 @@
 @deps kdewin-mingw4 qt-mingw4
 @deps kde-additional-mingw4 kdebase-runtime-mingw4
 @deps kile-mingw4 kdesdk-mingw4
-@deps kipi-plugins-mingw4 kdegraphics-mingw4 kdepimlibs-mingw4
+@deps kipi-plugins-mingw4 kdegraphics-mingw4 kdepimlibs-mingw4 libkdegraphics-mingw4
 @deps koffice-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4 lcms
 @deps konversation-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4
 @deps krecipes-mingw4 mysql-embedded mysql-server sqlite
@@ -143,7 +143,7 @@
 @deps automoc-vc90 qt-vc90
 ; dbus may be compiled with libxml2 or expat, so use both dependencies
 @deps dbus-vc90 libxml2 iconv expat
-@deps digikam-vc90 kdegraphics-vc90 kdeedu-vc90 exiv2-vc90 lcms
+@deps digikam-vc90 kdegraphics-vc90 kdeedu-vc90 exiv2-vc90 lcms libkdegraphics-vc90
 @deps k3b-vc90 kdemultimedia-vc90 libdvdcss-vc90 cdrtools dvd+rw-tools
 @deps kdebase-apps-vc90 kdebase-runtime-vc90
 @deps kdebase-runtime-vc90 kdepimlibs-vc90 kdelibs-vc90 oxygen-icons
@@ -166,7 +166,7 @@
 @deps kdewin-vc90 qt-vc90
 @deps kde-additional-vc90 kdebase-runtime-vc90
 @deps kile-vc90 kdesdk-vc90
-@deps kipi-plugins-vc90 kdegraphics-vc90 kdepimlibs-vc90
+@deps kipi-plugins-vc90 kdegraphics-vc90 kdepimlibs-vc90 libkdegraphics-vc90
 @deps koffice-vc90 kdebase-runtime-vc90 kdelibs-vc90 lcms
 @deps konversation-vc90 kdebase-runtime-vc90 kdelibs-vc90
 @deps krecipes-vc90 mysql-embedded mysql-server sqlite
@@ -198,6 +198,9 @@
 @deps okular-vc90  libkdegraphics-vc90
 @deps okular-mingw libkdegraphics-mingw
 @deps okular-mingw4 libkdegraphics-mingw4
+@deps kdegraphics-vc90  libkdegraphics-vc90
+@deps kdegraphics-mingw libkdegraphics-mingw
+@deps kdegraphics-mingw4 libkdegraphics-mingw4
 ;------------------------------------------------------
 ; kdesdk
 ;------------------------------------------------------
