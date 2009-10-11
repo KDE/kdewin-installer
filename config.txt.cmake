@@ -94,7 +94,7 @@
 @deps krecipes-mingw mysql-embedded mysql-server sqlite
 @deps ktorrent-mingw libgmp kdebase-runtime-mingw qca-mingw
 @deps phonon-mingw qt-mingw
-@deps poppler-mingw fontconfig-mingw freetype-mingw poppler-data
+@deps poppler-mingw fontconfig-mingw freetype-mingw poppler-data lcms
 @deps qca-mingw cyrus-sasl openssl
 @deps qt-mingw dbus-mingw runtime-mingw
 @deps strigi-mingw libbzip2 openssl zlib iconv libxml2 exiv2-mingw
@@ -133,7 +133,7 @@
 @deps krecipes-mingw4 mysql-embedded mysql-server sqlite
 @deps ktorrent-mingw4 libgmp kdebase-runtime-mingw4 qca-mingw4
 @deps phonon-mingw4 qt-mingw4
-@deps poppler-mingw4 fontconfig-mingw4 freetype-mingw4 poppler-data
+@deps poppler-mingw4 fontconfig-mingw4 freetype-mingw4 poppler-data lcms
 @deps qca-mingw4 cyrus-sasl openssl
 @deps qt-mingw4 dbus-mingw4 runtime-mingw4
 @deps strigi-mingw4 libbzip2 openssl zlib iconv libxml2 exiv2-mingw4
@@ -172,7 +172,7 @@
 @deps krecipes-vc90 mysql-embedded mysql-server sqlite
 @deps ktorrent-vc90 libgmp kdebase-runtime-vc90 qca-vc90
 @deps phonon-vc90 qt-vc90
-@deps poppler-vc90 fontconfig-vc90 freetype-vc90 poppler-data
+@deps poppler-vc90 fontconfig-vc90 freetype-vc90 poppler-data lcms
 @deps qca-vc90 cyrus-sasl openssl
 @deps qt-vc90 dbus-vc90 runtime-vc90
 @deps strigi-vc90 libbzip2 openssl zlib iconv libxml2 exiv2-vc90
