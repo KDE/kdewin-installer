@@ -91,7 +91,7 @@
 @deps kipi-plugins-mingw kdegraphics-mingw kdepimlibs-mingw libkdegraphics-mingw
 @deps koffice-mingw kdebase-runtime-mingw kdelibs-mingw lcms
 @deps konversation-mingw kdebase-runtime-mingw kdelibs-mingw
-@deps krecipes-mingw mysql-embedded mysql-server sqlite
+@deps krecipes-mingw mysql-embedded mysql-server sqlite qimageblitz-mingw
 @deps ktorrent-mingw libgmp kdebase-runtime-mingw qca-mingw
 @deps phonon-mingw qt-mingw
 @deps poppler-mingw fontconfig-mingw freetype-mingw poppler-data lcms openjpeg
@@ -130,7 +130,7 @@
 @deps kipi-plugins-mingw4 kdegraphics-mingw4 kdepimlibs-mingw4 libkdegraphics-mingw4
 @deps koffice-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4 lcms
 @deps konversation-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4
-@deps krecipes-mingw4 mysql-embedded mysql-server sqlite
+@deps krecipes-mingw4 mysql-embedded mysql-server sqlite qimageblitz-mingw4
 @deps ktorrent-mingw4 libgmp kdebase-runtime-mingw4 qca-mingw4
 @deps phonon-mingw4 qt-mingw4
 @deps poppler-mingw4 fontconfig-mingw4 freetype-mingw4 poppler-data lcms openjpeg
@@ -169,7 +169,7 @@
 @deps kipi-plugins-vc90 kdegraphics-vc90 kdepimlibs-vc90 libkdegraphics-vc90
 @deps koffice-vc90 kdebase-runtime-vc90 kdelibs-vc90 lcms
 @deps konversation-vc90 kdebase-runtime-vc90 kdelibs-vc90
-@deps krecipes-vc90 mysql-embedded mysql-server sqlite
+@deps krecipes-vc90 mysql-embedded mysql-server sqlite qimageblitz-vc90
 @deps ktorrent-vc90 libgmp kdebase-runtime-vc90 qca-vc90
 @deps phonon-vc90 qt-vc90
 @deps poppler-vc90 fontconfig-vc90 freetype-vc90 poppler-data lcms openjpeg
