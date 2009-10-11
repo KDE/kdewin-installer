@@ -80,7 +80,7 @@
 @deps kdepimlibs-mingw kdelibs-mingw boost-mingw libical cyrus-sasl
 @deps kdesdk-mingw kdebase-runtime-mingw kdelibs-mingw kdepimlibs-mingw astyle diffutils
 @deps kdetoys-mingw kdebase-runtime-mingw kdelibs-mingw
-@deps kdeutils-mingw kdebase-runtime-mingw kdelibs-mingw libzip libgmp
+@deps kdeutils-mingw kdebase-runtime-mingw kdelibs-mingw libzip libgmp qca-mingw
 @deps kdevplatform-mingw kdebase-runtime-mingw
 @deps kdevelop-mingw kdevplatform-mingw
 @deps kdewebdev-mingw kdebase-runtime-mingw kdelibs-mingw
@@ -119,7 +119,7 @@
 @deps kdepimlibs-mingw4 kdelibs-mingw4 boost-mingw4 libical cyrus-sasl
 @deps kdesdk-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4 kdepimlibs-mingw4 astyle diffutils
 @deps kdetoys-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4
-@deps kdeutils-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4 libzip libgmp
+@deps kdeutils-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4 libzip libgmp qca-mingw4
 @deps kdevplatform-mingw4 kdebase-runtime-mingw4
 @deps kdevelop-mingw4 kdevplatform-mingw4
 @deps kdewebdev-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4
@@ -158,7 +158,7 @@
 @deps kdepimlibs-vc90 kdelibs-vc90 boost-vc90 libical cyrus-sasl
 @deps kdesdk-vc90 kdebase-runtime-vc90 kdelibs-vc90 astyle diffutils
 @deps kdetoys-vc90 kdebase-runtime-vc90 kdelibs-vc90
-@deps kdeutils-vc90 kdebase-runtime-vc90 libzip libgmp
+@deps kdeutils-vc90 kdebase-runtime-vc90 libzip libgmp qca-vc90
 @deps kdevplatform-vc90 kdebase-runtime-vc90
 @deps kdevelop-vc90 kdevplatform-vc90
 @deps kdewebdev-vc90 kdebase-runtime-vc90 kdelibs-vc90
