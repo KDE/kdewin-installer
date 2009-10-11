@@ -15,7 +15,7 @@
 @categorynotes qt Qt related packages 
 
 ; to which category packages belongs to
-@categorypackages win32libs aspell cyrus-sasl ebook-tools expat gettext giflib gpgme iconv jasper jpeg lcms libbzip2 libgmp libgs libical libidn libpng libxml2 libxslt libzip mysql-embedded mysql-server openslp openssl shared-mime-info sqlite tiff zlib
+@categorypackages win32libs aspell cyrus-sasl ebook-tools expat gettext giflib gpgme iconv jasper jpeg lcms libbzip2 libgmp libgs libical libidn libpng libxml2 libxslt libzip mysql-embedded mysql-server openjpeg openslp openssl shared-mime-info sqlite tiff zlib
 @categorypackages win32libs pcre-vc90  dbus-vc90  exiv2-vc90  libspectre-vc90  libmsn-vc90  libdvdcss-vc90  libsamplerate-vc90
 @categorypackages win32libs pcre-mingw dbus-mingw exiv2-mingw libspectre-mingw libmsn-mingw libdvdcss-mingw libsamplerate-mingw
 @categorypackages win32libs pcre-mingw4 dbus-mingw4 exiv2-mingw4 libspectre-mingw4 libmsn-mingw4 libdvdcss-mingw4 libsamplerate-mingw4
@@ -94,7 +94,7 @@
 @deps krecipes-mingw mysql-embedded mysql-server sqlite
 @deps ktorrent-mingw libgmp kdebase-runtime-mingw qca-mingw
 @deps phonon-mingw qt-mingw
-@deps poppler-mingw fontconfig-mingw freetype-mingw poppler-data lcms
+@deps poppler-mingw fontconfig-mingw freetype-mingw poppler-data lcms openjpeg
 @deps qca-mingw cyrus-sasl openssl
 @deps qt-mingw dbus-mingw runtime-mingw
 @deps strigi-mingw libbzip2 openssl zlib iconv libxml2 exiv2-mingw
@@ -133,7 +133,7 @@
 @deps krecipes-mingw4 mysql-embedded mysql-server sqlite
 @deps ktorrent-mingw4 libgmp kdebase-runtime-mingw4 qca-mingw4
 @deps phonon-mingw4 qt-mingw4
-@deps poppler-mingw4 fontconfig-mingw4 freetype-mingw4 poppler-data lcms
+@deps poppler-mingw4 fontconfig-mingw4 freetype-mingw4 poppler-data lcms openjpeg
 @deps qca-mingw4 cyrus-sasl openssl
 @deps qt-mingw4 dbus-mingw4 runtime-mingw4
 @deps strigi-mingw4 libbzip2 openssl zlib iconv libxml2 exiv2-mingw4
@@ -172,7 +172,7 @@
 @deps krecipes-vc90 mysql-embedded mysql-server sqlite
 @deps ktorrent-vc90 libgmp kdebase-runtime-vc90 qca-vc90
 @deps phonon-vc90 qt-vc90
-@deps poppler-vc90 fontconfig-vc90 freetype-vc90 poppler-data lcms
+@deps poppler-vc90 fontconfig-vc90 freetype-vc90 poppler-data lcms openjpeg
 @deps qca-vc90 cyrus-sasl openssl
 @deps qt-vc90 dbus-vc90 runtime-vc90
 @deps strigi-vc90 libbzip2 openssl zlib iconv libxml2 exiv2-vc90
@@ -464,6 +464,7 @@
 @pkgnotes mingw-utils Mingw Utilities
 @pkgnotes mysql-embedded MySql embedded database library
 @pkgnotes mysql-server MySql database server
+@pkgnotes openjpeg a JPEG2000 library
 @pkgnotes openslp openslp client and libraries
 @pkgnotes openssl The OpenSSL runtime environment
 @pkgnotes patch Tool to merge diff files
