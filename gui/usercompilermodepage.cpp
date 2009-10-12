@@ -42,7 +42,6 @@ UserCompilerModePage::UserCompilerModePage() : InstallWizardPage(0)
     // logical grouping isn't available in the designer yet :-P
     QButtonGroup *groupA = new QButtonGroup(this);
     groupA->addButton(ui.compilerMinGW4);
-    groupA->addButton(ui.compilerMinGW);
     groupA->addButton(ui.compilerMSVC);
     if (isX64Windows())
         groupA->addButton(ui.compilerMSVCX64);
@@ -79,8 +78,6 @@ bool UserCompilerModePage::validatePage()
     Settings &s = Settings::instance();
     s.setPackageManagerMode(ui.installModePackageManager->isChecked());
 
-    if (ui.compilerMinGW->isChecked())
-        s.setCompilerType(Settings::MinGW);
     if (ui.compilerMinGW4->isChecked())
         s.setCompilerType(Settings::MinGW4);
     if (ui.compilerMSVC->isChecked())
@@ -96,14 +93,12 @@ void UserCompilerModePage::setCompilerMode(bool EndUserMode)
     switch (s.compilerType()) 
     {
         case Settings::MinGW4: ui.compilerMinGW4->setChecked(true); break;
-        case Settings::MinGW: ui.compilerMinGW->setChecked(true); break;
         case Settings::MSVC: ui.compilerMSVC->setChecked(true); break;
         case Settings::MSVC_X64: ui.compilerMSVCX64->setChecked(true); break;
         default: ui.compilerMSVC->setChecked(true); break;
     }
     bool state = !Database::isAnyPackageInstalled(s.installDir());
     ui.compilerMinGW4->setEnabled(state);
-    ui.compilerMinGW->setEnabled(state);
     ui.compilerMSVC->setEnabled(state);
     if (isX64Windows())
     	ui.compilerMSVCX64->setEnabled(state);
