@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2006-2008 Ralf Habacker <ralf.habacker@freenet.de>. 
+** Copyright (C) 2006-2009 Ralf Habacker <ralf.habacker@freenet.de>. 
 ** All rights reserved.
 **
 ** This file is part of the KDE installer for windows
@@ -46,7 +46,7 @@ bool Releases::convertFromOldMirrorUrl(QUrl &url)
 {
     // in case the url contains already a release path, remove this part as the following code will detect the releases by itself
     QString path = url.path();
-    int i = path.indexOf(QRegExp("/(unstable|stable)/(latest|[0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{1,2})"));
+    int i = path.indexOf(QRegExp("/(unstable|stable|nightly)/(latest|[0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{1,2}|[0-9]{8})"));
     if (i != -1)
     {
         url.setPath(path.left(i) + '/');
@@ -82,6 +82,19 @@ bool Releases::useOldMirrorUrl(const QUrl &url)
         release.name = version;
         release.url = url;
         release.type = ReleaseType::Unstable;
+        m_releases.append(release);
+        return true;
+    }    
+    aString = "/nightly/";
+    i = path.indexOf(aString);
+    if (i != -1)
+    {
+        int k = path.indexOf('/',i+aString.size()+1);
+        QString version = path.mid(i+aString.size(),k-i-aString.size());
+        ReleaseType release;
+        release.name = version;
+        release.url = url;
+        release.type = ReleaseType::Nightly;
         m_releases.append(release);
         return true;
     }    
@@ -219,14 +232,9 @@ bool Releases::parse(QIODevice *ioDev, const QUrl &url, ReleaseType::Type type)
                 continue;
             if ( !line.contains("href=\""))
                 continue;
-            int start = line.indexOf(QRegExp("href=\"(latest|[0-9]+\\.[0-9]+\\.[0-9]+/)"), 0);   
+            int start = line.indexOf(QRegExp("href=\"(latest|[0-9]+\\.[0-9]+\\.[0-9]+/|[0-9]{8}/)"), 0);   
             if (start == -1)
-			{
-				// check nightly builds
-				start = line.indexOf(QRegExp("href=\"(latest|[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]/)"), 0);   
-				if (start == -1)
 					continue;
-			}
                 
             int end = line.indexOf('\"',start+6);
             QString version = line.mid(start+6,end-start-6).remove('/');
@@ -253,7 +261,7 @@ bool Releases::parse(QIODevice *ioDev, const QUrl &url, ReleaseType::Type type)
             QString version = a[8].remove('/');
             
             // check syntax  x.y.z 
-            if (version.indexOf(QRegExp("^[0-9]+\\.[0-9]+\\.[0-9]+$"), 0) == -1)   
+            if (version.indexOf(QRegExp("^([0-9]+\\.[0-9]+\\.[0-9]+|[0-9]{8})$"), 0) == -1)   
                 continue;
                 
             ReleaseType release;
