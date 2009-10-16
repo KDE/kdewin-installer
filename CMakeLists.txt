@@ -17,7 +17,6 @@ include(cmake/macros.cmake)
 
 #set (CMAKE_SUPPRESS_REGENERATION 1)
 find_package(Qt4 4.5.2 COMPONENTS QtCore QtGui QtXml REQUIRED )
-include(${QT_USE_FILE})
 
 if (WIN32 AND CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
 # emerge workaround for cmake 2.6. qt-static 4.3.2 combination which is not able to detect uic and moc correctly
@@ -136,6 +135,7 @@ set (EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 include(3rdparty/CMakeLists.txt)
 # this will define .... _HEADERS, ...._SOURCES, ..._INCLUDE_DIR. for ... = quazip, bzip2, curl, filter,md5
 # add_subdirectory does not work for unknown reason
+include(${QT_USE_FILE})
 
 include_directories(
   ${CMAKE_SOURCE_DIR}
