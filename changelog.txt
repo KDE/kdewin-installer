@@ -1,5 +1,13 @@
 ChangeLog
 =========
+
+0.9.6-5 (1035319)
+-----------------
+- installer-gui: - added nightly builds installation (Ralf Habacker)
+- common:        - updated libcurl to 7.19.6 (Christian Ehrlicher)
+- buildsystem:   - uses official way to detect qt4 (Ralf Habacker)
+- config:        - fixed package dependencies (Patrick Spendrin)
+
 0.9.6-4 (1015612)
 -----------------
 - installer-gui: - splitted packages in end user package list into an application, a language package 
