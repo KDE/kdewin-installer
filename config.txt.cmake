@@ -29,7 +29,7 @@
 @categorypackages KDE koffice-vc90  ktorrent-vc90  kile-vc90  kde-additional-vc90  kdevelop-vc90  kdevplatform-vc90  konversation-vc90
 @categorypackages KDE koffice-mingw ktorrent-mingw kile-mingw kde-additional-mingw kdevelop-mingw kdevplatform-mingw konversation-mingw
 @categorypackages KDE koffice-mingw4 ktorrent-mingw4 kile-mingw4 kde-additional-mingw4 kdevelop-mingw4 kdevplatform-mingw4 konversation-mingw4
-@categorypackages KDEUNSTABLE k3b-vc90 k3b-mingw k3b-mingw4 yakuake-vc90  yakuake-mingw  yakuake-mingw4
+@categorypackages KDEUNSTABLE k3b-vc90 k3b-mingw k3b-mingw4 yakuake-vc90  yakuake-mingw  yakuake-mingw4 kaffeine-mingw kaffeine-mingw4 kaffeine-vc90
 @categorypackages qt qt-vc90 qt-mingw qt-mingw4 qt-static-vc90
 @categorypackages kde-l10n kde-l10n-af kde-l10n-ar kde-l10n-be kde-l10n-bg kde-l10n-bn kde-l10n-bn_IN kde-l10n-br kde-l10n-ca kde-l10n-cs kde-l10n-csb kde-l10n-cy kde-l10n-da kde-l10n-de kde-l10n-el kde-l10n-en_GB 
 @categorypackages kde-l10n kde-l10n-eo kde-l10n-es kde-l10n-et kde-l10n-eu kde-l10n-fa kde-l10n-fi kde-l10n-fr kde-l10n-fy kde-l10n-ga kde-l10n-gl kde-l10n-gu kde-l10n-ha kde-l10n-he kde-l10n-hi kde-l10n-hne kde-l10n-hr kde-l10n-hsb 
@@ -67,6 +67,7 @@
 @deps dbus-mingw expat 
 @deps digikam-mingw kdegraphics-mingw kdeedu-mingw exiv2-mingw lcms libkdegraphics-mingw
 @deps k3b-mingw kdemultimedia-mingw libdvdcss-mingw cdrtools dvd+rw-tools
+@deps kaffeine-mingw kdebase-runtime-mingw
 @deps kdelibs-mingw qt-mingw phonon-mingw pcre-mingw dbus-mingw kdewin-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
 @deps kdebase-apps-mingw kdebase-runtime-mingw
 @deps kdebase-runtime-mingw kdepimlibs-mingw kdelibs-mingw oxygen-icons
@@ -107,6 +108,7 @@
 @deps dbus-mingw4 expat 
 @deps digikam-mingw4 kdegraphics-mingw4 kdeedu-mingw4 exiv2-mingw4 lcms libkdegraphics-mingw4
 @deps k3b-mingw4 kdemultimedia-mingw4 libdvdcss-mingw4 cdrtools dvd+rw-tools
+@deps kaffeine-mingw4 kdebase-runtime-mingw4
 @deps kdelibs-mingw4 qt-mingw4 phonon-mingw4 pcre-mingw4 dbus-mingw4 kdewin-mingw4 qimageblitz-mingw4 qca-mingw4 strigi-mingw4 soprano-mingw4 taglib-mingw4 aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
 @deps kdebase-apps-mingw4 kdebase-runtime-mingw4
 @deps kdebase-runtime-mingw4 kdepimlibs-mingw4 kdelibs-mingw4 oxygen-icons
@@ -147,6 +149,7 @@
 @deps dbus-vc90 libxml2 iconv expat
 @deps digikam-vc90 kdegraphics-vc90 kdeedu-vc90 exiv2-vc90 lcms libkdegraphics-vc90
 @deps k3b-vc90 kdemultimedia-vc90 libdvdcss-vc90 cdrtools dvd+rw-tools
+@deps kaffeine-vc90 kdebase-runtime-vc90
 @deps kdebase-apps-vc90 kdebase-runtime-vc90
 @deps kdebase-runtime-vc90 kdepimlibs-vc90 kdelibs-vc90 oxygen-icons
 @deps kdebase-workspace-vc90 kdebase-runtime-vc90
@@ -489,6 +492,7 @@
 @pkgnotes fontconfig-* library for font customization and configuration
 @pkgnotes freetype-* A Free, High-Quality, and Portable Font Engine
 @pkgnotes k3b-* the KDE CD/DVD burning application
+@pkgnotes kaffeine-* kaffeine is a KDE Video player
 @pkgnotes kapman-* kapman is a pack man clone
 @pkgnotes kate-* 
 @pkgnotes katomic-* 
