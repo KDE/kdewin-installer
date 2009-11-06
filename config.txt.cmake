@@ -20,9 +20,9 @@
 @categorypackages win32libs pcre-mingw dbus-mingw exiv2-mingw libspectre-mingw libmsn-mingw libdvdcss-mingw libsamplerate-mingw
 @categorypackages win32libs pcre-mingw4 dbus-mingw4 exiv2-mingw4 libspectre-mingw4 libmsn-mingw4 libdvdcss-mingw4 libsamplerate-mingw4
 @categorypackages tools findutils grep mingw-utils diffutils patch
-@categorypackages kdesupport kdewin-vc90  kdewin-installer-vc90  runtime-vc90  qimageblitz-vc90  qca-vc90  strigi-vc90  soprano-vc90  taglib-vc90  phonon-vc90  fontconfig-vc90  freetype-vc90  poppler-vc90  automoc-vc90  oxygen-icons
-@categorypackages kdesupport kdewin-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw phonon-mingw fontconfig-mingw freetype-mingw poppler-mingw automoc-mingw oxygen-icons
-@categorypackages kdesupport kdewin-mingw4 kdewin-installer-mingw4 runtime-mingw4 qimageblitz-mingw4 qca-mingw4 strigi-mingw4 soprano-mingw4 taglib-mingw4 phonon-mingw4 fontconfig-mingw4 freetype-mingw4 poppler-mingw4 automoc-mingw4 oxygen-icons
+@categorypackages kdesupport kdewin-vc90  kdewin-installer-vc90  runtime-vc90  qimageblitz-vc90  qca-vc90  strigi-vc90  soprano-vc90  taglib-vc90  phonon-vc90  fontconfig-vc90  freetype-vc90  poppler-vc90  automoc-vc90  phonon-backends-vc90  oxygen-icons
+@categorypackages kdesupport kdewin-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw phonon-mingw fontconfig-mingw freetype-mingw poppler-mingw automoc-mingw phonon-backends-mingw oxygen-icons
+@categorypackages kdesupport kdewin-mingw4 kdewin-installer-mingw4 runtime-mingw4 qimageblitz-mingw4 qca-mingw4 strigi-mingw4 soprano-mingw4 taglib-mingw4 phonon-mingw4 fontconfig-mingw4 freetype-mingw4 poppler-mingw4 automoc-mingw4 phonon-backends-mingw4 oxygen-icons
 @categorypackages KDE amarok-vc90  digikam-vc90  kdelibs-vc90  kdepimlibs-vc90  kdepim-vc90  kdepim-runtime-vc90  kdebase-apps-vc90  kdebase-runtime-vc90  kdebase-workspace-vc90  kdeedu-vc90  kdegames-vc90  kdegraphics-vc90  kdenetwork-vc90  kdesdk-vc90  kdewebdev-vc90  kdeutils-vc90  kdeplasma-addons-vc90  kipi-plugins-vc90  krecipes-vc90
 @categorypackages KDE amarok-mingw digikam-mingw kdelibs-mingw kdepimlibs-mingw kdepim-mingw kdepim-runtime-mingw kdebase-apps-mingw kdebase-runtime-mingw kdebase-workspace-mingw kdeedu-mingw kdegames-mingw kdegraphics-mingw kdenetwork-mingw kdesdk-mingw kdewebdev-mingw kdeutils-mingw kdeplasma-addons-mingw kipi-plugins-mingw krecipes-mingw
 @categorypackages KDE amarok-mingw4 digikam-mingw4 kdelibs-mingw4 kdepimlibs-mingw4 kdepim-mingw4 kdepim-runtime-mingw4 kdebase-apps-mingw4 kdebase-runtime-mingw4 kdebase-workspace-mingw4 kdeedu-mingw4 kdegames-mingw4 kdegraphics-mingw4 kdenetwork-mingw4 kdesdk-mingw4 kdewebdev-mingw4 kdeutils-mingw4 kdeplasma-addons-mingw4 kipi-plugins-mingw4 krecipes-mingw4
@@ -93,7 +93,8 @@
 @deps konversation-mingw kdebase-runtime-mingw kdelibs-mingw
 @deps krecipes-mingw mysql-embedded mysql-server sqlite qimageblitz-mingw
 @deps ktorrent-mingw libgmp kdebase-runtime-mingw qca-mingw
-@deps phonon-mingw qt-mingw
+@deps phonon-mingw phonon-backends-mingw qt-mingw
+@deps phonon-backends-mingw qt-mingw
 @deps poppler-mingw fontconfig-mingw freetype-mingw poppler-data lcms openjpeg
 @deps qca-mingw cyrus-sasl openssl
 @deps qt-mingw dbus-mingw runtime-mingw
@@ -132,7 +133,8 @@
 @deps konversation-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4
 @deps krecipes-mingw4 mysql-embedded mysql-server sqlite qimageblitz-mingw4
 @deps ktorrent-mingw4 libgmp kdebase-runtime-mingw4 qca-mingw4
-@deps phonon-mingw4 qt-mingw4
+@deps phonon-mingw4 phonon-backends-mingw4 qt-mingw4
+@deps phonon-backends-mingw4 qt-mingw4
 @deps poppler-mingw4 fontconfig-mingw4 freetype-mingw4 poppler-data lcms openjpeg
 @deps qca-mingw4 cyrus-sasl openssl
 @deps qt-mingw4 dbus-mingw4 runtime-mingw4
@@ -171,7 +173,8 @@
 @deps konversation-vc90 kdebase-runtime-vc90 kdelibs-vc90
 @deps krecipes-vc90 mysql-embedded mysql-server sqlite qimageblitz-vc90
 @deps ktorrent-vc90 libgmp kdebase-runtime-vc90 qca-vc90
-@deps phonon-vc90 qt-vc90
+@deps phonon-vc90 phonon-backends-vc90 qt-vc90
+@deps phonon-backends-vc90 qt-vc90
 @deps poppler-vc90 fontconfig-vc90 freetype-vc90 poppler-data lcms openjpeg
 @deps qca-vc90 cyrus-sasl openssl
 @deps qt-vc90 dbus-vc90 runtime-vc90
@@ -553,6 +556,7 @@
 @pkgnotes openbabel-* program to convert the various file formats used in chemical software
 @pkgnotes oxygen-icons icons and bitmaps for the oxygen style
 @pkgnotes phonon-* KDE KDE4 multimedia API
+@pkgnotes phonon-backends-* some additional backends for the phonon multimedia API
 @pkgnotes poppler-data font data for poppler library
 @pkgnotes poppler-* PDF rendering library based on xpdf-3.0
 @pkgnotes pcre-* Perl-Compatible Regular Expressions (utilities)
