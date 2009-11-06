@@ -65,7 +65,7 @@
 @deps automoc-mingw qt-mingw
 @deps choqok-mingw kdelibs-mingw
 @deps dbus-mingw expat 
-@deps digikam-mingw kdegraphics-mingw kdeedu-mingw exiv2-mingw lcms libkdegraphics-mingw
+@deps digikam-mingw kdegraphics-mingw kdeedu-mingw exiv2-mingw lcms libkdegraphics-mingw marble-mingw
 @deps k3b-mingw kdemultimedia-mingw libdvdcss-mingw cdrtools dvd+rw-tools
 @deps kaffeine-mingw kdebase-runtime-mingw
 @deps kdelibs-mingw qt-mingw phonon-mingw pcre-mingw dbus-mingw kdewin-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
@@ -106,7 +106,7 @@
 @deps automoc-mingw4 qt-mingw4
 @deps choqok-mingw4 kdelibs-mingw4
 @deps dbus-mingw4 expat 
-@deps digikam-mingw4 kdegraphics-mingw4 kdeedu-mingw4 exiv2-mingw4 lcms libkdegraphics-mingw4
+@deps digikam-mingw4 kdegraphics-mingw4 kdeedu-mingw4 exiv2-mingw4 lcms libkdegraphics-mingw4 marble-mingw4
 @deps k3b-mingw4 kdemultimedia-mingw4 libdvdcss-mingw4 cdrtools dvd+rw-tools
 @deps kaffeine-mingw4 kdebase-runtime-mingw4
 @deps kdelibs-mingw4 qt-mingw4 phonon-mingw4 pcre-mingw4 dbus-mingw4 kdewin-mingw4 qimageblitz-mingw4 qca-mingw4 strigi-mingw4 soprano-mingw4 taglib-mingw4 aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
@@ -147,7 +147,7 @@
 @deps automoc-vc90 qt-vc90
 ; dbus may be compiled with libxml2 or expat, so use both dependencies
 @deps dbus-vc90 libxml2 iconv expat
-@deps digikam-vc90 kdegraphics-vc90 kdeedu-vc90 exiv2-vc90 lcms libkdegraphics-vc90
+@deps digikam-vc90 kdegraphics-vc90 kdeedu-vc90 exiv2-vc90 lcms libkdegraphics-vc90 marble-vc90
 @deps k3b-vc90 kdemultimedia-vc90 libdvdcss-vc90 cdrtools dvd+rw-tools
 @deps kaffeine-vc90 kdebase-runtime-vc90
 @deps kdebase-apps-vc90 kdebase-runtime-vc90
