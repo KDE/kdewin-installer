@@ -29,7 +29,9 @@
 @categorypackages KDE koffice-vc90  ktorrent-vc90  kile-vc90  kde-additional-vc90  kdevelop-vc90  kdevplatform-vc90  konversation-vc90
 @categorypackages KDE koffice-mingw ktorrent-mingw kile-mingw kde-additional-mingw kdevelop-mingw kdevplatform-mingw konversation-mingw
 @categorypackages KDE koffice-mingw4 ktorrent-mingw4 kile-mingw4 kde-additional-mingw4 kdevelop-mingw4 kdevplatform-mingw4 konversation-mingw4
-@categorypackages KDEUNSTABLE k3b-vc90 k3b-mingw k3b-mingw4 yakuake-vc90  yakuake-mingw  yakuake-mingw4 kaffeine-mingw kaffeine-mingw4 kaffeine-vc90
+@categorypackages KDEUNSTABLE k3b-vc90  yakuake-vc90  kaffeine-vc90  kmymoney-vc90  kphotoalbum-vc90
+@categorypackages KDEUNSTABLE k3b-mingw yakuake-mingw kaffeine-mingw kmymoney-mingw kphotoalbum-mingw
+@categorypackages KDEUNSTABLE k3b-mingw4 yakuake-mingw4 kaffeine-mingw4 kmymoney-mingw4 kphotoalbum-mingw4
 @categorypackages qt qt-vc90 qt-mingw qt-mingw4 qt-static-vc90
 @categorypackages kde-l10n kde-l10n-af kde-l10n-ar kde-l10n-be kde-l10n-bg kde-l10n-bn kde-l10n-bn_IN kde-l10n-br kde-l10n-ca kde-l10n-cs kde-l10n-csb kde-l10n-cy kde-l10n-da kde-l10n-de kde-l10n-el kde-l10n-en_GB 
 @categorypackages kde-l10n kde-l10n-eo kde-l10n-es kde-l10n-et kde-l10n-eu kde-l10n-fa kde-l10n-fi kde-l10n-fr kde-l10n-fy kde-l10n-ga kde-l10n-gl kde-l10n-gu kde-l10n-ha kde-l10n-he kde-l10n-hi kde-l10n-hne kde-l10n-hr kde-l10n-hsb 
@@ -90,8 +92,10 @@
 @deps kde-additional-mingw kdebase-runtime-mingw
 @deps kile-mingw kdesdk-mingw
 @deps kipi-plugins-mingw kdegraphics-mingw kdepimlibs-mingw libkdegraphics-mingw
+@deps kmymoney-mingw kdebase-runtime-mingw
 @deps koffice-mingw kdebase-runtime-mingw kdelibs-mingw lcms
 @deps konversation-mingw kdebase-runtime-mingw kdelibs-mingw
+@deps kphotoalbum-mingw marble-mingw kdeedu-mingw libkdegraphics-mingw kdegraphics-mingw
 @deps krecipes-mingw mysql-embedded mysql-server sqlite qimageblitz-mingw
 @deps ktorrent-mingw libgmp kdebase-runtime-mingw qca-mingw
 @deps phonon-mingw phonon-backends-mingw qt-mingw
@@ -131,8 +135,10 @@
 @deps kde-additional-mingw4 kdebase-runtime-mingw4
 @deps kile-mingw4 kdesdk-mingw4
 @deps kipi-plugins-mingw4 kdegraphics-mingw4 kdepimlibs-mingw4 libkdegraphics-mingw4
+@deps kmymoney-mingw4 kdebase-runtime-mingw4
 @deps koffice-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4 lcms
 @deps konversation-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4
+@deps kphotoalbum-mingw marble-mingw4 kdeedu-mingw4 libkdegraphics-mingw4 kdegraphics-mingw4
 @deps krecipes-mingw4 mysql-embedded mysql-server sqlite qimageblitz-mingw4
 @deps ktorrent-mingw4 libgmp kdebase-runtime-mingw4 qca-mingw4
 @deps phonon-mingw4 phonon-backends-mingw4 qt-mingw4
@@ -172,8 +178,10 @@
 @deps kde-additional-vc90 kdebase-runtime-vc90
 @deps kile-vc90 kdesdk-vc90
 @deps kipi-plugins-vc90 kdegraphics-vc90 kdepimlibs-vc90 libkdegraphics-vc90
+@deps kmymoney-vc90 kdebase-runtime-vc90
 @deps koffice-vc90 kdebase-runtime-vc90 kdelibs-vc90 lcms
 @deps konversation-vc90 kdebase-runtime-vc90 kdelibs-vc90
+@deps kphotoalbum-vc90 marble-vc90 kdeedu-vc90 libkdegraphics-vc90 kdegraphics-vc90
 @deps krecipes-vc90 mysql-embedded mysql-server sqlite qimageblitz-vc90
 @deps ktorrent-vc90 libgmp kdebase-runtime-vc90 qca-vc90
 @deps phonon-vc90 phonon-backends-vc90 qt-vc90
