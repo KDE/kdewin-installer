@@ -26,12 +26,12 @@
 @categorypackages KDE amarok-vc90  digikam-vc90  kdelibs-vc90  kdepimlibs-vc90  kdepim-vc90  kdepim-runtime-vc90  kdebase-apps-vc90  kdebase-runtime-vc90  kdebase-workspace-vc90  kdeedu-vc90  kdegames-vc90  kdegraphics-vc90  kdenetwork-vc90  kdesdk-vc90  kdewebdev-vc90  kdeutils-vc90  kdeplasma-addons-vc90  kipi-plugins-vc90  krecipes-vc90
 @categorypackages KDE amarok-mingw digikam-mingw kdelibs-mingw kdepimlibs-mingw kdepim-mingw kdepim-runtime-mingw kdebase-apps-mingw kdebase-runtime-mingw kdebase-workspace-mingw kdeedu-mingw kdegames-mingw kdegraphics-mingw kdenetwork-mingw kdesdk-mingw kdewebdev-mingw kdeutils-mingw kdeplasma-addons-mingw kipi-plugins-mingw krecipes-mingw
 @categorypackages KDE amarok-mingw4 digikam-mingw4 kdelibs-mingw4 kdepimlibs-mingw4 kdepim-mingw4 kdepim-runtime-mingw4 kdebase-apps-mingw4 kdebase-runtime-mingw4 kdebase-workspace-mingw4 kdeedu-mingw4 kdegames-mingw4 kdegraphics-mingw4 kdenetwork-mingw4 kdesdk-mingw4 kdewebdev-mingw4 kdeutils-mingw4 kdeplasma-addons-mingw4 kipi-plugins-mingw4 krecipes-mingw4
-@categorypackages KDE koffice-vc90  ktorrent-vc90  kile-vc90  kde-additional-vc90  kdevelop-vc90  kdevplatform-vc90  konversation-vc90
-@categorypackages KDE koffice-mingw ktorrent-mingw kile-mingw kde-additional-mingw kdevelop-mingw kdevplatform-mingw konversation-mingw
-@categorypackages KDE koffice-mingw4 ktorrent-mingw4 kile-mingw4 kde-additional-mingw4 kdevelop-mingw4 kdevplatform-mingw4 konversation-mingw4
-@categorypackages KDEUNSTABLE k3b-vc90  yakuake-vc90  kaffeine-vc90  kmymoney-vc90  kphotoalbum-vc90
-@categorypackages KDEUNSTABLE k3b-mingw yakuake-mingw kaffeine-mingw kmymoney-mingw kphotoalbum-mingw
-@categorypackages KDEUNSTABLE k3b-mingw4 yakuake-mingw4 kaffeine-mingw4 kmymoney-mingw4 kphotoalbum-mingw4
+@categorypackages KDE ktorrent-vc90  kile-vc90  kde-additional-vc90  kdevelop-vc90  kdevplatform-vc90  konversation-vc90
+@categorypackages KDE ktorrent-mingw kile-mingw kde-additional-mingw kdevelop-mingw kdevplatform-mingw konversation-mingw
+@categorypackages KDE ktorrent-mingw4 kile-mingw4 kde-additional-mingw4 kdevelop-mingw4 kdevplatform-mingw4 konversation-mingw4
+@categorypackages KDEUNSTABLE koffice-vc90  k3b-vc90  yakuake-vc90  kaffeine-vc90  kmymoney-vc90  kphotoalbum-vc90
+@categorypackages KDEUNSTABLE koffice-mingw k3b-mingw yakuake-mingw kaffeine-mingw kmymoney-mingw kphotoalbum-mingw
+@categorypackages KDEUNSTABLE koffice-mingw4 k3b-mingw4 yakuake-mingw4 kaffeine-mingw4 kmymoney-mingw4 kphotoalbum-mingw4
 @categorypackages qt qt-vc90 qt-mingw qt-mingw4 qt-static-vc90
 @categorypackages kde-l10n kde-l10n-af kde-l10n-ar kde-l10n-be kde-l10n-bg kde-l10n-bn kde-l10n-bn_IN kde-l10n-br kde-l10n-ca kde-l10n-cs kde-l10n-csb kde-l10n-cy kde-l10n-da kde-l10n-de kde-l10n-el kde-l10n-en_GB 
 @categorypackages kde-l10n kde-l10n-eo kde-l10n-es kde-l10n-et kde-l10n-eu kde-l10n-fa kde-l10n-fi kde-l10n-fr kde-l10n-fy kde-l10n-ga kde-l10n-gl kde-l10n-gu kde-l10n-ha kde-l10n-he kde-l10n-hi kde-l10n-hne kde-l10n-hr kde-l10n-hsb 
