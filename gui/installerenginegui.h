@@ -26,6 +26,9 @@
 #include "installerengine.h"
 #include "package.h"
 
+class QTreeWidget;
+class QTreeWidgetItem;
+
 class InstallerEngineGui : public InstallerEngine
 {
 public:
