@@ -37,8 +37,6 @@ class GlobalConfig;
 class Settings;
 class Package;
 class InstallWizard;
-class QTreeWidget;
-class QTreeWidgetItem;
 class Database;
 
 /** 
