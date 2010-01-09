@@ -33,7 +33,7 @@ class QByteArray;
 class MirrorType
 {
     public:
-        typedef enum URLType {Unspecified, Local, Other } ;
+        typedef enum {Unspecified, Local, Other } URLType;
         MirrorType(const QUrl &_url=QUrl(), const QString _name=QString(), const QString &_continent=QString(), const QString &_country=QString(), URLType _type=Unspecified)
         {
             url = _url;

@@ -28,20 +28,29 @@
 #include "installerupdate.h"
 #include "settings.h"
 
+#ifdef Q_WS_WIN
 #include <windows.h>
+#else
+#define Sleep sleep
+#endif
 
 #include <QCoreApplication>
 #include <QtDebug>
 #include <QProcess>
 #include <QFileInfo>
 
+#ifdef Q_WS_WIN
 #include <psapi.h>
+#else
+#include <unistd.h>
+#endif
 
 QUrl installerUpdateUrl("http://www.winkde.org/pub/kde/ports/win32/installer/");
 QByteArray installerName ="kdewin-installer-gui-";
 
 bool isProcessRunning(int pid)
 {
+#ifdef Q_WS_WIN
     DWORD aProcesses[1024], cbNeeded, cProcesses;
     unsigned int i;
 
@@ -59,6 +68,7 @@ bool isProcessRunning(int pid)
         if (aProcesses[i] == pid)
             return true;
     }
+#endif
     return false;
 }
 
@@ -134,8 +144,13 @@ bool InstallerUpdate::isUpdateAvailable()
 void InstallerUpdate::setUrl(const QUrl &url)
 {
     m_url = url;
+#ifdef Q_WS_WIN
     char installerExePath[MAX_PATH+1];
     GetModuleFileNameA(NULL, installerExePath, MAX_PATH);
+#else
+    // why can't we use this version for both Windows and Linux???
+    QString installerExePath = QCoreApplication::applicationFilePath();
+#endif
     QFileInfo pi(installerExePath); 
     m_currentInstallerFilePath = installerExePath;
     QFileInfo fi(m_url.path()); 
@@ -176,7 +191,11 @@ bool InstallerUpdate::run()
 {
     if (m_url.isValid())
     {
+#ifdef Q_WS_WIN
         QString processID = QString::number(GetCurrentProcessId());
+#else
+        QString processID = QString::number(getpid());
+#endif
         QProcess::startDetached(m_localFilePath,QStringList() << "--finish-update" << m_currentInstallerFilePath << processID);
         QCoreApplication::quit();
         exit(0);

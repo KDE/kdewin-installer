@@ -28,7 +28,9 @@
 #include "selfinstaller.h"
 #include "settings.h"
 
+#ifdef Q_WS_WIN
 #include <windows.h>
+#endif
 
 #include <QCoreApplication>
 #include <QtDebug>
@@ -36,14 +38,20 @@
 #include <QProcess>
 #include <QFileInfo>
 
+#ifdef Q_WS_WIN
 #include <psapi.h>
+#endif
 
 #define REGISTRY_KEY_BASE "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\"
 
 SelfInstaller::SelfInstaller()
 {
+#ifdef Q_WS_WIN
     char installerExePath[MAX_PATH+1];
     GetModuleFileNameA(NULL, installerExePath, MAX_PATH);
+#else
+    QString installerExePath = QCoreApplication::applicationFilePath();
+#endif
     m_currentExecutable.setFile(installerExePath);
     m_installRoot = Settings::instance().installDir();
     m_installedExecutable.setFile(m_installRoot + "/bin/" + m_currentExecutable.fileName());    

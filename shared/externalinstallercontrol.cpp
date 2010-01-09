@@ -25,7 +25,11 @@
 #include <QCoreApplication>
 #include <QProcess>
 
+#ifdef Q_WS_WIN
 #include <windows.h>
+#else
+#define Sleep sleep
+#endif
 
 bool InstallerControlType::parse(const QString &string)
 {
@@ -54,7 +58,9 @@ bool InstallerControlType::parse(const QStringList &fields)
 
 class WindowItem {
     public:
+#ifdef Q_WS_WIN
         HWND handle;
+#endif
         QString className; 
         QString titleName;
         friend QDebug operator<< (QDebug out, const WindowItem &c);
@@ -64,17 +70,22 @@ typedef QList<WindowItem> WindowItemList;
 
 class ExternalInstallerControlPrivate {
     public:
+#ifdef Q_WS_WIN
         bool enumerateWindows(DWORD processID);
+#endif
         
     private:
+#ifdef Q_WS_WIN
         static BOOL CALLBACK EnumWindowsProc(HWND hwnd,LPARAM lParam);
         static BOOL CALLBACK EnumChildWindowProc(HWND hwnd,LPARAM lParam);
-        QList<WindowItem> items;
         DWORD m_processId;
         HWND m_parentWindowsHandle;
+#endif
+        QList<WindowItem> items;
     friend class ExternalInstallerControl;
 };
 
+#ifdef Q_WS_WIN
 BOOL CALLBACK ExternalInstallerControlPrivate::EnumChildWindowProc(HWND hwnd,LPARAM lParam)
 {
     ExternalInstallerControlPrivate *p = (ExternalInstallerControlPrivate*)lParam;
@@ -122,11 +133,14 @@ bool ExternalInstallerControlPrivate::enumerateWindows(DWORD processId)
     BOOL ret = EnumWindows(ExternalInstallerControlPrivate::EnumWindowsProc,(LPARAM)this);
     return true;
 }
+#endif
 
 QDebug operator<< (QDebug out, const WindowItem &c)
 {
     out << "WindowItem (" 
+#ifdef Q_WS_WIN
         << "handle: " << c.handle
+#endif
         << "className: " << c.className
         << "titleName: " << c.titleName
         << ")";
@@ -142,6 +156,7 @@ QDebug operator<< (QDebug out, const WindowItemList &c)
     return out;
 }
 
+#ifdef Q_WS_WIN
 // All credit to Nish
 void SetForegroundWindowEx( HWND hWnd )
 {
@@ -179,6 +194,7 @@ void SetItemText(HWND hwnd, const QString &message)
         PostMessage(hwnd,WM_KEYUP,VkKeyScan(c) ,0);
     }
 }
+#endif
 
 ExternalInstallerControl::ExternalInstallerControl()
 {
@@ -200,8 +216,12 @@ ExternalInstallerControl::~ExternalInstallerControl()
 
 bool ExternalInstallerControl::connect(const QProcess &proc)
 {
+#ifdef Q_WS_WIN
     _PROCESS_INFORMATION* p = proc.pid();
     m_processId = p->dwProcessId;
+#else
+    // FIXME: there should be a Linux specific section here
+#endif
     updateWindowItems();
     return d->items.size() > 0;
 }
@@ -211,7 +231,11 @@ bool ExternalInstallerControl::updateWindowItems()
     d->items.clear();
     while(1) 
     {
+#ifdef Q_WS_WIN
         bool ret = d->enumerateWindows(m_processId);
+#else
+        break;
+#endif
         if (d->items.size() > 0)
             break;
         Sleep(1000);
@@ -236,10 +260,12 @@ bool ExternalInstallerControl::pressButton(const QString &caption)
                 // the wanted action for unknown reason
                 // any hints how to solve this problem are welcome
 
+#ifdef Q_WS_WIN
                 // --- start critial section --
                 SetForegroundWindowEx(d->m_parentWindowsHandle);
                 PostMessage(item.handle,WM_LBUTTONDOWN,0,0);
                 PostMessage(item.handle,WM_LBUTTONUP,0,0);
+#endif
                 return true;
                 // --- end critial section -- 
             }
@@ -262,10 +288,12 @@ bool ExternalInstallerControl::fillInputField(const QString &identifier, const Q
         {
             if (item.className == "Button" && item.titleName == text)
             {
+#ifdef Q_WS_WIN
                 PostMessage(item.handle,WM_SETFOCUS,0,0);
                 Sleep(1);
                 PostMessage(item.handle,WM_LBUTTONUP,0,0);
                 Sleep(1);
+#endif
                 return true;
             }
         }

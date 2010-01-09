@@ -80,7 +80,7 @@ static QFile *logFile = 0;
 
 void myMessageOutput(QtMsgType type, const char *msg)
 {
-    char *msgtype;
+    const char *msgtype;
     switch (type) {
      case QtDebugMsg: 
          msgtype = "Debug: ";
@@ -142,5 +142,5 @@ void closeMessageHandler()
 }
 
 int qDebug_indention = 0;
-char *qDebug_indentBuf ="                                                                                                               ";
+char *qDebug_indentBuf = (char*)"                                                                                                               ";
  

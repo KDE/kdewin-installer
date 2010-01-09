@@ -370,7 +370,7 @@ bool removeDirectory(const QString& aDir)
 }
 
 
-
+#ifdef Q_WS_WIN
 static BOOL IsWow64()
 {
     typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
@@ -389,6 +389,7 @@ static BOOL IsWow64()
     }
     return bIsWow64;
 }
+#endif
 
 bool isX64Windows()
 {

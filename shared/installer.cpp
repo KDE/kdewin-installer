@@ -195,8 +195,8 @@ bool Installer::install(Package *pkg, const Package::Type type)
 
 bool Installer::installExecutable(Package *pkg, Package::Type type)
 {
-#ifdef Q_OS_WIN
     QString fileName = pkg->localFilePath(type);
+#ifdef Q_OS_WIN
     QProcess proc;
     proc.start (fileName, QStringList ( "/Q" ) );   // FIXME: don't hardcode command line parameters!
     if ( !proc.waitForStarted() )
@@ -226,8 +226,8 @@ bool Installer::installExecutable(Package *pkg, Package::Type type)
 
 bool Installer::installMsiPackage(Package *pkg, Package::Type type)
 {
-#ifdef Q_OS_WIN
     QString fileName = pkg->localFilePath(type);
+#ifdef Q_OS_WIN
     QProcess proc;
     proc.start ( "msiexec", QStringList() << "/I" << QDir::toNativeSeparators ( fileName ) );
     if ( !proc.waitForStarted() )
