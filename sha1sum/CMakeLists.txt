@@ -10,3 +10,5 @@ if (MSVC)
     target_link_libraries(sha1sum ws2_32)
 endif (MSVC)
 
+get_target_property(SHA1SUM_EXECUTABLE sha1sum LOCATION)
+set(SHA1SUM_EXECUTABLE ${SHA1SUM_EXECUTABLE} PARENT_SCOPE)
