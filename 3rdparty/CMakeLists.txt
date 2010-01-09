@@ -19,6 +19,7 @@ if (BZIP2_UNPACK_SUPPORT)
     )
     add_library(bzip2  ${bzip2_SOURCES} ${bzip2_HEADERS})
     target_link_libraries(bzip2)
+    get_target_property(BZIP2_LIBRARY bzip2 LOCATION)
 
     set(filters_SOURCES
         ${CMAKE_SOURCE_DIR}/3rdparty/filters/tarfilter.cpp
@@ -31,10 +32,11 @@ if (BZIP2_UNPACK_SUPPORT)
     include_directories(${CMAKE_SOURCE_DIR}/3rdparty/bzip2)
     add_library(filters ${filters_SOURCES} ${filters_HEADERS})
     target_link_libraries(filters)
+    get_target_property(FILTERS_LIBRARY filters LOCATION)
 
     # public interface
     set(BZIP2_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/bzip2 ${CMAKE_SOURCE_DIR}/3rdparty/filters)
-    set(BZIP2_LIBRARIES filters bzip2)
+    set(BZIP2_LIBRARIES ${FILTERS_LIBRARY} ${BZIP2_LIBRARY})
 
 endif (BZIP2_UNPACK_SUPPORT)
 
@@ -171,7 +173,7 @@ target_link_libraries(quazip)
 
 # public interface
 set(QUAZIP_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/quazip/quazip)
-set(QUAZIP_LIBRARIES quazip)
+get_target_property(QUAZIP_LIBRARIES quazip LOCATION)
 
 #-------------------------------------------------------------------
 # 7zip library
@@ -212,7 +214,7 @@ if(SEVENZIP_UNPACK_SUPPORT)
 
   # public interface
   set(QUA7ZIP_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/qua7zip)
-  set(QUA7ZIP_LIBRARIES quaz7ip)
+  get_target_property(QUA7ZIP_LIBRARIES qua7zip LOCATION)
   
   endif(SEVENZIP_UNPACK_SUPPORT)
 
