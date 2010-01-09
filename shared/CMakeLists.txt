@@ -79,8 +79,10 @@ set (shared_sources_gui ${installer_shared_gui_SOURCES} ${installer_shared_HEADE
 qt4_wrap_cpp(shared_sources_console ${installer_shared_HEADERS})
 qt4_wrap_cpp(shared_sources_gui ${installer_shared_HEADERS})
 
+if(NOT BUILD_INSTALLER_THEME)
 add_library(shared-console ${shared_sources_console})
 target_link_libraries(shared-console)
+endif(NOT BUILD_INSTALLER_THEME)
 
 add_library(shared-gui ${shared_sources_gui})
 set_target_properties(shared-gui PROPERTIES COMPILE_FLAGS -DUSE_GUI)

@@ -199,15 +199,19 @@ endif (UNIX)
 add_subdirectory(sha1sum)
 
 add_subdirectory(shared)
+if(NOT BUILD_INSTALLER_THEME)
 add_subdirectory(console)
+endif(NOT BUILD_INSTALLER_THEME)
 add_subdirectory(gui)
 #add_subdirectory(enduser)
 #add_subdirectory(package-manager)
+if(NOT BUILD_INSTALLER_THEME)
 add_subdirectory(tests)
 add_subdirectory(packager)
 add_subdirectory(doc)
 # not supported yet
 add_subdirectory(configer)
+endif(NOT BUILD_INSTALLER_THEME)
 if(WIN32)
 #  add_subdirectory(menubuilder)
 endif(WIN32)
@@ -218,6 +222,7 @@ if (WIN32)
     addExplorerWrapper()
 endif(WIN32)
 
+if(NOT BUILD_INSTALLER_THEME)
 install( FILES cmake/modules/FindKDEWIN_Packager.cmake  DESTINATION  share/apps/cmake/modules )
 
 # install required shared libraries
@@ -275,3 +280,4 @@ if (WINSCP_FOUND)
     UPLOAD()
 endif (WINSCP_FOUND)
 
+endif(NOT BUILD_INSTALLER_THEME)

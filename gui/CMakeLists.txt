@@ -114,8 +114,8 @@ set(main_all_headers
     ${md5_HEADERS}
 )
 
-if(BUILD_FOR_AMAROK)
-add_subdirectory(themes/amarok)
-else(BUILD_FOR_AMAROK)
-add_subdirectory(themes/main)
-endif(BUILD_FOR_AMAROK)
+if(BUILD_INSTALLER_THEME)
+  add_subdirectory(themes/${BUILD_INSTALLER_THEME})
+else(BUILD_INSTALLER_THEME)
+  add_subdirectory(themes/main)
+endif(BUILD_INSTALLER_THEME)
