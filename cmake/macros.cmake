@@ -101,3 +101,73 @@ macro (create_checksum_file _target)
         install(FILES ${_filename}.sha1 DESTINATION bin)
     endif (SHA1SUM_EXECUTABLE)
 endmacro (create_checksum_file _target)
+
+# the following macro adds a themed installer
+macro (add_themed_installer _appname _resource)
+  set (TARGET ${_appname}-installer-gui)
+  set (TARGET_FILENAME ${_appname}-installer-gui-${VERSION_PATCH})
+
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} )
+
+  set (UI_SOURCES 
+    ${main_UI_SOURCES}
+    titlepage.ui
+  )
+
+  set(all_sources 
+      ${main_all_sources}
+  )
+
+  set(all_headers
+      ${main_all_headers}
+  )
+
+  QT4_WRAP_UI(all_sources ${UI_SOURCES})
+
+  QT4_ADD_RESOURCES(all_sources ${_resource})
+  if(WIN32)
+  if(MINGW)
+    QT4_ADD_RESOURCES2(all_sources ${CMAKE_CURRENT_SOURCE_DIR}/gui.rc)
+  else(MINGW)
+    list(APPEND all_sources ${CMAKE_CURRENT_SOURCE_DIR}/gui.rc)
+  endif(MINGW)
+  endif(WIN32)
+
+  qt4_wrap_cpp(all_sources ${all_headers})
+
+#  if (BUILD_TRANSLATIONS)
+#      qt4_create_translation(
+#          _qm_files
+#          ${CMAKE_BINARY_DIR}/bin
+#          ${all_sources} ${all_headers}
+#          ${CMAKE_SOURCE_DIR}/translations/installer-gui-de.ts
+#          ${CMAKE_SOURCE_DIR}/translations/installer-gui-fr.ts
+#      )
+#
+#      add_custom_target(${TARGET}-translations DEPENDS ${_qm_files} ) 
+#      install(FILES ${_qm_files} DESTINATION bin)
+#      list(APPEND all_sources ${_qm_files})
+#  endif (BUILD_TRANSLATIONS)
+
+  if(WIN32)
+    set(_WIN32 WIN32)
+  else(WIN32)
+    set(_WIN32)
+  endif(WIN32)
+  add_executable(${TARGET} ${_WIN32} ${all_sources} ${all_headers})
+  set_target_properties(${TARGET} PROPERTIES COMPILE_FLAGS -DUSE_GUI)
+  set_target_properties(${TARGET} PROPERTIES OUTPUT_NAME ${TARGET_FILENAME})
+  target_link_libraries(${TARGET}
+                        ${QT_QTCORE_LIBRARY}
+                        ${QT_QTGUI_LIBRARY}
+                        ${QT_QTMAIN_LIBRARY}
+                        ${GUI_LIBS}
+  )
+  write_file(${EXECUTABLE_OUTPUT_PATH}/${TARGET}.bat "start ${TARGET_FILENAME}")
+
+  install_targets(/bin ${TARGET} )
+  install(FILES ${EXECUTABLE_OUTPUT_PATH}/${TARGET}.bat DESTINATION bin)
+
+  pack_target(${TARGET})
+  create_checksum_file(${TARGET})
+ndmacro (add_themed_installer _appname _resource)
