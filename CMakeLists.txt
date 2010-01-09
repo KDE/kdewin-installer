@@ -167,8 +167,8 @@ configure_file(${CMAKE_SOURCE_DIR}/mirrors.lst.cmake ${CMAKE_BINARY_DIR}/config/
 
 #FIXME: ${BZIP2_LIBRARIES} -> 3rdparty
 if (UNIX)
-  set (CONSOLE_LIBS pthread dl z rt ${QUAZIP_LIBRARIES} ${BZIP2_LIBRARIES} ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} ${CURL_LIBRARIES} shared-console)
-  set (GUI_LIBS pthread dl z rt ${QUAZIP_LIBRARIES} ${BZIP2_LIBRARIES} ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} ${CURL_LIBRARIES} shared-gui)
+  set (CONSOLE_LIBS pthread dl z rt ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} shared-console ${CURL_LIBRARIES} ${QUAZIP_LIBRARIES} ${BZIP2_LIBRARIES})
+  set (GUI_LIBS pthread dl z rt ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} shared-gui ${CURL_LIBRARIES} ${QUAZIP_LIBRARIES} ${BZIP2_LIBRARIES})
   if (STATIC_BUILD)
     find_package(X11)
     find_package(Freetype)
@@ -197,7 +197,6 @@ endif (UNIX)
 
 # our targets
 add_subdirectory(sha1sum)
-set (SHA1SUM_EXECUTABLE ${EXECUTABLE_OUTPUT_PATH}/sha1sum.exe)
 
 add_subdirectory(shared)
 add_subdirectory(console)
