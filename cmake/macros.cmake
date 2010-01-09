@@ -170,4 +170,4 @@ macro (add_themed_installer _appname _resource)
 
   pack_target(${TARGET})
   create_checksum_file(${TARGET})
-ndmacro (add_themed_installer _appname _resource)
+endmacro (add_themed_installer _appname _resource)
