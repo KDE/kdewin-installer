@@ -49,7 +49,7 @@ class GlobalConfig {
         bool parse(const QStringList &configFiles);
 
         /// return list of site definitions
-        QList<Site*> *sites()  { return &m_sites;   } 
+        QList<Site*> *sites()  { return &m_sites; } 
 
         /// return list of package definitions 
         QList<Package*> *packages() { return &m_packages; }
@@ -62,6 +62,9 @@ class GlobalConfig {
         
         /// return category packages relations
         QHash <QString,QStringList> &categoryPackages() { return m_categoryPackages; }
+
+        /// return meta packages relations
+        QHash <QString,QStringList> &metaPackages() { return m_metaPackages; }
 
         /// return package orientated news
         QHash<QString, QString> *news() { return &m_news; }
@@ -92,6 +95,7 @@ class GlobalConfig {
         QHash <QString,QString> m_news;
         QHash <QString,QString> m_categoryNotes;
         QHash <QString,QStringList> m_categoryPackages;
+        QHash <QString,QStringList> m_metaPackages;
         QList <Mirror*> m_mirrors;
         QString m_baseURL;
         QDateTime m_timestamp;

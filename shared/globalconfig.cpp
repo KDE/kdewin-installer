@@ -245,6 +245,13 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 cmd.removeFirst();
                 m_categoryPackages[category] << cmd;
             }
+            else if (keyword == "metapackage")
+            {
+                QString metapackage = cmd[1];
+                cmd.removeFirst();
+                cmd.removeFirst();
+                m_metaPackages[metapackage] << cmd;
+            }
             else if (keyword == "endusercategories")
             {
                 cmd.removeFirst();
