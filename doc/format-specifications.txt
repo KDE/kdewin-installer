@@ -48,6 +48,7 @@ token = '@' attribute '\n' ;
 attribute =   file-format-attribute 
             | categorynotes-attribute
             | categorypackages-attribute
+            | metapackage-attribute
             | news-attribute
             | minversion-attribute
             | timestamp-attribute
@@ -75,9 +76,14 @@ category = string ;
 
 (* category specific package association independend from sites *) 
 categorypackages-attribute = package-category { package-name } ;
-package-name = string ; 
+package-name = string ;
 
- 
+
+(* define a metapackage e.g. @metapackage koffice libkoffice karbon kplato kpresenter krita kspread kword  *) 
+metapackage-attribute = metapackage-name { package-name } ;
+package-name = string ;
+
+
 (* define a news entry (not used yet) *)
 news-attribute = date package-name comment          (* eg.@news 20071015 png2ico : removed package, it is now in kdewin32 *)
 comment = string
