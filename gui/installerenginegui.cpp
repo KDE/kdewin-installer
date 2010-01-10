@@ -55,7 +55,7 @@ PackageStates dependencyStates;
 // from packageselectorpage.cpp
 int typeToColumn ( Package::Type type );
 
-enum iconType {_install, _autoinstall,_keepinstalled, _update, _remove, _nothing, _disable};
+enum iconType {_install, _autoinstall,_keepinstalled, _update, _remove, _nothing, _disable };
 
 
 static void setIcon ( QTreeWidgetItem &item, int column, iconType action )
@@ -178,7 +178,7 @@ static void setIcon ( QTreeWidgetItem &item, Package::Type type, iconType action
     
 void InstallerEngineGui::setEndUserInitialState ( QTreeWidgetItem &item, Package *available, Package *installed, int column )
 {
-    if (installed && available->version() != installed->version())
+    if (installed && available && available->version() != installed->version())
     {
         if (installed->isInstalled(Package::BIN))
         {
@@ -195,6 +195,10 @@ void InstallerEngineGui::setEndUserInitialState ( QTreeWidgetItem &item, Package
     {
         if (available->hasType(Package::BIN))
             setIcon(item,column,packageStates.getState(available,Package::BIN),_nothing);
+    }
+    else
+    {
+        setIcon(item,column,_nothing);
     }
 }
 
@@ -279,7 +283,11 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
     }
     bool sameVersion = available && installed && available->version() == installed->version();
 
-    stateType currentState = packageStates.getState(available,type);
+    stateType currentState;
+    if(available)
+        currentState = packageStates.getState(available,type);
+    else
+        currentState = _Nothing;
     stateType newState = _Nothing;
     iconType iconState = _nothing;
 
