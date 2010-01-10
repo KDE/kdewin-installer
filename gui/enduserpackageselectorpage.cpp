@@ -1,6 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2008 Ralf Habacker <ralf.habacker@freenet.de> 
+** Copyright (C) 2010 Patrick Spendrin <ps_ml@gmx.de> 
 ** All rights reserved.
 **
 ** This file is part of the KDE installer for windows
@@ -44,6 +45,7 @@
 #include <QTreeWidget>
 
 extern InstallerEngineGui *engine;
+typedef enum { C_ACTION, C_NAME, C_AVAILABLE, C_INSTALLED, C_NOTES } columnvalue;
 
 EndUserPackageSelectorPage::EndUserPackageSelectorPage()  : InstallWizardPage(0)
 {
@@ -140,33 +142,47 @@ void EndUserPackageSelectorPage::setWidgetData()
                 )
             continue;
             
-        QStringList data;
-        Package *installedPackage = engine->database()->getPackage(availablePackage->name());
-        Package::PackageVersion installedVersion = installedPackage ? installedPackage->installedVersion() : Package::PackageVersion();
-        Package::PackageVersion availableVersion = availablePackage->version();
-        availablePackage->setInstalledVersion(installedVersion);
-
-        if (installedPackage && availableVersion == installedVersion)
-            continue;
-        data    
-            << ""
-            << PackageInfo::baseName(availablePackage->name())
-            << (availableVersion != installedVersion ? availableVersion.toString() : "")
-            << installedVersion.toString()
-            << QString();
-        QTreeWidgetItem *item = new QTreeWidgetItem ( ( QTreeWidgetItem* ) 0, data );
-        // save real package name for selection code
-        item->setData(0,Qt::StatusTipRole,availablePackage->name());
-        engine->setEndUserInitialState( *item,availablePackage,installedPackage,0);
-        item->setText ( 4, availablePackage->notes() );
-        item->setToolTip ( 0, toolTip );
-        categoryList.append(item);
+        QTreeWidgetItem *item = addPackageToTree(availablePackage, 0);
+        if (item)
+            categoryList.append(item);
     }
     tree->addTopLevelItems ( categoryList );
     tree->expandAll();
-    tree->sortItems ( 0,Qt::AscendingOrder );
+    tree->sortItems ( C_NAME, Qt::AscendingOrder );
     for ( int i = 0; i < tree->columnCount(); i++ )
         tree->resizeColumnToContents ( i );
+}
+
+QTreeWidgetItem *EndUserPackageSelectorPage::addPackageToTree(Package *availablePackage, QTreeWidgetItem *parent)
+{
+    QStringList data;
+    QString toolTip = "select this checkbox to install or update this package";
+
+    Package *installedPackage = engine->database()->getPackage(availablePackage->name());
+    Package::PackageVersion installedVersion = installedPackage ? installedPackage->installedVersion() : Package::PackageVersion();
+    Package::PackageVersion availableVersion = availablePackage->version();
+    availablePackage->setInstalledVersion(installedVersion);
+
+    if (installedPackage && availableVersion == installedVersion)
+        return 0;
+    data    
+        << ""
+        << PackageInfo::baseName(availablePackage->name())
+        << (availableVersion != installedVersion ? availableVersion.toString() : "")
+        << installedVersion.toString()
+        << QString();
+    QTreeWidgetItem *item = new QTreeWidgetItem ( parent, data );
+    // save real package name for selection code
+    item->setData(C_ACTION, Qt::StatusTipRole, availablePackage->name());
+    if(!availablePackage->metaFlag()) {
+        engine->setEndUserInitialState(*item, availablePackage, installedPackage, C_ACTION);
+    } else {
+        engine->setEndUserInitialState(*item, 0, 0, C_ACTION);
+    }
+    item->setText(C_NOTES, availablePackage->notes());
+    item->setToolTip(C_NAME, toolTip);
+
+    return item;
 }
 
 void EndUserPackageSelectorPage::initializePage()
@@ -206,17 +222,17 @@ void EndUserPackageSelectorPage::preSelectPackages(const QString &package)
     bool found = false;
     foreach(QString code, searchCodes)
     {
-        QList<QTreeWidgetItem *> list = tree->findItems (QString(pattern).arg(code), Qt::MatchContains, 1 );
+        QList<QTreeWidgetItem *> list = tree->findItems (QString(pattern).arg(code), Qt::MatchContains, C_NAME );
         foreach(QTreeWidgetItem *item, list)
         {
-            QString name = item->data(0, Qt::StatusTipRole).toString();
-            QString availableVersion = item->text ( 2 );
-            Package *availablePackage = engine->getPackageByName ( name,availableVersion  );
+            QString name = item->data(C_ACTION, Qt::StatusTipRole).toString();
+            QString availableVersion = item->text ( C_AVAILABLE );
+            Package *availablePackage = engine->getPackageByName ( name, availableVersion );
             if (!engine->isPackageSelected(availablePackage,Package::BIN))
             {
-                QString installedVersion = item->text ( 3 );
+                QString installedVersion = item->text ( C_INSTALLED );
                 Package *installedPackage = engine->database()->getPackage( name,installedVersion.toAscii() );
-                engine->setNextState(*item, availablePackage, installedPackage, Package::BIN, 0 );
+                engine->setNextState(*item, availablePackage, installedPackage, Package::BIN, C_ACTION );
                 qDebug() << "found" << QString(pattern).arg(code);
             }   
             found = true;
@@ -259,20 +275,21 @@ void EndUserPackageSelectorPage::setPackageDisplayType(PackageDisplayType type)
 
 void EndUserPackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
 {
-    QString name = item->data(0, Qt::StatusTipRole).toString();
-    QString installedVersion = item->text ( 3 );
-    QString availableVersion = item->text ( 2 );
+    QString name = item->data( C_ACTION, Qt::StatusTipRole ).toString();
+    QString installedVersion = item->text ( C_INSTALLED );
+    QString availableVersion = item->text ( C_AVAILABLE );
 
     Package *installedPackage = engine->database()->getPackage( name,installedVersion.toAscii() );
-    Package *availablePackage = engine->getPackageByName ( name,availableVersion  );
+    Package *availablePackage = engine->getPackageByName( name, availableVersion );
+
     if ( !availablePackage && !installedPackage ) {
         qWarning() << __FUNCTION__ << "neither available or installed package present for package" << name;
         return;
     }
 
-    if ( column == 0)
+    if ( column == C_ACTION )
     {
-        engine->setNextState(*item, availablePackage, installedPackage, Package::BIN, 0 );
+        engine->setNextState(*item, availablePackage, installedPackage, Package::BIN, C_ACTION );
     }
     // dependencies are selected later
 }
@@ -284,10 +301,10 @@ void EndUserPackageSelectorPage::selectAllClicked()
     for(int i = 0; i < count; i++)
     {
         QTreeWidgetItem *item = tree->topLevelItem(i);
-        QString name = item->data(0, Qt::StatusTipRole).toString();
+        QString name = item->data(C_ACTION, Qt::StatusTipRole).toString();
         if (name.startsWith("aspell-") || name.startsWith("kde-l10n"))
             continue;
-        itemClicked(item,0);
+        itemClicked(item, C_ACTION);
     }
 }
 
@@ -318,8 +335,8 @@ void EndUserPackageSelectorPage::slotFilterTextChanged(const QString &text)
         }
         return; 
     }
-    QList<QTreeWidgetItem *> list = tree->findItems (text, Qt::MatchContains, 1 );
-    foreach(QTreeWidgetItem *item, tree->findItems (text, Qt::MatchContains, 4 ))
+    QList<QTreeWidgetItem *> list = tree->findItems (text, Qt::MatchContains, C_NAME );
+    Q_FOREACH(QTreeWidgetItem *item, tree->findItems (text, Qt::MatchContains, C_NOTES ))
     {
         if (!list.contains(item))
             list.append(item);
