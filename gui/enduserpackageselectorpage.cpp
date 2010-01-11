@@ -174,11 +174,7 @@ QTreeWidgetItem *EndUserPackageSelectorPage::addPackageToTree(Package *available
     QTreeWidgetItem *item = new QTreeWidgetItem ( parent, data );
     // save real package name for selection code
     item->setData(C_ACTION, Qt::StatusTipRole, availablePackage->name());
-    if(!availablePackage->metaFlag()) {
-        engine->setEndUserInitialState(*item, availablePackage, installedPackage, C_ACTION);
-    } else {
-        engine->setEndUserInitialState(*item, 0, 0, C_ACTION);
-    }
+    engine->setEndUserInitialState(*item, availablePackage, installedPackage, C_ACTION);
     item->setText(C_NOTES, availablePackage->notes());
     item->setToolTip(C_NAME, toolTip);
 
