@@ -20,9 +20,9 @@
 @categorypackages win32libs pcre-mingw dbus-mingw exiv2-mingw libspectre-mingw libmsn-mingw libdvdcss-mingw libsamplerate-mingw
 @categorypackages win32libs pcre-mingw4 dbus-mingw4 exiv2-mingw4 libspectre-mingw4 libmsn-mingw4 libdvdcss-mingw4 libsamplerate-mingw4
 @categorypackages tools findutils grep mingw-utils diffutils patch
-@categorypackages kdesupport kdewin-vc90  kdewin-installer-vc90  runtime-vc90  qimageblitz-vc90  qca-vc90  strigi-vc90  soprano-vc90  taglib-vc90  phonon-vc90  fontconfig-vc90  freetype-vc90  poppler-vc90  automoc-vc90  phonon-backends-vc90  oxygen-icons
-@categorypackages kdesupport kdewin-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw phonon-mingw fontconfig-mingw freetype-mingw poppler-mingw automoc-mingw phonon-backends-mingw oxygen-icons
-@categorypackages kdesupport kdewin-mingw4 kdewin-installer-mingw4 runtime-mingw4 qimageblitz-mingw4 qca-mingw4 strigi-mingw4 soprano-mingw4 taglib-mingw4 phonon-mingw4 fontconfig-mingw4 freetype-mingw4 poppler-mingw4 automoc-mingw4 phonon-backends-mingw4 oxygen-icons
+@categorypackages kdesupport kdewin-vc90  kdewin-installer-vc90  runtime-vc90  qimageblitz-vc90  qca-vc90  strigi-vc90  soprano-vc90  taglib-vc90  phonon-vc90  fontconfig-vc90  freetype-vc90  poppler-vc90  automoc-vc90  attica-vc90  phonon-backends-vc90  oxygen-icons
+@categorypackages kdesupport kdewin-mingw kdewin-installer-mingw runtime-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw phonon-mingw fontconfig-mingw freetype-mingw poppler-mingw automoc-mingw attica-mingw phonon-backends-mingw oxygen-icons
+@categorypackages kdesupport kdewin-mingw4 kdewin-installer-mingw4 runtime-mingw4 qimageblitz-mingw4 qca-mingw4 strigi-mingw4 soprano-mingw4 taglib-mingw4 phonon-mingw4 fontconfig-mingw4 freetype-mingw4 poppler-mingw4 automoc-mingw4 attica-mingw4 phonon-backends-mingw4 oxygen-icons
 @categorypackages KDE amarok-vc90  digikam-vc90  kdelibs-vc90  kdepimlibs-vc90  kdepim-vc90  kdepim-runtime-vc90  kdebase-apps-vc90  kdebase-runtime-vc90  kdebase-workspace-vc90  kdeedu-vc90  kdegames-vc90  kdegraphics-vc90  kdenetwork-vc90  kdesdk-vc90  kdewebdev-vc90  kdeutils-vc90  kdeplasma-addons-vc90  kipi-plugins-vc90  krecipes-vc90
 @categorypackages KDE amarok-mingw digikam-mingw kdelibs-mingw kdepimlibs-mingw kdepim-mingw kdepim-runtime-mingw kdebase-apps-mingw kdebase-runtime-mingw kdebase-workspace-mingw kdeedu-mingw kdegames-mingw kdegraphics-mingw kdenetwork-mingw kdesdk-mingw kdewebdev-mingw kdeutils-mingw kdeplasma-addons-mingw kipi-plugins-mingw krecipes-mingw
 @categorypackages KDE amarok-mingw4 digikam-mingw4 kdelibs-mingw4 kdepimlibs-mingw4 kdepim-mingw4 kdepim-runtime-mingw4 kdebase-apps-mingw4 kdebase-runtime-mingw4 kdebase-workspace-mingw4 kdeedu-mingw4 kdegames-mingw4 kdegraphics-mingw4 kdenetwork-mingw4 kdesdk-mingw4 kdewebdev-mingw4 kdeutils-mingw4 kdeplasma-addons-mingw4 kipi-plugins-mingw4 krecipes-mingw4
@@ -70,7 +70,7 @@
 @deps digikam-mingw kdegraphics-mingw kdeedu-mingw exiv2-mingw lcms libkdegraphics-mingw marble-mingw
 @deps k3b-mingw kdemultimedia-mingw libdvdcss-mingw cdrtools dvd+rw-tools
 @deps kaffeine-mingw kdebase-runtime-mingw
-@deps kdelibs-mingw qt-mingw phonon-mingw pcre-mingw dbus-mingw kdewin-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
+@deps kdelibs-mingw qt-mingw phonon-mingw attica-mingw pcre-mingw dbus-mingw kdewin-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
 @deps kdebase-apps-mingw kdebase-runtime-mingw
 @deps kdebase-runtime-mingw kdepimlibs-mingw kdelibs-mingw oxygen-icons
 @deps kdebase-workspace-mingw kdebase-runtime-mingw kdepimlibs-mingw
@@ -113,7 +113,7 @@
 @deps digikam-mingw4 kdegraphics-mingw4 kdeedu-mingw4 exiv2-mingw4 lcms libkdegraphics-mingw4 marble-mingw4
 @deps k3b-mingw4 kdemultimedia-mingw4 libdvdcss-mingw4 cdrtools dvd+rw-tools
 @deps kaffeine-mingw4 kdebase-runtime-mingw4
-@deps kdelibs-mingw4 qt-mingw4 phonon-mingw4 pcre-mingw4 dbus-mingw4 kdewin-mingw4 qimageblitz-mingw4 qca-mingw4 strigi-mingw4 soprano-mingw4 taglib-mingw4 aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
+@deps kdelibs-mingw4 qt-mingw4 phonon-mingw4 attica-mingw4 pcre-mingw4 dbus-mingw4 kdewin-mingw4 qimageblitz-mingw4 qca-mingw4 strigi-mingw4 soprano-mingw4 taglib-mingw4 aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
 @deps kdebase-apps-mingw4 kdebase-runtime-mingw4
 @deps kdebase-runtime-mingw4 kdepimlibs-mingw4 kdelibs-mingw4 oxygen-icons
 @deps kdebase-workspace-mingw4 kdebase-runtime-mingw4 kdepimlibs-mingw4
@@ -162,7 +162,7 @@
 @deps kdeedu-vc90 kdebase-runtime-vc90 kdelibs-vc90 openbabel-vc90 cfitsio
 @deps kdegames-vc90 kdebase-runtime-vc90 kdelibs-vc90 phonon-vc90
 @deps kdegraphics-vc90 kdebase-runtime-vc90 kdelibs-vc90 poppler-vc90 ebook-tools libspectre exiv2-vc90
-@deps kdelibs-vc90 qt-vc90 phonon-vc90 pcre-vc90 runtime-vc90 qt-vc90 dbus-vc90 kdewin-vc90 qimageblitz-vc90 qca-vc90 strigi-vc90 soprano-vc90 taglib-vc90 aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl tiff zlib shared-mime-info
+@deps kdelibs-vc90 qt-vc90 phonon-vc90 attica-vc90 pcre-vc90 runtime-vc90 qt-vc90 dbus-vc90 kdewin-vc90 qimageblitz-vc90 qca-vc90 strigi-vc90 soprano-vc90 taglib-vc90 aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl tiff zlib shared-mime-info
 @deps kdemultimedia-vc90 kdebase-runtime-vc90 taglib-vc90
 @deps kdenetwork-vc90 kdebase-runtime-vc90 kdelibs-vc90 sqlite libgmp libidn libmsn-vc90
 @deps kdepim-vc90 kdepim-runtime-vc90 kdepimlibs-vc90 kdebase-runtime-vc90 gpgme sqlite akonadi-vc90
