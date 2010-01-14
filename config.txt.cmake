@@ -223,43 +223,49 @@
 ;-------------------------------------------------------
 ; kdesdk
 ;-------------------------------------------------------
-@metapackage kdesdk libkdesdk umbrello lokalize kate kbugbuster kompare
+@metapackage kdesdk libkdesdk kcachegrind umbrello lokalize kate kbugbuster kompare
 ;
-@categorypackages KDE kbugbuster-mingw umbrello-mingw kate-mingw lokalize-mingw libkdesdk-mingw kompare-mingw
-@categorypackages KDE kbugbuster-mingw4 umbrello-mingw4 kate-mingw4 lokalize-mingw4 libkdesdk-mingw4 kompare-mingw4
-@categorypackages KDE kbugbuster-vc90 umbrello-vc90 kate-vc90 lokalize-vc90 libkdesdk-vc90 kompare-vc90
+@categorypackages KDE kcachegrind-mingw kbugbuster-mingw umbrello-mingw kate-mingw lokalize-mingw libkdesdk-mingw kompare-mingw
+@categorypackages KDE kcachegrind-mingw4 kbugbuster-mingw4 umbrello-mingw4 kate-mingw4 lokalize-mingw4 libkdesdk-mingw4 kompare-mingw4
+@categorypackages KDE kcachegrind-vc90 kbugbuster-vc90 umbrello-vc90 kate-vc90 lokalize-vc90 libkdesdk-vc90 kompare-vc90
 ;
-@deps kbugbuster-mingw
-@deps kbugbuster-mingw4
-@deps kbugbuster-vc90
-@deps umbrello-mingw
-@deps umbrello-mingw4
-@deps umbrello-vc90
-@deps kate-mingw
-@deps kate-mingw4
-@deps kate-vc90
-@deps lokalize-mingw
-@deps lokalize-mingw4
-@deps lokalize-vc90
-@deps libkdesdk-mingw
-@deps libkdesdk-mingw4
-@deps libkdesdk-vc90
-@deps kompare-mingw
-@deps kompare-mingw4
-@deps kompare-vc90
+@deps kcachegrind-mingw libkdesdk-mingw
+@deps kcachegrind-mingw4 libkdesdk-mingw4
+@deps kcachegrind-vc90 libkdesdk-vc90
+@deps kbugbuster-mingw libkdesdk-mingw
+@deps kbugbuster-mingw4 libkdesdk-mingw4
+@deps kbugbuster-vc90 libkdesdk-vc90
+@deps umbrello-mingw libkdesdk-mingw
+@deps umbrello-mingw4 libkdesdk-mingw4
+@deps umbrello-vc90 libkdesdk-vc90
+@deps kate-mingw libkdesdk-mingw
+@deps kate-mingw4 libkdesdk-mingw4
+@deps kate-vc90 libkdesdk-vc90
+@deps lokalize-mingw libkdesdk-mingw
+@deps lokalize-mingw4 libkdesdk-mingw4
+@deps lokalize-vc90 libkdesdk-vc90
+@deps libkdesdk-mingw kdebase-runtime-mingw kdelibs-mingw-mingw kdepimlibs-mingw-mingw
+@deps libkdesdk-mingw4 kdebase-runtime-mingw4 kdelibs-mingw-mingw4 kdepimlibs-mingw-mingw4
+@deps libkdesdk-vc90 kdebase-runtime-vc90 kdelibs-mingw-vc90 kdepimlibs-mingw-vc90
+@deps kompare-mingw libkdesdk-mingw
+@deps kompare-mingw4 libkdesdk-mingw4
+@deps kompare-vc90 libkdesdk-vc90
 ;
 ;-------------------------------------------------------
 ; kdegames
 ;-------------------------------------------------------
 @metapackage kdegames bomber bovo kapman katomic kbattleship kblackbox kblocks kbounce kbreakout kdiamond kfourinline kgoldrunner killbots kiriki kjumpingcube klines kmahjongg kmines knetwalk kolf kollision konquest kpat kreversi ksame kshisen ksirk kspaceduel ksquares ksudoku ktron ktuberling kubrick lskat
 ;
-@categorypackages KDE ksirk-mingw kdiamond-mingw kapman-mingw knetwalk-mingw kolf-mingw kblocks-mingw kshisen-mingw bomber-mingw kmahjongg-mingw libkdegames-mingw kpat-mingw ksudoku-mingw klines-mingw kbounce-mingw kgoldrunner-mingw kiriki-mingw killbots-mingw kreversi-mingw kbattleship-mingw ktuberling-mingw lskat-mingw kjumpingcube-mingw ktron-mingw kollision-mingw katomic-mingw kspaceduel-mingw bovo-mingw konquest-mingw kmines-mingw kbreakout-mingw kfourinline-mingw ksame-mingw ksquares-mingw kblackbox-mingw kubrick-mingw
-@categorypackages KDE ksirk-mingw4 kdiamond-mingw4 kapman-mingw4 knetwalk-mingw4 kolf-mingw4 kblocks-mingw4 kshisen-mingw4 bomber-mingw4 kmahjongg-mingw4 libkdegames-mingw4 kpat-mingw4 ksudoku-mingw4 klines-mingw4 kbounce-mingw4 kgoldrunner-mingw4 kiriki-mingw4 killbots-mingw4 kreversi-mingw4 kbattleship-mingw4 ktuberling-mingw4 lskat-mingw4 kjumpingcube-mingw4 ktron-mingw4 kollision-mingw4 katomic-mingw4 kspaceduel-mingw4 bovo-mingw4 konquest-mingw4 kmines-mingw4 kbreakout-mingw4 kfourinline-mingw4 ksame-mingw4 ksquares-mingw4 kblackbox-mingw4 kubrick-mingw4
-@categorypackages KDE ksirk-vc90 kdiamond-vc90 kapman-vc90 knetwalk-vc90 kolf-vc90 kblocks-vc90 kshisen-vc90 bomber-vc90 kmahjongg-vc90 libkdegames-vc90 kpat-vc90 ksudoku-vc90 klines-vc90 kbounce-vc90 kgoldrunner-vc90 kiriki-vc90 killbots-vc90 kreversi-vc90 kbattleship-vc90 ktuberling-vc90 lskat-vc90 kjumpingcube-vc90 ktron-vc90 kollision-vc90 katomic-vc90 kspaceduel-vc90 bovo-vc90 konquest-vc90 kmines-vc90 kbreakout-vc90 kfourinline-vc90 ksame-vc90 ksquares-vc90 kblackbox-vc90 kubrick-vc90
+@categorypackages KDE ksirk-mingw palapeli-mingw kdiamond-mingw kapman-mingw knetwalk-mingw kolf-mingw kblocks-mingw kshisen-mingw bomber-mingw kmahjongg-mingw libkdegames-mingw kpat-mingw ksudoku-mingw klines-mingw kbounce-mingw kigo-mingw granatier-mingw kgoldrunner-mingw kiriki-mingw killbots-mingw kreversi-mingw kbattleship-mingw ktuberling-mingw lskat-mingw kjumpingcube-mingw ktron-mingw kollision-mingw katomic-mingw kspaceduel-mingw bovo-mingw konquest-mingw kmines-mingw kbreakout-mingw kfourinline-mingw ksame-mingw ksquares-mingw kblackbox-mingw kubrick-mingw
+@categorypackages KDE ksirk-mingw4 palapeli-mingw4 kdiamond-mingw4 kapman-mingw4 knetwalk-mingw4 kolf-mingw4 kblocks-mingw4 kshisen-mingw4 bomber-mingw4 kmahjongg-mingw4 libkdegames-mingw4 kpat-mingw4 ksudoku-mingw4 klines-mingw4 kbounce-mingw4 kigo-mingw4 granatier-mingw4 kgoldrunner-mingw4 kiriki-mingw4 killbots-mingw4 kreversi-mingw4 kbattleship-mingw4 ktuberling-mingw4 lskat-mingw4 kjumpingcube-mingw4 ktron-mingw4 kollision-mingw4 katomic-mingw4 kspaceduel-mingw4 bovo-mingw4 konquest-mingw4 kmines-mingw4 kbreakout-mingw4 kfourinline-mingw4 ksame-mingw4 ksquares-mingw4 kblackbox-mingw4 kubrick-mingw4
+@categorypackages KDE ksirk-vc90 palapeli-vc90 kdiamond-vc90 kapman-vc90 knetwalk-vc90 kolf-vc90 kblocks-vc90 kshisen-vc90 bomber-vc90 kmahjongg-vc90 libkdegames-vc90 kpat-vc90 ksudoku-vc90 klines-vc90 kbounce-vc90 kigo-vc90 granatier-vc90 kgoldrunner-vc90 kiriki-vc90 killbots-vc90 kreversi-vc90 kbattleship-vc90 ktuberling-vc90 lskat-vc90 kjumpingcube-vc90 ktron-vc90 kollision-vc90 katomic-vc90 kspaceduel-vc90 bovo-vc90 konquest-vc90 kmines-vc90 kbreakout-vc90 kfourinline-vc90 ksame-vc90 ksquares-vc90 kblackbox-vc90 kubrick-vc90
 ;
 @deps ksirk-mingw libkdegames-mingw qca-mingw
 @deps ksirk-mingw4 libkdegames-mingw4 qca-mingw4
 @deps ksirk-vc90 libkdegames-vc90 qca-vc90
+@deps palapeli-mingw libkdegames-mingw
+@deps palapeli-mingw4 libkdegames-mingw4
+@deps palapeli-vc90 libkdegames-vc90
 @deps kdiamond-mingw libkdegames-mingw
 @deps kdiamond-mingw4 libkdegames-mingw4
 @deps kdiamond-vc90 libkdegames-vc90
@@ -299,6 +305,12 @@
 @deps kbounce-mingw libkdegames-mingw
 @deps kbounce-mingw4 libkdegames-mingw4
 @deps kbounce-vc90 libkdegames-vc90
+@deps kigo-mingw libkdegames-mingw
+@deps kigo-mingw4 libkdegames-mingw4
+@deps kigo-vc90 libkdegames-vc90
+@deps granatier-mingw libkdegames-mingw
+@deps granatier-mingw4 libkdegames-mingw4
+@deps granatier-vc90 libkdegames-vc90
 @deps kgoldrunner-mingw libkdegames-mingw
 @deps kgoldrunner-mingw4 libkdegames-mingw4
 @deps kgoldrunner-vc90 libkdegames-vc90
@@ -621,7 +633,7 @@
 @pkgnotes kdepimlibs-* KDE PIM libraries
 @pkgnotes kdemultimedia-* KDE multimedia applications (jux, kmix, kmixctrl, kscd)
 @pkgnotes kdenetwork-* KDE Networking applications
-@pkgnotes kdesdk-* software development package (umbrello, kate)
+@pkgnotes kdesdk-* KDE software development package (umbrello, kate)
 @pkgnotes kdetoys-* collection of several programs in KDE
 @pkgnotes kdeutils-* various desktop utilities (KGpg, Okteta)
 @pkgnotes kdevelop-* UNSTABLE KDevelop integrated development environment
