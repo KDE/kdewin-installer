@@ -482,6 +482,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                         site->setPackageNote(pkg.arg("mingw"),cmd.join(" "));
                         site->setPackageNote(pkg.arg("vc90"),cmd.join(" "));
                         site->setPackageNote(pkg.arg("mingw4"),cmd.join(" "));
+                        site->setPackageNote(pkg,cmd.join(" "));
                     }
                     else
                         site->setPackageNote(pkg,cmd.join(" "));
@@ -534,6 +535,16 @@ bool GlobalConfig::parse(QIODevice *ioDev)
         }
     }
     return true;
+}
+
+QString GlobalConfig::packageCategory(const QString &package)
+{
+    Q_FOREACH(const QString& category, m_categoryPackages.keys())
+    {
+        if(m_categoryPackages[category].contains(package)) return category;
+    }
+    
+    return QString();
 }
 
 void GlobalConfig::clear()

@@ -71,6 +71,9 @@ class GlobalConfig {
 
         /// return category displayed in enduser mode
         QStringList &endUserCategories() { return m_endUserCategories; }
+        
+        /// returns the category for a specific package
+        QString packageCategory(const QString &package);
 
         QDateTime &timeStamp() { return m_timestamp; }
         void clear(); 
