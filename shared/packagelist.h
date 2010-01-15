@@ -56,6 +56,7 @@ public:
 
     QT_DEPRECATED Package *getPackage(QString const &pkgName, const QByteArray &version = QByteArray()) { return find(pkgName, version); }
     Package *find(QString const &pkgName, const QByteArray &version = QByteArray());
+    Package *findPackageFromBaseName(QString const &pkgBaseName, const QByteArray &version = QByteArray());
 
     QStringList listPackages();
     bool readFromFile(const QString &_fileName=QString());
