@@ -365,5 +365,15 @@ class PackageInfo {
                     
             return name;
         }
+        
+        /// return the possible package endings
+        static QStringList endings()
+        {
+            QStringList list;
+            list << "msvc" << "vc90" << "mingw4" << "mingw";
+            if(isX64Windows()) list << "x64";
+            list << "x86";
+            return list;
+        }
 };
 #endif
