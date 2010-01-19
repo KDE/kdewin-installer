@@ -23,6 +23,7 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+#include <QtCore/QDir>
 #include <QtCore/QObject>
 #include <QtCore/QSettings>
 #include <QtCore/QStringList>
@@ -120,7 +121,7 @@ public:
     CompilerType compilerType() const { return (CompilerType) (m_settings->value("compilerType",m_settingsMain->value("compilerType",0).toInt()).toInt()); }
     void setCompilerType(CompilerType type);
 
-    QString logFile() { return downloadDir()+"\\kdewin-installer.log"; }
+    QString logFile() { return downloadDir() + QDir::separator() + "kdewin-installer.log"; }
     
     // QSettings compatible interface
     void beginGroup(const QString &prefix) { m_settings->beginGroup(prefix); }
