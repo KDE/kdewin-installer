@@ -72,7 +72,7 @@ void PostProcessPage::performAction()
 
         ui.progressBar->setMaximum(4);
         ui.progressBar->setValue(0);
-        runCommand("updating mime database","update-mime-database",QStringList() << Settings::instance().installDir()+ "/share/mime");
+        runCommand("updating mime database","update-mime-database",QStringList() << QDir::fromNativeSeparators(Settings::instance().installDir()) + "/share/mime");
         ui.progressBar->setValue(1);
         runCommand("updating system configuration database","kbuildsycoca4");
         ui.progressBar->setValue(2);
