@@ -62,6 +62,7 @@ public:
     void setNextState(QTreeWidgetItem &item, Package *available, Package *installed, Package::Type type, int column);
     bool isPackageSelected ( Package *available, Package::Type type );
 
+    void setMetaPackageState(QTreeWidgetItem &item, int column);
 protected:
     bool setDependencyState(Package *pkg, QTreeWidget *list);
 

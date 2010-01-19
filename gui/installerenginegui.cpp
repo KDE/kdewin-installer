@@ -55,7 +55,7 @@ PackageStates dependencyStates;
 // from packageselectorpage.cpp
 int typeToColumn ( Package::Type type );
 
-enum iconType {_install, _autoinstall,_keepinstalled, _update, _remove, _nothing, _disable };
+enum iconType {_install, _autoinstall, _keepinstalled, _update, _remove, _nothing, _disable, _dirty };
 
 
 static void setIcon ( QTreeWidgetItem &item, int column, iconType action )
@@ -68,6 +68,7 @@ static void setIcon ( QTreeWidgetItem &item, int column, iconType action )
     static QIcon id;
     static QIcon dl;
     static QIcon up;
+    static QIcon dr;
 
     if ( ii.isNull() ) {
         ai = QIcon ( ":/autoinstall.xpm" );
@@ -77,6 +78,7 @@ static void setIcon ( QTreeWidgetItem &item, int column, iconType action )
         id = QIcon ( ":/install_disabled.xpm" );
         dl = QIcon ( ":/del.xpm" );
         up = QIcon ( ":/update.xpm" );
+        dr = QIcon ( ":/dirty.xpm" );
     }
 #endif
 
@@ -103,6 +105,9 @@ static void setIcon ( QTreeWidgetItem &item, int column, iconType action )
     case _disable:
         item.setIcon ( column, id );
         return;
+    case _dirty:
+        item.setIcon ( column, dr );
+        return;
     }
 #else
     switch ( action ) {
@@ -126,6 +131,9 @@ static void setIcon ( QTreeWidgetItem &item, int column, iconType action )
         return;
     case _disable:
         item.setText ( column,"" );
+        return;
+    case _dirty:
+        item.setText ( column,"-#-" );
         return;
     }
 #endif
@@ -176,6 +184,39 @@ static void setIcon ( QTreeWidgetItem &item, Package::Type type, iconType action
     setIcon(item,typeToColumn ( type ), action);
 }
     
+void InstallerEngineGui::setMetaPackageState(QTreeWidgetItem &item, int column)
+{
+    bool dirty = false;
+    int c = 0;
+
+    for(int i = 0; i < item.childCount(); ++i)
+    {
+        QString name = item.child(i)->data(column, Qt::StatusTipRole).toString();
+        if(packageStates.getState(name, QString(), Package::BIN) == _Install) 
+        {
+            dirty = true;
+            c++;
+        }
+        else if(packageStates.getState(name, QString(), Package::BIN) == _Update ||
+                packageStates.getState(name, QString(), Package::BIN) == _Remove) 
+        {
+            dirty = true;
+        }
+        else if(packageStates.getState(name, QString(), Package::BIN) == _Nothing) 
+        {
+            // we need to find out whether this packages is kept or whether it just isn't installed.
+            if(database()->getPackage(name)) {
+                c++;
+            }
+        }
+    }
+    
+    if(dirty && c < item.childCount()) setIcon(item, column, _Nothing, _dirty);
+    else if(dirty) setIcon(item, column, _Nothing, _install);
+    else if(!dirty && c == item.childCount()) setIcon(item, column, _Nothing, _keepinstalled);
+    else setIcon(item, column, _Nothing, _nothing);
+}
+
 void InstallerEngineGui::setEndUserInitialState ( QTreeWidgetItem &item, Package *available, Package *installed, int column )
 {
     if (installed && available && available->version() != installed->version())
@@ -195,10 +236,8 @@ void InstallerEngineGui::setEndUserInitialState ( QTreeWidgetItem &item, Package
     {
         if (available->hasType(Package::BIN))
             setIcon(item,column,packageStates.getState(available,Package::BIN),_nothing);
-    }
-    else
-    {
-        setIcon(item,column,_nothing);
+        else if (available->hasType(Package::META))
+            setMetaPackageState(item, column);
     }
 }
 
