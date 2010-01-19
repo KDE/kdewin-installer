@@ -93,6 +93,8 @@ bool InstallerEngine::initPackages()
         return false;
 
     addInstalledPackages();
+    
+    addMetaPackages();
 
     // add site independend package category relations
     QHash<QString, QStringList>::const_iterator i = m_globalConfig->categoryPackages().constBegin();
@@ -106,6 +108,12 @@ bool InstallerEngine::initPackages()
             if (pkg)
                 pkg->addCategories(i.key());
         }
+    }
+    
+    Q_FOREACH (const QString &metaPackage, m_globalConfig->metaPackages().keys())
+    {
+        QString category = m_globalConfig->packageCategory(metaPackage + "-%1");
+        categoryCache.addPackage(category, metaPackage);
     }
     m_addedPackages = true;
 
@@ -318,6 +326,33 @@ bool InstallerEngine::addInstalledPackages()
     {
         if (!m_packageResources->find(pkg->name(),pkg->version().toString().toLatin1()))
             m_packageResources->append(*pkg);
+    }
+    return true;
+}
+
+bool InstallerEngine::addMetaPackages()
+{
+    Q_FOREACH(const QString& metaPackage, m_globalConfig->metaPackages().keys())
+    {
+        Package *p = m_packageResources->findPackageFromBaseName(metaPackage);
+
+        // only add metaPackage if there is no package existing
+        if(!p) {
+            p = new Package;
+            p->setName(metaPackage);
+            Q_FOREACH(Site *site, *m_globalConfig->sites())
+            {
+                if(site && !site->packageNote(metaPackage + "-%1").isEmpty()) {
+                    p->setNotes(site->packageNote(metaPackage + "-%1"));
+                }
+            }
+            Package::PackageItem item("meta");
+            p->add(item);
+            p->addCategories("all");
+
+            m_packageResources->append(*p);
+            categoryCache.addPackage(p);
+        }
     }
     return true;
 }

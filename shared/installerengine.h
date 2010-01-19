@@ -142,6 +142,9 @@ protected:
     /// add packages collected from site definition
     bool addPackagesFromSites();
     
+    /// add meta packages collected from site definition
+    bool addMetaPackages();
+
     /// add installed packages for which no package is available
     bool addInstalledPackages();
 
