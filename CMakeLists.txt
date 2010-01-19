@@ -163,7 +163,6 @@ configure_file(${CMAKE_SOURCE_DIR}/config.txt.cmake ${CMAKE_BINARY_DIR}/config/k
 
 set (RELEASE_PATH "/unstable/4.0.83/win32")
 set (RELEASE "4.0.83")
-configure_file(${CMAKE_SOURCE_DIR}/mirrors.lst.cmake ${CMAKE_BINARY_DIR}/config/mirrors.lst)
 
 #FIXME: ${BZIP2_LIBRARIES} -> 3rdparty
 if (UNIX)
