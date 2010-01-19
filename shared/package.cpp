@@ -248,6 +248,11 @@ bool Package::PackageItem::setContentType(const QString &type)
         m_contentType = SRC;
         return true;
     }
+    else if(ct == "meta")
+    {
+        m_contentType = META;
+        return true;
+    }
     else
     {
         m_contentType = NONE;
@@ -263,6 +268,7 @@ static QString typeToString(Package::Type type)
         case Package::LIB:   return "LIB";
         case Package::DOC:   return "DOC";
         case Package::SRC:   return "SRC";
+        case Package::META:  return "META";
         default: return "unknown" + QString::number(type);
     }
 }
@@ -273,6 +279,7 @@ QDebug &operator<<(QDebug &out, const Package::Type c)
         case Package::LIB:   out << "LIB";  break;
         case Package::DOC:   out << "DOC";  break;
         case Package::SRC:   out << "SRC";  break;
+        case Package::META:  out << "META";  break;
         default: out << "unknown" + QString::number(c);
     }
     return out;
