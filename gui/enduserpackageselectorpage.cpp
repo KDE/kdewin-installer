@@ -39,13 +39,14 @@
 #include "enduserpackageselectorpage.h"
 #include "packagecategorycache.h"
 
+#include <QVector>
 #include <QListWidget>
 #include <QSplitter>
 #include <QTextEdit>
 #include <QTreeWidget>
 
 extern InstallerEngineGui *engine;
-typedef enum { C_ACTION, C_NAME, C_AVAILABLE, C_INSTALLED, C_NOTES } columnvalue;
+typedef enum { C_NAME, C_ACTION, C_AVAILABLE, C_INSTALLED, C_NOTES,  /* always leave this item at the end */ C_COLUMNCOUNT } columnvalue;
 
 EndUserPackageSelectorPage::EndUserPackageSelectorPage()  : InstallWizardPage(0)
 {
@@ -64,27 +65,29 @@ void EndUserPackageSelectorPage::setWidgetData()
 {
     QTreeWidget *tree = ui.packageList;
     tree->clear();
-    QStringList labels;
+    QVector<QString> labels;
     QList<QTreeWidgetItem *> items;
     QString toolTip = "select this checkbox to install or update this package";
 
-    labels 
-    << tr ( "Action" )
-    << tr ( "Package" )
-    << tr ( "Available" )
-    << tr ( "Installed" )
-    << tr ( "Package notes" )
-    ;
+    labels.resize( C_COLUMNCOUNT );
+    labels[C_NAME] = tr ( "Package" );
+    labels[C_ACTION] = tr ( "Action" );
+    labels[C_AVAILABLE] = tr ( "Available" );
+    labels[C_INSTALLED] = tr ( "Installed" );
+    labels[C_NOTES] = tr ( "Package notes" );
 
-    tree->setColumnCount ( 5 );
-    tree->setHeaderLabels ( labels );
+    tree->setColumnCount ( C_COLUMNCOUNT );
+    tree->setHeaderLabels ( QList<QString>::fromVector( labels ) );
+
+    tree->setIndentation(10);
+
     // see http://lists.trolltech.com/qt-interest/2006-06/thread00441-0.html
     // and Task Tracker Entry 106731
     //tree->setAlignment(Center);
 
     // adding top level items
     QList<QTreeWidgetItem *> categoryList;
-    QList <Package*> packageList;
+    QHash<QString, Package*> packageList;
 
     QStringList selectedCategories;
     Q_FOREACH(QString category, categoryCache.categories())
@@ -99,9 +102,12 @@ void EndUserPackageSelectorPage::setWidgetData()
         // add packages which are installed but for which no config entry is there 
         Q_FOREACH(Package *instPackage, categoryCache.packages(categoryName,*engine->database())) 
         {
-            Package *p = engine->packageResources()->getPackage(instPackage->name());
-            if (!p)
-                packageList << instPackage;
+            QString name = instPackage->name();
+            Package *p = engine->packageResources()->getPackage(name);
+            
+            if (!p) {
+                packageList[PackageInfo::baseName(name)] = instPackage;
+            }
         }
     }
     
@@ -122,11 +128,48 @@ void EndUserPackageSelectorPage::setWidgetData()
                     && ( name.endsWith ( QLatin1String( "-msvc" ) ) || name.endsWith ( QLatin1String( "-vc90" ) ) 
                       || name.endsWith ( QLatin1String( "-mingw" ) ) ) )
                 continue;
-            packageList << availablePackage;
+            packageList[PackageInfo::baseName(name)] = availablePackage;
         }
     }
     
-    Q_FOREACH(Package *availablePackage,packageList)
+    // go through all metaPackages now
+    Q_FOREACH(QString metaPackage, engine->globalConfig()->metaPackages().keys())
+    {
+        Package *p = engine->packageResources()->find(metaPackage);
+
+        // in case p is 0, we couldn't find a predefined package - e.g. another package has been defined before
+        // maybe this could be wanted though?
+        if(!p) continue;
+
+        QTreeWidgetItem *item = addPackageToTree(p, 0);
+
+        // if this is no metaPackage, simply ignore it
+        if(p->hasType(Package::META)) {
+            int packageCount = 0;
+
+            // now check whether we have packages for this metaPackage in our packageList and add them as child elements
+            Q_FOREACH(QString name, engine->globalConfig()->metaPackages()[metaPackage])
+            {
+                // if this package is contained in the packageList and inside our metaPackage, we want to make it a child item
+                // of this QTreeWidgetItem
+                if(packageList.keys().contains(name)) {
+                    if(addPackageToTree(packageList[name], item) != 0) ++packageCount;
+                    packageList.remove( name );
+                }
+            }
+
+            // in case the packageCount is 0 (e.g. there are no childItems available for this metaPackage) simply delete the
+            // item again which we got from addPackageToTree
+            if(packageCount > 0) {
+                categoryList.append(item);
+                engine->setMetaPackageState(*item, C_ACTION);
+            } else {
+                delete item;
+            }
+        }
+    }
+    
+    Q_FOREACH(Package *availablePackage,packageList.values())
     {
         QString name = availablePackage->name();
         if (m_displayType == Language && !name.contains("kde-l10n"))
@@ -155,7 +198,7 @@ void EndUserPackageSelectorPage::setWidgetData()
 
 QTreeWidgetItem *EndUserPackageSelectorPage::addPackageToTree(Package *availablePackage, QTreeWidgetItem *parent)
 {
-    QStringList data;
+    QVector<QString> data;
     QString toolTip = "select this checkbox to install or update this package";
 
     Package *installedPackage = engine->database()->getPackage(availablePackage->name());
@@ -165,15 +208,15 @@ QTreeWidgetItem *EndUserPackageSelectorPage::addPackageToTree(Package *available
 
     if (installedPackage && availableVersion == installedVersion)
         return 0;
-    data    
-        << ""
-        << PackageInfo::baseName(availablePackage->name())
-        << (availableVersion != installedVersion ? availableVersion.toString() : "")
-        << installedVersion.toString()
-        << QString();
-    QTreeWidgetItem *item = new QTreeWidgetItem ( parent, data );
+    data.resize( C_COLUMNCOUNT );
+    data[C_NAME] = PackageInfo::baseName(availablePackage->name());
+    data[C_AVAILABLE] = (availableVersion != installedVersion ? availableVersion.toString() : "");
+    data[C_INSTALLED] = installedVersion.toString();
+    QTreeWidgetItem *item = new QTreeWidgetItem ( parent, QList<QString>::fromVector( data ) );
     // save real package name for selection code
     item->setData(C_ACTION, Qt::StatusTipRole, availablePackage->name());
+    
+    // in case the package is a meta package, we need to check whether the subpackages are installed -> fix that after this function
     engine->setEndUserInitialState(*item, availablePackage, installedPackage, C_ACTION);
     item->setText(C_NOTES, availablePackage->notes());
     item->setToolTip(C_NAME, toolTip);
@@ -283,9 +326,47 @@ void EndUserPackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
         return;
     }
 
+    if ( engine->globalConfig()->metaPackages().keys().contains( name ) ) {
+
+        // this is a metaPackage which has no representation in the database
+        // now go through all subpackages
+        Q_FOREACH(QString package, engine->globalConfig()->metaPackages()[name])
+        {
+            int i = 0;
+            QString packageName;
+            
+            // try to find the childItems which are connected to this metaPackage
+            for(; i < item->childCount(); ++i)
+            {
+                packageName = item->child(i)->data(C_ACTION, Qt::StatusTipRole).toString();
+                if(package == PackageInfo::baseName(item->child(i)->data(C_ACTION, Qt::StatusTipRole).toString()))
+                    break;
+            }
+            if(i == item->childCount()) continue;
+    
+            QString _installedVersion = item->child(i)->text ( C_INSTALLED );
+            QString _availableVersion = item->child(i)->text ( C_AVAILABLE );
+
+            Package *ip = engine->database()->getPackage( packageName, _installedVersion.toAscii() );
+            Package *ap = engine->getPackageByName( packageName, _availableVersion );
+
+            if(!ap && !ip) continue;
+            
+            // switch state for the childItem
+            if ( column == C_ACTION) engine->setNextState(*item->child(i), ap, ip, Package::BIN, C_ACTION );
+        }
+    }
+
     if ( column == C_ACTION )
     {
         engine->setNextState(*item, availablePackage, installedPackage, Package::BIN, C_ACTION );
+        if(availablePackage->hasType(Package::META))
+            engine->setMetaPackageState( *item, C_ACTION );
+
+        // now check that if we're no top level item, we need to handle also the category icon
+        if (ui.packageList->indexOfTopLevelItem(item) == -1) {
+            engine->setMetaPackageState( *item->parent(), C_ACTION );
+        }
     }
     // dependencies are selected later
 }
@@ -328,19 +409,37 @@ void EndUserPackageSelectorPage::slotFilterTextChanged(const QString &text)
         {
             QTreeWidgetItem *item = tree->topLevelItem (i);
             item->setHidden(false);
+            for(int j = 0; j < item->childCount(); j++)
+            {
+                item->child(j)->setHidden(false);
+            }
         }
         return; 
     }
-    QList<QTreeWidgetItem *> list = tree->findItems (text, Qt::MatchContains, C_NAME );
-    Q_FOREACH(QTreeWidgetItem *item, tree->findItems (text, Qt::MatchContains, C_NOTES ))
+
+    QList<QTreeWidgetItem *> list = tree->findItems (text, Qt::MatchContains|Qt::MatchRecursive, C_NAME );
+    Q_FOREACH(QTreeWidgetItem *item, tree->findItems (text, Qt::MatchContains|Qt::MatchRecursive, C_NOTES ))
     {
         if (!list.contains(item))
             list.append(item);
-    }       
+    }
+    
+    Q_FOREACH(QTreeWidgetItem *item, list)
+    {
+        QTreeWidgetItem *parent = item->parent();
+        if (!list.contains(parent) && parent != tree->invisibleRootItem())
+            list.append(parent);
+    }
+    
     for(int i = 0; i < tree->topLevelItemCount(); i++)
     {
         QTreeWidgetItem *item = tree->topLevelItem (i);
         item->setHidden(!list.contains(item));
+        for(int j = 0; j < item->childCount(); j++)
+        {
+            QTreeWidgetItem *child = item->child(j);
+            child->setHidden(!list.contains(child));
+        }
     }
 }
 
