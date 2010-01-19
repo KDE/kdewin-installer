@@ -254,7 +254,7 @@
 ;-------------------------------------------------------
 ; kdegames
 ;-------------------------------------------------------
-@metapackage kdegames bomber bovo kapman katomic kbattleship kblackbox kblocks kbounce kbreakout kdiamond kfourinline kgoldrunner killbots kiriki kjumpingcube klines kmahjongg kmines knetwalk kolf kollision konquest kpat kreversi ksame kshisen ksirk kspaceduel ksquares ksudoku ktron ktuberling kubrick lskat
+@metapackage kdegames kigo palapeli granatier bomber bovo kapman katomic kbattleship kblackbox kblocks kbounce kbreakout kdiamond kfourinline kgoldrunner killbots kiriki kjumpingcube klines kmahjongg kmines knetwalk kolf kollision konquest kpat kreversi ksame kshisen ksirk kspaceduel ksquares ksudoku ktron ktuberling kubrick lskat
 ;
 @categorypackages KDE ksirk-mingw palapeli-mingw kdiamond-mingw kapman-mingw knetwalk-mingw kolf-mingw kblocks-mingw kshisen-mingw bomber-mingw kmahjongg-mingw libkdegames-mingw kpat-mingw ksudoku-mingw klines-mingw kbounce-mingw kigo-mingw granatier-mingw kgoldrunner-mingw kiriki-mingw killbots-mingw kreversi-mingw kbattleship-mingw ktuberling-mingw lskat-mingw kjumpingcube-mingw ktron-mingw kollision-mingw katomic-mingw kspaceduel-mingw bovo-mingw konquest-mingw kmines-mingw kbreakout-mingw kfourinline-mingw ksame-mingw ksquares-mingw kblackbox-mingw kubrick-mingw
 @categorypackages KDE ksirk-mingw4 palapeli-mingw4 kdiamond-mingw4 kapman-mingw4 knetwalk-mingw4 kolf-mingw4 kblocks-mingw4 kshisen-mingw4 bomber-mingw4 kmahjongg-mingw4 libkdegames-mingw4 kpat-mingw4 ksudoku-mingw4 klines-mingw4 kbounce-mingw4 kigo-mingw4 granatier-mingw4 kgoldrunner-mingw4 kiriki-mingw4 killbots-mingw4 kreversi-mingw4 kbattleship-mingw4 ktuberling-mingw4 lskat-mingw4 kjumpingcube-mingw4 ktron-mingw4 kollision-mingw4 katomic-mingw4 kspaceduel-mingw4 bovo-mingw4 konquest-mingw4 kmines-mingw4 kbreakout-mingw4 kfourinline-mingw4 ksame-mingw4 ksquares-mingw4 kblackbox-mingw4 kubrick-mingw4
@@ -671,14 +671,16 @@
 @pkgnotes libkdegraphics-* the kdegraphics support libraries
 @pkgnotes kcolorchooser-* a simple color choosing tool
 ;
+@pkgnotes kcachegrind-* A cachegrind viewer for KDE
 @pkgnotes kbugbuster-* a bug triaging application for KDE
 @pkgnotes umbrello-* An UML modeling tool for KDE
 @pkgnotes kate-* a MDI text editor application for KDE
 @pkgnotes lokalize-* A computer-aided translation system for KDE
-@pkgnotes libkdesdk-* additional libraries and applications for the KDE software development package
+@pkgnotes libkdesdk-* KDE Software development package
 @pkgnotes kompare-* KDE diff tool
 ;
 @pkgnotes ksirk-* a Risk strategy game
+@pkgnotes palapeli-* a jigsaw puzzle game
 @pkgnotes kdiamond-* a bejeweled like game
 @pkgnotes kapman-* a pacman like game
 @pkgnotes knetwalk-* a game for system administrators
@@ -692,6 +694,8 @@
 @pkgnotes ksudoku-* a sudoku puzzle game
 @pkgnotes klines-* a little game about balls and how to get rid of them
 @pkgnotes kbounce-* kde bounce ball game
+@pkgnotes kigo-* a go game
+@pkgnotes granatier-* a ClanBomber-like game
 @pkgnotes kgoldrunner-* KGoldrunner is a maze-threading game with a puzzle flavor
 @pkgnotes kiriki-* a Yahtzee dice game
 @pkgnotes killbots-* a game of killer robots and teleportation
