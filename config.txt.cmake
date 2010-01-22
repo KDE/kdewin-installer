@@ -445,27 +445,33 @@
 ;-------------------------------------------------------
 ; koffice
 ;-------------------------------------------------------
-@metapackage koffice libkoffice karbon kplato kpresenter krita kspread kword
+@metapackage koffice libkoffice karbon kplato kpresenter kivio krita kspread kword kexi
 ;
-@categorypackages KDE kplato-mingw krita-mingw kspread-mingw karbon-mingw kword-mingw kpresenter-mingw libkoffice-mingw
-@categorypackages KDE kplato-mingw4 krita-mingw4 kspread-mingw4 karbon-mingw4 kword-mingw4 kpresenter-mingw4 libkoffice-mingw4
-@categorypackages KDE kplato-vc90 krita-vc90 kspread-vc90 karbon-vc90 kword-vc90 kpresenter-vc90 libkoffice-vc90
+@categorypackages KDE kivio-mingw kexi-mingw krita-mingw kplato-mingw karbon-mingw kword-mingw kspread-mingw kpresenter-mingw libkoffice-mingw
+@categorypackages KDE kivio-mingw4 kexi-mingw4 krita-mingw4 kplato-mingw4 karbon-mingw4 kword-mingw4 kspread-mingw4 kpresenter-mingw4 libkoffice-mingw4
+@categorypackages KDE kivio-vc90 kexi-vc90 krita-vc90 kplato-vc90 karbon-vc90 kword-vc90 kspread-vc90 kpresenter-vc90 libkoffice-vc90
 ;
-@deps kplato-mingw libkoffice-mingw
-@deps kplato-mingw4 libkoffice-mingw4
-@deps kplato-vc90 libkoffice-vc90
+@deps kivio-mingw libkoffice-mingw
+@deps kivio-mingw4 libkoffice-mingw4
+@deps kivio-vc90 libkoffice-vc90
+@deps kexi-mingw libkoffice-mingw
+@deps kexi-mingw4 libkoffice-mingw4
+@deps kexi-vc90 libkoffice-vc90
 @deps krita-mingw libkoffice-mingw
 @deps krita-mingw4 libkoffice-mingw4
 @deps krita-vc90 libkoffice-vc90
-@deps kspread-mingw libkoffice-mingw
-@deps kspread-mingw4 libkoffice-mingw4
-@deps kspread-vc90 libkoffice-vc90
+@deps kplato-mingw libkoffice-mingw
+@deps kplato-mingw4 libkoffice-mingw4
+@deps kplato-vc90 libkoffice-vc90
 @deps karbon-mingw libkoffice-mingw
 @deps karbon-mingw4 libkoffice-mingw4
 @deps karbon-vc90 libkoffice-vc90
 @deps kword-mingw libkoffice-mingw
 @deps kword-mingw4 libkoffice-mingw4
 @deps kword-vc90 libkoffice-vc90
+@deps kspread-mingw libkoffice-mingw
+@deps kspread-mingw4 libkoffice-mingw4
+@deps kspread-vc90 libkoffice-vc90
 @deps kpresenter-mingw libkoffice-mingw
 @deps kpresenter-mingw4 libkoffice-mingw4
 @deps kpresenter-vc90 libkoffice-vc90
@@ -738,11 +744,13 @@
 @pkgnotes kig-* Kig is a program for exploring geometric constructions
 @pkgnotes marble-* Marble is a Virtual Globe and World Atlas
 ;
-@pkgnotes kplato-* a project management application
+@pkgnotes kivio-* a diagramming and flowcharting application
+@pkgnotes kexi-* an integrated data management application
 @pkgnotes krita-* a creative application for raster images
-@pkgnotes kspread-* a calculation and spreadsheet application
+@pkgnotes kplato-* a project management application
 @pkgnotes karbon-* a vector drawing application
 @pkgnotes kword-* a word processor and desktop publisher application
+@pkgnotes kspread-* a calculation and spreadsheet application
 @pkgnotes kpresenter-* a presentation application
 @pkgnotes libkoffice-* the KOffice support libraries
 ;
