@@ -136,10 +136,10 @@ void EndUserPackageSelectorPage::setWidgetData()
     Q_FOREACH(QString metaPackage, engine->globalConfig()->metaPackages().keys())
     {
         Package *p = engine->packageResources()->find(metaPackage);
+        if(!p) p = packageList[PackageInfo::baseName(metaPackage)];
 
         // in case p is 0, we couldn't find a predefined package - e.g. another package has been defined before
-        // maybe this could be wanted though?
-        if(!p) continue;
+        if(!p || p->hasType(Package::BIN) || p->hasType(Package::LIB)) continue;
 
         QTreeWidgetItem *item = addPackageToTree(p, 0);
 
@@ -184,10 +184,11 @@ void EndUserPackageSelectorPage::setWidgetData()
                     ) 
                 )
             continue;
-            
-        QTreeWidgetItem *item = addPackageToTree(availablePackage, 0);
-        if (item)
-            categoryList.append(item);
+        if(availablePackage->hasType(Package::BIN)) {
+            QTreeWidgetItem *item = addPackageToTree(availablePackage, 0);
+            if (item)
+                categoryList.append(item);
+        }
     }
     tree->addTopLevelItems ( categoryList );
     tree->expandAll();
@@ -326,11 +327,11 @@ void EndUserPackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
         return;
     }
 
-    if ( engine->globalConfig()->metaPackages().keys().contains( name ) ) {
+    if ( engine->globalConfig()->metaPackages().keys().contains( PackageInfo::baseName(name) ) ) {
 
         // this is a metaPackage which has no representation in the database
         // now go through all subpackages
-        Q_FOREACH(QString package, engine->globalConfig()->metaPackages()[name])
+        Q_FOREACH(QString package, engine->globalConfig()->metaPackages()[PackageInfo::baseName(name)])
         {
             int i = 0;
             QString packageName;
