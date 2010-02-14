@@ -191,7 +191,6 @@ void EndUserPackageSelectorPage::setWidgetData()
         }
     }
     tree->addTopLevelItems ( categoryList );
-    tree->expandAll();
     tree->sortItems ( C_NAME, Qt::AscendingOrder );
     for ( int i = 0; i < tree->columnCount(); i++ )
         tree->resizeColumnToContents ( i );
