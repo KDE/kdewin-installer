@@ -346,13 +346,13 @@ bool InstallerEngine::addMetaPackages()
                     p->setNotes(site->packageNote(metaPackage + "-%1"));
                 }
             }
-            Package::PackageItem item("meta");
-            p->add(item);
-            p->addCategories("all");
-
-            m_packageResources->append(*p);
-            categoryCache.addPackage(p);
         }
+        Package::PackageItem item("meta");
+        p->add(item);
+        p->addCategories("all");
+
+        m_packageResources->append(*p);
+        categoryCache.addPackage(p);
     }
     return true;
 }
