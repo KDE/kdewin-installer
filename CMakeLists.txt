@@ -55,6 +55,9 @@ OPTION(BUILD_TRANSLATIONS "build translations" OFF)
 
 ENABLE_TESTING()
 
+include(CTest)
+include(CTestConfig.cmake)
+
 ADD_DEFINITIONS(-D_WIN32_WINNT=0x0500)
 # -------------------------------------------------------
 # build type settings
