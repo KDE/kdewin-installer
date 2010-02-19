@@ -202,9 +202,9 @@ void InstallerEngineConsole::listPackage(const QStringList &list)
 
 bool includePackage(Package *p)
 {
-    if (Settings::instance().compilerType() == Settings::MinGW && (p->name().contains("-msvc") || p->name().contains("-mingw4"))
-        || Settings::instance().compilerType() == Settings::MSVC && p->name().contains("-mingw")
-        || Settings::instance().compilerType() == Settings::MinGW4 && (p->name().contains("-mingw") && !p->name().contains("-mingw4") || p->name().contains("-msvc")) )
+    if (Settings::instance().compilerType() == MinGW && (p->name().contains("-msvc") || p->name().contains("-mingw4"))
+        || Settings::instance().compilerType() == MSVC && p->name().contains("-mingw")
+        || Settings::instance().compilerType() == MinGW4 && (p->name().contains("-mingw") && !p->name().contains("-mingw4") || p->name().contains("-msvc")) )
         return false;
     else
         return true;
@@ -212,9 +212,9 @@ bool includePackage(Package *p)
 
 bool includePackage(const QString &p)
 {
-    if (Settings::instance().compilerType() == Settings::MinGW && (p.contains("-msvc") || p.contains("-mingw4"))
-        || Settings::instance().compilerType() == Settings::MSVC && p.contains("-mingw")
-        || Settings::instance().compilerType() == Settings::MinGW4 && (p.contains("-mingw") && !p.contains("-mingw4") || p.contains("-msvc")))
+    if (Settings::instance().compilerType() == MinGW && (p.contains("-msvc") || p.contains("-mingw4"))
+        || Settings::instance().compilerType() == MSVC && p.contains("-mingw")
+        || Settings::instance().compilerType() == MinGW4 && (p.contains("-mingw") && !p.contains("-mingw4") || p.contains("-msvc")))
         return false;
     else
         return true;
