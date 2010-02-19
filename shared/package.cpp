@@ -316,6 +316,7 @@ Package::Package(const Package &other)
     m_handled    = other.m_handled;
     m_notes      = other.m_notes;
     m_longNotes  = other.m_longNotes;
+    m_homeUrl    = other.m_homeUrl;
     m_installedversion = other.m_installedversion;
     m_hashType = other.m_hashType;
     m_userData[0] = other.m_userData[0];

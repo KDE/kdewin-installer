@@ -88,6 +88,9 @@ public:
     void setCategoryNotes(const QString &category, const QString &notes);
     QString &categoryNotes(const QString &category);
 
+    void setPackageHomeUrl(const QString &package, const QString &url);
+    QString packageHomeUrl(const QString &package);
+
     void setPackageNote(const QString &package, const QString &notes);
     QString packageNote(const QString &package);
 
@@ -120,6 +123,7 @@ private:
     QHash<QString, QStringList> m_packageCategories;
     QHash<QString, QString> m_packageNotes;
     QHash<QString, QString> m_packageLongNotes;
+    QHash<QString, QString> m_packageHomeUrl;
     friend QDebug &operator<<(QDebug&, const Site &);
     friend QDebug &operator<<(QDebug&, const SiteType &);
 };

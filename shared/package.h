@@ -175,6 +175,11 @@ public:
     /// set long notes 
     void setLongNotes(const QString &notes) { m_longNotes = notes; }
 
+    /// return home url  
+    QString homeURL() const { return m_homeUrl; }
+    /// return home url 
+    void setHomeURL(const QString &url) { m_homeUrl = url; }
+
     /// return package categories
     const QStringList &categories() const { return m_categories; }
     /// set package categories
@@ -302,6 +307,7 @@ protected:
     PackageVersion m_version;  // base version (4.13b-1)
     PackageVersion m_installedversion;
     QString m_notes;    // notes from package.notes
+    QString m_homeUrl;  // home url of package
     QString m_longNotes;// notes from package.notes
     QStringList m_categories;
     QStringList m_deps;

@@ -563,6 +563,8 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
                     p.setNotes(m_curSite->packageNote(pkgName));
                 if(m_curSite)
                     p.setLongNotes(m_curSite->packageLongNotes(pkgName));
+                if(m_curSite)
+                    p.setHomeURL(m_curSite->packageHomeUrl(pkgName));
                 if (m_curSite)
                 {
 #ifdef VERSIONED_DEPENDENCIES
@@ -575,6 +577,12 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
                 Package::PackageItem item(pkgType);
                 item.setUrlAndFileName(m_baseURL.toString() + fileName,fileName);
                 pkg->add(item);
+                if(m_curSite)
+                    pkg->setNotes(m_curSite->packageNote(pkgName));
+                if(m_curSite)
+                    pkg->setLongNotes(m_curSite->packageLongNotes(pkgName));
+                if(m_curSite)
+                    pkg->setHomeURL(m_curSite->packageHomeUrl(pkgName));
                 if (m_curSite)
                 {
 #ifdef VERSIONED_DEPENDENCIES

@@ -55,6 +55,16 @@ void Site::setPackageNote(const QString &package, const QString &note)
     m_packageNotes[package] = note;
 }
 
+void Site::setPackageHomeUrl(const QString &package, const QString &url)
+{
+    m_packageHomeUrl[package] = url;
+}
+
+QString Site::packageHomeUrl(const QString &package)
+{
+    return m_packageHomeUrl[package];
+}
+
 bool Site::setType(const QString &type)
 {
     if (type == "apachemodindex")

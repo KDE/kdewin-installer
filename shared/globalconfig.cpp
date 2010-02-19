@@ -33,6 +33,9 @@
 #include <QMessageBox>
 #endif
 
+
+QStringList packageTypes = QStringList() << "msvc" << "mingw" << "vc90" << "mingw4";
+
 GlobalConfig::GlobalConfig()
 {}
 
@@ -388,6 +391,11 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     QString notes = cmd.join(" ").replace("\\n","\n");
                     pkg->setLongNotes(notes);
                 }
+                else if(keyword == "homeurl") 
+                {
+                    cmd.removeFirst();
+                    pkg->setHomeURL(cmd.join(" "));
+                }
                 else if(keyword == "category")
                 {
                     cmd.removeFirst();
@@ -470,6 +478,19 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     cmd.removeFirst();
                     site->setNotes(cmd.join(" "));
                 }
+                else if(keyword == "pkghomeurl") 
+                {
+                    QString pkg = cmd[1];
+                    QString url = cmd[2];
+                    if (pkg.contains("-*"))  
+                    {
+                        pkg.replace("-*","-%1");
+                        foreach(const QString type, packageTypes)
+                            site->setPackageHomeUrl(pkg.arg(type),url);
+                        pkg.replace("-%1","");
+                        site->setPackageHomeUrl(pkg,url);
+                    }
+                }
                 else if(keyword == "pkgnotes") 
                 {
                     QString pkg = cmd[1];
@@ -478,10 +499,8 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     if (pkg.contains("-*")) 
                     {
                         pkg.replace("-*","-%1");
-                        site->setPackageNote(pkg.arg("msvc"),cmd.join(" "));
-                        site->setPackageNote(pkg.arg("mingw"),cmd.join(" "));
-                        site->setPackageNote(pkg.arg("vc90"),cmd.join(" "));
-                        site->setPackageNote(pkg.arg("mingw4"),cmd.join(" "));
+                        foreach(const QString type, packageTypes)
+                            site->setPackageNote(pkg.arg(type),cmd.join(" "));
                         site->setPackageNote(pkg,cmd.join(" "));
                     }
                     else
@@ -495,8 +514,9 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     QString details = cmd.join(" ").replace("\\n","\n");
                     if (pkg.contains("-*")) 
                     {
-                        site->setPackageLongNotes(pkg.replace("*","msvc"),details);
-                        site->setPackageLongNotes(pkg.replace("*","mingw"),details);
+                        pkg.replace("-*","-%1");
+                        foreach(const QString type, packageTypes)
+                            site->setPackageLongNotes(pkg.arg(type),details);
                     }
                     else
                         site->setPackageLongNotes(pkg,details);

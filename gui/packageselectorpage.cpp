@@ -313,8 +313,12 @@ void PackageSelectorPage::setWidgetData( QString categoryName )
         Package::PackageVersion availableVersion = availablePackage->version();
         availablePackage->setInstalledVersion(installedVersion);
 
+        QString _name = availablePackage->homeURL().isEmpty() 
+            ? PackageInfo::baseName(availablePackage->name()) 
+            : QString("<a href=\"%1\">%2</a>").arg(availablePackage->homeURL()).arg(PackageInfo::baseName(availablePackage->name()) );
+
         /// @TODO add version format check to be sure available package is really newer
-        data << PackageInfo::baseName(availablePackage->name())
+        data << name
             << (availableVersion != installedVersion ? availablePackage->version().toString() : "")
             << installedVersion.toString()
             << QString();
