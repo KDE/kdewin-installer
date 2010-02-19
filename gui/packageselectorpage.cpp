@@ -196,7 +196,7 @@ void PackageSelectorPage::setLeftTreeData()
     Q_FOREACH (const QString &category,categoryCache.categories())
     {
         const QStringList names = category.split(':');
-        if ( (s.compilerType() == Settings::MinGW ||s.compilerType() == Settings::MSVC || Settings::MinGW4)
+        if ( (s.compilerType() == MinGW ||s.compilerType() == MSVC || MinGW4)
             && (names[0] == QLatin1String("msvc") || names[0] == QLatin1String("mingw") || names[0] == QLatin1String("mingw4")) )
             continue;
 
@@ -292,13 +292,13 @@ void PackageSelectorPage::setWidgetData( QString categoryName )
     Q_FOREACH(Package *availablePackage,categoryCache.packages(categoryName,*engine->packageResources()))
     {
         QString name = availablePackage->name();
-        if ( ( categoryName == "mingw"  || s.compilerType() == Settings::MinGW )
+        if ( ( categoryName == "mingw"  || s.compilerType() == MinGW )
                 && ( name.endsWith ( QLatin1String( "-msvc" ) ) || name.endsWith ( QLatin1String( "-vc90" ) ) || name.endsWith ( QLatin1String( "-mingw4" ) ) ) )
             continue;
-        else if ( ( categoryName == "mingw4"  || s.compilerType() == Settings::MinGW4 )
+        else if ( ( categoryName == "mingw4"  || s.compilerType() == MinGW4 )
                 && ( name.endsWith ( QLatin1String( "-mingw" ) ) || name.endsWith ( QLatin1String( "-msvc" ) ) || name.endsWith ( QLatin1String( "-vc90" ) ) ) )
             continue;
-        else if ( ( categoryName == "msvc"  || s.compilerType() == Settings::MSVC )
+        else if ( ( categoryName == "msvc"  || s.compilerType() == MSVC )
                   && ( name.endsWith ( QLatin1String ( "-mingw" ) ) || name.endsWith ( QLatin1String ( "-mingw4" ) )) )
             continue;
         packageList << availablePackage;

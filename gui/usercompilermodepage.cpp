@@ -79,11 +79,11 @@ bool UserCompilerModePage::validatePage()
     s.setPackageManagerMode(ui.installModePackageManager->isChecked());
 
     if (ui.compilerMinGW4->isChecked())
-        s.setCompilerType(Settings::MinGW4);
+        s.setCompilerType(MinGW4);
     if (ui.compilerMSVC->isChecked())
-        s.setCompilerType(Settings::MSVC);
+        s.setCompilerType(MSVC);
     if (isX64Windows() && ui.compilerMSVCX64->isChecked())
-        s.setCompilerType(Settings::MSVC_X64);
+        s.setCompilerType(MSVC_X64);
     return true;
 }
 
@@ -92,9 +92,9 @@ void UserCompilerModePage::setCompilerMode(bool EndUserMode)
     Settings &s = Settings::instance();
     switch (s.compilerType()) 
     {
-        case Settings::MinGW4: ui.compilerMinGW4->setChecked(true); break;
-        case Settings::MSVC: ui.compilerMSVC->setChecked(true); break;
-        case Settings::MSVC_X64: ui.compilerMSVCX64->setChecked(true); break;
+        case MinGW4: ui.compilerMinGW4->setChecked(true); break;
+        case MSVC: ui.compilerMSVC->setChecked(true); break;
+        case MSVC_X64: ui.compilerMSVCX64->setChecked(true); break;
         default: ui.compilerMSVC->setChecked(true); break;
     }
     bool state = !Database::isAnyPackageInstalled(s.installDir());

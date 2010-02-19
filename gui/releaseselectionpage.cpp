@@ -59,7 +59,7 @@ void ReleaseSelectionPage::initializePage()
         currentMirror = releases.realBaseURL().toString() + "stable/latest/";
     qDebug() << "current mirror with release" << currentMirror;
     
-    Q_FOREACH(const ReleaseType &m, releases.releases())
+    Q_FOREACH(const MirrorReleaseType &m, releases.releases())
     {
         qDebug() << "adding release" << m.name << "with url" << m.url;
         QListWidgetItem *item = new QListWidgetItem(m.toString());

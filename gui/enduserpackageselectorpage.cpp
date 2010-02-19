@@ -117,14 +117,14 @@ void EndUserPackageSelectorPage::setWidgetData()
         Q_FOREACH(Package *availablePackage,categoryCache.packages(categoryName,*engine->packageResources()))
         {
             QString name = availablePackage->name();
-            if ( ( categoryName == "mingw"  || s.compilerType() == Settings::MinGW )
+            if ( ( categoryName == "mingw"  || s.compilerType() == MinGW )
                     && ( name.endsWith ( QLatin1String( "-msvc" ) ) || name.endsWith ( QLatin1String( "-vc90" ) ) 
                       || name.endsWith ( QLatin1String( "-mingw4" ) ) ) )
                 continue;
-            else if ( ( categoryName == "msvc"  || s.compilerType() == Settings::MSVC )
+            else if ( ( categoryName == "msvc"  || s.compilerType() == MSVC )
                       && ( name.endsWith ( QLatin1String ( "-mingw" ) ) || name.endsWith( QLatin1String( "-mingw4" ) ) ) )
                 continue;
-            else if ( ( categoryName == "mingw4"  || s.compilerType() == Settings::MinGW4 )
+            else if ( ( categoryName == "mingw4"  || s.compilerType() == MinGW4 )
                     && ( name.endsWith ( QLatin1String( "-msvc" ) ) || name.endsWith ( QLatin1String( "-vc90" ) ) 
                       || name.endsWith ( QLatin1String( "-mingw" ) ) ) )
                 continue;
