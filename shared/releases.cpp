@@ -65,10 +65,10 @@ bool Releases::useOldMirrorUrl(const QUrl &url)
     {
         int k = path.indexOf('/',i+aString.size()+1);
         QString version = path.mid(i+aString.size(),k-i-aString.size());
-        ReleaseType release;
+        MirrorReleaseType release;
         release.name = version;
         release.url = url;
-        release.type = ReleaseType::Stable;
+        release.type = Stable;
         m_releases.append(release);
         return true;
     }    
@@ -78,10 +78,10 @@ bool Releases::useOldMirrorUrl(const QUrl &url)
     {
         int k = path.indexOf('/',i+aString.size()+1);
         QString version = path.mid(i+aString.size(),k-i-aString.size());
-        ReleaseType release;
+        MirrorReleaseType release;
         release.name = version;
         release.url = url;
-        release.type = ReleaseType::Unstable;
+        release.type = Unstable;
         m_releases.append(release);
         return true;
     }    
@@ -91,10 +91,10 @@ bool Releases::useOldMirrorUrl(const QUrl &url)
     {
         int k = path.indexOf('/',i+aString.size()+1);
         QString version = path.mid(i+aString.size(),k-i-aString.size());
-        ReleaseType release;
+        MirrorReleaseType release;
         release.name = version;
         release.url = url;
-        release.type = ReleaseType::Nightly;
+        release.type = Nightly;
         m_releases.append(release);
         return true;
     }    
@@ -115,11 +115,11 @@ bool Releases::patchReleaseUrls(const QUrl &url)
     DownloaderProgress *old = Downloader::instance()->progress();
     Downloader::instance()->setProgress(0);
 
-    ReleaseTypeList temp = m_releases;
+    MirrorReleaseTypeList temp = m_releases;
     m_releases.clear();
     QByteArray out;
 
-    Q_FOREACH( ReleaseType r, temp )
+    Q_FOREACH( MirrorReleaseType r, temp )
     {
         QUrl u = r.url.toString() + "win32/config.txt";
         if (Downloader::instance()->fetch(u,out)) 
@@ -173,7 +173,7 @@ bool Releases::fetch(const QUrl &_url)
     {
         qWarning() << "could not fetch stable versions from" << url;
     }
-    else if (!parse(out,url,ReleaseType::Stable))
+    else if (!parse(out,url,Stable))
     {
         qWarning() << "could not extract stable versions from directory list fetched from" << url;
     }
@@ -183,7 +183,7 @@ bool Releases::fetch(const QUrl &_url)
     {
         qWarning() << "could not fetch unstable versions from" << url;
     }
-    else if (!parse(out,url,ReleaseType::Unstable))
+    else if (!parse(out,url,Unstable))
     {
         qWarning() << "could not extract unstable versions from directory list fetched from" << url;
     }
@@ -193,14 +193,14 @@ bool Releases::fetch(const QUrl &_url)
     {
         qWarning() << "could not fetch nightly versions from" << url;
     }
-    else if (!parse(out,url,ReleaseType::Nightly))
+    else if (!parse(out,url,Nightly))
     {
         qWarning() << "could not extract nightly versions from directory list fetched from" << url;
     }
     return patchReleaseUrls(m_baseURL);
 }
 
-bool Releases::parse(const QString &fileName, const QUrl &url, ReleaseType::Type type)
+bool Releases::parse(const QString &fileName, const QUrl &url, ReleaseType type)
 {
     QFile file(fileName);
     if (!file.exists())
@@ -211,7 +211,7 @@ bool Releases::parse(const QString &fileName, const QUrl &url, ReleaseType::Type
     return parse(&file,url,type);
 }
 
-bool Releases::parse(const QByteArray &data, const QUrl &url, ReleaseType::Type type)
+bool Releases::parse(const QByteArray &data, const QUrl &url, ReleaseType type)
 {
     QByteArray ba(data);
     QBuffer buf(&ba);
@@ -221,7 +221,7 @@ bool Releases::parse(const QByteArray &data, const QUrl &url, ReleaseType::Type 
     return parse(&buf,url,type);
 }
 
-bool Releases::parse(QIODevice *ioDev, const QUrl &url, ReleaseType::Type type)
+bool Releases::parse(QIODevice *ioDev, const QUrl &url, ReleaseType type)
 {
     if (url.scheme() == "http") 
     {
@@ -239,7 +239,7 @@ bool Releases::parse(QIODevice *ioDev, const QUrl &url, ReleaseType::Type type)
             int end = line.indexOf('\"',start+6);
             QString version = line.mid(start+6,end-start-6).remove('/');
             qDebug() << "line:" << line << version;
-            ReleaseType release;
+            MirrorReleaseType release;
             release.url = url.toString() + version + '/';
             release.name = version;
             release.type = type;
@@ -264,7 +264,7 @@ bool Releases::parse(QIODevice *ioDev, const QUrl &url, ReleaseType::Type type)
             if (version.indexOf(QRegExp("^([0-9]+\\.[0-9]+\\.[0-9]+|[0-9]{8})$"), 0) == -1)   
                 continue;
                 
-            ReleaseType release;
+            MirrorReleaseType release;
             release.url = url.toString() + version + '/';
             release.name = version;
             release.type = type;
@@ -283,21 +283,21 @@ Releases &Releases::instance()
     return Releases;
 }
 
-QDebug &operator<<(QDebug &out, const ReleaseTypeList  &c)
+QDebug &operator<<(QDebug &out, const MirrorReleaseTypeList  &c)
 {
     out << "QList<ReleaseType> (";
-    Q_FOREACH(const ReleaseType &m,c)
+    Q_FOREACH(const MirrorReleaseType &m,c)
         out << m;
     out << ")";
     return out;
 }
 
-QDebug &operator<<(QDebug &out, const ReleaseType &c)
+QDebug &operator<<(QDebug &out, const MirrorReleaseType &c)
 {
     out << "ReleaseType ("
         << "url:" << c.url
         << "name:" << c.name
-        << "type:" << (c.type == ReleaseType::Stable ? "stable" : "unstable")
+        << "type:" << toString(c.type)
         << ")";
     return out;
 }

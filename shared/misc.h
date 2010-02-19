@@ -32,6 +32,14 @@ class QFile;
 class QIODevice;
 class QTextStream;
 
+typedef enum { RTUnspecified=0, Stable, Unstable, Nightly } ReleaseType;
+ReleaseType toReleaseType(const QString &type); 
+const QString toString(ReleaseType type);
+
+typedef enum { Unspecified=0, MinGW=1, MSVC = 2, MSVC8=2, MSVC9=3, MinGW4=4, MSVC_X64=5 } CompilerType;
+CompilerType toCompilerType(const QString &type); 
+
+
 struct InstallFile
 {
   QString inputFile;
@@ -86,5 +94,48 @@ bool removeDirectory(const QString& aDir);
 
 /// check if system is 64 bit Windows
 bool isX64Windows();
+
+
+// setup-<packageName>-<releaseType>-<version>[-<mirror>].exe
+/**
+ InstallerCallConfig provides predefined informations from the 
+ installer filename to skip related wizard pages. In detail 
+ these informations are 
+ 
+ - which package to install (skip package selecting page)
+ - which release type and version (skip release selecting page)
+ - which compiler (skip compiler selecting page)
+ - which download server (skip download server selecting page)
+ 
+ The filename has to build in the following manner: 
+
+    setup-<packageName>-[<compiler]-[<version>]-[<releaseType>]-[<mirror>].exe
+
+  each part could be skipped by leaving the related field empty 
+
+  @todo move to separate file or a more descriptive place
+*/
+
+class InstallerCallConfig {
+public:
+    InstallerCallConfig();
+    bool isValid() { return key == "setup"; }
+
+    static InstallerCallConfig &instance(); 
+
+    QString packageName;
+    ReleaseType releaseType; 
+    QString version; 
+    QString mirror; 
+    CompilerType compilerType;
+
+protected:
+    bool isLoaded; 
+    QString key;
+    QString installerBaseName;
+
+};
+
+
 
 #endif

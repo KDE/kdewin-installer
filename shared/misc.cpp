@@ -403,3 +403,78 @@ bool isX64Windows()
     return false; // Win64 does not support Win16
 #endif
 }
+
+ReleaseType toReleaseType(const QString &_type)
+{
+    QString type(_type.toLower());
+    if (type == "unstable")
+        return Unstable;
+    else if (type== "stable")
+        return Stable;
+    else if (type == "nightly")
+        return Nightly;
+    else 
+        return RTUnspecified;
+}
+
+const QString toString(ReleaseType type)
+{
+    if (type == Stable)
+        return "stable";
+    else if (type == Unstable)
+	    return "unstable";
+    else if (type == Nightly)
+	    return "nightly";
+    else
+	    return "unknown";
+}
+
+CompilerType toCompilerType(const QString &_type)
+{
+    QString type(_type.toLower());
+    if (type == "vc90")
+        return MSVC9;
+    else if (type == "mingw4")
+        return MinGW4;
+    else if (type == "vc_x64")
+        return MSVC_X64;
+    else 
+        return Unspecified;
+}
+
+InstallerCallConfig::InstallerCallConfig() : isLoaded(false)
+{
+    QFileInfo fi(QCoreApplication::applicationFilePath());
+    installerBaseName = fi.baseName();
+    QStringList a = installerBaseName.split("-");
+    if (a.size() == 6)
+    {
+        key = a[0];
+
+        packageName = a[1].isEmpty() || a[1] == "*" ? "" : a[1];
+
+        compilerType = toCompilerType(a[2]);
+        if (compilerType == Unspecified)
+            compilerType = MSVC9;
+
+        version = a[3].isEmpty() || a[3] == QLatin1String("*") ? "latest" : a[3]; 
+
+        releaseType = toReleaseType(a[4]);
+        if (releaseType == Unspecified)
+            releaseType = Stable;
+
+        mirror = a[5].isEmpty() && a[5] != QLatin1String("*") ? a[5] : "www.winkde.org";
+    }
+    isLoaded = true;
+}
+
+/*
+ setup-<packageName>-[<compiler]-[<version>]-[<releaseType>]-[<mirror>].exe
+ setup-*-vc90-latest-stable-*.exe
+ setup-*-vc90-latest-stable-*.exe
+*/
+InstallerCallConfig &InstallerCallConfig::instance()
+{
+    static InstallerCallConfig instance;
+    return instance;
+}

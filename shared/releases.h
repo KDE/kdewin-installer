@@ -22,6 +22,8 @@
 #ifndef RELEASES_H
 #define RELEASES_H
 
+#include "misc.h"
+
 #include <QtCore/QString>
 #include <QtCore/QUrl>
 #include <QtDebug>
@@ -30,35 +32,24 @@ class QByteArray;
 /**    
    \brief The ReleaseType class provides access to the details of a single release from a given mirror. 
    */
-class ReleaseType {
+class MirrorReleaseType {
     public:
-        typedef enum { Stable, Unstable, Nightly } Type;
 
-        ReleaseType() { }
+        MirrorReleaseType() { }
         const QString toString() const 
         { 
-            if (type == Stable)
-				return "stable " + name;
-            else if (type == Unstable)
-				return "unstable " + name;
-            else if (type == Nightly)
-				return "nightly " + name;
-			else 
-			{
-				qWarning() << "unknown release type for " << name;
-				return "unknown " + name; 
-			}
+            return ::toString(type) + " " + name;
         }
         QUrl url;
         QString name; 
-        Type type;   
+        ReleaseType type;   
 };
-QDebug &operator<<(QDebug &out, const ReleaseType &c);
+QDebug &operator<<(QDebug &out, const MirrorReleaseType &c);
 
 /**    
    The ReleaseTypeList type specifies a list of releases. 
     */
-typedef QList<ReleaseType> ReleaseTypeList;
+typedef QList<MirrorReleaseType> MirrorReleaseTypeList;
 
 /**    
    \brief The Releases class provides access to all releases located on a specific mirror.  
@@ -77,9 +68,9 @@ class Releases
         /// clear list of previously fetched releases 
         void clear() { m_releases.clear(); }
         ///manually add a release to the list of releases
-        void add(const ReleaseType &release) { m_releases.append(release); }
+        void add(const MirrorReleaseType &release) { m_releases.append(release); }
         /// return list of detected releases
-        ReleaseTypeList &releases() { return m_releases; }
+        MirrorReleaseTypeList &releases() { return m_releases; }
 
         /**
             return the really used base url because the base url given to fetch 
@@ -106,7 +97,7 @@ class Releases
          @param type type of release list provided by filename
          @return true if parse was performed successfully, false otherwise
         */
-        bool parse(const QString &fileName, const QUrl &url, ReleaseType::Type type);
+        bool parse(const QString &fileName, const QUrl &url, ReleaseType type);
         /**
          parse releases list from a QByteArray. The release list is accessable by the releases() method. 
          
@@ -115,7 +106,7 @@ class Releases
          @param type type of release list provided by data
          @return true if parse was performed successfully, false otherwise
         */
-        bool parse(const QByteArray &data, const QUrl &url, ReleaseType::Type type);
+        bool parse(const QByteArray &data, const QUrl &url, ReleaseType type);
         /**
          parse releases list from an QIODevice instance. The releases list is accessable 
          by the releases() method. 
@@ -125,12 +116,12 @@ class Releases
          @param type type of release list provided by data
          @return true if parse was performed successfully, false otherwise
         */
-        bool parse(QIODevice *ioDev, const QUrl &url, ReleaseType::Type type);
+        bool parse(QIODevice *ioDev, const QUrl &url, ReleaseType type);
 
-        ReleaseTypeList m_releases;
+        MirrorReleaseTypeList m_releases;
         QUrl m_baseURL;
 };
 
-QDebug &operator<<(QDebug &,const ReleaseTypeList &);
+QDebug &operator<<(QDebug &,const MirrorReleaseTypeList &);
 
 #endif

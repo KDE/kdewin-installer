@@ -23,6 +23,8 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+#include "misc.h"
+
 #include <QtCore/QDir>
 #include <QtCore/QObject>
 #include <QtCore/QSettings>
@@ -117,7 +119,6 @@ public:
     bool autoNextStep() const { return m_settingsMain->value("autoNextStep", true).toBool(); }
     void setAutoNextStep(bool state) { m_settingsMain->setValue("autoNextStep", state); sync(); }
 
-    typedef enum { unspecified=0, MinGW=1, MSVC = 2, MSVC8=2, MSVC9=3, MinGW4=4, MSVC_X64=5 } CompilerType;
     CompilerType compilerType() const { return (CompilerType) (m_settings->value("compilerType",m_settingsMain->value("compilerType",0).toInt()).toInt()); }
     void setCompilerType(CompilerType type);
 
