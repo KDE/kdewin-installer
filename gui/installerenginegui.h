@@ -59,7 +59,7 @@ public:
     void setEndUserInitialState ( QTreeWidgetItem &item, Package *available, Package *installed, int column=0 );
 
     void setInitialState(QTreeWidgetItem &item, Package *available, Package *installed,int column=0);
-    void setNextState(QTreeWidgetItem &item, Package *available, Package *installed, Package::Type type, int column);
+    void setNextState(QTreeWidgetItem &item, Package *available, Package *installed, Package::Type type, int column, bool handleMetaPackage=false);
     bool isPackageSelected ( Package *available, Package::Type type );
 
     void setMetaPackageState(QTreeWidgetItem &item, int column);

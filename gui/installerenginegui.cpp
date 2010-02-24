@@ -297,7 +297,7 @@ void InstallerEngineGui::setInitialState ( QTreeWidgetItem &item, Package *avail
     }
 }
 
-void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *available, Package *installed, Package::Type type, int column )
+void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *available, Package *installed, Package::Type type, int column, bool handleMetaPackage)
 {
     if (type == Package::NONE)
         return;
@@ -358,12 +358,20 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
             newState = _Nothing;
         }
     }
-    else if (currentState == _Update)
+    else if (currentState == _Update && !handleMetaPackage)
     {
         if (isAvailable && isInstalled && !sameVersion)
         {
             iconState = _remove;
             newState = _Remove;
+        }
+    }
+    else if (currentState == _Update && handleMetaPackage)
+    {
+        if (isAvailable && isInstalled && !sameVersion)
+        {
+            iconState = _update;
+            newState = _Update;
         }
     }
     else if (currentState == _Install)

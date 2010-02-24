@@ -353,7 +353,7 @@ void EndUserPackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
             if(!ap && !ip) continue;
             
             // switch state for the childItem
-            if ( column == C_ACTION) engine->setNextState(*item->child(i), ap, ip, Package::BIN, C_ACTION );
+            if ( column == C_ACTION) engine->setNextState(*item->child(i), ap, ip, Package::BIN, C_ACTION, true);
         }
     }
 
