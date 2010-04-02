@@ -159,6 +159,9 @@ void EndUserPackageSelectorPage::setWidgetData()
         // in case p is 0, we couldn't find a predefined package - e.g. another package has been defined before
         if(!p || p->hasType(Package::BIN) || p->hasType(Package::LIB)) continue;
 
+        if (!includePackage(p->name(),m_displayType))
+            continue;
+
         QTreeWidgetItem *item = addPackageToTree(p, 0);
 
         // if this is no metaPackage, simply ignore it
