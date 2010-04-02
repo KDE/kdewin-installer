@@ -61,6 +61,24 @@ EndUserPackageSelectorPage::EndUserPackageSelectorPage()  : InstallWizardPage(0)
         setSubTitle(statusTip());
 }
 
+bool EndUserPackageSelectorPage::includePackage(const QString &name, PackageDisplayType displayType)
+{
+    if (displayType == Language && !name.contains("-l10n") )
+        return false;
+    else if (displayType == Spelling && !name.contains("aspell"))
+        return false;
+    else if (displayType == Application 
+            && ( name.contains("aspell") 
+                || name.contains("-l10n") 
+                || name.contains("lib") 
+                || name.contains("runtime")
+                ) 
+            )
+        return false;
+    else 
+        return true;
+}
+
 void EndUserPackageSelectorPage::setWidgetData()
 {
     QTreeWidget *tree = ui.packageList;
@@ -171,18 +189,7 @@ void EndUserPackageSelectorPage::setWidgetData()
     
     Q_FOREACH(Package *availablePackage,packageList.values())
     {
-        QString name = availablePackage->name();
-        if (m_displayType == Language && !name.contains("kde-l10n"))
-            continue;
-        else if (m_displayType == Spelling && !name.contains("aspell"))
-            continue;
-        else if (m_displayType == Application 
-                && ( name.contains("aspell") 
-                    || name.contains("kde-l10n") 
-                    || name.contains("lib") 
-                    || name.contains("runtime")
-                    ) 
-                )
+        if (!includePackage(availablePackage->name(),m_displayType))
             continue;
         if(availablePackage->hasType(Package::BIN)) {
             QTreeWidgetItem *item = addPackageToTree(availablePackage, 0);

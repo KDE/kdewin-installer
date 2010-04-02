@@ -47,6 +47,8 @@ protected:
     void setPackageDisplayType(PackageDisplayType type);
     void preSelectPackages(const QString &package);
     QTreeWidgetItem *addPackageToTree(Package *package, QTreeWidgetItem *parent);
+    bool includePackage(const QString &name, PackageDisplayType displayType);
+
 
 protected slots:
     void itemClicked(QTreeWidgetItem *item, int column);
