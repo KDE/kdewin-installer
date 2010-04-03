@@ -198,6 +198,7 @@ bool Installer::installExecutable(Package *pkg, Package::Type type)
     QString fileName = pkg->localFilePath(type);
 #ifdef Q_OS_WIN
     QProcess proc;
+    proc.setWorkingDirectory(QDir::tempPath());
     proc.start (fileName, QStringList ( "/Q" ) );   // FIXME: don't hardcode command line parameters!
     if ( !proc.waitForStarted() )
         return false;
