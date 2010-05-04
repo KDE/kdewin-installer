@@ -62,53 +62,6 @@
 @deps shared-mime-info gettext libxml2 iconv
 @deps ebook-tools libzip
 @deps libspectre libgs
-; mingw dependencies
-@deps amarok-mingw kdebase-runtime-mingw phonon-mingw taglib-mingw mysql-embedded
-@deps automoc-mingw qt-mingw
-@deps choqok-mingw kdelibs-mingw qjson-mingw
-@deps dbus-mingw expat 
-@deps digikam-mingw kdegraphics-mingw kdeedu-mingw exiv2-mingw lcms libkdegraphics-mingw marble-mingw
-@deps k3b-mingw kdemultimedia-mingw libdvdcss-mingw cdrtools dvd+rw-tools
-@deps kaffeine-mingw kdebase-runtime-mingw
-@deps kdelibs-mingw qt-mingw phonon-mingw attica-mingw pcre-mingw dbus-mingw kdewin-mingw qimageblitz-mingw qca-mingw strigi-mingw soprano-mingw taglib-mingw aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
-@deps kdebase-apps-mingw kdebase-runtime-mingw
-@deps kdebase-runtime-mingw kdepimlibs-mingw kdelibs-mingw oxygen-icons
-@deps kdebase-workspace-mingw kdebase-runtime-mingw kdepimlibs-mingw
-@deps kdeedu-mingw kdebase-runtime-mingw kdelibs-mingw openbabel-mingw cfitsio
-@deps kdegames-mingw kdebase-runtime-mingw kdelibs-mingw phonon-mingw
-@deps kdegraphics-mingw kdebase-runtime-mingw kdelibs-mingw poppler-mingw ebook-tools libspectre exiv2-mingw
-@deps kdemultimedia-mingw kdebase-runtime-mingw taglib-mingw
-@deps kdenetwork-mingw kdebase-runtime-mingw kdelibs-mingw sqlite libgmp libidn libmsn-mingw
-@deps kdepim-mingw kdepim-runtime-mingw kdepimlibs-mingw kdebase-runtime-mingw gpgme sqlite akonadi-mingw
-@deps kdepimlibs-mingw kdelibs-mingw boost-mingw libical cyrus-sasl
-@deps kdesdk-mingw kdebase-runtime-mingw kdelibs-mingw kdepimlibs-mingw astyle diffutils
-@deps kdetoys-mingw kdebase-runtime-mingw kdelibs-mingw
-@deps kdeutils-mingw kdebase-runtime-mingw kdelibs-mingw libzip libgmp qca-mingw
-@deps kdevplatform-mingw kdebase-runtime-mingw
-@deps kdevelop-mingw kdevplatform-mingw
-@deps kdewebdev-mingw kdebase-runtime-mingw kdelibs-mingw
-@deps kdewin-installer-mingw qt-mingw
-@deps kdewin-mingw qt-mingw
-@deps kde-additional-mingw kdebase-runtime-mingw
-@deps kile-mingw kdesdk-mingw
-@deps kipi-plugins-mingw kdegraphics-mingw kdepimlibs-mingw libkdegraphics-mingw
-@deps kmymoney-mingw kdebase-runtime-mingw
-@deps koffice-mingw kdebase-runtime-mingw kdelibs-mingw lcms
-@deps konversation-mingw kdebase-runtime-mingw kdelibs-mingw
-@deps kphotoalbum-mingw marble-mingw kdeedu-mingw libkdegraphics-mingw kdegraphics-mingw
-@deps krecipes-mingw mysql-embedded mysql-server sqlite qimageblitz-mingw
-@deps ktorrent-mingw libgmp kdebase-runtime-mingw qca-mingw
-@deps phonon-mingw phonon-backends-mingw qt-mingw
-@deps phonon-backends-mingw qt-mingw
-@deps phonon-vlc-mingw phonon-mingw vlc
-@deps phonon-mplayer-mingw phonon-mingw
-@deps poppler-mingw fontconfig-mingw freetype-mingw poppler-data lcms openjpeg
-@deps qca-mingw cyrus-sasl openssl
-@deps qjson-mingw qt-mingw
-@deps qt-mingw dbus-mingw runtime-mingw
-@deps quassel-mingw kdelibs-mingw
-@deps strigi-mingw libbzip2 openssl zlib iconv libxml2 exiv2-mingw
-@deps yakuake-mingw kdebase-apps-mingw
 ; mingw4 dependencies
 @deps amarok-mingw4 kdebase-runtime-mingw4 phonon-mingw4 taglib-mingw4 mysql-embedded
 @deps automoc-mingw4 qt-mingw4
