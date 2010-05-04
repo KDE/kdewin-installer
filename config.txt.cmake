@@ -100,10 +100,13 @@
 @deps ktorrent-mingw libgmp kdebase-runtime-mingw qca-mingw
 @deps phonon-mingw phonon-backends-mingw qt-mingw
 @deps phonon-backends-mingw qt-mingw
+@deps phonon-vlc-mingw phonon-mingw vlc
+@deps phonon-mplayer-mingw phonon-mingw
 @deps poppler-mingw fontconfig-mingw freetype-mingw poppler-data lcms openjpeg
 @deps qca-mingw cyrus-sasl openssl
 @deps qjson-mingw qt-mingw
 @deps qt-mingw dbus-mingw runtime-mingw
+@deps quassel-mingw kdelibs-mingw
 @deps strigi-mingw libbzip2 openssl zlib iconv libxml2 exiv2-mingw
 @deps yakuake-mingw kdebase-apps-mingw
 ; mingw4 dependencies
@@ -144,10 +147,13 @@
 @deps ktorrent-mingw4 libgmp kdebase-runtime-mingw4 qca-mingw4
 @deps phonon-mingw4 phonon-backends-mingw4 qt-mingw4
 @deps phonon-backends-mingw4 qt-mingw4
+@deps phonon-vlc-mingw4 phonon-mingw4 vlc
+@deps phonon-mplayer-mingw4 phonon-mingw4
 @deps poppler-mingw4 fontconfig-mingw4 freetype-mingw4 poppler-data lcms openjpeg
 @deps qca-mingw4 cyrus-sasl openssl
 @deps qjson-mingw4 qt-mingw4
 @deps qt-mingw4 dbus-mingw4 runtime-mingw4
+@deps quassel-mingw4 kdelibs-mingw4
 @deps strigi-mingw4 libbzip2 openssl zlib iconv libxml2 exiv2-mingw4
 @deps yakuake-mingw4 kdebase-apps-mingw4
 ; msvc dependencies
@@ -189,10 +195,13 @@
 @deps ktorrent-vc90 libgmp kdebase-runtime-vc90 qca-vc90
 @deps phonon-vc90 phonon-backends-vc90 qt-vc90
 @deps phonon-backends-vc90 qt-vc90
+@deps phonon-vlc-vc90 phonon-vc90 kdewin-vc90 vlc
+@deps phonon-mplayer-vc90 phonon-vc90
 @deps poppler-vc90 fontconfig-vc90 freetype-vc90 poppler-data lcms openjpeg
 @deps qca-vc90 cyrus-sasl openssl
 @deps qjson-vc90 qt-vc90
 @deps qt-vc90 dbus-vc90 runtime-vc90
+@deps quassel-vc90 kdelibs-vc90
 @deps strigi-vc90 libbzip2 openssl zlib iconv libxml2 exiv2-vc90
 @deps yakuake-vc90 kdebase-apps-vc90
 ;
@@ -661,6 +670,8 @@
 @pkgnotes oxygen-icons icons and bitmaps for the oxygen style
 @pkgnotes phonon-* KDE KDE4 multimedia API
 @pkgnotes phonon-backends-* some additional backends for the phonon multimedia API
+@pkgnotes phonon-vlc-* A VLC backend for the phonon multimedia API
+@pkgnotes phonon-mplayer-* A MPlayer backend for the phonon multimedia API
 @pkgnotes poppler-data font data for poppler library
 @pkgnotes poppler-* PDF rendering library based on xpdf-3.0
 @pkgnotes pcre-* Perl-Compatible Regular Expressions (utilities)
@@ -668,6 +679,7 @@
 @pkgnotes qimageblitz-* KDE image effect library
 @pkgnotes qjson-* the easiest way to manage JSON objects with Qt
 @pkgnotes qt-* C++ GUI application framework
+@pkgnotes quassel-* Quassel IRC 
 @pkgnotes runtime-* Mingw runtime files
 @pkgnotes soprano-* RDF storage solutions library
 @pkgnotes strigi-* desktop search engine
