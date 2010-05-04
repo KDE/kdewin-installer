@@ -98,6 +98,7 @@
 @deps kphotoalbum-mingw marble-mingw4 kdeedu-mingw4 libkdegraphics-mingw4 kdegraphics-mingw4
 @deps krecipes-mingw4 mysql-embedded mysql-server sqlite qimageblitz-mingw4
 @deps ktorrent-mingw4 libgmp kdebase-runtime-mingw4 qca-mingw4
+@deps libktorrent-mingw4 kdebase-runtime-mingw4 qca-mingw4 libgmp-mingw4
 @deps phonon-mingw4 qt-mingw4
 @deps phonon-vlc-mingw4 phonon-mingw4 vlc
 @deps phonon-mplayer-mingw4 phonon-mingw4
@@ -145,6 +146,7 @@
 @deps kphotoalbum-vc90 marble-vc90 kdeedu-vc90 libkdegraphics-vc90 kdegraphics-vc90
 @deps krecipes-vc90 mysql-embedded mysql-server sqlite qimageblitz-vc90
 @deps ktorrent-vc90 libgmp kdebase-runtime-vc90 qca-vc90
+@deps libktorrent-vc90 kdebase-runtime-vc90 qca-vc90 libgmp-vc90
 @deps phonon-vc90 qt-vc90
 @deps phonon-vlc-vc90 phonon-vc90 kdewin-vc90 vlc
 @deps phonon-mplayer-vc90 phonon-vc90
