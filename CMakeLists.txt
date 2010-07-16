@@ -116,8 +116,11 @@ endif (WIN32 OR CYGWIN)
 set (EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
 # add 3rdparty sources and definitions
-add_subdirectory(3rdparty)
+include(3rdparty/CMakeLists.txt)
 # this will define .... _HEADERS, ...._SOURCES, ..._INCLUDE_DIR. for ... = quazip, bzip2, curl, filter,md5
+# please note that add_subdirectory will not work because definitions set with add_definitions  
+# will only be visible in the 3rdparty directory and below. 
+ 
 include(${QT_USE_FILE})
 
 include_directories(
