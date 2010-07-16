@@ -1,7 +1,7 @@
 set (NAME kdewin-installer)
 project(${NAME})
 
-cmake_minimum_required(VERSION 2.6.2)
+cmake_minimum_required(VERSION 2.6)
 
 set (VERSION_MAJOR 0)
 set (VERSION_MINOR 9)
@@ -16,25 +16,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 include(cmake/macros.cmake)
 
 #set (CMAKE_SUPPRESS_REGENERATION 1)
-find_package(Qt4 4.5.2 COMPONENTS QtCore QtGui QtXml REQUIRED )
-
-if (WIN32 AND CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
-# emerge workaround for cmake 2.6. qt-static 4.3.2 combination which is not able to detect uic and moc correctly
-# we need also to set the environment variable QMAKESPEC to %KDEROOT%\mkspecs/<compiler>
-    FIND_PROGRAM(_QT_UIC_EXECUTABLE
-        NAMES uic
-        PATHS ${QT_BINARY_DIR}
-        NO_DEFAULT_PATH
-    )
-    set (QT_UIC_EXECUTABLE ${_QT_UIC_EXECUTABLE})
-
-    FIND_PROGRAM(_QT_MOC_EXECUTABLE
-        NAMES moc
-        PATHS ${QT_BINARY_DIR}
-        NO_DEFAULT_PATH
-    )
-    set (QT_MOC_EXECUTABLE ${_QT_MOC_EXECUTABLE})
-endif (WIN32 AND CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
+find_package(Qt4 COMPONENTS QtCore QtGui QtXml REQUIRED )
 
 find_package(UPX)
 find_package(KDEWIN_Packager)
@@ -45,11 +27,11 @@ if(COMMAND cmake_policy)
     cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
           
-OPTION(SEVENZIP_UNPACK_SUPPORT "Enable 7-zip unpacking support" OFF)
+OPTION(SEVENZIP_UNPACK_SUPPORT "Enable 7-zip unpacking support" ON)
 OPTION(BZIP2_UNPACK_SUPPORT "Enable tar.bz2 unpacking support" ON)
 # todo detect static qt library automatically
 OPTION(STATIC_BUILD "enable static build support" ON)
-OPTION(INSTALL_SYSTEM_LIBS "install required system libraries too (only in shared mode)" OFF)
+OPTION(INSTALL_SYSTEM_LIBS "install required system libraries too (only in shared mode)" ON)
 OPTION(BUILD_TESTS "build test applications " OFF)
 OPTION(BUILD_TRANSLATIONS "build translations" OFF)
 
@@ -135,9 +117,8 @@ endif (WIN32 OR CYGWIN)
 set (EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
 # add 3rdparty sources and definitions
-include(3rdparty/CMakeLists.txt)
+add_subdirectory(3rdparty)
 # this will define .... _HEADERS, ...._SOURCES, ..._INCLUDE_DIR. for ... = quazip, bzip2, curl, filter,md5
-# add_subdirectory does not work for unknown reason
 include(${QT_USE_FILE})
 
 include_directories(
@@ -164,9 +145,6 @@ set (SITE_URL "@url .")
 set (SITE_URL_LIST ";")
 configure_file(${CMAKE_SOURCE_DIR}/config.txt.cmake ${CMAKE_BINARY_DIR}/config/ktown.kde.org/config.txt)
 
-set (RELEASE_PATH "/unstable/4.0.83/win32")
-set (RELEASE "4.0.83")
-
 #FIXME: ${BZIP2_LIBRARIES} -> 3rdparty
 if (UNIX)
   set (CONSOLE_LIBS pthread dl z rt ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} shared-console ${CURL_LIBRARIES} ${QUAZIP_LIBRARIES} ${BZIP2_LIBRARIES})
@@ -187,14 +165,6 @@ else(UNIX)
   # required for static linking
   set (CONSOLE_LIBS shared-console ${QUAZIP_LIBRARIES} ${BZIP2_LIBRARIES} ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} ${CURL_LIBRARIES} kernel32 user32 shell32 uuid ole32 advapi32 ws2_32 shlwapi psapi)
   set (GUI_LIBS shared-gui ${QUAZIP_LIBRARIES} ${BZIP2_LIBRARIES} ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} ${QT_QTGUI_LIBRARY} ${CURL_LIBRARIES} gdi32 comdlg32 oleaut32 imm32 winmm winspool ws2_32 ole32 uuid user32 advapi32 shlwapi psapi)
-  # when qt 4.4 is build with directx support dxguid is required 
-  # how to detect that qt 4.4 is build with directx ? 
-  if (STATIC_BUILD)
-    if (QT_VERSION_MAJOR EQUAL 4 AND QT_VERSION_MINOR GREATER 3 AND QT_VERSION_MINOR LESS 5) 
-        list(APPEND GUI_LIBS dxguid)
-    endif (QT_VERSION_MAJOR EQUAL 4 AND QT_VERSION_MINOR GREATER 3  AND QT_VERSION_MINOR LESS 5) 
-  endif (STATIC_BUILD)
-
 endif (UNIX)
 
 # our targets
@@ -221,7 +191,7 @@ endif(WIN32)
 
 if (WIN32)
     include(Win32Macros)
-    addExplorerWrapper()
+    addExplorerWrapper(kdewin-installer)
 endif(WIN32)
 
 if(NOT BUILD_INSTALLER_THEME)

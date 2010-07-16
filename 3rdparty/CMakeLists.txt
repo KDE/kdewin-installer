@@ -21,6 +21,8 @@ if (BZIP2_UNPACK_SUPPORT)
     target_link_libraries(bzip2)
     get_target_property(BZIP2_LIBRARY bzip2 LOCATION)
 
+    add_definitions(${QT_DEFINITIONS})
+
     set(filters_SOURCES
         ${CMAKE_SOURCE_DIR}/3rdparty/filters/tarfilter.cpp
         ${CMAKE_SOURCE_DIR}/3rdparty/filters/bzip2iodevice.cpp
@@ -29,7 +31,8 @@ if (BZIP2_UNPACK_SUPPORT)
         ${CMAKE_SOURCE_DIR}/3rdparty/filters/tarfilter.h
         ${CMAKE_SOURCE_DIR}/3rdparty/filters/bzip2iodevice.h
     )
-    include_directories(${CMAKE_SOURCE_DIR}/3rdparty/bzip2)
+
+    include_directories(${CMAKE_SOURCE_DIR}/3rdparty/bzip2 ${QT_INCLUDES})
     add_library(filters ${filters_SOURCES} ${filters_HEADERS})
     target_link_libraries(filters)
     get_target_property(FILTERS_LIBRARY filters LOCATION)
@@ -127,12 +130,17 @@ set(CURL_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/curl/include)
 
 find_package(CURL)
 if(WIN32)
-  include_directories(${CURL_INCLUDE_DIR})
-  add_definitions(-DCURL_STATICLIB -DWITHOUT_MM_LIB -DCURL_DISABLE_TELNET -DCURL_DISABLE_LDAP)
-  add_library(curl STATIC ${curl_SOURCES} ${curl_HEADERS})
-  if(MINGW)
+    include_directories(${CURL_INCLUDE_DIR})
+    add_definitions(-DWITHOUT_MM_LIB -DCURL_DISABLE_TELNET -DCURL_DISABLE_LDAP)
+    if (STATIC_BUILD)
+        add_definitions(-DCURL_STATICLIB)
+        add_library(curl STATIC ${curl_SOURCES} ${curl_HEADERS})
+    else (STATIC_BUILD)
+        add_library(curl SHARED ${curl_SOURCES} ${curl_HEADERS})
+    endif (STATIC_BUILD)
+#  if(MINGW)
     target_link_libraries( curl ws2_32 )
-  endif(MINGW)
+#  endif(MINGW)
   set_target_properties(curl PROPERTIES COMPILE_FLAGS "-DBUILDING_LIBCURL -I${CURL_INCLUDE_DIR}/../lib")
 
   set (CURL_LIBRARIES curl Wldap32)
@@ -141,8 +149,9 @@ else(WIN32)
       set (CURL_LIBRARIES ${CURL_LIBRARY})
       include_directories( ${CURL_INCLUDE_DIR})
   else (CURL_FOUND)
-    include_directories(${CURL_INCLUDE_DIR})
     add_definitions(-DCURL_STATICLIB -DWITHOUT_MM_LIB -DCURL_DISABLE_TELNET -DCURL_DISABLE_LDAP)
+    include_directories(${CURL_INCLUDE_DIR})
+    add_definitions(-DWITHOUT_MM_LIB -DCURL_DISABLE_TELNET -DCURL_DISABLE_LDAP)
     add_library(curl STATIC ${curl_SOURCES} ${curl_HEADERS})
     set_target_properties(curl PROPERTIES COMPILE_FLAGS "-DBUILDING_LIBCURL -I${CURL_INCLUDE_DIR}/../lib")
     set (CURL_LIBRARIES curl)
