@@ -44,19 +44,18 @@ ADD_DEFINITIONS(-D_WIN32_WINNT=0x0500)
 # -------------------------------------------------------
 # build type settings
 # -------------------------------------------------------
-# load qt configuration
-QT_QUERY_QMAKE(QT_CONFIG "CONFIG")
-
 if (QT_CONFIG MATCHES ".*shared.*")
     set (STATIC_BUILD 0)
     MESSAGE(STATUS "Qt is build in shared mode - use shared build mode too")
 else (QT_CONFIG MATCHES ".*shared.*")
     set (STATIC_BUILD 1)
     if (MSVC)
-        QT_QUERY_QMAKE(QMAKE_CFLAGS_RELEASE "QMAKE_CFLAGS_RELEASE")
-        message(STATUS ${QMAKE_CFLAGS_RELEASE})
+        IF(EXISTS "${QT_MKSPECS_DIR}/default/qmake.conf")
+            FILE(READ "${QT_MKSPECS_DIR}/default/qmake.conf" _qmake_FILE_contents)
+            STRING(REGEX MATCH "QMAKE_CFLAGS_RELEASE[^\n]+" QMAKE_CFLAGS_RELEASE "${_qmake_FILE_contents}")
+        ENDIF(EXISTS "${QT_MKSPECS_DIR}/default/qmake.conf")
         if (QMAKE_CFLAGS_RELEASE MATCHES ".*-MT.*")
-            MESSAGE(STATUS "Qt is build in static mode - use static build mode too")
+            MESSAGE(STATUS "Qt is build in static mode with static runtime - use static build mode with static runtime too")
             set (MSVCRT_COMPILE_FLAGS "-MT /Os /Oy /GL")
             set (MSVCRT_LINK_FLAGS "/NODEFAULTLIB:msvcrt")
         else (QMAKE_CFLAGS_RELEASE MATCHES ".*-MT.*")
