@@ -294,6 +294,14 @@ bool InstallerEngine::addPackagesFromSites()
         if (Settings::hasDebug("InstallerEngine"))
             qDebug() << __FUNCTION__ << packageList;
 
+        Hash::Type hashType;
+        if (site->hashType().type() != Hash::None)
+            hashType = site->hashType().type();
+        else if (m_globalConfig->hashType().type() != Hash::None)
+            hashType = m_globalConfig->hashType().type();
+        else
+            hashType = Hash::MD5;
+
         Q_FOREACH(Package *pkg, packageList.packages())
         {
             // add some generic categories
@@ -310,7 +318,7 @@ bool InstallerEngine::addPackagesFromSites()
             // if the package hash type is not already set because a hash file was found,
             //  apply site wite hash type settings to the package
             if (pkg->hashType().type() == Hash::None)
-                pkg->hashType().setType(site->hashType().type());
+                pkg->hashType().setType(hashType);
             
             m_packageResources->append(*pkg);
             categoryCache.addPackage(pkg);

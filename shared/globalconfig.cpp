@@ -260,7 +260,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 cmd.removeFirst();
                 m_endUserCategories << cmd;
             }
-            else if (keyword == "hashtype")
+            else if (!inSite && keyword == "hashtype")
             {
                 if (!m_hashType.setType(cmd[1]))
                     qCritical() << "line" << lineNr << "illegal hash type defined" << cmd[1];

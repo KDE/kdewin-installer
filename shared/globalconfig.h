@@ -86,6 +86,8 @@ class GlobalConfig {
         /// return path of remote config file
         static const QFileInfo remoteConfigFile();
 
+        Hash &hashType() { return m_hashType; }
+
     protected:
         bool parseFromFile(const QString &fileName);
         bool parseFromByteArray(const QByteArray &ba);
