@@ -52,6 +52,7 @@ attribute =   file-format-attribute
             | news-attribute
             | minversion-attribute
             | timestamp-attribute
+            | hash-type-attribute
             ;
 
                        
@@ -89,6 +90,11 @@ news-attribute = date package-name comment          (* eg.@news 20071015 png2ico
 comment = string
 
 
+(* define a hash type used for package digests eg. @hashtype sha1 *)
+hash-type-attribute = 'hashtype' hash-type ;      
+hash-type = 'sha1' | 'md5' ;
+
+
 (* attributes for describing a site 
  A site defines a remote location which will be parsed on demand for archive files *)
  
@@ -102,6 +108,7 @@ site-attributes = 'url' absolute-or-relative-url            (* basic url for pac
                 | 'type'  site-scanner-type                 (* site type - specifies the site scanner type (deprecated) *)
                 | 'notes'  comment                          (* a description of the site, which will be printed in the category view of the installer *)
                 | 'exclude' filename                        (* exclude file from package collecting *)
+                | 'hashtype' hash-type                      (* define a hash type used for package digests in this site *)
                 ;
                 
 absolute-or-relative-url = absolute-url | relative-url ; 
