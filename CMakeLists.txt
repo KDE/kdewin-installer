@@ -201,9 +201,6 @@ add_subdirectory(doc)
 # not supported yet
 add_subdirectory(configer)
 endif(NOT BUILD_INSTALLER_THEME)
-if(WIN32)
-#  add_subdirectory(menubuilder)
-endif(WIN32)
 #add_subdirectory(tools)
 
 if (WIN32)
