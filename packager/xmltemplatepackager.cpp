@@ -359,6 +359,7 @@ bool XmlTemplatePackager::makePackage(const QString &dir, const QString &destdir
         {
             m_name = p->name;
             m_notes = p->description;
+            m_dependencies = p->dependencies;
         }
         m_currentPackage = p;
         if (!Packager::makePackage(dir,destdir,bComplete))

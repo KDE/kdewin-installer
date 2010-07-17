@@ -435,6 +435,7 @@ bool Packager::makePackagePart(const QString &root, QList<InstallFile> &fileList
     info->name = m_name;
     info->compilerType = m_type;
     info->shortDescription = m_notes;
+    info->dependencies = m_dependencies;
     
     generatePackageFileList(fileList, type);
     if (fileList.size() > 0)

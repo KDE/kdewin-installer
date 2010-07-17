@@ -78,6 +78,7 @@ class Packager {
       QString m_srcExcludes;
       QString m_checkSumMode;
       QString m_type;
+      QStringList m_dependencies;
       bool m_verbose;
       bool m_debugPackage;
       bool m_special;
