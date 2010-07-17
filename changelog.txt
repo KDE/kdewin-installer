@@ -1,6 +1,25 @@
 ChangeLog
 =========
 
+0.9.7-1 (...)
+-----------------
+- installer-gui: - fixed bug not been able to use sha1 digest type in config.txt (Ralf Habacker)
+
+0.9.7-0 (1122832)
+-----------------
+- installer-gui: - initial, not full working version of a single click application 
+                   group installing feature (Patrick Spendrin)
+                 - fixed language package display in end user package selector page (Ralf Habacker)
+                 - fixed wrong meta package display in end user package selector page (Ralf Habacker)
+- config:        - fixed package dependencies (Patrick Spendrin, Patrick von Reth)
+
+0.9.6-6 ()
+-----------------
+- installer-gui: - added nightly builds installation (Ralf Habacker)
+- common:        - updated libcurl to 7.19.6 (Christian Ehrlicher)
+- buildsystem:   - uses official way to detect qt4 (Ralf Habacker)
+- config:        - fixed package dependencies (Patrick Spendrin)
+
 0.9.6-5 (1035319)
 -----------------
 - installer-gui: - added nightly builds installation (Ralf Habacker)
