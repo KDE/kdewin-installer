@@ -29,7 +29,11 @@ ENDFOREACH(it)
 
 ENDMACRO(QT4_ADD_RESOURCES2)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR} 
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${GUI_INCLUDE_DIR}
+)
 
 if(CMAKE_COMPILER_2005)
      # to avoid a lot of deprecated warnings

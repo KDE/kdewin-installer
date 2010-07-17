@@ -2,7 +2,6 @@
 # BZIP2
 #-------------------------------------------------------------------
 if (BZIP2_UNPACK_SUPPORT)
-    set(filters_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/filters)
 
     set(bzip2_SOURCES
         ${CMAKE_SOURCE_DIR}/3rdparty/bzip2/blocksort.c
@@ -20,6 +19,16 @@ if (BZIP2_UNPACK_SUPPORT)
     add_library(bzip2  ${bzip2_SOURCES} ${bzip2_HEADERS})
     target_link_libraries(bzip2)
 
+    # public interface
+    set(BZIP2_DEFINITIONS "" PARENT_SCOPE)
+    set(BZIP2_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/bzip2 PARENT_SCOPE)
+    set(BZIP2_LIBRARIES bzip2 PARENT_SCOPE)
+
+#-------------------------------------------------------------------
+# tar filters
+#-------------------------------------------------------------------
+
+    set(filters_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/filters)
     add_definitions(${QT_DEFINITIONS})
     include_directories(${CMAKE_SOURCE_DIR}/3rdparty/bzip2 ${QT_INCLUDES})
 
@@ -37,9 +46,9 @@ if (BZIP2_UNPACK_SUPPORT)
     get_target_property(FILTERS_LIBRARY filters LOCATION)
 
     # public interface
-    set(BZIP2_DEFINITIONS "" PARENT_SCOPE)
-    set(BZIP2_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/bzip2 ${CMAKE_SOURCE_DIR}/3rdparty/filters PARENT_SCOPE)
-    set(BZIP2_LIBRARIES ${FILTERS_LIBRARY} bzip2 PARENT_SCOPE)
+    set(FILTERS_DEFINITIONS "" PARENT_SCOPE)
+    set(FILTERS_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/filters PARENT_SCOPE)
+    set(FILTERS_LIBRARIES ${FILTERS_LIBRARY} PARENT_SCOPE)
 
 endif (BZIP2_UNPACK_SUPPORT)
 
@@ -249,4 +258,4 @@ if(SEVENZIP_UNPACK_SUPPORT)
   set(QUA7ZIP_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/qua7zip PARENT_SCOPE)
   set(QUA7ZIP_LIBRARIES qua7zip PARENT_SCOPE)
   
-  endif(SEVENZIP_UNPACK_SUPPORT)
+endif(SEVENZIP_UNPACK_SUPPORT)
