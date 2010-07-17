@@ -27,12 +27,24 @@ if(COMMAND cmake_policy)
     cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
           
-OPTION(SEVENZIP_UNPACK_SUPPORT "Enable 7-zip unpacking support" ON)
+# experimental 7zip file support
+# the qua7zip library do not support creating of 7zip archives yet,
+# which means that the packager is not able to write 7zip archives
+# do not enable by default
+OPTION(SEVENZIP_UNPACK_SUPPORT "Enable 7-zip unpacking support" OFF)
+
 OPTION(BZIP2_UNPACK_SUPPORT "Enable tar.bz2 unpacking support" ON)
-# todo detect static qt library automatically
+
+# static qt build is detected automatically
 OPTION(STATIC_BUILD "enable static build support" ON)
-OPTION(INSTALL_SYSTEM_LIBS "install required system libraries too (only in shared mode)" ON)
+
+# this option is intended for standalone shared builds, do not enable by default
+OPTION(INSTALL_SYSTEM_LIBS "install required system libraries too (only in shared mode)" OFF)
+
 OPTION(BUILD_TESTS "build test applications " OFF)
+
+# experimental translations support - integration of languages files in kde4-l10n is missing
+# see http://websvn.kde.org/trunk/l10n-kde4/templates/messages/qt
 OPTION(BUILD_TRANSLATIONS "build translations" OFF)
 
 ENABLE_TESTING()
