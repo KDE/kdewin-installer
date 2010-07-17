@@ -114,20 +114,17 @@ else (WIN32 OR CYGWIN)
     set (LIBRARY_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/lib)
 endif (WIN32 OR CYGWIN)
 set (EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
-
-# add 3rdparty sources and definitions
-include(3rdparty/CMakeLists.txt)
-# this will define .... _HEADERS, ...._SOURCES, ..._INCLUDE_DIR. for ... = quazip, bzip2, curl, filter,md5
-# please note that add_subdirectory will not work because definitions set with add_definitions  
-# will only be visible in the 3rdparty directory and below. 
  
 include(${QT_USE_FILE})
+
+# add 3rdparty sources and definitions
+add_subdirectory(3rdparty)
+# this will define xxx_INCLUDE_DIR, xxx_LIBRARIES and xxx_DEFINITIONS for xxx = quazip, qua7zip, bzip2, curl
 
 include_directories(
   ${CMAKE_SOURCE_DIR}
   ${CMAKE_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/shared
-  ${QT_INCLUDES}
   $ENV{QMAKESPEC}
 )
 configure_file(${CMAKE_SOURCE_DIR}/config.h.cmake ${CMAKE_BINARY_DIR}/config.h)
@@ -165,9 +162,15 @@ else(UNIX)
     set (FIRST_LIBS mingw32)
   endif(MINGW)
   # required for static linking
-  set (CONSOLE_LIBS shared-console ${QUAZIP_LIBRARIES} ${BZIP2_LIBRARIES} ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} ${CURL_LIBRARIES} kernel32 user32 shell32 uuid ole32 advapi32 ws2_32 shlwapi psapi)
-  set (GUI_LIBS shared-gui ${QUAZIP_LIBRARIES} ${BZIP2_LIBRARIES} ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} ${QT_QTGUI_LIBRARY} ${CURL_LIBRARIES} gdi32 comdlg32 oleaut32 imm32 winmm winspool ws2_32 ole32 uuid user32 advapi32 shlwapi psapi)
+  set (CONSOLE_LIBS ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} shared-console  ${BZIP2_LIBRARIES} ${CURL_LIBRARIES} ${QUAZIP_LIBRARIES} ${QUA7ZIP_LIBRARIES} kernel32 user32 shell32 uuid ole32 advapi32 ws2_32 shlwapi psapi)
+  set (GUI_LIBS ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} ${QT_QTGUI_LIBRARY} shared-gui ${BZIP2_LIBRARIES} ${CURL_LIBRARIES} ${QUAZIP_LIBRARIES} ${QUA7ZIP_LIBRARIES} gdi32 comdlg32 oleaut32 imm32 winmm winspool ws2_32 ole32 uuid user32 advapi32 shlwapi psapi)
 endif (UNIX)
+
+set (CONSOLE_DEFINITIONS ${QT_DEFINITIONS} ${BZIP2_DEFINITIONS} ${CURL_DEFINITIONS} ${QUAZIP_DEFINITIONS} ${QUA7ZIP_DEFINITIONS})
+set (GUI_DEFINITIONS     ${QT_DEFINITIONS} ${BZIP2_DEFINITIONS} ${CURL_DEFINITIONS} ${QUAZIP_DEFINITIONS} ${QUA7ZIP_DEFINITIONS})
+
+set (CONSOLE_INCLUDE_DIR  ${QT_INCLUDES} ${CMAKE_SOURCE_DIR}/shared ${BZIP2_INCLUDE_DIR} ${CURL_INCLUDE_DIR} ${QUAZIP_INCLUDE_DIR} ${QUA7ZIP_INCLUDE_DIR})
+set (GUI_INCLUDE_DIR      ${QT_INCLUDES} ${CMAKE_SOURCE_DIR}/shared ${BZIP2_INCLUDE_DIR} ${CURL_INCLUDE_DIR} ${QUAZIP_INCLUDE_DIR} ${QUA7ZIP_INCLUDE_DIR})
 
 # our targets
 add_subdirectory(sha1sum)

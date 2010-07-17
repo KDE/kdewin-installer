@@ -155,7 +155,7 @@ macro (add_themed_installer _appname _resource)
     set(_WIN32)
   endif(WIN32)
   add_executable(${TARGET} ${_WIN32} ${all_sources} ${all_headers})
-  set_target_properties(${TARGET} PROPERTIES COMPILE_FLAGS -DUSE_GUI)
+  set_target_properties(${TARGET} PROPERTIES COMPILE_FLAGS "-DUSE_GUI ${GUI_DEFINITIONS}")
   set_target_properties(${TARGET} PROPERTIES OUTPUT_NAME ${TARGET_FILENAME})
   target_link_libraries(${TARGET}
                         ${QT_QTCORE_LIBRARY}

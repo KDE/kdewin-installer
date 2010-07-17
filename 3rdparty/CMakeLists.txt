@@ -19,9 +19,9 @@ if (BZIP2_UNPACK_SUPPORT)
     )
     add_library(bzip2  ${bzip2_SOURCES} ${bzip2_HEADERS})
     target_link_libraries(bzip2)
-    get_target_property(BZIP2_LIBRARY bzip2 LOCATION)
 
     add_definitions(${QT_DEFINITIONS})
+    include_directories(${CMAKE_SOURCE_DIR}/3rdparty/bzip2 ${QT_INCLUDES})
 
     set(filters_SOURCES
         ${CMAKE_SOURCE_DIR}/3rdparty/filters/tarfilter.cpp
@@ -32,14 +32,14 @@ if (BZIP2_UNPACK_SUPPORT)
         ${CMAKE_SOURCE_DIR}/3rdparty/filters/bzip2iodevice.h
     )
 
-    include_directories(${CMAKE_SOURCE_DIR}/3rdparty/bzip2 ${QT_INCLUDES})
-    add_library(filters ${filters_SOURCES} ${filters_HEADERS})
+    add_library(filters STATIC ${filters_SOURCES} ${filters_HEADERS})
     target_link_libraries(filters)
     get_target_property(FILTERS_LIBRARY filters LOCATION)
 
     # public interface
-    set(BZIP2_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/bzip2 ${CMAKE_SOURCE_DIR}/3rdparty/filters)
-    set(BZIP2_LIBRARIES ${FILTERS_LIBRARY} ${BZIP2_LIBRARY})
+    set(BZIP2_DEFINITIONS "" PARENT_SCOPE)
+    set(BZIP2_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/bzip2 ${CMAKE_SOURCE_DIR}/3rdparty/filters PARENT_SCOPE)
+    set(BZIP2_LIBRARIES ${FILTERS_LIBRARY} bzip2 PARENT_SCOPE)
 
 endif (BZIP2_UNPACK_SUPPORT)
 
@@ -125,42 +125,60 @@ set(curl_HEADERS
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/include/curl/stdcheaders.h
     ${CMAKE_SOURCE_DIR}/3rdparty/curl/include/curl/types.h
 )
-# public interface
 set(CURL_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/curl/include)
 
-find_package(CURL)
 if(WIN32)
     include_directories(${CURL_INCLUDE_DIR})
     add_definitions(-DWITHOUT_MM_LIB -DCURL_DISABLE_TELNET -DCURL_DISABLE_LDAP)
     if (STATIC_BUILD)
         add_definitions(-DCURL_STATICLIB)
+        add_library(curl STATIC ${curl_SOURCES})
+        target_link_libraries( curl)
+        # public interface
+        set (CURL_DEFINITIONS "-DCURL_STATICLIB" PARENT_SCOPE)
+        set (CURL_INCLUDE_DIR ${CURL_INCLUDE_DIR} PARENT_SCOPE)
+        set (CURL_LIBRARIES curl  PARENT_SCOPE)
+    else (STATIC_BUILD)
+        # warning !!! using shared curl may collide with external curl dll either 
+        #   use external curl dll 
+        # or 
+        #   use a different name for the local curl dll and don't forget to install it        
+        add_library(curl SHARED ${curl_SOURCES} ${curl_HEADERS})
+        target_link_libraries( curl ws2_32)
+        # public interface
+        set (CURL_DEFINITIONS "" PARENT_SCOPE)
+        set (CURL_INCLUDE_DIR ${CURL_INCLUDE_DIR} PARENT_SCOPE)
+        set (CURL_LIBRARIES curl Wldap32 PARENT_SCOPE)
+    endif (STATIC_BUILD)
+    set_target_properties(curl PROPERTIES COMPILE_FLAGS "-DBUILDING_LIBCURL -I${CURL_INCLUDE_DIR}/../lib")
+else(WIN32)
+  find_package(CURL)
+  if (CURL_FOUND)
+      # public interface
+      set (CURL_DEFINITIONS ${CURL_DEFINITIONS} PARENT_SCOPE)
+      set (CURL_LIBRARIES ${CURL_LIBRARY} PARENT_SCOPE)
+      #CURL_INCLUDE_DIR is set by find_package
+      set (CURL_INCLUDE_DIR ${CURL_INCLUDE_DIR} PARENT_SCOPE)
+  else (CURL_FOUND)
+    add_definitions(-DWITHOUT_MM_LIB -DCURL_DISABLE_TELNET -DCURL_DISABLE_LDAP)
+    if (STATIC_BUILD)
+        add_definitions(-DCURL_STATICLIB)
         add_library(curl STATIC ${curl_SOURCES} ${curl_HEADERS})
+        set (CURL_DEFINITIONS "-DCURL_STATICLIB")
     else (STATIC_BUILD)
         add_library(curl SHARED ${curl_SOURCES} ${curl_HEADERS})
     endif (STATIC_BUILD)
-#  if(MINGW)
-    target_link_libraries( curl ws2_32 )
-#  endif(MINGW)
-  set_target_properties(curl PROPERTIES COMPILE_FLAGS "-DBUILDING_LIBCURL -I${CURL_INCLUDE_DIR}/../lib")
-
-  set (CURL_LIBRARIES curl Wldap32)
-else(WIN32)
-  if (CURL_FOUND)
-      set (CURL_LIBRARIES ${CURL_LIBRARY})
-      include_directories( ${CURL_INCLUDE_DIR})
-  else (CURL_FOUND)
-    add_definitions(-DCURL_STATICLIB -DWITHOUT_MM_LIB -DCURL_DISABLE_TELNET -DCURL_DISABLE_LDAP)
-    set (CURL_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty)
-    include_directories(${CURL_INCLUDE_DIR})
-    add_definitions(-DWITHOUT_MM_LIB -DCURL_DISABLE_TELNET -DCURL_DISABLE_LDAP)
-    add_library(curl STATIC ${curl_SOURCES} ${curl_HEADERS})
     set_target_properties(curl PROPERTIES COMPILE_FLAGS "-DBUILDING_LIBCURL -I${CURL_INCLUDE_DIR}/../lib")
-    set (CURL_LIBRARIES curl)
+    # public interface
+    set (CURL_DEFINITIONS ${CURL_DEFINITIONS} PARENT_SCOPE)
+    set (CURL_LIBRARIES curl PARENT_SCOPE)
+    set (CURL_INCLUDE_DIR ${CURL_INCLUDE_DIR} PARENT_SCOPE)
   endif (CURL_FOUND) 
 endif(WIN32)
 
 #-------------------------------------------------------------------
 # QUAZIP library
+
 #-------------------------------------------------------------------
 set(quazip_SOURCES
     ${CMAKE_SOURCE_DIR}/3rdparty/quazip/quazip/ioapi.c
@@ -178,12 +196,15 @@ set(quazip_HEADERS
     ${CMAKE_SOURCE_DIR}/3rdparty/quazip/quazip/quazipfile.h
     ${CMAKE_SOURCE_DIR}/3rdparty/quazip/quazip/quazipnewinfo.h
 )
-add_library(quazip  ${quazip_SOURCES} ${quazip_HEADERS})
+include_directories(${CMAKE_SOURCE_DIR}/3rdparty/zlib)
+
+add_library(quazip STATIC ${quazip_SOURCES} ${quazip_HEADERS})
 target_link_libraries(quazip)
 
 # public interface
-set(QUAZIP_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/quazip/quazip)
-get_target_property(QUAZIP_LIBRARIES quazip LOCATION)
+set(QUAZIP_DEFINITIONS "" PARENT_SCOPE)
+set(QUAZIP_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/quazip/quazip ${CMAKE_SOURCE_DIR}/3rdparty/zlib PARENT_SCOPE)
+set(QUAZIP_LIBRARIES quazip PARENT_SCOPE)
 
 #-------------------------------------------------------------------
 # 7zip library
@@ -219,20 +240,13 @@ if(SEVENZIP_UNPACK_SUPPORT)
     ${CMAKE_SOURCE_DIR}/3rdparty/qua7zip/lzma_sdk/7zip/Compress/LZMA_C/LzmaDecode.h
     )
 
-  add_library(qua7zip  ${qua7zip_SOURCES} ${qua7zip_HEADERS})
+  add_library(qua7zip STATIC ${qua7zip_SOURCES} ${qua7zip_HEADERS})
   target_link_libraries(qua7zip)
+  get_target_property(QUA7ZIP_LIBRARY qua7zip LOCATION)
 
   # public interface
-  set(QUA7ZIP_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/qua7zip)
-  get_target_property(QUA7ZIP_LIBRARIES qua7zip LOCATION)
+  set(QUA7ZIP_DEFINITIONS "" PARENT_SCOPE)
+  set(QUA7ZIP_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/qua7zip PARENT_SCOPE)
+  set(QUA7ZIP_LIBRARIES qua7zip PARENT_SCOPE)
   
   endif(SEVENZIP_UNPACK_SUPPORT)
-
-include_directories(
-  ${CMAKE_SOURCE_DIR}/3rdparty/zlib
-  ${CURL_INCLUDE_DIR}
-  ${BZIP2_INCLUDE_DIR}
-  ${FILTERS_INCLUDE_DIR}
-  ${QUAZIP_INCLUDE_DIR}
-  ${QUA7ZIP_INCLUDE_DIR}
-)

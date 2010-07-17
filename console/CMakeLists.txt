@@ -25,6 +25,7 @@ set (TARGET kdewin-installer-console)
 
 add_executable(${TARGET} ${all_sources})
 target_link_libraries(${TARGET} ${CONSOLE_LIBS})
+set_target_properties(${TARGET} PROPERTIES COMPILE_FLAGS "${CONSOLE_DEFINITIONS}")
 
 install_targets(/bin ${TARGET})
 
