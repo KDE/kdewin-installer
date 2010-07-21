@@ -57,7 +57,7 @@
 @deps ebook-tools libzip
 @deps libspectre libgs
 ; mingw4 dependencies
-@deps amarok-mingw4 kdebase-runtime-mingw4 phonon-mingw4 taglib-mingw4 mysql-embedded
+@deps amarok-mingw4 kdebase-runtime-mingw4 phonon-mingw4 taglib-mingw4 taglib-extras-mingw4 mysql-embedded
 @deps automoc-mingw4 qt-mingw4
 @deps choqok-mingw4 kdelibs-mingw4 qjson-mingw4
 @deps dbus-mingw4 expat 
@@ -104,7 +104,7 @@
 @deps strigi-mingw4 libbzip2 openssl zlib iconv libxml2 exiv2-mingw4
 @deps yakuake-mingw4 kdebase-apps-mingw4
 ; msvc dependencies
-@deps amarok-vc90 kdebase-runtime-vc90 phonon-vc90 taglib-vc90 mysql-embedded
+@deps amarok-vc90 kdebase-runtime-vc90 phonon-vc90 taglib-vc90 taglib-extras-vc90 mysql-embedded
 @deps automoc-vc90 qt-vc90
 ; dbus may be compiled with libxml2 or expat, so use both dependencies
 @deps choqok-vc90 kdelibs-vc90 qjson-vc90
