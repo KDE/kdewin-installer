@@ -32,7 +32,6 @@ set(installer_shared_HEADERS
     installerprogress.h
     installerupdate.h
     package.h
-    packagerinfo.h
     packagecategorycache.h
     packagelist.h
     qio.h
