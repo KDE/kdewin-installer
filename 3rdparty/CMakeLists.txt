@@ -5,14 +5,13 @@
 if (BZIP2_UNPACK_SUPPORT)
     # limit external static bzip2 library usage to shared build mode 
     # in static build mode we cannot rely that the external library is a static build
-    #if (NOT STATIC_BUILD)
-    #    find_package(bzip2)
-    #    set(BZIP2_DEFINITIONS "" CACHE STRING "BZIP compiler definitions" FORCE)
-    #endif (NOT STATIC_BUILD)
-    if (NOT BZIP2_FOUND)
+    if (NOT STATIC_BUILD)
+        find_package(bzip2)
+        set(BZIP2_DEFINITIONS "" CACHE STRING "BZIP compiler definitions" FORCE)
+    else (NOT STATIC_BUILD)
         message(STATUS "using local static bzip2 library")
         add_subdirectory(bzip2)
-    endif (NOT BZIP2_FOUND)
+    endif (NOT STATIC_BUILD)
     
     add_subdirectory(filters)
 endif (BZIP2_UNPACK_SUPPORT)
@@ -29,10 +28,10 @@ endif (BZIP2_UNPACK_SUPPORT)
 #    endif (CURL_FOUND)
 #endif (NOT STATIC_BUILD)
     
-if (NOT CURL_FOUND)
+#if (NOT CURL_FOUND)
     message(STATUS "using local static curl library")
     add_subdirectory(curl)
-endif (NOT CURL_FOUND)
+#endif (NOT CURL_FOUND)
 
 #-------------------------------------------------------------------
 # QUAZIP library
