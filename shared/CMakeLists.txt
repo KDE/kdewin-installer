@@ -36,6 +36,7 @@ set(installer_shared_HEADERS
     packagecategorycache.h
     packagelist.h
     packagestates.h
+    proxysettings.h
     qio.h
     site.h
     mirrors.h
@@ -72,6 +73,7 @@ set(installer_shared_SOURCES
     packagecategorycache.cpp
     packagelist.cpp
     packagestates.cpp
+    proxysettings.cpp
     qio.cpp
     site.cpp
     selfinstaller.cpp

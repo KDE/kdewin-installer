@@ -46,24 +46,24 @@ void InternetSettingsPage::initializePage()
 #endif
     ProxySettings proxy;
     switch (s.proxyMode()) {
-        case Settings::InternetExplorer: 
+        case ProxySettings::InternetExplorer:
             ui.proxyIE->setChecked(true); 
             break;
-        case Settings::Manual: 
+        case ProxySettings::Manual:
             ui.proxyManual->setChecked(true); 
             break;
-        case Settings::FireFox: 
+        case ProxySettings::FireFox:
             ui.proxyFireFox->setChecked(true); 
             break;
-        case Settings::Environment: 
+        case ProxySettings::Environment:
             ui.proxyIE->setChecked(true); 
             break;
-        case Settings::None:
+        case ProxySettings::None:
         default: 
             ui.proxyOff->setChecked(true); 
             break;
     }
-    s.proxy(s.proxyMode(),"",proxy);
+    proxy.from(s.proxyMode());
 
     ui.proxyHost->setText(proxy.hostname);
     ui.proxyPort->setText(proxy.port ? QString("%1").arg(proxy.port) : QString());
@@ -79,17 +79,17 @@ void InternetSettingsPage::initializePage()
 bool InternetSettingsPage::validatePage()
 {
     Settings &s = Settings::instance();
-    Settings::ProxyMode m = Settings::None;
+    ProxySettings::ProxyMode m = ProxySettings::None;
     if(ui.proxyIE->isChecked())
 #ifdef Q_WS_WIN
-      m = Settings::InternetExplorer;
+      m = ProxySettings::InternetExplorer;
 #else
-      m = Settings::Environment;
+      m = ProxySettings::Environment;
 #endif
     if(ui.proxyFireFox->isChecked())
-        m = Settings::FireFox;
+        m = ProxySettings::FireFox;
     if(ui.proxyManual->isChecked())
-        m = Settings::Manual;
+        m = ProxySettings::Manual;
     s.setProxyMode(m);
     if (ui.proxyManual->isChecked())
     {
@@ -121,16 +121,16 @@ void InternetSettingsPage::switchProxyFields(bool mode)
     ProxySettings proxy;
     if(ui.proxyIE->isChecked())
 #ifdef Q_WS_WIN
-        s.proxy(Settings::InternetExplorer,"",proxy);
+        proxy.from(ProxySettings::InternetExplorer);
 #else
-        s.proxy(Settings::Environment,"",proxy);
+        proxy.from(ProxySettings::Environment);
 #endif
     else if(ui.proxyFireFox->isChecked())
-        s.proxy(Settings::FireFox,"",proxy);
+        proxy.from(ProxySettings::FireFox);
     else if(ui.proxyManual->isChecked())
-        s.proxy(Settings::Manual,"",proxy);
+        proxy.from(ProxySettings::Manual);
     else
-        s.proxy(Settings::None,"",proxy);
+        proxy.from(ProxySettings::None);
         
     ui.proxyHost->setText(proxy.hostname);
     ui.proxyPort->setText(proxy.port ? QString("%1").arg(proxy.port) : QString());

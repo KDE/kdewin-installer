@@ -25,6 +25,7 @@
 #define DOWNLOADER_H
 
 #include "hash.h"
+#include "downloaderprogress.h"
 
 #include <QtCore/QObject>
 #include <QtCore/QString>
