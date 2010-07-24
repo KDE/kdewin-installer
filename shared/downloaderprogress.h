@@ -48,15 +48,26 @@ protected:
     QWidget *m_parent;
 };
 
+/**
+  DownloaderProgress provides a user feedback about the
+  download progress. In gui mode it contains a progress bar
+  and text with remote url, local file name, the number of
+  files to download and the index of the current downloaded
+  file.
+*/
 class DownloaderProgress : public GenericProgress
 {
 public:
     DownloaderProgress(QWidget *parent);
     virtual ~DownloaderProgress();
     void setTitle(const QUrl &url, const QString &localFile=QString());
+    /// set progress bar maximum
     void setMaximum(int value);
+    /// set progress bar value
     void setValue(int value);
+    /// set number of files
     void setFileCount(int count);
+    /// set current number of file
     void setFileNumber(int number);
     void show();
 protected:
