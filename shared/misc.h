@@ -96,47 +96,4 @@ bool removeDirectory(const QString& aDir);
 /// check if system is 64 bit Windows
 bool isX64Windows();
 
-
-/**
- InstallerCallConfig provides package related informations from the 
- installer filename which could be used to skip related wizard pages 
- or to implement specific gui applications. 
- 
- - which package to install (e.g. umbrello)
- - which compiler (e.g vc90, mingw4)
- - which release type (e.g. stable,nightly,unstable)
- - which release version (e.g. 4.4.4)
- - which download server
- 
- The filename has to build in the following manner: 
-
-    setup-<packageName>-<compiler>-<version>-<releaseType>[-<mirror>].exe
-
-  parts in [] are optional
-
-  @todo move to separate file or a more descriptive place
-*/
-
-class InstallerCallConfig {
-public:
-    InstallerCallConfig(const QString &fileName=QString());
-    bool isValid() { return key == "setup"; }
-
-    static InstallerCallConfig &instance(); 
-
-    QString packageName;
-    ReleaseType releaseType; 
-    QString version; 
-    QString mirror; 
-    CompilerType compilerType;
-
-protected:
-    bool isLoaded; 
-    QString key;
-    QString installerBaseName;
-
-};
-
-
-
 #endif

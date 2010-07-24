@@ -28,6 +28,7 @@ set(installer_shared_HEADERS
     hashfile.h
     hintfile.h
     installer.h
+    installercallconfig.h
     installerengine.h
     installerprogress.h
     installerupdate.h
@@ -61,6 +62,7 @@ set(installer_shared_SOURCES
     hashfile.cpp
     hintfile.cpp
     installer.cpp
+    installercallconfig.cpp
     installerengine.cpp
     installerprogress.cpp
     installerupdate.cpp
