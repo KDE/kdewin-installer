@@ -73,8 +73,8 @@
 @deps kdegraphics-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4 poppler-mingw4 ebook-tools libspectre exiv2-mingw4
 @deps kdemultimedia-mingw4 kdebase-runtime-mingw4 taglib-mingw4
 @deps kdenetwork-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4 sqlite libgmp libidn libmsn-mingw4
-@deps kdepim-mingw4 kdepim-runtime-mingw4 kdepim-runtime-mingw4 kdepimlibs-mingw4 kdebase-runtime-mingw4 gpgme sqlite
-@deps kdepimlibs-mingw4 kdelibs-mingw4 boost-mingw4 libical cyrus-sasl
+@deps kdepim-mingw4 kdepim-runtime-mingw4 kdepim-runtime-mingw4 kdepimlibs-mingw4 kdebase-runtime-mingw4 sqlite
+@deps kdepimlibs-mingw4 kdelibs-mingw4 boost-mingw4 libical cyrus-sasl gpgme
 @deps kdesdk-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4 kdepimlibs-mingw4 astyle diffutils
 @deps kdetoys-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4
 @deps kdeutils-mingw4 kdebase-runtime-mingw4 kdelibs-mingw4 libzip libgmp qca-mingw4
@@ -121,8 +121,8 @@
 @deps kdelibs-vc90 qt-vc90 phonon-vc90 attica-vc90 pcre-vc90 runtime-vc90 qt-vc90 dbus-vc90 kdewin-vc90 qimageblitz-vc90 qca-vc90 strigi-vc90 soprano-vc90 taglib-vc90 aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl tiff zlib shared-mime-info
 @deps kdemultimedia-vc90 kdebase-runtime-vc90 taglib-vc90
 @deps kdenetwork-vc90 kdebase-runtime-vc90 kdelibs-vc90 sqlite libgmp libidn libmsn-vc90
-@deps kdepim-vc90 kdepim-runtime-vc90 kdepimlibs-vc90 kdebase-runtime-vc90 gpgme sqlite akonadi-vc90
-@deps kdepimlibs-vc90 kdelibs-vc90 boost-vc90 libical cyrus-sasl
+@deps kdepim-vc90 kdepim-runtime-vc90 kdepimlibs-vc90 kdebase-runtime-vc90 sqlite akonadi-vc90
+@deps kdepimlibs-vc90 kdelibs-vc90 boost-vc90 libical cyrus-sasl gpgme
 @deps kdesdk-vc90 kdebase-runtime-vc90 kdelibs-vc90 astyle diffutils
 @deps kdetoys-vc90 kdebase-runtime-vc90 kdelibs-vc90
 @deps kdeutils-vc90 kdebase-runtime-vc90 libzip libgmp qca-vc90
