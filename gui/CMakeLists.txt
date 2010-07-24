@@ -29,6 +29,10 @@ ENDFOREACH(it)
 
 ENDMACRO(QT4_ADD_RESOURCES2)
 
+add_definitions(
+    ${GUI_DEFINITIONS}
+)
+
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR} 
     ${CMAKE_CURRENT_BINARY_DIR}

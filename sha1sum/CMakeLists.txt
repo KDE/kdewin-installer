@@ -1,5 +1,12 @@
+add_definitions(
+    -DMISC_SMALL_VERSION
+    ${QT_DEFINITIONS}
+)
 
-add_definitions(-DMISC_SMALL_VERSION)
+include_directories(
+    ${QT_INCLUDES}
+)
+
 add_executable(sha1sum 
     sha1sum.cpp 
     ../shared/hash.cpp 
@@ -11,4 +18,4 @@ if (MSVC)
 endif (MSVC)
 
 get_target_property(SHA1SUM_EXECUTABLE sha1sum LOCATION)
-set(SHA1SUM_EXECUTABLE ${SHA1SUM_EXECUTABLE} PARENT_SCOPE)
+set(SHA1SUM_EXECUTABLE ${SHA1SUM_EXECUTABLE} CACHE FILEPATH "executable" FORCE)

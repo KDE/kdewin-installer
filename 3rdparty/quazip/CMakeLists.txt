@@ -1,4 +1,12 @@
-include_directories(${QT_INCLUDES})
+
+add_definitions(
+    ${QT_DEFINITIONS}
+)
+
+include_directories(
+    ${CMAKE_SOURCE_DIR}/3rdparty/zlib
+    ${QT_INCLUDES}
+)
 
 set(quazip_SOURCES
     quazip/ioapi.c
@@ -16,8 +24,6 @@ set(quazip_HEADERS
     quazip/quazipfile.h
     quazip/quazipnewinfo.h
 )
-
-include_directories(${CMAKE_SOURCE_DIR}/3rdparty/zlib)
 
 add_library(quazip STATIC ${quazip_SOURCES} ${quazip_HEADERS})
 target_link_libraries(quazip)

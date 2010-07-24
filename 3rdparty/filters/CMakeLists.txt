@@ -1,5 +1,16 @@
+
+add_definitions(
+    ${BZIP2_DEFINITIONS}
+    ${QT_DEFINITIONS}
+)
+
+include_directories(
+    ${BZIP2_INCLUDE_DIR}
+    ${QT_INCLUDES}
+)
+
+
 set(FILTERS_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/filters)
-include_directories(${BZIP2_INCLUDE_DIR} ${QT_INCLUDES})
 
 set(filters_SOURCES
     ${CMAKE_SOURCE_DIR}/3rdparty/filters/tarfilter.cpp
@@ -11,7 +22,6 @@ set(filters_HEADERS
 )
 
 add_library(filters STATIC ${filters_SOURCES} ${filters_HEADERS})
-set_target_properties(filters PROPERTIES COMPILE_FLAGS "${BZIP2_DEFINITIONS}")
 target_link_libraries(filters)
 get_target_property(FILTERS_LIBRARY filters LOCATION)
 

@@ -1,3 +1,13 @@
+add_definitions(
+    ${CONSOLE_DEFINITIONS}
+)
+
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${CONSOLE_INCLUDE_DIR}
+)
+
 set(installer_CONSOLE_SOURCES
    main.cpp
    installerengineconsole.cpp
@@ -7,7 +17,6 @@ set(installer_CONSOLE_HEADERS
    installerengineconsole.h
 )
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
 if(CMAKE_COMPILER_2005)
      # to avoid a lot of deprecated warnings
@@ -25,7 +34,6 @@ set (TARGET kdewin-installer-console)
 
 add_executable(${TARGET} ${all_sources})
 target_link_libraries(${TARGET} ${CONSOLE_LIBS})
-set_target_properties(${TARGET} PROPERTIES COMPILE_FLAGS "${CONSOLE_DEFINITIONS}")
 
 install_targets(/bin ${TARGET})
 

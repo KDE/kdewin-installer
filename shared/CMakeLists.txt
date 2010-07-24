@@ -1,10 +1,19 @@
+add_definitions(
+    ${BZIP2_DEFINITIONS}
+    ${CURL_DEFINITIONS}
+    ${FILTERS_DEFINITIONS}
+    ${QUAZIP_DEFINITIONS}
+    ${QUA7ZIP_DEFINITIONS}
+    ${QT_DEFINITIONS}
+)
 
 include_directories(
     ${BZIP2_INCLUDE_DIR}
-    ${FILTERS_INCLUDE_DIR}
     ${CURL_INCLUDE_DIR}
+    ${FILTERS_INCLUDE_DIR}
     ${QUAZIP_INCLUDE_DIR}
     ${QUA7ZIP_INCLUDE_DIR}
+    ${QT_INCLUDES}
 )
 
 set(installer_shared_HEADERS
@@ -23,6 +32,7 @@ set(installer_shared_HEADERS
     installerprogress.h
     installerupdate.h
     package.h
+    packagerinfo.h
     packagecategorycache.h
     packagelist.h
     qio.h
@@ -86,10 +96,9 @@ qt4_wrap_cpp(shared_sources_gui ${installer_shared_HEADERS})
 
 if(NOT BUILD_INSTALLER_THEME)
 add_library(shared-console STATIC ${shared_sources_console})
-set_target_properties(shared-console  PROPERTIES COMPILE_FLAGS "${QT_DEFINITIONS} ${BZIP2_DEFINITIONS} ${CURL_DEFINITIONS} ${FILTERS_DEFINITIONS} ${QUAZIP_DEFINITIONS} ${QUA7ZIP_DEFINITIONS}")
 target_link_libraries(shared-console ${QT_LIBRARIES} ${BZIP2_LIBRARIES} ${CURL_LIBRARIES} ${FILTERS_LIBRARIES} ${QUAZIP_LIBRARIES} ${QUA7ZIP_LIBRARIES} kernel32 user32 shell32 uuid ole32 advapi32 ws2_32 shlwapi psapi)
 endif(NOT BUILD_INSTALLER_THEME)
 
 add_library(shared-gui STATIC ${shared_sources_gui})
-set_target_properties(shared-gui PROPERTIES COMPILE_FLAGS "-DUSE_GUI ${QT_DEFINITIONS} ${BZIP2_DEFINITIONS} ${CURL_DEFINITIONS} ${FILTERS_DEFINITIONS} ${QUAZIP_DEFINITIONS} ${QUA7ZIP_DEFINITIONS}")
+set_target_properties(shared-gui PROPERTIES COMPILE_FLAGS "-DUSE_GUI")
 target_link_libraries(shared-gui ${QT_LIBRARIES} ${BZIP2_LIBRARIES} ${CURL_LIBRARIES} ${FILTERS_LIBRARIES} ${QUAZIP_LIBRARIES} ${QUA7ZIP_LIBRARIES} kernel32 user32 shell32 uuid ole32 advapi32 ws2_32 shlwapi psapi)
