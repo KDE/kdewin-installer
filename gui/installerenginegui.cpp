@@ -46,12 +46,6 @@
 
 #include <QtGui/QTreeWidget>
 
-/// holds the package selection and icon states
-PackageStates packageStates;
-
-/// holds the package dependency state
-PackageStates dependencyStates;
-
 // from packageselectorpage.cpp
 int typeToColumn ( Package::Type type );
 
