@@ -62,7 +62,6 @@ set(installer_GUI_SOURCES
    ${CMAKE_CURRENT_SOURCE_DIR}/internetsettingspage.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/mirrorsettingspage.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/packageselectorpage.cpp
-   ${CMAKE_CURRENT_SOURCE_DIR}/packagestates.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/postprocesspage.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/releaseselectionpage.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/settingspage.cpp
@@ -88,7 +87,6 @@ set(installer_GUI_HEADERS
    ${CMAKE_CURRENT_SOURCE_DIR}/internetsettingspage.h
    ${CMAKE_CURRENT_SOURCE_DIR}/mirrorsettingspage.h
    ${CMAKE_CURRENT_SOURCE_DIR}/packageselectorpage.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/packagestates.h
    ${CMAKE_CURRENT_SOURCE_DIR}/postprocesspage.h
    ${CMAKE_CURRENT_SOURCE_DIR}/releaseselectionpage.h
    ${CMAKE_CURRENT_SOURCE_DIR}/settingspage.h

@@ -34,6 +34,7 @@ set(installer_shared_HEADERS
     package.h
     packagecategorycache.h
     packagelist.h
+    packagestates.h
     qio.h
     site.h
     mirrors.h
@@ -68,6 +69,7 @@ set(installer_shared_SOURCES
     package.cpp
     packagecategorycache.cpp
     packagelist.cpp
+    packagestates.cpp
     qio.cpp
     site.cpp
     selfinstaller.cpp
