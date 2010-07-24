@@ -36,7 +36,6 @@ QT4_ADD_RESOURCES(packager_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/packager.qrc)
 set (TARGET kdewin-packager)
 
 add_executable(${TARGET} ${packager_SOURCES} ${packager_HEADERS})
-set_target_properties(${TARGET} PROPERTIES COMPILE_FLAGS "${CONSOLE_DEFINITIONS}")
 target_link_libraries(${TARGET} ${CONSOLE_LIBS} ${QT_QTXML_LIBRARIES})
 
 install_targets(/bin ${TARGET} )
