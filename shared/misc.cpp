@@ -442,12 +442,24 @@ CompilerType toCompilerType(const QString &_type)
         return Unspecified;
 }
 
-InstallerCallConfig::InstallerCallConfig() : isLoaded(false)
+const QString toString(CompilerType type)
 {
-    QFileInfo fi(QCoreApplication::applicationFilePath());
-    installerBaseName = fi.baseName();
+    if (type == MSVC9)
+        return "vc90";
+    else if (type == MinGW4)
+        return "mingw4";
+    else if (type == MSVC_X64)
+        return "vc_x64";
+    else
+        return "";
+}
+
+InstallerCallConfig::InstallerCallConfig(const QString &fileName) : isLoaded(false)
+{
+    QFileInfo fi(!fileName.isEmpty() ? fileName : QCoreApplication::applicationFilePath());
+    installerBaseName = fi.completeBaseName();
     QStringList a = installerBaseName.split("-");
-    if (a.size() == 6)
+    if (a.size() >= 5)
     {
         key = a[0];
 
@@ -463,9 +475,12 @@ InstallerCallConfig::InstallerCallConfig() : isLoaded(false)
         if (releaseType == Unspecified)
             releaseType = Stable;
 
-        mirror = a[5].isEmpty() && a[5] != QLatin1String("*") ? a[5] : "www.winkde.org";
+        if (a.size() == 5 || a[5].isEmpty())
+            mirror = "www.winkde.org";
+        else if (a[5] != QLatin1String("*"))
+            mirror = a[5];
+        isLoaded = true;
     }
-    isLoaded = true;
 }
 
 /*

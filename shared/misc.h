@@ -38,6 +38,7 @@ const QString toString(ReleaseType type);
 
 typedef enum { Unspecified=0, MinGW=1, MSVC = 2, MSVC8=2, MSVC9=3, MinGW4=4, MSVC_X64=5 } CompilerType;
 CompilerType toCompilerType(const QString &type); 
+const QString toString(CompilerType compilerType);
 
 
 struct InstallFile
@@ -96,29 +97,29 @@ bool removeDirectory(const QString& aDir);
 bool isX64Windows();
 
 
-// setup-<packageName>-<releaseType>-<version>[-<mirror>].exe
 /**
- InstallerCallConfig provides predefined informations from the 
- installer filename to skip related wizard pages. In detail 
- these informations are 
+ InstallerCallConfig provides package related informations from the 
+ installer filename which could be used to skip related wizard pages 
+ or to implement specific gui applications. 
  
- - which package to install (skip package selecting page)
- - which release type and version (skip release selecting page)
- - which compiler (skip compiler selecting page)
- - which download server (skip download server selecting page)
+ - which package to install (e.g. umbrello)
+ - which compiler (e.g vc90, mingw4)
+ - which release type (e.g. stable,nightly,unstable)
+ - which release version (e.g. 4.4.4)
+ - which download server
  
  The filename has to build in the following manner: 
 
-    setup-<packageName>-[<compiler]-[<version>]-[<releaseType>]-[<mirror>].exe
+    setup-<packageName>-<compiler>-<version>-<releaseType>[-<mirror>].exe
 
-  each part could be skipped by leaving the related field empty 
+  parts in [] are optional
 
   @todo move to separate file or a more descriptive place
 */
 
 class InstallerCallConfig {
 public:
-    InstallerCallConfig();
+    InstallerCallConfig(const QString &fileName=QString());
     bool isValid() { return key == "setup"; }
 
     static InstallerCallConfig &instance(); 
