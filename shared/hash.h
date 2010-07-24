@@ -53,6 +53,9 @@ class Hash {
         /// compute hash from file content 
         QByteArray hash(const QString &file);
 
+        /// compute hash from byte array
+        QByteArray hash(QByteArray &data);
+
         /// the following three methods supports adding partial data 
         /// reset hash value
         void reset();

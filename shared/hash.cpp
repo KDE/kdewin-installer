@@ -81,6 +81,13 @@ QByteArray Hash::hash(QFile &file)
     return hash.result();
 }
 
+QByteArray Hash::hash(QByteArray &data)
+{
+    QCryptographicHash hash( m_type == MD5 ? QCryptographicHash::Md5 : QCryptographicHash::Sha1 );
+    hash.addData(data);
+    return hash.result();
+}
+
 QByteArray Hash::hash(const QString &file)
 {
     QFile f(file);
