@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.6)
 set (VERSION_MAJOR 0)
 set (VERSION_MINOR 9)
 set (VERSION_REVISION 7)
-set (VERSION_PATCH "0")
+set (VERSION_PATCH "1")
 set (VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REVISION}")
 set (VERSION_PATCH "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REVISION}-${VERSION_PATCH}")
 
@@ -156,7 +156,9 @@ set (SITE_URL "@url .")
 set (SITE_URL_LIST ";")
 configure_file(${CMAKE_SOURCE_DIR}/config.txt.cmake ${CMAKE_BINARY_DIR}/config/ktown.kde.org/config.txt)
 
-#FIXME: ${BZIP2_LIBRARIES} -> 3rdparty
+#-----------------------------------------------------------------------------------------
+# set libs required by console and gui apps 
+#-----------------------------------------------------------------------------------------
 if (UNIX)
   set (CONSOLE_LIBS pthread dl z rt ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} shared-console ${CURL_LIBRARIES} ${QUAZIP_LIBRARIES} ${BZIP2_LIBRARIES})
   set (GUI_LIBS pthread dl z rt ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} shared-gui ${CURL_LIBRARIES} ${QUAZIP_LIBRARIES} ${BZIP2_LIBRARIES})
@@ -174,17 +176,19 @@ else(UNIX)
     set (FIRST_LIBS mingw32)
   endif(MINGW)
   # required for static linking
-  set (CONSOLE_LIBS ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} shared-console  ${BZIP2_LIBRARIES} ${CURL_LIBRARIES} ${FILTERS_LIBRARIES} ${QUAZIP_LIBRARIES} ${QUA7ZIP_LIBRARIES} kernel32 user32 shell32 uuid ole32 advapi32 ws2_32 shlwapi psapi)
+  set (CONSOLE_LIBS ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} shared-console ${BZIP2_LIBRARIES} ${CURL_LIBRARIES} ${FILTERS_LIBRARIES} ${QUAZIP_LIBRARIES} ${QUA7ZIP_LIBRARIES} kernel32 user32 shell32 uuid ole32 advapi32 ws2_32 shlwapi psapi)
   set (GUI_LIBS ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} ${QT_QTGUI_LIBRARY} shared-gui ${BZIP2_LIBRARIES} ${CURL_LIBRARIES} ${FILTERS_LIBRARIES} ${QUAZIP_LIBRARIES} ${QUA7ZIP_LIBRARIES} gdi32 comdlg32 oleaut32 imm32 winmm winspool ws2_32 ole32 uuid user32 advapi32 shlwapi psapi)
 endif (UNIX)
 
-set (CONSOLE_DEFINITIONS ${QT_DEFINITIONS} ${BZIP2_DEFINITIONS} ${CURL_DEFINITIONS} ${FILTERS_DEFINITIONS} ${QUAZIP_DEFINITIONS} ${QUA7ZIP_DEFINITIONS})
-set (GUI_DEFINITIONS     ${QT_DEFINITIONS} ${BZIP2_DEFINITIONS} ${CURL_DEFINITIONS} ${FILTERS_DEFINITIONS} ${QUAZIP_DEFINITIONS} ${QUA7ZIP_DEFINITIONS})
+set (CONSOLE_DEFINITIONS ${QT_DEFINITIONS} ${CURL_DEFINITIONS} ${BZIP2_DEFINITIONS} ${FILTERS_DEFINITIONS} ${QUAZIP_DEFINITIONS} ${QUA7ZIP_DEFINITIONS})
+set (GUI_DEFINITIONS     "-DUSE_GUI" ${QT_DEFINITIONS} ${BZIP2_DEFINITIONS} ${CURL_DEFINITIONS} ${FILTERS_DEFINITIONS} ${QUAZIP_DEFINITIONS} ${QUA7ZIP_DEFINITIONS})
 
-set (CONSOLE_INCLUDE_DIR  ${QT_INCLUDES} ${CMAKE_SOURCE_DIR}/shared ${BZIP2_INCLUDE_DIR} ${CURL_INCLUDE_DIR} ${FILTERS_INCLUDE_DIR} ${QUAZIP_INCLUDE_DIR} ${QUA7ZIP_INCLUDE_DIR})
-set (GUI_INCLUDE_DIR      ${QT_INCLUDES} ${CMAKE_SOURCE_DIR}/shared ${BZIP2_INCLUDE_DIR} ${CURL_INCLUDE_DIR} ${FILTERS_INCLUDE_DIR} ${QUAZIP_INCLUDE_DIR} ${QUA7ZIP_INCLUDE_DIR})
+set (CONSOLE_INCLUDE_DIR  ${BZIP2_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/shared  ${QT_INCLUDES}${CURL_INCLUDE_DIR} ${FILTERS_INCLUDE_DIR} ${QUAZIP_INCLUDE_DIR} ${QUA7ZIP_INCLUDE_DIR})
+set (GUI_INCLUDE_DIR      ${BZIP2_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/shared ${QT_INCLUDES} ${CURL_INCLUDE_DIR} ${FILTERS_INCLUDE_DIR} ${QUAZIP_INCLUDE_DIR} ${QUA7ZIP_INCLUDE_DIR})
 
+#-----------------------------------------------------------------------------------------
 # our targets
+#-----------------------------------------------------------------------------------------
 add_subdirectory(sha1sum)
 
 add_subdirectory(shared)

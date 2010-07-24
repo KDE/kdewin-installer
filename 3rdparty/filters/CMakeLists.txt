@@ -1,0 +1,22 @@
+set(FILTERS_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/filters)
+include_directories(${BZIP2_INCLUDE_DIR} ${QT_INCLUDES})
+
+set(filters_SOURCES
+    ${CMAKE_SOURCE_DIR}/3rdparty/filters/tarfilter.cpp
+    ${CMAKE_SOURCE_DIR}/3rdparty/filters/bzip2iodevice.cpp
+)
+set(filters_HEADERS
+    ${CMAKE_SOURCE_DIR}/3rdparty/filters/tarfilter.h
+    ${CMAKE_SOURCE_DIR}/3rdparty/filters/bzip2iodevice.h
+)
+
+add_library(filters STATIC ${filters_SOURCES} ${filters_HEADERS})
+set_target_properties(filters PROPERTIES COMPILE_FLAGS "${BZIP2_DEFINITIONS}")
+target_link_libraries(filters)
+get_target_property(FILTERS_LIBRARY filters LOCATION)
+
+# public interface
+set(FILTERS_DEFINITIONS ""  CACHE STRING "definitions" FORCE)
+set(FILTERS_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/filters CACHE FILEPATH "include directories" FORCE)
+set(FILTERS_LIBRARIES ${FILTERS_LIBRARY} CACHE FILEPATH "libraries" FORCE)
+set(FILTERS_FOUND TRUE CACHE BOOL "state" FORCE)
