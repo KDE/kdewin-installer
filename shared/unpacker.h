@@ -24,13 +24,13 @@
 #ifndef UNPACKER_H
 #define UNPACKER_H
 
-#include <QtCore/QObject>
-
+#include "installerprogress.h"
 #include "package.h"  // StringHash
+
+#include <QtCore/QObject>
 
 class QEventLoop;
 class UPThread;
-class InstallerProgress;
 
 /** 
 \brief The class Unpacker provides unpackaging of downloaded package files 
