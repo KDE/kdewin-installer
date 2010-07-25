@@ -21,9 +21,11 @@
 **
 ****************************************************************************/
 
+#include "config.h"
 #include "debug.h"
 #include "downloader.h"
 #include "downloaderprogress.h"
+#include "hash.h"
 #include "registry.h"
 #include "selfinstaller.h"
 #include "settings.h"
@@ -46,15 +48,11 @@
 
 SelfInstaller::SelfInstaller()
 {
-#ifdef Q_WS_WIN
-    char installerExePath[MAX_PATH+1];
-    GetModuleFileNameA(NULL, installerExePath, MAX_PATH);
-#else
     QString installerExePath = QCoreApplication::applicationFilePath();
-#endif
     m_currentExecutable.setFile(installerExePath);
     m_installRoot = Settings::instance().installDir();
     m_installedExecutable.setFile(m_installRoot + "/bin/" + m_currentExecutable.fileName());    
+    m_installedDesktopFile.setFile(m_installRoot + QString("/share/applications/kde4/%1.desktop").arg(m_installedExecutable.completeBaseName()));
        
     m_kdeVersion = "4.2.0";
     m_kdeInstallKey = "kde420r";
@@ -70,7 +68,27 @@ SelfInstaller::~SelfInstaller()
 bool SelfInstaller::isInstalled()
 {
 
-    bool ret = m_installedExecutable.exists();
+    /**
+     @todo compare sha1sum of running installa agains installed installer 
+     because they have the same name 
+    */ 
+    if (!(m_installedExecutable.exists() && m_installedDesktopFile.exists()))
+        return false;
+
+    Hash hash(Hash::SHA1);
+    QByteArray a = hash.hash(m_currentExecutable.absoluteFilePath()).toHex();
+    QByteArray b = hash.hash(m_installedExecutable.absoluteFilePath()).toHex();
+    if (a != b)
+        return false;
+    QByteArray data;
+    if (!createDesktopFile(data))
+        return false;
+    a = hash.hash(data).toHex();
+    b = hash.hash(m_installedDesktopFile.absoluteFilePath()).toHex();
+    bool ret = a == b;        
+    
+    // @todo check if desktop file is there and have the correct content. 
+
     qDebug() << __FUNCTION__ << ret;
     return ret;
 }
@@ -95,6 +113,15 @@ bool SelfInstaller::uninstall()
 
 bool SelfInstaller::installExecutable()
 {
+    // to move file to temporary dir
+    QString backupFileName = m_installedExecutable.absoluteFilePath()+".bak";
+    QFile::remove(backupFileName);
+    if (QFile::exists(m_installedExecutable.absoluteFilePath()))
+    {
+        qDebug() << "old installer found, rename it";
+        QFile::rename(m_installedExecutable.absoluteFilePath(), backupFileName);
+    }
+
     if (!QFile::copy(m_currentExecutable.absoluteFilePath(), m_installedExecutable.absoluteFilePath()))
     {
         qCritical() << "could not copy installer executable into installation bin dir";
@@ -105,10 +132,48 @@ bool SelfInstaller::installExecutable()
 
 bool SelfInstaller::installResourceFiles()
 {
-    if (!QFile::copy(":/installer.desktop",m_installRoot + "/share/applications/kde4/installer.desktop"))
+    // move file to temporary dir
+    QString backupFileName = m_installedDesktopFile.absoluteFilePath()+".bak";
+
+    QFile::remove(backupFileName);
+    if (QFile::exists(m_installedDesktopFile.absoluteFilePath()))
     {
-        qCritical() << "could not install installer desktop file";
+        qDebug() << "old desktop file found, rename it";
+        QFile::rename(m_installedDesktopFile.absoluteFilePath(), backupFileName);
+    }
+
+    QByteArray data;
+    if (!createDesktopFile(data))
+    {
+        qCritical() << "could not create desktop file content";
         return false;
+    }
+
+    QFile outFile(m_installedDesktopFile.absoluteFilePath());
+
+    if (!outFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        qCritical() << "could not create desktop file" << m_installedDesktopFile.absoluteFilePath();
+        return false;
+    }
+
+    outFile.write(data);
+
+    return true;
+}
+
+bool SelfInstaller::createDesktopFile(QByteArray &fileData)
+{
+    QString appName = QLatin1String("KDE Installer " VERSION_PATCH);
+    QFile inFile(":/installer.desktop");
+    if (!inFile.open(QIODevice::ReadOnly | QIODevice::Text))
+        return false;
+
+    while (!inFile.atEnd()) {
+        QByteArray line = inFile.readLine();
+        line.replace("##TARGET_FILENAME##",m_installedExecutable.fileName().toLatin1());
+        line.replace("##DESKTOP_APPNAME##",appName.toLatin1());
+        fileData.append(line);
     }
     return true;
 }
@@ -159,7 +224,7 @@ bool SelfInstaller::uninstallExecutable()
 
 bool SelfInstaller::uninstallResourceFiles()
 {
-    return QFile::remove(m_installRoot + "/share/applications/kde4/installer.desktop");
+    return QFile::remove(m_installedDesktopFile.absoluteFilePath());
 }
  
 bool SelfInstaller::uninstallSoftwareControlPanelEntry()

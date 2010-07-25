@@ -87,13 +87,17 @@ class SelfInstaller
         /// delete uninstall entry in software control panel
         bool uninstallSoftwareControlPanelEntry();
 
+        /// create desktop file from template
+        bool createDesktopFile(QByteArray &fileData);
+
+
         QFileInfo m_currentExecutable;
         QFileInfo m_installedExecutable;
+        QFileInfo m_installedDesktopFile;
         QString m_installRoot;
         QString m_kdeVersion;
         QString m_kdeInstallKey;
         QString m_kdeReleaseMode;
-        
     public:
         friend QDebug &operator<<(QDebug &out, const SelfInstaller &c);
 };
