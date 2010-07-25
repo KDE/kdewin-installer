@@ -134,6 +134,7 @@ QString Settings::downloadDir() const
         path = QString::fromUtf16((const ushort*)buf2, iRet);
         delete[] buf;
         delete[] buf2;
+        path += "/KDE";
     }
 #else
     if (path.isEmpty())
