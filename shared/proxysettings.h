@@ -31,11 +31,17 @@
 class ProxySettings
 {
 public:
-    typedef enum {None = 0, InternetExplorer, FireFox, Environment, Manual} ProxyMode;
+    typedef enum {None = 0, InternetExplorer, FireFox, Environment, Manual, AutoDetect} ProxyMode;
     ProxySettings();
 
     /// read in proxy settings depending on mode and url based
     bool from(ProxyMode mode, const QString &url=QString());
+
+    /// save settings
+    bool save();
+
+    /// convert to cleartext output
+    QString toString();
 
     QString hostname;
     int port;
@@ -49,6 +55,7 @@ protected:
 #endif
     bool fromFireFox(const QString &url);
     bool fromEnvironment(const QString &url);
+    bool fromAutoDetect(const QString &url);
 
 };
 

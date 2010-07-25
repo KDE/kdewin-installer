@@ -22,6 +22,9 @@
 
 #include "proxysettings.h"
 #include "settings.h"
+#include "downloader.h"
+
+static QString testUrl = "http://www.winkde.org";
 
 ProxySettings::ProxySettings() : port(0)
 {
@@ -47,6 +50,9 @@ bool ProxySettings::from(ProxyMode _mode, const QString &url)
         case ProxySettings::Environment:
             return fromEnvironment(url);
 #endif
+        case ProxySettings::AutoDetect:
+            return fromAutoDetect(url);
+
         case ProxySettings::None:
         default:
             hostname = QString();
@@ -56,6 +62,15 @@ bool ProxySettings::from(ProxyMode _mode, const QString &url)
             break;
     }
     return false;
+}
+
+bool ProxySettings::save()
+{
+    Settings &s = Settings::instance();
+    s.setProxyMode(mode);
+    if (mode == ProxySettings::Manual)
+        s.setProxy(*this);
+    return true;
 }
 
 #ifdef Q_OS_WIN
@@ -171,4 +186,64 @@ bool ProxySettings::fromFireFox(const QString &url)
         }
     }
     return false;
+}
+
+
+bool ProxySettings::fromAutoDetect(const QString &url)
+{
+    Settings &s = Settings::instance();
+    QByteArray data;
+
+    if (from(InternetExplorer,url) && !hostname.isEmpty())
+    {
+        s.setProxyMode(mode);
+        if (Downloader::instance()->fetch(testUrl,data))
+        {
+            return true;
+        }
+    }
+    if (from(FireFox,url) && !hostname.isEmpty())
+    {
+        s.setProxyMode(mode);
+        if (Downloader::instance()->fetch(testUrl,data))
+        {
+            return true;
+        }
+    }
+    if (from(Environment,url) && !hostname.isEmpty())
+    {
+        s.setProxyMode(mode);
+        if (Downloader::instance()->fetch(testUrl,data))
+        {
+            return true;
+        }
+    }
+    mode = ProxySettings::None;
+    s.setProxyMode(mode);
+    if (Downloader::instance()->fetch(testUrl,data))
+    {
+        return true;
+    }
+    return false;
+}
+
+
+QString ProxySettings::toString()
+{
+    switch(mode)
+    {
+        case ProxySettings::InternetExplorer:
+            return "using IE proxy" + hostname;
+        case ProxySettings::FireFox:
+            return "using Firefox proxy" + hostname;
+        case ProxySettings::Manual:
+            return "using manual set proxy" + hostname;
+
+        case ProxySettings::Environment:
+            return "using proxy from environment" + hostname;
+
+        case ProxySettings::None:
+        default:
+            return "no proxy used";
+    }
 }
