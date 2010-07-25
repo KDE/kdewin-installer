@@ -27,6 +27,7 @@
 #include "installerprogress.h"
 #include "package.h"
 #include "packagelist.h"
+#include "packagestates.h"
 #include "globalconfig.h"
 #include "database.h"
 
@@ -37,6 +38,12 @@
 QString InstallerEngine::defaultConfigURL;
 QString InstallerEngine::fallBackURL = "http://downloads.sourceforge.net/kde-windows";
 InstallerEngine::InstallMode InstallerEngine::m_installMode = InstallerEngine::onlineInstall;
+
+/// holds the package selection and icon states
+PackageStates packageStates;
+
+/// holds the package dependency state
+PackageStates dependencyStates;
 
 InstallerEngine::InstallerEngine(QObject *parent)
     : QObject(parent),
@@ -58,7 +65,7 @@ InstallerEngine::InstallerEngine(QObject *parent)
     m_packageResources = new PackageList();
 
 
-//    connect(&Settings::instance(),SIGNAL(installDirChanged(const QString&)),this,SLOT(installDirChanged(const QString&)));
+    //connect(&Settings::instance(),SIGNAL(installDirChanged(const QString&)),this,SLOT(installDirChanged(const QString&)));
     connect(m_installer,SIGNAL(error(const QString &)),this,SLOT(slotError(const QString &)));
 
 }

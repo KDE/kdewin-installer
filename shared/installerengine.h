@@ -28,6 +28,7 @@
 #include "settings.h"
 #include "globalconfig.h"
 #include "packagecategorycache.h"
+#include "packagestates.h"
 #include "database.h"
 
 class PackageList;
@@ -158,5 +159,11 @@ protected:
 
     friend QDebug &operator<<(QDebug &, const InstallerEngine &);
 };
+
+/// holds the package selection and icon states
+extern PackageStates packageStates;
+
+/// holds the package dependency state
+extern PackageStates dependencyStates;
 
 #endif
