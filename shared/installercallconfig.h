@@ -40,7 +40,9 @@
  
  The filename has to build in the following manner: 
 
-    setup-<packageName>-<compiler>-<version>-<releaseType>[-<mirror>].exe
+    setup-<packageName>-<compiler>-<releaseType>-<version>[-<mirror>].exe
+
+ '-' in packagenames has to be replaced by '_'
 
   parts in [] are optional
 */
@@ -57,6 +59,9 @@ public:
     QString version; 
     QString mirror; 
     CompilerType compilerType;
+    bool hasReleaseType;
+    bool hasVersion;
+    bool hasMirror;
 
 protected:
     bool isLoaded; 

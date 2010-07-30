@@ -28,33 +28,68 @@
 #include <QCoreApplication>
 #include <QStringList>
 
-InstallerCallConfig::InstallerCallConfig(const QString &fileName) : isLoaded(false)
+InstallerCallConfig::InstallerCallConfig(const QString &fileName)
+    : isLoaded(false), hasMirror(false), hasVersion(false), hasReleaseType(false)
 {
     QFileInfo fi(!fileName.isEmpty() ? fileName : QCoreApplication::applicationFilePath());
     installerBaseName = fi.completeBaseName();
     QStringList a = installerBaseName.split("-");
-    if (a.size() >= 5)
+    releaseType = Stable;
+    compilerType = MSVC9;
+    version = "latest";
+    mirror = "www.winkde.org";
+
+    // setup-<packagename>.exe
+    if (a.size() >= 2)
     {
         key = a[0];
-
         packageName = a[1].isEmpty() || a[1] == "*" ? "" : a[1];
+        packageName.replace('_','-');
+    }
 
+    // setup-<packagename>-<compiler>.exe
+    if (a.size() >= 3)
+    {
         compilerType = toCompilerType(a[2]);
         if (compilerType == Unspecified)
             compilerType = MSVC9;
-
-        version = a[3].isEmpty() || a[3] == QLatin1String("*") ? "latest" : a[3]; 
-
-        releaseType = toReleaseType(a[4]);
-        if (releaseType == Unspecified)
-            releaseType = Stable;
-
-        if (a.size() == 5 || a[5].isEmpty())
-            mirror = "www.winkde.org";
-        else if (a[5] != QLatin1String("*"))
-            mirror = a[5];
-        isLoaded = true;
     }
+
+    // setup-<packagename>-<compiler>-<releasetype>.exe
+    if (a.size() >= 4)
+    {
+        if (!a[3].isEmpty() && a[3] != QLatin1String("*"))
+        {
+            releaseType = toReleaseType(a[3]);
+            if (releaseType == Unspecified)
+                releaseType = Stable;
+            else
+                hasReleaseType = true;
+        }
+        else
+            releaseType == Unspecified;
+    }
+
+    // setup-<packagename>-<compiler>-<releasetype>-<version>.exe
+    if (a.size() >= 5)
+    {
+        if (!a[4].isEmpty() && a[4] != QLatin1String("*"))
+        {
+            version = a[4];
+            hasVersion = true;
+        }
+    }
+
+    // setup-<packagename>-<compiler>-<releasetype>-<version>-<mirror>.exe
+    if (a.size() >= 6)
+    {
+        if (!a[5].isEmpty() && a[5] != QLatin1String("*"))
+        {
+            mirror = a[5];
+            hasMirror = true;
+        }
+    }
+    isLoaded = true;
 }
 
 InstallerCallConfig &InstallerCallConfig::instance()
