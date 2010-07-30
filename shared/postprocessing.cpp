@@ -50,11 +50,9 @@ bool PostProcessing::run()
 {
     emit numberOfCommands(5);
     runCommand(0,"updating mime database","update-mime-database",QStringList() << QDir::fromNativeSeparators(Settings::instance().installDir()) + "/share/mime");
-    runCommand(1,"starting kde background processes","kdeinit4");
-    //runCommand(1,"updating system configuration database","kbuildsycoca4");
-    //runCommand(2,"deleting old windows start menu entries","kwinstartmenu",QStringList() <<  "--remove");
-    //runCommand(3,"creating new windows start menu entries","kwinstartmenu");
-    //runCommand(4,"stopping kde background processes","kdeinit4", QStringList() << "--terminate");
+    runCommand(1,"updating system configuration database","kbuildsycoca4");
+    runCommand(2,"deleting old windows start menu entries","kwinstartmenu",QStringList() <<  "--remove");
+    runCommand(3,"creating new windows start menu entries","kwinstartmenu");
     emit finished();
     return true;
 }
