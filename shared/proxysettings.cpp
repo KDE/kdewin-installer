@@ -233,17 +233,17 @@ QString ProxySettings::toString()
     switch(mode)
     {
         case ProxySettings::InternetExplorer:
-            return "using IE proxy" + hostname;
+            return "using IE proxy " + hostname;
         case ProxySettings::FireFox:
-            return "using Firefox proxy" + hostname;
+            return "using Firefox proxy " + hostname;
         case ProxySettings::Manual:
-            return "using manual set proxy" + hostname;
+            return "using manual set proxy " + hostname;
 
         case ProxySettings::Environment:
-            return "using proxy from environment" + hostname;
+            return "using proxy from environment " + hostname;
 
         case ProxySettings::None:
         default:
-            return "no proxy used";
+            return "using no proxy";
     }
 }
