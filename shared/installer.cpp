@@ -199,7 +199,10 @@ bool Installer::installExecutable(Package *pkg, Package::Type type)
 #ifdef Q_OS_WIN
     QProcess proc;
     proc.setWorkingDirectory(QDir::tempPath());
-    proc.start (fileName, QStringList ( "/Q" ) );   // FIXME: don't hardcode command line parameters!
+    QStringList params( "/Q" );
+    if (fileName.contains("vcredist"))
+        params << "/p";
+    proc.start (fileName, params);   // FIXME: don't hardcode command line parameters!
     if ( !proc.waitForStarted() )
         return false;
 
