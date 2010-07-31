@@ -49,7 +49,6 @@ Installer::Installer(QObject *parent)
         : QObject(parent), m_type(Installer::Standard)
 {
     m_root = ".";
-    connect(Unpacker::instance(),SIGNAL(error(const QString &)),this,SLOT(slotError(const QString &)));
 }
 
 Installer::~Installer()
@@ -159,7 +158,7 @@ bool Installer::install(Package *pkg, const Package::Type type)
     m_installType = type;
     QString fileName = pkg->localFileName(type); 
     qDebug() << __FUNCTION__ << "filename: " << fileName << "type: " << type;
-    
+
     if (fileName.endsWith(".exe")) 
     {
         if (!installExecutable(pkg,type))
@@ -175,7 +174,10 @@ bool Installer::install(Package *pkg, const Package::Type type)
         m_files = QStringList() << pkg->localFilePath(type);
     }
     else {
-        if (!Unpacker::instance()->unpackFile(pkg->localFilePath(type), m_root, pkg->pathRelocations()))
+        connect(Unpacker::instance(),SIGNAL(error(const QString &)),this,SLOT(slotError(const QString &)));
+        bool ret = Unpacker::instance()->unpackFile(pkg->localFilePath(type), m_root, pkg->pathRelocations());
+        disconnect(Unpacker::instance(),SIGNAL(error(const QString &)),this,SLOT(slotError(const QString &)));
+        if (!ret)
             return false;
         m_files = Unpacker::instance()->unpackedFiles();
     }
