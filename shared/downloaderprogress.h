@@ -42,6 +42,7 @@ public:
     virtual void setTitle(const QString &title);
     virtual void show();
     virtual void hide();
+    virtual void setValue(int value) {}
 protected:
     virtual void updateDisplay();
     QLabel *m_titleLabel;
