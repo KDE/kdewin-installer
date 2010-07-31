@@ -32,6 +32,12 @@
 #include <QtGui/QGridLayout>
 #include <QtGui/QDesktopWidget>
 
+
+//#define DISABLE_GENERICPROCESS_PARENT_CONTROL
+// show() and hide() controls also parent widget 
+// this may have unwanted side effects 
+// uncomment the above listed define to disable 
+
 #ifdef USE_GUI
 GenericProgress::GenericProgress(QWidget *parent)
   : QWidget(parent), m_titleLabel(NULL), m_parent(parent)
@@ -48,18 +54,23 @@ void GenericProgress::setTitle(const QString &title)
 
 void GenericProgress::show()
 {
-  if(m_parent) {
-    m_parent->show();
-    const QRect &r = QDesktopWidget().screenGeometry();
-    m_parent->move(r.width() / 2 - m_parent->width() / 2, r.height() / 2 - m_parent->height() / 2);
-    return;
-  }
-  QWidget::show();
+#ifndef DISABLE_GENERICPROCESS_PARENT_CONTROL
+	if(m_parent) {
+		m_parent->show();
+		const QRect &r = QDesktopWidget().screenGeometry();
+		m_parent->move(r.width() / 2 - m_parent->width() / 2, r.height() / 2 - m_parent->height() / 2);
+		return;
+	}
+#endif
+  	QWidget::show();
 }
 
 void GenericProgress::hide()
 {
-  m_parent ? m_parent->hide() : QWidget::hide();
+#ifndef DISABLE_GENERICPROCESS_PARENT_CONTROL
+	m_parent ? m_parent->hide() : QWidget::hide();
+#endif
+  	QWidget::hide();
 }
 
 void GenericProgress::updateDisplay()
