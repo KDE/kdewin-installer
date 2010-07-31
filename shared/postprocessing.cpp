@@ -25,6 +25,12 @@
 
 #include <QListWidget>
 #include <QProcess>
+#include <QCoreApplication>
+
+//#define POSTPROCESSING_ALLOW_EVENTS
+// allowing events during client application
+// running requires special quit handling
+// running simply quit() does now work
 
 PostProcessing::PostProcessing(QObject *parent) : QObject(parent)
 {
@@ -41,9 +47,24 @@ bool PostProcessing::runCommand(int index, const QString &msg, const QString &ap
     emit commandStarted(msg);
 
     qDebug() << "running " << app << params;
-    int ret = QProcess::execute( f.absoluteFilePath(), params);
-    emit commandFinished(ret == 0);
-    return ret == 0;
+#ifndef POSTPROCESSING_ALLOW_EVENTS
+    int noError = QProcess::execute( f.absoluteFilePath(), params) == 0;
+#else
+    QProcess p;
+    p.start(f.absoluteFilePath(), params);
+    if (!p.waitForStarted(3000))
+        return false;
+
+    while (p.state() == QProcess::Running)
+    {
+        QCoreApplication::processEvents();
+    }
+    bool noError = p.exitStatus() == QProcess::NormalExit && p.exitCode() == 0;
+#endif
+    qDebug() << "application finished";
+
+    emit commandFinished(noError);
+    return noError;
 }
 
 bool PostProcessing::run()
