@@ -34,7 +34,8 @@ class PostProcessing : public QObject
     Q_OBJECT
 public:
     PostProcessing(QObject *parent = 0);
-    bool run();
+    bool start();
+    void stop();
 
 signals:
     void numberOfCommands(int count);
@@ -45,8 +46,11 @@ signals:
 
 public slots:
 
+
 protected:
     bool runCommand(int index, const QString &msg, const QString &app, const QStringList &params=QStringList());
+
+    bool m_shouldQuit;
 };
 
 #endif // POSTPROCESSING_H

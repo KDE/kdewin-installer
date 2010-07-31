@@ -27,11 +27,6 @@
 #include <QProcess>
 #include <QCoreApplication>
 
-//#define POSTPROCESSING_ALLOW_EVENTS
-// allowing events during client application
-// running requires special quit handling
-// running simply quit() does now work
-
 PostProcessing::PostProcessing(QObject *parent) : QObject(parent)
 {
 }
@@ -47,33 +42,40 @@ bool PostProcessing::runCommand(int index, const QString &msg, const QString &ap
     emit commandStarted(msg);
 
     qDebug() << "running " << app << params;
-#ifndef POSTPROCESSING_ALLOW_EVENTS
-    int noError = QProcess::execute( f.absoluteFilePath(), params) == 0;
-#else
+
     QProcess p;
     p.start(f.absoluteFilePath(), params);
     if (!p.waitForStarted(3000))
         return false;
 
-    while (p.state() == QProcess::Running)
+    m_shouldQuit = false;
+    while (p.state() == QProcess::Running && !m_shouldQuit)
     {
         QCoreApplication::processEvents();
     }
     bool noError = p.exitStatus() == QProcess::NormalExit && p.exitCode() == 0;
-#endif
-    qDebug() << "application finished";
+
+    qDebug() << "application finished" << m_shouldQuit;
 
     emit commandFinished(noError);
     return noError;
 }
 
-bool PostProcessing::run()
+bool PostProcessing::start()
 {
     emit numberOfCommands(5);
     runCommand(0,"updating mime database","update-mime-database",QStringList() << QDir::fromNativeSeparators(Settings::instance().installDir()) + "/share/mime");
-    runCommand(1,"updating system configuration database","kbuildsycoca4");
-    runCommand(2,"deleting old windows start menu entries","kwinstartmenu",QStringList() <<  "--remove");
-    runCommand(3,"creating new windows start menu entries","kwinstartmenu");
+    if (!m_shouldQuit)
+        runCommand(1,"updating system configuration database","kbuildsycoca4");
+    if (!m_shouldQuit)
+        runCommand(2,"deleting old windows start menu entries","kwinstartmenu",QStringList() <<  "--remove");
+    if (!m_shouldQuit)
+        runCommand(3,"creating new windows start menu entries","kwinstartmenu");
     emit finished();
     return true;
+}
+
+void PostProcessing::stop()
+{
+    m_shouldQuit = true;
 }
