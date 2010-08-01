@@ -68,9 +68,10 @@ void GenericProgress::show()
 void GenericProgress::hide()
 {
 #ifndef DISABLE_GENERICPROCESS_PARENT_CONTROL
-	m_parent ? m_parent->hide() : QWidget::hide();
+    m_parent ? m_parent->hide() : QWidget::hide();
+#else
+    QWidget::hide();
 #endif
-  	QWidget::hide();
 }
 
 void GenericProgress::updateDisplay()
