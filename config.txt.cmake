@@ -15,9 +15,9 @@
 @categorynotes qt Qt related packages 
 
 ; to which category packages belongs to
-@categorypackages win32libs aspell cyrus-sasl ebook-tools expat gettext giflib gpgme iconv jasper jpeg lcms libbzip2 libgmp libgs libical libidn libpng libxml2 libxslt libzip mysql-embedded mysql-server openjpeg openslp openssl shared-mime-info sqlite tiff zlib
-@categorypackages win32libs pcre-vc90  dbus-vc90  exiv2-vc90  libspectre-vc90  libmsn-vc90  libdvdcss-vc90  libsamplerate-vc90
-@categorypackages win32libs pcre-mingw4 dbus-mingw4 exiv2-mingw4 libspectre-mingw4 libmsn-mingw4 libdvdcss-mingw4 libsamplerate-mingw4
+@categorypackages win32libs aspell cyrus-sasl ebook-tools expat gettext giflib gpgme iconv jasper jpeg lcms libbzip2 libgmp libgs libical libidn libpng libxml2 libxslt libzip mysql-embedded mysql-server openjpeg openslp shared-mime-info sqlite tiff zlib
+@categorypackages win32libs pcre-vc90  dbus-vc90  exiv2-vc90  libspectre-vc90  libmsn-vc90  libdvdcss-vc90  libsamplerate-vc90 openssl-vc90
+@categorypackages win32libs pcre-mingw4 dbus-mingw4 exiv2-mingw4 libspectre-mingw4 libmsn-mingw4 libdvdcss-mingw4 libsamplerate-mingw4 openssl-mingw4
 @categorypackages tools findutils grep mingw-utils diffutils patch
 @categorypackages kdesupport kdewin-vc90  kdewin-installer-vc90  runtime-vc90  qimageblitz-vc90  qca-vc90  strigi-vc90  soprano-vc90  taglib-vc90  phonon-vc90  fontconfig-vc90  freetype-vc90  poppler-vc90  automoc-vc90  attica-vc90 oxygen-icons qjson-vc90 phonon-vlc-vc90 phonon-mplayer-vc90
 @categorypackages kdesupport kdewin-mingw4 kdewin-installer-mingw4 runtime-mingw4 qimageblitz-mingw4 qca-mingw4 strigi-mingw4 soprano-mingw4 taglib-mingw4 phonon-mingw4 fontconfig-mingw4 freetype-mingw4 poppler-mingw4 automoc-mingw4 attica-mingw4 oxygen-icons qjson-mingw4 phonon-vlc-mingw4 phonon-mplayer-mingw4
@@ -64,7 +64,7 @@
 @deps digikam-mingw4 kdegraphics-mingw4 kdeedu-mingw4 exiv2-mingw4 lcms libkdegraphics-mingw4 marble-mingw4
 @deps k3b-mingw4 kdemultimedia-mingw4 libdvdcss-mingw4 cdrtools dvd+rw-tools
 @deps kaffeine-mingw4 kdebase-runtime-mingw4
-@deps kdelibs-mingw4 qt-mingw4 phonon-mingw4 attica-mingw4 pcre-mingw4 dbus-mingw4 kdewin-mingw4 qimageblitz-mingw4 qca-mingw4 strigi-mingw4 soprano-mingw4 taglib-mingw4 aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl  tiff zlib shared-mime-info
+@deps kdelibs-mingw4 qt-mingw4 phonon-mingw4 attica-mingw4 pcre-mingw4 dbus-mingw4 kdewin-mingw4 qimageblitz-mingw4 qca-mingw4 strigi-mingw4 soprano-mingw4 taglib-mingw4 openssl-mingw4 aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt tiff zlib shared-mime-info
 @deps kdebase-apps-mingw4 kdebase-runtime-mingw4
 @deps kdebase-runtime-mingw4 kdepimlibs-mingw4 kdelibs-mingw4 oxygen-icons
 @deps kdebase-workspace-mingw4 kdebase-runtime-mingw4 kdepimlibs-mingw4
@@ -97,11 +97,11 @@
 @deps phonon-vlc-mingw4 phonon-mingw4 vlc
 @deps phonon-mplayer-mingw4 phonon-mingw4
 @deps poppler-mingw4 fontconfig-mingw4 freetype-mingw4 poppler-data lcms openjpeg
-@deps qca-mingw4 cyrus-sasl openssl
+@deps qca-mingw4 cyrus-sasl openssl-mingw4
 @deps qjson-mingw4 qt-mingw4
 @deps qt-mingw4 dbus-mingw4 runtime-mingw4
 @deps quassel-mingw4 kdelibs-mingw4
-@deps strigi-mingw4 libbzip2 openssl zlib iconv libxml2 exiv2-mingw4
+@deps strigi-mingw4 libbzip2 openssl-mingw4 zlib iconv libxml2 exiv2-mingw4
 @deps yakuake-mingw4 kdebase-apps-mingw4
 ; msvc dependencies
 @deps amarok-vc90 kdebase-runtime-vc90 phonon-vc90 taglib-vc90 taglib-extras-vc90 mysql-embedded
@@ -118,7 +118,7 @@
 @deps kdeedu-vc90 kdebase-runtime-vc90 kdelibs-vc90 openbabel-vc90 cfitsio
 @deps kdegames-vc90 kdebase-runtime-vc90 kdelibs-vc90 phonon-vc90
 @deps kdegraphics-vc90 kdebase-runtime-vc90 kdelibs-vc90 poppler-vc90 ebook-tools libspectre exiv2-vc90
-@deps kdelibs-vc90 qt-vc90 phonon-vc90 attica-vc90 pcre-vc90 runtime-vc90 qt-vc90 dbus-vc90 kdewin-vc90 qimageblitz-vc90 qca-vc90 strigi-vc90 soprano-vc90 taglib-vc90 aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt openssl tiff zlib shared-mime-info
+@deps kdelibs-vc90 qt-vc90 phonon-vc90 attica-vc90 pcre-vc90 runtime-vc90 qt-vc90 dbus-vc90 kdewin-vc90 qimageblitz-vc90 qca-vc90 strigi-vc90 soprano-vc90 taglib-vc90 openssl-vc90 aspell libbzip2 expat giflib iconv jasper jpeg gettext libpng libxml2 libxslt tiff zlib shared-mime-info
 @deps kdemultimedia-vc90 kdebase-runtime-vc90 taglib-vc90
 @deps kdenetwork-vc90 kdebase-runtime-vc90 kdelibs-vc90 sqlite libgmp libidn libmsn-vc90
 @deps kdepim-vc90 kdepim-runtime-vc90 kdepimlibs-vc90 kdebase-runtime-vc90 sqlite akonadi-vc90
@@ -145,11 +145,11 @@
 @deps phonon-vlc-vc90 phonon-vc90 kdewin-vc90 vlc
 @deps phonon-mplayer-vc90 phonon-vc90
 @deps poppler-vc90 fontconfig-vc90 freetype-vc90 poppler-data lcms openjpeg
-@deps qca-vc90 cyrus-sasl openssl
+@deps qca-vc90 cyrus-sasl openssl-vc09
 @deps qjson-vc90 qt-vc90
 @deps qt-vc90 dbus-vc90 runtime-vc90
 @deps quassel-vc90 kdelibs-vc90
-@deps strigi-vc90 libbzip2 openssl zlib iconv libxml2 exiv2-vc90
+@deps strigi-vc90 libbzip2 openssl-vc90 zlib iconv libxml2 exiv2-vc90
 @deps yakuake-vc90 kdebase-apps-vc90
 ;
 ;-------------------------------------------------------
@@ -483,7 +483,6 @@
 @pkgnotes mysql-server MySql database server
 @pkgnotes openjpeg a JPEG2000 library
 @pkgnotes openslp openslp client and libraries
-@pkgnotes openssl The OpenSSL runtime environment
 @pkgnotes patch Tool to merge diff files
 @pkgnotes redland Resource Description Framework (RDF)
 @pkgnotes sed Stream Editor
@@ -530,6 +529,7 @@
 @pkgnotes ktorrent-* KDE Torrent client
 @pkgnotes libgmp devel-tools GNU MP library for abritary precision arithmetic
 @pkgnotes openbabel-* program to convert the various file formats used in chemical software
+@pkgnotes openssl-* The OpenSSL runtime environment
 @pkgnotes oxygen-icons icons and bitmaps for the oxygen style
 @pkgnotes phonon-* KDE KDE4 multimedia API
 @pkgnotes phonon-vlc-* A VLC backend for the phonon multimedia API
