@@ -78,16 +78,18 @@ InstallerEngine::~InstallerEngine()
     delete m_packageResources;
 }
 
-void InstallerEngine::initGlobalConfig()
+bool InstallerEngine::initGlobalConfig()
 {
     if (m_globalConfigReaded)
         m_globalConfig->clear();
-    readGlobalConfig();
+    if (!readGlobalConfig())
+        return false;
     QHash<QString, QString>::const_iterator i = m_globalConfig->categoryNotes().constBegin();
     for (; i != m_globalConfig->categoryNotes().constEnd(); i++)
         categoryCache.setNote(i.key(),i.value());
 
     m_globalConfigReaded = true;
+    return true;
 }
 
 bool InstallerEngine::initPackages()
@@ -133,7 +135,8 @@ bool InstallerEngine::initPackages()
 
 bool InstallerEngine::init()
 {
-    initGlobalConfig();
+    if (!initGlobalConfig())
+        return false;
     return initPackages();
 }
 

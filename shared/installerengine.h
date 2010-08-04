@@ -57,7 +57,7 @@ public:
     void setRoot(const QString &root);
     
     // read in global config 
-    void initGlobalConfig();
+    bool initGlobalConfig();
 
     // add packages from global config or sites (requires proxy settings)
     bool initPackages();
