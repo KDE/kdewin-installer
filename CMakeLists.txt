@@ -204,6 +204,8 @@ add_subdirectory(doc)
 add_subdirectory(configer)
 endif(NOT BUILD_INSTALLER_THEME)
 #add_subdirectory(tools)
+add_subdirectory(single-package-installer)
+
 
 if (WIN32)
     include(Win32Macros)

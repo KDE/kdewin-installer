@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/go-next.png</file>
+        <file>images/dialog-cancel.png</file>
+        <file>images/dialog-ok-apply.png</file>
+        <file>images/kde1.jpg</file>
+        <file>images/kde3.jpg</file>
+        <file>images/kde.png</file>
+        <file>images/kde1.png</file>
+    </qresource>
+</RCC>
