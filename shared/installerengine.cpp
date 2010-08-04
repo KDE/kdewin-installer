@@ -400,6 +400,76 @@ bool InstallerEngine::getStartMenuRootPath()
     return false;
 }
 
+bool InstallerEngine::setDependencyState(Package *_package, QList<Package *> &dependencies)
+{
+    qDebug() << __FUNCTION__ << _package->name();
+
+    Q_FOREACH(const QString &dep, _package->deps())
+    {
+        Package *package = m_packageResources->getPackage(dep);
+        if (!package)
+            continue;
+
+        // check dependencies first
+        bool ret = setDependencyState(package, dependencies);
+
+        stateType state = packageStates.getState(package,Package::BIN);
+        stateType depState = dependencyStates.getState(package,Package::BIN);
+
+        Package *installedPackage = m_database->getPackage(dep);
+
+        // if package is already installed, ignore it
+        if (installedPackage && installedPackage->version() == package->version())
+            continue;
+
+        // set installed version for uninstaller - this should be set in a more central places
+        if (installedPackage && package->installedVersion().isEmpty())
+            package->setInstalledVersion(installedPackage->version());
+
+        // the package is installed with a different version
+        stateType newState = installedPackage ? _Update : _Install;
+
+        // only add package if is neither selected in main or dependency states
+        if ((state == _Nothing || state == _Remove) && (depState == _Nothing || depState == _Remove))
+        {
+            qDebug() << __FUNCTION__ << "selected package" << package->name() << "in previous state" << state << "for" << newState;
+            if (!dependencies.contains(package))
+                dependencies.append(package);
+
+            dependencyStates.setState(package,Package::BIN,newState);
+#if 0
+            // set additional package types for download/install/remove
+            if (m_displayMode == Developer)
+            {
+                if (package->hasType(Package::LIB))
+                    dependencyStates.setState(package,Package::LIB,newState);
+                if (package->hasType(Package::DOC))
+                    dependencyStates.setState(package,Package::DOC,newState);
+            }
+            else if (m_displayMode == BinaryOnly)
+            {
+                ;//if (package->hasType(Package::DOC))
+                 //   dependenciesStates.setState(package,Package::DOC,_Install);
+            }
+#endif
+        }
+    }
+    return true;
+}
+
+void InstallerEngine::checkUpdateDependencies(QList<Package*> &deps)
+{
+    dependencyStates.clear();
+    if (deps.count() > 0)
+        deps.clear();
+
+    Q_FOREACH(Package *pkg, packageStates.packages(m_packageResources)) {
+        if (!setDependencyState(pkg,deps))
+            break;
+    }
+    qDebug() <<  packageStates;
+    qDebug() << dependencyStates;
+}
 
 QDebug &operator<<(QDebug &out, const InstallerEngine &c)
 {

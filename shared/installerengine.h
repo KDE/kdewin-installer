@@ -100,6 +100,10 @@ public:
 
     static InstallMode installMode() { return m_installMode; }
 
+    void checkUpdateDependencies(QList<Package*> &deps);
+
+    bool setDependencyState(Package *package, QList<Package*>&deps);
+
 Q_SIGNALS:
     void error ( const QString &error );
 
