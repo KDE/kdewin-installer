@@ -48,47 +48,6 @@ const int availableVersionColumn = 1;
 const int installedVersionColumn = 2;
 const int VersionColumn = 2;
 
-static int BINColumn = 3;
-static int SRCColumn = 4;
-static int DBGColumn = 5;
-static int NotesColumn = 6;
-static int LIBColumn = 7;
-static int DOCColumn = 8;
-static int ColumnCount = 9;
-
-Package::Type columnToType ( int column )
-{
-    if (column == BINColumn)
-        return Package::BIN;
-    else if (column == LIBColumn)
-        return Package::LIB;
-    else if (column == DOCColumn)
-        return Package::DOC;
-    else if (column == SRCColumn)
-        return Package::SRC;
-    else if (column == DBGColumn)
-        return Package::DBG;
-    else
-        return Package::NONE;
-}
-
-int typeToColumn ( Package::Type type )
-{
-    switch ( type ) {
-    case Package::BIN :
-        return BINColumn;
-    case Package::LIB :
-        return LIBColumn;
-    case Package::DOC :
-        return DOCColumn;
-    case Package::SRC :
-        return SRCColumn;
-    case Package::DBG :
-        return DBGColumn;
-    default:
-        return 0;
-    }
-}
 
 // must be global
 QTreeWidget *tree;

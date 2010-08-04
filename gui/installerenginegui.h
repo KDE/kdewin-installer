@@ -29,6 +29,17 @@
 class QTreeWidget;
 class QTreeWidgetItem;
 
+Package::Type columnToType ( int column );
+int typeToColumn ( Package::Type type )
+
+extern int BINColumn;
+extern int SRCColumn;
+extern int DBGColumn;
+extern int NotesColumn;
+extern int LIBColumn;
+extern int DOCColumn;
+extern int ColumnCount;
+
 class InstallerEngineGui : public InstallerEngine
 {
 public:

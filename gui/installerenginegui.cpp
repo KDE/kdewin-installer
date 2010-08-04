@@ -46,8 +46,47 @@
 
 #include <QtGui/QTreeWidget>
 
-// from packageselectorpage.cpp
-int typeToColumn ( Package::Type type );
+int BINColumn = 3;
+int SRCColumn = 4;
+int DBGColumn = 5;
+int NotesColumn = 6;
+int LIBColumn = 7;
+int DOCColumn = 8;
+int ColumnCount = 9;
+
+int typeToColumn ( Package::Type type )
+{
+    switch ( type ) {
+    case Package::BIN :
+        return BINColumn;
+    case Package::LIB :
+        return LIBColumn;
+    case Package::DOC :
+        return DOCColumn;
+    case Package::SRC :
+        return SRCColumn;
+    case Package::DBG :
+        return DBGColumn;
+    default:
+        return 0;
+    }
+}
+
+Package::Type columnToType ( int column )
+{
+    if (column == BINColumn)
+        return Package::BIN;
+    else if (column == LIBColumn)
+        return Package::LIB;
+    else if (column == DOCColumn)
+        return Package::DOC;
+    else if (column == SRCColumn)
+        return Package::SRC;
+    else if (column == DBGColumn)
+        return Package::DBG;
+    else
+        return Package::NONE;
+}
 
 enum iconType {_install, _autoinstall, _keepinstalled, _update, _remove, _nothing, _disable, _dirty };
 
