@@ -9,7 +9,7 @@ archive-filename = package-name file-compiler-type file-version file-package-typ
 md5sum-filename = package-name file-compiler-type file-version file-package-type archive-extension '.md5' ;
 
 package-name =  letter { ( letter | digit | '_' | '-' ) } ;
-file-compiler-type = ( '-' ('mingw' | 'msvc') | '') ;
+file-compiler-type = ( '-' ('mingw' | 'msvc' | 'mingw4' | 'vc90' ) | '') ;
 
 file-version = '-' (version | date | string ) ;         (* string means something specific *) 
 version = major-version-number '.' minor-version-number [ '.' patchlevel [ '-' number ] ] ;
@@ -29,8 +29,8 @@ minute = 2-digit-number; (* 00-59 *)
 2-digit-number = decimal-digit decimal-digit ;
 
 file-package-type = '-' package-type ;
-package-type = ( 'bin' | 'lib' | 'doc' | 'src' );
-archive-extension = ('.tar.bz2' | '.zip' | '.exe' | '.msi' ); 
+package-type = ( 'bin' | 'lib' | 'doc' | 'src' | 'dbg' );
+archive-extension = ('.tar.bz2' | '.zip' | '.exe' | '.msi' | '.7z' ); 
 
 
 
@@ -101,6 +101,7 @@ hash-type = 'sha1' | 'md5' ;
 site-statement = site-initial-token { site-token } empty-line ;          
 site-initial-token = '@' 'site' category '\n' ;             (* main site keyword  eg @site win32libs *)
 site-token = '@' site-attributes '\n' ;
+
 site-attributes = 'url' absolute-or-relative-url            (* basic url for packages, which will be prefixed to the archive found by this site *)
                 | 'url-list' absolute-or-relative-url       (* url of html page containing package links *)
                 | 'deps' package-name depending-package-name (* package dependencies *)
@@ -110,6 +111,7 @@ site-attributes = 'url' absolute-or-relative-url            (* basic url for pac
                 | 'exclude' filename                        (* exclude file from package collecting *)
                 | 'hashtype' hash-type                      (* define a hash type used for package digests in this site *)
                 ;
+(* site-attributes is not complete yet, see ../shared/globalconfig.cpp for details *)
                 
 absolute-or-relative-url = absolute-url | relative-url ; 
 absolute-url = ( 'http://' | 'ftp://' ) host path ; 
@@ -133,13 +135,29 @@ package-attributes =  'category' category-name              (* categorie(s) the 
                     | 'url-lib' absolute-or-relative-url [ local-filename ]      (* url of development package including include headers, import libraries and tools for compiling applications/libraries against this package *)
                     | 'url-doc' absolute-or-relative-url [ local-filename ]      (* url of documentation package *)
                     | 'url-src' absolute-or-relative-url [ local-filename ]      (* url of source package *)
-(* not yet implemented 
+                    | 'url-dbg' absolute-or-relative-url [ local-filename ]      (* url of debug package *)
+                    | 'filename-bin' local-filename       (* local filename of binary package *)
+                    | 'filename-lib' local-filename       (* local filename of development package *)
+                    | 'filename-doc' local-filename       (* local filename of documentation package *)
+                    | 'filename-src' local-filename       (* local filename of source package *)
+                    | 'filename-dbg' local-filename       (* local filename of debug package *)
+                    | hash-type-attribute
+                    | 'hash-bin' hash-value               (* hash value of binary/runtime package @hash-bin 58cb5a282539da8ec2f67e4f96db7f6c *)
+                    | 'hash-lib' hash-value               (* hash value of development package including include headers, import libraries and tools for compiling applications/libraries against this package @eg. hash-lib 58cb5a282539da8ec2f67e4f96db7f6c *)
+                    | 'hash-doc' hash-value               (* hash value of documentation package eg. @hash-doc 58cb5a282539da8ec2f67e4f96db7f6c *)
+                    | 'hash-src' hash-value               (* hash value of source package eg. @hash-src 58cb5a282539da8ec2f67e4f96db7f6c *)
+                    | 'hash-dbg' hash-value               (* hash value of source package eg. @hash-src 58cb5a282539da8ec2f67e4f96db7f6c *)
+                    | 'nomd5'                               (* disable md5 checking *)
                     | 'md5-bin' md5sum                      (* md5 checksum of binary/runtime package @md5-bin 58cb5a282539da8ec2f67e4f96db7f6c *)
                     | 'md5-lib' md5sum                      (* md5 checksum of development package including include headers, import libraries and tools for compiling applications/libraries against this package @eg. md5-lib 58cb5a282539da8ec2f67e4f96db7f6c *)
                     | 'md5-doc' md5sum                      (* md5 checksum of documentation package eg. @md5-doc 58cb5a282539da8ec2f67e4f96db7f6c *)
                     | 'md5-src' md5sum                      (* md5 checksum of source package eg. @md5-src 58cb5a282539da8ec2f67e4f96db7f6c *)
-*)
+                    | 'md5-dbg' md5sum                      (* md5 checksum of source package eg. @md5-src 58cb5a282539da8ec2f67e4f96db7f6c *)
                     | 'relocate' src-pattern dest-pattern   (* relocate path in the archive from src-pattern to dest-pattern eg. @relocate ^ bin/ *)
+                    | 'notes' string                        (* package notes *)
+                    | 'details' string '\\n' string         (* long package notes (multi line note) *)
+                    | 'homeurl' string absolute-url         (* url of package website *)
+                    | 'control' string                      (* comand sequence for controlling exe installer gui (experimental) *) 
                     ;
 category-name = string ;
 package-version = version ;
