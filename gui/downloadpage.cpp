@@ -26,6 +26,9 @@
 #include "downloaderprogress.h"
 #include "downloader.h"
 
+#include <QVBoxLayout>
+#include <QAbstractButton>
+
 DownloadPage::DownloadPage() : InstallWizardPage(0)
 {
     setTitle(tr("Downloading Packages"));

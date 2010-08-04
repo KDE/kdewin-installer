@@ -25,6 +25,8 @@
 #include "finishpage.h"
 
 #include <QProcess>
+#include <QLabel>
+#include <QVBoxLayout>
 
 FinishPage::FinishPage()
 {

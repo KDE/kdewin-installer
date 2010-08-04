@@ -28,6 +28,8 @@
 #include "installwizard.h"
 //#include "ui_finishpage.h"
 
+#include <QCheckBox>
+
 class FinishPage : public InstallWizardPage
 {
 public:

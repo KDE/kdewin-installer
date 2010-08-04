@@ -26,6 +26,9 @@
 #include "installerprogress.h"
 #include "uninstaller.h"
 
+#include <QVBoxLayout>
+#include <QAbstractButton>
+
 UninstallPage::UninstallPage()
 {
     setTitle(tr("Uninstalling packages"));

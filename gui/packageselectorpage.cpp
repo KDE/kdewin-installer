@@ -42,6 +42,8 @@
 #include <QSplitter>
 #include <QTextEdit>
 #include <QTreeWidget>
+#include <QLabel>
+#include <QHBoxLayout>
 
 const int NameColumn = 0;
 const int availableVersionColumn = 1;
