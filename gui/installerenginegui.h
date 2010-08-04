@@ -30,7 +30,7 @@ class QTreeWidget;
 class QTreeWidgetItem;
 
 Package::Type columnToType ( int column );
-int typeToColumn ( Package::Type type )
+int typeToColumn ( Package::Type type );
 
 extern int BINColumn;
 extern int SRCColumn;
