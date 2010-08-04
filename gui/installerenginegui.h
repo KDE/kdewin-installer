@@ -54,7 +54,9 @@ public:
     void selectPackagesForReinstall();
     void unselectAllPackages();
 
+    /// @todo merge with related methods from InstallerEngine class
     void checkUpdateDependencies(QTreeWidget *list);
+    /// @todo merge with related methods from InstallerEngine class
     bool checkRemoveDependencies(QTreeWidget *list);
 
     bool downloadPackages(const QString &category=QString());
@@ -75,6 +77,7 @@ public:
 
     void setMetaPackageState(QTreeWidgetItem &item, int column);
 protected:
+    /// @todo merge with related methods from InstallerEngine class
     bool setDependencyState(Package *pkg, QTreeWidget *list);
 
 private:
