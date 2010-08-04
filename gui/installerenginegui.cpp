@@ -588,7 +588,8 @@ bool InstallerEngineGui::init()
 {
     m_displayMode = Settings::instance().isPackageManagerMode() ? Single : BinaryOnly;
 
-    initGlobalConfig();
+    if (!initGlobalConfig())
+        return false;
     
     if (isInstallerVersionOutdated())
         InstallerDialogs::instance().installerOutdated();
