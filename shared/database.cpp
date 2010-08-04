@@ -31,6 +31,10 @@
 #include <QFileInfo>
 #include <QtCore/QTextCodec>
 
+#ifndef DISABLE_SIGNALS
+#define DISABLE_SIGNALS
+#endif
+
 Database::Database ( QObject *parent )
         : QObject ( parent )
 {
@@ -59,8 +63,10 @@ Database::Database ( QObject *parent )
     m_versionKeys["tortoisesvn-17049785"] = "1.4.3";
     
     addFromRegistry();
+#ifndef DISABLE_SIGNALS
     connect ( &Settings::instance(),SIGNAL ( installDirChanged ( const QString & ) ),
               this, SLOT ( slotInstallDirChanged ( const QString & ) ) );
+#endif
 }
 
 Database::~Database()
