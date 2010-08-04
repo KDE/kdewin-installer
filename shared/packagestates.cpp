@@ -36,8 +36,9 @@ void PackageStates::setState(const QString &pkgName, const QString & pkgVersion,
         case Package::LIB: value.lib = state; break;
         case Package::DOC: value.doc = state; break;
         case Package::SRC: value.src = state; break;
+        case Package::DBG: value.dbg = state; break;
         case Package::ALL: value.all = state; break;
-        case Package::ANY: value.bin = value.lib = value.doc = value.src = value.all = state;
+        case Package::ANY: value.bin = value.lib = value.doc = value.src = value.dbg = value.all = state;
         default: break;
     }
     m_states[key] = value;
@@ -102,6 +103,7 @@ stateType PackageStates::getState(const QString &pkgName, const QString &pkgVers
         case Package::LIB: return value.lib;
         case Package::DOC: return value.doc;
         case Package::SRC: return value.src;
+        case Package::DBG: return value.dbg;
         case Package::ALL: return value.all;
         default: return _Nothing;
     }

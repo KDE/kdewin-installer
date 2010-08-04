@@ -71,6 +71,8 @@ void InstallerEngineConsole::printPackage(Package *p)
         qprintf("%s-doc-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
     if (p->isInstalled(Package::SRC))
         qprintf("%s-src-%s\n",qPrintable(p->name()), qPrintable(p->version().toString()));   
+    if (p->isInstalled(Package::DBG))
+        qprintf("%s-dbg-%s\n",qPrintable(p->name()), qPrintable(p->version().toString()));   
 }
 
 void InstallerEngineConsole::queryPackage()
@@ -120,6 +122,11 @@ void InstallerEngineConsole::queryPackageListFiles(const QString &pkgName)
     {
         Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::SRC))
             qprintf("%s%s\n", info.type == Package::NONE  ? "SRC: " : "", qPrintable(file));
+    }
+    if ((info.type == Package::NONE || info.type == Package::DBG) && p->isInstalled(Package::DBG))
+    {
+        Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::DBG))
+            qprintf("%s%s\n", info.type == Package::NONE  ? "DBG: " : "", qPrintable(file));
     }
 }
 
@@ -241,6 +248,9 @@ void InstallerEngineConsole::printPackageURLs(Package *p)
     url = p->getUrl(Package::SRC);
     if (!url.isEmpty())
         qprintf("%s\n",qPrintable(url.toString())); 
+    url = p->getUrl(Package::DBG);
+    if (!url.isEmpty())
+        qprintf("%s\n",qPrintable(url.toString())); 
 }
 
 void InstallerEngineConsole::listPackageURLs()
@@ -324,6 +334,8 @@ bool InstallerEngineConsole::downloadPackages(const QStringList &packages, const
             p->downloadItem(Package::DOC);
         if (p->hasType(Package::SRC))
             p->downloadItem(Package::SRC);
+        if (p->hasType(Package::DBG))
+            p->downloadItem(Package::DBG);
     }
     return true;
 }
@@ -338,12 +350,14 @@ bool InstallerEngineConsole::installPackages(const QStringList &packages,const Q
             continue;
         if (p->hasType(Package::BIN))
             p->installItem(m_installer,Package::BIN);
-        if (p->hasType(Package::BIN))
+        if (p->hasType(Package::LIB))
             p->installItem(m_installer,Package::LIB);
-        if (p->hasType(Package::BIN))
+        if (p->hasType(Package::DOC))
             p->installItem(m_installer,Package::DOC);
-        if (p->hasType(Package::BIN))
+        if (p->hasType(Package::SRC))
             p->installItem(m_installer,Package::SRC);
+        if (p->hasType(Package::DBG))
+            p->installItem(m_installer,Package::DBG);
     }
     return true;
 }

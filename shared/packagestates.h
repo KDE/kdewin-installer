@@ -19,9 +19,9 @@ class PackageFlags {
   public: 
     PackageFlags() 
     { 
-        all = bin = lib  = doc = src = _Nothing; 
+        all = bin = lib  = doc = src = dbg = _Nothing; 
     };
-    stateType all,bin,lib,doc,src; 
+    stateType all,bin,lib,doc,src,dbg; 
 };
 
 typedef QHash<QString,PackageFlags> PackageStatesType;

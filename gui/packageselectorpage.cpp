@@ -50,10 +50,11 @@ const int VersionColumn = 2;
 
 static int BINColumn = 3;
 static int SRCColumn = 4;
-static int NotesColumn = 5;
-static int LIBColumn = 6;
-static int DOCColumn = 7;
-static int ColumnCount = 8;
+static int DBGColumn = 5;
+static int NotesColumn = 6;
+static int LIBColumn = 7;
+static int DOCColumn = 8;
+static int ColumnCount = 9;
 
 Package::Type columnToType ( int column )
 {
@@ -65,6 +66,8 @@ Package::Type columnToType ( int column )
         return Package::DOC;
     else if (column == SRCColumn)
         return Package::SRC;
+    else if (column == DBGColumn)
+        return Package::DBG;
     else
         return Package::NONE;
 }
@@ -80,6 +83,8 @@ int typeToColumn ( Package::Type type )
         return DOCColumn;
     case Package::SRC :
         return SRCColumn;
+    case Package::DBG :
+        return DBGColumn;
     default:
         return 0;
     }
@@ -226,15 +231,17 @@ void PackageSelectorPage::setWidgetData( QString categoryName )
         LIBColumn = 4;
         DOCColumn = 5;
         SRCColumn = 6;
-        NotesColumn = 7;
-        ColumnCount = 8;
+        DBGColumn = 7;
+        NotesColumn = 8;
+        ColumnCount = 9;
     }
     else if (displayMode == InstallerEngineGui::Developer)
     {
         BINColumn = 3;
         SRCColumn = 4;
-        NotesColumn = 5;
-        ColumnCount = 6;
+        DBGColumn = 5;
+        NotesColumn = 6;
+        ColumnCount = 7;
         LIBColumn = 0;
         DOCColumn = 0;
     }
@@ -246,6 +253,7 @@ void PackageSelectorPage::setWidgetData( QString categoryName )
     QString libToolTip;
     QString docToolTip;
     QString srcToolTip;
+    QString dbgToolTip;
 
     labels
     << tr ( "Package" )
@@ -265,10 +273,12 @@ void PackageSelectorPage::setWidgetData( QString categoryName )
     }
     labels 
     << tr ( "Src" )
+    << tr ( "Dbg" )
     << tr ( "Package notes" )
     ;
     binToolTip = "select this checkbox to install/remove/update the binary, development and doc part of this package";
     srcToolTip = "select this checkbox to install/remove/update the source of this package";
+    dbgToolTip = "select this checkbox to install/remove/update the package containing debugging symbols";
 
     tree->setColumnCount ( ColumnCount );
     tree->setHeaderLabels ( labels );
@@ -332,6 +342,7 @@ void PackageSelectorPage::setWidgetData( QString categoryName )
         item->setToolTip ( BINColumn, binToolTip );
 
         item->setToolTip ( SRCColumn, srcToolTip );
+        item->setToolTip ( DBGColumn, dbgToolTip );
         categoryList.append(item);
     }
     tree->addTopLevelItems ( categoryList );
@@ -382,6 +393,8 @@ void PackageSelectorPage::updatePackageInfo(const Package *availablePackage, con
             list += tr ( "---- DOC package ----" ) + "\n" + engine->database()->getPackageFiles ( installedPackage->name(),Package::DOC ).join ( "\n" ) + "\n";
         if ( installedPackage->isInstalled ( Package::SRC ) )
             list += tr ( "---- SRC package ----" ) + "\n" + engine->database()->getPackageFiles ( installedPackage->name(),Package::SRC ).join ( "\n" ) + "\n";
+        if ( installedPackage->isInstalled ( Package::DBG ) )
+            list += tr ( "---- DBG package ----" ) + "\n" + engine->database()->getPackageFiles ( installedPackage->name(),Package::DBG ).join ( "\n" ) + "\n";
         if ( list.isEmpty() )
             packageInfo->setTabEnabled ( 2,false );
         else {
@@ -453,7 +466,7 @@ void PackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
     if ( column < BINColumn )
         return;
 
-    if ( column == BINColumn || column == LIBColumn || column == DOCColumn || column == SRCColumn )
+    if ( column == BINColumn || column == LIBColumn || column == DOCColumn || column == SRCColumn || column == DBGColumn )
     {
 #if 0
         if (!checkRemoveDependencies(installedPackage))

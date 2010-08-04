@@ -211,6 +211,8 @@ bool PackageList::syncWithFile(const QString &_fileName)
                     apkg->setInstalled(Package::DOC);
                 if (pkg.isInstalled(Package::SRC))
                     apkg->setInstalled(Package::SRC);
+                if (pkg.isInstalled(Package::DBG))
+                    apkg->setInstalled(Package::DBG);
             }
             else
                 append(pkg);
@@ -252,6 +254,8 @@ bool PackageList::syncWithDatabase(Database &database)
             apkg->setInstalled(Package::DOC);
         if (pkg->isInstalled(Package::SRC))
             apkg->setInstalled(Package::SRC);
+        if (pkg->isInstalled(Package::DBG))
+            apkg->setInstalled(Package::DBG);
         pkg->setHandled(true);
     }
     Q_FOREACH ( Package *p, newPackages )
@@ -422,6 +426,12 @@ bool PackageList::readInternal(QIODevice *ioDev, PackageList::Type type, bool ap
                     Package::PackageItem item(Package::SRC);
                     item.setUrl(m_baseURL);
                     item.setFileName(name+"-"+version+"-src.zip");
+                    pkg.add(item);
+                }
+                {
+                    Package::PackageItem item(Package::DBG);
+                    item.setUrl(m_baseURL);
+                    item.setFileName(name+"-"+version+"-dbg.zip");
                     pkg.add(item);
                 }
                 addPackage(pkg);

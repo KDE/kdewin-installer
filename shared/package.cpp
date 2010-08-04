@@ -144,6 +144,9 @@ bool Package::PackageItem::set(const QUrl &url, const QString &fn, const QByteAr
     else
     if(ct == "src")
         return set(url, fn, SRC, bInstalled);
+    else
+    if(ct == "dbg")
+        return set(url, fn, DBG, bInstalled);
     // unknown type
     return false;
 }
@@ -248,6 +251,11 @@ bool Package::PackageItem::setContentType(const QString &type)
         m_contentType = SRC;
         return true;
     }
+    else if(ct == "dbg")
+    {
+        m_contentType = DBG;
+        return true;
+    }
     else if(ct == "meta")
     {
         m_contentType = META;
@@ -268,6 +276,7 @@ static QString typeToString(Package::Type type)
         case Package::LIB:   return "LIB";
         case Package::DOC:   return "DOC";
         case Package::SRC:   return "SRC";
+        case Package::DBG:   return "DBG";
         case Package::META:  return "META";
         default: return "unknown" + QString::number(type);
     }
@@ -279,6 +288,7 @@ QDebug &operator<<(QDebug &out, const Package::Type c)
         case Package::LIB:   out << "LIB";  break;
         case Package::DOC:   out << "DOC";  break;
         case Package::SRC:   out << "SRC";  break;
+        case Package::DBG:   out << "DBG";  break;
         case Package::META:  out << "META";  break;
         default: out << "unknown" + QString::number(c);
     }
@@ -408,6 +418,9 @@ QString Package::getTypeAsString(bool requiredIsInstalled, const QString &delim)
             case SRC:
                 types += "src" + delim;
                 break;
+            case DBG:
+                types += "dbg" + delim;
+                break;
           default:
                 break;
         };
@@ -449,13 +462,15 @@ bool Package::write(QTextStream &out) const
     << (isInstalled(BIN) ? "bin:" : ":")
     << (isInstalled(LIB) ? "lib:" : ":")
     << (isInstalled(DOC) ? "doc:" : ":")
-    << (isInstalled(SRC) ? "src" : QString())
+    << (isInstalled(SRC) ? "src:" : ":")
+    << (isInstalled(DBG) ? "dbg:" : QString())
     << ";"
     << ";"
     << getUrl(BIN).toString() << ";"
     << getUrl(LIB).toString() << ";"
     << getUrl(DOC).toString() << ";"
-    << getUrl(SRC).toString()
+    << getUrl(SRC).toString() << ";"
+    << getUrl(DBG).toString()
     << "\n";
     return true;
 }
@@ -759,6 +774,7 @@ QString Package::typeToString(Package::Type type)
         case LIB:    return "lib";
         case DOC:    return "doc";
         case SRC:    return "src";
+        case DBG:    return "dbg";
         case ALL:    return "all";
         default:    return "unknown";
     }
@@ -1000,6 +1016,11 @@ PackageInfo PackageInfo::fromString(const QString &_name, const QString &version
     {
         result.type = Package::SRC;
         name.replace("-src","");
+    }
+    else if (name.contains("-dbg")) 
+    {
+        result.type = Package::DBG;
+        name.replace("-dbg","");
     }
     
     // version is given

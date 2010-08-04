@@ -280,6 +280,8 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                         type = Package::DOC;
                     else if(keyword == "url-src")
                         type = Package::SRC;
+                    else if(keyword == "url-dbg")
+                        type = Package::DBG;
                     else
                         continue;
                     QUrl url(cmd[1]);
@@ -306,6 +308,8 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                         type = Package::DOC;
                     else if(keyword == "filename-src")
                         type = Package::SRC;
+                    else if(keyword == "filename-dbg")
+                        type = Package::DBG;
                     else
                         continue;
                     if (!pkg->hasType(type))
@@ -343,6 +347,8 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                         type = Package::DOC;
                     else if(keyword == "hash-src")
                         type = Package::SRC;
+                    else if(keyword == "hash-dbg")
+                        type = Package::DBG;
                     else
                         continue;
                     if (!pkg->hasType(type))
@@ -366,6 +372,8 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                         type = Package::DOC;
                     else if(keyword == "md5-src")
                         type = Package::SRC;
+                    else if(keyword == "md5-dbg")
+                        type = Package::DBG;
                     else
                         continue;
                     if (!pkg->hasType(type))

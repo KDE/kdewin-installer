@@ -50,7 +50,7 @@ typedef QHash<QString, QString> StringHash;
 class Package
 {
 public:
-    enum Type { NONE = 0, BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8, ALL = 15, ANY = 16, META = 47};
+    enum Type { NONE = 0, BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8, DBG = 16, ALL = 31, ANY = 32, META = 95};
     Q_DECLARE_FLAGS(Types,Type);
 
     class PackageVersion {

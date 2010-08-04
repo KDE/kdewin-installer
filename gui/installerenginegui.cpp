@@ -255,6 +255,8 @@ void InstallerEngineGui::setInitialState ( QTreeWidgetItem &item, Package *avail
                 setIcon(item,Package::BIN,packageStates.getState(available,Package::DOC),_nothing);
             if (available->hasType(Package::SRC))
                 setIcon(item,Package::SRC,packageStates.getState(available,Package::SRC),_nothing);
+            if (available->hasType(Package::DBG))
+                setIcon(item,Package::DBG,packageStates.getState(available,Package::DBG),_nothing);
         }
         else if (m_displayMode == Single)
         {
@@ -264,6 +266,8 @@ void InstallerEngineGui::setInitialState ( QTreeWidgetItem &item, Package *avail
                 setIcon(item,Package::DOC,packageStates.getState(available,Package::DOC),_nothing);
             if (available->hasType(Package::SRC))
                 setIcon(item,Package::SRC,packageStates.getState(available,Package::SRC),_nothing);
+            if (available->hasType(Package::DBG))
+                setIcon(item,Package::SRC,packageStates.getState(available,Package::DBG),_nothing);
         }
     }
     if (installed)
@@ -278,6 +282,8 @@ void InstallerEngineGui::setInitialState ( QTreeWidgetItem &item, Package *avail
                 setIcon(item,Package::BIN,packageStates.getState(installed,Package::BIN),_keepinstalled);
             if (installed->isInstalled(Package::SRC))
                 setIcon(item,Package::SRC,packageStates.getState(installed,Package::BIN),_keepinstalled);
+            if (installed->isInstalled(Package::DBG))
+                setIcon(item,Package::DBG,packageStates.getState(installed,Package::BIN),_keepinstalled);
         }
         else if(m_displayMode == Single)
         {
@@ -287,6 +293,8 @@ void InstallerEngineGui::setInitialState ( QTreeWidgetItem &item, Package *avail
                 setIcon(item,Package::DOC,_keepinstalled);
             if (installed->isInstalled(Package::SRC))
                 setIcon(item,Package::SRC,_keepinstalled);
+            if (installed->isInstalled(Package::DBG))
+                setIcon(item,Package::DBG,_keepinstalled);
         }
     }
 }
@@ -301,13 +309,13 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
 
     if (type == Package::BIN && m_displayMode == Developer)
     {
-        isAvailable = available && (available->hasType(type) || available->hasType(Package::LIB) || available->hasType(Package::DOC));
-        isInstalled = installed && (installed->isInstalled(type) || installed->hasType(Package::LIB) || installed->hasType(Package::DOC));
+        isAvailable = available && (available->hasType(type) || available->hasType(Package::LIB) || available->hasType(Package::DOC) || available->hasType(Package::DBG));
+        isInstalled = installed && (installed->isInstalled(type) || installed->hasType(Package::LIB) || installed->hasType(Package::DOC) || available->hasType(Package::DBG));
     }
     else if (type == Package::BIN && m_displayMode == BinaryOnly)
     {
-        isAvailable = available && (available->hasType(type) /*|| available->hasType(Package::DOC)*/);
-        isInstalled = installed && (installed->isInstalled(type) /*|| installed->hasType(Package::DOC)*/);
+        isAvailable = available && (available->hasType(type) || available->hasType(Package::DBG));
+        isInstalled = installed && (installed->isInstalled(type) || installed->hasType(Package::DBG));
     }
     else
     {
@@ -396,11 +404,13 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
             packageStates.setState(available,Package::LIB,newState);
         if (available->hasType(Package::DOC))
             packageStates.setState(available,Package::DOC,newState);
+        if (available->hasType(Package::DBG))
+            packageStates.setState(available,Package::DBG,newState);
     }
     else if (type == Package::BIN && m_displayMode == BinaryOnly)
     {
-        ;//if (available->hasType(Package::DOC))
-         //   packageStates.setState(available,Package::DOC,newState);
+        if (available->hasType(Package::DBG))
+            packageStates.setState(available,Package::DBG,newState);
     }
 }
 
@@ -479,11 +489,13 @@ bool InstallerEngineGui::setDependencyState(Package *_package, QTreeWidget *list
                     dependencyStates.setState(package,Package::LIB,newState);
                 if (package->hasType(Package::DOC))
                     dependencyStates.setState(package,Package::DOC,newState);
+                if (package->hasType(Package::DBG))
+                    dependencyStates.setState(package,Package::DBG,newState);
             }
             else if (m_displayMode == BinaryOnly)
             {
-                ;//if (package->hasType(Package::DOC))
-                 //   dependenciesStates.setState(package,Package::DOC,_Install);
+                if (package->hasType(Package::DBG))
+                    dependencyStates.setState(package,Package::DBG,_Install);
             }
         }
     }
@@ -574,11 +586,13 @@ void InstallerEngineGui::selectAllPackagesForRemoval()
                 packageStates.setState(installed,Package::LIB,newState);
             if (installed->hasType(Package::DOC))
                 packageStates.setState(installed,Package::DOC,newState);
+            if (installed->hasType(Package::DBG))
+                packageStates.setState(installed,Package::DBG,newState);
         }
         else if (type == Package::BIN && m_displayMode == BinaryOnly)
         {
-            ;//if (installed->hasType(Package::DOC))
-             //   packageStates.setState(available,Package::DOC,newState);
+            if (installed->hasType(Package::DBG))
+                packageStates.setState(installed,Package::DBG,newState);
         }
         m_packageResources->addPackage(*installed);
     }
@@ -643,6 +657,8 @@ bool InstallerEngineGui::downloadPackages ( const QString &category )
         if (!downloadPackageItem(pkg,Package::DOC))
             return false;
         if (!downloadPackageItem(pkg,Package::SRC))
+            return false;
+        if (!downloadPackageItem(pkg,Package::DBG))
             return false;
     }
     return true;
@@ -752,6 +768,10 @@ bool InstallerEngineGui::removePackages ( const QString &category )
             return false;
         if ( all || isMarkedForRemoval ( pkg,Package::SRC ) )
             pkg->removeItem ( m_installer, Package::SRC );
+        if (m_canceled)
+            return false;
+        if ( all || isMarkedForRemoval ( pkg,Package::DBG ) )
+            pkg->removeItem ( m_installer, Package::DBG );
         m_removedPackages++;
     }
     return true;
@@ -799,6 +819,10 @@ bool InstallerEngineGui::installPackages ( const QString &_category )
             return false;
         if ( all || isMarkedForInstall ( pkg,Package::SRC ) )
             pkg->installItem ( m_installer, Package::SRC );
+        if (m_canceled)
+            return false;
+        if ( all || isMarkedForInstall ( pkg,Package::DBG ) )
+            pkg->installItem ( m_installer, Package::DBG );
         // @TODO: where to handle desktop icons creating
         m_installedPackages++;
     }
