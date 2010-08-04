@@ -3,10 +3,11 @@
 
 #include <QDialog>
 
-#include "ui_settingspage.h"
+namespace Ui {
+    class SettingsDialog;
+}
 #include "globalconfig.h"
 #include "settings.h"
-
 
 class SettingsPage : public QDialog
 {
@@ -23,7 +24,7 @@ private slots:
     void reject();
 
 private:
-    Ui::SettingsDialog ui;
+    Ui::SettingsDialog *ui;
     Settings &s;
 };
 
