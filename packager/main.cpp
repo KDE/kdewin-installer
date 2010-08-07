@@ -33,11 +33,12 @@
 #include <QUrl>
 #include <QDir>
 
-QString name, root, srcRoot, srcExclude, version, notes, type, destdir;
+QString name, root, srcRoot, symRoot, srcExclude, version, notes, type, destdir;
 QString checkSumMode = "md5";
 bool bComplete = false;
 QFileInfo rootDir;
 QFileInfo srcRootDir;
+QFileInfo symRootDir;
 bool strip = false;
 bool verbose = false;
 bool debugPackage = false;
@@ -205,7 +206,15 @@ int main(int argc, char *argv[])
         debugPackage = 1;
         args.removeAt(idx);
     }
-    
+
+    idx = args.indexOf("-symroot");
+    if(idx != -1 && idx < args.count() -1) {
+        symRoot = args[idx + 1];
+        symRootDir = QFileInfo(symRoot);
+        args.removeAt(idx + 1);
+        args.removeAt(idx);
+    }
+
     if (!useTemplate) {
         idx = args.indexOf("-special");
         if(idx != -1) {
@@ -275,7 +284,17 @@ int main(int argc, char *argv[])
 
     if(!srcRoot.isEmpty() &&(!srcRootDir.isDir() || !srcRootDir.isReadable()))
        printHelp(QString("Source Root path %1 is not accessible").arg(srcRoot));
-
+    
+    if (debugPackage)
+    {
+        if (symRoot.isEmpty())
+            printHelp(QString("Specify the root to the symbol files if you also provide -debug-package"));
+        else
+        if (!symRootDir.isDir() || !symRootDir.isReadable())
+        {
+            printHelp(QString("Symbol root path %1 is not accessible").arg(srcRoot));
+        }
+    }
 
     Packager *packager = useTemplate ?  new XmlTemplatePackager(name, version, notes) : new Packager(name, version, notes);
     if (!type.isEmpty())
@@ -286,6 +305,9 @@ int main(int argc, char *argv[])
 
     if (!srcExclude.isEmpty())
         packager->setSourceExcludes(srcExclude);
+
+    if (!symRoot.isEmpty())
+        packager->setSymbolsRoot(symRootDir.filePath());
 
     packager->setVerbose(verbose);
     packager->setWithDebugPackage(debugPackage);

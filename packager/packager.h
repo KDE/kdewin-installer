@@ -29,12 +29,13 @@
 
 class Packager {
     public:
-      enum Type { NONE = 0, BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8, DEBUG = 16, ALL = 15};
+      enum Type { NONE = 0, BIN = 1, LIB = 2, DOC = 4, SRC = 8, DBG = 16, DEBUG = 32, ALL = 31};
 
       Packager(const QString &packageName, const QString &packageVersion,const QString &notes=QString());
       ~Packager();
       
       void setSourceRoot(const QString &dir) { m_srcRoot = dir; }
+      void setSymbolsRoot(const QString &dir) { m_symRoot = dir; }
       void setSourceExcludes(const QString &excludes) { m_srcExcludes = excludes; }
       void setWithDebugPackage(bool mode) { m_debugPackage = mode; }
       void setCompressionMode(unsigned int mode) { m_compMode = (mode < 1 || mode > 2) ? 1 : mode; }
@@ -75,6 +76,7 @@ class Packager {
       QString m_notes;
       QString m_rootDir;
       QString m_srcRoot;
+      QString m_symRoot;
       QString m_srcExcludes;
       QString m_checkSumMode;
       QString m_type;
@@ -101,6 +103,9 @@ inline QDebug operator<<(QDebug out, Packager::Type c)
             break;
         case Packager::SRC:
             out << "source";
+            break;
+        case Packager::DBG:
+            out << "symbols";
             break;
         case Packager::NONE:
             out << "complete package";

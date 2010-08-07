@@ -400,6 +400,8 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
         packageType = "documentation";
     else if (type == Packager::SRC)
         packageType = "source";
+    else if (type == Packager::DBG)
+        packageType = "symbols";
     else if (type == Packager::ALL)
         packageType = "all";
             
@@ -417,6 +419,8 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
             packageType = "doc";
         else if (type == Packager::SRC)
             packageType = "src";
+        else if (type == Packager::DBG)
+            packageType = "dbg";
         else if (type == Packager::ALL)
             packageType = "all";
         part = m_currentPackage->partList[packageType];

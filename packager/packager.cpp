@@ -202,7 +202,7 @@ bool Packager::createZipFile(const QString &zipFile, const QString &filesRootDir
 }
 
 bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::Type type, const QString &root)
-{	
+{
 	QString dir = root.isEmpty() ? m_rootDir : root;
     QString exclude;
     fileList.clear();
@@ -305,6 +305,17 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 generateFileList(fileList, dir, "manifest", "*-doc.cmd" );
                 generateFileList(fileList, dir, "doc", "*.*");
                 generateFileList(fileList, dir, "man", "*.*");
+                return true;
+            case DBG:
+                generateFileList(fileList, dir, "manifest", "*-dbg.cmd" );
+                if (m_type == "vc80" || m_type == "vc90")
+                {
+                    generateFileList(fileList, dir, "", "*.pdb");
+                }
+                else if (m_type == "mingw" || m_type == "mingw4")
+                {
+                    generateFileList(fileList, dir, "", "*.sym");
+                }
                 return true;
             case SRC:
                 exclude = m_srcExcludes + " .git .svn CVS .#* *.rej *.orig *.bak";
@@ -437,7 +448,7 @@ bool Packager::makePackagePart(const QString &root, QList<InstallFile> &fileList
     info->shortDescription = m_notes;
     info->dependencies = m_dependencies;
     
-    generatePackageFileList(fileList, type);
+    generatePackageFileList(fileList, type, root);
     if (fileList.size() > 0)
     {
         if (m_verbose)
@@ -471,7 +482,8 @@ bool Packager::makePackage(const QString &root, const QString &destdir, bool bCo
         
     makePackagePart(root, fileList, manifestFiles, Packager::BIN, destdir);
     makePackagePart(root, fileList, manifestFiles, Packager::LIB, destdir);
-    makePackagePart(root, fileList, manifestFiles, Packager::DOC, destdir);    
+    makePackagePart(root, fileList, manifestFiles, Packager::DOC, destdir);
+    makePackagePart(m_symRoot, fileList, manifestFiles, Packager::DBG, destdir);
     makePackagePart(m_srcRoot.isEmpty() ? m_rootDir : m_srcRoot, fileList, manifestFiles, Packager::SRC, destdir);
     if(bComplete) {
         makePackagePart(root, fileList, manifestFiles, Packager::NONE, destdir);
@@ -512,6 +524,9 @@ QString Packager::getBaseFileName(Packager::Type type)
             break;
         case SRC:
             name += "-src";
+            break;
+        case DBG:
+            name += "-dbg";
             break;
         default:
             break;
