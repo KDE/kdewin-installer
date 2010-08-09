@@ -292,7 +292,7 @@ int main(int argc, char *argv[])
         else
         if (!symRootDir.isDir() || !symRootDir.isReadable())
         {
-            printHelp(QString("Symbol root path %1 is not accessible").arg(srcRoot));
+            printHelp(QString("Symbol root path %1 is not accessible").arg(symRoot));
         }
     }
 
