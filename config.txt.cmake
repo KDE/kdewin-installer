@@ -759,9 +759,9 @@
 ;------------------------------------------------------
 @package dbg_x86
 @category debug-tools
-@version 6.9.3.113
+@version 6.11.1.404
 @notes msvc Debugging Tools
-@url-bin http://msdl.microsoft.com/download/symbols/debuggers/dbg_x86_6.9.3.113.msi
+@url-bin http://msdl.microsoft.com/download/symbols/debuggers/dbg_x86_6.11.1.404.msi
 @nomd5
 
 @package regmon

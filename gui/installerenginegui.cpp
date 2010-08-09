@@ -306,7 +306,7 @@ void InstallerEngineGui::setInitialState ( QTreeWidgetItem &item, Package *avail
             if (available->hasType(Package::SRC))
                 setIcon(item,Package::SRC,packageStates.getState(available,Package::SRC),_nothing);
             if (available->hasType(Package::DBG))
-                setIcon(item,Package::SRC,packageStates.getState(available,Package::DBG),_nothing);
+                setIcon(item,Package::DBG,packageStates.getState(available,Package::DBG),_nothing);
         }
     }
     if (installed)
