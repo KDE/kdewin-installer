@@ -103,9 +103,9 @@ qt4_wrap_cpp(shared_sources_gui ${installer_shared_HEADERS})
 
 if(NOT BUILD_INSTALLER_THEME)
 add_library(shared-console STATIC ${shared_sources_console})
-target_link_libraries(shared-console ${QT_LIBRARIES} ${BZIP2_LIBRARIES} ${CURL_LIBRARIES} ${FILTERS_LIBRARIES} ${QUAZIP_LIBRARIES} ${QUA7ZIP_LIBRARIES} kernel32 user32 shell32 uuid ole32 advapi32 ws2_32 shlwapi psapi)
+target_link_libraries(shared-console ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTMAIN_LIBRARY} ${BZIP2_LIBRARIES} ${CURL_LIBRARIES} ${FILTERS_LIBRARIES} ${QUAZIP_LIBRARIES} ${QUA7ZIP_LIBRARIES} kernel32 user32 shell32 uuid ole32 advapi32 ws2_32 shlwapi psapi)
 endif(NOT BUILD_INSTALLER_THEME)
 
 add_library(shared-gui STATIC ${shared_sources_gui})
 set_target_properties(shared-gui PROPERTIES COMPILE_FLAGS "-DUSE_GUI")
-target_link_libraries(shared-gui ${QT_LIBRARIES} ${BZIP2_LIBRARIES} ${CURL_LIBRARIES} ${FILTERS_LIBRARIES} ${QUAZIP_LIBRARIES} ${QUA7ZIP_LIBRARIES} kernel32 user32 shell32 uuid ole32 advapi32 ws2_32 shlwapi psapi)
+target_link_libraries(shared-gui ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTMAIN_LIBRARY} ${BZIP2_LIBRARIES} ${CURL_LIBRARIES} ${FILTERS_LIBRARIES} ${QUAZIP_LIBRARIES} ${QUA7ZIP_LIBRARIES} kernel32 user32 shell32 uuid ole32 advapi32 ws2_32 shlwapi psapi)
