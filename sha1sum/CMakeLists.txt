@@ -5,6 +5,7 @@ add_definitions(
 
 include_directories(
     ${QT_INCLUDES}
+    ../shared
 )
 
 add_executable(sha1sum 

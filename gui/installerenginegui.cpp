@@ -35,6 +35,7 @@
 #include "installer.h"
 #include "downloaderprogress.h"
 #include "package.h"
+#include "packageinfo.h"
 #include "packagelist.h"
 #include "globalconfig.h"
 #include "database.h"

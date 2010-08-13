@@ -25,6 +25,7 @@
 #include "downloader.h"
 #include "globalconfig.h"
 #include "hintfile.h"
+#include "packageinfo.h"
 #include "packagelist.h"
 #include "misc.h"
 

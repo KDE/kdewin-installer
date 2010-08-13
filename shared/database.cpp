@@ -24,6 +24,7 @@
 #include "database.h"
 #include "hash.h"
 #include "package.h"
+#include "packageinfo.h"
 #include "packagelist.h"
 #include "misc.h"
 

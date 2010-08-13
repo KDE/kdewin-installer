@@ -134,7 +134,6 @@ add_subdirectory(3rdparty)
 include_directories(
   ${CMAKE_SOURCE_DIR}
   ${CMAKE_BINARY_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/shared
   $ENV{QMAKESPEC}
 )
 configure_file(${CMAKE_SOURCE_DIR}/config.h.cmake ${CMAKE_BINARY_DIR}/config.h)
@@ -190,6 +189,7 @@ set (GUI_INCLUDE_DIR      ${BZIP2_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/shared  ${CUR
 add_subdirectory(sha1sum)
 
 add_subdirectory(shared)
+
 if(NOT BUILD_INSTALLER_THEME)
 add_subdirectory(console)
 endif(NOT BUILD_INSTALLER_THEME)

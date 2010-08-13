@@ -32,7 +32,6 @@
 #include <QHash>
 #include <QtDebug>
 
-
 class QTextStream;
 class Downloader;
 class Installer;
@@ -285,21 +284,7 @@ public:
         return 0;
     }
 
-    // @TODO move the static methods to PackageInfo
-    /// separate package name, version, type and file format from a filename
-    static bool fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat);
-
-    /// separate package name and version from a string
-    static bool fromString(const QString &astring, QString &pkgName, QString &pkgVersion);
-
-    /// generate manifest file name
-    static QString manifestFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type);
-
-    /// generate version file name
-    static QString versionFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type);
-
-protected:
-    
+protected:    
     bool setError(const QString &text) { m_lastError = text; qCritical() << text; return false; }
 
     PackageItemType m_packages;
@@ -316,6 +301,7 @@ protected:
     Hash       m_hashType;     // contains the hash type for this package
     QString    m_lastError;    
     void       *m_userData[2];
+    static QString m_packageRoot;
     friend QDebug &operator<<(QDebug &, const Package &);
 };
 QDebug &operator<<(QDebug &, const Package::Type);
@@ -325,61 +311,4 @@ QDebug &operator<<(QDebug &, const QList<Package*> &);
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Package::Types);
 
-class PackageInfo {
-   public: 
-        QString name; 
-        QString architecture;
-        Package::Type type;
-        QString version; 
-        /// separate package name and version from a string
-        static inline bool fromString(const QString &astring, QString &pkgName, QString &pkgVersion)
-        {
-            return Package::fromString(astring,pkgName,pkgVersion);
-        }
-
-        /// separate package name and version from a string
-        static inline QString manifestFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type)
-        {
-            return Package::manifestFileName(pkgName,pkgVersion,type);
-        }
-
-        /// separate package name, version, type and file format from a filename
-        static bool fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat)
-        {
-            return Package::fromFileName(fileName, pkgName, pkgVersion, pkgType, pkgFormat);
-        }
-
-        static PackageInfo fromString(const QString &name, const QString &version=QString());
-
-        /// return package name from string without optional compiler 
-        static QString baseName(const QString &_name)
-        {
-            QString name = _name;
-            if (name.endsWith("-msvc"))
-                name.remove("-msvc");
-            if (name.endsWith("-vc90"))
-                name.remove("-vc90");
-            if (name.endsWith("-mingw4"))
-                name.remove("-mingw4");
-            if (name.endsWith("-mingw"))
-                name.remove("-mingw");
-            if (isX64Windows())
-                if (name.endsWith("-x64"))
-                    name.remove("-x64");
-            if (name.endsWith("-x86"))
-                name.remove("-x86");
-                    
-            return name;
-        }
-        
-        /// return the possible package endings
-        static QStringList endings()
-        {
-            QStringList list;
-            list << "msvc" << "vc90" << "mingw4" << "mingw";
-            if(isX64Windows()) list << "x64";
-            list << "x86";
-            return list;
-        }
-};
 #endif

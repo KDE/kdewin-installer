@@ -34,6 +34,7 @@ set(installer_shared_HEADERS
     installerupdate.h
     package.h
     packagecategorycache.h
+    packageinfo.h
     packagelist.h
     packagestates.h
     postprocessing.h
@@ -72,6 +73,7 @@ set(installer_shared_SOURCES
     misc.cpp
     package.cpp
     packagecategorycache.cpp
+    packageinfo.cpp
     packagelist.cpp
     packagestates.cpp
     postprocessing.cpp

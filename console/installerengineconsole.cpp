@@ -27,6 +27,7 @@
 #include "installerengineconsole.h"
 #include "installerprogress.h"
 #include "package.h"
+#include "packageinfo.h"
 #include "packagelist.h"
 #include "qio.h"
 

@@ -31,6 +31,7 @@
 #include "installerenginegui.h"
 #include "installerdialogs.h"
 #include "package.h"
+#include "packageinfo.h"
 #include "packagelist.h"
 #include "mirrors.h"
 #include "settings.h"
