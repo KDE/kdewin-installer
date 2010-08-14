@@ -44,6 +44,8 @@ public:
 protected slots:
     void setupEngine();
     void downloadPackages();
+    void downloadPackagesStage1();
+    void downloadPackagesStage2();
     void installPackages();
     void postProcessing();
     void finished();
@@ -53,6 +55,7 @@ protected:
 
 protected slots:
     void addHint(const QString &hint);
+    void setSubLabelHint(const QString &hint);
     void stop();
 
 private:
@@ -67,6 +70,7 @@ private:
     QPixmap next;
     QPixmap okay;
     QPixmap error;
+    int m_counter;
 };
 
 #endif

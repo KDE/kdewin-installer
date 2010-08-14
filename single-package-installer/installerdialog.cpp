@@ -97,11 +97,26 @@ void InstallerDialog::initItems()
     ui.label5->setText("");
     ui.label5->setVisible(false);
     ui.textLabel5->setVisible(false);
+    setSubLabelHint("");
 }
 
 void InstallerDialog::addHint(const QString &hint)
 {
     ui.hintLabel->setText(ui.hintLabel->text() + "\n" + hint);
+    QCoreApplication::processEvents();
+}
+
+void InstallerDialog::setSubLabelHint(const QString &hint)
+{
+    if (hint.isEmpty())
+    {
+        ui.subLabel->setVisible(false);
+    }
+    else
+    {
+        ui.subLabel->setVisible(true);
+        ui.subLabel->setText(hint);
+    }
     QCoreApplication::processEvents();
 }
 
@@ -198,7 +213,29 @@ void InstallerDialog::setupEngine()
 void InstallerDialog::downloadPackages()
 {
     setItem(2);
-    addHint(QString("I'm downloading up to %1 package depending on what downloaded earlier").arg(packagesToInstall.size()));
+    addHint(QString("I will download up to %1 package(s) depending on what has been downloaded earlier").arg(packagesToInstall.size()));
+    m_counter = 10;
+    QTimer::singleShot(1,this,SLOT(downloadPackagesStage1()));
+}
+
+void InstallerDialog::downloadPackagesStage1()
+{
+    if (m_counter-- > 0)
+    {
+        setSubLabelHint(QString("%1 seconds left until download starts").arg(m_counter+1));
+        QTimer::singleShot(1000,this,SLOT(downloadPackagesStage1()));
+    }
+    else
+    {
+        setSubLabelHint("");
+        QTimer::singleShot(1,this,SLOT(downloadPackagesStage2()));
+    }
+}
+
+void InstallerDialog::downloadPackagesStage2()
+{
+    setItem(2);
+    addHint(QString("I'm downloading package(s)"));
     if (engine.downloadPackages(packagesToInstall))
         QTimer::singleShot(1,this,SLOT(installPackages()));
     else
