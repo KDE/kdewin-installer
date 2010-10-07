@@ -49,8 +49,10 @@ public slots:
 
 protected:
     bool runCommand(int index, const QString &msg, const QString &app, const QStringList &params=QStringList());
+    bool checkKWinStartMenuVersion(const QByteArray &required);
 
     bool m_shouldQuit;
+    bool m_singleAppsInstallMode;
 };
 
 #endif // POSTPROCESSING_H

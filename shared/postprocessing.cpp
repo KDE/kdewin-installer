@@ -27,8 +27,42 @@
 #include <QProcess>
 #include <QCoreApplication>
 
-PostProcessing::PostProcessing(QObject *parent) : QObject(parent)
+PostProcessing::PostProcessing(QObject *parent) : QObject(parent), m_singleAppsInstallMode(false)
 {
+}
+
+bool PostProcessing::checkKWinStartMenuVersion(const QByteArray &required)
+{
+    QStringList versions;
+    QFileInfo f(Settings::instance().installDir()+"/bin/kwinstartmenu.exe");
+    QProcess p;
+    p.start(f.absoluteFilePath(), QStringList() << "--version");
+    if (!p.waitForStarted(3000))
+        return false;
+
+    m_shouldQuit = false;
+    while (p.state() == QProcess::Running && !m_shouldQuit)
+    {
+        QCoreApplication::processEvents();
+    }
+    bool noError = p.exitStatus() == QProcess::NormalExit && p.exitCode() == 0;
+    if (!noError)
+        return false;
+        
+    QByteArray out = p.readAllStandardOutput();
+    QByteArray kwinStartMenuVersion; 
+    QList<QByteArray> lines = out.split('\n');
+    for (int i = 0; i < lines.size(); ++i) {
+        if (lines.at(i).contains("winstartmenu"))
+        {
+            QList<QByteArray> pair = lines.at(i).split(':');
+            kwinStartMenuVersion = pair[1].trimmed();
+            break;
+        }
+    }
+    if (kwinStartMenuVersion.isEmpty())
+        return false;
+    return required >= kwinStartMenuVersion;
 }
 
 bool PostProcessing::runCommand(int index, const QString &msg, const QString &app, const QStringList &params)
@@ -63,14 +97,18 @@ bool PostProcessing::runCommand(int index, const QString &msg, const QString &ap
 
 bool PostProcessing::start()
 {
-    emit numberOfCommands(5);
+    emit numberOfCommands(4);
+    QStringList kwinStartmenuMainParameters;
+    if (m_singleAppsInstallMode && checkKWinStartMenuVersion("1.1"))
+        kwinStartmenuMainParameters << "--nocategories";
+    
     runCommand(0,"updating mime database","update-mime-database",QStringList() << QDir::fromNativeSeparators(Settings::instance().installDir()) + "/share/mime");
     if (!m_shouldQuit)
-        runCommand(1,"updating system configuration database","kbuildsycoca4");
+        runCommand(1,"updating system configuration database","kbuildsycoca4", QStringList() << "--noincremental");
     if (!m_shouldQuit)
-        runCommand(2,"deleting old windows start menu entries","kwinstartmenu",QStringList() <<  "--remove");
+        runCommand(2,"deleting old windows start menu entries","kwinstartmenu",QStringList() << kwinStartmenuMainParameters << "--remove");
     if (!m_shouldQuit)
-        runCommand(3,"creating new windows start menu entries","kwinstartmenu");
+        runCommand(3,"creating new windows start menu entries","kwinstartmenu", QStringList() << kwinStartmenuMainParameters << "--install");
     emit finished();
     return true;
 }
