@@ -1089,9 +1089,9 @@
 
 @package runtime-vc90
 @category devel-tools
-@version 9.0.21022.8
-@notes Microsoft Visual C++ 2008 Redistributable Package (x86)
-@url-bin http://download.microsoft.com/download/1/1/1/1116b75a-9ec3-481a-a3c8-1777b5381140/vcredist_x86.exe
+@version 9.0.30729.17
+@notes Microsoft Visual C++ 2008 SP1 Redistributable Package (x86)
+@url-bin http://download.microsoft.com/download/d/d/9/dd9a82d0-52ef-40db-8dab-795376989c03/vcredist_x86.exe
 @filename-bin vcredist_x86-vc90.exe
 @nomd5
 
