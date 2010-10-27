@@ -434,6 +434,8 @@ CompilerType toCompilerType(const QString &_type)
     QString type(_type.toLower());
     if (type == "vc90")
         return MSVC9;
+    if (type == "vc100")
+        return MSVC10;
     else if (type == "mingw4")
         return MinGW4;
     else if (type == "vc_x64")
@@ -446,6 +448,8 @@ const QString toString(CompilerType type)
 {
     if (type == MSVC9)
         return "vc90";
+    if (type == MSVC10)
+        return "vc100";
     else if (type == MinGW4)
         return "mingw4";
     else if (type == MSVC_X64)

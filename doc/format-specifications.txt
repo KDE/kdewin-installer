@@ -9,7 +9,7 @@ archive-filename = package-name file-compiler-type file-version file-package-typ
 md5sum-filename = package-name file-compiler-type file-version file-package-type archive-extension '.md5' ;
 
 package-name =  letter { ( letter | digit | '_' | '-' ) } ;
-file-compiler-type = ( '-' ('mingw' | 'msvc' | 'mingw4' | 'vc90' ) | '') ;
+file-compiler-type = ( '-' ('mingw' | 'msvc' | 'mingw4' | 'vc90' | 'vc100' ) | '') ;
 
 file-version = '-' (version | date | string ) ;         (* string means something specific *) 
 version = major-version-number '.' minor-version-number [ '.' patchlevel [ '-' number ] ] ;

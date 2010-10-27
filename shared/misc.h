@@ -36,7 +36,7 @@ typedef enum { RTUnspecified=0, Stable, Unstable, Nightly } ReleaseType;
 ReleaseType toReleaseType(const QString &type); 
 const QString toString(ReleaseType type);
 
-typedef enum { Unspecified=0, MinGW=1, MSVC = 2, MSVC8=2, MSVC9=3, MinGW4=4, MSVC_X64=5 } CompilerType;
+typedef enum { Unspecified=0, MinGW=1, MSVC = 2, MSVC8=2, MSVC9=3, MSVC10=4, MinGW4=5, MSVC_X64=6 } CompilerType;
 CompilerType toCompilerType(const QString &type); 
 const QString toString(CompilerType compilerType);
 

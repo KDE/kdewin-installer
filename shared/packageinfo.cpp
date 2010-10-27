@@ -264,6 +264,8 @@ QString PackageInfo::baseName(const QString &_name)
         name.remove("-msvc");
     if (name.endsWith("-vc90"))
         name.remove("-vc90");
+    if (name.endsWith("-vc100"))
+        name.remove("-vc100");
     if (name.endsWith("-mingw4"))
         name.remove("-mingw4");
     if (name.endsWith("-mingw"))
@@ -280,7 +282,7 @@ QString PackageInfo::baseName(const QString &_name)
 QStringList PackageInfo::endings()
 {
     QStringList list;
-    list << "msvc" << "vc90" << "mingw4" << "mingw";
+    list << "msvc" << "vc90" << "vc100" << "mingw4" << "mingw";
     if(isX64Windows()) list << "x64";
     list << "x86";
     return list;

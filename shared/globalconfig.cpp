@@ -34,7 +34,7 @@
 #endif
 
 
-QStringList packageTypes = QStringList() << "msvc" << "mingw" << "vc90" << "mingw4";
+QStringList packageTypes = QStringList() << "msvc" << "mingw" << "vc90" << "vc100" << "mingw4";
 
 GlobalConfig::GlobalConfig()
 {}

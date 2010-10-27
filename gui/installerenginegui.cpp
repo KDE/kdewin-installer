@@ -89,7 +89,7 @@ Package::Type columnToType ( int column )
         return Package::NONE;
 }
 
-enum iconType {_install, _autoinstall, _keepinstalled, _update, _remove, _nothing, _disable, _dirty };
+enum iconType {_icon_install, _icon_autoinstall, _icon_keepinstalled, _icon_update, _icon_remove, _icon_nothing, _icon_disable, _icon_dirty };
 
 
 static void setIcon ( QTreeWidgetItem &item, int column, iconType action )
@@ -118,55 +118,55 @@ static void setIcon ( QTreeWidgetItem &item, int column, iconType action )
 
 #ifndef DISABLE_ICONS
     switch ( action ) {
-    case _autoinstall:
+    case _icon_autoinstall:
         item.setIcon ( column, ai );
         return;
-    case _install:
+    case _icon_install:
         item.setIcon ( column, ii );
         return;
-    case _keepinstalled:
+    case _icon_keepinstalled:
         item.setIcon ( column, ki );
         return;
-    case _remove:
+    case _icon_remove:
         item.setIcon ( column, dl );
         return;
-    case _update:
+    case _icon_update:
         item.setIcon ( column, up );
         return;
-    case _nothing:
+    case _icon_nothing:
         item.setIcon ( column, ni );
         return;
-    case _disable:
+    case _icon_disable:
         item.setIcon ( column, id );
         return;
-    case _dirty:
+    case _icon_dirty:
         item.setIcon ( column, dr );
         return;
     }
 #else
     switch ( action ) {
-    case _autoinstall:
+    case _icon_autoinstall:
         item.setText ( column,"-I-" );
         return;
-    case _install:
+    case _icon_install:
         item.setText ( column,"-I-" );
         return;
-    case _keepinstalled:
+    case _icon_keepinstalled:
         item.setText ( column,"-i-" );
         return;
-    case _remove:
+    case _icon_remove:
         item.setText ( column,"-R-" );
         return;
-    case _update:
+    case _icon_update:
         item.setText ( column,"-U-" );
         return;
-    case _nothing:
+    case _icon_nothing:
         item.setText ( column,"---" );
         return;
-    case _disable:
+    case _icon_disable:
         item.setText ( column,"" );
         return;
-    case _dirty:
+    case _icon_dirty:
         item.setText ( column,"-#-" );
         return;
     }
@@ -180,13 +180,13 @@ static void setIcon ( QTreeWidgetItem &item, Package::Type type, stateType state
   iconType t = defType;
   switch( state ) {
     case _Install:
-      t = _install;
+      t = _icon_install;
       break;
     case _Update:
-      t = _update;
+      t = _icon_update;
       break;
     case _Remove:
-      t = _remove;
+      t = _icon_remove;
       break;
     default:
       break;
@@ -199,13 +199,13 @@ static void setIcon ( QTreeWidgetItem &item, int column, stateType state, iconTy
   iconType t = defType;
   switch( state ) {
     case _Install:
-      t = _install;
+      t = _icon_install;
       break;
     case _Update:
-      t = _update;
+      t = _icon_update;
       break;
     case _Remove:
-      t = _remove;
+      t = _icon_remove;
       break;
     default:
       break;
@@ -245,10 +245,10 @@ void InstallerEngineGui::setMetaPackageState(QTreeWidgetItem &item, int column)
         }
     }
     
-    if(dirty && c < item.childCount()) setIcon(item, column, _Nothing, _dirty);
-    else if(dirty) setIcon(item, column, _Nothing, _install);
-    else if(!dirty && c == item.childCount()) setIcon(item, column, _Nothing, _keepinstalled);
-    else setIcon(item, column, _Nothing, _nothing);
+    if(dirty && c < item.childCount()) setIcon(item, column, _Nothing, _icon_dirty);
+    else if(dirty) setIcon(item, column, _Nothing, _icon_install);
+    else if(!dirty && c == item.childCount()) setIcon(item, column, _Nothing, _icon_keepinstalled);
+    else setIcon(item, column, _Nothing, _icon_nothing);
 }
 
 void InstallerEngineGui::setEndUserInitialState ( QTreeWidgetItem &item, Package *available, Package *installed, int column )
@@ -257,19 +257,19 @@ void InstallerEngineGui::setEndUserInitialState ( QTreeWidgetItem &item, Package
     {
         if (installed->isInstalled(Package::BIN))
         {
-            setIcon(item,column,packageStates.getState(installed,Package::BIN),_update);
+            setIcon(item,column,packageStates.getState(installed,Package::BIN),_icon_update);
             packageStates.setState(available,Package::BIN,_Update);
         }
     }
     else if (installed)
     {
         if (installed->isInstalled(Package::BIN))
-            setIcon(item,column,packageStates.getState(installed,Package::BIN),_keepinstalled);
+            setIcon(item,column,packageStates.getState(installed,Package::BIN),_icon_keepinstalled);
     }
     else if (available)
     {
         if (available->hasType(Package::BIN))
-            setIcon(item,column,packageStates.getState(available,Package::BIN),_nothing);
+            setIcon(item,column,packageStates.getState(available,Package::BIN),_icon_nothing);
         else if (available->hasType(Package::META))
             setMetaPackageState(item, column);
     }
@@ -286,55 +286,55 @@ void InstallerEngineGui::setInitialState ( QTreeWidgetItem &item, Package *avail
     if (available)
     {
         if (available->hasType(Package::BIN))
-            setIcon(item,Package::BIN,packageStates.getState(available,Package::BIN),_nothing);
+            setIcon(item,Package::BIN,packageStates.getState(available,Package::BIN),_icon_nothing);
         if (m_displayMode == Developer)
         {
             if (available->hasType(Package::LIB))
-                setIcon(item,Package::BIN,packageStates.getState(available,Package::LIB),_nothing);
+                setIcon(item,Package::BIN,packageStates.getState(available,Package::LIB),_icon_nothing);
             if (available->hasType(Package::DOC))
-                setIcon(item,Package::BIN,packageStates.getState(available,Package::DOC),_nothing);
+                setIcon(item,Package::BIN,packageStates.getState(available,Package::DOC),_icon_nothing);
             if (available->hasType(Package::SRC))
-                setIcon(item,Package::SRC,packageStates.getState(available,Package::SRC),_nothing);
+                setIcon(item,Package::SRC,packageStates.getState(available,Package::SRC),_icon_nothing);
             if (available->hasType(Package::DBG))
-                setIcon(item,Package::DBG,packageStates.getState(available,Package::DBG),_nothing);
+                setIcon(item,Package::DBG,packageStates.getState(available,Package::DBG),_icon_nothing);
         }
         else if (m_displayMode == Single)
         {
             if (available->hasType(Package::LIB))
-                setIcon(item,Package::LIB,packageStates.getState(available,Package::LIB),_nothing);
+                setIcon(item,Package::LIB,packageStates.getState(available,Package::LIB),_icon_nothing);
             if (available->hasType(Package::DOC))
-                setIcon(item,Package::DOC,packageStates.getState(available,Package::DOC),_nothing);
+                setIcon(item,Package::DOC,packageStates.getState(available,Package::DOC),_icon_nothing);
             if (available->hasType(Package::SRC))
-                setIcon(item,Package::SRC,packageStates.getState(available,Package::SRC),_nothing);
+                setIcon(item,Package::SRC,packageStates.getState(available,Package::SRC),_icon_nothing);
             if (available->hasType(Package::DBG))
-                setIcon(item,Package::DBG,packageStates.getState(available,Package::DBG),_nothing);
+                setIcon(item,Package::DBG,packageStates.getState(available,Package::DBG),_icon_nothing);
         }
     }
     if (installed)
     {
         if (installed->isInstalled(Package::BIN))
-            setIcon(item,Package::BIN,packageStates.getState(installed,Package::BIN),_keepinstalled);
+            setIcon(item,Package::BIN,packageStates.getState(installed,Package::BIN),_icon_keepinstalled);
         if (m_displayMode == Developer)
         {
             if (installed->isInstalled(Package::LIB))
-                setIcon(item,Package::BIN,packageStates.getState(installed,Package::BIN),_keepinstalled);
+                setIcon(item,Package::BIN,packageStates.getState(installed,Package::BIN),_icon_keepinstalled);
             if (installed->isInstalled(Package::DOC))
-                setIcon(item,Package::BIN,packageStates.getState(installed,Package::BIN),_keepinstalled);
+                setIcon(item,Package::BIN,packageStates.getState(installed,Package::BIN),_icon_keepinstalled);
             if (installed->isInstalled(Package::SRC))
-                setIcon(item,Package::SRC,packageStates.getState(installed,Package::BIN),_keepinstalled);
+                setIcon(item,Package::SRC,packageStates.getState(installed,Package::BIN),_icon_keepinstalled);
             if (installed->isInstalled(Package::DBG))
-                setIcon(item,Package::DBG,packageStates.getState(installed,Package::BIN),_keepinstalled);
+                setIcon(item,Package::DBG,packageStates.getState(installed,Package::BIN),_icon_keepinstalled);
         }
         else if(m_displayMode == Single)
         {
             if (installed->isInstalled(Package::LIB))
-                setIcon(item,Package::LIB,_keepinstalled);
+                setIcon(item,Package::LIB,_icon_keepinstalled);
             if (installed->isInstalled(Package::DOC))
-                setIcon(item,Package::DOC,_keepinstalled);
+                setIcon(item,Package::DOC,_icon_keepinstalled);
             if (installed->isInstalled(Package::SRC))
-                setIcon(item,Package::SRC,_keepinstalled);
+                setIcon(item,Package::SRC,_icon_keepinstalled);
             if (installed->isInstalled(Package::DBG))
-                setIcon(item,Package::DBG,_keepinstalled);
+                setIcon(item,Package::DBG,_icon_keepinstalled);
         }
     }
 }
@@ -370,33 +370,33 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
     else
         currentState = _Nothing;
     stateType newState = _Nothing;
-    iconType iconState = _nothing;
+    iconType iconState = _icon_nothing;
 
     if (currentState == _Nothing)
     {
         if (isAvailable && isInstalled && !sameVersion)
         {
-            iconState = _update;
+            iconState = _icon_update;
             newState = _Update;
         }
         else if (isAvailable && isInstalled && sameVersion)
         {
-            iconState = _remove;
+            iconState = _icon_remove;
             newState = _Remove;
         }
         else if (!isAvailable && isInstalled)
         {
-            iconState = _remove;
+            iconState = _icon_remove;
             newState = _Remove;
         }
         else if (isAvailable && !isInstalled)
         {
-            iconState = _install;
+            iconState = _icon_install;
             newState = _Install;
         }
         else if (!isAvailable && !isInstalled)
         {
-            iconState = _disable;
+            iconState = _icon_disable;
             newState = _Nothing;
         }
     }
@@ -404,7 +404,7 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
     {
         if (isAvailable && isInstalled && !sameVersion)
         {
-            iconState = _remove;
+            iconState = _icon_remove;
             newState = _Remove;
         }
     }
@@ -412,7 +412,7 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
     {
         if (isAvailable && isInstalled && !sameVersion)
         {
-            iconState = _update;
+            iconState = _icon_update;
             newState = _Update;
         }
     }
@@ -420,7 +420,7 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
     {
         if (isAvailable && !isInstalled)
         {
-            iconState = _nothing;
+            iconState = _icon_nothing;
             newState = _Nothing;
         }
     }
@@ -428,7 +428,7 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
     {
         if (isInstalled)
         {
-            iconState =_keepinstalled;
+            iconState =_icon_keepinstalled;
             newState = _Nothing;
         }
     }

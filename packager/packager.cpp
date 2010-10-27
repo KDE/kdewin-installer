@@ -308,7 +308,7 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 return true;
             case DBG:
                 generateFileList(fileList, dir, "manifest", "*-dbg.cmd" );
-                if (m_type == "vc80" || m_type == "vc90")
+                if (m_type == "vc80" || m_type == "vc90" || m_type == "vc100")
                 {
                     generateFileList(fileList, dir, "", "*.pdb");
                 }
