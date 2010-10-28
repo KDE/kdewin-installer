@@ -135,6 +135,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}
   ${CMAKE_BINARY_DIR}
   $ENV{QMAKESPEC}
+  ${CMAKE_SOURCE_DIR}/shared
 )
 configure_file(${CMAKE_SOURCE_DIR}/config.h.cmake ${CMAKE_BINARY_DIR}/config.h)
 
