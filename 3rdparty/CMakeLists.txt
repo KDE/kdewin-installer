@@ -26,12 +26,10 @@ if (NOT STATIC_BUILD)
     if (CURL_FOUND)
         set (CURL_LIBRARIES ${CURL_LIBRARY} CACHE FILEPATH "library" FORCE)
     endif (CURL_FOUND)
-endif (NOT STATIC_BUILD)
-    
-if (NOT CURL_FOUND)
+else (NOT STATIC_BUILD)
     message(STATUS "using local static curl library")
     add_subdirectory(curl)
-endif (NOT CURL_FOUND)
+endif (NOT STATIC_BUILD)
 
 #-------------------------------------------------------------------
 # QUAZIP library
