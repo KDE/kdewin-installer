@@ -179,24 +179,24 @@ int main(int argc, char *argv[])
 
     if (!options.rootdir.isEmpty())
         Settings::instance().setInstallDir(options.rootdir);
-	else
-	{	
-		QFileInfo f(QCoreApplication::applicationDirPath() + "/../manifest");
-		if (f.exists() && f.isDir())
-		{
-			Settings::instance().setInstallDir(f.canonicalPath());
-		}	
-		else 
-		{
-			f.setFile(QCoreApplication::applicationDirPath() + "/manifest");
-			if (f.exists() && f.isDir())
-				Settings::instance().setInstallDir(f.canonicalPath());
-		}
-	}
+    else
+    {    
+        QFileInfo f(QCoreApplication::applicationDirPath() + "/../manifest");
+        if (f.exists() && f.isDir())
+        {
+            Settings::instance().setInstallDir(f.canonicalPath());
+        }    
+        else 
+        {
+            f.setFile(QCoreApplication::applicationDirPath() + "/manifest");
+            if (f.exists() && f.isDir())
+                Settings::instance().setInstallDir(f.canonicalPath());
+        }
+    }
 
     if (options.verbose)
         qOut() << "using root " << Settings::instance().installDir() << "\n";
-		
+        
     engine.initLocal();
 
     // query needs setting database root 
