@@ -175,11 +175,28 @@ int main(int argc, char *argv[])
         InstallerEngine::defaultConfigURL = Settings::instance().mirrorWithReleasePath().toString();
 
     if (options.verbose)
-        qOut() << "using url" << InstallerEngine::defaultConfigURL;
+        qOut() << "using url " << InstallerEngine::defaultConfigURL << "\n";
 
     if (!options.rootdir.isEmpty())
         Settings::instance().setInstallDir(options.rootdir);
+	else
+	{	
+		QFileInfo f(QCoreApplication::applicationDirPath() + "/../manifest");
+		if (f.exists() && f.isDir())
+		{
+			Settings::instance().setInstallDir(f.canonicalPath());
+		}	
+		else 
+		{
+			f.setFile(QCoreApplication::applicationDirPath() + "/manifest");
+			if (f.exists() && f.isDir())
+				Settings::instance().setInstallDir(f.canonicalPath());
+		}
+	}
 
+    if (options.verbose)
+        qOut() << "using root " << Settings::instance().installDir() << "\n";
+		
     engine.initLocal();
 
     // query needs setting database root 
