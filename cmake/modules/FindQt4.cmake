@@ -659,12 +659,15 @@ IF (QT4_QMAKE_FOUND)
   IF (QT_LIBRARY_DIR AND (NOT QT_QTCORE_INCLUDE_DIR OR NOT QT_HEADERS_DIR OR  QT_QMAKE_CHANGED))
       _qt4_query_qmake(QT_INSTALL_HEADERS qt_headers)
       SET(QT_QTCORE_INCLUDE_DIR NOTFOUND)
-      FIND_PATH(QT_QTCORE_INCLUDE_DIR QtCore
-                HINTS ${qt_headers}
-                ${QT_LIBRARY_DIR}/QtCore.framework/Headers
-                PATH_SUFFIXES QtCore
-        )
-
+      
+      #FIND_PATH(QT_QTCORE_INCLUDE_DIR QtCore
+      #          HINTS ${qt_headers}
+      #          ${QT_LIBRARY_DIR}/QtCore.framework/Headers
+      #         PATH_SUFFIXES QtCore
+      #  )
+      SET (QT_QTCORE_INCLUDE_DIR "${qt_headers}/QtCore")
+      
+      message(STATUS "!!!! fixed wrong setting of QT_QTCORE_INCLUDE_DIR to qmake result - " ${QT_QTCORE_INCLUDE_DIR})
       # Set QT_HEADERS_DIR based on finding QtCore header
       IF(QT_QTCORE_INCLUDE_DIR)
         IF(QT_USE_FRAMEWORKS)
