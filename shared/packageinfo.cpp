@@ -160,7 +160,21 @@ bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QStrin
 
     const QStringList parts = baseName.split('-');
 
-    if (parts.size() == 6)
+    if (parts.size() == 8)
+    {
+        // a-b-c-version-patchlevel-type
+        pkgName = parts[0] + "-" + parts[1] + "-" + parts[2] + "-" + parts[3] + "-" + parts[4];
+        pkgVersion = parts[5] + "-" + parts[6];
+        pkgType = parts[7];
+    }
+    else if (parts.size() == 7)
+    {
+        // a-b-c-version-patchlevel-type
+        pkgName = parts[0] + "-" + parts[1] + "-" + parts[2] + "-" + parts[3];
+        pkgVersion = parts[4] + "-" + parts[5];
+        pkgType = parts[6];
+    }
+    else if (parts.size() == 6)
     {
         // a-b-c-version-patchlevel-type
         pkgName = parts[0] + "-" + parts[1] + "-" + parts[2];
