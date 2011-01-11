@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2008 Ralf Habacker <ralf.habacker@freenet.de> 
+** Copyright (C) 2008-2010 Ralf Habacker <ralf.habacker@freenet.de> 
 ** All rights reserved.
 **
 ** This file is part of the KDE installer for windows
@@ -37,15 +37,23 @@ UserCompilerModePage::UserCompilerModePage() : InstallWizardPage(0)
     setSubTitle(statusTip());
 
     if (!isX64Windows())
+    {
         ui.compilerMSVCX64->setVisible(false);
-
+        ui.compilerMinGW4_W64->setVisible(false);
+    }
+    
     // logical grouping isn't available in the designer yet :-P
     QButtonGroup *groupA = new QButtonGroup(this);
     groupA->addButton(ui.compilerMinGW4);
-    groupA->addButton(ui.compilerMSVC);
+    groupA->addButton(ui.compilerMinGW4_W32);
+    groupA->addButton(ui.compilerMSVC9);
+    groupA->addButton(ui.compilerMSVC10);
     if (isX64Windows())
+    {
+        groupA->addButton(ui.compilerMinGW4_W64);
         groupA->addButton(ui.compilerMSVCX64);
-
+    }
+    
     QButtonGroup *groupB = new QButtonGroup(this);
     groupB->addButton(ui.installModeEndUser);
     groupB->addButton(ui.installModePackageManager);
@@ -80,10 +88,19 @@ bool UserCompilerModePage::validatePage()
 
     if (ui.compilerMinGW4->isChecked())
         s.setCompilerType(MinGW4);
-    if (ui.compilerMSVC->isChecked())
-        s.setCompilerType(MSVC);
-    if (isX64Windows() && ui.compilerMSVCX64->isChecked())
-        s.setCompilerType(MSVC_X64);
+    else if (ui.compilerMinGW4_W32->isChecked())
+        s.setCompilerType(MinGW4_W32);
+    else if (ui.compilerMSVC9->isChecked())
+        s.setCompilerType(MSVC9);
+    else if (ui.compilerMSVC10->isChecked())
+        s.setCompilerType(MSVC10);
+    else if (isX64Windows())
+    {
+        if (ui.compilerMSVCX64->isChecked())
+            s.setCompilerType(MSVC_X64);
+        else if (ui.compilerMinGW4_W64->isChecked())
+            s.setCompilerType(MinGW4_W64);
+    }
     return true;
 }
 
@@ -93,15 +110,23 @@ void UserCompilerModePage::setCompilerMode(bool EndUserMode)
     switch (s.compilerType()) 
     {
         case MinGW4: ui.compilerMinGW4->setChecked(true); break;
-        case MSVC: ui.compilerMSVC->setChecked(true); break;
+        case MinGW4_W32: ui.compilerMinGW4_W32->setChecked(true); break;
+        case MinGW4_W64: ui.compilerMinGW4_W64->setChecked(true); break;
+        case MSVC9: ui.compilerMSVC9->setChecked(true); break;
+        case MSVC10: ui.compilerMSVC10->setChecked(true); break;
         case MSVC_X64: ui.compilerMSVCX64->setChecked(true); break;
-        default: ui.compilerMSVC->setChecked(true); break;
+        default: ui.compilerMSVC10->setChecked(true); break;
     }
     bool state = !Database::isAnyPackageInstalled(s.installDir());
     ui.compilerMinGW4->setEnabled(state);
-    ui.compilerMSVC->setEnabled(state);
+    ui.compilerMinGW4_W32->setEnabled(state);
+    ui.compilerMSVC9->setEnabled(state);
+    ui.compilerMSVC10->setEnabled(state);
     if (isX64Windows())
+    {
     	ui.compilerMSVCX64->setEnabled(state);
+        ui.compilerMinGW4_W64->setEnabled(state);
+    }
 }
 
 void UserCompilerModePage::slotModeButtonClicked(int id)
