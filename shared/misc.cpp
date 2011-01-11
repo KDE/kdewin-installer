@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2006-2009 Ralf Habacker. All rights reserved.
+** Copyright (C) 2006-2010 Ralf Habacker. All rights reserved.
 ** Copyright (C) 2006-2007 Christian Ehrlicher <ch.ehrlicher@gmx.de>
 **
 ** This file is part of the KDE installer for windows
@@ -438,6 +438,8 @@ CompilerType toCompilerType(const QString &_type)
         return MSVC10;
     else if (type == "mingw4")
         return MinGW4;
+    else if (type == "x86-mingw4")
+        return MinGW4_W32;
     else if (type == "vc_x64")
         return MSVC_X64;
     else 
@@ -448,10 +450,12 @@ const QString toString(CompilerType type)
 {
     if (type == MSVC9)
         return "vc90";
-    if (type == MSVC10)
+    else if (type == MSVC10)
         return "vc100";
     else if (type == MinGW4)
         return "mingw4";
+    else if (type == MinGW4_W32)
+        return "x86-mingw4";
     else if (type == MSVC_X64)
         return "vc_x64";
     else

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2006-2009 Ralf Habacker. All rights reserved.
+** Copyright (C) 2006-2010 Ralf Habacker. All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
@@ -36,7 +36,7 @@ typedef enum { RTUnspecified=0, Stable, Unstable, Nightly } ReleaseType;
 ReleaseType toReleaseType(const QString &type); 
 const QString toString(ReleaseType type);
 
-typedef enum { Unspecified=0, MinGW=1, MSVC = 2, MSVC8=2, MSVC9=3, MSVC10=4, MinGW4=5, MSVC_X64=6 } CompilerType;
+typedef enum { Unspecified=0, MinGW=1, MSVC=2, MSVC8=2, MSVC9=3, MSVC10=4, MinGW4=5, MSVC_X64=6, MinGW4_W32=7 } CompilerType;
 CompilerType toCompilerType(const QString &type); 
 const QString toString(CompilerType compilerType);
 
