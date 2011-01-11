@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2005-2009 Ralf Habacker <ralf.habacker@freenet.de>
+** Copyright (C) 2005-2010 Ralf Habacker <ralf.habacker@freenet.de>
 ** Copyright (C) 2008 Christian Ehrlicher <ch.ehrlicher@gmx.de>
 ** All rights reserved.
 **
@@ -231,68 +231,14 @@ bool Package::PackageItem::setUrlAndFileName(const QUrl &_url, const QString &fn
 
 bool Package::PackageItem::setContentType(const QString &type)
 {
-    QString ct = type.toLower();
-    if(ct == "bin")
-    {
-        m_contentType = BIN;
-        return true;
-    }
-    else if(ct == "lib")
-    {
-        m_contentType = LIB;
-        return true;
-    }
-    else if(ct == "doc")
-    {
-        m_contentType = DOC;
-        return true;
-    }
-    else if(ct == "src")
-    {
-        m_contentType = SRC;
-        return true;
-    }
-    else if(ct == "dbg")
-    {
-        m_contentType = DBG;
-        return true;
-    }
-    else if(ct == "meta")
-    {
-        m_contentType = META;
-        return true;
-    }
-    else
-    {
-        m_contentType = NONE;
-        return false;
-    }
+    m_contentType = stringToType(type.toLower());
+	return m_contentType != NONE;
 }
 #endif
 
-static QString typeToString(Package::Type type)
-{
-    switch(type) {
-        case Package::BIN:   return "BIN";
-        case Package::LIB:   return "LIB";
-        case Package::DOC:   return "DOC";
-        case Package::SRC:   return "SRC";
-        case Package::DBG:   return "DBG";
-        case Package::META:  return "META";
-        default: return "unknown" + QString::number(type);
-    }
-}
 QDebug &operator<<(QDebug &out, const Package::Type c)
 {
-    switch(c) {
-        case Package::BIN:   out << "BIN";  break;
-        case Package::LIB:   out << "LIB";  break;
-        case Package::DOC:   out << "DOC";  break;
-        case Package::SRC:   out << "SRC";  break;
-        case Package::DBG:   out << "DBG";  break;
-        case Package::META:  out << "META";  break;
-        default: out << "unknown" + QString::number(c);
-    }
+	out <<  typeToString(c);
     return out;
 }
 
@@ -768,15 +714,49 @@ void Package::addDeps(const QStringList &deps)
 }
 #endif
 
-QString Package::typeToString(Package::Type type)
+Package::Type stringToType(const QString &type)
+{
+    QString ct = type.toLower();
+    if(ct == "bin")
+    {
+        return Package::BIN;
+    }
+    else if(ct == "lib")
+    {
+        return Package::LIB;
+    }
+    else if(ct == "doc")
+    {
+        return Package::DOC;
+    }
+    else if(ct == "src")
+    {
+        return Package::SRC;
+    }
+    else if(ct == "dbg")
+    {
+        return Package::DBG;
+    }
+    else if(ct == "meta")
+    {
+        return Package::META;
+    }
+    else
+    {
+        return Package::NONE;
+    }
+}
+
+QString typeToString(Package::Type type)
 {
     switch(type) {
-        case BIN:    return "bin";
-        case LIB:    return "lib";
-        case DOC:    return "doc";
-        case SRC:    return "src";
-        case DBG:    return "dbg";
-        case ALL:    return "all";
+        case Package::BIN:    return "bin";
+        case Package::LIB:    return "lib";
+        case Package::DOC:    return "doc";
+        case Package::SRC:    return "src";
+        case Package::DBG:    return "dbg";
+        case Package::META:   return "meta";
+        case Package::ALL:    return "all";
         default:    return "unknown";
     }
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2005-2008 Ralf Habacker. All rights reserved.
+** Copyright (C) 2005-2010 Ralf Habacker. All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
@@ -237,9 +237,6 @@ public:
     /// uninstall a package item
     bool removeItem(Installer *installer, Package::Type type);
 
-    /// return specific type as string
-    static QString typeToString(Package::Type type);
-
     /// set Install state of a package type (e.g. from gnuwin32 manifests)
     QT_DEPRECATED void setInstalled(const Package &other);
 
@@ -310,5 +307,12 @@ QDebug &operator<<(QDebug &, const Package &);
 QDebug &operator<<(QDebug &, const QList<Package*> &);
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Package::Types);
+
+/// return specific type string as type
+Package::Type stringToType(const QString &type);
+
+/// return specific type as string
+QString typeToString(Package::Type type);
+
 
 #endif
