@@ -208,21 +208,11 @@ void InstallerEngineConsole::listPackage(const QStringList &list)
         listPackage(pkgName);
 }
 
-bool includePackage(Package *p)
+bool InstallerEngineConsole::includePackage(CompilerType compilerType, const QString &name)
 {
-    if (Settings::instance().compilerType() == MinGW && (p->name().contains("-msvc") || p->name().contains("-mingw4"))
-        || Settings::instance().compilerType() == MSVC && p->name().contains("-mingw")
-        || Settings::instance().compilerType() == MinGW4 && (p->name().contains("-mingw") && !p->name().contains("-mingw4") || p->name().contains("-msvc")) )
-        return false;
-    else
-        return true;
-}
-
-bool includePackage(const QString &p)
-{
-    if (Settings::instance().compilerType() == MinGW && (p.contains("-msvc") || p.contains("-mingw4"))
-        || Settings::instance().compilerType() == MSVC && p.contains("-mingw")
-        || Settings::instance().compilerType() == MinGW4 && (p.contains("-mingw") && !p.contains("-mingw4") || p.contains("-msvc")))
+   if (compilerType == MinGW && (name.contains("-msvc") || name.contains("-mingw4"))
+        || compilerType == MSVC && name.contains("-mingw")
+        || compilerType == MinGW4 && (name.contains("-mingw") && !name.contains("-mingw4") || name.contains("-msvc")) )
         return false;
     else
         return true;
@@ -260,7 +250,7 @@ void InstallerEngineConsole::listPackageURLs()
     QList <Package*> list = m_packageResources->packages(); 
     Q_FOREACH(Package *p, list)
     {
-        if (includePackage(p))
+        if (includePackage(Settings::instance().compilerType(),p->name()))
             printPackageURLs(p);
     }
 }
@@ -269,7 +259,7 @@ void InstallerEngineConsole::listPackageURLs(const QString &pkgName)
 {
     init();
     Package *p = m_packageResources->getPackage(pkgName); 
-    if (includePackage(p))
+    if (includePackage(Settings::instance().compilerType(),p->name()))
         printPackageURLs(p);
 }
 
@@ -278,7 +268,7 @@ void InstallerEngineConsole::listPackageURLs(const QStringList &list)
     init();
     Q_FOREACH(const QString &pkgName, list)
     {
-        if (includePackage(pkgName))
+        if (includePackage(Settings::instance().compilerType(),pkgName))
             listPackageURLs(pkgName);
     }
 }
