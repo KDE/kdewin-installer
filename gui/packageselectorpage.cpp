@@ -45,6 +45,7 @@
 #include <QTreeWidget>
 #include <QLabel>
 #include <QHBoxLayout>
+#include <QRegExp>
 
 const int NameColumn = 0;
 const int availableVersionColumn = 1;
@@ -265,13 +266,19 @@ void PackageSelectorPage::setWidgetData( QString categoryName )
     {
         QString name = availablePackage->name();
         if ( ( categoryName == "mingw"  || s.compilerType() == MinGW )
-                && ( name.endsWith ( QLatin1String( "-msvc" ) ) || name.endsWith ( QLatin1String( "-vc90" ) ) || name.endsWith ( QLatin1String( "-mingw4" ) ) ) )
+            &&  QRegExp(".*-(msvc|vc90|vc100|mingw4)$").exactMatch(name) )
             continue;
         else if ( ( categoryName == "mingw4"  || s.compilerType() == MinGW4 )
-                && ( name.endsWith ( QLatin1String( "-mingw" ) ) || name.endsWith ( QLatin1String( "-msvc" ) ) || name.endsWith ( QLatin1String( "-vc90" ) ) ) )
+                && QRegExp(".*-(mingw|x86-mingw4|msvc|vc90|vc100)$" ).exactMatch(name) )
             continue;
-        else if ( ( categoryName == "msvc"  || s.compilerType() == MSVC )
-                  && ( name.endsWith ( QLatin1String ( "-mingw" ) ) || name.endsWith ( QLatin1String ( "-mingw4" ) )) )
+        else if ( ( categoryName == "mingw4"  || s.compilerType() == MinGW4_W32 )
+                && ( QRegExp(".*-(mingw|mingw4|msvc|vc90|vc100)$" ).exactMatch(name) && !QRegExp(".*-x86-mingw4$" ).exactMatch(name) ) )
+            continue;
+        else if ( ( categoryName == "msvc"  || s.compilerType() == MSVC9 )
+                  && QRegExp(".*-(mingw|mingw4|vc100)$" ).exactMatch(name) )
+            continue;
+        else if ( ( categoryName == "msvc"  || s.compilerType() == MSVC10 )
+                  && QRegExp(".*-(mingw|mingw4|msvc|vc90)$" ).exactMatch(name)  )
             continue;
         packageList << availablePackage;
     }

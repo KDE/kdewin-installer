@@ -45,6 +45,7 @@
 #include <QSplitter>
 #include <QTextEdit>
 #include <QTreeWidget>
+#include <QRegExp>
 
 extern InstallerEngineGui *engine;
 typedef enum { C_NAME, C_ACTION, C_AVAILABLE, C_INSTALLED, C_NOTES,  /* always leave this item at the end */ C_COLUMNCOUNT } columnvalue;
@@ -123,34 +124,38 @@ void EndUserPackageSelectorPage::setWidgetData()
         {
             QString name = instPackage->name();
             Package *p = engine->packageResources()->getPackage(name);
-            
+
             if (!p) {
                 packageList[PackageInfo::baseName(name)] = instPackage;
             }
         }
     }
-    
+
     Settings &s = Settings::instance();
     Q_FOREACH(QString categoryName, selectedCategories) 
     {
         Q_FOREACH(Package *availablePackage,categoryCache.packages(categoryName,*engine->packageResources()))
         {
             QString name = availablePackage->name();
-            if ( ( categoryName == "mingw"  || s.compilerType() == MinGW )
-                    && ( name.endsWith ( QLatin1String( "-msvc" ) ) || name.endsWith ( QLatin1String( "-vc90" ) ) 
-                      || name.endsWith ( QLatin1String( "-mingw4" ) ) || name.endsWith ( QLatin1String( "-vc100" ) ) ) )
-                continue;
-            else if ( ( categoryName == "msvc"  || s.compilerType() == MSVC )
-                      && ( name.endsWith ( QLatin1String ( "-mingw" ) ) || name.endsWith( QLatin1String( "-mingw4" ) ) ) )
-                continue;
-            else if ( ( categoryName == "mingw4"  || s.compilerType() == MinGW4 )
-                    && ( name.endsWith ( QLatin1String( "-msvc" ) ) || name.endsWith ( QLatin1String( "-vc90" ) ) 
-                      || name.endsWith ( QLatin1String( "-mingw" ) ) || name.endsWith ( QLatin1String( "-vc100" ) ) ) )
-                continue;
+        if ( ( categoryName == "mingw"  || s.compilerType() == MinGW )
+            &&  QRegExp(".*-(msvc|vc90|vc100|mingw4)$").exactMatch(name) )
+            continue;
+        else if ( ( categoryName == "mingw4"  || s.compilerType() == MinGW4 )
+                && QRegExp(".*-(mingw|x86-mingw4|msvc|vc90|vc100)$" ).exactMatch(name) )
+            continue;
+        else if ( ( categoryName == "mingw4"  || s.compilerType() == MinGW4_W32 )
+                && ( QRegExp(".*-(mingw|mingw4|msvc|vc90|vc100)$" ).exactMatch(name) && !QRegExp(".*-x86-mingw4$" ).exactMatch(name) ) )
+            continue;
+        else if ( ( categoryName == "msvc"  || s.compilerType() == MSVC9 )
+                  && QRegExp(".*-(mingw|mingw4|vc100)$" ).exactMatch(name) )
+            continue;
+        else if ( ( categoryName == "msvc"  || s.compilerType() == MSVC10 )
+                  && QRegExp(".*-(mingw|mingw4|msvc|vc90)$" ).exactMatch(name)  )
+            continue;
             packageList[PackageInfo::baseName(name)] = availablePackage;
         }
     }
-    
+
     // go through all metaPackages now
     Q_FOREACH(QString metaPackage, engine->globalConfig()->metaPackages().keys())
     {
@@ -190,7 +195,7 @@ void EndUserPackageSelectorPage::setWidgetData()
             }
         }
     }
-    
+
     Q_FOREACH(Package *availablePackage,packageList.values())
     {
         if (!includePackage(availablePackage->name(),m_displayType))
@@ -226,7 +231,7 @@ QTreeWidgetItem *EndUserPackageSelectorPage::addPackageToTree(Package *available
     QTreeWidgetItem *item = new QTreeWidgetItem ( parent, QList<QString>::fromVector( data ) );
     // save real package name for selection code
     item->setData(C_ACTION, Qt::StatusTipRole, availablePackage->name());
-    
+
     // in case the package is a meta package, we need to check whether the subpackages are installed -> fix that after this function
     engine->setEndUserInitialState(*item, availablePackage, installedPackage, C_ACTION);
     item->setText(C_NOTES, availablePackage->notes());
@@ -268,7 +273,7 @@ void EndUserPackageSelectorPage::preSelectPackages(const QString &package)
     QString languageCode = b[0];
     QStringList searchCodes = QStringList() << systemCode << languageCode;
     QString pattern = package + "-%1";
-  
+
     bool found = false;
     foreach(QString code, searchCodes)
     {
@@ -345,7 +350,7 @@ void EndUserPackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
         {
             int i = 0;
             QString packageName;
-            
+
             // try to find the childItems which are connected to this metaPackage
             for(; i < item->childCount(); ++i)
             {
@@ -354,7 +359,7 @@ void EndUserPackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
                     break;
             }
             if(i == item->childCount()) continue;
-    
+
             QString _installedVersion = item->child(i)->text ( C_INSTALLED );
             QString _availableVersion = item->child(i)->text ( C_AVAILABLE );
 
@@ -362,7 +367,7 @@ void EndUserPackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
             Package *ap = engine->getPackageByName( packageName, _availableVersion );
 
             if(!ap && !ip) continue;
-            
+
             // switch state for the childItem
             if ( column == C_ACTION) engine->setNextState(*item->child(i), ap, ip, Package::BIN, C_ACTION, true);
         }
@@ -434,14 +439,14 @@ void EndUserPackageSelectorPage::slotFilterTextChanged(const QString &text)
         if (!list.contains(item))
             list.append(item);
     }
-    
+
     Q_FOREACH(QTreeWidgetItem *item, list)
     {
         QTreeWidgetItem *parent = item->parent();
         if (!list.contains(parent) && parent != tree->invisibleRootItem())
             list.append(parent);
     }
-    
+
     for(int i = 0; i < tree->topLevelItemCount(); i++)
     {
         QTreeWidgetItem *item = tree->topLevelItem (i);

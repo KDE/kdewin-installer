@@ -58,12 +58,10 @@ PackageInfo PackageInfo::fromString(const QString &_name, const QString &version
     if (name.contains("-x64"))
     {
         result.architecture = "x64";
-        name.replace("-x64","");
     }
     else if (name.contains("-x86"))
     {
         result.architecture = "x86";
-        name.replace("-x86","");
     }
     else
     {
