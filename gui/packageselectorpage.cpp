@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2008 Ralf Habacker <ralf.habacker@freenet.de> 
+** Copyright (C) 2008-2010 Ralf Habacker <ralf.habacker@freenet.de> 
 ** All rights reserved.
 **
 ** This file is part of the KDE installer for windows
@@ -265,22 +265,8 @@ void PackageSelectorPage::setWidgetData( QString categoryName )
     Q_FOREACH(Package *availablePackage,categoryCache.packages(categoryName,*engine->packageResources()))
     {
         QString name = availablePackage->name();
-        if ( ( categoryName == "mingw"  || s.compilerType() == MinGW )
-            &&  QRegExp(".*-(msvc|vc90|vc100|mingw4)$").exactMatch(name) )
-            continue;
-        else if ( ( categoryName == "mingw4"  || s.compilerType() == MinGW4 )
-                && QRegExp(".*-(mingw|x86-mingw4|msvc|vc90|vc100)$" ).exactMatch(name) )
-            continue;
-        else if ( ( categoryName == "mingw4"  || s.compilerType() == MinGW4_W32 )
-                && ( QRegExp(".*-(mingw|mingw4|msvc|vc90|vc100)$" ).exactMatch(name) && !QRegExp(".*-x86-mingw4$" ).exactMatch(name) ) )
-            continue;
-        else if ( ( categoryName == "msvc"  || s.compilerType() == MSVC9 )
-                  && QRegExp(".*-(mingw|mingw4|vc100)$" ).exactMatch(name) )
-            continue;
-        else if ( ( categoryName == "msvc"  || s.compilerType() == MSVC10 )
-                  && QRegExp(".*-(mingw|mingw4|msvc|vc90)$" ).exactMatch(name)  )
-            continue;
-        packageList << availablePackage;
+        if (engine->includePackage(s.compilerType(),name,categoryName)) 
+            packageList << availablePackage;
     }
 
     Q_FOREACH(Package *availablePackage,packageList)

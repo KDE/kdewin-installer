@@ -1,6 +1,6 @@
 /*
 **
-** Copyright (C) 2005-2008 Ralf Habacker. All rights reserved.
+** Copyright (C) 2005-2010 Ralf Habacker. All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
@@ -103,6 +103,9 @@ public:
     void checkUpdateDependencies(QList<Package*> &deps);
 
     bool setDependencyState(Package *package, QList<Package*>&deps);
+
+    /// check if a package should be included in the list of displayed packages
+    bool includePackage(CompilerType compilerType, const QString &name, const QString &categoryName=QString());
 
 Q_SIGNALS:
     void error ( const QString &error );

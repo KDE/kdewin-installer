@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2005-2008 Ralf Habacker. All rights reserved.
+** Copyright (C) 2005-2010 Ralf Habacker. All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
@@ -34,6 +34,7 @@
 #include <QtDebug>
 #include <QDir>
 #include <QFlags>
+#include <QRegexp>
 
 QString InstallerEngine::defaultConfigURL;
 QString InstallerEngine::fallBackURL = "http://downloads.sourceforge.net/kde-windows";
@@ -489,4 +490,24 @@ QDebug &operator<<(QDebug &out, const InstallerEngine &c)
 void InstallerEngine::slotError(const QString &msg)
 {
     emit error(msg);
+}
+
+bool InstallerEngine::includePackage(CompilerType compilerType, const QString &name, const QString &categoryName)
+{
+    if ( ( categoryName == "mingw"  || compilerType == MinGW )
+        &&  QRegExp(".*-(msvc|vc90|vc100|mingw4)$").exactMatch(name) )
+        return false;
+    else if ( ( categoryName == "mingw4"  || compilerType == MinGW4 )
+            && QRegExp(".*-(mingw|x86-mingw4|msvc|vc90|vc100)$" ).exactMatch(name) )
+        return false;
+    else if ( ( categoryName == "mingw4"  || compilerType == MinGW4_W32 )
+            && ( QRegExp(".*-(mingw|mingw4|msvc|vc90|vc100)$" ).exactMatch(name) && !QRegExp(".*-x86-mingw4$" ).exactMatch(name) ) )
+        return false;
+    else if ( ( categoryName == "msvc"  || compilerType == MSVC9 )
+              && QRegExp(".*-(mingw|mingw4|vc100)$" ).exactMatch(name) )
+        return false;
+    else if ( ( categoryName == "msvc"  || compilerType == MSVC10 )
+              && QRegExp(".*-(mingw|mingw4|msvc|vc90)$" ).exactMatch(name)  )
+        return false;
+    return true;
 }
