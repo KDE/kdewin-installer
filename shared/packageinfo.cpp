@@ -157,34 +157,34 @@ bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QStrin
         baseName = fileName.toLower();
     }
 
-	QString work = baseName;
-	pkgType = work.mid(work.lastIndexOf("-")+1);
-	work.remove("-" + pkgType);
+    QString work = baseName;
+    pkgType = work.mid(work.lastIndexOf("-")+1);
+    work.remove("-" + pkgType);
 
-	
-	QRegExp compilersRx("-(mingw|x86-mingw4|mingw4|msvc|vc90|vc100)-");
-	QRegExp versionRx("-(\\d|\\w|\\.)*(-\\d*){0,1}$");
+    
+    QRegExp compilersRx("-(mingw|x86-mingw4|mingw4|msvc|vc90|vc100)-");
+    QRegExp versionRx("-(\\d|\\w|\\.)*(-\\d*){0,1}$");
 
-	QString compiler;
-	int pos = compilersRx.indexIn(work);
-	QStringList tmp;
-	if(pos != -1){
-		compiler = compilersRx.capturedTexts()[0];
-		tmp =  work.split(compiler);
-		compiler = compiler.remove(compiler.length() -1 ,1);
-		pkgName = tmp[0] + compiler;
-		pkgVersion = tmp[1];
-	}else{
-		pos = versionRx.indexIn(work);
-		if(pos != -1){
-			tmp = versionRx.capturedTexts();
-		pkgVersion = tmp[0].remove(0,1);
-		pkgName = work.remove("-" + tmp[0]);
-		}else{
-			qWarning() << "filename without version found" << baseName;
-			return false;
-		}
-	}
+    QString compiler;
+    int pos = compilersRx.indexIn(work);
+    QStringList tmp;
+    if(pos != -1){
+        compiler = compilersRx.capturedTexts()[0];
+        tmp =  work.split(compiler);
+        compiler = compiler.remove(compiler.length() -1 ,1);
+        pkgName = tmp[0] + compiler;
+        pkgVersion = tmp[1];
+    }else{
+        pos = versionRx.indexIn(work);
+        if(pos != -1){
+            tmp = versionRx.capturedTexts();
+        pkgVersion = tmp[0].remove(0,1);
+        pkgName = work.remove("-" + tmp[0]);
+        }else{
+            qWarning() << "filename without version found" << baseName;
+            return false;
+        }
+    }
     return true;
 }
 
