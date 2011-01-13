@@ -1,6 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2010 Ralf Habacker. All rights reserved.
+** Copyright (C) 2010 Patrick von Reth patrick.vonreth@gmail.com> 
 **
 ** This file is part of the KDE installer for windows
 **
@@ -184,7 +185,6 @@ bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QStrin
 			return false;
 		}
 	}
-	qDebug()<<pkgName<<
     return true;
 }
 
