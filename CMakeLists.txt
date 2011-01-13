@@ -201,8 +201,6 @@ if(NOT BUILD_INSTALLER_THEME)
 add_subdirectory(tests)
 add_subdirectory(packager)
 add_subdirectory(doc)
-# not supported yet
-add_subdirectory(configer)
 endif(NOT BUILD_INSTALLER_THEME)
 #add_subdirectory(tools)
 add_subdirectory(single-package-installer)
