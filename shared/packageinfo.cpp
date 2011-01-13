@@ -156,105 +156,35 @@ bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QStrin
         baseName = fileName.toLower();
     }
 
-    const QStringList parts = baseName.split('-');
+	QString work = baseName;
+	pkgType = work.mid(work.lastIndexOf("-")+1);
+	work.remove("-" + pkgType);
 
-    if (parts.size() == 8)
-    {
-        // a-b-c-d-e-version-patchlevel-type
-        pkgName = parts[0] + "-" + parts[1] + "-" + parts[2] + "-" + parts[3] + "-" + parts[4];
-        pkgVersion = parts[5] + "-" + parts[6];
-        pkgType = parts[7];
-    }
-    else if (parts.size() == 7)
-    {
-        // a-b-c-d-version-patchlevel-type
-        pkgName = parts[0] + "-" + parts[1] + "-" + parts[2] + "-" + parts[3];
-        pkgVersion = parts[4] + "-" + parts[5];
-        pkgType = parts[6];
-    }
-    else if (parts.size() == 6)
-    {
-        // a-b-c-version-patchlevel-type
-        pkgName = parts[0] + "-" + parts[1] + "-" + parts[2];
-        pkgVersion = parts[3] + "-" + parts[4];
-        pkgType = parts[5];
-    }
-    else if (parts.size() == 5)
-    {
-        // a-b-c-version-type
-        if (parts[2][0].isLetter())
-        {
-            pkgName = parts[0] + "-" + parts[1] + "-" + parts[2];
-            pkgVersion = parts[3];
-        }
-        else
-        {
-            pkgName = parts[0] + "-" + parts[1];
-            pkgVersion = parts[2] + '-' + parts[3];
-        }
-        pkgType = parts[4];
-    }
-    else if (parts.size() == 4)
-    {
-        // a-b-version-x
-        if (parts[1][0].isLetter())
-        {
-            pkgName += parts[0] + "-" + parts[1];
-            pkgVersion = parts[2];
-        }
-        else
-        {
-            pkgName = parts[0];
-            pkgVersion = parts[1] + '-' + parts[2];
-        }
-        // a-b-version-patch
-        if (parts[3][0].isNumber())
-        {
-            pkgType = "all";
-            pkgVersion += "-" + parts[3];
-        }
-        else
-            pkgType = parts[3];
-    }
-    else if(parts.size() == 3)
-    {
-        pkgName = parts[0];
-        if (parts[1][0].isNumber())
-            pkgVersion = parts[1];
-        else
-            pkgName += "-" + parts[1];
+	
+	QRegExp compilersRx("-(mingw|x86-mingw4|mingw4|msvc|vc90|vc100)-");
+	QRegExp versionRx("-(\\d|\\w|\\.)*(-\\d*){0,1}$");
 
-        // aspell-0.50.3-3
-        if (parts[2][0].isNumber())
-        {
-            if (pkgVersion.isEmpty())
-                pkgVersion = parts[2];
-            else
-                pkgVersion += "-" + parts[2];
-            pkgType = "bin";
-        }
-        else
-            pkgType = parts[2];
-    }
-    else if(parts.size() == 2)
-    {
-        pkgName = parts[0];
-        pkgVersion = parts[1];
-        pkgType = "bin";
-    }
-    else if(parts.size() == 1)
-    {
-        pkgName = parts[0];
-        pkgVersion = "";
-        pkgType = "bin";
-        qWarning() << "filename without version found" << baseName;
-        return false;
-    }
-    else
-    {
-        qWarning() << __FUNCTION__ << "unhandled case with" << baseName;
-        return false;
-    }
+	QString compiler;
+	int pos = compilersRx.indexIn(work);
+	QStringList tmp;
+	if(pos != -1){
+		compiler = compilersRx.capturedTexts()[0];
+		tmp =  work.split(compiler);
+		compiler = compiler.remove(compiler.length() -1 ,1);
+		pkgName = tmp[0] + compiler;
+		pkgVersion = tmp[1];
+	}else{
+		pos = versionRx.indexIn(work);
+		if(pos != -1){
+			tmp = versionRx.capturedTexts();
+		pkgVersion = tmp[0].remove(0,1);
+		pkgName = work.remove("-" + tmp[0]);
+		}else{
+			qWarning() << "filename without version found" << baseName;
+			return false;
+		}
+	}
+	qDebug()<<pkgName<<
     return true;
 }
 
