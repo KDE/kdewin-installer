@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2005-2007 Ralf Habacker. All rights reserved.
+** Copyright (C) 2005-2010 Ralf Habacker. All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
@@ -63,7 +63,6 @@ public:
     bool installPackages(const QStringList &packages, const QString &category=QString());
 
     void initLocal();
-    bool includePackage(CompilerType compilerType, const QString &name);
     
 protected:
     bool init();

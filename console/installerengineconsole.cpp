@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2005-2007 Ralf Habacker. All rights reserved.
+** Copyright (C) 2005-2010 Ralf Habacker. All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
@@ -208,16 +208,6 @@ void InstallerEngineConsole::listPackage(const QStringList &list)
         listPackage(pkgName);
 }
 
-bool InstallerEngineConsole::includePackage(CompilerType compilerType, const QString &name)
-{
-   if (compilerType == MinGW && (name.contains("-msvc") || name.contains("-mingw4"))
-        || compilerType == MSVC && name.contains("-mingw")
-        || compilerType == MinGW4 && (name.contains("-mingw") && !name.contains("-mingw4") || name.contains("-msvc")) )
-        return false;
-    else
-        return true;
-}
-
 void InstallerEngineConsole::printPackageURLs(Package *p)
 {
     if (!p)
@@ -304,10 +294,6 @@ void InstallerEngineConsole::listPackageCategories(const QStringList &list)
     Q_FOREACH(const QString &pkgName, list)
         listPackageCategories(pkgName);
 }
-
-
-
-
 
 bool InstallerEngineConsole::downloadPackages(const QStringList &packages, const QString &category)
 {
