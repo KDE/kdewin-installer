@@ -511,3 +511,11 @@ bool InstallerEngine::includePackage(CompilerType compilerType, const QString &n
         return false;
     return true;
 }
+
+bool InstallerEngine::includeCategory(CompilerType compilerType, const QString &categoryName)
+{
+    if ( (compilerType == MinGW || compilerType == MSVC || compilerType == MinGW4)
+        && (categoryName == QLatin1String("msvc") || categoryName == QLatin1String("mingw") || categoryName == QLatin1String("mingw4")) )
+        return false;
+    return true;
+}

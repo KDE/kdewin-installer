@@ -107,6 +107,9 @@ public:
     /// check if a package should be included in the list of displayed packages
     bool includePackage(CompilerType compilerType, const QString &name, const QString &categoryName=QString());
 
+    /// check if a category should be included in the list of displayed categories
+    bool includeCategory(CompilerType compilerType, const QString &categoryName);
+
 Q_SIGNALS:
     void error ( const QString &error );
 

@@ -164,8 +164,7 @@ void PackageSelectorPage::setLeftTreeData()
     Q_FOREACH (const QString &category,categoryCache.categories())
     {
         const QStringList names = category.split(':');
-        if ( (s.compilerType() == MinGW ||s.compilerType() == MSVC || MinGW4)
-            && (names[0] == QLatin1String("msvc") || names[0] == QLatin1String("mingw") || names[0] == QLatin1String("mingw4")) )
+        if (!engine->includeCategory(s.compilerType(), names[0]))
             continue;
 
         QTreeWidgetItem *categoryItem = new QTreeWidgetItem ( ( QTreeWidget* ) 0, names );
