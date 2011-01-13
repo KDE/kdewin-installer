@@ -26,7 +26,6 @@ set(installer_shared_HEADERS
     globalconfig.h
     hash.h
     hashfile.h
-    hintfile.h
     installer.h
     installercallconfig.h
     installerengine.h
@@ -63,7 +62,6 @@ set(installer_shared_SOURCES
     globalconfig.cpp
     hash.cpp
     hashfile.cpp
-    hintfile.cpp
     installer.cpp
     installercallconfig.cpp
     installerengine.cpp

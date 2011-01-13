@@ -24,7 +24,6 @@
 #include "debug.h"
 #include "downloader.h"
 #include "globalconfig.h"
-#include "hintfile.h"
 #include "packageinfo.h"
 #include "packagelist.h"
 #include "misc.h"
@@ -479,43 +478,6 @@ bool PackageList::readInternal(QIODevice *ioDev, PackageList::Type type, bool ap
     }
     emit configLoaded();
     m_parserConfigFileFound = false;
-    return true;
-}
-
-bool PackageList::addPackageFromHintFile(const QString &fileName)
-{
-    // if a config file is present, don't scan hint files, we assume that they
-    // are merged into the config file
-    if (m_parserConfigFileFound)
-        return false;
-
-    const QStringList hintFile = QString(fileName).split('.');
-    const QString &pkgName = hintFile[0];
-    // download hint file
-    QByteArray ba;
-    if (!Downloader::instance()->fetch(m_baseURL.toString() + '/' + fileName, ba))
-    {
-        qCritical() << "could not download" << m_baseURL.toString() + '/' + fileName;
-        return false;
-    }
-    HintFile hf;
-    HintFileType hd;
-    hf.parse(ba,hd);
-    Package *pkg = find(pkgName);
-    if(!pkg) {
-        Package p;
-        p.setName(pkgName);
-        p.setNotes(hd.shortDesc);
-        p.setLongNotes(hd.longDesc);
-        p.addCategories(hd.categories);
-        p.addDeps(hd.requires.split(QLatin1Char(' ')));
-        append(p);
-    } else {
-        pkg->setNotes(hd.shortDesc);
-        pkg->setLongNotes(hd.longDesc);
-        pkg->addCategories(hd.categories);
-        pkg->addDeps(hd.requires.split(QLatin1Char(' ')));
-    }
     return true;
 }
 

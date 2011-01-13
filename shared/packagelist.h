@@ -127,7 +127,6 @@ signals:
 protected:
     bool addPackagesFromFileNames(const QStringList &files, bool ignoreConfigTxt=false);
 
-    bool addPackageFromHintFile(const QString &file);
     bool readInternal(QIODevice *ioDev, PackageList::Type type, bool append=false);
 private:
     QList<Package*> m_packageList;
