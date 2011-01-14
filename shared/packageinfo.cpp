@@ -195,23 +195,7 @@ QString PackageInfo::manifestFileName(const QString &pkgName, const QString &pkg
 QString PackageInfo::baseName(const QString &_name)
 {
     QString name = _name;
-    if (name.endsWith("-msvc"))
-        name.remove("-msvc");
-    if (name.endsWith("-vc90"))
-        name.remove("-vc90");
-    if (name.endsWith("-vc100"))
-        name.remove("-vc100");
-    if (name.endsWith("-mingw4"))
-        name.remove("-mingw4");
-    if (name.endsWith("-mingw"))
-        name.remove("-mingw");
-    if (isX64Windows())
-        if (name.endsWith("-x64"))
-            name.remove("-x64");
-    if (name.endsWith("-x86"))
-        name.remove("-x86");
-
-    return name;
+    return name.remove(QRegExp("-("+PackageInfo::compilers().join("|")+"x64|x86|)$"));
 }
 
 QStringList PackageInfo::endings()
