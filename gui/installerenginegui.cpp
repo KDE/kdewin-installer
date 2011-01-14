@@ -517,7 +517,12 @@ bool InstallerEngineGui::setDependencyState(Package *_package, QTreeWidget *list
             qDebug() << __FUNCTION__ << "selected package" << package->name() << "in previous state" << state << "for" << newState;
             if (list) 
             {   
-                QTreeWidgetItem * item = new QTreeWidgetItem(QStringList() << PackageInfo::baseName(package->name()) << package->version().toString() << package->notes());
+                QString name;
+                if (m_packageManagerMode)
+                    name = package->name();
+                else
+                    name = PackageInfo::baseName(package->name());
+                QTreeWidgetItem * item = new QTreeWidgetItem(QStringList() << name << package->version().toString() << package->notes());
                 list->addTopLevelItem(item);
             }
             dependencyStates.setState(package,Package::BIN,newState);
@@ -573,7 +578,7 @@ bool isMarkedForRemoval ( Package *pkg,Package::Type type )
 }
 
 InstallerEngineGui::InstallerEngineGui (QWidget *parent)
-        : InstallerEngine ( parent ), m_parent(parent)
+        : InstallerEngine ( parent ), m_parent(parent), m_packageManagerMode(false)
 {
     InstallerUpdate &iu = InstallerUpdate::instance();
     if (iu.isUpdateAvailable()) {

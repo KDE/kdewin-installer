@@ -68,6 +68,9 @@ public:
     DisplayType displayMode() { return m_displayMode; }
     void setDisplayMode(DisplayType mode) { m_displayMode = mode; }
 
+    void setPackageManagerMode(bool mode) { m_packageManagerMode = mode; }
+    bool packageManagerMode() { return m_packageManagerMode; }
+
     /// @TODO: cleanup
     void setEndUserInitialState ( QTreeWidgetItem &item, Package *available, Package *installed, int column=0 );
 
@@ -83,6 +86,7 @@ protected:
 private:
     DisplayType    m_displayMode;
     QWidget *m_parent;
+    bool m_packageManagerMode;
     bool downloadPackageItem(Package *pkg, Package::Type type );
 };
 

@@ -58,6 +58,9 @@ UserCompilerModePage::UserCompilerModePage() : InstallWizardPage(0)
     groupB->addButton(ui.installModeEndUser);
     groupB->addButton(ui.installModePackageManager);
     connect( groupB,SIGNAL(buttonClicked (int)),this,SLOT(slotModeButtonClicked(int)) );
+
+    // initial setup of packagemanager mode from previous settings, may be overriden later by the user
+    engine->setPackageManagerMode(Settings::instance().isPackageManagerMode());
 }
 
 void UserCompilerModePage::initializePage()
@@ -85,6 +88,7 @@ bool UserCompilerModePage::validatePage()
 {
     Settings &s = Settings::instance();
     s.setPackageManagerMode(ui.installModePackageManager->isChecked());
+    engine->setPackageManagerMode(s.isPackageManagerMode());
 
     if (ui.compilerMinGW4->isChecked())
         s.setCompilerType(MinGW4);
