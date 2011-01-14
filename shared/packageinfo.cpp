@@ -25,30 +25,39 @@
 
 bool PackageInfo::fromString(const QString &name, QString &pkgName, QString &pkgVersion)
 {
-    const QStringList parts = name.split('-');
-    // <name>-<version>
-    if (parts.size() == 2 && parts[1][0].isNumber())
-    {
-        pkgName = parts[0];
-        pkgVersion = parts[1];
-        return true;
+    QString work(name);
+    
+    //something like "-(mingw|mingw4|msvc|vc90|vc100)-
+    //qDebug()<<QString("-("+PackageInfo::endings().join("|")+")-");
+    QRegExp compilersRx("-("+PackageInfo::compilers().join("|")+")-");
+    QRegExp versionRx("-(\\d|\\w|\\.|\\+)*(-\\d*){0,1}$");
+    QRegExp archRx("-(x86|x64)");
+
+    int pos = compilersRx.indexIn(work);
+    if(pos != -1){
+        QString compiler = compilersRx.capturedTexts()[0];
+        QStringList tmp =  work.split(compiler);
+        compiler = compiler.remove(compiler.length() -1 ,1);
+        pkgName = tmp[0] + compiler;
+        pkgVersion = tmp[1];
+    }else{
+        QString arch;
+        pos = archRx.indexIn(work);
+        if(pos != -1){
+            arch = archRx.capturedTexts()[0];
+            work.remove(arch);
+        }
+        pos = versionRx.indexIn(work);
+        if(pos != -1){
+            QStringList tmp = versionRx.capturedTexts();
+            pkgVersion = tmp[0].remove(0,1);
+            pkgName = work.remove("-" + tmp[0]) + arch;
+        }else{
+            qWarning() << "filename without version found" << name;
+            return false;
+        }
     }
-    // <name>-<version>-<patchlevel>
-    else if (parts.size() == 3 && parts[1][0].isNumber())
-    {
-        pkgName = parts[0];
-        pkgVersion = parts[1] + '-' + parts[2];
-        return true;
-    }
-    // <name1>-<name2>-<version>
-    else if (parts.size() == 3 && parts[2][0].isNumber())
-    {
-        pkgName = parts[0] + '-' + parts[1];
-        pkgVersion = parts[2];
-        return true;
-    }
-    else
-        return false;
+    return true;
 }
 
 PackageInfo PackageInfo::fromString(const QString &_name, const QString &version)
@@ -158,32 +167,18 @@ bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QStrin
     }
 
     QString work = baseName;
-    pkgType = work.mid(work.lastIndexOf("-")+1);
-    work.remove("-" + pkgType);
-
-    //to recognize mingw-w32 x86-mingw4 must come before mingw4
-    QRegExp compilersRx("-(mingw|x86-mingw4|mingw4|msvc|vc90|vc100)-");
-    QRegExp versionRx("-(\\d|\\w|\\.)*(-\\d*){0,1}$");
-
-    int pos = compilersRx.indexIn(work);
-    if(pos != -1){
-        QString compiler = compilersRx.capturedTexts()[0];
-        QStringList tmp =  work.split(compiler);
-        compiler = compiler.remove(compiler.length() -1 ,1);
-        pkgName = tmp[0] + compiler;
-        pkgVersion = tmp[1];
-    }else{
-        pos = versionRx.indexIn(work);
-        if(pos != -1){
-            QStringList tmp = versionRx.capturedTexts();
-            pkgVersion = tmp[0].remove(0,1);
-            pkgName = work.remove("-" + tmp[0]);
-        }else{
-            qWarning() << "filename without version found" << baseName;
-            return false;
-        }
+    QRegExp typeRx("(" + types().join("|") + ")$");
+    int pos = typeRx.indexIn(work);
+    if(pos == -1){
+        qWarning() << "filename without type found" << baseName;
+        return false;
     }
-    return true;
+
+    pkgType = typeRx.capturedTexts()[0];
+    work.remove(pkgType);
+    pkgType.remove(0,1);
+
+    return fromString(work, pkgName, pkgVersion);
 }
 
 
@@ -222,8 +217,22 @@ QString PackageInfo::baseName(const QString &_name)
 QStringList PackageInfo::endings()
 {
     QStringList list;
-    list << "msvc" << "vc90" << "vc100" << "mingw4" << "mingw";
+    list << PackageInfo::compilers();
     if(isX64Windows()) list << "x64";
     list << "x86";
+    return list;
+}
+
+QStringList PackageInfo::compilers()
+{
+    QStringList list;
+    list << "msvc" << "vc90" << "vc100" <<"mingw4" << "mingw";
+    return list;
+}
+
+QStringList PackageInfo::types()
+{
+    QStringList list;
+    list<<"-bin"<<"-lib"<<"-doc"<<"-src"<<"-dbg";
     return list;
 }
