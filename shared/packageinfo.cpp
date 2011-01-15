@@ -30,8 +30,13 @@ bool PackageInfo::fromString(const QString &name, QString &pkgName, QString &pkg
     //something like "-(mingw|mingw4|msvc|vc90|vc100)-
     //qDebug()<<QString("-("+PackageInfo::endings().join("|")+")-");
     QRegExp compilersRx("-("+PackageInfo::compilers().join("|")+")-");
-    QRegExp versionRx("-(\\d|\\w|\\.|\\+)*(-\\d*){0,1}$");
+    //alow only number and pouns, as patchlvl only numbers
+    QRegExp versionRx("-(\\d|\\.|_)*(-\\d*){0,1}$");
     QRegExp archRx("-(x86|x64)");
+
+    //doesnt end with a version but with a compiler name
+    if(QRegExp(".*-("+PackageInfo::compilers().join("|")+")$").exactMatch(work))
+        return false;
 
     int pos = compilersRx.indexIn(work);
     if(pos != -1){
@@ -41,17 +46,11 @@ bool PackageInfo::fromString(const QString &name, QString &pkgName, QString &pkg
         pkgName = tmp[0] + compiler;
         pkgVersion = tmp[1];
     }else{
-        QString arch;
-        pos = archRx.indexIn(work);
-        if(pos != -1){
-            arch = archRx.capturedTexts()[0];
-            work.remove(arch);
-        }
         pos = versionRx.indexIn(work);
         if(pos != -1){
             QStringList tmp = versionRx.capturedTexts();
             pkgVersion = tmp[0].remove(0,1);
-            pkgName = work.remove("-" + tmp[0]) + arch;
+            pkgName = work.remove("-" + tmp[0]);
         }else{
             qWarning() << "filename without version found" << name;
             return false;
@@ -63,6 +62,9 @@ bool PackageInfo::fromString(const QString &name, QString &pkgName, QString &pkg
 PackageInfo PackageInfo::fromString(const QString &_name, const QString &version)
 {
     PackageInfo result;
+    if(_name.isEmpty())
+        return result;
+
     QString name = _name;
     // check architecture
     if (name.contains("-x64"))
@@ -115,31 +117,10 @@ PackageInfo PackageInfo::fromString(const QString &_name, const QString &version
     }
 
     // version is empty
-    const QStringList parts = name.split('-');
-    // <name>-<version>
-    if (parts.size() == 1)
-    {
+    if(!fromString(name, result.name, result.version)){
         result.name = name;
+        return result;
     }
-    else if (parts.size() == 2 && parts[1][0].isNumber())
-    {
-        result.name = parts[0];
-        result.version = parts[1];
-    }
-    // <name>-<version>-<patchlevel>
-    else if (parts.size() == 3 && parts[1][0].isNumber())
-    {
-        result.name = parts[0];
-        result.version = parts[1] + '-' + parts[2];
-    }
-    // <name1>-<name2>-<version>
-    else if (parts.size() == 3 && parts[2][0].isNumber())
-    {
-        result.name = parts[0] + '-' + parts[1];
-        result.version = parts[2];
-    }
-    else
-        result.name = name;
     return result;
 }
 
