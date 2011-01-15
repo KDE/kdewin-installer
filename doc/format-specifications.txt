@@ -10,7 +10,7 @@ md5sum-filename = package-name file-compiler-type file-version file-package-type
 sha1sum-filename = package-name file-compiler-type file-version file-package-type archive-extension '.sha1' ;
 
 package-name =  letter { ( letter | digit | '_' | '-' ) } ;
-file-compiler-type = ( '-' ('mingw' | 'mingw4' | 'x86-mingw4' | 'x64-mingw4' | 'msvc' | 'vc90' | 'vc100' ) | '') ;
+file-compiler-type = ( '-' ('mingw' | 'mingw4' | 'mingw4_x86' | 'mingw4_x64' | 'msvc' | 'vc90' | 'vc100' ) | '') ;
 
 file-version = '-' (version | date | string ) ;         (* string means something specific *) 
 version = major-version-number '.' minor-version-number [ '.' patchlevel [ '-' number ] ] ;
