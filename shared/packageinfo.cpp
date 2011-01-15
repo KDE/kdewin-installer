@@ -38,16 +38,14 @@ bool PackageInfo::fromString(const QString &name, QString &pkgName, QString &pkg
     if(QRegExp(".*-("+PackageInfo::compilers().join("|")+")$").exactMatch(work))
         return false;
 
-    int pos = compilersRx.indexIn(work);
-    if(pos != -1){
+    if(compilersRx.indexIn(work) != -1){
         QString compiler = compilersRx.capturedTexts()[0];
         QStringList tmp =  work.split(compiler);
         compiler = compiler.remove(compiler.length() -1 ,1);
         pkgName = tmp[0] + compiler;
         pkgVersion = tmp[1];
     }else{
-        pos = versionRx.indexIn(work);
-        if(pos != -1){
+        if(versionRx.indexIn(work) != -1){
             QStringList tmp = versionRx.capturedTexts();
             pkgVersion = tmp[0].remove(0,1);
             pkgName = work.remove("-" + tmp[0]);
@@ -66,47 +64,19 @@ PackageInfo PackageInfo::fromString(const QString &_name, const QString &version
         return result;
 
     QString name = _name;
+
     // check architecture
-    if (name.contains("-x64"))
-    {
-        result.architecture = "x64";
-    }
-    else if (name.contains("-x86"))
-    {
-        result.architecture = "x86";
-    }
-    else
-    {
+    QRegExp archRx("(x86|x64)");    
+    if( archRx.indexIn(name) != -1){
+        result.architecture = archRx.capturedTexts()[0];
+    }else{
         result.architecture = "x86";
     }
 
     // check type
-    result.type = Package::NONE;
-    if (name.contains("-bin"))
-    {
-        result.type = Package::BIN;
-        name.replace("-bin","");
-    }
-    else if (name.contains("-lib"))
-    {
-        result.type = Package::LIB;
-        name.replace("-lib","");
-    }
-    else if (name.contains("-doc"))
-    {
-        result.type = Package::DOC;
-        name.replace("-doc","");
-    }
-    else if (name.contains("-src"))
-    {
-        result.type = Package::SRC;
-        name.replace("-src","");
-    }
-    else if (name.contains("-dbg"))
-    {
-        result.type = Package::DBG;
-        name.replace("-dbg","");
-    }
+    QRegExp typeRx("-(" + PackageInfo::types().join("|") + ")$");
+    if(typeRx.indexIn(name) != -1)
+        result.type = stringToType(typeRx.capturedTexts()[0].remove(0,1));
 
     // version is given
     if (!version.isEmpty())
@@ -117,7 +87,7 @@ PackageInfo PackageInfo::fromString(const QString &_name, const QString &version
     }
 
     // version is empty
-    if(!fromString(name, result.name, result.version)){
+    if(!PackageInfo::fromString(name, result.name, result.version)){
         result.name = name;
         return result;
     }
@@ -148,9 +118,8 @@ bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QStrin
     }
 
     QString work = baseName;
-    QRegExp typeRx("(" + types().join("|") + ")$");
-    int pos = typeRx.indexIn(work);
-    if(pos == -1){
+    QRegExp typeRx("(" + PackageInfo::types().join("|") + ")$");
+    if(typeRx.indexIn(work) == -1){
         qWarning() << "filename without type found" << baseName;
         return false;
     }
@@ -176,7 +145,8 @@ QString PackageInfo::manifestFileName(const QString &pkgName, const QString &pkg
 QString PackageInfo::baseName(const QString &_name)
 {
     QString name = _name;
-    return name.remove(QRegExp("-("+PackageInfo::compilers().join("|")+"x64|x86|)$"));
+    name.remove(QRegExp("-("+PackageInfo::compilers().join("|")+")$"));
+    return name.remove(QRegExp("-(x64|x86)$"));
 }
 
 QStringList PackageInfo::endings()
