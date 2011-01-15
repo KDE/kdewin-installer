@@ -35,7 +35,7 @@ InstallerCallConfig::InstallerCallConfig(const QString &fileName)
     installerBaseName = fi.completeBaseName();
     QStringList a = installerBaseName.split("-");
     releaseType = Stable;
-    compilerType = MSVC9;
+    compilerType = CompilerType::MSVC9;
     version = "latest";
     mirror = "www.winkde.org";
 
@@ -50,9 +50,9 @@ InstallerCallConfig::InstallerCallConfig(const QString &fileName)
     // setup-<packagename>-<compiler>.exe
     if (a.size() >= 3)
     {
-        compilerType = toCompilerType(a[2]);
-        if (compilerType == Unspecified)
-            compilerType = MSVC9;
+        compilerType = CompilerType::toCompilerType(a[2]);
+        if (compilerType == CompilerType::Unspecified)
+            compilerType = CompilerType::MSVC9;
     }
 
     // setup-<packagename>-<compiler>-<releasetype>.exe

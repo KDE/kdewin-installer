@@ -25,12 +25,14 @@
 
 #include "package.h"
 
+
 class PackageInfo {
 public:
     QString name;
     QString architecture;
     Package::Type type;
     QString version;
+
 
     /// separate package name and version from a string
     static bool fromString(const QString &astring, QString &pkgName, QString &pkgVersion);

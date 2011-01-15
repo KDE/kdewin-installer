@@ -43,6 +43,7 @@
 #include <QFile>
 #include <QDateTime>
 #include <QBuffer>
+#include <QMap>
 
 #ifndef MISC_SMALL_VERSION
 
@@ -428,22 +429,17 @@ const QString toString(ReleaseType type)
     else
 	    return "unknown";
 }
-
+namespace CompilerType{
 CompilerType toCompilerType(const QString &_type)
 {
-    QString type(_type.toLower());
-    if (type == "vc90")
-        return MSVC9;
-    if (type == "vc100")
-        return MSVC10;
-    else if (type == "mingw4")
-        return MinGW4;
-    else if (type == "x86-mingw4")
-        return MinGW4_W32;
-    else if (type == "vc_x64")
-        return MSVC_X64;
-    else 
-        return Unspecified;
+    static QMap<QString,CompilerType> *compilerMap = NULL;
+    if(!compilerMap){
+        compilerMap->insert("vc90",MSVC9);
+        compilerMap->insert("vc10",MSVC10);
+        compilerMap->insert("mingw4",MinGW4);
+        compilerMap->insert("x86-mingw4",MinGW4_W32);
+    }
+    return compilerMap->contains(_type)?compilerMap->value(_type):Unspecified;
 }
 
 const QString toString(CompilerType type)
@@ -460,4 +456,6 @@ const QString toString(CompilerType type)
         return "vc_x64";
     else
         return "";
+}
+
 }

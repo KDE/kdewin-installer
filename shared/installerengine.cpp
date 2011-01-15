@@ -492,29 +492,29 @@ void InstallerEngine::slotError(const QString &msg)
     emit error(msg);
 }
 
-bool InstallerEngine::includePackage(CompilerType compilerType, const QString &name, const QString &categoryName)
+bool InstallerEngine::includePackage(CompilerType::CompilerType compilerType, const QString &name, const QString &categoryName)
 {
-    if ( ( categoryName == "mingw"  || compilerType == MinGW )
+    if ( ( categoryName == "mingw"  || compilerType == CompilerType::MinGW )
         &&  QRegExp(".*-(msvc|vc90|vc100|mingw4)$").exactMatch(name) )
         return false;
-    else if ( ( categoryName == "mingw4"  || compilerType == MinGW4 )
+    else if ( ( categoryName == "mingw4"  || compilerType == CompilerType::MinGW4 )
             && QRegExp(".*-(mingw|x86-mingw4|msvc|vc90|vc100)$" ).exactMatch(name) )
         return false;
-    else if ( ( categoryName == "mingw4"  || compilerType == MinGW4_W32 )
+    else if ( ( categoryName == "mingw4"  || compilerType == CompilerType::MinGW4_W32 )
             && ( QRegExp(".*-(mingw|mingw4|msvc|vc90|vc100)$" ).exactMatch(name) && !QRegExp(".*-x86-mingw4$" ).exactMatch(name) ) )
         return false;
-    else if ( ( categoryName == "msvc"  || compilerType == MSVC9 )
+    else if ( ( categoryName == "msvc"  || compilerType == CompilerType::MSVC9 )
               && QRegExp(".*-(mingw|mingw4|vc100)$" ).exactMatch(name) )
         return false;
-    else if ( ( categoryName == "msvc"  || compilerType == MSVC10 )
+    else if ( ( categoryName == "msvc"  || compilerType == CompilerType::MSVC10 )
               && QRegExp(".*-(mingw|mingw4|msvc|vc90)$" ).exactMatch(name)  )
         return false;
     return true;
 }
 
-bool InstallerEngine::includeCategory(CompilerType compilerType, const QString &categoryName)
+bool InstallerEngine::includeCategory(CompilerType::CompilerType compilerType, const QString &categoryName)
 {
-    if ( (compilerType == MinGW || compilerType == MSVC || compilerType == MinGW4)
+    if ( (compilerType == CompilerType::MinGW || compilerType == CompilerType::MSVC || compilerType == CompilerType::MinGW4)
         && (categoryName == QLatin1String("msvc") || categoryName == QLatin1String("mingw") || categoryName == QLatin1String("mingw4")) )
         return false;
     return true;
