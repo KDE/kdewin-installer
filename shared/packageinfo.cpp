@@ -75,8 +75,10 @@ PackageInfo PackageInfo::fromString(const QString &_name, const QString &version
 
     // check type
     QRegExp typeRx("-(" + PackageInfo::types().join("|") + ")$");
-    if(typeRx.indexIn(name) != -1)
+    if(typeRx.indexIn(name) != -1){
         result.type = stringToType(typeRx.capturedTexts()[0].remove(0,1));
+        name.remove(typeRx.capturedTexts()[0]);
+    }
 
     // version is given
     if (!version.isEmpty())
