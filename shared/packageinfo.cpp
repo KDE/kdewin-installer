@@ -30,7 +30,7 @@ bool PackageInfo::fromString(const QString &name, QString &pkgName, QString &pkg
     //something like "-(mingw|mingw4|msvc|vc90|vc100)-
     //qDebug()<<QString("-("+PackageInfo::endings().join("|")+")-");
     QRegExp compilersRx("-("+PackageInfo::compilers().join("|")+")-");
-    //alow only number and pouns, as patchlvl only numbers
+    //alow only number and points, as patchlvl only numbers
     QRegExp versionRx("-(\\d|\\.|_)*(-\\d*){0,1}$");
     QRegExp archRx("-(x86|x64)");
 
@@ -118,7 +118,7 @@ bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QStrin
     }
 
     QString work = baseName;
-    QRegExp typeRx("(" + PackageInfo::types().join("|") + ")$");
+    QRegExp typeRx("-(" + PackageInfo::types().join("|") + ")$");
     if(typeRx.indexIn(work) == -1){
         qWarning() << "filename without type found" << baseName;
         return false;
@@ -168,6 +168,6 @@ QStringList PackageInfo::compilers()
 QStringList PackageInfo::types()
 {
     QStringList list;
-    list<<"-bin"<<"-lib"<<"-doc"<<"-src"<<"-dbg";
+    list<<"bin"<<"lib"<<"doc"<<"src"<<"dbg";
     return list;
 }
