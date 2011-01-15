@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2010 Ralf Habacker. All rights reserved.
-** Copyright (C) 2010 Patrick von Reth patrick.vonreth@gmail.com> 
+** Copyright (C) 2011 Patrick von Reth patrick.vonreth@gmail.com> 
 **
 ** This file is part of the KDE installer for windows
 **
@@ -28,15 +28,10 @@ bool PackageInfo::fromString(const QString &name, QString &pkgName, QString &pkg
     QString work(name);
     
     //something like "-(mingw|mingw4|msvc|vc90|vc100)-
-    //qDebug()<<QString("-("+PackageInfo::endings().join("|")+")-");
     QRegExp compilersRx("-("+PackageInfo::compilers().join("|")+")-");
     //alow only number and points, as patchlvl only numbers
-    QRegExp versionRx("-(\\d|\\.|_)*(-\\d*){0,1}$");
-    QRegExp archRx("-(x86|x64)");
+    QRegExp versionRx("-(\\w|\\d|\\.|_|\\+)*(-\\d*){0,1}$");
 
-    //doesnt end with a version but with a compiler name
-    if(QRegExp(".*-("+PackageInfo::compilers().join("|")+")$").exactMatch(work))
-        return false;
 
     if(compilersRx.indexIn(work) != -1){
         QString compiler = compilersRx.capturedTexts()[0];
@@ -87,12 +82,7 @@ PackageInfo PackageInfo::fromString(const QString &_name, const QString &version
         result.name = name;
         return result;
     }
-
-    // version is empty
-    if(!PackageInfo::fromString(name, result.name, result.version)){
-        result.name = name;
-        return result;
-    }
+    result.name = name;
     return result;
 }
 
