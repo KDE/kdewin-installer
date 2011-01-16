@@ -441,21 +441,28 @@ CompilerTypes::CompilerType CompilerTypes::toCompilerType(const QString &_type)
         compilerMap.insert("x86-mingw4",MinGW4_W32);
         compilerMap.insert("x64-mingw4",MinGW4_W64);
     }
-    return compilerMap.contains(_type)?compilerMap.value(_type):CompilerTypes::Unspecified;
+    QString t = _type.toLower();
+    return compilerMap.contains(t)?compilerMap.value(t):CompilerTypes::Unspecified;
 }
 
 const QString CompilerTypes::toString(CompilerType type)
 {
-    static QMap<CompilerType,QString> compilerMap;
-    if(compilerMap.isEmpty()){
-        compilerMap.insert(MSVC9,"vc90");
-        compilerMap.insert(MSVC10,"vc100");
-        compilerMap.insert(MSVC10_X64,"x64-vc100");
-        compilerMap.insert(MinGW4,"mingw4");
-        compilerMap.insert(MinGW4_W32,"x86-mingw4");
-        compilerMap.insert(MinGW4_W64,"x64-mingw4");
+    switch(type){
+        case MSVC9:
+            return "vc90";
+        case MSVC10:
+            return "vc100";
+        case MSVC10_X64:
+            return "x64-vc100";
+        case MinGW4:
+            return "mingw4";
+        case MinGW4_W32:
+            return "x86-mingw4";
+        case MinGW4_W64:
+            return "x64-mingw4";
+        default:
+            return "";
     }
-    return compilerMap.contains(type)?compilerMap.value(type):QString();
 }
 
 const QStringList CompilerTypes::compilers()

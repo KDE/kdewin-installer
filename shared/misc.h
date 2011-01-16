@@ -28,6 +28,8 @@
 #include <QRegExp>
 #include <QString>
 #include <QSettings>
+#include <QFlags>
+
 class QFile;
 class QIODevice;
 class QTextStream;
@@ -39,7 +41,7 @@ const QString toString(ReleaseType type);
 
 class CompilerTypes{
 public:
-    enum CompilerType{
+    enum CompilerTypeFlag{
         Unspecified=0,
         MinGW=1,
         MSVC=2,
@@ -51,11 +53,13 @@ public:
         MinGW4_W32=7,
         MinGW4_W64=8 
     };
+     Q_DECLARE_FLAGS(CompilerType,CompilerTypeFlag);
     static CompilerTypes::CompilerType toCompilerType(const QString &type); 
     static const QString toString(CompilerTypes::CompilerType compilerType);
         //return all compilers
     static const QStringList compilers();
 };
+ Q_DECLARE_OPERATORS_FOR_FLAGS(CompilerTypes::CompilerType);
 
 struct InstallFile
 {

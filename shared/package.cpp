@@ -36,6 +36,7 @@
 #include <QStringList>
 #include <QFile>
 #include <QDir>
+#include <QMap>
 
 Package::PackageVersion::PackageVersion(const QString &version)
 {
@@ -716,35 +717,17 @@ void Package::addDeps(const QStringList &deps)
 
 Package::Type stringToType(const QString &type)
 {
-    QString ct = type.toLower();
-    if(ct == "bin")
-    {
-        return Package::BIN;
+    static QMap<QString,Package::Type> typeMap;
+    if(typeMap.isEmpty()){
+        typeMap.insert("bin",Package::BIN);
+        typeMap.insert("lib",Package::LIB);
+        typeMap.insert("doc",Package::DOC);
+        typeMap.insert("src",Package::SRC);
+        typeMap.insert("dbg",Package::DBG);
+        typeMap.insert("meta",Package::META);
     }
-    else if(ct == "lib")
-    {
-        return Package::LIB;
-    }
-    else if(ct == "doc")
-    {
-        return Package::DOC;
-    }
-    else if(ct == "src")
-    {
-        return Package::SRC;
-    }
-    else if(ct == "dbg")
-    {
-        return Package::DBG;
-    }
-    else if(ct == "meta")
-    {
-        return Package::META;
-    }
-    else
-    {
-        return Package::NONE;
-    }
+    QString _type = type.toLower();
+    return typeMap.contains(_type)?typeMap.value(_type):Package::NONE;
 }
 
 QString typeToString(Package::Type type)
