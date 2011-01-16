@@ -457,3 +457,12 @@ const QString CompilerTypes::toString(CompilerType type)
     }
     return compilerMap.contains(type)?compilerMap.value(type):QString();
 }
+
+const QStringList CompilerTypes::compilers()
+{
+    static QStringList list;
+    if(list.isEmpty()){
+        list  << "vc90" << "vc100" << "x64-vc100" << "x86-mingw4" << "x64-mingw4" << "mingw4" ;
+    }
+    return list;
+}

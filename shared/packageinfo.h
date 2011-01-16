@@ -55,9 +55,6 @@ public:
     /// return the possible package endings
     static QStringList endings();
 
-    //return all compilers
-    static QStringList compilers();
-
     // return the possible types endings
     static QStringList types();
 };

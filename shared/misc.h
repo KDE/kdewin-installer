@@ -53,6 +53,8 @@ public:
     };
     static CompilerTypes::CompilerType toCompilerType(const QString &type); 
     static const QString toString(CompilerTypes::CompilerType compilerType);
+        //return all compilers
+    static const QStringList compilers();
 };
 
 struct InstallFile
