@@ -54,12 +54,29 @@ public:
         MinGW4_W64=8 
     };
      Q_DECLARE_FLAGS(CompilerType,CompilerTypeFlag);
-    static CompilerTypes::CompilerType toCompilerType(const QString &type); 
+    static CompilerTypes::CompilerType fromString(const QString &type); 
     static const QString toString(CompilerTypes::CompilerType compilerType);
         //return all compilers
-    static const QStringList compilers();
+    static const QStringList values();
+    static QRegExp regex();
 };
  Q_DECLARE_OPERATORS_FOR_FLAGS(CompilerTypes::CompilerType);
+
+class ArchitectureTypes{
+public:
+    enum ArchitectureFlag{
+        Unspecified,
+        x86,
+        x64
+    };
+     Q_DECLARE_FLAGS(ArchitectureType,ArchitectureFlag);
+    static ArchitectureTypes::ArchitectureType fromString(const QString &type); 
+    static const QString toString(ArchitectureTypes::ArchitectureType compilerType);
+        //return all architectures
+    static const QStringList values();
+    static QRegExp regex();
+};
+ Q_DECLARE_OPERATORS_FOR_FLAGS(ArchitectureTypes::ArchitectureType);
 
 struct InstallFile
 {

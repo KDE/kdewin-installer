@@ -28,7 +28,7 @@ bool PackageInfo::fromString(const QString &name, QString &pkgName, QString &pkg
     QString work(name);
     
     //something like "-(mingw|mingw4|msvc|vc90|vc100)-
-    QRegExp compilersRx("-("+CompilerTypes::compilers().join("|")+")-");
+    QRegExp compilersRx = CompilerTypes::regex();
     //alow only number and points, as patchlvl only numbers
     QRegExp versionRx("-(\\w|\\d|\\.|_|\\+)*(-\\d*){0,1}$");
 
@@ -36,9 +36,8 @@ bool PackageInfo::fromString(const QString &name, QString &pkgName, QString &pkg
     if(compilersRx.indexIn(work) != -1){
         QString compiler = compilersRx.capturedTexts()[0];
         QStringList tmp =  work.split(compiler);
-        compiler = compiler.remove(compiler.length() -1 ,1);
         pkgName = tmp[0] + compiler;
-        pkgVersion = tmp[1];
+        pkgVersion = tmp[1].remove(0,1);
     }else{
         if(versionRx.indexIn(work) != -1){
             QStringList tmp = versionRx.capturedTexts();
@@ -61,7 +60,7 @@ PackageInfo PackageInfo::fromString(const QString &_name, const QString &version
     QString name = _name;
 
     // check architecture
-    QRegExp archRx("(x86|x64)");    
+    QRegExp archRx = ArchitectureTypes::regex();    
     if( archRx.indexIn(name) != -1){
         result.architecture = archRx.capturedTexts()[0];
     }else{
@@ -137,14 +136,17 @@ QString PackageInfo::manifestFileName(const QString &pkgName, const QString &pkg
 QString PackageInfo::baseName(const QString &_name)
 {
     QString name = _name;
-    name.remove(QRegExp("-("+CompilerTypes::compilers().join("|")+")$"));
-    return name.remove(QRegExp("-(x64|x86)$"));
+    name.remove(CompilerTypes::regex());
+    name.remove(ArchitectureTypes::regex());
+    //remove last "-" at the end
+    return name.remove(name.length()-1,1);
+
 }
 
 QStringList PackageInfo::endings()
 {
     QStringList list;
-    list << CompilerTypes::compilers();
+    list << CompilerTypes::values();
     if(isX64Windows()) list << "x64";
     list << "x86";
     return list;

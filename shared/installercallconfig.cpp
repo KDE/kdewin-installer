@@ -50,7 +50,7 @@ InstallerCallConfig::InstallerCallConfig(const QString &fileName)
     // setup-<packagename>-<compiler>.exe
     if (a.size() >= 3)
     {
-        compilerType = CompilerTypes::toCompilerType(a[2]);
+        compilerType = CompilerTypes::fromString(a[2]);
         if (compilerType == CompilerTypes::Unspecified)
             compilerType = CompilerTypes::MSVC9;
     }

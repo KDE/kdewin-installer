@@ -430,7 +430,7 @@ const QString toString(ReleaseType type)
 	    return "unknown";
 }
 
-CompilerTypes::CompilerType CompilerTypes::toCompilerType(const QString &_type)
+CompilerTypes::CompilerType CompilerTypes::fromString(const QString &_type)
 {
     static QMap<QString,CompilerType> compilerMap;
     if(compilerMap.isEmpty()){
@@ -465,11 +465,53 @@ const QString CompilerTypes::toString(CompilerType type)
     }
 }
 
-const QStringList CompilerTypes::compilers()
+const QStringList CompilerTypes::values()
 {
     static QStringList list;
     if(list.isEmpty()){
         list  << "vc90" << "vc100" << "x64-vc100" << "x86-mingw4" << "x64-mingw4" << "mingw4" ;
     }
     return list;
+}
+
+QRegExp CompilerTypes::regex(){
+    static QRegExp compilersRx("("+CompilerTypes::values().join("|")+")");
+    return compilersRx;
+}
+
+ArchitectureTypes::ArchitectureType ArchitectureTypes::fromString(const QString &_type)
+{
+    QString arch = _type.toLower();
+    if(arch == "x86")
+        return x86;
+    else if(arch == "x64")
+        return x64;
+    else 
+        return Unspecified;
+}
+
+const QString ArchitectureTypes::toString(ArchitectureTypes::ArchitectureType arch)
+{
+    switch(arch){
+        case x86:
+            return "x86";
+        case x64:
+            return "x64";
+        default:
+            return "";
+    }
+}
+
+const QStringList ArchitectureTypes::values()
+{
+    static QStringList list;
+    if(list.isEmpty()){
+        list  << "x86" << "x64" ;
+    }
+    return list;
+}
+
+QRegExp ArchitectureTypes::regex(){
+    static QRegExp architecturesRx("("+ArchitectureTypes::values().join("|")+")");
+    return architecturesRx;
 }
