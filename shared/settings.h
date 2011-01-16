@@ -116,8 +116,8 @@ public:
     bool autoNextStep() const { return m_settingsMain->value("autoNextStep", true).toBool(); }
     void setAutoNextStep(bool state) { m_settingsMain->setValue("autoNextStep", state); sync(); }
 
-    CompilerType::CompilerType compilerType() const { return (CompilerType::CompilerType) (m_settings->value("compilerType",m_settingsMain->value("compilerType",0).toInt()).toInt()); }
-    void setCompilerType(CompilerType::CompilerType type);
+    CompilerTypes::CompilerType compilerType() const { return (CompilerTypes::CompilerType) (m_settings->value("compilerType",m_settingsMain->value("compilerType",0).toInt()).toInt()); }
+    void setCompilerType(CompilerTypes::CompilerType type);
 
     QString logFile() { return downloadDir() + QDir::separator() + "kdewin-installer.log"; }
     

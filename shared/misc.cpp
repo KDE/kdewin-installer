@@ -429,33 +429,31 @@ const QString toString(ReleaseType type)
     else
 	    return "unknown";
 }
-namespace CompilerType{
-CompilerType toCompilerType(const QString &_type)
+
+CompilerTypes::CompilerType CompilerTypes::toCompilerType(const QString &_type)
 {
-    static QMap<QString,CompilerType> *compilerMap = NULL;
-    if(!compilerMap){
-        compilerMap->insert("vc90",MSVC9);
-        compilerMap->insert("vc10",MSVC10);
-        compilerMap->insert("mingw4",MinGW4);
-        compilerMap->insert("x86-mingw4",MinGW4_W32);
+    static QMap<QString,CompilerType> compilerMap;
+    if(compilerMap.isEmpty()){
+        compilerMap.insert("vc90",MSVC9);
+        compilerMap.insert("vc100",MSVC10);
+        compilerMap.insert("x64-vc100",MSVC10_X64);
+        compilerMap.insert("mingw4",MinGW4);
+        compilerMap.insert("x86-mingw4",MinGW4_W32);
+        compilerMap.insert("x64-mingw4",MinGW4_W64);
     }
-    return compilerMap->contains(_type)?compilerMap->value(_type):Unspecified;
+    return compilerMap.contains(_type)?compilerMap.value(_type):CompilerTypes::Unspecified;
 }
 
-const QString toString(CompilerType type)
+const QString CompilerTypes::toString(CompilerType type)
 {
-    if (type == MSVC9)
-        return "vc90";
-    else if (type == MSVC10)
-        return "vc100";
-    else if (type == MinGW4)
-        return "mingw4";
-    else if (type == MinGW4_W32)
-        return "x86-mingw4";
-    else if (type == MSVC_X64)
-        return "vc_x64";
-    else
-        return "";
-}
-
+    static QMap<CompilerType,QString> compilerMap;
+    if(compilerMap.isEmpty()){
+        compilerMap.insert(MSVC9,"vc90");
+        compilerMap.insert(MSVC10,"vc100");
+        compilerMap.insert(MSVC10_X64,"x64-vc100");
+        compilerMap.insert(MinGW4,"mingw4");
+        compilerMap.insert(MinGW4_W32,"x86-mingw4");
+        compilerMap.insert(MinGW4_W64,"x64-mingw4");
+    }
+    return compilerMap.contains(type)?compilerMap.value(type):QString();
 }

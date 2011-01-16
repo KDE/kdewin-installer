@@ -55,7 +55,7 @@ InstallerDialog::InstallerDialog()
     if (config.isValid())
     {
         InstallerEngine::defaultConfigURL = QString("http://www.winkde.org/pub/kde/ports/win32/releases/%1/%2").arg(toString(config.releaseType)).arg(config.version);
-        QString installRoot = QString("%1/KDE-%2-%3-%4").arg(QLatin1String(qgetenv("ProgramFiles"))).arg(toString(config.compilerType)).arg(toString(config.releaseType)).arg(config.version);
+        QString installRoot = QString("%1/KDE-%2-%3-%4").arg(QLatin1String(qgetenv("ProgramFiles"))).arg(CompilerTypes::toString(config.compilerType)).arg(toString(config.releaseType)).arg(config.version);
         addHint("I'm installing into " + installRoot);
         engine.setRoot(installRoot);
         ProxySettings ps;
@@ -68,7 +68,7 @@ InstallerDialog::InstallerDialog()
             ps.save();
             addHint("I'm " + ps.toString());
         }
-        packages << config.packageName+'-'+toString(config.compilerType);
+        packages << config.packageName+'-'+CompilerTypes::toString(config.compilerType);
         setItem(0);
         QTimer::singleShot(250,this,SLOT(setupEngine()));
     }

@@ -162,7 +162,7 @@ void Settings::setDownloadDir(const QString &dir)
     emit downloadDirChanged(QDir::toNativeSeparators(d.absolutePath()));
 }
 
-void Settings::setCompilerType(CompilerType::CompilerType ctype)
+void Settings::setCompilerType(CompilerTypes::CompilerType ctype)
 {
     if (compilerType() != ctype) {
         m_settings->setValue("compilerType", (int)ctype);

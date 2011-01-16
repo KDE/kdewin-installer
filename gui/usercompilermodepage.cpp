@@ -91,19 +91,19 @@ bool UserCompilerModePage::validatePage()
     engine->setPackageManagerMode(s.isPackageManagerMode());
 
     if (ui.compilerMinGW4->isChecked())
-        s.setCompilerType(CompilerType::MinGW4);
+        s.setCompilerType(CompilerTypes::MinGW4);
     else if (ui.compilerMinGW4_W32->isChecked())
-        s.setCompilerType(CompilerType::MinGW4_W32);
+        s.setCompilerType(CompilerTypes::MinGW4_W32);
     else if (ui.compilerMSVC9->isChecked())
-        s.setCompilerType(CompilerType::MSVC9);
+        s.setCompilerType(CompilerTypes::MSVC9);
     else if (ui.compilerMSVC10->isChecked())
-        s.setCompilerType(CompilerType::MSVC10);
+        s.setCompilerType(CompilerTypes::MSVC10);
     else if (isX64Windows())
     {
         if (ui.compilerMSVCX64->isChecked())
-            s.setCompilerType(CompilerType::MSVC_X64);
+            s.setCompilerType(CompilerTypes::MSVC10_X64);
         else if (ui.compilerMinGW4_W64->isChecked())
-            s.setCompilerType(CompilerType::MinGW4_W64);
+            s.setCompilerType(CompilerTypes::MinGW4_W64);
     }
     return true;
 }
@@ -113,12 +113,12 @@ void UserCompilerModePage::setCompilerMode(bool EndUserMode)
     Settings &s = Settings::instance();
     switch (s.compilerType()) 
     {
-        case CompilerType::MinGW4: ui.compilerMinGW4->setChecked(true); break;
-        case CompilerType::MinGW4_W32: ui.compilerMinGW4_W32->setChecked(true); break;
-        case CompilerType::MinGW4_W64: ui.compilerMinGW4_W64->setChecked(true); break;
-        case CompilerType::MSVC9: ui.compilerMSVC9->setChecked(true); break;
-        case CompilerType::MSVC10: ui.compilerMSVC10->setChecked(true); break;
-        case CompilerType::MSVC_X64: ui.compilerMSVCX64->setChecked(true); break;
+        case CompilerTypes::MinGW4: ui.compilerMinGW4->setChecked(true); break;
+        case CompilerTypes::MinGW4_W32: ui.compilerMinGW4_W32->setChecked(true); break;
+        case CompilerTypes::MinGW4_W64: ui.compilerMinGW4_W64->setChecked(true); break;
+        case CompilerTypes::MSVC9: ui.compilerMSVC9->setChecked(true); break;
+        case CompilerTypes::MSVC10: ui.compilerMSVC10->setChecked(true); break;
+        case CompilerTypes::MSVC10_X64: ui.compilerMSVCX64->setChecked(true); break;
         default: ui.compilerMSVC10->setChecked(true); break;
     }
     bool state = !Database::isAnyPackageInstalled(s.installDir());
