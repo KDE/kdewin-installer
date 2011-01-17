@@ -175,7 +175,7 @@ static void setIcon ( QTreeWidgetItem &item, int column, iconType action )
     // item.icon(column).setIconSize(QSize(22,22));
 }
 
-//this function must directly tage the enum FileTypes::FileTypeFlags , else the values get cast to int and this function is never called
+//this function must directly take the enum FileTypes::FileTypeFlags , else the values get cast to int and this function is never called
 static void setIcon ( QTreeWidgetItem &item, FileTypes::FileTypeFlags type, stateType state, iconType defType )
 {
   iconType t = defType;
