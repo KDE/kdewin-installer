@@ -24,6 +24,7 @@
 #define INSTALLERENGINECONSOLE_H
 
 #include  "installerengine.h"
+#include "typehelper.h"
 
 class InstallerEngineConsole : public InstallerEngine
 {

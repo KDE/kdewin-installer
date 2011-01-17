@@ -149,7 +149,7 @@ void EndUserPackageSelectorPage::setWidgetData()
         if(!p) p = packageList[PackageInfo::baseName(metaPackage)];
 
         // in case p is 0, we couldn't find a predefined package - e.g. another package has been defined before
-        if(!p || p->hasType(Package::BIN) || p->hasType(Package::LIB)) continue;
+        if(!p || p->hasType(FileTypes::BIN) || p->hasType(FileTypes::LIB)) continue;
 
         if (!includePackage(p->name(),m_displayType))
             continue;
@@ -157,7 +157,7 @@ void EndUserPackageSelectorPage::setWidgetData()
         QTreeWidgetItem *item = addPackageToTree(p, 0);
 
         // if this is no metaPackage, simply ignore it
-        if(p->hasType(Package::META)) {
+        if(p->hasType(FileTypes::META)) {
             int packageCount = 0;
 
             // now check whether we have packages for this metaPackage in our packageList and add them as child elements
@@ -186,7 +186,7 @@ void EndUserPackageSelectorPage::setWidgetData()
     {
         if (!includePackage(availablePackage->name(),m_displayType))
             continue;
-        if(availablePackage->hasType(Package::BIN)) {
+        if(availablePackage->hasType(FileTypes::BIN)) {
             QTreeWidgetItem *item = addPackageToTree(availablePackage, 0);
             if (item)
                 categoryList.append(item);
@@ -269,11 +269,11 @@ void EndUserPackageSelectorPage::preSelectPackages(const QString &package)
             QString name = item->data(C_ACTION, Qt::StatusTipRole).toString();
             QString availableVersion = item->text ( C_AVAILABLE );
             Package *availablePackage = engine->getPackageByName ( name, availableVersion );
-            if (!engine->isPackageSelected(availablePackage,Package::BIN))
+            if (!engine->isPackageSelected(availablePackage,FileTypes::BIN))
             {
                 QString installedVersion = item->text ( C_INSTALLED );
                 Package *installedPackage = engine->database()->getPackage( name,installedVersion.toAscii() );
-                engine->setNextState(*item, availablePackage, installedPackage, Package::BIN, C_ACTION );
+                engine->setNextState(*item, availablePackage, installedPackage, FileTypes::BIN, C_ACTION );
                 qDebug() << "found" << QString(pattern).arg(code);
             }   
             found = true;
@@ -355,14 +355,14 @@ void EndUserPackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
             if(!ap && !ip) continue;
 
             // switch state for the childItem
-            if ( column == C_ACTION) engine->setNextState(*item->child(i), ap, ip, Package::BIN, C_ACTION, true);
+            if ( column == C_ACTION) engine->setNextState(*item->child(i), ap, ip, FileTypes::BIN, C_ACTION, true);
         }
     }
 
     if ( column == C_ACTION )
     {
-        engine->setNextState(*item, availablePackage, installedPackage, Package::BIN, C_ACTION );
-        if(availablePackage->hasType(Package::META))
+        engine->setNextState(*item, availablePackage, installedPackage, FileTypes::BIN, C_ACTION );
+        if(availablePackage->hasType(FileTypes::META))
             engine->setMetaPackageState( *item, C_ACTION );
 
         // now check that if we're no top level item, we need to handle also the category icon

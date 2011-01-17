@@ -26,6 +26,7 @@
 
 #include <QObject>
 #include "package.h"
+#include "typehelper.h"
 
 class PackageList;
 /**
@@ -44,10 +45,10 @@ public:
     bool readFromDirectory ( const QString &dirPath=QString() );
     void addPackage ( const Package &package );
 
-    void listPackageFiles ( const QString &pkgName, Package::Type pkgType=Package::BIN );
+    void listPackageFiles ( const QString &pkgName, FileTypes::FileType pkgType=FileTypes::BIN );
     void listPackages ( const QString &title=QString() );
-    QStringList getPackageFiles ( const QString &pkgName, Package::Type pkgType=Package::BIN );
-    bool verifyFiles( const QString &pkgName, Package::Type pkgType=Package::BIN  );
+    QStringList getPackageFiles ( const QString &pkgName, FileTypes::FileType pkgType=FileTypes::BIN );
+    bool verifyFiles( const QString &pkgName, FileTypes::FileType pkgType=FileTypes::BIN  );
     Package *getPackage ( const QString &pkgName, const QByteArray &version=QByteArray() );
     void clear();
 

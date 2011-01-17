@@ -24,6 +24,7 @@
 #define INSTALLERCALLCONFIG_H
 
 #include "misc.h"
+#include "typehelper.h"
 
 #include <QString>
 

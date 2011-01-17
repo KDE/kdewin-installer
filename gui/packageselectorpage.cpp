@@ -339,16 +339,16 @@ void PackageSelectorPage::updatePackageInfo(const Package *availablePackage, con
     e = ( QTextEdit* ) packageInfo->widget ( 2 );
     if ( e && installedPackage) {
         QString list;
-        if ( installedPackage->isInstalled ( Package::BIN ) )
-            list += tr ( "---- BIN package ----" ) + "\n" + engine->database()->getPackageFiles ( installedPackage->name(),Package::BIN ).join ( "\n" ) + "\n";
-        if ( installedPackage->isInstalled ( Package::LIB ) )
-            list += tr ( "---- LIB package ----" ) + "\n" + engine->database()->getPackageFiles ( installedPackage->name(),Package::LIB ).join ( "\n" ) + "\n";
-        if ( installedPackage->isInstalled ( Package::DOC ) )
-            list += tr ( "---- DOC package ----" ) + "\n" + engine->database()->getPackageFiles ( installedPackage->name(),Package::DOC ).join ( "\n" ) + "\n";
-        if ( installedPackage->isInstalled ( Package::SRC ) )
-            list += tr ( "---- SRC package ----" ) + "\n" + engine->database()->getPackageFiles ( installedPackage->name(),Package::SRC ).join ( "\n" ) + "\n";
-        if ( installedPackage->isInstalled ( Package::DBG ) )
-            list += tr ( "---- DBG package ----" ) + "\n" + engine->database()->getPackageFiles ( installedPackage->name(),Package::DBG ).join ( "\n" ) + "\n";
+        if ( installedPackage->isInstalled ( FileTypes::BIN ) )
+            list += tr ( "---- BIN package ----" ) + "\n" + engine->database()->getPackageFiles ( installedPackage->name(),FileTypes::BIN ).join ( "\n" ) + "\n";
+        if ( installedPackage->isInstalled ( FileTypes::LIB ) )
+            list += tr ( "---- LIB package ----" ) + "\n" + engine->database()->getPackageFiles ( installedPackage->name(),FileTypes::LIB ).join ( "\n" ) + "\n";
+        if ( installedPackage->isInstalled ( FileTypes::DOC ) )
+            list += tr ( "---- DOC package ----" ) + "\n" + engine->database()->getPackageFiles ( installedPackage->name(),FileTypes::DOC ).join ( "\n" ) + "\n";
+        if ( installedPackage->isInstalled ( FileTypes::SRC ) )
+            list += tr ( "---- SRC package ----" ) + "\n" + engine->database()->getPackageFiles ( installedPackage->name(),FileTypes::SRC ).join ( "\n" ) + "\n";
+        if ( installedPackage->isInstalled ( FileTypes::DBG ) )
+            list += tr ( "---- DBG package ----" ) + "\n" + engine->database()->getPackageFiles ( installedPackage->name(),FileTypes::DBG ).join ( "\n" ) + "\n";
         if ( list.isEmpty() )
             packageInfo->setTabEnabled ( 2,false );
         else {

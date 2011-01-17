@@ -28,6 +28,7 @@
 #include "packagelist.h"
 #include "unpacker.h"
 #include "uninstaller.h"
+#include "typehelper.h"
 
 #include <QtCore/QBuffer>
 #include <QtCore/QDir>
@@ -112,8 +113,8 @@ bool Installer::createManifestFile()
 
 bool Installer::createManifestFileForExecutable()
 {
-    QString mFile = m_packageToInstall->manifestFileName(Package::BIN);
-    QString vFile = m_packageToInstall->versionFileName(Package::BIN);
+    QString mFile = m_packageToInstall->manifestFileName(FileTypes::BIN);
+    QString vFile = m_packageToInstall->versionFileName(FileTypes::BIN);
     QFile mf(m_root + "/manifest/" + mFile);
     if (!mf.open(QIODevice::WriteOnly | QIODevice::Text))
         return false;
@@ -152,7 +153,7 @@ bool Installer::createQtConfigFile()
     return true;
 }
 
-bool Installer::install(Package *pkg, const Package::Type type)
+bool Installer::install(Package *pkg, const FileTypes::FileType type)
 {
     m_packageToInstall = pkg;
     m_installType = type;
@@ -195,7 +196,7 @@ bool Installer::install(Package *pkg, const Package::Type type)
     return true;
 }
 
-bool Installer::installExecutable(Package *pkg, Package::Type type)
+bool Installer::installExecutable(Package *pkg, FileTypes::FileType type)
 {
     QString fileName = pkg->localFilePath(type);
 #ifdef Q_OS_WIN
@@ -230,7 +231,7 @@ bool Installer::installExecutable(Package *pkg, Package::Type type)
 #endif
 }
 
-bool Installer::installMsiPackage(Package *pkg, Package::Type type)
+bool Installer::installMsiPackage(Package *pkg, FileTypes::FileType type)
 {
     QString fileName = pkg->localFilePath(type);
 #ifdef Q_OS_WIN

@@ -33,6 +33,7 @@
 #include "installer.h"
 #include "installerengineconsole.h"
 #include "misc.h"
+#include "typehelper.h"
 
 #include <iostream>
 

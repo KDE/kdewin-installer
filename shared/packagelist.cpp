@@ -136,7 +136,7 @@ bool PackageList::writeToFile(const QString &_fileName)
     }
 
     // this needs to be enhanced to fit current Package content
-    // also maybe move this into class Package -> Package::write(QTextStream &out)
+    // also maybe move this into class Package -> FileTypes::write(QTextStream &out)
     QTextStream out(&file);
     out << "# package list" << "\n";
     out << "@format 1.0" << "\n";
@@ -168,7 +168,7 @@ bool PackageList::readFromFile(const QString &_fileName)
         Package pkg;
         if (pkg.read(in))
         {
-            if ( pkg.isInstalled(Package::BIN) || m_curSite && !m_curSite->isExclude(pkg.name()))
+            if ( pkg.isInstalled(FileTypes::BIN) || m_curSite && !m_curSite->isExclude(pkg.name()))
                 append(pkg);
         }
     }
@@ -203,16 +203,16 @@ bool PackageList::syncWithFile(const QString &_fileName)
             apkg = find(pkg.name());
             if (apkg)
             {
-                if (pkg.isInstalled(Package::BIN))
-                    apkg->setInstalled(Package::BIN);
-                if (pkg.isInstalled(Package::LIB))
-                    apkg->setInstalled(Package::LIB);
-                if (pkg.isInstalled(Package::DOC))
-                    apkg->setInstalled(Package::DOC);
-                if (pkg.isInstalled(Package::SRC))
-                    apkg->setInstalled(Package::SRC);
-                if (pkg.isInstalled(Package::DBG))
-                    apkg->setInstalled(Package::DBG);
+                if (pkg.isInstalled(FileTypes::BIN))
+                    apkg->setInstalled(FileTypes::BIN);
+                if (pkg.isInstalled(FileTypes::LIB))
+                    apkg->setInstalled(FileTypes::LIB);
+                if (pkg.isInstalled(FileTypes::DOC))
+                    apkg->setInstalled(FileTypes::DOC);
+                if (pkg.isInstalled(FileTypes::SRC))
+                    apkg->setInstalled(FileTypes::SRC);
+                if (pkg.isInstalled(FileTypes::DBG))
+                    apkg->setInstalled(FileTypes::DBG);
             }
             else
                 append(pkg);
@@ -246,16 +246,16 @@ bool PackageList::syncWithDatabase(Database &database)
             pkg->setHandled(true);
             continue;
         }
-        if (pkg->isInstalled(Package::BIN))
-            apkg->setInstalled(Package::BIN);
-        if (pkg->isInstalled(Package::LIB))
-            apkg->setInstalled(Package::LIB);
-        if (pkg->isInstalled(Package::DOC))
-            apkg->setInstalled(Package::DOC);
-        if (pkg->isInstalled(Package::SRC))
-            apkg->setInstalled(Package::SRC);
-        if (pkg->isInstalled(Package::DBG))
-            apkg->setInstalled(Package::DBG);
+        if (pkg->isInstalled(FileTypes::BIN))
+            apkg->setInstalled(FileTypes::BIN);
+        if (pkg->isInstalled(FileTypes::LIB))
+            apkg->setInstalled(FileTypes::LIB);
+        if (pkg->isInstalled(FileTypes::DOC))
+            apkg->setInstalled(FileTypes::DOC);
+        if (pkg->isInstalled(FileTypes::SRC))
+            apkg->setInstalled(FileTypes::SRC);
+        if (pkg->isInstalled(FileTypes::DBG))
+            apkg->setInstalled(FileTypes::DBG);
         pkg->setHandled(true);
     }
     Q_FOREACH ( Package *p, newPackages )
@@ -405,31 +405,31 @@ bool PackageList::readInternal(QIODevice *ioDev, PackageList::Type type, bool ap
                 // available types could not be determined on this web page
                 // so assume all types are available
                 {
-                    Package::PackageItem item(Package::BIN);
+                    Package::PackageItem item(FileTypes::BIN);
                     item.setUrl(m_baseURL);
                     item.setFileName(name+"-"+version+"-bin.zip");
                     pkg.add(item);
                 }
                 {
-                    Package::PackageItem item(Package::LIB);
+                    Package::PackageItem item(FileTypes::LIB);
                     item.setUrl(m_baseURL);
                     item.setFileName(name+"-"+version+"-lib.zip");
                     pkg.add(item);
                 }
                 {
-                    Package::PackageItem item(Package::DOC);
+                    Package::PackageItem item(FileTypes::DOC);
                     item.setUrl(m_baseURL);
                     item.setFileName(name+"-"+version+"-doc.zip");
                     pkg.add(item);
                 }
                 {
-                    Package::PackageItem item(Package::SRC);
+                    Package::PackageItem item(FileTypes::SRC);
                     item.setUrl(m_baseURL);
                     item.setFileName(name+"-"+version+"-src.zip");
                     pkg.add(item);
                 }
                 {
-                    Package::PackageItem item(Package::DBG);
+                    Package::PackageItem item(FileTypes::DBG);
                     item.setUrl(m_baseURL);
                     item.setFileName(name+"-"+version+"-dbg.zip");
                     pkg.add(item);

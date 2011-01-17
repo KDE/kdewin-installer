@@ -39,45 +39,6 @@ typedef enum { RTUnspecified=0, Stable, Unstable, Nightly } ReleaseType;
 ReleaseType toReleaseType(const QString &type); 
 const QString toString(ReleaseType type);
 
-class CompilerTypes{
-public:
-    enum CompilerTypeFlag{
-        Unspecified=0,
-        MinGW=1,
-        MSVC=2,
-        MSVC8=2,
-        MSVC9=3,
-        MSVC10=4,
-        MinGW4=5,
-        MSVC10_X64=6,
-        MinGW4_W32=7,
-        MinGW4_W64=8 
-    };
-     Q_DECLARE_FLAGS(CompilerType,CompilerTypeFlag);
-    static CompilerTypes::CompilerType fromString(const QString &type); 
-    static const QString toString(CompilerTypes::CompilerType compilerType);
-        //return all compilers
-    static const QStringList values();
-    static QRegExp regex();
-};
- Q_DECLARE_OPERATORS_FOR_FLAGS(CompilerTypes::CompilerType);
-
-class ArchitectureTypes{
-public:
-    enum ArchitectureFlag{
-        Unspecified,
-        x86,
-        x64
-    };
-     Q_DECLARE_FLAGS(ArchitectureType,ArchitectureFlag);
-    static ArchitectureTypes::ArchitectureType fromString(const QString &type); 
-    static const QString toString(ArchitectureTypes::ArchitectureType compilerType);
-        //return all architectures
-    static const QStringList values();
-    static QRegExp regex();
-};
- Q_DECLARE_OPERATORS_FOR_FLAGS(ArchitectureTypes::ArchitectureType);
-
 struct InstallFile
 {
   QString inputFile;

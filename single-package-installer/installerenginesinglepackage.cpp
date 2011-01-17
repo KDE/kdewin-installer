@@ -29,6 +29,7 @@
 #include "packagelist.h"
 #include "downloader.h"
 #include "unpacker.h"
+#include "typehelper.h"
 
 #include <QApplication>
 #include <QtDebug>
@@ -65,8 +66,8 @@ bool InstallerEngineSinglePackage::downloadPackages(QList<Package*> &packagesToI
     {
         if (!p)
             continue;
-        if (p->hasType(Package::BIN))
-            if (!p->downloadItem(Package::BIN))
+        if (p->hasType(FileTypes::BIN))
+            if (!p->downloadItem(FileTypes::BIN))
                 return false;
     }
     return true;
@@ -79,8 +80,8 @@ bool InstallerEngineSinglePackage::installPackages(QList<Package*> &packagesToIn
     {
         if (!p)
             continue;
-        if (p->hasType(Package::BIN))
-            if (!p->installItem(m_installer,Package::BIN))
+        if (p->hasType(FileTypes::BIN))
+            if (!p->installItem(m_installer,FileTypes::BIN))
                 return false;
     }
     return true;

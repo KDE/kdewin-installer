@@ -55,38 +55,38 @@ int LIBColumn = 7;
 int DOCColumn = 8;
 int ColumnCount = 9;
 
-int typeToColumn ( Package::Type type )
+int typeToColumn ( FileTypes::FileType type )
 {
     switch ( type ) {
-    case Package::BIN :
+    case FileTypes::BIN :
         return BINColumn;
-    case Package::LIB :
+    case FileTypes::LIB :
         return LIBColumn;
-    case Package::DOC :
+    case FileTypes::DOC :
         return DOCColumn;
-    case Package::SRC :
+    case FileTypes::SRC :
         return SRCColumn;
-    case Package::DBG :
+    case FileTypes::DBG :
         return DBGColumn;
     default:
         return 0;
     }
 }
 
-Package::Type columnToType ( int column )
+FileTypes::FileType columnToType ( int column )
 {
     if (column == BINColumn)
-        return Package::BIN;
+        return FileTypes::BIN;
     else if (column == LIBColumn)
-        return Package::LIB;
+        return FileTypes::LIB;
     else if (column == DOCColumn)
-        return Package::DOC;
+        return FileTypes::DOC;
     else if (column == SRCColumn)
-        return Package::SRC;
+        return FileTypes::SRC;
     else if (column == DBGColumn)
-        return Package::DBG;
+        return FileTypes::DBG;
     else
-        return Package::NONE;
+        return FileTypes::NONE;
 }
 
 enum iconType {_icon_install, _icon_autoinstall, _icon_keepinstalled, _icon_update, _icon_remove, _icon_nothing, _icon_disable, _icon_dirty };
@@ -175,7 +175,8 @@ static void setIcon ( QTreeWidgetItem &item, int column, iconType action )
     // item.icon(column).setIconSize(QSize(22,22));
 }
 
-static void setIcon ( QTreeWidgetItem &item, Package::Type type, stateType state, iconType defType )
+//this function must directly tage the enum FileTypes::FileTypeFlags , else the values get cast to int and this function is never called
+static void setIcon ( QTreeWidgetItem &item, FileTypes::FileTypeFlags type, stateType state, iconType defType )
 {
   iconType t = defType;
   switch( state ) {
@@ -213,7 +214,7 @@ static void setIcon ( QTreeWidgetItem &item, int column, stateType state, iconTy
   setIcon( item, column, t );
 }
 
-static void setIcon ( QTreeWidgetItem &item, Package::Type type, iconType action )
+static void setIcon ( QTreeWidgetItem &item, FileTypes::FileType type, iconType action )
 {
     setIcon(item,typeToColumn ( type ), action);
 }
@@ -226,17 +227,17 @@ void InstallerEngineGui::setMetaPackageState(QTreeWidgetItem &item, int column)
     for(int i = 0; i < item.childCount(); ++i)
     {
         QString name = item.child(i)->data(column, Qt::StatusTipRole).toString();
-        if(packageStates.getState(name, QString(), Package::BIN) == _Install) 
+        if(packageStates.getState(name, QString(), FileTypes::BIN) == _Install) 
         {
             dirty = true;
             c++;
         }
-        else if(packageStates.getState(name, QString(), Package::BIN) == _Update ||
-                packageStates.getState(name, QString(), Package::BIN) == _Remove) 
+        else if(packageStates.getState(name, QString(), FileTypes::BIN) == _Update ||
+                packageStates.getState(name, QString(), FileTypes::BIN) == _Remove) 
         {
             dirty = true;
         }
-        else if(packageStates.getState(name, QString(), Package::BIN) == _Nothing) 
+        else if(packageStates.getState(name, QString(), FileTypes::BIN) == _Nothing) 
         {
             // we need to find out whether this packages is kept or whether it just isn't installed.
             if(database()->getPackage(name)) {
@@ -255,27 +256,27 @@ void InstallerEngineGui::setEndUserInitialState ( QTreeWidgetItem &item, Package
 {
     if (installed && available && available->version() != installed->version())
     {
-        if (installed->isInstalled(Package::BIN))
+        if (installed->isInstalled(FileTypes::BIN))
         {
-            setIcon(item,column,packageStates.getState(installed,Package::BIN),_icon_update);
-            packageStates.setState(available,Package::BIN,_Update);
+            setIcon(item,column,packageStates.getState(installed,FileTypes::BIN),_icon_update);
+            packageStates.setState(available,FileTypes::BIN,_Update);
         }
     }
     else if (installed)
     {
-        if (installed->isInstalled(Package::BIN))
-            setIcon(item,column,packageStates.getState(installed,Package::BIN),_icon_keepinstalled);
+        if (installed->isInstalled(FileTypes::BIN))
+            setIcon(item,column,packageStates.getState(installed,FileTypes::BIN),_icon_keepinstalled);
     }
     else if (available)
     {
-        if (available->hasType(Package::BIN))
-            setIcon(item,column,packageStates.getState(available,Package::BIN),_icon_nothing);
-        else if (available->hasType(Package::META))
+        if (available->hasType(FileTypes::BIN))
+            setIcon(item,column,packageStates.getState(available,FileTypes::BIN),_icon_nothing);
+        else if (available->hasType(FileTypes::META))
             setMetaPackageState(item, column);
     }
 }
 
-bool InstallerEngineGui::isPackageSelected ( Package *available, Package::Type type )
+bool InstallerEngineGui::isPackageSelected ( Package *available, FileTypes::FileType type )
 {
     return packageStates.getState(available,type) == _Install;
 }
@@ -285,77 +286,77 @@ void InstallerEngineGui::setInitialState ( QTreeWidgetItem &item, Package *avail
 {
     if (available)
     {
-        if (available->hasType(Package::BIN))
-            setIcon(item,Package::BIN,packageStates.getState(available,Package::BIN),_icon_nothing);
+        if (available->hasType(FileTypes::BIN))
+            setIcon(item,FileTypes::BIN,packageStates.getState(available,FileTypes::BIN),_icon_nothing);
         if (m_displayMode == Developer)
         {
-            if (available->hasType(Package::LIB))
-                setIcon(item,Package::BIN,packageStates.getState(available,Package::LIB),_icon_nothing);
-            if (available->hasType(Package::DOC))
-                setIcon(item,Package::BIN,packageStates.getState(available,Package::DOC),_icon_nothing);
-            if (available->hasType(Package::SRC))
-                setIcon(item,Package::SRC,packageStates.getState(available,Package::SRC),_icon_nothing);
-            if (available->hasType(Package::DBG))
-                setIcon(item,Package::DBG,packageStates.getState(available,Package::DBG),_icon_nothing);
+            if (available->hasType(FileTypes::LIB))
+                setIcon(item,FileTypes::BIN,packageStates.getState(available,FileTypes::LIB),_icon_nothing);
+            if (available->hasType(FileTypes::DOC))
+                setIcon(item,FileTypes::BIN,packageStates.getState(available,FileTypes::DOC),_icon_nothing);
+            if (available->hasType(FileTypes::SRC))
+                setIcon(item,FileTypes::SRC,packageStates.getState(available,FileTypes::SRC),_icon_nothing);
+            if (available->hasType(FileTypes::DBG))
+                setIcon(item,FileTypes::DBG,packageStates.getState(available,FileTypes::DBG),_icon_nothing);
         }
         else if (m_displayMode == Single)
         {
-            if (available->hasType(Package::LIB))
-                setIcon(item,Package::LIB,packageStates.getState(available,Package::LIB),_icon_nothing);
-            if (available->hasType(Package::DOC))
-                setIcon(item,Package::DOC,packageStates.getState(available,Package::DOC),_icon_nothing);
-            if (available->hasType(Package::SRC))
-                setIcon(item,Package::SRC,packageStates.getState(available,Package::SRC),_icon_nothing);
-            if (available->hasType(Package::DBG))
-                setIcon(item,Package::DBG,packageStates.getState(available,Package::DBG),_icon_nothing);
+            if (available->hasType(FileTypes::LIB))
+                setIcon(item,FileTypes::LIB,packageStates.getState(available,FileTypes::LIB),_icon_nothing);
+            if (available->hasType(FileTypes::DOC))
+                setIcon(item,FileTypes::DOC,packageStates.getState(available,FileTypes::DOC),_icon_nothing);
+            if (available->hasType(FileTypes::SRC))
+                setIcon(item,FileTypes::SRC,packageStates.getState(available,FileTypes::SRC),_icon_nothing);
+            if (available->hasType(FileTypes::DBG))
+                setIcon(item,FileTypes::DBG,packageStates.getState(available,FileTypes::DBG),_icon_nothing);
         }
     }
     if (installed)
     {
-        if (installed->isInstalled(Package::BIN))
-            setIcon(item,Package::BIN,packageStates.getState(installed,Package::BIN),_icon_keepinstalled);
+        if (installed->isInstalled(FileTypes::BIN))
+            setIcon(item,FileTypes::BIN,packageStates.getState(installed,FileTypes::BIN),_icon_keepinstalled);
         if (m_displayMode == Developer)
         {
-            if (installed->isInstalled(Package::LIB))
-                setIcon(item,Package::BIN,packageStates.getState(installed,Package::BIN),_icon_keepinstalled);
-            if (installed->isInstalled(Package::DOC))
-                setIcon(item,Package::BIN,packageStates.getState(installed,Package::BIN),_icon_keepinstalled);
-            if (installed->isInstalled(Package::SRC))
-                setIcon(item,Package::SRC,packageStates.getState(installed,Package::BIN),_icon_keepinstalled);
-            if (installed->isInstalled(Package::DBG))
-                setIcon(item,Package::DBG,packageStates.getState(installed,Package::BIN),_icon_keepinstalled);
+            if (installed->isInstalled(FileTypes::LIB))
+                setIcon(item,FileTypes::BIN,packageStates.getState(installed,FileTypes::BIN),_icon_keepinstalled);
+            if (installed->isInstalled(FileTypes::DOC))
+                setIcon(item,FileTypes::BIN,packageStates.getState(installed,FileTypes::BIN),_icon_keepinstalled);
+            if (installed->isInstalled(FileTypes::SRC))
+                setIcon(item,FileTypes::SRC,packageStates.getState(installed,FileTypes::BIN),_icon_keepinstalled);
+            if (installed->isInstalled(FileTypes::DBG))
+                setIcon(item,FileTypes::DBG,packageStates.getState(installed,FileTypes::BIN),_icon_keepinstalled);
         }
         else if(m_displayMode == Single)
         {
-            if (installed->isInstalled(Package::LIB))
-                setIcon(item,Package::LIB,_icon_keepinstalled);
-            if (installed->isInstalled(Package::DOC))
-                setIcon(item,Package::DOC,_icon_keepinstalled);
-            if (installed->isInstalled(Package::SRC))
-                setIcon(item,Package::SRC,_icon_keepinstalled);
-            if (installed->isInstalled(Package::DBG))
-                setIcon(item,Package::DBG,_icon_keepinstalled);
+            if (installed->isInstalled(FileTypes::LIB))
+                setIcon(item,FileTypes::LIB,_icon_keepinstalled);
+            if (installed->isInstalled(FileTypes::DOC))
+                setIcon(item,FileTypes::DOC,_icon_keepinstalled);
+            if (installed->isInstalled(FileTypes::SRC))
+                setIcon(item,FileTypes::SRC,_icon_keepinstalled);
+            if (installed->isInstalled(FileTypes::DBG))
+                setIcon(item,FileTypes::DBG,_icon_keepinstalled);
         }
     }
 }
 
-void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *available, Package *installed, Package::Type type, int column, bool handleMetaPackage)
+void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *available, Package *installed, FileTypes::FileType type, int column, bool handleMetaPackage)
 {
-    if (type == Package::NONE)
+    if (type == FileTypes::NONE)
         return;
 
     bool isAvailable;
     bool isInstalled;
 
-    if (type == Package::BIN && m_displayMode == Developer)
+    if (type == FileTypes::BIN && m_displayMode == Developer)
     {
-        isAvailable = available && (available->hasType(type) || available->hasType(Package::LIB) || available->hasType(Package::DOC) || available->hasType(Package::DBG));
-        isInstalled = installed && (installed->isInstalled(type) || installed->hasType(Package::LIB) || installed->hasType(Package::DOC) || available->hasType(Package::DBG));
+        isAvailable = available && (available->hasType(type) || available->hasType(FileTypes::LIB) || available->hasType(FileTypes::DOC) || available->hasType(FileTypes::DBG));
+        isInstalled = installed && (installed->isInstalled(type) || installed->hasType(FileTypes::LIB) || installed->hasType(FileTypes::DOC) || available->hasType(FileTypes::DBG));
     }
-    else if (type == Package::BIN && m_displayMode == BinaryOnly)
+    else if (type == FileTypes::BIN && m_displayMode == BinaryOnly)
     {
-        isAvailable = available && (available->hasType(type) || available->hasType(Package::DBG));
-        isInstalled = installed && (installed->isInstalled(type) || installed->hasType(Package::DBG));
+        isAvailable = available && (available->hasType(type) || available->hasType(FileTypes::DBG));
+        isInstalled = installed && (installed->isInstalled(type) || installed->hasType(FileTypes::DBG));
     }
     else
     {
@@ -438,19 +439,19 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
         packageStates.setState(available,type,newState);
 
     // set additional package types for download/install/remove
-    if (type == Package::BIN && m_displayMode == Developer)
+    if (type == FileTypes::BIN && m_displayMode == Developer)
     {
-        if (available->hasType(Package::LIB))
-            packageStates.setState(available,Package::LIB,newState);
-        if (available->hasType(Package::DOC))
-            packageStates.setState(available,Package::DOC,newState);
-        if (available->hasType(Package::DBG))
-            packageStates.setState(available,Package::DBG,newState);
+        if (available->hasType(FileTypes::LIB))
+            packageStates.setState(available,FileTypes::LIB,newState);
+        if (available->hasType(FileTypes::DOC))
+            packageStates.setState(available,FileTypes::DOC,newState);
+        if (available->hasType(FileTypes::DBG))
+            packageStates.setState(available,FileTypes::DBG,newState);
     }
-    else if (type == Package::BIN && m_displayMode == BinaryOnly)
+    else if (type == FileTypes::BIN && m_displayMode == BinaryOnly)
     {
-        if (available->hasType(Package::DBG))
-            packageStates.setState(available,Package::DBG,newState);
+        if (available->hasType(FileTypes::DBG))
+            packageStates.setState(available,FileTypes::DBG,newState);
     }
 }
 
@@ -495,8 +496,8 @@ bool InstallerEngineGui::setDependencyState(Package *_package, QTreeWidget *list
         // check dependencies first
         setDependencyState(package, list);
 
-        stateType state = packageStates.getState(package,Package::BIN);
-        stateType depState = dependencyStates.getState(package,Package::BIN);
+        stateType state = packageStates.getState(package,FileTypes::BIN);
+        stateType depState = dependencyStates.getState(package,FileTypes::BIN);
 
         Package *installedPackage = m_database->getPackage(dep);
 
@@ -525,29 +526,29 @@ bool InstallerEngineGui::setDependencyState(Package *_package, QTreeWidget *list
                 QTreeWidgetItem * item = new QTreeWidgetItem(QStringList() << name << package->version().toString() << package->notes());
                 list->addTopLevelItem(item);
             }
-            dependencyStates.setState(package,Package::BIN,newState);
+            dependencyStates.setState(package,FileTypes::BIN,newState);
 
             // set additional package types for download/install/remove
             if (m_displayMode == Developer)
             {
-                if (package->hasType(Package::LIB))
-                    dependencyStates.setState(package,Package::LIB,newState);
-                if (package->hasType(Package::DOC))
-                    dependencyStates.setState(package,Package::DOC,newState);
-                if (package->hasType(Package::DBG))
-                    dependencyStates.setState(package,Package::DBG,newState);
+                if (package->hasType(FileTypes::LIB))
+                    dependencyStates.setState(package,FileTypes::LIB,newState);
+                if (package->hasType(FileTypes::DOC))
+                    dependencyStates.setState(package,FileTypes::DOC,newState);
+                if (package->hasType(FileTypes::DBG))
+                    dependencyStates.setState(package,FileTypes::DBG,newState);
             }
             else if (m_displayMode == BinaryOnly)
             {
-                if (package->hasType(Package::DBG))
-                    dependencyStates.setState(package,Package::DBG,_Install);
+                if (package->hasType(FileTypes::DBG))
+                    dependencyStates.setState(package,FileTypes::DBG,_Install);
             }
         }
     }
     return true;
 }
 
-bool isMarkedForDownload ( Package *pkg,Package::Type type )
+bool isMarkedForDownload ( Package *pkg,FileTypes::FileType type )
 {
     stateType state = packageStates.getState ( pkg, type );
     stateType depState = dependencyStates.getState ( pkg, type );
@@ -557,7 +558,7 @@ bool isMarkedForDownload ( Package *pkg,Package::Type type )
     return result;
 }
 
-bool isMarkedForInstall ( Package *pkg,Package::Type type )
+bool isMarkedForInstall ( Package *pkg,FileTypes::FileType type )
 {
     stateType state = packageStates.getState ( pkg, type );
     stateType depState = dependencyStates.getState ( pkg, type );
@@ -567,7 +568,7 @@ bool isMarkedForInstall ( Package *pkg,Package::Type type )
     return result;
 }
 
-bool isMarkedForRemoval ( Package *pkg,Package::Type type )
+bool isMarkedForRemoval ( Package *pkg,FileTypes::FileType type )
 {
     stateType state = packageStates.getState ( pkg, type );
     stateType depState = dependencyStates.getState ( pkg, type );
@@ -619,26 +620,26 @@ void InstallerEngineGui::unselectAllPackages()
 
 void InstallerEngineGui::selectAllPackagesForRemoval()
 {
-    Package::Type type = Package::BIN;
+    FileTypes::FileType type = FileTypes::BIN;
     stateType newState = _Remove;
     Q_FOREACH(const Package *installed,m_database->packages())
     {
         if (installed->hasType(type))
             packageStates.setState(installed,type,newState);
         // set additional package types for download/install/remove
-        if (type == Package::BIN && m_displayMode == Developer)
+        if (type == FileTypes::BIN && m_displayMode == Developer)
         {
-            if (installed->hasType(Package::LIB))
-                packageStates.setState(installed,Package::LIB,newState);
-            if (installed->hasType(Package::DOC))
-                packageStates.setState(installed,Package::DOC,newState);
-            if (installed->hasType(Package::DBG))
-                packageStates.setState(installed,Package::DBG,newState);
+            if (installed->hasType(FileTypes::LIB))
+                packageStates.setState(installed,FileTypes::LIB,newState);
+            if (installed->hasType(FileTypes::DOC))
+                packageStates.setState(installed,FileTypes::DOC,newState);
+            if (installed->hasType(FileTypes::DBG))
+                packageStates.setState(installed,FileTypes::DBG,newState);
         }
-        else if (type == Package::BIN && m_displayMode == BinaryOnly)
+        else if (type == FileTypes::BIN && m_displayMode == BinaryOnly)
         {
-            if (installed->hasType(Package::DBG))
-                packageStates.setState(installed,Package::DBG,newState);
+            if (installed->hasType(FileTypes::DBG))
+                packageStates.setState(installed,FileTypes::DBG,newState);
         }
         m_packageResources->addPackage(*installed);
     }
@@ -650,9 +651,9 @@ void InstallerEngineGui::selectPackagesForReinstall()
     qWarning() << "has to be implemented";
 }
 
-bool InstallerEngineGui::downloadPackageItem(Package *pkg, Package::Type type )
+bool InstallerEngineGui::downloadPackageItem(Package *pkg, FileTypes::FileType type )
 {
-    bool all = false; //isMarkedForInstall(pkg,Package::ALL);
+    bool all = false; //isMarkedForInstall(pkg,FileTypes::ALL);
     if ( !isMarkedForDownload ( pkg,type ) )
         return true;
 
@@ -696,15 +697,15 @@ bool InstallerEngineGui::downloadPackages ( const QString &category )
             return false;
 
         Downloader::instance()->progress()->setFileNumber(i++);
-        if (!downloadPackageItem(pkg,Package::BIN))
+        if (!downloadPackageItem(pkg,FileTypes::BIN))
             return false;
-        if (!downloadPackageItem(pkg,Package::LIB))
+        if (!downloadPackageItem(pkg,FileTypes::LIB))
             return false;
-        if (!downloadPackageItem(pkg,Package::DOC))
+        if (!downloadPackageItem(pkg,FileTypes::DOC))
             return false;
-        if (!downloadPackageItem(pkg,Package::SRC))
+        if (!downloadPackageItem(pkg,FileTypes::SRC))
             return false;
-        if (!downloadPackageItem(pkg,Package::DBG))
+        if (!downloadPackageItem(pkg,FileTypes::DBG))
             return false;
     }
     return true;
@@ -799,25 +800,25 @@ bool InstallerEngineGui::removePackages ( const QString &category )
             return false;
 
         m_installer->progress()->setPackageNumber(i++);
-        bool all = false; //isMarkedForRemoval(pkg,Package::ALL);
-        if ( all || isMarkedForRemoval ( pkg,Package::BIN ) )
-            pkg->removeItem ( m_installer, Package::BIN );
+        bool all = false; //isMarkedForRemoval(pkg,FileTypes::ALL);
+        if ( all || isMarkedForRemoval ( pkg,FileTypes::BIN ) )
+            pkg->removeItem ( m_installer, FileTypes::BIN );
         if (m_canceled)
             return false;
-        if ( all || isMarkedForRemoval ( pkg,Package::LIB ) )
-            pkg->removeItem ( m_installer, Package::LIB );
+        if ( all || isMarkedForRemoval ( pkg,FileTypes::LIB ) )
+            pkg->removeItem ( m_installer, FileTypes::LIB );
         if (m_canceled)
             return false;
-        if ( all || isMarkedForRemoval ( pkg,Package::DOC ) )
-            pkg->removeItem ( m_installer, Package::DOC );
+        if ( all || isMarkedForRemoval ( pkg,FileTypes::DOC ) )
+            pkg->removeItem ( m_installer, FileTypes::DOC );
         if (m_canceled)
             return false;
-        if ( all || isMarkedForRemoval ( pkg,Package::SRC ) )
-            pkg->removeItem ( m_installer, Package::SRC );
+        if ( all || isMarkedForRemoval ( pkg,FileTypes::SRC ) )
+            pkg->removeItem ( m_installer, FileTypes::SRC );
         if (m_canceled)
             return false;
-        if ( all || isMarkedForRemoval ( pkg,Package::DBG ) )
-            pkg->removeItem ( m_installer, Package::DBG );
+        if ( all || isMarkedForRemoval ( pkg,FileTypes::DBG ) )
+            pkg->removeItem ( m_installer, FileTypes::DBG );
         m_removedPackages++;
     }
     return true;
@@ -850,25 +851,25 @@ bool InstallerEngineGui::installPackages ( const QString &_category )
             return false;
 
         m_installer->progress()->setPackageNumber(i++);
-        bool all = false;//isMarkedForInstall(pkg,Package::ALL);
-        if ( all || isMarkedForInstall ( pkg,Package::BIN ) )
-            pkg->installItem ( m_installer, Package::BIN );
+        bool all = false;//isMarkedForInstall(pkg,FileTypes::ALL);
+        if ( all || isMarkedForInstall ( pkg,FileTypes::BIN ) )
+            pkg->installItem ( m_installer, FileTypes::BIN );
         if (m_canceled)
             return false;
-        if ( all || isMarkedForInstall ( pkg,Package::LIB ) )
-            pkg->installItem ( m_installer, Package::LIB );
+        if ( all || isMarkedForInstall ( pkg,FileTypes::LIB ) )
+            pkg->installItem ( m_installer, FileTypes::LIB );
         if (m_canceled)
             return false;
-        if ( all || isMarkedForInstall ( pkg,Package::DOC ) )
-            pkg->installItem ( m_installer, Package::DOC );
+        if ( all || isMarkedForInstall ( pkg,FileTypes::DOC ) )
+            pkg->installItem ( m_installer, FileTypes::DOC );
         if (m_canceled)
             return false;
-        if ( all || isMarkedForInstall ( pkg,Package::SRC ) )
-            pkg->installItem ( m_installer, Package::SRC );
+        if ( all || isMarkedForInstall ( pkg,FileTypes::SRC ) )
+            pkg->installItem ( m_installer, FileTypes::SRC );
         if (m_canceled)
             return false;
-        if ( all || isMarkedForInstall ( pkg,Package::DBG ) )
-            pkg->installItem ( m_installer, Package::DBG );
+        if ( all || isMarkedForInstall ( pkg,FileTypes::DBG ) )
+            pkg->installItem ( m_installer, FileTypes::DBG );
         // @TODO: where to handle desktop icons creating
         m_installedPackages++;
     }

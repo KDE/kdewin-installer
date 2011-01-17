@@ -30,6 +30,7 @@
 #include "packageinfo.h"
 #include "packagelist.h"
 #include "qio.h"
+#include "typehelper.h"
 
 #include <QtDebug>
 #include <QDir>
@@ -64,15 +65,15 @@ void InstallerEngineConsole::printPackage(Package *p)
 {
     if (!p)
         return;
-    if (p->isInstalled(Package::BIN))
+    if (p->isInstalled(FileTypes::BIN))
         qprintf("%s-bin-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
-    if (p->isInstalled(Package::LIB))
+    if (p->isInstalled(FileTypes::LIB))
         qprintf("%s-lib-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
-    if (p->isInstalled(Package::DOC))
+    if (p->isInstalled(FileTypes::DOC))
         qprintf("%s-doc-%s\n",qPrintable(p->name()), qPrintable(p->version().toString())); 
-    if (p->isInstalled(Package::SRC))
+    if (p->isInstalled(FileTypes::SRC))
         qprintf("%s-src-%s\n",qPrintable(p->name()), qPrintable(p->version().toString()));   
-    if (p->isInstalled(Package::DBG))
+    if (p->isInstalled(FileTypes::DBG))
         qprintf("%s-dbg-%s\n",qPrintable(p->name()), qPrintable(p->version().toString()));   
 }
 
@@ -104,30 +105,30 @@ void InstallerEngineConsole::queryPackageListFiles(const QString &pkgName)
         return;
 
     PackageInfo info = PackageInfo::fromString(pkgName);
-    if ((info.type == Package::NONE || info.type == Package::BIN) && p->isInstalled(Package::BIN))
+    if ((info.type == FileTypes::NONE || info.type == FileTypes::BIN) && p->isInstalled(FileTypes::BIN))
     {
-        Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::BIN))
-            qprintf("%s%s\n", info.type == Package::NONE  ? "BIN: " : "", qPrintable(file));
+        Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,FileTypes::BIN))
+            qprintf("%s%s\n", info.type == FileTypes::NONE  ? "BIN: " : "", qPrintable(file));
     }
-    if ((info.type == Package::NONE || info.type == Package::LIB) && p->isInstalled(Package::LIB))
+    if ((info.type == FileTypes::NONE || info.type == FileTypes::LIB) && p->isInstalled(FileTypes::LIB))
     {
-        Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::LIB))
-            qprintf("%s%s\n", info.type == Package::NONE  ? "LIB: " : "", qPrintable(file));
+        Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,FileTypes::LIB))
+            qprintf("%s%s\n", info.type == FileTypes::NONE  ? "LIB: " : "", qPrintable(file));
     }
-    if ((info.type == Package::NONE || info.type == Package::DOC) && p->isInstalled(Package::DOC))
+    if ((info.type == FileTypes::NONE || info.type == FileTypes::DOC) && p->isInstalled(FileTypes::DOC))
     {
-        Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::DOC))
-            qprintf("%s%s\n", info.type == Package::NONE  ? "DOC: " : "", qPrintable(file));
+        Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,FileTypes::DOC))
+            qprintf("%s%s\n", info.type == FileTypes::NONE  ? "DOC: " : "", qPrintable(file));
     }
-    if ((info.type == Package::NONE || info.type == Package::SRC) && p->isInstalled(Package::SRC))
+    if ((info.type == FileTypes::NONE || info.type == FileTypes::SRC) && p->isInstalled(FileTypes::SRC))
     {
-        Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::SRC))
-            qprintf("%s%s\n", info.type == Package::NONE  ? "SRC: " : "", qPrintable(file));
+        Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,FileTypes::SRC))
+            qprintf("%s%s\n", info.type == FileTypes::NONE  ? "SRC: " : "", qPrintable(file));
     }
-    if ((info.type == Package::NONE || info.type == Package::DBG) && p->isInstalled(Package::DBG))
+    if ((info.type == FileTypes::NONE || info.type == FileTypes::DBG) && p->isInstalled(FileTypes::DBG))
     {
-        Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,Package::DBG))
-            qprintf("%s%s\n", info.type == Package::NONE  ? "DBG: " : "", qPrintable(file));
+        Q_FOREACH(const QString &file, m_database->getPackageFiles(pkgName,FileTypes::DBG))
+            qprintf("%s%s\n", info.type == FileTypes::NONE  ? "DBG: " : "", qPrintable(file));
     }
 }
 
@@ -213,23 +214,23 @@ void InstallerEngineConsole::printPackageURLs(Package *p)
     if (!p)
         return;
     QUrl url;
-    url = p->getUrl(Package::BIN);
+    url = p->getUrl(FileTypes::BIN);
     if (!url.isEmpty())
         qprintf("%s\n",qPrintable(url.toString())); 
     
     if (!Settings::instance().isDeveloperInstallMode())
         return;
 
-    url = p->getUrl(Package::LIB);
+    url = p->getUrl(FileTypes::LIB);
     if (!url.isEmpty())
         qprintf("%s\n",qPrintable(url.toString())); 
-    url = p->getUrl(Package::DOC);
+    url = p->getUrl(FileTypes::DOC);
     if (!url.isEmpty())
         qprintf("%s\n",qPrintable(url.toString())); 
-    url = p->getUrl(Package::SRC);
+    url = p->getUrl(FileTypes::SRC);
     if (!url.isEmpty())
         qprintf("%s\n",qPrintable(url.toString())); 
-    url = p->getUrl(Package::DBG);
+    url = p->getUrl(FileTypes::DBG);
     if (!url.isEmpty())
         qprintf("%s\n",qPrintable(url.toString())); 
 }
@@ -303,16 +304,16 @@ bool InstallerEngineConsole::downloadPackages(const QStringList &packages, const
         Package *p = m_packageResources->getPackage(pkgName);
         if (!p)
             continue;
-        if (p->hasType(Package::BIN))
-            p->downloadItem(Package::BIN);
-        if (p->hasType(Package::LIB))
-            p->downloadItem(Package::LIB);
-        if (p->hasType(Package::DOC))
-            p->downloadItem(Package::DOC);
-        if (p->hasType(Package::SRC))
-            p->downloadItem(Package::SRC);
-        if (p->hasType(Package::DBG))
-            p->downloadItem(Package::DBG);
+        if (p->hasType(FileTypes::BIN))
+            p->downloadItem(FileTypes::BIN);
+        if (p->hasType(FileTypes::LIB))
+            p->downloadItem(FileTypes::LIB);
+        if (p->hasType(FileTypes::DOC))
+            p->downloadItem(FileTypes::DOC);
+        if (p->hasType(FileTypes::SRC))
+            p->downloadItem(FileTypes::SRC);
+        if (p->hasType(FileTypes::DBG))
+            p->downloadItem(FileTypes::DBG);
     }
     return true;
 }
@@ -325,16 +326,16 @@ bool InstallerEngineConsole::installPackages(const QStringList &packages,const Q
         Package *p = m_packageResources->getPackage(pkgName);
         if (!p)
             continue;
-        if (p->hasType(Package::BIN))
-            p->installItem(m_installer,Package::BIN);
-        if (p->hasType(Package::LIB))
-            p->installItem(m_installer,Package::LIB);
-        if (p->hasType(Package::DOC))
-            p->installItem(m_installer,Package::DOC);
-        if (p->hasType(Package::SRC))
-            p->installItem(m_installer,Package::SRC);
-        if (p->hasType(Package::DBG))
-            p->installItem(m_installer,Package::DBG);
+        if (p->hasType(FileTypes::BIN))
+            p->installItem(m_installer,FileTypes::BIN);
+        if (p->hasType(FileTypes::LIB))
+            p->installItem(m_installer,FileTypes::LIB);
+        if (p->hasType(FileTypes::DOC))
+            p->installItem(m_installer,FileTypes::DOC);
+        if (p->hasType(FileTypes::SRC))
+            p->installItem(m_installer,FileTypes::SRC);
+        if (p->hasType(FileTypes::DBG))
+            p->installItem(m_installer,FileTypes::DBG);
     }
     return true;
 }

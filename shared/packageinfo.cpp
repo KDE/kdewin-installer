@@ -28,7 +28,7 @@ bool PackageInfo::fromString(const QString &name, QString &pkgName, QString &pkg
     QString work(name);
     
     //something like "-(mingw|mingw4|msvc|vc90|vc100)-
-    QRegExp compilersRx = CompilerTypes::regex();
+    QRegExp compilersRx = CompilerTypes::endswith();
     //alow only number and points, as patchlvl only numbers
     QRegExp versionRx("-(\\w|\\d|\\.|_|\\+)*(-\\d*){0,1}$");
 
@@ -60,7 +60,7 @@ PackageInfo PackageInfo::fromString(const QString &_name, const QString &version
     QString name = _name;
 
     // check architecture
-    QRegExp archRx = ArchitectureTypes::regex();    
+    QRegExp archRx = ArchitectureTypes::endswith();    
     if( archRx.indexIn(name) != -1){
         result.architecture = archRx.capturedTexts()[0];
     }else{
@@ -68,10 +68,10 @@ PackageInfo PackageInfo::fromString(const QString &_name, const QString &version
     }
 
     // check type
-    QRegExp typeRx("-(" + PackageInfo::types().join("|") + ")$");
+    QRegExp typeRx = FileTypes::endswith();
     if(typeRx.indexIn(name) != -1){
-        result.type = stringToType(typeRx.capturedTexts()[0].remove(0,1));
-        name.remove(typeRx.capturedTexts()[0]);
+        result.type = FileTypes::fromString(typeRx.capturedTexts()[0]);
+        name.remove("-" + result.type);
     }
 
     // version is given
@@ -108,36 +108,35 @@ bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QStrin
         baseName = fileName.toLower();
     }
 
-    QString work = baseName;
-    QRegExp typeRx("-(" + PackageInfo::types().join("|") + ")$");
-    if(typeRx.indexIn(work) == -1){
+
+    QRegExp typeRx = FileTypes::endswith();
+    if(typeRx.indexIn(baseName) == -1){
         qWarning() << "filename without type found" << baseName;
         return false;
     }
 
     pkgType = typeRx.capturedTexts()[0];
-    work.remove(pkgType);
-    pkgType.remove(0,1);
+    baseName.remove("-" + pkgType);
 
-    return fromString(work, pkgName, pkgVersion);
+    return fromString(baseName, pkgName, pkgVersion);
 }
 
 
-QString PackageInfo::versionFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type)
+QString PackageInfo::versionFileName(const QString &pkgName, const QString &pkgVersion, const FileTypes::FileType type)
 {
-    return pkgName + "-" + pkgVersion + "-" + typeToString(type) +".ver";
+    return pkgName + "-" + pkgVersion + "-" + FileTypes::toString(type) +".ver";
 }
 
-QString PackageInfo::manifestFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type)
+QString PackageInfo::manifestFileName(const QString &pkgName, const QString &pkgVersion, const FileTypes::FileType type)
 {
-    return pkgName + "-" + pkgVersion + "-" + typeToString(type) +".mft";
+    return pkgName + "-" + pkgVersion + "-" + FileTypes::toString(type) +".mft";
 }
 
 QString PackageInfo::baseName(const QString &_name)
 {
     QString name = _name;
-    name.remove(CompilerTypes::regex());
-    name.remove(ArchitectureTypes::regex());
+    name.remove(CompilerTypes::endswith());
+    name.remove(ArchitectureTypes::endswith());
     //remove last "-" at the end
     return name.remove(name.length()-1,1);
 
@@ -152,9 +151,3 @@ QStringList PackageInfo::endings()
     return list;
 }
 
-QStringList PackageInfo::types()
-{
-    QStringList list;
-    list<<"bin"<<"lib"<<"doc"<<"src"<<"dbg";
-    return list;
-}

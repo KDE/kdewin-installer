@@ -271,17 +271,17 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     pkg->setVersion(cmd[1]);
                 else if(keyword.startsWith("url-")) 
                 {
-                    Package::Type type;
+                    FileTypes::FileType type;
                     if(keyword == "url-bin")
-                        type = Package::BIN;
+                        type = FileTypes::BIN;
                     else if(keyword == "url-lib")
-                        type = Package::LIB;
+                        type = FileTypes::LIB;
                     else if(keyword == "url-doc")
-                        type = Package::DOC;
+                        type = FileTypes::DOC;
                     else if(keyword == "url-src")
-                        type = Package::SRC;
+                        type = FileTypes::SRC;
                     else if(keyword == "url-dbg")
-                        type = Package::DBG;
+                        type = FileTypes::DBG;
                     else
                         continue;
                     QUrl url(cmd[1]);
@@ -299,17 +299,17 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 }
                 else if(keyword.startsWith("filename-")) 
                 {
-                    Package::Type type;
+                    FileTypes::FileType type;
                     if(keyword == "filename-bin")
-                        type = Package::BIN;
+                        type = FileTypes::BIN;
                     else if(keyword == "filename-lib")
-                        type = Package::LIB;
+                        type = FileTypes::LIB;
                     else if(keyword == "filename-doc")
-                        type = Package::DOC;
+                        type = FileTypes::DOC;
                     else if(keyword == "filename-src")
-                        type = Package::SRC;
+                        type = FileTypes::SRC;
                     else if(keyword == "filename-dbg")
-                        type = Package::DBG;
+                        type = FileTypes::DBG;
                     else
                         continue;
                     if (!pkg->hasType(type))
@@ -338,17 +338,17 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                         qCritical() << "line" << lineNr << "there is no hash type specified before";
                         continue;
                     }
-                    Package::Type type;
+                    FileTypes::FileType type;
                     if(keyword == "hash-bin")
-                        type = Package::BIN;
+                        type = FileTypes::BIN;
                     else if(keyword == "hash-lib")
-                        type = Package::LIB;
+                        type = FileTypes::LIB;
                     else if(keyword == "hash-doc")
-                        type = Package::DOC;
+                        type = FileTypes::DOC;
                     else if(keyword == "hash-src")
-                        type = Package::SRC;
+                        type = FileTypes::SRC;
                     else if(keyword == "hash-dbg")
-                        type = Package::DBG;
+                        type = FileTypes::DBG;
                     else
                         continue;
                     if (!pkg->hasType(type))
@@ -363,17 +363,17 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 else if(keyword.startsWith("md5-")) 
                 {
                     pkg->hashType().setType(Hash::MD5);
-                    Package::Type type;
+                    FileTypes::FileType type;
                     if(keyword == "md5-bin")
-                        type = Package::BIN;
+                        type = FileTypes::BIN;
                     else if(keyword == "md5-lib")
-                        type = Package::LIB;
+                        type = FileTypes::LIB;
                     else if(keyword == "md5-doc")
-                        type = Package::DOC;
+                        type = FileTypes::DOC;
                     else if(keyword == "md5-src")
-                        type = Package::SRC;
+                        type = FileTypes::SRC;
                     else if(keyword == "md5-dbg")
-                        type = Package::DBG;
+                        type = FileTypes::DBG;
                     else
                         continue;
                     if (!pkg->hasType(type))

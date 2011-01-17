@@ -30,6 +30,7 @@
 #include "packagecategorycache.h"
 #include "packagestates.h"
 #include "database.h"
+#include "typehelper.h"
 
 class PackageList;
 class Downloader;

@@ -24,6 +24,7 @@
 #define SETTINGS_H
 
 #include "misc.h"
+#include "typehelper.h"
 #include "proxysettings.h"
 
 #include <QtCore/QDir>

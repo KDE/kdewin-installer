@@ -24,13 +24,13 @@
 #define PACKAGEINFO_H
 
 #include "package.h"
-
+#include "typehelper.h"
 
 class PackageInfo {
 public:
     QString name;
     QString architecture;
-    Package::Type type;
+    FileTypes::FileType type;
     QString version;
 
 
@@ -47,16 +47,13 @@ public:
     static QString baseName(const QString &_name);
 
     // returns version file name of package item e.g. xyz-1.2.3-bin.ver
-    static QString versionFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type);
+    static QString versionFileName(const QString &pkgName, const QString &pkgVersion, const FileTypes::FileType type);
 
     // returns manifest file name of package item e.g. xyz-1.2.3-bin.mft
-    static QString manifestFileName(const QString &pkgName, const QString &pkgVersion, const Package::Type type);
+    static QString manifestFileName(const QString &pkgName, const QString &pkgVersion, const FileTypes::FileType type);
 
     /// return the possible package endings
     static QStringList endings();
-
-    // return the possible types endings
-    static QStringList types();
 };
 
 #endif

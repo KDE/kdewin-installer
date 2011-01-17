@@ -134,23 +134,9 @@ bool Package::PackageItem::set(const QUrl &url, const QString &fn, const QByteAr
 #ifdef DEBUG
     qDebug() << __FUNCTION__ << " " << path << " " << contentType << " " << bInstalled;
 #endif
-    QByteArray ct = contentType.toLower();
-    if(ct == "bin")
-        return set(url, fn, BIN, bInstalled);
-    else
-    if(ct == "lib")
-        return set(url, fn, LIB, bInstalled);
-    else
-    if(ct == "doc")
-        return set(url, fn, DOC, bInstalled);
-    else
-    if(ct == "src")
-        return set(url, fn, SRC, bInstalled);
-    else
-    if(ct == "dbg")
-        return set(url, fn, DBG, bInstalled);
-    // unknown type
-    return false;
+    FileTypes::FileType  type = FileTypes::fromString(contentType.toLower());
+    return type == FileTypes::NONE?false:set(url, fn, type, bInstalled);
+
 }
 
 /**
@@ -160,7 +146,7 @@ bool Package::PackageItem::set(const QUrl &url, const QString &fn, const QByteAr
   @param contentType package item content type
   @param bInstalled flag if package item is installed
  */
-bool Package::PackageItem::set(const QUrl &url, const QString &fn, Package::Type contentType, bool bInstalled)
+bool Package::PackageItem::set(const QUrl &url, const QString &fn, FileTypes::FileType contentType, bool bInstalled)
 {
     PackageItem desc;
     int idx;
@@ -191,7 +177,7 @@ bool Package::PackageItem::set(const QUrl &url, const QString &fn, Package::Type
     }
 
     desc.m_url = url;
-    if (contentType != Package::NONE)
+    if (contentType != FileTypes::NONE)
         desc.m_contentType = contentType;
     desc.m_installed  = m_installed;
 #ifdef DEBUG
@@ -232,14 +218,14 @@ bool Package::PackageItem::setUrlAndFileName(const QUrl &_url, const QString &fn
 
 bool Package::PackageItem::setContentType(const QString &type)
 {
-    m_contentType = stringToType(type.toLower());
-	return m_contentType != NONE;
+    m_contentType = FileTypes::fromString(type.toLower());
+	return m_contentType != FileTypes::NONE;
 }
 #endif
 
-QDebug &operator<<(QDebug &out, const Package::Type c)
+QDebug &operator<<(QDebug &out, const FileTypes::FileType c)
 {
-	out <<  typeToString(c);
+	out <<  FileTypes::toString(c);
     return out;
 }
 
@@ -248,7 +234,7 @@ QDebug &operator<<(QDebug &out, const Package::PackageItem &c)
     out << "PackageItem ("
         << "m_url:" << c.m_url
         << "m_fileName:" << c.m_fileName
-        << "m_contentType:" << typeToString(c.m_contentType)
+        << "m_contentType:" << FileTypes::toString(c.m_contentType)
         << "m_installed:" << c.m_installed
         << ")";
     return out;
@@ -281,21 +267,21 @@ Package::Package(const Package &other)
     m_userData[1] = other.m_userData[1];
 }
 
-QString Package::localFileName(Package::Type contentType) const
+QString Package::localFileName(FileTypes::FileType contentType) const
 {
     if(m_packages.contains(contentType))
         return m_packages[contentType].fileName();
     return QString();
 }
 
-QUrl Package::getUrl(Package::Type contentType) const
+QUrl Package::getUrl(FileTypes::FileType contentType) const
 {
     if(m_packages.contains(contentType))
         return m_packages[contentType].url();
     return QUrl();
 }
 
-bool Package::setUrl(Package::Type contentType, const QUrl &url)
+bool Package::setUrl(FileTypes::FileType contentType, const QUrl &url)
 {
     if(!m_packages.contains(contentType))
         return false;
@@ -314,7 +300,7 @@ bool Package::add(const PackageItem &item)
     return true;
 }
 
-Package::PackageItem &Package::item(Package::Type contentType)
+Package::PackageItem &Package::item(FileTypes::FileType contentType)
 {
     static PackageItem empty;
     if(!m_packages.contains(contentType))
@@ -328,7 +314,7 @@ void Package::setInstalled(const Package &other)
     // FIXME!
 }
 
-bool Package::hasType(Package::Type contentType) const
+bool Package::hasType(FileTypes::FileType contentType) const
 {
     return m_packages.contains(contentType);
 }
@@ -348,37 +334,18 @@ QString Package::getTypeAsString(bool requiredIsInstalled, const QString &delim)
 {
     QString types;
 
-    QHash<Type, PackageItem>::ConstIterator it = m_packages.constBegin();
+    QHash<FileTypes::FileType, PackageItem>::ConstIterator it = m_packages.constBegin();
     for( ; it != m_packages.constEnd(); ++it) {
         if(requiredIsInstalled && !(*it).installed())
             continue;
-
-        switch((*it).contentType()) {
-            case BIN:
-                types += "bin" + delim;
-                break;
-            case LIB:
-                types += "lib" + delim;
-                break;
-            case DOC:
-                types += "doc" + delim;
-                break;
-            case SRC:
-                types += "src" + delim;
-                break;
-            case DBG:
-                types += "dbg" + delim;
-                break;
-          default:
-                break;
-        };
+        types += FileTypes::toString((*it).contentType())  + delim;
     }
     return types;
 }
 
-bool Package::isInstalled(Package::Type contentType) const
+bool Package::isInstalled(FileTypes::FileType contentType) const
 {
-    if (contentType == ANY)
+    if (contentType == FileTypes::ANY)
     {
         Q_FOREACH (const PackageItem &item, m_packages)
         {
@@ -392,7 +359,7 @@ bool Package::isInstalled(Package::Type contentType) const
     return false;
 }
 
-void Package::setInstalled(Package::Type contentType)
+void Package::setInstalled(FileTypes::FileType contentType)
 {
     if(m_packages.contains(contentType))
         m_packages[contentType].setInstalled(true);
@@ -407,18 +374,18 @@ bool Package::write(QTextStream &out) const
     out << m_name << "\t" << m_version.toString()
 // FIXME store path relocation information for removing too
     << "\t"
-    << (isInstalled(BIN) ? "bin:" : ":")
-    << (isInstalled(LIB) ? "lib:" : ":")
-    << (isInstalled(DOC) ? "doc:" : ":")
-    << (isInstalled(SRC) ? "src:" : ":")
-    << (isInstalled(DBG) ? "dbg:" : QString())
+    << (isInstalled(FileTypes::BIN) ? "bin:" : ":")
+    << (isInstalled(FileTypes::LIB) ? "lib:" : ":")
+    << (isInstalled(FileTypes::DOC) ? "doc:" : ":")
+    << (isInstalled(FileTypes::SRC) ? "src:" : ":")
+    << (isInstalled(FileTypes::DBG) ? "dbg:" : QString())
     << ";"
     << ";"
-    << getUrl(BIN).toString() << ";"
-    << getUrl(LIB).toString() << ";"
-    << getUrl(DOC).toString() << ";"
-    << getUrl(SRC).toString() << ";"
-    << getUrl(DBG).toString()
+    << getUrl(FileTypes::BIN).toString() << ";"
+    << getUrl(FileTypes::LIB).toString() << ";"
+    << getUrl(FileTypes::DOC).toString() << ";"
+    << getUrl(FileTypes::SRC).toString() << ";"
+    << getUrl(FileTypes::DBG).toString()
     << "\n";
     return true;
 }
@@ -437,7 +404,7 @@ bool Package::read(QTextStream &in)
     const QString &baseURL = options.at(1);
     if(!options.at(2).isEmpty())
     {
-        Package::PackageItem item(BIN);
+        Package::PackageItem item(FileTypes::BIN);
         item.setInstalled(state.size() > 0 && state.at(0) == "bin");
         if (item.setUrlAndFileName(options.at(2), ""))
           add(item);
@@ -446,7 +413,7 @@ bool Package::read(QTextStream &in)
     }
     if(!options.at(3).isEmpty())
     {
-        Package::PackageItem item(LIB);
+        Package::PackageItem item(FileTypes::LIB);
         item.setInstalled(state.size() > 1 && state.at(1) == "lib");
         if (item.setUrlAndFileName(options.at(3), ""))
           add(item);
@@ -455,7 +422,7 @@ bool Package::read(QTextStream &in)
     }
     if(!options.at(4).isEmpty())
     {
-        Package::PackageItem item(DOC);
+        Package::PackageItem item(FileTypes::DOC);
         item.setInstalled(state.size() > 2 && state.at(2) == "doc");
         if (item.setUrlAndFileName(options.at(4), ""))
             add(item);
@@ -464,7 +431,7 @@ bool Package::read(QTextStream &in)
     }
     if(!options.at(5).isEmpty())
     {
-        Package::PackageItem item(SRC);
+        Package::PackageItem item(FileTypes::SRC);
         item.setInstalled(state.size() > 3 && state.at(3) == "doc");
         if (item.setUrlAndFileName(options.at(5), ""))
             add(item);
@@ -474,7 +441,7 @@ bool Package::read(QTextStream &in)
     return true;
 }
 
-QString Package::localFilePath(Package::Type type, bool bCreateDir)
+QString Package::localFilePath(FileTypes::FileType type, bool bCreateDir)
 {
     QString dir = Settings::instance().downloadDir();
     QDir d(dir);
@@ -502,7 +469,7 @@ static QByteArray readMD5SumFile(const QString &filename)
   return str;
 }
 
-bool Package::downloadItem(Package::Type type)
+bool Package::downloadItem(FileTypes::FileType type)
 {
     QUrl url = getUrl(type);
     qDebug() << __FUNCTION__ << " going to download URL " << url.toString() << "type" << type;
@@ -649,7 +616,7 @@ bool Package::downloadItem(Package::Type type)
     return setError(checkSumError); 
 }
 
-bool Package::installItem(Installer *installer, Package::Type type)
+bool Package::installItem(Installer *installer, FileTypes::FileType type)
 {
     QString fileName = localFileName(type);
     if (fileName.isEmpty())
@@ -670,7 +637,7 @@ bool Package::installItem(Installer *installer, Package::Type type)
     return true;
 }
 
-bool Package::removeItem(Installer *installer, Package::Type type)
+bool Package::removeItem(Installer *installer, FileTypes::FileType type)
 {
     QString manifestFile = installer->root()+"/manifest/"+PackageInfo::manifestFileName(name(),installedVersion().toString(),type);
     installer->uninstall(manifestFile);
@@ -715,41 +682,12 @@ void Package::addDeps(const QStringList &deps)
 }
 #endif
 
-Package::Type stringToType(const QString &type)
-{
-    static QMap<QString,Package::Type> typeMap;
-    if(typeMap.isEmpty()){
-        typeMap.insert("bin",Package::BIN);
-        typeMap.insert("lib",Package::LIB);
-        typeMap.insert("doc",Package::DOC);
-        typeMap.insert("src",Package::SRC);
-        typeMap.insert("dbg",Package::DBG);
-        typeMap.insert("meta",Package::META);
-    }
-    QString _type = type.toLower();
-    return typeMap.contains(_type)?typeMap.value(_type):Package::NONE;
-}
-
-QString typeToString(Package::Type type)
-{
-    switch(type) {
-        case Package::BIN:    return "bin";
-        case Package::LIB:    return "lib";
-        case Package::DOC:    return "doc";
-        case Package::SRC:    return "src";
-        case Package::DBG:    return "dbg";
-        case Package::META:   return "meta";
-        case Package::ALL:    return "all";
-        default:    return "unknown";
-    }
-}
-
-QString Package::manifestFileName(const Package::Type type) const
+QString Package::manifestFileName(const FileTypes::FileType type) const
 {
     return PackageInfo::manifestFileName(m_name,m_version.toString(),type);
 }
 
-QString Package::versionFileName(const Package::Type type) const
+QString Package::versionFileName(const FileTypes::FileType type) const
 {
     return PackageInfo::versionFileName(m_name,m_version.toString(),type);
 }

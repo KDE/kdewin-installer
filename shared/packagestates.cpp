@@ -21,10 +21,11 @@
 ****************************************************************************/
 
 #include "packagestates.h"
+#include "typehelper.h"
 
 // @TODO add reference counter to be able to unselected indirect dependencies
 
-void PackageStates::setState(const QString &pkgName, const QString & pkgVersion, Package::Type type, stateType state)
+void PackageStates::setState(const QString &pkgName, const QString & pkgVersion, FileTypes::FileType type, stateType state)
 {
     QString key = getKey(pkgName,pkgVersion);
     PackageFlags value;
@@ -32,19 +33,19 @@ void PackageStates::setState(const QString &pkgName, const QString & pkgVersion,
         value = m_states[key];
 
     switch(type) {
-        case Package::BIN: value.bin = state; break;
-        case Package::LIB: value.lib = state; break;
-        case Package::DOC: value.doc = state; break;
-        case Package::SRC: value.src = state; break;
-        case Package::DBG: value.dbg = state; break;
-        case Package::ALL: value.all = state; break;
-        case Package::ANY: value.bin = value.lib = value.doc = value.src = value.dbg = value.all = state;
+        case FileTypes::BIN: value.bin = state; break;
+        case FileTypes::LIB: value.lib = state; break;
+        case FileTypes::DOC: value.doc = state; break;
+        case FileTypes::SRC: value.src = state; break;
+        case FileTypes::DBG: value.dbg = state; break;
+        case FileTypes::ALL: value.all = state; break;
+        case FileTypes::ANY: value.bin = value.lib = value.doc = value.src = value.dbg = value.all = state;
         default: break;
     }
     m_states[key] = value;
 }
 
-void PackageStates::setState(const Package *pkg, Package::Type type, stateType state)
+void PackageStates::setState(const Package *pkg, FileTypes::FileType type, stateType state)
 {
     setState(pkg->name(),pkg->version().toString(),type,state);
 }
@@ -90,7 +91,7 @@ bool PackageStates::setPresentState(const QList <Package *>&list)
 
 #endif
 
-stateType PackageStates::getState(const QString &pkgName, const QString &pkgVersion, Package::Type type)
+stateType PackageStates::getState(const QString &pkgName, const QString &pkgVersion, FileTypes::FileType type)
 {
     QString key = getKey(pkgName,pkgVersion);
 
@@ -99,16 +100,16 @@ stateType PackageStates::getState(const QString &pkgName, const QString &pkgVers
     PackageFlags value = m_states[key];
 
     switch(type) {
-        case Package::BIN: return value.bin;
-        case Package::LIB: return value.lib;
-        case Package::DOC: return value.doc;
-        case Package::SRC: return value.src;
-        case Package::DBG: return value.dbg;
-        case Package::ALL: return value.all;
+        case FileTypes::BIN: return value.bin;
+        case FileTypes::LIB: return value.lib;
+        case FileTypes::DOC: return value.doc;
+        case FileTypes::SRC: return value.src;
+        case FileTypes::DBG: return value.dbg;
+        case FileTypes::ALL: return value.all;
         default: return _Nothing;
     }
 }
-stateType PackageStates::getState(const Package* pkg, Package::Type type)
+stateType PackageStates::getState(const Package* pkg, FileTypes::FileType type)
 {
     return getState(pkg->name(),pkg->version().toString(),type);
 }

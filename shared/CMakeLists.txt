@@ -42,6 +42,7 @@ set(installer_shared_HEADERS
     site.h
     mirrors.h
     misc.h
+	typehelper.h
     registry.h
     releases.h
     selfinstaller.h
@@ -69,6 +70,7 @@ set(installer_shared_SOURCES
     installerupdate.cpp
     mirrors.cpp
     misc.cpp
+	typehelper.cpp
     package.cpp
     packagecategorycache.cpp
     packageinfo.cpp

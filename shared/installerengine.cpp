@@ -414,8 +414,8 @@ bool InstallerEngine::setDependencyState(Package *_package, QList<Package *> &de
         // check dependencies first
         bool ret = setDependencyState(package, dependencies);
 
-        stateType state = packageStates.getState(package,Package::BIN);
-        stateType depState = dependencyStates.getState(package,Package::BIN);
+        stateType state = packageStates.getState(package,FileTypes::BIN);
+        stateType depState = dependencyStates.getState(package,FileTypes::BIN);
 
         Package *installedPackage = m_database->getPackage(dep);
 
@@ -437,7 +437,7 @@ bool InstallerEngine::setDependencyState(Package *_package, QList<Package *> &de
             if (!dependencies.contains(package))
                 dependencies.append(package);
 
-            dependencyStates.setState(package,Package::BIN,newState);
+            dependencyStates.setState(package,FileTypes::BIN,newState);
 #if 0
             // set additional package types for download/install/remove
             if (m_displayMode == Developer)

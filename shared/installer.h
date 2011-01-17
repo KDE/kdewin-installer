@@ -26,6 +26,7 @@
 #include <QtCore/QProcess>
 #include "package.h"
 #include "installerprogress.h"
+#include "typehelper.h"
 
 class Database;
 class PackageList;
@@ -53,7 +54,7 @@ public:
     void setDatabase(Database *database) { m_database = database; }
 
     /// install package item with specified type
-    bool install(Package *pkg, const Package::Type type);
+    bool install(Package *pkg, const FileTypes::FileType type);
 
     bool uninstall(const QString &pathToManifest);
 
@@ -72,8 +73,8 @@ protected slots:
     void slotError(const QString &);
 
 protected:
-    bool installExecutable(Package *pkg, Package::Type type);
-    bool installMsiPackage(Package *pkg, Package::Type type);
+    bool installExecutable(Package *pkg, FileTypes::FileType type);
+    bool installMsiPackage(Package *pkg, FileTypes::FileType type);
     bool createManifestFile();
     bool createManifestFileForExecutable();
     bool createQtConfigFile();
@@ -85,7 +86,7 @@ protected:
     Database *m_database;
 
     Package* m_packageToInstall;
-    Package::Type m_installType;
+    FileTypes::FileType m_installType;
 };
 
 #endif
