@@ -28,9 +28,6 @@
 class QRegExp;
 class QStringList;
 
-//typedef enum { RTUnspecified=0, Stable, Unstable, Nightly } ReleaseType;
-//ReleaseType toReleaseType(const QString &type); 
-//const QString toString(ReleaseType type);
 
 class CompilerTypes{
 public:
