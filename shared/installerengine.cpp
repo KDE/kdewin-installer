@@ -503,6 +503,9 @@ bool InstallerEngine::includePackage(CompilerTypes::CompilerType compilerType, c
     else if ( ( categoryName == "mingw4"  || compilerType == CompilerTypes::MinGW4_W32 )
             && ( QRegExp(".*-(mingw|mingw4|msvc|vc90|vc100)$" ).exactMatch(name) && !QRegExp(".*-x86-mingw4$" ).exactMatch(name) ) )
         return false;
+    else if ( ( categoryName == "mingw4"  || compilerType == CompilerTypes::MinGW4_W64 )
+            && ( QRegExp(".*-(mingw|mingw4|msvc|vc90|vc100)$" ).exactMatch(name) && !QRegExp(".*-x64-mingw4$" ).exactMatch(name) ) )
+        return false;
     else if ( ( categoryName == "msvc"  || compilerType == CompilerTypes::MSVC9 )
               && QRegExp(".*-(mingw|mingw4|vc100)$" ).exactMatch(name) )
         return false;
