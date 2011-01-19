@@ -28,7 +28,7 @@ bool PackageInfo::fromString(const QString &name, QString &pkgName, QString &pkg
     QString work(name);
     
     //something like "-(mingw|mingw4|msvc|vc90|vc100)-
-    QRegExp compilersRx = CompilerTypes::endswith();
+    QRegExp compilersRx = CompilerTypes::regex();
     //alow only number and points, as patchlvl only numbers
     QRegExp versionRx("-(\\w|\\d|\\.|_|\\+)*(-\\d*){0,1}$");
 
