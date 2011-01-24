@@ -56,6 +56,7 @@
 
 QList<CompilerTypes::Type> CompilerTypes::m_types;
 QStringList CompilerTypes::m_typeStrings;
+QStringList CompilerTypes::m_descriptions;
 
 void CompilerTypes::init()
 {
@@ -63,11 +64,13 @@ void CompilerTypes::init()
     {
         m_types << MSVC9 << MSVC10 << MinGW4 << MinGW4_W32;
         m_typeStrings << "vc90" << "vc100" << "mingw4" << "x86-mingw4";
+        m_descriptions << "MSVC 2008 32bit (deprecated)" << "MSVC 2010 32bit" << "MinGW4 (deprecated)" << "MinGW4 32bit";
         // @TODO remove 0 & in case x64 packages are available
         if (0 && isX64Windows())
         {
             m_types << MSVC10_X64 << MinGW4_W64;
             m_typeStrings << "x64-vc100" << "x64-mingw4";
+            m_descriptions << "MSVC 2010 64bit" << "MinGW4 64bit";
         }
      }
  }
@@ -96,6 +99,13 @@ const QStringList &CompilerTypes::values()
 {
     init();
     return m_typeStrings;
+}
+
+const QString &CompilerTypes::description(Type type)
+{
+    init();
+    int i = m_types.indexOf(type);
+    return i != -1 ? m_descriptions[i] : QString();
 }
 
 QRegExp CompilerTypes::regex(){

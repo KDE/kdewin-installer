@@ -49,6 +49,13 @@ UserCompilerModePage::UserCompilerModePage() : InstallWizardPage(0)
     if (!CompilerTypes::contains(CompilerTypes::MinGW4_W64))
         ui.compilerMinGW4_W64->setVisible(false);
     
+    ui.compilerMinGW4->setText(CompilerTypes::description(CompilerTypes::MinGW4));
+    ui.compilerMinGW4_W32->setText(CompilerTypes::description(CompilerTypes::MinGW4_W32));
+    ui.compilerMinGW4_W64->setText(CompilerTypes::description(CompilerTypes::MinGW4_W64));
+    ui.compilerMSVC9->setText(CompilerTypes::description(CompilerTypes::MSVC9));
+    ui.compilerMSVC10->setText(CompilerTypes::description(CompilerTypes::MSVC10));
+    ui.compilerMSVCX64->setText(CompilerTypes::description(CompilerTypes::MSVC10_X64));
+
     // logical grouping isn't available in the designer yet :-P
     QButtonGroup *groupA = new QButtonGroup(this);
     groupA->addButton(ui.compilerMinGW4);

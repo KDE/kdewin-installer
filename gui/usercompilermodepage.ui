@@ -256,42 +256,42 @@ p, li { white-space: pre-wrap; }
          <item>
           <widget class="QRadioButton" name="compilerMSVCX64">
            <property name="text">
-            <string>MSVC 2010 64Bit</string>
+            <string>vc100-x64</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QRadioButton" name="compilerMSVC10">
            <property name="text">
-            <string>MSVC 2010 32Bit</string>
+            <string>vc100</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QRadioButton" name="compilerMSVC9">
            <property name="text">
-            <string>MSVC 2008 32Bit</string>
+            <string>vc90</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QRadioButton" name="compilerMinGW4_W64">
            <property name="text">
-            <string>MinGW4 W64</string>
+            <string>mingw4-x64</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QRadioButton" name="compilerMinGW4_W32">
            <property name="text">
-            <string>MinGW4 W32</string>
+            <string>mingw4-x86</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QRadioButton" name="compilerMinGW4">
            <property name="text">
-            <string>MinGW4</string>
+            <string>mingw4</string>
            </property>
           </widget>
          </item>

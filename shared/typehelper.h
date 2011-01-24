@@ -59,6 +59,13 @@ public:
     static const QStringList &values();
 
     /**
+      returns description of specific compiler
+      @param type compiler type 
+      @return description usable in gui 
+    */
+    static const QString &description(Type type);
+
+    /**
      returns state if the requested compiler is supported
      @param type type of compiler
      @return true if compiler is suppoprted
@@ -88,6 +95,7 @@ public:
 protected:
     static QList<Type> m_types;
     static QStringList m_typeStrings;
+    static QStringList m_descriptions;
 
     static void init();
  };
