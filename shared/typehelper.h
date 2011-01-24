@@ -54,14 +54,14 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(CompilerTypes::CompilerType);
 
 class ArchitectureTypes{
 public:
-    enum ArchitectureFlag{
+    enum Type {
         Unspecified,
         x86,
         x64
     };
-     Q_DECLARE_FLAGS(ArchitectureType,ArchitectureFlag);
-    static ArchitectureTypes::ArchitectureType fromString(const QString &type); 
-    static const QString toString(ArchitectureTypes::ArchitectureType architecture);
+     Q_DECLARE_FLAGS(ArchitectureType,Type);
+    static Type fromString(const QString &type);
+    static const QString toString(Type architecture);
     static const QStringList values();
     static QRegExp regex();
     static QRegExp endswith();

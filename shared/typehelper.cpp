@@ -105,7 +105,7 @@ QRegExp CompilerTypes::endswith(){
     return compilersRx;
 }
 
-ArchitectureTypes::ArchitectureType ArchitectureTypes::fromString(const QString &_type)
+ArchitectureTypes::Type ArchitectureTypes::fromString(const QString &_type)
 {
     QString arch = _type.toLower();
     if(arch == "x86")
@@ -116,7 +116,7 @@ ArchitectureTypes::ArchitectureType ArchitectureTypes::fromString(const QString 
         return Unspecified;
 }
 
-const QString ArchitectureTypes::toString(ArchitectureTypes::ArchitectureType arch)
+const QString ArchitectureTypes::toString(ArchitectureTypes::Type arch)
 {
     switch(arch){
         case x86:
