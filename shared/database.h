@@ -45,10 +45,10 @@ public:
     bool readFromDirectory ( const QString &dirPath=QString() );
     void addPackage ( const Package &package );
 
-    void listPackageFiles ( const QString &pkgName, FileTypes::FileType pkgType=FileTypes::BIN );
+    void listPackageFiles ( const QString &pkgName, FileTypes::Type pkgType=FileTypes::BIN );
     void listPackages ( const QString &title=QString() );
-    QStringList getPackageFiles ( const QString &pkgName, FileTypes::FileType pkgType=FileTypes::BIN );
-    bool verifyFiles( const QString &pkgName, FileTypes::FileType pkgType=FileTypes::BIN  );
+    QStringList getPackageFiles ( const QString &pkgName, FileTypes::Type pkgType=FileTypes::BIN );
+    bool verifyFiles( const QString &pkgName, FileTypes::Type pkgType=FileTypes::BIN  );
     Package *getPackage ( const QString &pkgName, const QByteArray &version=QByteArray() );
     void clear();
 

@@ -270,7 +270,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     pkg->setVersion(cmd[1]);
                 else if(keyword.startsWith("url-")) 
                 {
-                    FileTypes::FileType type;
+                    FileTypes::Type type;
                     if(keyword == "url-bin")
                         type = FileTypes::BIN;
                     else if(keyword == "url-lib")
@@ -298,7 +298,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 }
                 else if(keyword.startsWith("filename-")) 
                 {
-                    FileTypes::FileType type;
+                    FileTypes::Type type;
                     if(keyword == "filename-bin")
                         type = FileTypes::BIN;
                     else if(keyword == "filename-lib")
@@ -337,7 +337,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                         qCritical() << "line" << lineNr << "there is no hash type specified before";
                         continue;
                     }
-                    FileTypes::FileType type;
+                    FileTypes::Type type;
                     if(keyword == "hash-bin")
                         type = FileTypes::BIN;
                     else if(keyword == "hash-lib")
@@ -362,7 +362,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                 else if(keyword.startsWith("md5-")) 
                 {
                     pkg->hashType().setType(Hash::MD5);
-                    FileTypes::FileType type;
+                    FileTypes::Type type;
                     if(keyword == "md5-bin")
                         type = FileTypes::BIN;
                     else if(keyword == "md5-lib")

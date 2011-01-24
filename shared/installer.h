@@ -54,7 +54,7 @@ public:
     void setDatabase(Database *database) { m_database = database; }
 
     /// install package item with specified type
-    bool install(Package *pkg, const FileTypes::FileType type);
+    bool install(Package *pkg, const FileTypes::Type type);
 
     bool uninstall(const QString &pathToManifest);
 
@@ -73,8 +73,8 @@ protected slots:
     void slotError(const QString &);
 
 protected:
-    bool installExecutable(Package *pkg, FileTypes::FileType type);
-    bool installMsiPackage(Package *pkg, FileTypes::FileType type);
+    bool installExecutable(Package *pkg, FileTypes::Type type);
+    bool installMsiPackage(Package *pkg, FileTypes::Type type);
     bool createManifestFile();
     bool createManifestFileForExecutable();
     bool createQtConfigFile();
@@ -86,7 +86,7 @@ protected:
     Database *m_database;
 
     Package* m_packageToInstall;
-    FileTypes::FileType m_installType;
+    FileTypes::Type m_installType;
 };
 
 #endif

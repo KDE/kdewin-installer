@@ -147,9 +147,9 @@ QRegExp ArchitectureTypes::endswith(){
     return architecturesRx;
 }
 
-FileTypes::FileType FileTypes::fromString(const QString &type)
+FileTypes::Type FileTypes::fromString(const QString &type)
 {
-    static QMap<QString,FileTypes::FileType> typeMap;
+    static QMap<QString,FileTypes::Type> typeMap;
     if(typeMap.isEmpty()){
         typeMap.insert("bin",BIN);
         typeMap.insert("lib",LIB);
@@ -162,7 +162,7 @@ FileTypes::FileType FileTypes::fromString(const QString &type)
     return typeMap.contains(_type)?typeMap.value(_type):NONE;
 }
 
-const QString FileTypes::toString(FileType type)
+const QString FileTypes::toString(Type type)
 {
   switch(type) {
     case BIN:    return "bin";

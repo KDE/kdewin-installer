@@ -134,7 +134,7 @@ bool Package::PackageItem::set(const QUrl &url, const QString &fn, const QByteAr
 #ifdef DEBUG
     qDebug() << __FUNCTION__ << " " << path << " " << contentType << " " << bInstalled;
 #endif
-    FileTypes::FileType  type = FileTypes::fromString(contentType.toLower());
+    FileTypes::Type  type = FileTypes::fromString(contentType.toLower());
     return type == FileTypes::NONE?false:set(url, fn, type, bInstalled);
 
 }
@@ -146,7 +146,7 @@ bool Package::PackageItem::set(const QUrl &url, const QString &fn, const QByteAr
   @param contentType package item content type
   @param bInstalled flag if package item is installed
  */
-bool Package::PackageItem::set(const QUrl &url, const QString &fn, FileTypes::FileType contentType, bool bInstalled)
+bool Package::PackageItem::set(const QUrl &url, const QString &fn, FileTypes::Type contentType, bool bInstalled)
 {
     PackageItem desc;
     int idx;
@@ -223,7 +223,7 @@ bool Package::PackageItem::setContentType(const QString &type)
 }
 #endif
 
-QDebug &operator<<(QDebug &out, const FileTypes::FileType c)
+QDebug &operator<<(QDebug &out, const FileTypes::Type c)
 {
 	out <<  FileTypes::toString(c);
     return out;
@@ -267,21 +267,21 @@ Package::Package(const Package &other)
     m_userData[1] = other.m_userData[1];
 }
 
-QString Package::localFileName(FileTypes::FileType contentType) const
+QString Package::localFileName(FileTypes::Type contentType) const
 {
     if(m_packages.contains(contentType))
         return m_packages[contentType].fileName();
     return QString();
 }
 
-QUrl Package::getUrl(FileTypes::FileType contentType) const
+QUrl Package::getUrl(FileTypes::Type contentType) const
 {
     if(m_packages.contains(contentType))
         return m_packages[contentType].url();
     return QUrl();
 }
 
-bool Package::setUrl(FileTypes::FileType contentType, const QUrl &url)
+bool Package::setUrl(FileTypes::Type contentType, const QUrl &url)
 {
     if(!m_packages.contains(contentType))
         return false;
@@ -300,7 +300,7 @@ bool Package::add(const PackageItem &item)
     return true;
 }
 
-Package::PackageItem &Package::item(FileTypes::FileType contentType)
+Package::PackageItem &Package::item(FileTypes::Type contentType)
 {
     static PackageItem empty;
     if(!m_packages.contains(contentType))
@@ -314,7 +314,7 @@ void Package::setInstalled(const Package &other)
     // FIXME!
 }
 
-bool Package::hasType(FileTypes::FileType contentType) const
+bool Package::hasType(FileTypes::Type contentType) const
 {
     return m_packages.contains(contentType);
 }
@@ -334,7 +334,7 @@ QString Package::getTypeAsString(bool requiredIsInstalled, const QString &delim)
 {
     QString types;
 
-    QHash<FileTypes::FileType, PackageItem>::ConstIterator it = m_packages.constBegin();
+    QHash<FileTypes::Type, PackageItem>::ConstIterator it = m_packages.constBegin();
     for( ; it != m_packages.constEnd(); ++it) {
         if(requiredIsInstalled && !(*it).installed())
             continue;
@@ -343,7 +343,7 @@ QString Package::getTypeAsString(bool requiredIsInstalled, const QString &delim)
     return types;
 }
 
-bool Package::isInstalled(FileTypes::FileType contentType) const
+bool Package::isInstalled(FileTypes::Type contentType) const
 {
     if (contentType == FileTypes::ANY)
     {
@@ -359,7 +359,7 @@ bool Package::isInstalled(FileTypes::FileType contentType) const
     return false;
 }
 
-void Package::setInstalled(FileTypes::FileType contentType)
+void Package::setInstalled(FileTypes::Type contentType)
 {
     if(m_packages.contains(contentType))
         m_packages[contentType].setInstalled(true);
@@ -441,7 +441,7 @@ bool Package::read(QTextStream &in)
     return true;
 }
 
-QString Package::localFilePath(FileTypes::FileType type, bool bCreateDir)
+QString Package::localFilePath(FileTypes::Type type, bool bCreateDir)
 {
     QString dir = Settings::instance().downloadDir();
     QDir d(dir);
@@ -469,7 +469,7 @@ static QByteArray readMD5SumFile(const QString &filename)
   return str;
 }
 
-bool Package::downloadItem(FileTypes::FileType type)
+bool Package::downloadItem(FileTypes::Type type)
 {
     QUrl url = getUrl(type);
     qDebug() << __FUNCTION__ << " going to download URL " << url.toString() << "type" << type;
@@ -616,7 +616,7 @@ bool Package::downloadItem(FileTypes::FileType type)
     return setError(checkSumError); 
 }
 
-bool Package::installItem(Installer *installer, FileTypes::FileType type)
+bool Package::installItem(Installer *installer, FileTypes::Type type)
 {
     QString fileName = localFileName(type);
     if (fileName.isEmpty())
@@ -637,7 +637,7 @@ bool Package::installItem(Installer *installer, FileTypes::FileType type)
     return true;
 }
 
-bool Package::removeItem(Installer *installer, FileTypes::FileType type)
+bool Package::removeItem(Installer *installer, FileTypes::Type type)
 {
     QString manifestFile = installer->root()+"/manifest/"+PackageInfo::manifestFileName(name(),installedVersion().toString(),type);
     installer->uninstall(manifestFile);
@@ -682,12 +682,12 @@ void Package::addDeps(const QStringList &deps)
 }
 #endif
 
-QString Package::manifestFileName(const FileTypes::FileType type) const
+QString Package::manifestFileName(const FileTypes::Type type) const
 {
     return PackageInfo::manifestFileName(m_name,m_version.toString(),type);
 }
 
-QString Package::versionFileName(const FileTypes::FileType type) const
+QString Package::versionFileName(const FileTypes::Type type) const
 {
     return PackageInfo::versionFileName(m_name,m_version.toString(),type);
 }

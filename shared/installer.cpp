@@ -153,7 +153,7 @@ bool Installer::createQtConfigFile()
     return true;
 }
 
-bool Installer::install(Package *pkg, const FileTypes::FileType type)
+bool Installer::install(Package *pkg, const FileTypes::Type type)
 {
     m_packageToInstall = pkg;
     m_installType = type;
@@ -196,7 +196,7 @@ bool Installer::install(Package *pkg, const FileTypes::FileType type)
     return true;
 }
 
-bool Installer::installExecutable(Package *pkg, FileTypes::FileType type)
+bool Installer::installExecutable(Package *pkg, FileTypes::Type type)
 {
     QString fileName = pkg->localFilePath(type);
 #ifdef Q_OS_WIN
@@ -231,7 +231,7 @@ bool Installer::installExecutable(Package *pkg, FileTypes::FileType type)
 #endif
 }
 
-bool Installer::installMsiPackage(Package *pkg, FileTypes::FileType type)
+bool Installer::installMsiPackage(Package *pkg, FileTypes::Type type)
 {
     QString fileName = pkg->localFilePath(type);
 #ifdef Q_OS_WIN

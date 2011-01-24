@@ -29,8 +29,8 @@
 class QTreeWidget;
 class QTreeWidgetItem;
 
-FileTypes::FileType columnToType ( int column );
-int typeToColumn ( FileTypes::FileType type );
+FileTypes::Type columnToType ( int column );
+int typeToColumn ( FileTypes::Type type );
 
 extern int BINColumn;
 extern int SRCColumn;
@@ -75,8 +75,8 @@ public:
     void setEndUserInitialState ( QTreeWidgetItem &item, Package *available, Package *installed, int column=0 );
 
     void setInitialState(QTreeWidgetItem &item, Package *available, Package *installed,int column=0);
-    void setNextState(QTreeWidgetItem &item, Package *available, Package *installed, FileTypes::FileType type, int column, bool handleMetaPackage=false);
-    bool isPackageSelected ( Package *available, FileTypes::FileType type );
+    void setNextState(QTreeWidgetItem &item, Package *available, Package *installed, FileTypes::Type type, int column, bool handleMetaPackage=false);
+    bool isPackageSelected ( Package *available, FileTypes::Type type );
 
     void setMetaPackageState(QTreeWidgetItem &item, int column);
 protected:
@@ -87,7 +87,7 @@ private:
     DisplayType    m_displayMode;
     QWidget *m_parent;
     bool m_packageManagerMode;
-    bool downloadPackageItem(Package *pkg, FileTypes::FileType type );
+    bool downloadPackageItem(Package *pkg, FileTypes::Type type );
 };
 
 #endif

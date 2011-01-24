@@ -157,13 +157,13 @@ void Database::listPackages ( const QString &title )
     qDebug() <<  pkg->toString ( true," - " );
 }
 
-void Database::listPackageFiles ( const QString &pkgName, FileTypes::FileType pkgType )
+void Database::listPackageFiles ( const QString &pkgName, FileTypes::Type pkgType )
 {
     const QStringList files = getPackageFiles ( pkgName,pkgType );
     qDebug() << files;
 }
 
-QStringList Database::getPackageFiles ( const QString &pkgName, FileTypes::FileType pkgType )
+QStringList Database::getPackageFiles ( const QString &pkgName, FileTypes::Type pkgType )
 {
     QStringList files;
     Package *pkg = getPackage ( pkgName );
@@ -195,7 +195,7 @@ QStringList Database::getPackageFiles ( const QString &pkgName, FileTypes::FileT
     return files;
 }
 
-bool Database::verifyFiles( const QString &pkgName, FileTypes::FileType pkgType )
+bool Database::verifyFiles( const QString &pkgName, FileTypes::Type pkgType )
 {
     QStringList files;
     Package *pkg = getPackage ( pkgName );

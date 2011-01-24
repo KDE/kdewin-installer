@@ -55,7 +55,7 @@ int LIBColumn = 7;
 int DOCColumn = 8;
 int ColumnCount = 9;
 
-int typeToColumn ( FileTypes::FileType type )
+int typeToColumn ( FileTypes::Type type )
 {
     switch ( type ) {
     case FileTypes::BIN :
@@ -73,7 +73,7 @@ int typeToColumn ( FileTypes::FileType type )
     }
 }
 
-FileTypes::FileType columnToType ( int column )
+FileTypes::Type columnToType ( int column )
 {
     if (column == BINColumn)
         return FileTypes::BIN;
@@ -175,8 +175,8 @@ static void setIcon ( QTreeWidgetItem &item, int column, iconType action )
     // item.icon(column).setIconSize(QSize(22,22));
 }
 
-//this function must directly take the enum FileTypes::FileTypeFlags , else the values get cast to int and this function is never called
-static void setIcon ( QTreeWidgetItem &item, FileTypes::FileTypeFlags type, stateType state, iconType defType )
+//this function must directly take the enum FileTypes::TypeFlags , else the values get cast to int and this function is never called
+static void setIcon ( QTreeWidgetItem &item, FileTypes::Type type, stateType state, iconType defType )
 {
   iconType t = defType;
   switch( state ) {
@@ -214,7 +214,7 @@ static void setIcon ( QTreeWidgetItem &item, int column, stateType state, iconTy
   setIcon( item, column, t );
 }
 
-static void setIcon ( QTreeWidgetItem &item, FileTypes::FileType type, iconType action )
+static void setIcon ( QTreeWidgetItem &item, FileTypes::Type type, iconType action )
 {
     setIcon(item,typeToColumn ( type ), action);
 }
@@ -276,7 +276,7 @@ void InstallerEngineGui::setEndUserInitialState ( QTreeWidgetItem &item, Package
     }
 }
 
-bool InstallerEngineGui::isPackageSelected ( Package *available, FileTypes::FileType type )
+bool InstallerEngineGui::isPackageSelected ( Package *available, FileTypes::Type type )
 {
     return packageStates.getState(available,type) == _Install;
 }
@@ -340,7 +340,7 @@ void InstallerEngineGui::setInitialState ( QTreeWidgetItem &item, Package *avail
     }
 }
 
-void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *available, Package *installed, FileTypes::FileType type, int column, bool handleMetaPackage)
+void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *available, Package *installed, FileTypes::Type type, int column, bool handleMetaPackage)
 {
     if (type == FileTypes::NONE)
         return;
@@ -548,7 +548,7 @@ bool InstallerEngineGui::setDependencyState(Package *_package, QTreeWidget *list
     return true;
 }
 
-bool isMarkedForDownload ( Package *pkg,FileTypes::FileType type )
+bool isMarkedForDownload ( Package *pkg,FileTypes::Type type )
 {
     stateType state = packageStates.getState ( pkg, type );
     stateType depState = dependencyStates.getState ( pkg, type );
@@ -558,7 +558,7 @@ bool isMarkedForDownload ( Package *pkg,FileTypes::FileType type )
     return result;
 }
 
-bool isMarkedForInstall ( Package *pkg,FileTypes::FileType type )
+bool isMarkedForInstall ( Package *pkg,FileTypes::Type type )
 {
     stateType state = packageStates.getState ( pkg, type );
     stateType depState = dependencyStates.getState ( pkg, type );
@@ -568,7 +568,7 @@ bool isMarkedForInstall ( Package *pkg,FileTypes::FileType type )
     return result;
 }
 
-bool isMarkedForRemoval ( Package *pkg,FileTypes::FileType type )
+bool isMarkedForRemoval ( Package *pkg,FileTypes::Type type )
 {
     stateType state = packageStates.getState ( pkg, type );
     stateType depState = dependencyStates.getState ( pkg, type );
@@ -620,7 +620,7 @@ void InstallerEngineGui::unselectAllPackages()
 
 void InstallerEngineGui::selectAllPackagesForRemoval()
 {
-    FileTypes::FileType type = FileTypes::BIN;
+    FileTypes::Type type = FileTypes::BIN;
     stateType newState = _Remove;
     Q_FOREACH(const Package *installed,m_database->packages())
     {
@@ -651,7 +651,7 @@ void InstallerEngineGui::selectPackagesForReinstall()
     qWarning() << "has to be implemented";
 }
 
-bool InstallerEngineGui::downloadPackageItem(Package *pkg, FileTypes::FileType type )
+bool InstallerEngineGui::downloadPackageItem(Package *pkg, FileTypes::Type type )
 {
     bool all = false; //isMarkedForInstall(pkg,FileTypes::ALL);
     if ( !isMarkedForDownload ( pkg,type ) )

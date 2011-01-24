@@ -70,12 +70,12 @@ public:
 
 class FileTypes{
 public:
-    enum FileTypeFlags{
+    enum Type {
         NONE = 0, BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8, DBG = 16, ALL = 31, ANY = 32, META = 95
     };
-     Q_DECLARE_FLAGS(FileType,FileTypeFlags);
-    static FileTypes::FileType fromString(const QString &type); 
-    static const QString toString(FileTypes::FileType type);
+     Q_DECLARE_FLAGS(FileType,Type);
+    static Type fromString(const QString &type);
+    static const QString toString(Type type);
     static const QStringList values();
     static QRegExp regex();
     static QRegExp endswith();

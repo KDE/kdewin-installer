@@ -91,11 +91,11 @@ public:
     class PackageItem {
         public:
             PackageItem() { }
-            PackageItem(FileTypes::FileType type) { m_contentType = type; }
+            PackageItem(FileTypes::Type type) { m_contentType = type; }
             PackageItem(const QString &type) { setContentType(type); }
             
             bool setContentType(const QString &type);
-            FileTypes::FileType contentType() const { return m_contentType; } 
+            FileTypes::Type contentType() const { return m_contentType; }
             
             bool setFileName(const QString &_fileName) 
             { 
@@ -129,16 +129,16 @@ public:
 
         protected:
             QString m_fileName;       // filename only
-            FileTypes::FileType    m_contentType;    // BIN / LIB / DOC / SRC
+            FileTypes::Type    m_contentType;    // BIN / LIB / DOC / SRC
             bool    m_installed;      // true if already installed
             QString m_hash;           /// hash sum 
             QUrl    m_url;            // complete download url
-            QT_DEPRECATED bool set(const QUrl &url, const QString &fn, FileTypes::FileType contentType=FileTypes::NONE, bool bInstalled = false);
+            QT_DEPRECATED bool set(const QUrl &url, const QString &fn, FileTypes::Type contentType=FileTypes::NONE, bool bInstalled = false);
             QT_DEPRECATED bool set(const QUrl &url, const QString &fn, const QByteArray &contentType, bool bInstalled = false);
 
     };
 public:
-    typedef QHash<FileTypes::FileType, PackageItem> PackageItemType;
+    typedef QHash<FileTypes::Type, PackageItem> PackageItemType;
     
     Package();
     Package(const Package &other);
@@ -204,36 +204,36 @@ public:
     /// -> probably better return pointer to packageitem and access its methods 
     
     /// return state of a specific item type is available
-    bool hasType(FileTypes::FileType contentType) const;
+    bool hasType(FileTypes::Type contentType) const;
 
     /// return modifiable package item
-    Package::PackageItem &item(FileTypes::FileType contentType);
+    Package::PackageItem &item(FileTypes::Type contentType);
     
     /// add a package item to this package
     bool add(const PackageItem &item);
 
     /// check if specific content is already installed
-    QT_DEPRECATED bool isInstalled(FileTypes::FileType type) const;
+    QT_DEPRECATED bool isInstalled(FileTypes::Type type) const;
     /// set that a specific content is already installed
-    QT_DEPRECATED void setInstalled(FileTypes::FileType type);
+    QT_DEPRECATED void setInstalled(FileTypes::Type type);
 
     /// returns local fileName of package item e.g. xyz-1.2.3-bin.zip
-    QString localFileName(FileTypes::FileType type) const;
+    QString localFileName(FileTypes::Type type) const;
 
     /// return full local path and filename for a package type in the download  directory. If bCreateDir is true creates path 
-    QString localFilePath(FileTypes::FileType type, bool bCreateDir = false);
+    QString localFilePath(FileTypes::Type type, bool bCreateDir = false);
 
     /// returns complete url of package item e.g. http://host/path.../fileName
-    QUrl getUrl(FileTypes::FileType type) const;
+    QUrl getUrl(FileTypes::Type type) const;
     /// set url of package item e.g. http://host/path.../fileName
-    bool setUrl(FileTypes::FileType type, const QUrl &url);
+    bool setUrl(FileTypes::Type type, const QUrl &url);
 
     /// download a package item
-    bool downloadItem(FileTypes::FileType type);
+    bool downloadItem(FileTypes::Type type);
     /// install a package item
-    bool installItem(Installer *installer, FileTypes::FileType type);
+    bool installItem(Installer *installer, FileTypes::Type type);
     /// uninstall a package item
-    bool removeItem(Installer *installer, FileTypes::FileType type);
+    bool removeItem(Installer *installer, FileTypes::Type type);
 
     /// set Install state of a package type (e.g. from gnuwin32 manifests)
     QT_DEPRECATED void setInstalled(const Package &other);
@@ -255,10 +255,10 @@ public:
     const QString &error() const { return m_lastError; }
 
     /// generate manifest file name
-    QString manifestFileName(const FileTypes::FileType type) const;
+    QString manifestFileName(const FileTypes::Type type) const;
 
     /// generate version file name
-    QString versionFileName(const FileTypes::FileType type) const;
+    QString versionFileName(const FileTypes::Type type) const;
     
     /// user specific data pointer (currently used for ExternalInstallerControl)
     bool setUserData(int index,void *data) 
@@ -299,7 +299,7 @@ protected:
     static QString m_packageRoot;
     friend QDebug &operator<<(QDebug &, const Package &);
 };
-QDebug &operator<<(QDebug &, const FileTypes::FileType);
+QDebug &operator<<(QDebug &, const FileTypes::Type);
 QDebug &operator<<(QDebug &, const Package::PackageItem &);
 QDebug &operator<<(QDebug &, const Package &);
 QDebug &operator<<(QDebug &, const QList<Package*> &);

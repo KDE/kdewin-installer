@@ -30,7 +30,7 @@ class PackageInfo {
 public:
     QString name;
     QString architecture;
-    FileTypes::FileType type;
+    FileTypes::Type type;
     QString version;
 
 
@@ -47,10 +47,10 @@ public:
     static QString baseName(const QString &_name);
 
     // returns version file name of package item e.g. xyz-1.2.3-bin.ver
-    static QString versionFileName(const QString &pkgName, const QString &pkgVersion, const FileTypes::FileType type);
+    static QString versionFileName(const QString &pkgName, const QString &pkgVersion, const FileTypes::Type type);
 
     // returns manifest file name of package item e.g. xyz-1.2.3-bin.mft
-    static QString manifestFileName(const QString &pkgName, const QString &pkgVersion, const FileTypes::FileType type);
+    static QString manifestFileName(const QString &pkgName, const QString &pkgVersion, const FileTypes::Type type);
 
     /// return the possible package endings
     static QStringList endings();

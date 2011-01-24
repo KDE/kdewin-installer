@@ -122,12 +122,12 @@ bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QStrin
 }
 
 
-QString PackageInfo::versionFileName(const QString &pkgName, const QString &pkgVersion, const FileTypes::FileType type)
+QString PackageInfo::versionFileName(const QString &pkgName, const QString &pkgVersion, const FileTypes::Type type)
 {
     return pkgName + "-" + pkgVersion + "-" + FileTypes::toString(type) +".ver";
 }
 
-QString PackageInfo::manifestFileName(const QString &pkgName, const QString &pkgVersion, const FileTypes::FileType type)
+QString PackageInfo::manifestFileName(const QString &pkgName, const QString &pkgVersion, const FileTypes::Type type)
 {
     return pkgName + "-" + pkgVersion + "-" + FileTypes::toString(type) +".mft";
 }

@@ -30,10 +30,10 @@ typedef QHash<QString,PackageFlags> PackageStatesType;
 class PackageStates {
   public:
     PackageStates() {}
-    void setState(const QString &pkgName, const QString &pkgVersion, FileTypes::FileType type, stateType state);
-    void setState(const Package *pkg, FileTypes::FileType type, stateType state);
-    stateType getState(const QString &pkgName, const QString &pkgVersion, FileTypes::FileType type  );
-    stateType getState(const Package *pkg, FileTypes::FileType type);
+    void setState(const QString &pkgName, const QString &pkgVersion, FileTypes::Type type, stateType state);
+    void setState(const Package *pkg, FileTypes::Type type, stateType state);
+    stateType getState(const QString &pkgName, const QString &pkgVersion, FileTypes::Type type  );
+    stateType getState(const Package *pkg, FileTypes::Type type);
     QList <Package *>packages(PackageList *list);
     void clear();
     friend QDebug operator<<(QDebug, const PackageStates &);

@@ -25,7 +25,7 @@
 
 // @TODO add reference counter to be able to unselected indirect dependencies
 
-void PackageStates::setState(const QString &pkgName, const QString & pkgVersion, FileTypes::FileType type, stateType state)
+void PackageStates::setState(const QString &pkgName, const QString & pkgVersion, FileTypes::Type type, stateType state)
 {
     QString key = getKey(pkgName,pkgVersion);
     PackageFlags value;
@@ -45,7 +45,7 @@ void PackageStates::setState(const QString &pkgName, const QString & pkgVersion,
     m_states[key] = value;
 }
 
-void PackageStates::setState(const Package *pkg, FileTypes::FileType type, stateType state)
+void PackageStates::setState(const Package *pkg, FileTypes::Type type, stateType state)
 {
     setState(pkg->name(),pkg->version().toString(),type,state);
 }
@@ -91,7 +91,7 @@ bool PackageStates::setPresentState(const QList <Package *>&list)
 
 #endif
 
-stateType PackageStates::getState(const QString &pkgName, const QString &pkgVersion, FileTypes::FileType type)
+stateType PackageStates::getState(const QString &pkgName, const QString &pkgVersion, FileTypes::Type type)
 {
     QString key = getKey(pkgName,pkgVersion);
 
@@ -109,7 +109,7 @@ stateType PackageStates::getState(const QString &pkgName, const QString &pkgVers
         default: return _Nothing;
     }
 }
-stateType PackageStates::getState(const Package* pkg, FileTypes::FileType type)
+stateType PackageStates::getState(const Package* pkg, FileTypes::Type type)
 {
     return getState(pkg->name(),pkg->version().toString(),type);
 }
