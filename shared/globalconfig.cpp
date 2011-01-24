@@ -34,7 +34,6 @@
 #endif
 
 
-QStringList packageTypes = QStringList() << "msvc" << "mingw" << "vc90" << "vc100" << "mingw4" << "x86-mingw4";
 
 GlobalConfig::GlobalConfig()
 {}
@@ -493,7 +492,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     if (pkg.contains("-*"))  
                     {
                         pkg.replace("-*","-%1");
-                        foreach(const QString type, packageTypes)
+                        foreach(const QString type, CompilerTypes::values())
                             site->setPackageHomeUrl(pkg.arg(type),url);
                         pkg.replace("-%1","");
                         site->setPackageHomeUrl(pkg,url);
@@ -507,7 +506,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     if (pkg.contains("-*")) 
                     {
                         pkg.replace("-*","-%1");
-                        foreach(const QString type, packageTypes)
+                        foreach(const QString type, CompilerTypes::values())
                             site->setPackageNote(pkg.arg(type),cmd.join(" "));
                         site->setPackageNote(pkg,cmd.join(" "));
                     }
@@ -523,7 +522,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     if (pkg.contains("-*")) 
                     {
                         pkg.replace("-*","-%1");
-                        foreach(const QString type, packageTypes)
+                        foreach(const QString type, CompilerTypes::values())
                             site->setPackageLongNotes(pkg.arg(type),details);
                     }
                     else
