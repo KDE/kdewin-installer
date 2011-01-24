@@ -31,7 +31,7 @@ class QStringList;
 
 class CompilerTypes{
 public:
-    enum CompilerTypeFlag{
+    enum Type {
         Unspecified=0,
         MinGW=1,
         MSVC=2,
@@ -43,9 +43,9 @@ public:
         MinGW4_W32=7,
         MinGW4_W64=8 
     };
-     Q_DECLARE_FLAGS(CompilerType,CompilerTypeFlag);
-    static CompilerTypes::CompilerType fromString(const QString &type); 
-    static const QString toString(CompilerTypes::CompilerType compilerType);
+     Q_DECLARE_FLAGS(CompilerType,Type);
+    static Type fromString(const QString &type);
+    static const QString toString(Type compilerType);
     static const QStringList values();
     static QRegExp regex();
     static QRegExp endswith();

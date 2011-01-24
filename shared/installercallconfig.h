@@ -59,7 +59,7 @@ public:
     ReleaseType releaseType; 
     QString version; 
     QString mirror; 
-    CompilerTypes::CompilerType compilerType;
+    CompilerTypes::Type compilerType;
     bool hasReleaseType;
     bool hasVersion;
     bool hasMirror;

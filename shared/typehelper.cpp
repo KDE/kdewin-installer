@@ -51,9 +51,9 @@
 //	    return "unknown";
 //}
 
-CompilerTypes::CompilerType CompilerTypes::fromString(const QString &_type)
+CompilerTypes::Type CompilerTypes::fromString(const QString &_type)
 {
-    static QMap<QString,CompilerType> compilerMap;
+    static QMap<QString,Type> compilerMap;
     if(compilerMap.isEmpty()){
         compilerMap.insert("vc90",MSVC9);
         compilerMap.insert("vc100",MSVC10);
@@ -66,7 +66,7 @@ CompilerTypes::CompilerType CompilerTypes::fromString(const QString &_type)
     return compilerMap.contains(t)?compilerMap.value(t):CompilerTypes::Unspecified;
 }
 
-const QString CompilerTypes::toString(CompilerType type)
+const QString CompilerTypes::toString(Type type)
 {
     switch(type){
         case MSVC9:

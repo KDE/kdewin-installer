@@ -106,10 +106,10 @@ public:
     bool setDependencyState(Package *package, QList<Package*>&deps);
 
     /// check if a package should be included in the list of displayed packages
-    bool includePackage(CompilerTypes::CompilerType compilerType, const QString &name, const QString &categoryName=QString());
+    bool includePackage(CompilerTypes::Type compilerType, const QString &name, const QString &categoryName=QString());
 
     /// check if a category should be included in the list of displayed categories
-    bool includeCategory(CompilerTypes::CompilerType compilerType, const QString &categoryName);
+    bool includeCategory(CompilerTypes::Type compilerType, const QString &categoryName);
 
 Q_SIGNALS:
     void error ( const QString &error );

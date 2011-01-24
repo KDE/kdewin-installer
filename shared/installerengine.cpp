@@ -492,7 +492,7 @@ void InstallerEngine::slotError(const QString &msg)
     emit error(msg);
 }
 
-bool InstallerEngine::includePackage(CompilerTypes::CompilerType compilerType, const QString &name, const QString &categoryName)
+bool InstallerEngine::includePackage(CompilerTypes::Type compilerType, const QString &name, const QString &categoryName)
 {
     if ( ( categoryName == "mingw"  || compilerType == CompilerTypes::MinGW )
         &&  QRegExp(".*-(msvc|vc90|vc100|mingw4)$").exactMatch(name) )
@@ -515,7 +515,7 @@ bool InstallerEngine::includePackage(CompilerTypes::CompilerType compilerType, c
     return true;
 }
 
-bool InstallerEngine::includeCategory(CompilerTypes::CompilerType compilerType, const QString &categoryName)
+bool InstallerEngine::includeCategory(CompilerTypes::Type compilerType, const QString &categoryName)
 {
     if ( (compilerType == CompilerTypes::MinGW || compilerType == CompilerTypes::MSVC || compilerType == CompilerTypes::MinGW4)
         && (categoryName == QLatin1String("msvc") || categoryName == QLatin1String("mingw") || categoryName == QLatin1String("mingw4")) )
