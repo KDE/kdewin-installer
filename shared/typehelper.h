@@ -39,6 +39,7 @@ class QStringList;
 */
 class CompilerTypes {
 public:
+    // Please do not change the constants, they are used in installation config files
     enum Type {
         Unspecified=0,
         MinGW=1,
@@ -51,7 +52,7 @@ public:
         MinGW4_W32=7,
         MinGW4_W64=8 
     };
-     Q_DECLARE_FLAGS(CompilerType,Type);
+    Q_DECLARE_FLAGS(Types,Type);
 
     /**
       returns a list of string with support compilers
@@ -99,7 +100,7 @@ protected:
 
     static void init();
  };
-Q_DECLARE_OPERATORS_FOR_FLAGS(CompilerTypes::CompilerType);
+Q_DECLARE_OPERATORS_FOR_FLAGS(CompilerTypes::Types);
 
 class ArchitectureTypes {
 public:
@@ -108,27 +109,27 @@ public:
         x86,
         x64
     };
-     Q_DECLARE_FLAGS(ArchitectureType,Type);
+    Q_DECLARE_FLAGS(Types,Type);
     static Type fromString(const QString &type);
     static const QString toString(Type architecture);
     static const QStringList values();
     static QRegExp regex();
     static QRegExp endswith();
 };
- Q_DECLARE_OPERATORS_FOR_FLAGS(ArchitectureTypes::ArchitectureType);
+Q_DECLARE_OPERATORS_FOR_FLAGS(ArchitectureTypes::Types);
 
 class FileTypes {
 public:
     enum Type {
         NONE = 0, BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8, DBG = 16, ALL = 31, ANY = 32, META = 95
     };
-     Q_DECLARE_FLAGS(FileType,Type);
+    Q_DECLARE_FLAGS(Types,Type);
     static Type fromString(const QString &type);
     static const QString toString(Type type);
     static const QStringList values();
     static QRegExp regex();
     static QRegExp endswith();
 };
-Q_DECLARE_OPERATORS_FOR_FLAGS(FileTypes::FileType);
+Q_DECLARE_OPERATORS_FOR_FLAGS(FileTypes::Types);
 
 #endif
