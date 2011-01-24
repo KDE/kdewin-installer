@@ -52,7 +52,6 @@ public:
         MinGW4_W32=7,
         MinGW4_W64=8 
     };
-    Q_DECLARE_FLAGS(Types,Type);
 
     /**
       returns a list of string with support compilers
@@ -100,7 +99,6 @@ protected:
 
     static void init();
  };
-Q_DECLARE_OPERATORS_FOR_FLAGS(CompilerTypes::Types);
 
 class ArchitectureTypes {
 public:
