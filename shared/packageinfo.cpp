@@ -138,7 +138,8 @@ QString PackageInfo::baseName(const QString &_name)
     name.remove(CompilerTypes::endswith());
     name.remove(ArchitectureTypes::endswith());
     //remove last "-" at the end
-    return name.remove(name.length()-1,1);
+    static QRegExp e("-*$");
+    return name.remove(e);
 
 }
 
