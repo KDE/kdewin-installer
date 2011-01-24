@@ -23,6 +23,7 @@
 ****************************************************************************/
 
 #include "typehelper.h"
+#include "misc.h"
 
 #include <QMap>
 #include <QRegExp>
@@ -53,59 +54,60 @@
 //	    return "unknown";
 //}
 
-CompilerTypes::Type CompilerTypes::fromString(const QString &_type)
+QList<CompilerTypes::Type> CompilerTypes::m_types;
+QStringList CompilerTypes::m_typeStrings;
+
+void CompilerTypes::init()
 {
-    static QMap<QString,Type> compilerMap;
-    if(compilerMap.isEmpty()){
-        compilerMap.insert("vc90",MSVC9);
-        compilerMap.insert("vc100",MSVC10);
-        compilerMap.insert("x64-vc100",MSVC10_X64);
-        compilerMap.insert("mingw4",MinGW4);
-        compilerMap.insert("x86-mingw4",MinGW4_W32);
-        compilerMap.insert("x64-mingw4",MinGW4_W64);
-    }
-    QString t = _type.toLower();
-    return compilerMap.contains(t)?compilerMap.value(t):CompilerTypes::Unspecified;
+    if (m_types.size() == 0)
+    {
+        m_types << MSVC9 << MSVC10 << MinGW4 << MinGW4_W32;
+        m_typeStrings << "vc90" << "vc100" << "mingw4" << "x86-mingw4";
+        // @TODO remove 0 & in case x64 packages are available
+        if (0 && isX64Windows())
+        {
+            m_types << MSVC10_X64 << MinGW4_W64;
+            m_typeStrings << "x64-vc100" << "x64-mingw4";
+        }
+     }
+ }
+
+bool CompilerTypes::contains(Type type)
+{
+    init();
+    return m_types.contains(type);
+}
+
+CompilerTypes::Type CompilerTypes::fromString(const QString &type)
+{
+    init();
+    int i = m_typeStrings.indexOf(type.toLower());
+    return i != -1 ? m_types[i] : CompilerTypes::Unspecified;
 }
 
 const QString CompilerTypes::toString(Type type)
 {
-    switch(type){
-        case MSVC9:
-            return "vc90";
-        case MSVC10:
-            return "vc100";
-        case MSVC10_X64:
-            return "x64-vc100";
-        case MinGW4:
-            return "mingw4";
-        case MinGW4_W32:
-            return "x86-mingw4";
-        case MinGW4_W64:
-            return "x64-mingw4";
-        default:
-            return "";
-    }
+    init();
+    int i = m_types.indexOf(type);
+    return i != -1 ? m_typeStrings[i] : QString();
 }
 
-const QStringList CompilerTypes::values()
+const QStringList &CompilerTypes::values()
 {
-    static QStringList list;
-    if(list.isEmpty()){
-        list  << "vc90" << "vc100" << "x64-vc100" << "x86-mingw4" << "x64-mingw4" << "mingw4" ;
-    }
-    return list;
+    init();
+    return m_typeStrings;
 }
 
 QRegExp CompilerTypes::regex(){
-    static QRegExp compilersRx("("+CompilerTypes::values().join("|")+")");
+    static QRegExp compilersRx("("+values().join("|")+")");
     return compilersRx;
 }
 
 QRegExp CompilerTypes::endswith(){
-    static QRegExp compilersRx("("+CompilerTypes::values().join("|")+")$");
+    static QRegExp compilersRx("("+values().join("|")+")$");
     return compilersRx;
 }
+
 
 ArchitectureTypes::Type ArchitectureTypes::fromString(const QString &_type)
 {

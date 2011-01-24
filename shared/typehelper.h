@@ -26,11 +26,17 @@
 #define TYPEHELPER_H
 
 #include <QFlags>
+#include <QList>
+#include <QString>
 
 class QRegExp;
 class QStringList;
 
 
+/**
+ holds a set of supported compilers
+ and type conversation methods
+*/
 class CompilerTypes {
 public:
     enum Type {
@@ -46,12 +52,45 @@ public:
         MinGW4_W64=8 
     };
      Q_DECLARE_FLAGS(CompilerType,Type);
-    static Type fromString(const QString &type);
-    static const QString toString(Type compilerType);
-    static const QStringList values();
+
+    /**
+      returns a list of string with support compilers
+    */
+    static const QStringList &values();
+
+    /**
+     returns state if the requested compiler is supported
+     @param type type of compiler
+     @return true if compiler is suppoprted
+    */
+    static bool contains(Type type);
+
+    /**
+     returns regular expression of supported compilers
+     which could be used to match package file names.
+     @return regular expression instance
+    */
     static QRegExp regex();
-    static QRegExp endswith();
-};
+
+    /**
+     returns regular expression of supported compilers which could
+     be used to match the end of a package file names.
+     @return regular expression instance
+    */
+     static QRegExp endswith();
+
+    // convert a string to compiler type
+    static Type fromString(const QString &type);
+
+    // convert a compiler type to a string
+    static const QString toString(Type compilerType);
+
+protected:
+    static QList<Type> m_types;
+    static QStringList m_typeStrings;
+
+    static void init();
+ };
 Q_DECLARE_OPERATORS_FOR_FLAGS(CompilerTypes::CompilerType);
 
 class ArchitectureTypes {

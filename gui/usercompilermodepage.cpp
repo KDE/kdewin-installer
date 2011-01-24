@@ -23,7 +23,6 @@
 ****************************************************************************/
 
 #include "database.h"
-#include "misc.h"
 #include "usercompilermodepage.h"
 
 #include <QDir>
@@ -36,11 +35,19 @@ UserCompilerModePage::UserCompilerModePage() : InstallWizardPage(0)
     setTitle(windowTitle());
     setSubTitle(statusTip());
 
-    if (!isX64Windows())
-    {
+    if (!CompilerTypes::contains(CompilerTypes::MinGW4))
+        ui.compilerMinGW4->setVisible(false);
+    if (!CompilerTypes::contains(CompilerTypes::MinGW4_W32))
+        ui.compilerMinGW4_W32->setVisible(false);
+    if (!CompilerTypes::contains(CompilerTypes::MSVC9))
+        ui.compilerMSVC9->setVisible(false);
+    if (!CompilerTypes::contains(CompilerTypes::MSVC10))
+        ui.compilerMSVC10->setVisible(false);
+
+    if (!CompilerTypes::contains(CompilerTypes::MSVC10_X64))
         ui.compilerMSVCX64->setVisible(false);
+    if (!CompilerTypes::contains(CompilerTypes::MinGW4_W64))
         ui.compilerMinGW4_W64->setVisible(false);
-    }
     
     // logical grouping isn't available in the designer yet :-P
     QButtonGroup *groupA = new QButtonGroup(this);
@@ -48,11 +55,8 @@ UserCompilerModePage::UserCompilerModePage() : InstallWizardPage(0)
     groupA->addButton(ui.compilerMinGW4_W32);
     groupA->addButton(ui.compilerMSVC9);
     groupA->addButton(ui.compilerMSVC10);
-    if (isX64Windows())
-    {
-        groupA->addButton(ui.compilerMinGW4_W64);
-        groupA->addButton(ui.compilerMSVCX64);
-    }
+    groupA->addButton(ui.compilerMinGW4_W64);
+    groupA->addButton(ui.compilerMSVCX64);
     
     QButtonGroup *groupB = new QButtonGroup(this);
     groupB->addButton(ui.installModeEndUser);
@@ -98,13 +102,12 @@ bool UserCompilerModePage::validatePage()
         s.setCompilerType(CompilerTypes::MSVC9);
     else if (ui.compilerMSVC10->isChecked())
         s.setCompilerType(CompilerTypes::MSVC10);
-    else if (isX64Windows())
-    {
-        if (ui.compilerMSVCX64->isChecked())
-            s.setCompilerType(CompilerTypes::MSVC10_X64);
-        else if (ui.compilerMinGW4_W64->isChecked())
-            s.setCompilerType(CompilerTypes::MinGW4_W64);
-    }
+    else if (ui.compilerMSVCX64->isChecked())
+        s.setCompilerType(CompilerTypes::MSVC10_X64);
+    else if (ui.compilerMinGW4_W64->isChecked())
+        s.setCompilerType(CompilerTypes::MinGW4_W64);
+    else
+        s.setCompilerType(CompilerTypes::MSVC10);
     return true;
 }
 
@@ -126,11 +129,9 @@ void UserCompilerModePage::setCompilerMode(bool EndUserMode)
     ui.compilerMinGW4_W32->setEnabled(state);
     ui.compilerMSVC9->setEnabled(state);
     ui.compilerMSVC10->setEnabled(state);
-    if (isX64Windows())
-    {
-    	ui.compilerMSVCX64->setEnabled(state);
-        ui.compilerMinGW4_W64->setEnabled(state);
-    }
+    // display is controlled by setVisible
+    ui.compilerMSVCX64->setEnabled(state);
+    ui.compilerMinGW4_W64->setEnabled(state);
 }
 
 void UserCompilerModePage::slotModeButtonClicked(int id)
