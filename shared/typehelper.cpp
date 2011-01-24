@@ -1,6 +1,8 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Patrick von Reth patrick.vonreth@gmail.com> . All rights reserved.
+** Copyright (C) 2011 Patrick von Reth <patrick.vonreth@gmail.com>
+** Copyright (C) 2011 Ralf Habacker <ralf.habacker@freenet.de>
+** All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
@@ -137,12 +139,14 @@ const QStringList ArchitectureTypes::values()
     return list;
 }
 
-QRegExp ArchitectureTypes::regex(){
+QRegExp ArchitectureTypes::regex()
+{
     static QRegExp architecturesRx("("+ArchitectureTypes::values().join("|")+")");
     return architecturesRx;
 }
 
-QRegExp ArchitectureTypes::endswith(){
+QRegExp ArchitectureTypes::endswith()
+{
     static QRegExp architecturesRx("("+ArchitectureTypes::values().join("|")+")$");
     return architecturesRx;
 }
@@ -185,12 +189,14 @@ const QStringList FileTypes::values()
     return list;
 }
 
-QRegExp FileTypes::regex(){
+QRegExp FileTypes::regex()
+{
     static QRegExp compilersRx("("+FileTypes::values().join("|")+")");
     return compilersRx;
 }
 
-QRegExp FileTypes::endswith(){
+QRegExp FileTypes::endswith()
+{
     static QRegExp compilersRx("("+FileTypes::values().join("|")+")$");
     return compilersRx;
 }

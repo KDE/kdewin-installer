@@ -1,6 +1,8 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Patrick von Reth patrick.vonreth@gmail.com> . All rights reserved.
+** Copyright (C) 2011 Patrick von Reth <patrick.vonreth@gmail.com>
+** Copyright (C) 2011 Ralf Habacker <ralf.habacker@freenet.de>
+** All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
@@ -29,7 +31,7 @@ class QRegExp;
 class QStringList;
 
 
-class CompilerTypes{
+class CompilerTypes {
 public:
     enum Type {
         Unspecified=0,
@@ -52,7 +54,7 @@ public:
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(CompilerTypes::CompilerType);
 
-class ArchitectureTypes{
+class ArchitectureTypes {
 public:
     enum Type {
         Unspecified,
@@ -68,7 +70,7 @@ public:
 };
  Q_DECLARE_OPERATORS_FOR_FLAGS(ArchitectureTypes::ArchitectureType);
 
-class FileTypes{
+class FileTypes {
 public:
     enum Type {
         NONE = 0, BIN = 1 ,LIB = 2 ,DOC = 4 ,SRC = 8, DBG = 16, ALL = 31, ANY = 32, META = 95

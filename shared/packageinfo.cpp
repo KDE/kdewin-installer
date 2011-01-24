@@ -1,7 +1,8 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Ralf Habacker. All rights reserved.
-** Copyright (C) 2011 Patrick von Reth patrick.vonreth@gmail.com> 
+** Copyright (C) 2010 Ralf Habacker <ralf.habacker@freenet.de>
+** Copyright (C) 2011 Patrick von Reth <patrick.vonreth@gmail.com>
+** All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
