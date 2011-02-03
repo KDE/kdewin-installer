@@ -101,7 +101,10 @@ bool PostProcessing::start()
     QStringList kwinStartmenuMainParameters;
     if (m_singleAppsInstallMode && checkKWinStartMenuVersion("1.1"))
         kwinStartmenuMainParameters << "--nocategories";
-    
+
+    if (!m_singleAppsInstallMode && checkKWinStartMenuVersion("1.2"))
+        kwinStartmenuMainParameters << "--set-root-custom-string" << CompilerTypes::toString(Settings::instance().compilerType());
+        
     runCommand(0,"updating mime database","update-mime-database",QStringList() << QDir::fromNativeSeparators(Settings::instance().installDir()) + "/share/mime");
     if (!m_shouldQuit)
         runCommand(1,"updating system configuration database","kbuildsycoca4", QStringList() << "--noincremental");
