@@ -47,6 +47,8 @@ OPTION(BUILD_TESTS "build test applications " OFF)
 # see http://websvn.kde.org/trunk/l10n-kde4/templates/messages/qt
 OPTION(BUILD_TRANSLATIONS "build translations" OFF)
 
+OPTION(BUILD_PACKAGER_ONLY "Only build packager" OFF)
+
 ENABLE_TESTING()
 
 include(CTest)
@@ -184,6 +186,11 @@ set (GUI_DEFINITIONS     "-DUSE_GUI" ${QT_DEFINITIONS} ${BZIP2_DEFINITIONS} ${CU
 set (CONSOLE_INCLUDE_DIR  ${BZIP2_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/shared  ${CURL_INCLUDE_DIR} ${FILTERS_INCLUDE_DIR} ${QUAZIP_INCLUDE_DIR} ${QUA7ZIP_INCLUDE_DIR} ${QT_INCLUDES})
 set (GUI_INCLUDE_DIR      ${BZIP2_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/shared  ${CURL_INCLUDE_DIR} ${FILTERS_INCLUDE_DIR} ${QUAZIP_INCLUDE_DIR} ${QUA7ZIP_INCLUDE_DIR} ${QT_INCLUDES})
 
+if (BUILD_PACKAGER_ONLY)
+    add_subdirectory(shared)
+    add_subdirectory(packager)
+else(BUILD_PACKAGER_ONLY)
+
 #-----------------------------------------------------------------------------------------
 # our targets
 #-----------------------------------------------------------------------------------------
@@ -270,3 +277,4 @@ if (WINSCP_FOUND)
 endif (WINSCP_FOUND)
 
 endif(NOT BUILD_INSTALLER_THEME)
+endif(BUILD_PACKAGER_ONLY)
