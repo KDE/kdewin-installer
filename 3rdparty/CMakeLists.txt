@@ -21,15 +21,16 @@ endif (BZIP2_UNPACK_SUPPORT)
 #-------------------------------------------------------------------
 # limit external curl library usage to shared build mode 
 # in static build mode we cannot rely that the external library is a static build
-if (NOT STATIC_BUILD)
-    find_package(curl)
-    if (CURL_FOUND)
-        set (CURL_LIBRARIES ${CURL_LIBRARY} CACHE FILEPATH "library" FORCE)
-    endif (CURL_FOUND)
-else (NOT STATIC_BUILD)
+
+#if (NOT STATIC_BUILD)
+#    find_package(curl)
+#    if (CURL_FOUND)
+#        set (CURL_LIBRARIES ${CURL_LIBRARY} CACHE FILEPATH "library" FORCE)
+#    endif (CURL_FOUND)
+#else (NOT STATIC_BUILD)
     message(STATUS "using local static curl library")
     add_subdirectory(curl)
-endif (NOT STATIC_BUILD)
+#endif (NOT STATIC_BUILD)
 
 #-------------------------------------------------------------------
 # QUAZIP library
@@ -43,3 +44,8 @@ add_subdirectory(quazip)
 if(SEVENZIP_UNPACK_SUPPORT)
     add_subdirectory(qua7zip)
 endif(SEVENZIP_UNPACK_SUPPORT)
+
+#-------------------------------------------------------------------
+# attica library
+#-------------------------------------------------------------------
+add_subdirectory(attica)
