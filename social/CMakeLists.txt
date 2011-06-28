@@ -12,13 +12,9 @@ add_definitions(-DCMAKE_BUILD_TYPE=Debug)
 set(testSRCS main.cpp
              mainwindow.cpp
              categorybutton.cpp
-         #    installerenginegui.h
-             installerenginesinglepackage.cpp
              softwareitem.cpp)
 set(testHDRS mainwindow.h
              categorybutton.h
-        #     installerenginegui.h
-             installerenginesinglepackage.h
              softwareitem.h)
 qt4_wrap_cpp(test_MOC_SRCS ${testHDRS})
 find_package(Qt4 REQUIRED)

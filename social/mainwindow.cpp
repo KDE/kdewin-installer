@@ -11,18 +11,11 @@
 #include <attica/category.h>
 #include <attica/content.h>
 #include <QListWidget>
-#include <QDebug>
+//#include <QDebug>
 #include <attica/downloaditem.h>
 //#include <QWebView>
 #include "installerengine.h"
-#include "../shared/misc.h"
-//#include "../shared/debug.h"
-#include "../shared/installercallconfig.h"
-#include "../shared/installerprogress.h"
-#include "../shared/downloader.h"
-#include "../shared/unpacker.h"
-#include "../shared/postprocessing.h"
-
+#include "debug.h"
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
@@ -84,13 +77,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::providersChanged()
 {
-    qDebug("provider has changed");
+    qDebug()<<"provider has changed";
     if (!m_manager.providers().isEmpty()) {
-        qDebug("provider list is not empty");
+        qDebug()<<"provider list is not empty";
         m_provider = m_manager.providerByUrl(QUrl(QString::fromAscii("http://attica.tudalex.com/")));
       //  m_provider = m_manager.providerByUrl(QUrl(QString::fromAscii("http://api.opendesktop.org/v1/")));
         if (!m_provider.isValid()) {
-            qDebug("provider is not valid");
+            qDebug()<<"provider is not valid";
             return;
         }
         Attica::ListJob<Attica::Category>* job = m_provider.requestCategories();
@@ -102,7 +95,7 @@ void MainWindow::providersChanged()
 
 void MainWindow::onContentRecieved(Attica::BaseJob *job)
 {
-    qDebug("Job finished");
+    qDebug()<<"Job finished";
     Attica::ListJob<Attica::Category> *personJob = static_cast< Attica::ListJob<Attica::Category> * >( job );
     if (personJob->metadata().error() == Attica::Metadata::NoError)
     {
@@ -123,7 +116,7 @@ void MainWindow::onContentRecieved(Attica::BaseJob *job)
 
     }
     else
-        qDebug("job didn't go well");
+        qDebug()<<"job didn't go well";
 }
 
 void MainWindow::category_selected()
@@ -157,11 +150,11 @@ void MainWindow::onContentListRecieved(Attica::BaseJob *job)
 void MainWindow::softwareSelected(QListWidgetItem* item)
 {
     SoftwareItem *sitem = static_cast < SoftwareItem *> (item);
-    qDebug("reached here");
+    qDebug()<<"reached here";
     Attica::Content *content = sitem->getContent();
-    qDebug("got content");
+    qDebug()<<"got content";
     if (content == NULL)
-            qDebug("content is NULL");
+            qDebug()<<"content is NULL";
     else
     {
         qDebug()<<"should now install software named:"<<content->name()<<endl;
@@ -191,6 +184,22 @@ void MainWindow::softwareSelected(QListWidgetItem* item)
     presentation_screen->setLayout(vertical);
 
     presentation_screen->show();
+    InstallerEngine::defaultConfigURL=QString("http://www.winkde.org/pub/kde/ports/win32/releases/stable/4.5.4/");
+    InstallerEngine * t = new InstallerEngine();
+    //t->init();
+
+
+    t->initPackages();
+
+    Database *tmp = t->database();
+    qDebug()<<tmp->packages().size();
+    qDebug()<<t->usedDownloadSource();
+    qDebug()<<*(t->globalConfig());
+    Q_FOREACH(Package *package, tmp->packages())
+    {
+        qDebug()<<package->name();
+    }
+
 }
 
 

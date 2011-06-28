@@ -8,12 +8,13 @@
 #include <QObject>
 #include <QApplication>
 #include <QTextEdit>
-
+#include <debug.h>
 
 #include "mainwindow.h"
 int main(int argv, char **args)
 {
-    QApplication app(argv,args,1);
+    setMessageHandler();
+    QApplication app(argv,args);
     MainWindow* window = new MainWindow();
     window->show();
     return app.exec();
