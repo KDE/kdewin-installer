@@ -208,6 +208,14 @@ void MainWindow::softwareSelected(QListWidgetItem* item)
     while (i < packages.size())
     {
         Package *tpack  = t->getPackageByName(packages.at(i));
+        if (t->database()->getPackage(packages.at(i)) == NULL)
+        {
+            qDebug()<<"package is allready installed: "<<packages.at(i);
+            ++i;
+            continue;
+        }
+        if (tpack==NULL)
+            qDebug()<<"can't get package: "<<packages.at(i);
         qDebug()<<"processing package:"<<tpack->name();
         Q_FOREACH(const QString &dependency, tpack->deps())
         {
@@ -220,24 +228,29 @@ void MainWindow::softwareSelected(QListWidgetItem* item)
                 qDebug()<<"allready installing package:"<<dependency;
         }
         ++i;
+        qDebug()<<"i is:"<<i<<"size is:"<<packages.size();
+        qDebug()<<packages;
     }
 
     Q_FOREACH(const QString &package_name, packages)
     {
         Package *pack = t->getPackageByName(package_name);
+
+
         if (!pack->isInstalled(FileTypes::BIN))
         {
-            /*
+
             qDebug()<<"downloading package "<<pack->name();
             pack->downloadItem(FileTypes::BIN);
             qDebug()<<"installing package"<<pack->name();
             pack->installItem(t->installer(),FileTypes::BIN);
             qDebug()<<"finished installing"<<pack->name();
-            */
-            qDebug()<<"should install pacakage: "<<pack->name();
+
+            //qDebug()<<"should install pacakage: "<<pack->name();
         }
         else
             qDebug()<<"package allready installed: "<<pack->name();
+
     }
 
 }
