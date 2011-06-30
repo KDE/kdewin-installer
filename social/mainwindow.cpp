@@ -204,10 +204,15 @@ void MainWindow::softwareSelected(QListWidgetItem* item)
     Package *pachet = t->getPackageByName("amarok-vc100");
     QStringList packages;
     packages<<pachet->name();
-    Q_FOREACH(const QString &dependency, pachet->deps())
+    QStringListIterator it(packages);
+    while (it.hasNext())
     {
-        if (!packages.contains(dependency))
-            packages<<dependency;
+
+        Q_FOREACH(const QString &dependency, t->getPackageByName(it.next())->deps())
+        {
+            if (!packages.contains(dependency))
+                packages<<dependency;
+        }
     }
 
     Q_FOREACH(const QString &package_name, packages)
