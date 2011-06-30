@@ -204,15 +204,22 @@ void MainWindow::softwareSelected(QListWidgetItem* item)
     Package *pachet = t->getPackageByName("amarok-vc100");
     QStringList packages;
     packages<<pachet->name();
-    QStringListIterator it(packages);
-    while (it.hasNext())
+    int i = 0;
+    while (i < packages.size())
     {
-
-        Q_FOREACH(const QString &dependency, t->getPackageByName(it.next())->deps())
+        Package *tpack  = t->getPackageByName(packages.at(i));
+        qDebug()<<"processing package:"<<tpack->name();
+        Q_FOREACH(const QString &dependency, tpack->deps())
         {
             if (!packages.contains(dependency))
+            {
                 packages<<dependency;
+                qDebug()<<"added package:"<<dependency;
+            }
+            else
+                qDebug()<<"allready installing package:"<<dependency;
         }
+        ++i;
     }
 
     Q_FOREACH(const QString &package_name, packages)
@@ -220,12 +227,17 @@ void MainWindow::softwareSelected(QListWidgetItem* item)
         Package *pack = t->getPackageByName(package_name);
         if (!pack->isInstalled(FileTypes::BIN))
         {
+            /*
             qDebug()<<"downloading package "<<pack->name();
             pack->downloadItem(FileTypes::BIN);
             qDebug()<<"installing package"<<pack->name();
             pack->installItem(t->installer(),FileTypes::BIN);
             qDebug()<<"finished installing"<<pack->name();
+            */
+            qDebug()<<"should install pacakage: "<<pack->name();
         }
+        else
+            qDebug()<<"package allready installed: "<<pack->name();
     }
 
 }
