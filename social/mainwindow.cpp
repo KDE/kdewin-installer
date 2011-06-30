@@ -184,20 +184,42 @@ void MainWindow::softwareSelected(QListWidgetItem* item)
     presentation_screen->setLayout(vertical);
 
     presentation_screen->show();
+    //initGlobalConfig();
     InstallerEngine::defaultConfigURL=QString("http://www.winkde.org/pub/kde/ports/win32/releases/stable/4.5.4/");
     InstallerEngine * t = new InstallerEngine();
     //t->init();
-
-
+    //t->globalConfig()->fetch("http://www.winkde.org/pub/kde/ports/win32/releases/stable/4.5.4/");
+    t->initGlobalConfig();
     t->initPackages();
 
-    Database *tmp = t->database();
+
+    PackageList *tmp = t->packageResources();
     qDebug()<<tmp->packages().size();
     qDebug()<<t->usedDownloadSource();
     qDebug()<<*(t->globalConfig());
     Q_FOREACH(Package *package, tmp->packages())
     {
         qDebug()<<package->name();
+    }
+    Package *pachet = t->getPackageByName("amarok-vc100");
+    QStringList packages;
+    Q_FOREACH(const QString &dependency, pachet->deps())
+    {
+        if (!packages.contains(dependency))
+            packages<<dependency;
+    }
+
+    Q_FOREACH(const QString &package_name, packages)
+    {
+        Package *pack = t->getPackageByName(package_name);
+        if (!pack->isInstalled(FileTypes::BIN))
+        {
+            qDebug()<<"downloading package "<<pack->name();
+            pack->downloadItem(FileTypes::BIN);
+            qDebug()<<"installing package"<<pack->name();
+            pack->installItem(t->installer(),FileTypes::BIN);
+            qDebug()<<"finished installing"<<pack->name();
+        }
     }
 
 }
