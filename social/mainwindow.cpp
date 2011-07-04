@@ -14,8 +14,11 @@
 //#include <QDebug>
 #include <attica/downloaditem.h>
 //#include <QWebView>
-#include "installerengine.h"
+#include "installerenginesocial.h"
 #include "debug.h"
+#include "downloaderprogress.h"
+#include "downloader.h"
+#include "QtGui/QMessageBox"
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
@@ -185,73 +188,28 @@ void MainWindow::softwareSelected(QListWidgetItem* item)
 
     presentation_screen->show();
     //initGlobalConfig();
-    InstallerEngine::defaultConfigURL=QString("http://www.winkde.org/pub/kde/ports/win32/releases/stable/4.5.4/");
-    InstallerEngine * t = new InstallerEngine();
-    //t->init();
-    //t->globalConfig()->fetch("http://www.winkde.org/pub/kde/ports/win32/releases/stable/4.5.4/");
-    t->initGlobalConfig();
-    t->initPackages();
+    QWidget * download = new QWidget();
+
+    DownloaderProgress *progress = new DownloaderProgress(download);
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(progress);
+    layout->addStretch(1);
+    download->setLayout(layout);
 
 
-    PackageList *tmp = t->packageResources();
-    qDebug()<<tmp->packages().size();
-    qDebug()<<t->usedDownloadSource();
-    qDebug()<<*(t->globalConfig());
-    Q_FOREACH(Package *package, tmp->packages())
-    {
-        qDebug()<<package->name();
-    }
-    Package *pachet = t->getPackageByName("amarok-vc100");
-    QStringList packages;
-    packages<<pachet->name();
-    int i = 0;
-    while (i < packages.size())
-    {
-        Package *tpack  = t->getPackageByName(packages.at(i));
-        if (t->database()->getPackage(packages.at(i)) == NULL)
-        {
-            qDebug()<<"package is allready installed: "<<packages.at(i);
-            ++i;
-            continue;
-        }
-        if (tpack==NULL)
-            qDebug()<<"can't get package: "<<packages.at(i);
-        qDebug()<<"processing package:"<<tpack->name();
-        Q_FOREACH(const QString &dependency, tpack->deps())
-        {
-            if (!packages.contains(dependency))
-            {
-                packages<<dependency;
-                qDebug()<<"added package:"<<dependency;
-            }
-            else
-                qDebug()<<"allready installing package:"<<dependency;
-        }
-        ++i;
-        qDebug()<<"i is:"<<i<<"size is:"<<packages.size();
-        qDebug()<<packages;
-    }
-
-    Q_FOREACH(const QString &package_name, packages)
-    {
-        Package *pack = t->getPackageByName(package_name);
+    Downloader::instance()->setProgress(progress);
+    installerprogress *inst_progress = new installerprogress();
+    InstallerEngineSocial *t = new InstallerEngineSocial();
+    connect(t,SIGNAL(packagesToInstall(int)),inst_progress,SLOT(getpackageno(int)));
+    connect(t,SIGNAL(packageInstalled(QString)),inst_progress,SLOT(packageinstalled(QString)));
+    connect(t,SIGNAL(postInstalationStart()),inst_progress,SLOT(InstallMenuItems()));
+    connect(t,SIGNAL(postInstalationEnd()),inst_progress,SLOT(FinishedInstallMenuItems()));
+    //t->installpackage(QLatin1String("amarok-vc100"));
+    //QString packageName = content->downloadUrlDescription(1).packageName();
+    QString packageName = content->description();
 
 
-        if (!pack->isInstalled(FileTypes::BIN))
-        {
 
-            qDebug()<<"downloading package "<<pack->name();
-            pack->downloadItem(FileTypes::BIN);
-            qDebug()<<"installing package"<<pack->name();
-            pack->installItem(t->installer(),FileTypes::BIN);
-            qDebug()<<"finished installing"<<pack->name();
-
-            //qDebug()<<"should install pacakage: "<<pack->name();
-        }
-        else
-            qDebug()<<"package allready installed: "<<pack->name();
-
-    }
 
 }
 

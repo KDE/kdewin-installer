@@ -8,6 +8,7 @@
 #include <attica/provider.h>
 #include <attica/providermanager.h>
 #include <QListWidget>
+#include "installerprogress.h"
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
