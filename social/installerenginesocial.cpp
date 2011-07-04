@@ -113,4 +113,5 @@ bool InstallerEngineSocial::postInstallTasks()
     QProcess::execute(Settings::instance().installDir()+"/bin/kwinstartmenu.exe");
     qDebug()<<"finished post-installl tasks";
     emit postInstalationEnd();
+    return true;
 }
