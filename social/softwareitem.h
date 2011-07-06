@@ -12,6 +12,7 @@ public:
     Attica::Content *getContent();
 private:
     Attica::Content *m_content;
+
 };
 
 #endif // SOFTWAREITEM_H

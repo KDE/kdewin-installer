@@ -1,5 +1,6 @@
 #include "installerenginesocial.h"
 #include "downloader.h"
+#include <QtGui>
 InstallerEngineSocial::InstallerEngineSocial(QObject *parent) :
     InstallerEngine(parent)
 {
@@ -51,6 +52,18 @@ bool InstallerEngineSocial::installpackage(QString name)
     Package *pack = this->getPackageByName(name);
     if (pack == NULL)
         return false;
+    int status = 0;
+    QWidget *download = new QWidget;
+    DownloaderProgress *progress = new DownloaderProgress(download);
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(progress);
+    layout->addStretch(1);
+    download->setLayout(layout);
+
+
+    Downloader::instance()->setProgress(progress);
+
+
     QStringList packages = this->getDependencies(pack->name());
     Downloader::instance()->progress()->setFileCount(packages.size());
     int i = 0;
@@ -75,7 +88,18 @@ bool InstallerEngineSocial::installpackage(QString name)
 
     }
     qDebug()<<"finished downloading packages";
+
+
+
+    InstallerProgressSocial *inst_progress = new InstallerProgressSocial();
+    connect(this,SIGNAL(packagesToInstall(int)),inst_progress,SLOT(getpackageno(int)));
+    connect(this,SIGNAL(packageInstalled(QString)),inst_progress,SLOT(packageinstalled(QString)));
+    connect(this,SIGNAL(postInstalationStart()),inst_progress,SLOT(InstallMenuItems()));
+    connect(this,SIGNAL(postInstalationEnd()),inst_progress,SLOT(FinishedInstallMenuItems()));
+
+
     emit packagesToInstall(packages.size());
+
     Q_FOREACH(const QString &package_name, packages)
     {
         Package *pack = this->getPackageByName(package_name);
@@ -89,7 +113,7 @@ bool InstallerEngineSocial::installpackage(QString name)
         {
 
             qDebug()<<"installing package"<<pack->name();
-            pack->installItem(m_installer,FileTypes::BIN);
+            status&=pack->installItem(m_installer,FileTypes::BIN);
             qDebug()<<"finished installing"<<pack->name();
 
             //qDebug()<<"should install pacakage: "<<pack->name();
@@ -99,18 +123,35 @@ bool InstallerEngineSocial::installpackage(QString name)
 
     }
     qDebug()<<"finished installing software";
-    postInstallTasks();
 
+    delete inst_progress;
+    return status|!postInstallTasks();
+}
+bool InstallerEngineSocial::runCommand(const QString &msg, const QString &app, const QStringList &params)
+{
+    QFileInfo f(Settings::instance().installDir()+"/bin/" + app + ".exe");
+    qDebug() << "checking for app " << app << " - "  <<(f.exists() ? "found" : "not found");
+    if (!f.exists())
+        return false;
+
+
+    QCoreApplication::processEvents();
+    qDebug() << "running " << app << params;
+    return QProcess::execute( f.absoluteFilePath(), params) == 0 ? true : false;
 }
 
 bool InstallerEngineSocial::postInstallTasks()
 {
+    //TODO: Notice if any files of this crashes and report-it to the logfile
     qDebug()<<"running post-install tasks";
     emit postInstalationStart();
-    QProcess::execute(Settings::instance().installDir()+"/bin/update-mime-database.exe",QStringList() << QDir::fromNativeSeparators(Settings::instance().installDir()) + "/share/mime");
-    QProcess::execute(Settings::instance().installDir()+"/bin/kbuildsycoca4.exe");
-    QProcess::execute(Settings::instance().installDir()+"/bin/kwinstartmenu.exe",QStringList() <<  "--remove");
-    QProcess::execute(Settings::instance().installDir()+"/bin/kwinstartmenu.exe");
+    int status = 0;
+    status|=runCommand("updating mime database","update-mime-database",QStringList() << QDir::fromNativeSeparators(Settings::instance().installDir()) + "/share/mime");
+    status|=runCommand("updating system configuration database","kbuildsycoca4");
+    status|=runCommand("deleting old windows start menu entries","kwinstartmenu",QStringList() <<  "--remove");
+    status|=runCommand("creating new windows start menu entries","kwinstartmenu");
     qDebug()<<"finished post-installl tasks";
     emit postInstalationEnd();
 }
+
+

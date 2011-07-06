@@ -1,4 +1,5 @@
 #include "softwareitem.h"
+#include "imagedownloader.h"
 #include <attica/icon.h>
 SoftwareItem::SoftwareItem( Attica::Content *content)
 {

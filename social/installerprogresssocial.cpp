@@ -1,8 +1,8 @@
-#include "installerprogress.h"
-#include "ui_installerprogress.h"
+#include "installerprogresssocial.h"
+#include "ui_installerprogresssocial.h"
 #include <QtGui/QDesktopWidget>
 
-installerprogress::installerprogress(QWidget *parent) :
+InstallerProgressSocial::InstallerProgressSocial(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::installerprogress)
 {
@@ -14,22 +14,22 @@ installerprogress::installerprogress(QWidget *parent) :
     this->move(r.width() / 2 - this->width() / 2, r.height() / 2 - this->height() / 2);
 }
 
-installerprogress::~installerprogress()
+InstallerProgressSocial::~InstallerProgressSocial()
 {
     delete ui;
 }
 
-void installerprogress::update_progressbar(QString name)
+void InstallerProgressSocial::update_progressbar(QString name)
 {
     ui->progressBar->setValue((installedpackages*100)/packages);
     ui->software->setText(name);
 }
-void installerprogress::InstallMenuItems()
+void InstallerProgressSocial::InstallMenuItems()
 {
     ui->software->setText(QLatin1String("Setting Start Menu Links.."));
 }
 
-void installerprogress::FinishedInstallMenuItems()
+void InstallerProgressSocial::FinishedInstallMenuItems()
 {
     this->hide();
 }

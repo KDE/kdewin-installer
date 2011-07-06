@@ -16,14 +16,16 @@
 //#include <QWebView>
 #include "installerenginesocial.h"
 #include "debug.h"
-#include "downloaderprogress.h"
-#include "downloader.h"
 #include "QtGui/QMessageBox"
+#include "softwaredetails.h"
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
     this->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
     this->setMinimumWidth(600);
+
+
     QHBoxLayout *hbox = new QHBoxLayout;
     m_categories = new QVBoxLayout;
     hbox->addLayout(m_categories);
@@ -33,8 +35,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QWidget *center = new QWidget;
     center->setLayout(hbox);
     this->setCentralWidget(center);
-    QCommandLinkButton *test = new QCommandLinkButton(QString::fromLatin1("buton de test"));
-    //categories->addWidget(test);
+
+    //Setting up the install engine
+    m_installengine = new InstallerEngineSocial();
+
+
     connect(m_SoftwareList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), SLOT(softwareSelected(QListWidgetItem*)));
     connect(&m_manager, SIGNAL(defaultProvidersLoaded()), SLOT(providersChanged()));
     // tell it to get the default Providers
@@ -178,35 +183,13 @@ void MainWindow::softwareSelected(QListWidgetItem* item)
 
         }
     }
-    QWidget *presentation_screen = new QWidget();
-//    QWebView *presentation_page = new QWebView;
-//    presentation_page->setUrl(content->detailpage());
-    QVBoxLayout *vertical = new QVBoxLayout();
- //   vertical->addWidget(presentation_page);
-    vertical->addWidget(new QCommandLinkButton(QLatin1String("Install")));
-    presentation_screen->setLayout(vertical);
-
-    presentation_screen->show();
-    //initGlobalConfig();
-    QWidget * download = new QWidget();
-
-    DownloaderProgress *progress = new DownloaderProgress(download);
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(progress);
-    layout->addStretch(1);
-    download->setLayout(layout);
 
 
-    Downloader::instance()->setProgress(progress);
-    installerprogress *inst_progress = new installerprogress();
-    InstallerEngineSocial *t = new InstallerEngineSocial();
-    connect(t,SIGNAL(packagesToInstall(int)),inst_progress,SLOT(getpackageno(int)));
-    connect(t,SIGNAL(packageInstalled(QString)),inst_progress,SLOT(packageinstalled(QString)));
-    connect(t,SIGNAL(postInstalationStart()),inst_progress,SLOT(InstallMenuItems()));
-    connect(t,SIGNAL(postInstalationEnd()),inst_progress,SLOT(FinishedInstallMenuItems()));
-    //t->installpackage(QLatin1String("amarok-vc100"));
-    //QString packageName = content->downloadUrlDescription(1).packageName();
     QString packageName = content->description();
+    SoftwareDetails *details_page = new SoftwareDetails();
+    connect(details_page,SIGNAL(installpackage(QString)),m_installengine,SLOT(installpackage(QString)));
+    details_page->setContent(content);
+    details_page->show();
 
 
 

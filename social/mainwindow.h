@@ -9,6 +9,7 @@
 #include <attica/providermanager.h>
 #include <QListWidget>
 #include "installerprogress.h"
+#include "installerenginesocial.h"
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -28,6 +29,7 @@ private:
     Attica::ProviderManager m_manager;
     QListWidget * m_SoftwareList;
     QVBoxLayout *m_categories;
+    InstallerEngineSocial *m_installengine;
 
 
 };
