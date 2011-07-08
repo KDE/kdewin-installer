@@ -45,7 +45,3 @@ if(SEVENZIP_UNPACK_SUPPORT)
     add_subdirectory(qua7zip)
 endif(SEVENZIP_UNPACK_SUPPORT)
 
-#-------------------------------------------------------------------
-# attica library
-#-------------------------------------------------------------------
-add_subdirectory(attica)
