@@ -39,7 +39,7 @@ public:
     virtual ~ImageDownloader();
     QByteArray dowloadedData();
 signals:
-    void downloaded(ImageDownloader* const);
+    void downloaded();
 public slots:
     void fileDownloaded(QNetworkReply* pReply);
 private:

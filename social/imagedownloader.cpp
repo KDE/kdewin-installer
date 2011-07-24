@@ -40,7 +40,7 @@ ImageDownloader::~ImageDownloader()
 void ImageDownloader::fileDownloaded(QNetworkReply *pReply)
 {
     m_DownloadedData = pReply->readAll();
-    emit downloaded(this);
+    emit downloaded();
 }
 QByteArray ImageDownloader::dowloadedData()
 {

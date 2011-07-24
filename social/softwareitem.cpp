@@ -34,10 +34,20 @@ SoftwareItem::SoftwareItem( Attica::Content *content)
     {
         qDebug("There should be an Icon");
         Attica::Icon icon = content->icons().first();
-        this->setIcon(QIcon(icon.url().toString()));
+        m_imgdown = new ImageDownloader(icon.url());
+        connect(m_imgdown,SIGNAL(downloaded()),this,SLOT(image_downloaded()));
     }
 }
 Attica::Content * SoftwareItem::getContent()
 {
     return m_content;
+}
+
+void SoftwareItem::image_downloaded()
+{
+    QIcon icon;
+    QPixmap t;
+    t.loadFromData(m_imgdown->dowloadedData());
+    icon.addPixmap(t);
+    this->setIcon(icon);
 }

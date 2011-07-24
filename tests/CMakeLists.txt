@@ -16,7 +16,7 @@ macro (add_installer_test name)
     add_test(${TEST_NAME} ${CMAKE_CURRENT_BINARY_DIR}/../bin/${TEST_NAME})
 endmacro (add_installer_test name)
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_SOURCE_DIR}/packager)
+include_directories(${GUI_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_SOURCE_DIR}/packager)
 
 add_installer_test(test-database)
 add_installer_test(test-downloader)
@@ -33,6 +33,6 @@ add_installer_test(test-unpacker)
 if(win32)
   add_installer_test(test-startmenu)
 endif(win32)
-add_installer_test(test-proxy)
+#add_installer_test(test-proxy)
 
 endif (BUILD_TESTS)

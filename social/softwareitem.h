@@ -28,15 +28,20 @@
 #include <QListWidgetItem>
 #include <QListWidget>
 #include <attica/content.h>
+#include "imagedownloader.h"
 
-class SoftwareItem : public QListWidgetItem
+class SoftwareItem : public QObject, public QListWidgetItem
 {
+    Q_OBJECT
 public:
     explicit SoftwareItem( Attica::Content *content = NULL);
     Attica::Content *getContent();
 private:
     Attica::Content *m_content;
-
+public slots:
+    void image_downloaded();
+protected:
+    ImageDownloader * m_imgdown;
 };
 
 #endif // SOFTWAREITEM_H

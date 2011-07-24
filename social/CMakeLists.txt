@@ -42,6 +42,6 @@ INCLUDE(${QT_USE_FILE})
 
 
 add_executable(${TARGET} WIN32 ${testSRCS} ${test_MOC_SRCS} ${testHDRS} ${testUI})
-target_link_libraries(${TARGET} ${GUI_LIBS} ${LIBATTICA_LIBRARIES} ws2_32 ${QT_QTNETWORK_LIBRARY})
+target_link_libraries(${TARGET} ${GUI_LIBS}  ${LIBATTICA_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ws2_32)
 install_targets(/bin ${TARGET})
 

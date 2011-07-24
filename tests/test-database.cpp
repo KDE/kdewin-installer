@@ -159,20 +159,20 @@ UINT DetermineContextForAllProducts()
 #endif
 
 // this should go into Package class sometime in the future
-static Package::Type StringToPackageType(const QString &_type)
+static FileTypes::Type StringToPackageType(const QString &_type)
 {
     QString type = _type.toLower();
     
     if (type == "bin")
-        return Package::BIN;
+        return FileTypes::BIN;
     else if (type == "lib")
-        return Package::LIB;
+        return FileTypes::LIB;
     else if (type == "doc")
-        return Package::DOC;
+        return FileTypes::DOC;
     else if (type == "src")
-        return Package::SRC;
+        return FileTypes::SRC;
     else 
-        return Package::NONE;
+        return FileTypes::NONE;
 }
 
 

@@ -38,19 +38,19 @@ int main(int argc, char *argv[])
     Settings &s = Settings::instance();
     ProxySettings ps;
 
-    ret = s.proxy(Settings::InternetExplorer, http, ps);
+    ret = s.proxy(ProxySettings::InternetExplorer, http, ps);
     qDebug() << "IE settings for " << http << ":" << ret << ps;
     ret = s.proxy(Settings::InternetExplorer, ftp, ps);
     qDebug() << "IE settings for " << ftp << ":" << ret << ps;
 
-    ret = s.proxy(Settings::FireFox, http, ps);
+    ret = s.proxy(ProxySettings::FireFox, http, ps);
     qDebug() << "Firefox settings for " << http << ":" << ret << ps;
     ret = s.proxy(Settings::FireFox, ftp, ps);
     qDebug() << "Firefox settings for " << ftp << ":" << ret << ps;
 
-    ret = s.proxy(Settings::Manual, http, ps);
+    ret = s.proxy(ProxySettings::Manual, http, ps);
     qDebug() << "Manual settings for " << http << ":" << ret << ps;
-    ret = s.proxy(Settings::Manual, ftp, ps);
+    ret = s.proxy(ProxySettings::Manual, ftp, ps);
     qDebug() << "Manual settings for " << ftp << ":" << ret << ps;
 
     return 0;

@@ -87,7 +87,7 @@ MainWindow::MainWindow(QWidget *parent) :
                                  "</provider>"));
     m_manager.addProviderFromXml(QString::fromLatin1("<provider>"
                                  "<id>opendesktop</id>"
-                                 "<location>http://attica.tudalex.com/</location>"
+                                 "<location>http://attica.tudalex.com/api/</location>"
                                  "<name>Kde Windows Test</name>"
                                  "<icon></icon>"
                                  "<termsofuse>https://opendesktop.org/terms/</termsofuse>"
@@ -112,7 +112,7 @@ void MainWindow::providersChanged()
     qDebug()<<"provider has changed";
     if (!m_manager.providers().isEmpty()) {
         qDebug()<<"provider list is not empty";
-        m_provider = m_manager.providerByUrl(QUrl(QString::fromAscii("http://attica.tudalex.com/")));
+        m_provider = m_manager.providerByUrl(QUrl(QLatin1String("http://attica.tudalex.com/api/")));
       //  m_provider = m_manager.providerByUrl(QUrl(QString::fromAscii("http://api.opendesktop.org/v1/")));
         if (!m_provider.isValid()) {
             qDebug()<<"provider is not valid";
