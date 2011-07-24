@@ -176,6 +176,7 @@ bool InstallerEngineSocial::postInstallTasks()
     status|=runCommand("creating new windows start menu entries","kwinstartmenu");
     qDebug()<<"finished post-installl tasks";
     emit postInstalationEnd();
+    return true;
 }
 
 
