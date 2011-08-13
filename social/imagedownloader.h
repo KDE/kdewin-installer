@@ -41,10 +41,12 @@ public:
 signals:
     void downloaded();
 public slots:
-    void fileDownloaded(QNetworkReply* pReply);
+    void fileDownloaded();
+    void error(QNetworkReply::NetworkError code);
 private:
     QNetworkAccessManager m_WebCtrl;
     QByteArray m_DownloadedData;
+    QNetworkReply *m_Reply;
 };
 
 #endif // IMAGEDOWNLOADER_H

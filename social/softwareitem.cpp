@@ -24,18 +24,29 @@
 
 #include "softwareitem.h"
 #include "imagedownloader.h"
+#include "debug.h"
 #include <attica/icon.h>
+#include "downloader.h"
 SoftwareItem::SoftwareItem( Attica::Content *content)
 {
     this->setText(content->name());
+
     //this->setIcon(QIcon::addFile(content->icons()));
     this->m_content = content;
     if (!content->icons().empty())
     {
-        qDebug("There should be an Icon");
+        qDebug()<<"There should be an Icon";
         Attica::Icon icon = content->icons().first();
-        m_imgdown = new ImageDownloader(icon.url());
-        connect(m_imgdown,SIGNAL(downloaded()),this,SLOT(image_downloaded()));
+        QByteArray data;
+        Downloader::instance()->fetch(icon.url(),data);
+        QIcon ico;
+        QPixmap t;
+        t.loadFromData(data);
+        ico.addPixmap(t);
+
+        this->setIcon(ico);
+        //m_imgdown = new ImageDownloader(icon.url());
+        //connect(m_imgdown,SIGNAL(downloaded()),this,SLOT(image_downloaded()));
     }
 }
 Attica::Content * SoftwareItem::getContent()
@@ -45,6 +56,7 @@ Attica::Content * SoftwareItem::getContent()
 
 void SoftwareItem::image_downloaded()
 {
+    qDebug()<<"got the image";
     QIcon icon;
     QPixmap t;
     t.loadFromData(m_imgdown->dowloadedData());

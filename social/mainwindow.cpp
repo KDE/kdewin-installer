@@ -63,7 +63,6 @@ MainWindow::MainWindow(QWidget *parent) :
     //Setting up the install engine
     m_installengine = new InstallerEngineSocial();
 
-
     connect(m_SoftwareList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), SLOT(softwareSelected(QListWidgetItem*)));
     connect(&m_manager, SIGNAL(defaultProvidersLoaded()), SLOT(providersChanged()));
     // tell it to get the default Providers
@@ -213,6 +212,7 @@ void MainWindow::softwareSelected(QListWidgetItem* item)
     SoftwareDetails *details_page = new SoftwareDetails();
     connect(details_page,SIGNAL(installpackage(QString)),m_installengine,SLOT(installpackage(QString)));
     details_page->setContent(content);
+    details_page->setProvider(m_provider);
     details_page->show();
 
 

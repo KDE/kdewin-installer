@@ -27,6 +27,9 @@
 
 #include <QWidget>
 #include <attica/content.h>
+#include <attica/provider.h>
+#include <QVBoxLayout>
+#include <QScrollArea>
 
 namespace Ui {
     class SoftwareDetails;
@@ -36,18 +39,29 @@ class SoftwareDetails : public QWidget
 {
     Q_OBJECT
 
+
 public:
     explicit SoftwareDetails(QWidget *parent = 0);
     ~SoftwareDetails();
     void setContent(Attica::Content * content);
-
+    void setProvider(Attica::Provider  &provider);
+    Attica::Content *m_content;
 private:
     Ui::SoftwareDetails *ui;
-    Attica::Content *m_content;
+
+    Attica::Provider m_provider;
+    QWidget * comments;
+    QScrollArea *comments_scroll;
 signals:
     void installpackage(QString);
+    void commentsChanged();
 private slots:
     void installbuttonclicked();
+    void showComments();
+    void updateComments();
+    void commentsLoaded(Attica::BaseJob *);
+  //  void resizelogo();
+
 };
 
 #endif // SOFTWAREDETAILS_H

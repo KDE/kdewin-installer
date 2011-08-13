@@ -23,13 +23,21 @@
 ****************************************************************************/
 
 #include "imagedownloader.h"
+#include <QNetworkReply>
+#include <QMessageBox>
+#include <QDebug>
 
 ImageDownloader::ImageDownloader(QUrl imageUrl, QObject *parent) :
     QObject(parent)
 {
-    connect(&m_WebCtrl, SIGNAL(finished(QNetworkReply*)),this, SLOT(fileDownloaded(QNetworkReply*)));
+
+
     QNetworkRequest request(imageUrl);
-    m_WebCtrl.get(request);
+
+
+    m_Reply  = m_WebCtrl.get(request);
+    connect(m_Reply, SIGNAL(error(QNetworkReply::NetworkError)),this, SLOT(error(QNetworkReply::NetworkError)) );
+    connect(m_Reply, SIGNAL(finished()),this, SLOT(fileDownloaded()));
 }
 
 ImageDownloader::~ImageDownloader()
@@ -37,12 +45,17 @@ ImageDownloader::~ImageDownloader()
 
 }
 
-void ImageDownloader::fileDownloaded(QNetworkReply *pReply)
+void ImageDownloader::fileDownloaded()
 {
-    m_DownloadedData = pReply->readAll();
+    m_DownloadedData = m_Reply->readAll();
     emit downloaded();
 }
 QByteArray ImageDownloader::dowloadedData()
 {
     return m_DownloadedData;
+}
+
+void ImageDownloader::error(QNetworkReply::NetworkError code)
+{
+    qDebug()<<"There has been an error";
 }

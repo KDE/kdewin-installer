@@ -49,11 +49,12 @@ public slots:
     void onContentListRecieved(Attica::BaseJob*);
     void softwareSelected(QListWidgetItem*);
 private:
-    Attica::Provider m_provider;
+
     Attica::ProviderManager m_manager;
     QListWidget * m_SoftwareList;
     QVBoxLayout *m_categories;
     InstallerEngineSocial *m_installengine;
+    Attica::Provider m_provider;
 
 
 };
