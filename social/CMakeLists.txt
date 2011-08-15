@@ -23,7 +23,8 @@ set(testSRCS main.cpp
              softwaredetails.cpp
              imagedownloader.cpp
              commentadd.cpp
-             comment.cpp)
+             comment.cpp
+             descriptionbrowser.cpp)
 set(testHDRS mainwindow.h
              categorybutton.h
              softwareitem.h
@@ -32,7 +33,8 @@ set(testHDRS mainwindow.h
              softwaredetails.h
              imagedownloader.h
              commentadd.h
-             comment.h)
+             comment.h
+             descriptionbrowser.h)
 qt4_wrap_ui(test_UI_SRCS ${testUI})
 qt4_wrap_cpp(test_MOC_SRCS ${testHDRS})
 find_package(Qt4 REQUIRED)

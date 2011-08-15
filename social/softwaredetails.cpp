@@ -49,7 +49,15 @@ SoftwareDetails::~SoftwareDetails()
 }
 void SoftwareDetails::setContent(Attica::Content * content)
 {
-    ui->textBrowser->setText(content->description());
+    QString gallery;
+    int i = 1;
+    QString pic_url;
+    gallery.append("<div syle='white-space: pre'>");
+    QString previewpic = QString("previewpic");
+    while ((pic_url = content->attribute(QString("previewpic").append(QString::number(i))))!=QString())
+        gallery.append(QString("<a href='%1'><img src='%1' height='100'></img></a>  ").arg(pic_url)), ++i;
+    gallery.append("</div>");
+    ui->textBrowser->setText(gallery.append(content->description()));
     ui->software_title->setText(content->name());
     m_content = content;
     if (!m_content->icons().empty())

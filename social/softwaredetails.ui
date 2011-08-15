@@ -70,7 +70,7 @@
       </widget>
      </item>
      <item row="2" column="0" colspan="2">
-      <widget class="QTextBrowser" name="textBrowser">
+      <widget class="DescriptionBrowser" name="textBrowser">
        <property name="font">
         <font>
          <kerning>true</kerning>
@@ -109,6 +109,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DescriptionBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>descriptionbrowser.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
