@@ -32,15 +32,22 @@
 #include <QObject>
 #include <QApplication>
 #include <QTextEdit>
+#include <QSplashScreen>
 #include <debug.h>
 
 #include "mainwindow.h"
 int main(int argv, char **args)
 {
-    setMessageHandler();
+    setMessageHandler(); //Debug function
     QApplication app(argv,args);
+    QPixmap pixmap(":/kde-logo.png");
+    QSplashScreen splash(pixmap);
+    splash.show();
+    splash.setStyleSheet("background: transparent;");
     MainWindow* window = new MainWindow();
+    app.processEvents();
     window->show();
+    splash.finish(window);
     return app.exec();
 }
 

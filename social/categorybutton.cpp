@@ -23,6 +23,7 @@
 ****************************************************************************/
 
 #include "categorybutton.h"
+#include <QPixmap>
 
 CategoryButton::CategoryButton(QWidget *parent, Attica::Category *cat) :
     QCommandLinkButton(parent)
@@ -32,4 +33,7 @@ CategoryButton::CategoryButton(QWidget *parent, Attica::Category *cat) :
         category = cat;
         this->setText(cat->name());
     }
+    this->setCheckable(true);
+
+    this->setIcon(QIcon(QString(":/").append(this->text()).append(".png")));
 }

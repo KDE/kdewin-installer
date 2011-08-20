@@ -12,7 +12,8 @@ cmake_minimum_required(VERSION 2.6)
 set(testUI installerprogresssocial.ui
            softwaredetails.ui
            commentadd.ui
-           comment.ui)
+           comment.ui
+           settingspage.ui)
 
 set(testSRCS main.cpp
              mainwindow.cpp
@@ -24,7 +25,9 @@ set(testSRCS main.cpp
              imagedownloader.cpp
              commentadd.cpp
              comment.cpp
-             descriptionbrowser.cpp)
+             descriptionbrowser.cpp
+             settingspage.cpp)
+
 set(testHDRS mainwindow.h
              categorybutton.h
              softwareitem.h
@@ -34,9 +37,14 @@ set(testHDRS mainwindow.h
              imagedownloader.h
              commentadd.h
              comment.h
-             descriptionbrowser.h)
+             descriptionbrowser.h
+             settingspage.h)
+
+configure_file(images.qrc.cmake ${CMAKE_CURRENT_BINARY_DIR}/images.qrc)
+
 qt4_wrap_ui(test_UI_SRCS ${testUI})
 qt4_wrap_cpp(test_MOC_SRCS ${testHDRS})
+qt4_add_resources(test_RC images.qrc)
 find_package(Qt4 REQUIRED)
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -49,7 +57,7 @@ add_definitions(
 INCLUDE(${QT_USE_FILE} ${QT_USE_QTNETWORK})
 
 
-add_executable(${TARGET} WIN32 ${testSRCS} ${test_MOC_SRCS} ${testUI})
+add_executable(${TARGET} WIN32 ${testSRCS} ${test_MOC_SRCS} ${testUI} ${test_RC})
 target_link_libraries(${TARGET}  ${GUI_LIBS}  ${LIBATTICA_LIBRARIES}  ws2_32 ${QT_QTNETWORK_LIBRARY})
 install_targets(/bin ${TARGET})
 

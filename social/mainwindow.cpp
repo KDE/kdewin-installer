@@ -42,6 +42,9 @@
 #include "debug.h"
 #include "QtGui/QMessageBox"
 #include "softwaredetails.h"
+#include "settingspage.h"
+#include <QtGui>
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -102,7 +105,18 @@ MainWindow::MainWindow(QWidget *parent) :
                                  "  <event ocsversion=\"1.3\" />"
                                  "</services>"
                                  "</provider>"));
+    this->menuBar()->addAction("Settings",this,SLOT(displaySettings()));
 
+
+}
+void MainWindow::displaySettings()
+{
+    qDebug()<<"should display settings page";
+    SettingsPage *settings_window = new SettingsPage();
+    connect(settings_window,SIGNAL(setRoot(QString)), m_installengine,SLOT(changeRoot(QString)));
+
+    settings_window->setCurrentRoot(Settings::instance().installDir());
+    settings_window->show();
 }
 
 
@@ -140,7 +154,7 @@ void MainWindow::onContentRecieved(Attica::BaseJob *job)
 
             connect(category_button,SIGNAL(clicked()),this,SLOT(category_selected()));
             m_categories->addWidget(category_button);
-            if (i>10)
+            if (i>10) //FIXME: should change this
                 break;
             ++i;
         }
@@ -157,13 +171,14 @@ void MainWindow::category_selected()
     QList <Attica::Category> list;
     list.append(*(test->category));
     Attica::ListJob<Attica::Content>* job = m_provider.searchContents(list);
-    m_SoftwareList->clear();
+
     connect(job, SIGNAL(finished(Attica::BaseJob*)), SLOT(onContentListRecieved(Attica::BaseJob*)));
     job->start();
 }
 
 void MainWindow::onContentListRecieved(Attica::BaseJob *job)
 {
+    m_SoftwareList->clear();
     Attica::ListJob<Attica::Content> *ContentListJob = static_cast< Attica::ListJob<Attica::Content> * >( job );
     if (ContentListJob->metadata().error() == Attica::Metadata::NoError)
     {
@@ -211,8 +226,11 @@ void MainWindow::softwareSelected(QListWidgetItem* item)
     QString packageName = content->description();
     SoftwareDetails *details_page = new SoftwareDetails();
     connect(details_page,SIGNAL(installpackage(QString)),m_installengine,SLOT(installpackage(QString)));
+    connect(details_page,SIGNAL(uninstallpackage(QString)),m_installengine,SLOT(uninstallpackage(QString)));
     details_page->setContent(content);
     details_page->setProvider(m_provider);
+    if (m_installengine->isPackageInstalled(content->downloadUrlDescription(1).packageName()))
+        details_page->install_status_changed();
     details_page->show();
 
 

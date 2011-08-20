@@ -73,10 +73,16 @@ QStringList InstallerEngineSocial::getDependencies(QString package_name)
 
 bool InstallerEngineSocial::installpackage(QString name)
 {
+    m_database->clear();
+    m_database->readFromDirectory(m_root);
+
+    this->initPackages();
+
     Package *pack = this->getPackageByName(name);
     if (pack == NULL)
         return false;
     int status = 0;
+
     QWidget *download = new QWidget;
     DownloaderProgress *progress = new DownloaderProgress(download);
     QVBoxLayout *layout = new QVBoxLayout;
@@ -86,6 +92,7 @@ bool InstallerEngineSocial::installpackage(QString name)
 
 
     Downloader::instance()->setProgress(progress);
+
 
 
     QStringList packages = this->getDependencies(pack->name());
@@ -148,7 +155,7 @@ bool InstallerEngineSocial::installpackage(QString name)
     }
     qDebug()<<"finished installing software";
 
-    delete inst_progress;
+
     return status|!postInstallTasks();
 }
 bool InstallerEngineSocial::runCommand(const QString &msg, const QString &app, const QStringList &params)
@@ -175,8 +182,57 @@ bool InstallerEngineSocial::postInstallTasks()
     status|=runCommand("deleting old windows start menu entries","kwinstartmenu",QStringList() <<  "--remove");
     status|=runCommand("creating new windows start menu entries","kwinstartmenu");
     qDebug()<<"finished post-installl tasks";
+    //this->reload();
+
     emit postInstalationEnd();
-    return true;
+    qDebug()<<"finished post-installl tasks";
+    return status;
 }
 
+bool InstallerEngineSocial::uninstallpackage(QString name)
+{
+    m_database->clear();
+    m_database->readFromDirectory(m_root);
 
+    this->initPackages();
+
+    qDebug()<<"uninstalling package "<<name;
+    Package *pack = m_database->getPackage(name);
+    if (pack == NULL)
+        return false;
+    qDebug()<<"Package passed checks";
+
+    QLabel *uninstall_message = new QLabel();
+    uninstall_message->setText("Uninstalling. Please wait..");
+    uninstall_message->setFont(QFont(QString(),20));
+    //uninstall_message->setWindowFlags(Qt::Popup);
+    const QRect r = QApplication::desktop()->screenGeometry();
+    uninstall_message->setWindowFlags(Qt::SplashScreen);
+    uninstall_message->adjustSize();
+    uninstall_message->move(r.center()- uninstall_message->rect().center());
+
+
+    uninstall_message->show();
+
+    bool status =  pack->removeItem(m_installer,FileTypes::BIN);
+    uninstall_message->hide();
+    delete uninstall_message;
+    return status|!postInstallTasks();
+}
+
+bool InstallerEngineSocial::isPackageInstalled(QString name)
+{
+    Package *pack = this->getPackageByName(name);
+    if (pack == NULL)
+        return false;
+    return m_database->getPackage(name)!=NULL;
+
+}
+
+void InstallerEngineSocial::changeRoot(QString newRoot)
+{
+    Settings &s = Settings::instance();
+    s.setInstallDir(newRoot);
+    this->setRoot(s.installDir());
+    qDebug()<<"root set to "<<newRoot;
+}

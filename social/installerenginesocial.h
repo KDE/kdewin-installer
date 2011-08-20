@@ -33,6 +33,7 @@ class InstallerEngineSocial : public InstallerEngine
 public:
     explicit InstallerEngineSocial(QObject *parent = 0);
     QStringList getDependencies(QString package_name);
+    bool isPackageInstalled(QString name);
 signals:
     void packageInstalled(QString);
     void packagesToInstall(int);
@@ -40,11 +41,14 @@ signals:
     void postInstalationEnd();
 public slots:
     bool installpackage(QString name);
+    bool uninstallpackage(QString name);
+    void changeRoot(QString);
 private:
     bool postInstallTasks();
 protected:
     bool runCommand(const QString &msg, const QString &app, const QStringList &params=QStringList());
 
 };
+
 
 #endif // INSTALLERENGINESOCIAL_H

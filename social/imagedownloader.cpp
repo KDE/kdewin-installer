@@ -34,7 +34,6 @@ ImageDownloader::ImageDownloader(QUrl imageUrl, QObject *parent) :
 
     QNetworkRequest request(imageUrl);
 
-
     m_Reply  = m_WebCtrl.get(request);
     connect(m_Reply, SIGNAL(error(QNetworkReply::NetworkError)),this, SLOT(error(QNetworkReply::NetworkError)) );
     connect(m_Reply, SIGNAL(finished()),this, SLOT(fileDownloaded()));
@@ -47,7 +46,9 @@ ImageDownloader::~ImageDownloader()
 
 void ImageDownloader::fileDownloaded()
 {
+
     m_DownloadedData = m_Reply->readAll();
+
     emit downloaded();
 }
 QByteArray ImageDownloader::dowloadedData()

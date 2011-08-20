@@ -34,6 +34,8 @@
 #include <QListWidget>
 #include "installerprogress.h"
 #include "installerenginesocial.h"
+#include "settingspage.h"
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -48,6 +50,7 @@ public slots:
     void category_selected();
     void onContentListRecieved(Attica::BaseJob*);
     void softwareSelected(QListWidgetItem*);
+    void displaySettings();
 private:
 
     Attica::ProviderManager m_manager;

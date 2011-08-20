@@ -46,6 +46,7 @@ public:
     void setContent(Attica::Content * content);
     void setProvider(Attica::Provider  &provider);
     Attica::Content *m_content;
+    void install_status_changed();
 private:
     Ui::SoftwareDetails *ui;
 
@@ -54,12 +55,14 @@ private:
     QScrollArea *comments_scroll;
 signals:
     void installpackage(QString);
+    void uninstallpackage(QString);
     void commentsChanged();
 private slots:
     void installbuttonclicked();
     void showComments();
     void updateComments();
     void commentsLoaded(Attica::BaseJob *);
+
   //  void resizelogo();
 
 };

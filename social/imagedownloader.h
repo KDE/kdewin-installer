@@ -30,6 +30,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QMutex>
 
 class ImageDownloader : public QObject
 {
@@ -47,6 +48,8 @@ private:
     QNetworkAccessManager m_WebCtrl;
     QByteArray m_DownloadedData;
     QNetworkReply *m_Reply;
+
+
 };
 
 #endif // IMAGEDOWNLOADER_H

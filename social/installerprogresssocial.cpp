@@ -56,4 +56,5 @@ void InstallerProgressSocial::InstallMenuItems()
 void InstallerProgressSocial::FinishedInstallMenuItems()
 {
     this->hide();
+    this->deleteLater();
 }

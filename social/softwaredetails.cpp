@@ -37,7 +37,7 @@ SoftwareDetails::SoftwareDetails(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(ui->install_button,SIGNAL(pressed()),this,SLOT(installbuttonclicked()));
+    connect(ui->install_button,SIGNAL(clicked()),this,SLOT(installbuttonclicked()));
     connect(ui->comments, SIGNAL(clicked()), this, SLOT(showComments()));
     connect(this, SIGNAL(commentsChanged()), this, SLOT(updateComments()));
 
@@ -57,6 +57,7 @@ void SoftwareDetails::setContent(Attica::Content * content)
     while ((pic_url = content->attribute(QString("previewpic").append(QString::number(i))))!=QString())
         gallery.append(QString("<a href='%1'><img src='%1' height='100'></img></a>  ").arg(pic_url)), ++i;
     gallery.append("</div>");
+    this->setWindowTitle(content->name());
     ui->textBrowser->setText(gallery.append(content->description()));
     ui->software_title->setText(content->name());
     m_content = content;
@@ -81,8 +82,19 @@ void SoftwareDetails::setContent(Attica::Content * content)
 
 void SoftwareDetails::installbuttonclicked()
 {
-    emit installpackage(m_content->downloadUrlDescription(1).packageName());
-    qDebug()<<"download signal dispatched with the packagename:"<<m_content->downloadUrlDescription(1).packageName();
+    ui->install_button->setEnabled(false);
+    if (ui->install_button->text() == QString("Install"))
+    {
+        emit installpackage(m_content->downloadUrlDescription(1).packageName());
+        qDebug()<<"install signal dispatched with packagename:"<<m_content->downloadUrlDescription(1).packageName();
+    }
+    else
+    {
+        emit uninstallpackage(m_content->downloadUrlDescription(1).packageName());
+        qDebug()<<"uninstall signal dispatched with packagename:"<<m_content->downloadUrlDescription(1).packageName();
+    }
+    this->install_status_changed();
+    ui->install_button->setEnabled(true);
 }
 
 void SoftwareDetails::setProvider(Attica::Provider &provider)
@@ -160,4 +172,12 @@ void SoftwareDetails::commentsLoaded(Attica::BaseJob * job)
         //comments_scroll->setWidget(test);
         //comments_scroll->show();
     }
+}
+
+void SoftwareDetails::install_status_changed()
+{
+    if (ui->install_button->text() == QString("Install"))
+        ui->install_button->setText("Uninstall");
+    else
+        ui->install_button->setText("Install");
 }

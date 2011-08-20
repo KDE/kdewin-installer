@@ -30,14 +30,14 @@
 SoftwareItem::SoftwareItem( Attica::Content *content)
 {
     this->setText(content->name());
-
+    this->setFont(QFont(QString(),18));
     //this->setIcon(QIcon::addFile(content->icons()));
     this->m_content = content;
     if (!content->icons().empty())
     {
         qDebug()<<"There should be an Icon";
         Attica::Icon icon = content->icons().first();
-        QByteArray data;
+        /*QByteArray data;
         Downloader::instance()->fetch(icon.url(),data);
         QIcon ico;
         QPixmap t;
@@ -45,8 +45,9 @@ SoftwareItem::SoftwareItem( Attica::Content *content)
         ico.addPixmap(t);
 
         this->setIcon(ico);
-        //m_imgdown = new ImageDownloader(icon.url());
-        //connect(m_imgdown,SIGNAL(downloaded()),this,SLOT(image_downloaded()));
+        */
+        m_imgdown = new ImageDownloader(icon.url());
+        connect(m_imgdown,SIGNAL(downloaded()),this,SLOT(image_downloaded()));
     }
 }
 Attica::Content * SoftwareItem::getContent()
