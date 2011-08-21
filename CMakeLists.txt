@@ -21,7 +21,7 @@ find_package(Qt4 COMPONENTS QtCore QtGui QtXml REQUIRED )
 find_package(UPX)
 find_package(KDEWIN_Packager)
 find_package(WinSCP)
-find_package(LibAttica)
+find_package(LibAttica 0.2.8)
 
 # make cmake 2.6 happy
 if(COMMAND cmake_policy)
@@ -192,6 +192,10 @@ if (BUILD_PACKAGER_ONLY)
     add_subdirectory(shared)
     add_subdirectory(packager)
 else(BUILD_PACKAGER_ONLY)
+
+if (MINGW AND WIN32 AND STATIC_BUILD)
+    set(CMAKE_EXE_LINKER_FLAGS " -static-libgcc")
+endif(MINGW AND WIN32 AND STATIC_BUILD)
 
 #-----------------------------------------------------------------------------------------
 # our targets

@@ -179,6 +179,7 @@ void MainWindow::category_selected()
 void MainWindow::onContentListRecieved(Attica::BaseJob *job)
 {
     m_SoftwareList->clear();
+    m_SoftwareList->verticalScrollBar()->setValue(0);
     Attica::ListJob<Attica::Content> *ContentListJob = static_cast< Attica::ListJob<Attica::Content> * >( job );
     if (ContentListJob->metadata().error() == Attica::Metadata::NoError)
     {
