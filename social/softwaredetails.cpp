@@ -77,6 +77,8 @@ void SoftwareDetails::setContent(Attica::Content * content)
         ui->graphicsView->show();
 
     }
+    if (m_content->downloadUrlDescription(1).packageName() == QString())
+        ui->install_button->setEnabled(false);
 
 }
 

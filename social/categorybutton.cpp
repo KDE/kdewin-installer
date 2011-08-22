@@ -33,7 +33,7 @@ CategoryButton::CategoryButton(QWidget *parent, Attica::Category *cat) :
         category = cat;
         this->setText(cat->name());
     }
-    this->setCheckable(true);
-
+    this->setCheckable(1);
+    this->setChecked(1);
     this->setIcon(QIcon(QString(":/").append(this->text()).append(".png")));
 }

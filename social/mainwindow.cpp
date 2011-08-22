@@ -57,6 +57,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_categories = new QVBoxLayout;
     hbox->addLayout(m_categories);
     m_SoftwareList = new QListWidget;
+    m_SoftwareList->setSortingEnabled(true);
 
     hbox->addWidget(m_SoftwareList);
     QWidget *center = new QWidget;
@@ -168,6 +169,14 @@ void MainWindow::category_selected()
 {
     CategoryButton *test =static_cast < CategoryButton *>(QObject::sender());
 
+    for (int i = 0 ; i < m_categories->count(); ++i)
+    {
+        CategoryButton *tmp = static_cast < CategoryButton *>(m_categories->itemAt(i)->widget());
+
+        //tmp->setChecked(1);
+    }
+    test->setCheckable(1);
+    test->setChecked(1);
     QList <Attica::Category> list;
     list.append(*(test->category));
     Attica::ListJob<Attica::Content>* job = m_provider.searchContents(list);
