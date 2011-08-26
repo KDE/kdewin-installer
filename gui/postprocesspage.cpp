@@ -30,8 +30,6 @@
 
 #include <QProcess>
 
-
-
 bool PostProcessPage::runCommand(const QString &msg, const QString &app, const QStringList &params)
 {
     QFileInfo f(Settings::instance().installDir()+"/bin/" + app + ".exe");
@@ -78,7 +76,11 @@ void PostProcessPage::performAction()
         ui.progressBar->setValue(2);
         runCommand("deleting old windows start menu entries","kwinstartmenu",QStringList() <<  "--remove");
         ui.progressBar->setValue(3);
-        runCommand("creating new windows start menu entries","kwinstartmenu");
+        int version = engine->getStartMenuGeneratorVersion();
+        QStringList params;
+        if (version >= 0x00000103)
+            params << "--install";
+        runCommand("creating new windows start menu entries","kwinstartmenu",params);
         ui.progressBar->setValue(4);
     }
 

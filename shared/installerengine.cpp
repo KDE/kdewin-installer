@@ -401,6 +401,21 @@ bool InstallerEngine::getStartMenuRootPath()
     return false;
 }
 
+int InstallerEngine::getStartMenuGeneratorVersion()
+{
+    QProcess myProcess;
+    myProcess.start(m_root + "\\bin\\kwinstartmenu", QStringList() << "--version");
+    myProcess.waitForFinished(3000);
+    QByteArray data = myProcess.readAllStandardOutput();
+    if (data.size() > 0) 
+    {
+        QRegExp rx(".*KWinStartmenu:.*([0-9.]+).*");
+        if (rx.indexIn(data) != -1) 
+            return toVersionInt(rx.cap(1));
+    }
+    return 0;
+}
+
 bool InstallerEngine::setDependencyState(Package *_package, QList<Package *> &dependencies)
 {
     qDebug() << __FUNCTION__ << _package->name();

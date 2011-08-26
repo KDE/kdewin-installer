@@ -111,6 +111,9 @@ public:
     /// check if a category should be included in the list of displayed categories
     bool includeCategory(CompilerTypes::Type compilerType, const QString &categoryName);
 
+    /// return version of kde start menu generator in the form 0x00aabbcc as converted from 'aa.bb.cc'
+    int getStartMenuGeneratorVersion();
+
 Q_SIGNALS:
     void error ( const QString &error );
 

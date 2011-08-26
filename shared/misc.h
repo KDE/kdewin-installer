@@ -82,6 +82,9 @@ bool deleteFile(const QString &root, const QString &fn);
 /// return windows start menu path
 QString getStartMenuPath(bool bAllUsers);
 
+/// return int value of version string 'a.b.c' as 0x00bbccdd or 'a.b' as 0x0000aabb
+int toVersionInt(const QString &version);
+
 /// return path of executable
 QString exePath();
 

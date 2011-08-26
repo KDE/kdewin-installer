@@ -429,3 +429,14 @@ const QString toString(ReleaseType type)
     else
 	    return "unknown";
 }
+
+int toVersionInt(const QString &version)
+{
+    int result = 0;
+    foreach(const QString v, version.split("."))
+    {
+        result *= 256;
+        result += v.toInt();
+    }
+    return result;
+}
