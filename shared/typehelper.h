@@ -63,7 +63,7 @@ public:
       @param type compiler type 
       @return description usable in gui 
     */
-    static const QString &description(Type type);
+    static const QString description(Type type);
 
     /**
      returns state if the requested compiler is supported

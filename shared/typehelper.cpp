@@ -101,7 +101,7 @@ const QStringList &CompilerTypes::values()
     return m_typeStrings;
 }
 
-const QString &CompilerTypes::description(Type type)
+const QString CompilerTypes::description(Type type)
 {
     init();
     int i = m_types.indexOf(type);
