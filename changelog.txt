@@ -1,5 +1,12 @@
 ChangeLog
 =========
+0.9.9-0    
+-----------------
+- installer-gui: - added option if debug packages should be installed too in end user mode (Ralf Habacker)
+
+0.9.8-1
+-----------------
+- installer-gui: - added mingw w32 and w64 support (Patrick von Reth)
 
 0.9.7-1 (...)
 -----------------
