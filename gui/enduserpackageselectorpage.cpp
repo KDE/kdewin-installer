@@ -234,6 +234,12 @@ void EndUserPackageSelectorPage::initializePage()
     InstallerDialogs::instance().downloadProgressDialog(this,true,tr("Downloading Package Lists"));
     engine->init();
     InstallerDialogs::instance().downloadProgressDialog(this,false);
+
+    ui.installDebugPackagesCheckBox->setEnabled(engine->database()->size() == 0);
+    ui.installDebugPackagesCheckBox->setChecked(Settings::instance().installDebugPackages());
+    engine->setInstallDebugPackages(Settings::instance().installDebugPackages());
+    connect(ui.installDebugPackagesCheckBox,SIGNAL(clicked()),this,SLOT(slotInstallDebugPackages()));
+
     connect(ui.packageList,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
     connect(ui.selectAllCheckBox,SIGNAL(clicked()),this,SLOT(selectAllClicked()));
 
@@ -443,6 +449,12 @@ void EndUserPackageSelectorPage::slotFilterTextChanged(const QString &text)
             child->setHidden(!list.contains(child));
         }
     }
+}
+
+void EndUserPackageSelectorPage::slotInstallDebugPackages()
+{
+    Settings::instance().setInstallDebugPackages(ui.installDebugPackagesCheckBox->isChecked());
+    engine->setInstallDebugPackages(ui.installDebugPackagesCheckBox->isChecked());
 }
 
 bool EndUserPackageSelectorPage::validatePage()

@@ -450,7 +450,7 @@ void InstallerEngineGui::setNextState ( QTreeWidgetItem &item, Package *availabl
     }
     else if (type == FileTypes::BIN && m_displayMode == BinaryOnly)
     {
-        if (available->hasType(FileTypes::DBG))
+        if (available->hasType(FileTypes::DBG) && m_installDebugPackages)
             packageStates.setState(available,FileTypes::DBG,newState);
     }
 }
@@ -540,7 +540,7 @@ bool InstallerEngineGui::setDependencyState(Package *_package, QTreeWidget *list
             }
             else if (m_displayMode == BinaryOnly)
             {
-                if (package->hasType(FileTypes::DBG))
+                if (package->hasType(FileTypes::DBG) && m_installDebugPackages)
                     dependencyStates.setState(package,FileTypes::DBG,_Install);
             }
         }

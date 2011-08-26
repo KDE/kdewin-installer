@@ -58,6 +58,7 @@ protected slots:
     void slotLanguagePackageButton();
     void slotSpellingPackageButton();
     void slotFilterTextChanged(const QString &text);
+    void slotInstallDebugPackages();
 
 private:
     Ui::EndUserPackageSelectorPage ui;

@@ -79,6 +79,11 @@ public:
     bool isPackageSelected ( Package *available, FileTypes::Type type );
 
     void setMetaPackageState(QTreeWidgetItem &item, int column);
+
+    /// state of install debug packages flag
+    bool installDebugPackages() { return m_installDebugPackages; }
+    void setInstallDebugPackages(bool state) { m_installDebugPackages = state; }
+    
 protected:
     /// @todo merge with related methods from InstallerEngine class
     bool setDependencyState(Package *pkg, QTreeWidget *list);
@@ -87,6 +92,8 @@ private:
     DisplayType    m_displayMode;
     QWidget *m_parent;
     bool m_packageManagerMode;
+    bool m_installDebugPackages;
+    
     bool downloadPackageItem(Package *pkg, FileTypes::Type type );
 };
 

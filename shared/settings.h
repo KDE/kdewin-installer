@@ -117,6 +117,9 @@ public:
     bool autoNextStep() const { return m_settingsMain->value("autoNextStep", true).toBool(); }
     void setAutoNextStep(bool state) { m_settingsMain->setValue("autoNextStep", state); sync(); }
 
+    bool installDebugPackages() const { return m_settings->value("installDebugPackages", false).toBool(); }
+    void setInstallDebugPackages(bool state) { m_settings->setValue("installDebugPackages", state); sync(); }
+
     CompilerTypes::Type compilerType() const { return (CompilerTypes::Type) (m_settings->value("compilerType",m_settingsMain->value("compilerType",0).toInt()).toInt()); }
     void setCompilerType(CompilerTypes::Type type);
 
