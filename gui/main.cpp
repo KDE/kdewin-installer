@@ -72,9 +72,9 @@ int main(int argc, char *argv[])
 
     //
     // when installer is located in install root dir run it from a temporary location 
-    // to avoid installer executable acess problem for update and removal, 
+    // to avoid installer executable acess problem for update and removal,
     //
-    if (SelfInstaller::instance().isInstalled() && SelfInstaller::instance().isRunningFromInstallRoot())
+    if (SelfInstaller::instance().isRunningFromInstallRoot())
     {
         QStringList args = QApplication::arguments(); 
         args.removeFirst();
