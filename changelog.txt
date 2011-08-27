@@ -3,7 +3,9 @@ ChangeLog
 0.9.9-0    
 -----------------
 - installer-gui: - added option if debug packages should be installed too in end user mode (Ralf Habacker)
-
+                 - fixed bug not running installer from temporary location if it is started 
+				   from the install root (Ralf Habacker)
+                 - fixed crash, when running on x86 os (Ralf Habacker)
 0.9.8-1
 -----------------
 - installer-gui: - added mingw w32 and w64 support (Patrick von Reth)
