@@ -250,8 +250,8 @@ bool SelfInstaller::uninstallSoftwareControlPanelEntry()
 
 bool SelfInstaller::isRunningFromInstallRoot()
 {
-    qDebug() << __FUNCTION__;
-    return isInstalled() && m_currentExecutable.absoluteFilePath() == m_installedExecutable.absoluteFilePath();
+    qDebug() << __FUNCTION__ << "currentExecutable" << m_currentExecutable.absoluteFilePath() << "installedExecutable" << m_installedExecutable.absoluteFilePath();
+    return m_currentExecutable.absoluteFilePath().toLower() == m_installedExecutable.absoluteFilePath().toLower();
 }
 
 /// check if the currently running installer is started from the install root
@@ -269,7 +269,6 @@ void SelfInstaller::runFromTemporayLocation(const QStringList &arguments)
     qDebug() << __FUNCTION__;
     QString tempDir = QDir::tempPath();
     QString destPath = tempDir + "/" + m_currentExecutable.fileName();
-    
     QFile::remove(destPath);
     if (QFile::copy(m_currentExecutable.absoluteFilePath(), destPath))
     {
