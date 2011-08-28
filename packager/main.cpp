@@ -94,7 +94,7 @@ static void printHelp(const QString &addInfo)
        << "\n\t\t"      << "-verbose               display verbose processing informations"
        << "\n\t\t"      << "-version <version>     specify package version (e.g. 1.2.3 or 1.3.4-5)"
        << "\n\t\t"      << "-strip                 strip debug infos (MinGW only)"
-       << "\n\t\t"      << "-type <type>           specify type of package (mingw, mingw4, msvc{=vc80}, vc90, vc100)"
+       << "\n\t\t"      << "-type <type>           specify type of package (mingw, mingw4, x86-mingw4, x64-mingw4, msvc{=vc80}, vc90, vc100)"
        << "\n"
        << "\n\t\t"      << "-print-templates       print internal xml templates (kde,qt)"
        << "\n\t\t"      << "-template <filepath>   use xml template <filepath> for generating modules"

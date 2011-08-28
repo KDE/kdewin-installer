@@ -312,7 +312,7 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 {
                     generateFileList(fileList, dir, "", "*.pdb");
                 }
-                else if (m_type == "mingw" || m_type == "mingw4")
+                else if (m_type == "mingw" || m_type == "mingw4" || m_type == "x86-mingw4" || m_type == "x64-mingw4")
                 {
                     generateFileList(fileList, dir, "", "*.sym");
                 }

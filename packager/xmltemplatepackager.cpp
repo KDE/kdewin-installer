@@ -386,6 +386,10 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
         compilerType = "mingw";
     else if (m_type == "mingw4")
         compilerType = "mingw4";
+    else if (m_type == "x86-mingw4")
+        compilerType = "x86-mingw4";
+    else if (m_type == "x64-mingw4")
+        compilerType = "x64-mingw4";
     else if (m_type == "vc90")
         compilerType = "vc90";
     else if (m_type == "vc100")
