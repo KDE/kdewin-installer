@@ -47,6 +47,8 @@ protected:
     XmlPackage *m_currentPackage;
     XmlModule *m_currentModel;
     QList<InstallFile> m_fileList;
+    QList<InstallFile> m_srcFileList;
+    QList<InstallFile> m_dbgFileList;
     bool m_debug;
 };
 

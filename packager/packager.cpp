@@ -308,7 +308,7 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 return true;
             case DBG:
                 generateFileList(fileList, dir, "manifest", "*-dbg.cmd" );
-                if (m_type == "vc80" || m_type == "vc90" || m_type == "vc100")
+                if (m_type == "vc80" || m_type == "vc90" || m_type == "vc100" || m_type == "x64-vc100")
                 {
                     generateFileList(fileList, dir, "", "*.pdb");
                 }
@@ -374,7 +374,8 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
             QFile f(file.bAbsInputPath ? fn : rootDir + '/' + fn);
             if(!f.open(QIODevice::ReadOnly)) 
             {
-                qWarning("Can't open '%s' !", qPrintable(fn));
+                qWarning("Can't open '%s' as '%s' !", qPrintable(fn), f.fileName());
+                exit(1);
                 continue;
             }
             if (m_checkSumMode.isEmpty())
@@ -453,7 +454,7 @@ bool Packager::makePackagePart(const QString &root, QList<InstallFile> &fileList
     {
         if (m_verbose)
         {
-            qDebug() << "creating" << type << "of package" << destdir + getBaseFileName(type);
+            qDebug() << "creating" << type << "of package" << _destdir + getBaseFileName(type);
             Q_FOREACH(const InstallFile &f, fileList)
                 if (!f.inputFile.endsWith("/"))
                     qDebug() << "\t" << f.inputFile << " -> " << f.outputFile;
@@ -462,7 +463,7 @@ bool Packager::makePackagePart(const QString &root, QList<InstallFile> &fileList
         compressFiles(_destdir + getBaseFileName(type), root, fileList, manifestFiles, QString(), info->size);
         if (!m_checkSumMode.isEmpty())
             createHashFile(getBaseFileName(type) + getCompressedExtension(type), _destdir, info->hash);
-        info->writeToFile(destdir + "/" + getBaseFileName(type) + ".xml");
+        info->writeToFile(_destdir + getBaseFileName(type) + ".xml");
         return true;
     }
     // \todo this message should not be printed when in xml mode
