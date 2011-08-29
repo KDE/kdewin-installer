@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2008 Ralf Habacker <ralf.habacker@freenet.de> 
+** Copyright (C) 2008-2011 Ralf Habacker <ralf.habacker@freenet.de> 
 ** All rights reserved.
 **
 ** This file is part of the KDE installer for windows
@@ -27,6 +27,7 @@
 
 #include "installwizard.h"
 #include "ui_postprocesspage.h"
+#include "postprocessing.h"
 
 class PostProcessPage : public InstallWizardPage
 {
@@ -41,10 +42,13 @@ public:
     void cleanupPage();
     void performAction();
 
+protected slots:
+    void postProcessingEnd();
+    void addItem(const QString &label);
+
 protected:
     Ui::PostProcessPage ui;
-    bool runCommand(const QString &msg, const QString &app, const QStringList &params=QStringList());
-
+    PostProcessing m_postProcessing;
 };
 
 

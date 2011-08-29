@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2005-2010 Ralf Habacker. All rights reserved.
+** Copyright (C) 2005-2011 Ralf Habacker. All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
@@ -26,6 +26,8 @@
 #include <QObject>
 #include <QStringList>
 
+class InstallerEngine;
+
 /**
  handle postprocessing 
 */ 
@@ -33,7 +35,7 @@ class PostProcessing : public QObject
 {
     Q_OBJECT
 public:
-    PostProcessing(QObject *parent = 0);
+    PostProcessing(InstallerEngine *engine, QObject *parent = 0);
     bool start();
     void stop();
 
@@ -53,6 +55,7 @@ protected:
 
     bool m_shouldQuit;
     bool m_singleAppsInstallMode;
+    InstallerEngine *m_engine;
 };
 
 #endif // POSTPROCESSING_H

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2008 Ralf Habacker <ralf.habacker@freenet.de> 
+** Copyright (C) 2008-2011 Ralf Habacker <ralf.habacker@freenet.de> 
 ** All rights reserved.
 **
 ** This file is part of the KDE installer for windows
@@ -30,20 +30,7 @@
 
 #include <QProcess>
 
-bool PostProcessPage::runCommand(const QString &msg, const QString &app, const QStringList &params)
-{
-    QFileInfo f(Settings::instance().installDir()+"/bin/" + app + ".exe");
-    qDebug() << "checking for app " << app << " - "  <<(f.exists() ? "found" : "not found"); 
-    if (!f.exists())
-        return false;
-    
-    ui.listWidget->addItem(msg);
-    QCoreApplication::processEvents();
-    qDebug() << "running " << app << params; 
-    return QProcess::execute( f.absoluteFilePath(), params) == 0 ? true : false;
-}
-
-PostProcessPage::PostProcessPage() : InstallWizardPage(0)
+PostProcessPage::PostProcessPage() : InstallWizardPage(0), m_postProcessing(engine,this)
 {
     ui.setupUi(this);
     setTitle(windowTitle());
@@ -53,37 +40,29 @@ PostProcessPage::PostProcessPage() : InstallWizardPage(0)
 void PostProcessPage::initializePage()
 {
 }
+void PostProcessPage::addItem(const QString &label)
+{
+	ui.listWidget->addItem(label);
+}
 
 void PostProcessPage::performAction()
 {
-    if (engine->installedPackages() == 0 && engine->removedPackages() > 0)
-    {
-        ui.progressBar->setMaximum(4);
-        ui.progressBar->setValue(0);
-        ui.listWidget->addItem("deleting windows start menu entries");
-        removeDirectory(engine->startMenuRootPath);
-    }
-    else 
-    {
-        if (!SelfInstaller::instance().isInstalled())
-            SelfInstaller::instance().install();
+    if (engine->installedPackages() > 0 && !SelfInstaller::instance().isInstalled())
+		SelfInstaller::instance().install();
 
-        ui.progressBar->setMaximum(4);
-        ui.progressBar->setValue(0);
-        runCommand("updating mime database","update-mime-database",QStringList() << QDir::fromNativeSeparators(Settings::instance().installDir()) + "/share/mime");
-        ui.progressBar->setValue(1);
-        runCommand("updating system configuration database","kbuildsycoca4");
-        ui.progressBar->setValue(2);
-        runCommand("deleting old windows start menu entries","kwinstartmenu",QStringList() <<  "--remove");
-        ui.progressBar->setValue(3);
-        int version = engine->getStartMenuGeneratorVersion();
-        QStringList params;
-        if (version >= 0x00000103)
-            params << "--install";
-        runCommand("creating new windows start menu entries","kwinstartmenu",params);
-        ui.progressBar->setValue(4);
-    }
+    Q_ASSERT(connect(&m_postProcessing,SIGNAL(numberOfCommands(int)),ui.progressBar,SLOT(setMaximum(int))));
+    Q_ASSERT(connect(&m_postProcessing,SIGNAL(finished()),this,SLOT(postProcessingEnd())));
+    Q_ASSERT(connect(&m_postProcessing,SIGNAL(commandStarted(int)),ui.progressBar,SLOT(setValue(int))));
+    Q_ASSERT(connect(&m_postProcessing,SIGNAL(commandStarted(const QString &)),this,SLOT(addItem(const QString &))));
+    m_postProcessing.start();
+}
 
+void PostProcessPage::postProcessingEnd()
+{
+    disconnect(&m_postProcessing,SIGNAL(numberOfCommands(int)),ui.progressBar,SLOT(setMaximum(int)));
+    disconnect(&m_postProcessing,SIGNAL(finished()),this,SLOT(postProcessingEnd()));
+    disconnect(&m_postProcessing,SIGNAL(commandStarted(int)),ui.progressBar,SLOT(setValue(int)));
+    disconnect(&m_postProcessing,SIGNAL(commandStarted(const QString &)),ui.listWidget,SLOT(addItem(const QString &)));
     if (Settings::instance().autoNextStep())
         wizard()->next();
 }
