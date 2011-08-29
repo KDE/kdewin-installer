@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Ralf Habacker ralf.habacker@freenet.de
+** Copyright (C) 2010-2011 Ralf Habacker ralf.habacker@freenet.de
 **
 ** This file is part of the KDE installer for windows
 **
@@ -36,7 +36,7 @@
 InstallerEngineSinglePackage engine;
 
 InstallerDialog::InstallerDialog()
-    :  okay(":/images/dialog-ok-apply.png"), next(":/images/go-next.png"), error(":/images/dialog-cancel.png")
+    :  okay(":/images/dialog-ok-apply.png"), next(":/images/go-next.png"), error(":/images/dialog-cancel.png"), m_postProcessing(&engine, this)
 {
     ui.setupUi(this);
 
