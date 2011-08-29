@@ -394,6 +394,8 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
         compilerType = "vc90";
     else if (m_type == "vc100")
         compilerType = "vc100";
+    else if (m_type == "x64-vc100")
+        compilerType = "x64-vc100";
     else 
         compilerType = "vc80";
     

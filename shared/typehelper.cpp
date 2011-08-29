@@ -62,15 +62,25 @@ void CompilerTypes::init()
 {
     if (m_types.size() == 0)
     {
-        m_types << MSVC9 << MSVC10 << MinGW4 << MinGW4_W32;
-        m_typeStrings << "vc90" << "vc100" << "mingw4" << "x86-mingw4";
-        m_descriptions << "MSVC 2008 32bit (deprecated)" << "MSVC 2010 32bit" << "MinGW4 (deprecated)" << "MinGW4 32bit";
-        // @TODO remove 0 & in case x64 packages are available
-        if (0 && isX64Windows())
+#ifdef BUILD_WITH_DEPRECATED
+        m_types << MSVC9 << MinGW4;
+        m_typeStrings << "vc90" << "mingw4";
+        m_descriptions << "MSVC 2008 32bit (deprecated)" << "MinGW4 (deprecated)";
+#endif
+        m_types << MSVC10 << MinGW4_W32;
+        m_typeStrings << "vc100" << "x86-mingw4";
+        m_descriptions << "MSVC 2010 32bit" << "MinGW4 32bit";
+        if (isX64Windows())
         {
-            m_types << MSVC10_X64 << MinGW4_W64;
-            m_typeStrings << "x64-vc100" << "x64-mingw4";
-            m_descriptions << "MSVC 2010 64bit" << "MinGW4 64bit";
+        // @todo: enable msvc x64 builds if we ever set them up
+#ifdef MSVC_X64
+            m_types << MSVC10_X64;
+            m_typeStrings << "x64-vc100";
+            m_descriptions << "MSVC 2010 64bit";
+#endif
+            m_types << MinGW4_W64;
+            m_typeStrings << "x64-mingw4";
+            m_descriptions << "MinGW4 64bit";
         }
      }
  }
