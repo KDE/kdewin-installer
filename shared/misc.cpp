@@ -438,5 +438,11 @@ int toVersionInt(const QString &version)
         result *= 256;
         result += v.toInt();
     }
+    if (version.size() < 3)
+        result *= 256;
+
+    if (version.size() < 2)
+        result *= 256;
+
     return result;
 }
