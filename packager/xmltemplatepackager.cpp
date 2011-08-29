@@ -338,8 +338,11 @@ bool XmlTemplatePackager::parseConfig(const QString &fileName)
 bool XmlTemplatePackager::makePackage(const QString &dir, const QString &destdir, bool bComplete)
 {
     QFileInfo fi(dir);
-    findFiles(m_fileList, dir, fi.absoluteFilePath()+ (!dir.endsWith('/') ? "/" : "") );
-
+    findFiles(m_fileList, dir, fi.absoluteFilePath() + (!dir.endsWith('/') ? "/" : "") );
+    QFileInfo srcFi(m_srcRoot);
+    QFileInfo dbgFi(m_symRoot);
+    findFiles(m_srcFileList, m_srcRoot, srcFi.absoluteFilePath() + (!m_srcRoot.endsWith('/') ? "/" : "") );
+    findFiles(m_dbgFileList, m_symRoot, dbgFi.absoluteFilePath() + (!m_symRoot.endsWith('/') ? "/" : "") );
     if (m_debug)
         qDebug() << "rootdir:" << dir << m_fileList;
 
@@ -362,7 +365,7 @@ bool XmlTemplatePackager::makePackage(const QString &dir, const QString &destdir
             m_dependencies = p->dependencies;
         }
         m_currentPackage = p;
-        if (!Packager::makePackage(dir,destdir,bComplete))
+        if (!Packager::makePackage(dir, destdir, bComplete))
             return false;
     }
 
@@ -455,11 +458,14 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
                 if (m_debug)
                     qOut() << f->include << "----------------------";
                 QRegExp rx(f->include);
-                for (QList<InstallFile>::iterator i = m_fileList.begin(); i != m_fileList.end(); ++i)
+                QList<InstallFile>& currentFileList = m_fileList;
+                if(type == Packager::SRC) currentFileList = m_srcFileList;
+                else if(type == Packager::DBG) currentFileList = m_dbgFileList;
+                for (QList<InstallFile>::iterator i = currentFileList.begin(); i != currentFileList.end(); ++i)
                 {
                     InstallFile &file = *i;
                     int pos = 0;
-                    if (rx.indexIn(file.inputFile,pos) != -1)
+                    if (rx.indexIn(file.inputFile, pos) != -1)
                     {
                         if (file.usedFile) {
                             qError() << "while creating " << m_currentPackage->name << " part " << part->name  << " file " <<  file.inputFile <<" ignored, because it was already used\n";
