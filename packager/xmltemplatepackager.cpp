@@ -458,10 +458,10 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
                 if (m_debug)
                     qOut() << f->include << "----------------------";
                 QRegExp rx(f->include);
-                QList<InstallFile>& currentFileList = m_fileList;
-                if(type == Packager::SRC) currentFileList = m_srcFileList;
-                else if(type == Packager::DBG) currentFileList = m_dbgFileList;
-                for (QList<InstallFile>::iterator i = currentFileList.begin(); i != currentFileList.end(); ++i)
+                QList<InstallFile>* currentFileList = &m_fileList;
+                if(type == Packager::SRC) currentFileList = &m_srcFileList;
+                else if(type == Packager::DBG) currentFileList = &m_dbgFileList;
+                for (QList<InstallFile>::iterator i = currentFileList->begin(); i != currentFileList->end(); ++i)
                 {
                     InstallFile &file = *i;
                     int pos = 0;
