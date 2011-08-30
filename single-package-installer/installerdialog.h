@@ -25,6 +25,8 @@
 
 #include "ui_installerdialog.h"
 
+#include "installerEngineSinglePackage.h"
+
 #include "../shared/package.h"
 #include "../shared/postprocessing.h"
 
@@ -52,6 +54,8 @@ protected slots:
 
 protected:
     Ui::InstallerDialog ui;
+    InstallerEngineSinglePackage m_engine;
+
 
 protected slots:
     void addHint(const QString &hint);

@@ -21,7 +21,6 @@
 ****************************************************************************/
 
 #include "installerdialog.h"
-#include "installerenginesinglepackage.h"
 
 #include "../shared/misc.h"
 #include "../shared/debug.h"
@@ -33,10 +32,8 @@
 
 #include <QtGui>
 
-InstallerEngineSinglePackage engine;
-
 InstallerDialog::InstallerDialog()
-    :  okay(":/images/dialog-ok-apply.png"), next(":/images/go-next.png"), error(":/images/dialog-cancel.png"), m_postProcessing(&engine, this)
+    :  okay(":/images/dialog-ok-apply.png"), next(":/images/go-next.png"), error(":/images/dialog-cancel.png"), m_postProcessing(&m_engine, this)
 {
     ui.setupUi(this);
 
@@ -57,7 +54,7 @@ InstallerDialog::InstallerDialog()
         InstallerEngine::defaultConfigURL = QString("http://www.winkde.org/pub/kde/ports/win32/releases/%1/%2").arg(toString(config.releaseType)).arg(config.version);
         QString installRoot = QString("%1/KDE-%2-%3-%4").arg(QLatin1String(qgetenv("ProgramFiles"))).arg(CompilerTypes::toString(config.compilerType)).arg(toString(config.releaseType)).arg(config.version);
         addHint("I'm installing into " + installRoot);
-        engine.setRoot(installRoot);
+        m_engine.setRoot(installRoot);
         ProxySettings ps;
 
         setWindowTitle(tr("KDE %1 Application Installer").arg(config.packageName));
@@ -196,11 +193,11 @@ void InstallerDialog::setupEngine()
 {  
     setItem(1);
     addHint("I'm fetching packages from " + InstallerEngine::defaultConfigURL);
-    if (engine.init())
+    if (m_engine.init())
     {
-        Package *p = engine.getPackageByName(packages[0]);
+        Package *p = m_engine.getPackageByName(packages[0]);
         packagesToInstall.append(p);
-        engine.setDependencyState(p,packagesToInstall);
+        m_engine.setDependencyState(p,packagesToInstall);
         QTimer::singleShot(1,this,SLOT(downloadPackages()));
     }
     else
@@ -236,7 +233,7 @@ void InstallerDialog::downloadPackagesStage2()
 {
     setItem(2);
     addHint(QString("I'm downloading package(s)"));
-    if (engine.downloadPackages(packagesToInstall))
+    if (m_engine.downloadPackages(packagesToInstall))
         QTimer::singleShot(1,this,SLOT(installPackages()));
     else
     {
@@ -249,7 +246,7 @@ void InstallerDialog::installPackages()
 {
     setItem(3);
     addHint(QString("I'm installing %1 package(s)").arg(packagesToInstall.size()));
-    if (engine.installPackages(packagesToInstall))
+    if (m_engine.installPackages(packagesToInstall))
         QTimer::singleShot(1,this,SLOT(postProcessing()));
     else
     {
