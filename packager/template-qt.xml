@@ -20,8 +20,11 @@
             <files directory="manifest" include="*-lib.cmd"/>
             <files compiler="mingw" directory="lib" include="*.a" exclude="*d4.a *d.a"/>
             <files compiler="mingw4" directory="lib" include="*.a" exclude="*d4.a *d.a"/>
+            <files compiler="x86-mingw4" directory="lib" include="*.a" exclude="*d4.a *d.a"/>
+            <files compiler="x64-mingw4" directory="lib" include="*.a" exclude="*d4.a *d.a"/>
             <files compiler="vc80" directory="lib" include="*.lib" exclude="*d4.lib *d.lib"/>
             <files compiler="vc90" directory="lib" include="*.lib" exclude="*d4.lib *d.lib"/>
+            <files compiler="vc100" directory="lib" include="*.lib" exclude="*d4.lib *d.lib"/>
         </part>
         <part name="documentation">
             <files directory="bin" include="qtdemo.exe"/>
@@ -30,6 +33,9 @@
         </part>
         <part name="source">
             <files directory="." include="*.*" exclude=".git .svn CVS *.bak *.orig"/>
+        </part>
+        <part name="symbols">
+            <files directory="." include="*.*"/>
         </part>
     </package>
 </module>
