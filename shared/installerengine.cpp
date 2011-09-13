@@ -27,6 +27,7 @@
 #include "installerprogress.h"
 #include "package.h"
 #include "packagelist.h"
+#include "packageinfo.h"
 #include "packagestates.h"
 #include "globalconfig.h"
 #include "database.h"
@@ -353,25 +354,38 @@ bool InstallerEngine::addMetaPackages()
 {
     Q_FOREACH(const QString& metaPackage, m_globalConfig->metaPackages().keys())
     {
-        Package *p = m_packageResources->findPackageFromBaseName(metaPackage);
+        QList<Package*> pkgList;
+        Q_FOREACH(QString ending, PackageInfo::endings())
+        {
+            Package *_p = m_packageResources->find(metaPackage + "-" + ending);
+            if(_p) pkgList.append(_p);
+        }
 
         // only add metaPackage if there is no package existing
-        if(!p) {
-            p = new Package;
-            p->setName(metaPackage);
+        if(pkgList.isEmpty()) {
+            Package* _p = new Package;
+            _p->setName(metaPackage);
             Q_FOREACH(Site *site, *m_globalConfig->sites())
             {
                 if(site && !site->packageNote(metaPackage + "-%1").isEmpty()) {
-                    p->setNotes(site->packageNote(metaPackage + "-%1"));
+                    _p->setNotes(site->packageNote(metaPackage + "-%1"));
                 }
             }
+            pkgList.append(_p);
         }
-        Package::PackageItem item("meta");
-        p->add(item);
-        p->addCategories("all");
 
-        m_packageResources->append(*p);
-        categoryCache.addPackage(p);
+        // now go through all existing packages: these must be marked as metaPackage
+        Q_FOREACH(Package* p, pkgList)
+        {
+            Package::PackageItem item("meta");
+            p->add(item);
+            p->addCategories("all");
+
+            m_packageResources->append(*p);
+
+            // add package to the category cache, if it existed before, then the cache must be updated
+            categoryCache.addPackage(p);
+        }
     }
     return true;
 }
