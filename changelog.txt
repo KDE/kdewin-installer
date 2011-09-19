@@ -1,5 +1,13 @@
 ChangeLog
 =========
+0.9.9-2
+-----------------
+- packager: - fixed bug 282007: installer merges dbg and src packages into root (Ralf Habacker)
+
+0.9.9-1
+-----------------
+- packager: - some packager fixes (Patrick Spendrin)
+
 0.9.9-0    
 -----------------
 - installer-gui: - added option if debug packages should be installed too in end user mode (Ralf Habacker)
