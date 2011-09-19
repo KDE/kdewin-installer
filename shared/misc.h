@@ -73,7 +73,28 @@ bool parseHintFile(const QByteArray &ba, HintFileDescriptor &pkg);
 
 bool findExecutables(QList<InstallFile> &fileList, const QString &root, const QString &subdir, const QString &filter, const QString &exclude, bool debugExe=false);
 
-bool generateFileList(QList<InstallFile> &result, const QString &root, const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList, bool verbose=false);
+/**
+ generate file list
+ @param result returned list
+ @param root root path where to search
+ @param subdir subdir appended to root to search for, use '.' for recursive search from root directory
+ @param filter pattern for included file types (separated by space)
+ @param excludeList regex for excluded file types - use either this or filter
+ @param verbose dump collected files
+ @return False in case of errore
+*/
+ bool generateFileList(QList<InstallFile> &result, const QString &root, const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList, bool verbose=false);
+
+ /**
+ generate file list
+ @param result returned list
+ @param root root path where to search
+ @param subdir subdir appended to root to search for, use '.' for recursive search from root directory
+ @param filter regex for included file types (separated by space)
+ @param exclude pattern for excluded file types (separated by space) - use either this or filter
+ @param verbose dump collected files
+ @return False in case of errore
+*/
 bool generateFileList(QList<InstallFile> &result, const QString &root, const QString &subdir, const QString &filter, const QString &exclude = QString(), bool verbose=false);
 
 // try to delete a file, if not possible, move to root/tmp/deleteme

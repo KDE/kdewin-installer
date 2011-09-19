@@ -310,11 +310,11 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 generateFileList(fileList, dir, "manifest", "*-dbg.cmd" );
                 if (m_type == "vc80" || m_type == "vc90" || m_type == "vc100" || m_type == "x64-vc100")
                 {
-                    generateFileList(fileList, dir, "", "*.pdb");
+                    generateFileList(fileList, dir, ".", "*.pdb");
                 }
                 else if (m_type == "mingw" || m_type == "mingw4" || m_type == "x86-mingw4" || m_type == "x64-mingw4")
                 {
-                    generateFileList(fileList, dir, "", "*.sym");
+                    generateFileList(fileList, dir, ".", "*.sym");
                 }
                 return true;
             case SRC:
