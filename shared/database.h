@@ -62,8 +62,13 @@ public:
 
     void dump ( const QString &title=QString() );
 
+    /** 
+     set installation root - calling this method will load the list of installed packages
+     @param root installation root directory
+    */ 
     void setRoot ( const QString &root ) {
         m_root = root;
+        clear();
         readFromDirectory();
     }
 
