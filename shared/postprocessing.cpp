@@ -34,7 +34,7 @@ PostProcessing::PostProcessing(InstallerEngine *engine, QObject *parent) : QObje
 
 bool PostProcessing::runCommand(int index, const QString &msg, const QString &app, const QStringList &params)
 {
-    QFileInfo f(Settings::instance().installDir()+"/bin/" + app + ".exe");
+    QFileInfo f(m_engine->root()+"/bin/" + app + ".exe");
     qDebug() << "checking for app " << app << " - "  <<(f.exists() ? "found" : "not found");
     if (!f.exists())
         return false;
@@ -80,7 +80,7 @@ bool PostProcessing::start()
         if (!m_singleAppsInstallMode && m_engine->getStartMenuGeneratorVersion() >= 0x010200)
             kwinStartmenuMainParameters << "--set-root-custom-string" << CompilerTypes::toString(Settings::instance().compilerType());
 #endif
-        runCommand(0,"updating mime database","update-mime-database",QStringList() << QDir::fromNativeSeparators(Settings::instance().installDir()) + "/share/mime");
+        runCommand(0,"updating mime database","update-mime-database",QStringList() << QDir::fromNativeSeparators(m_engine->root()) + "/share/mime");
         if (!m_shouldQuit)
             runCommand(1,"updating system configuration database","kbuildsycoca4", QStringList() << "--noincremental");
         if (!m_shouldQuit)
