@@ -123,7 +123,7 @@ public:
     CompilerTypes::Type compilerType() const { return (CompilerTypes::Type) (m_settings->value("compilerType",m_settingsMain->value("compilerType",0).toInt()).toInt()); }
     void setCompilerType(CompilerTypes::Type type);
 
-    QString logFile() { return downloadDir() + QDir::separator() + "kdewin-installer.log"; }
+    QString logFile(const QString &baseName="kdewin-installer") { return downloadDir() + QDir::separator() + baseName + ".log"; }
     
     // QSettings compatible interface
     void beginGroup(const QString &prefix) { m_settings->beginGroup(prefix); }
