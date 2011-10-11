@@ -55,6 +55,12 @@ public:
     void setConfigURL(const QUrl &url);
     
     QString root() { return m_root; }
+
+    /**
+      set installation root 
+      Calling this method will reload the installed package into the internal database
+      @param root installation root 
+    */
     void setRoot(const QString &root);
     
     // read in global config 
@@ -65,6 +71,16 @@ public:
 
     // check installer version 
     bool isInstallerVersionOutdated();
+
+    /// check if any package is installed in the recent installation root
+    bool isAnyPackageInstalled();
+
+    /// check if any kde process is running from the installation root
+    bool isAnyKDEProcessRunning();
+
+    /// kill all kde processes running from the installation root
+    bool killAllKDEApps();
+
 
     void stop();
 

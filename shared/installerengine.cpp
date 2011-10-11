@@ -59,13 +59,10 @@ InstallerEngine::InstallerEngine(QObject *parent)
       m_errorAction(InstallerEngine::ignore)
 {
     m_database = new Database(this);
-    m_database->setRoot(Settings::instance().installDir());
     m_installer = new Installer(this);
-    m_installer->setRoot(Settings::instance().installDir());
     m_installer->setDatabase(m_database);
     m_globalConfig = new GlobalConfig();
     m_packageResources = new PackageList();
-
 
     //connect(&Settings::instance(),SIGNAL(installDirChanged(const QString&)),this,SLOT(installDirChanged(const QString&)));
     connect(m_installer,SIGNAL(error(const QString &)),this,SLOT(slotError(const QString &)));
@@ -78,6 +75,13 @@ InstallerEngine::~InstallerEngine()
     delete m_installer;
     delete m_globalConfig;
     delete m_packageResources;
+}
+
+void InstallerEngine::setRoot(const QString &root)
+{
+    m_root = root;
+    m_installer->setRoot(root);
+    m_database->setRoot(root);
 }
 
 bool InstallerEngine::initGlobalConfig()
@@ -137,6 +141,11 @@ bool InstallerEngine::initPackages()
 
 bool InstallerEngine::init()
 {
+    if (m_root.isEmpty())
+    {
+        qCritical() << "no install root set";
+        return false;
+    }
     if (!initGlobalConfig())
         return false;
     return initPackages();
@@ -166,11 +175,71 @@ bool InstallerEngine::isInstallerVersionOutdated()
     return minVersion != 0 && currentVersion < minVersion;
 }
 
-void InstallerEngine::setRoot(const QString &root)
+bool InstallerEngine::isAnyPackageInstalled()
 {
-    m_root = root;
-    m_installer->setRoot(root);
-    m_database->setRoot(root);
+    return m_database->isAnyPackageInstalled();
+}
+
+
+bool InstallerEngine::isAnyKDEProcessRunning()
+{
+    QString cmd = m_root +"/bin/kdeinit4.exe";
+    QProcess p;
+    QStringList args = QStringList() << "--list";
+    p.start(cmd,args);
+    if (!p.waitForStarted()) 
+    {
+        qCritical() << "could not start" << cmd << args;
+        return false;
+    }
+    if (!p.waitForFinished())
+    {
+        qCritical() << "failed to run" << cmd << args;
+        return false;
+    }
+    QByteArray _stderr = p.readAllStandardError();
+    qDebug() << "run" << cmd << args << "without errors" << _stderr; 
+    QList<QByteArray> lines = _stderr.split('\n');
+    int ret = lines.size() - 1; // because of trailing '\n'
+    // one line means ony kdeinit4 is running
+    return ret > 1;
+}
+
+bool InstallerEngine::killAllKDEApps()
+{
+    QString cmd = m_root +"/bin/kdeinit4.exe";
+    QStringList args = QStringList() << "--help";
+    QProcess p;
+    p.start(cmd, args);
+    if (!p.waitForStarted()) 
+    {
+        qCritical() << "could not start" << cmd << args;
+        return false;
+    }
+    if (!p.waitForFinished())
+    {
+        qCritical() << "failed to run" << cmd << args;
+        return false;
+    }
+    QByteArray _stdout = p.readAllStandardOutput();
+    args = QStringList() << "--terminate";
+
+    /// I got cases where files are not removed and resulted into "a could not remove file error on installing" 
+    p.start(cmd,args);
+    if (!p.waitForStarted()) 
+    {
+        qCritical() << "could not start" << cmd << args;
+        return false;
+    }
+    if (!p.waitForFinished())
+    {
+        qCritical() << "failed to run" << cmd << args;
+        return false;
+    }
+    qDebug() << "run" << cmd << args << "without errors"; 
+    // give applications some time to really be terminated
+    qsleep(1000);
+    return true;
 }
 
 void InstallerEngine::setConfigURL(const QUrl &url)
@@ -180,8 +249,7 @@ void InstallerEngine::setConfigURL(const QUrl &url)
  
 void InstallerEngine::reload()
 {
-    m_database->clear();
-    m_database->setRoot(m_root);
+    m_database->reload();
     categoryCache.clear();
     init();
 }

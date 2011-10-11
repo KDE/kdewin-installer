@@ -711,67 +711,6 @@ bool InstallerEngineGui::downloadPackages ( const QString &category )
     return true;
 }
 
-bool isAnyKDEProcessRunning()
-{
-    QString cmd = Settings::instance().installDir() +"/bin/kdeinit4.exe";
-    QProcess p;
-    QStringList args = QStringList() << "--list";
-    p.start(cmd,args);
-    if (!p.waitForStarted()) 
-    {
-        qCritical() << "could not start" << cmd << args;
-        return false;
-    }
-    if (!p.waitForFinished())
-    {
-        qCritical() << "failed to run" << cmd << args;
-        return false;
-    }
-    QByteArray _stderr = p.readAllStandardError();
-    qDebug() << "run" << cmd << args << "without errors" << _stderr; 
-    QList<QByteArray> lines = _stderr.split('\n');
-    int ret = lines.size() - 1; // because of trailing '\n'
-    // one line means ony kdeinit4 is running
-    return ret > 1;
-}
-
-bool killAllKDEApps()
-{
-    QString cmd = Settings::instance().installDir() +"/bin/kdeinit4.exe";
-    QStringList args = QStringList() << "--help";
-    QProcess p;
-    p.start(cmd, args);
-    if (!p.waitForStarted()) 
-    {
-        qCritical() << "could not start" << cmd << args;
-        return false;
-    }
-    if (!p.waitForFinished())
-    {
-        qCritical() << "failed to run" << cmd << args;
-        return false;
-    }
-    QByteArray _stdout = p.readAllStandardOutput();
-    args = QStringList() << "--terminate";
-
-    /// I got cases where files are not removed and resulted into "a could not remove file error on installing" 
-    p.start(cmd,args);
-    if (!p.waitForStarted()) 
-    {
-        qCritical() << "could not start" << cmd << args;
-        return false;
-    }
-    if (!p.waitForFinished())
-    {
-        qCritical() << "failed to run" << cmd << args;
-        return false;
-    }
-    qDebug() << "run" << cmd << args << "without errors"; 
-    // give applications some time to really be terminated
-    qsleep(1000);
-    return true;
-}
-
 bool InstallerEngineGui::removePackages ( const QString &category )
 {
 
