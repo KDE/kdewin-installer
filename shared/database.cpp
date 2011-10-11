@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2007 Ralf Habacker. All rights reserved.
+** Copyright (C) 2007-2011 Ralf Habacker. All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **

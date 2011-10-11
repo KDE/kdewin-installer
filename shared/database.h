@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2007 Ralf Habacker. All rights reserved.
+** Copyright (C) 2007-2011 Ralf Habacker. All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
@@ -63,7 +63,9 @@ public:
     void dump ( const QString &title=QString() );
 
     /** 
-     set installation root - calling this method will load the list of installed packages
+     set installation root
+     @note calling this method will reload the list of installed packages from the given 
+     installation root
      @param root installation root directory
     */ 
     void setRoot ( const QString &root ) {
