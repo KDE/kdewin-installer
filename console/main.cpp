@@ -198,9 +198,9 @@ int main(int argc, char *argv[])
     if (options.verbose)
         qOut() << "using root " << Settings::instance().installDir() << "\n";
         
-    engine.initLocal();
+    engine.setRoot(Settings::instance().installDir());
 
-    // query needs setting database root 
+    // query needs setting database root, this is performed by root
     if (options.query)
     {
         if (options.all)

@@ -63,8 +63,6 @@ public:
     bool downloadPackages(const QStringList &packages, const QString &category=QString());
     bool installPackages(const QStringList &packages, const QString &category=QString());
 
-    void initLocal();
-    
 protected:
     bool init();
     void printPackage(Package *p);

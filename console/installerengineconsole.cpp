@@ -43,14 +43,13 @@ InstallerEngineConsole::InstallerEngineConsole()
 {
 }
 
-void InstallerEngineConsole::initLocal()
-{
-    // required because this is initial set in InstallerEngine's constructor
-    m_database->setRoot(Settings::instance().installDir());
-}
-
 bool InstallerEngineConsole::init()
 {
+    if (m_root.isEmpty())
+    {
+        qCritical() << "no install root set";
+        return false;
+    }
     if (done)
         return true;
     initGlobalConfig();
