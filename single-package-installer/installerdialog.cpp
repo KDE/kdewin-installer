@@ -52,10 +52,11 @@ InstallerDialog::InstallerDialog()
     if (config.isValid())
     {
         InstallerEngine::defaultConfigURL = QString("http://www.winkde.org/pub/kde/ports/win32/releases/%1/%2").arg(toString(config.releaseType)).arg(config.version);
-        QString installRoot = QString("%1/KDE-%2-%3-%4").arg(QLatin1String(qgetenv("ProgramFiles"))).arg(CompilerTypes::toString(config.compilerType)).arg(toString(config.releaseType)).arg(config.version);
+        QString installRoot = QString("%1/%2-%3-%4-%5").arg(QLatin1String(qgetenv("ProgramFiles"))).arg(config.packageName).arg(CompilerTypes::toString(config.compilerType)).arg(toString(config.releaseType)).arg(config.version);
         addHint("I'm installing into " + installRoot);
         m_engine.setRoot(installRoot);
         ProxySettings ps;
+        m_postProcessing.setSingleApplicationMode(config.packageName);
 
         setWindowTitle(tr("KDE %1 Application Installer").arg(config.packageName));
         ui.topLabel->setText(tr("KDE %1 Installer").arg(config.packageName));

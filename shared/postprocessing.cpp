@@ -32,6 +32,12 @@ PostProcessing::PostProcessing(InstallerEngine *engine, QObject *parent) : QObje
 {
 }
 
+void PostProcessing::setSingleApplicationMode(const QString &customString)
+{
+    m_singleAppsInstallMode = true;
+    m_customString = customString;
+}
+
 bool PostProcessing::runCommand(int index, const QString &msg, const QString &app, const QStringList &params)
 {
     QFileInfo f(m_engine->root()+"/bin/" + app + ".exe");
@@ -75,7 +81,11 @@ bool PostProcessing::start()
         emit numberOfCommands(4);
         QStringList kwinStartmenuMainParameters;
         if (m_singleAppsInstallMode && m_engine->getStartMenuGeneratorVersion() >= 0x010100)
+        {
             kwinStartmenuMainParameters << "--nocategories";
+            if (!m_customString.isEmpty())
+                kwinStartmenuMainParameters << "--set-root-custom-string" << m_customString;
+        }
 #if 0
         if (!m_singleAppsInstallMode && m_engine->getStartMenuGeneratorVersion() >= 0x010200)
             kwinStartmenuMainParameters << "--set-root-custom-string" << CompilerTypes::toString(Settings::instance().compilerType());

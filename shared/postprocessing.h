@@ -36,6 +36,7 @@ class PostProcessing : public QObject
     Q_OBJECT
 public:
     PostProcessing(InstallerEngine *engine, QObject *parent = 0);
+    void setSingleApplicationMode(const QString &customString);
     bool start();
     void stop();
 
@@ -55,6 +56,7 @@ protected:
 
     bool m_shouldQuit;
     bool m_singleAppsInstallMode;
+    QString m_customString;
     InstallerEngine *m_engine;
 };
 
