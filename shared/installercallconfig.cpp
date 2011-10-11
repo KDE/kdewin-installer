@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2006-2010 Ralf Habacker. All rights reserved.
+** Copyright (C) 2006-2011 Ralf Habacker. All rights reserved.
 ** Copyright (C) 2006-2007 Christian Ehrlicher <ch.ehrlicher@gmx.de>
 **
 ** This file is part of the KDE installer for windows
@@ -35,7 +35,7 @@ InstallerCallConfig::InstallerCallConfig(const QString &fileName)
     installerBaseName = fi.completeBaseName();
     QStringList a = installerBaseName.split("-");
     releaseType = Stable;
-    compilerType = CompilerTypes::MSVC9;
+    compilerType = CompilerTypes::MSVC10;
     version = "latest";
     mirror = "www.winkde.org";
 
@@ -52,7 +52,7 @@ InstallerCallConfig::InstallerCallConfig(const QString &fileName)
     {
         compilerType = CompilerTypes::fromString(a[2]);
         if (compilerType == CompilerTypes::Unspecified)
-            compilerType = CompilerTypes::MSVC9;
+            compilerType = CompilerTypes::MSVC10;
     }
 
     // setup-<packagename>-<compiler>-<releasetype>.exe
