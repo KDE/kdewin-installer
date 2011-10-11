@@ -114,15 +114,16 @@ void myMessageOutput(QtMsgType type, const char *msg)
 /**
  redirect all Qt debug, warning and error messages to a file
 */
-void setMessageHandler()
+void setMessageHandler(const QString &baseName)
 {
 #ifndef MISC_SMALL_VERSION
+    // prepare filename part to remove from debug messages
     QString file = __FILE__; 
     QString key = "kdewin-installer";
     int i = file.indexOf(key);
     if (i != -1)
         fileOffset = i + key.size() + 1;
-    logFile = new QFile(Settings::instance().logFile());
+    logFile = new QFile(Settings::instance().logFile(baseName));
     logFile->remove();
     logFile->open(QIODevice::WriteOnly);
 

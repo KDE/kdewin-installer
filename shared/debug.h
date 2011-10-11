@@ -46,7 +46,7 @@ QTextStream &qError();
 
 
 /// set message handler
-void setMessageHandler();
+void setMessageHandler(const QString &baseName="kdewin-installer");
 
 /// close message handler
 void closeMessageHandler();
