@@ -63,7 +63,6 @@ Database::Database ( QObject *parent )
 //    m_versionKeys["tortoisesvn-10428b9"] = "1.4.3";
     m_versionKeys["tortoisesvn-17049785"] = "1.4.3";
     
-    addFromRegistry();
 #ifndef DISABLE_SIGNALS
     connect ( &Settings::instance(),SIGNAL ( installDirChanged ( const QString & ) ),
               this, SLOT ( slotInstallDirChanged ( const QString & ) ) );
@@ -76,6 +75,19 @@ Database::~Database()
     qDebug() << __FUNCTION__;
 #endif
     clear();
+}
+
+void Database::setRoot( const QString &root ) 
+{
+    m_root = root;
+    reload();
+}
+
+void Database::reload() 
+{
+    clear();
+    addFromRegistry();
+    readFromDirectory();
 }
 
 void Database::addPackage ( const Package &package )
@@ -277,6 +289,16 @@ bool Database::readFromDirectory ( const QString &_dir )
 bool Database::isAnyPackageInstalled ( const QString &installRoot )
 {
     return QDir ( installRoot+ "/manifest" ).exists();
+}
+
+bool Database::isAnyPackageInstalled()
+{
+    if (m_root.isEmpty())
+    {
+        qCriticial("no install root defined");
+        return false;
+    }
+    return QDir ( m_root + "/manifest" ).exists();
 }
 
 void Database::slotInstallDirChanged ( const QString &dir )

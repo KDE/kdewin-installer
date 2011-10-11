@@ -68,15 +68,18 @@ public:
      installation root
      @param root installation root directory
     */ 
-    void setRoot ( const QString &root ) {
-        m_root = root;
-        clear();
-        readFromDirectory();
-    }
+    void setRoot( const QString &root );
 
     QString root() const {
         return m_root;
     }
+
+    /** 
+     reload installed package list 
+    */
+    void reload();
+
+    bool isAnyPackageInstalled();
 
     static bool isAnyPackageInstalled ( const QString &installRoot );
 
