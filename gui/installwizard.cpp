@@ -212,7 +212,7 @@ int InstallWizard::nextIdEndUser() const
     
         if (skipSettings())
         {
-            if (Database::isAnyPackageInstalled(Settings::instance().installDir()))
+            if (engine->isAnyPackageInstalled())
 #if 1
                 return endUserInstallModePage;
 #else

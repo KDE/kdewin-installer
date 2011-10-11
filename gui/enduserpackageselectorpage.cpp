@@ -306,7 +306,7 @@ void EndUserPackageSelectorPage::setPackageDisplayType(PackageDisplayType type)
         ui.languagePackageButton->setEnabled(false);
         ui.spellingPackageButton->setEnabled(true);
         ui.selectAllCheckBox->setEnabled(false);
-        if (!Database::isAnyPackageInstalled(Settings::instance().installDir())) 
+        if (!engine->isAnyPackageInstalled()) 
             preSelectPackages("kde-l10n");
     }
     else if (type == Spelling) 
@@ -315,7 +315,7 @@ void EndUserPackageSelectorPage::setPackageDisplayType(PackageDisplayType type)
         ui.languagePackageButton->setEnabled(true);
         ui.spellingPackageButton->setEnabled(false);
         ui.selectAllCheckBox->setEnabled(false);
-        if (!Database::isAnyPackageInstalled(Settings::instance().installDir())) 
+        if (!engine->isAnyPackageInstalled()) 
             preSelectPackages("aspell");
     }
 }
