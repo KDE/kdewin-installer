@@ -40,7 +40,7 @@ InstallerDialog::InstallerDialog()
     connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(stop()));
     initItems();
 
-    setMessageHandler();
+    setMessageHandler("single-package-installer");
 
     QString setupName;
 
