@@ -60,7 +60,8 @@ options;
 static void usage()
 {
     cout << "... [options] <packagename> [<packagename>]"
-    << "\nRelease: " << VERSION
+    << "Qt: " QTVERSION "\n";
+    << "kdewin-installer-console: " VERSION_PATCH "\n";
     << "\nOptions: "
     << "\n -v|--verbose                                   print detailed process informations"
     << "\n --debug                                        print debug informations"

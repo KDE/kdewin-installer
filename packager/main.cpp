@@ -23,6 +23,7 @@
 **
 ****************************************************************************/
 
+#include "config.h"
 #include "packager.h"
 #include "qio.h"
 #include "xmltemplatepackager.h"
@@ -77,6 +78,8 @@ static void printHelp(const QString &addInfo)
     if(!addInfo.isEmpty())
         qerr << ": " << addInfo;
     qerr << "\n";
+    qerr << "Qt: " QTVERSION "\n";
+    qerr << "kdewin-packager: " VERSION_PATCH "\n";
     qerr << "Options:"
        << "\n\t\t"      << "-complete              create all-in-one package with all files"
        << "\n\t\t"      << "-checksum <md5|sha1>   set checksum mode (default: md5)"
