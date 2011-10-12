@@ -1,5 +1,11 @@
 ChangeLog
 =========
+0.9.9-3
+-----------------
+- build system:      - add support to build package without kdewin-packager, because it will be 
+                       build separate (Ralf Habacker)
+- console-installer:  - print out app and qt version (Ralf Habacker)
+
 0.9.9-2
 -----------------
 - packager:         - print app and qt version in help page (Ralf Habacker)
