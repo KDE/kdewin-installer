@@ -80,9 +80,9 @@ bool PostProcessing::start()
     else {
         emit numberOfCommands(4);
         QStringList kwinStartmenuMainParameters;
-        if (m_singleAppsInstallMode && m_engine->getStartMenuGeneratorVersion() >= 0x010100)
+        if (m_singleAppsInstallMode && m_engine->getStartMenuGeneratorVersion() >= 0x010300)
         {
-            kwinStartmenuMainParameters << "--nocategories";
+            kwinStartmenuMainParameters << "--disable-categories";
             if (!m_customString.isEmpty())
                 kwinStartmenuMainParameters << "--set-root-custom-string" << m_customString;
         }
