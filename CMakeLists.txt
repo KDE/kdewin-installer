@@ -47,6 +47,8 @@ OPTION(BUILD_TESTS "build test applications " OFF)
 # see http://websvn.kde.org/trunk/l10n-kde4/templates/messages/qt
 OPTION(BUILD_TRANSLATIONS "build translations" OFF)
 
+OPTION(BUILD_WITH_PACKAGER "build with packager" OFF)
+
 OPTION(BUILD_PACKAGER_ONLY "Only build packager" OFF)
 
 ENABLE_TESTING()
@@ -210,7 +212,9 @@ add_subdirectory(gui)
 #add_subdirectory(package-manager)
 if(NOT BUILD_INSTALLER_THEME)
 add_subdirectory(tests)
-add_subdirectory(packager)
+if(BUILD_WITH_PACKAGER)
+	add_subdirectory(packager)
+endif(BUILD_WITH_PACKAGER)
 add_subdirectory(doc)
 endif(NOT BUILD_INSTALLER_THEME)
 #add_subdirectory(tools)
