@@ -1,12 +1,27 @@
 ChangeLog
 =========
+0.9.9-3
+-----------------
+- build system:      - add support to build package without kdewin-packager, because it will be 
+                       build separate (Ralf Habacker)
+- console-installer:  - print out app and qt version (Ralf Habacker)
+
 0.9.9-2
 -----------------
-- packager: - fixed bug 282007: installer merges dbg and src packages into root (Ralf Habacker)
+- packager:         - print app and qt version in help page (Ralf Habacker)
+				    - fixed bug 282007: installer merges dbg and src packages into root (Ralf Habacker)
+					- print out app and qt version (Ralf Habacker)
+- build system:     - fixed qt 4.7.4 build support(Ralf Habacker)
+- shared:           - refactored install root handling in installer engine which fixes some install issues 
+                      with single app installer (Ralf Habacker)
+- single-installer: - added support for msvc 2010 (Ralf Habacker)
+                    - use uniq log file(Ralf Habacker)
+					- install each app in it's own directory (Ralf Habacker)
+					- add separate start menu entries for each app (Ralf Habacker)
 
 0.9.9-1
 -----------------
-- packager: - some packager fixes (Patrick Spendrin)
+- packager:       - some packager fixes (Patrick Spendrin)
 
 0.9.9-0    
 -----------------

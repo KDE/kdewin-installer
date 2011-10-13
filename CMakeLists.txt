@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.6)
 set (VERSION_MAJOR 0)
 set (VERSION_MINOR 9)
 set (VERSION_REVISION 9)
-set (VERSION_PATCH "2")
+set (VERSION_PATCH "4")
 set (VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REVISION}")
 set (VERSION_PATCH "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REVISION}-${VERSION_PATCH}")
 
@@ -46,6 +46,8 @@ OPTION(BUILD_TESTS "build test applications " OFF)
 # experimental translations support - integration of languages files in kde4-l10n is missing
 # see http://websvn.kde.org/trunk/l10n-kde4/templates/messages/qt
 OPTION(BUILD_TRANSLATIONS "build translations" OFF)
+
+OPTION(BUILD_WITH_PACKAGER "build with packager" OFF)
 
 OPTION(BUILD_PACKAGER_ONLY "Only build packager" OFF)
 
@@ -210,7 +212,9 @@ add_subdirectory(gui)
 #add_subdirectory(package-manager)
 if(NOT BUILD_INSTALLER_THEME)
 add_subdirectory(tests)
-add_subdirectory(packager)
+if(BUILD_WITH_PACKAGER)
+	add_subdirectory(packager)
+endif(BUILD_WITH_PACKAGER)
 add_subdirectory(doc)
 endif(NOT BUILD_INSTALLER_THEME)
 #add_subdirectory(tools)

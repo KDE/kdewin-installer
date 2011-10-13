@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2005-2006  Ralf Habacker. All rights reserved.
+** Copyright (C) 2005-2011 Ralf Habacker. All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
@@ -60,7 +60,8 @@ options;
 static void usage()
 {
     cout << "... [options] <packagename> [<packagename>]"
-    << "\nRelease: " << VERSION
+    << "Qt: " QTVERSION "\n"
+    << "kdewin-installer-console: " VERSION_PATCH "\n"
     << "\nOptions: "
     << "\n -v|--verbose                                   print detailed process informations"
     << "\n --debug                                        print debug informations"
