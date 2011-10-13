@@ -491,7 +491,7 @@ int InstallerEngine::getStartMenuGeneratorVersion()
     QByteArray data = myProcess.readAllStandardOutput();
     if (data.size() > 0) 
     {
-        QRegExp rx(".*[Kw][Ww]in[Ss]tartmenu:.*([0-9.]+).*");
+        QRegExp rx(".*kwinstartmenu:.*([0-9.]+).*",Qt::CaseInsensitive);
         if (rx.indexIn(data) != -1) 
             return toVersionInt(rx.cap(1));
     }
