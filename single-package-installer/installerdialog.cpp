@@ -66,7 +66,7 @@ InstallerDialog::InstallerDialog()
             ps.save();
             addHint("I'm " + ps.toString());
         }
-        packages << config.packageName+'-'+CompilerTypes::toString(config.compilerType);
+        packages << config.packageName.toLower()+'-'+CompilerTypes::toString(config.compilerType);
         setItem(0);
         QTimer::singleShot(250,this,SLOT(setupEngine()));
     }
@@ -197,6 +197,11 @@ void InstallerDialog::setupEngine()
     if (m_engine.init())
     {
         Package *p = m_engine.getPackageByName(packages[0]);
+        if (!p) 
+        {
+            addHint(QString(".... could not find package %s").arg(packages[0]));
+            setError(4);
+        }
         packagesToInstall.append(p);
         m_engine.setDependencyState(p,packagesToInstall);
         QTimer::singleShot(1,this,SLOT(downloadPackages()));
