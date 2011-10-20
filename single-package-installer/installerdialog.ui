@@ -37,7 +37,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Version 1.0 beta 2 - created by Ralf Habacker </string>
+    <string>Version 1.0 beta 3 - created by Ralf Habacker </string>
    </property>
   </widget>
   <widget class="QFrame" name="frame">
