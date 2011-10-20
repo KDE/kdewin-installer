@@ -32,12 +32,6 @@ PostProcessing::PostProcessing(InstallerEngine *engine, QObject *parent) : QObje
 {
 }
 
-void PostProcessing::setSingleApplicationMode(const QString &customString)
-{
-    m_singleAppsInstallMode = true;
-    m_customString = customString;
-}
-
 bool PostProcessing::runCommand(int index, const QString &msg, const QString &app, const QStringList &params)
 {
     QFileInfo f(m_engine->root()+"/bin/" + app + ".exe");
@@ -68,8 +62,14 @@ bool PostProcessing::runCommand(int index, const QString &msg, const QString &ap
     return noError;
 }
 
+/**
+ start() fetches from the installed package (which is either a single package or generic kde) the installed version
+ and runs kwinstartmenu to save these values persistantly and install the start menu entries 
+*/
 bool PostProcessing::start()
 {
+    QStringList kwinStartmenuMainParameters;
+
     if (m_engine->installedPackages() == 0 && m_engine->removedPackages() > 0)
     {
         emit numberOfCommands(1);
@@ -79,22 +79,28 @@ bool PostProcessing::start()
     }
     else {
         emit numberOfCommands(4);
-        QStringList kwinStartmenuMainParameters;
-        if (m_singleAppsInstallMode && m_engine->getStartMenuGeneratorVersion() >= 0x010300)
-        {
-            kwinStartmenuMainParameters << "--disable-categories";
-            if (!m_customString.isEmpty())
-                kwinStartmenuMainParameters << "--set-root-custom-string" << m_customString;
-        }
-#if 0
-        if (!m_singleAppsInstallMode && m_engine->getStartMenuGeneratorVersion() >= 0x010200)
-            kwinStartmenuMainParameters << "--set-root-custom-string" << CompilerTypes::toString(Settings::instance().compilerType());
-#endif
         runCommand(0,"updating mime database","update-mime-database",QStringList() << QDir::fromNativeSeparators(m_engine->root()) + "/share/mime");
         if (!m_shouldQuit)
             runCommand(1,"updating system configuration database","kbuildsycoca4", QStringList() << "--noincremental");
+
+        /* removing entries is still here because there were update problems with language switch*/
         if (!m_shouldQuit)
             runCommand(2,"deleting old windows start menu entries","kwinstartmenu",QStringList() << kwinStartmenuMainParameters << "--remove");
+
+        /* we set the package name and version here to give kwinstartmenu a chance to remove previous entries */
+        kwinStartmenuMainParameters << "--set-name-string" << m_packageName;
+        if (m_singleAppsInstallMode)
+        {
+            kwinStartmenuMainParameters << "--disable-categories";
+            kwinStartmenuMainParameters << "--set-version-string" << (!m_packageVersion.isEmpty() ?
+                m_packageVersion : m_engine->getAppVersionString(m_packageName, m_packageName));
+        }
+        else
+        {
+            kwinStartmenuMainParameters << "--enable-categories";
+            kwinStartmenuMainParameters << "--set-version-string" << (!m_packageVersion.isEmpty() ?
+                m_packageVersion :  m_engine->getAppVersionString("kde4-config", "KDE"));
+        }
         if (!m_shouldQuit)
             runCommand(3,"creating new windows start menu entries","kwinstartmenu", QStringList() << kwinStartmenuMainParameters << "--install");
     }

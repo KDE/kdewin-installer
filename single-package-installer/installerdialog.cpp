@@ -54,9 +54,12 @@ InstallerDialog::InstallerDialog()
         InstallerEngine::defaultConfigURL = QString("http://www.winkde.org/pub/kde/ports/win32/releases/%1/%2").arg(toString(config.releaseType)).arg(config.version);
         QString installRoot = QString("%1/%2-%3-%4-%5").arg(QLatin1String(qgetenv("ProgramFiles"))).arg(config.packageName).arg(CompilerTypes::toString(config.compilerType)).arg(toString(config.releaseType)).arg(config.version);
         addHint("I'm installing into " + installRoot);
+        Settings::instance().setInstallDir(installRoot, false);
         m_engine.setRoot(installRoot);
         ProxySettings ps;
-        m_postProcessing.setSingleApplicationMode(config.packageName);
+
+        m_postProcessing.setSingleApplicationMode(true);
+        m_postProcessing.setPackageName(config.packageName);
 
         setWindowTitle(tr("KDE %1 Application Installer").arg(config.packageName));
         ui.topLabel->setText(tr("KDE %1 Installer").arg(config.packageName));
@@ -268,6 +271,8 @@ void InstallerDialog::postProcessing()
     connect(&m_postProcessing,SIGNAL(finished()),this,SLOT(finished()));
     connect(&m_postProcessing,SIGNAL(commandStarted(const QString &)),this,SLOT(addHint(const QString &)));
     ui.closeButton->setEnabled(false);
+    // fetch version from package - it is not sure yet if running a gui app --version returns the version on stdout
+    m_postProcessing.setVersion(packagesToInstall[0]->version().toString());
     m_postProcessing.start();
 }
 
