@@ -131,8 +131,8 @@ public:
     int getStartMenuGeneratorVersion();
 
     /// return version identifed by "key" from executable "appname", see \ref toVersionInt for the output format
-    int getAppVersion(const QString &appname, const QString &key);
-    QString getAppVersionString(const QString &appname, const QString &key);
+    int getAppVersion(const QString &appname, const QString &key=QString());
+    QString getAppVersionString(const QString &appname, const QString &key=QString());
 
 Q_SIGNALS:
     void error ( const QString &error );

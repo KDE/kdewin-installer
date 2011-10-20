@@ -496,7 +496,7 @@ QString InstallerEngine::getAppVersionString(const QString &appname, const QStri
     QByteArray data = myProcess.readAllStandardOutput();
     if (data.size() > 0) 
     {
-        QRegExp rx(".*"+key+":.*([0-9.]+).*",Qt::CaseInsensitive);
+        QRegExp rx(".*"+(!key.isEmpty() ? key : appname)+":.*([0-9.]+).*",Qt::CaseInsensitive);
         if (rx.indexIn(data) != -1) 
             return rx.cap(1);
     }

@@ -87,20 +87,45 @@ bool PostProcessing::start()
         if (!m_shouldQuit)
             runCommand(2,"deleting old windows start menu entries","kwinstartmenu",QStringList() << kwinStartmenuMainParameters << "--remove");
 
-        /* we set the package name and version here to give kwinstartmenu a chance to remove previous entries */
-        kwinStartmenuMainParameters << "--set-name-string" << m_packageName;
-        if (m_singleAppsInstallMode)
+        int kwinstartmenuVersion = m_engine->getAppVersion("kwinstartmenu");
+
+        // 4.7.0
+        if (kwinstartmenuVersion > 0x00010200)
         {
-            kwinStartmenuMainParameters << "--disable-categories";
-            kwinStartmenuMainParameters << "--set-version-string" << (!m_packageVersion.isEmpty() ?
-                m_packageVersion : m_engine->getAppVersionString(m_packageName, m_packageName));
+            if (m_singleAppsInstallMode)
+                kwinStartmenuMainParameters << "--disable-categories";
+            else
+                kwinStartmenuMainParameters << "--enable-categories";
         }
-        else
+        // 4.5.4
+        else if (kwinstartmenuVersion >= 0x00010100)
         {
-            kwinStartmenuMainParameters << "--enable-categories";
-            kwinStartmenuMainParameters << "--set-version-string" << (!m_packageVersion.isEmpty() ?
-                m_packageVersion :  m_engine->getAppVersionString("kde4-config", "KDE"));
+            if (m_singleAppsInstallMode)
+                kwinStartmenuMainParameters << "--nocategories";
         }
+
+        // > 4.7.0
+        if (kwinstartmenuVersion >= 0x00010400)
+        {
+            /* we set the package name and version here to give kwinstartmenu a chance to remove previous entries */
+            kwinStartmenuMainParameters << "--set-name-string" << m_packageName;
+            if (m_singleAppsInstallMode)
+            {
+                kwinStartmenuMainParameters << "--set-version-string" << (!m_packageVersion.isEmpty() {
+                    m_packageVersion : m_engine->getAppVersionString(m_packageName, m_packageName));
+            }
+            else
+            {
+                kwinStartmenuMainParameters << "--set-version-string" << (!m_packageVersion.isEmpty() ?
+                    m_packageVersion :  m_engine->getAppVersionString("kde4-config", "KDE"));
+            }
+        }
+        // 4.7.0
+        elseif (kwinstartmenuVersion >= 0x00010200)
+        {
+            kwinStartmenuMainParameters << "--set-custom-string" << m_packageName;
+        }
+
         if (!m_shouldQuit)
             runCommand(3,"creating new windows start menu entries","kwinstartmenu", QStringList() << kwinStartmenuMainParameters << "--install");
     }
