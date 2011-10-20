@@ -130,6 +130,10 @@ public:
     /// return version of kde start menu generator in the form 0x00aabbcc as converted from 'aa.bb.cc'
     int getStartMenuGeneratorVersion();
 
+    /// return version identifed by "key" from executable "appname", see \ref toVersionInt for the output format
+    int getAppVersion(const QString &appname, const QString &key);
+    QString getAppVersionString(const QString &appname, const QString &key);
+
 Q_SIGNALS:
     void error ( const QString &error );
 

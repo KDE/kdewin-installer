@@ -483,19 +483,29 @@ bool InstallerEngine::getStartMenuRootPath()
     return false;
 }
 
-int InstallerEngine::getStartMenuGeneratorVersion()
+int InstallerEngine::getAppVersion(const QString &appname, const QString &key)
+{
+    return toVersionInt(getAppVersionString(appname, key));
+}
+
+QString InstallerEngine::getAppVersionString(const QString &appname, const QString &key)
 {
     QProcess myProcess;
-    myProcess.start(m_root + "\\bin\\kwinstartmenu", QStringList() << "--version");
+    myProcess.start(m_root + "\\bin\\" + appname, QStringList() << "--version");
     myProcess.waitForFinished(3000);
     QByteArray data = myProcess.readAllStandardOutput();
     if (data.size() > 0) 
     {
-        QRegExp rx(".*kwinstartmenu:.*([0-9.]+).*",Qt::CaseInsensitive);
+        QRegExp rx(".*"+key+":.*([0-9.]+).*",Qt::CaseInsensitive);
         if (rx.indexIn(data) != -1) 
-            return toVersionInt(rx.cap(1));
+            return rx.cap(1);
     }
-    return 0;
+    return QString();
+}
+
+int InstallerEngine::getStartMenuGeneratorVersion()
+{
+    return getAppVersion("kwinstartmenu", "kwinstartmenu");
 }
 
 bool InstallerEngine::setDependencyState(Package *_package, QList<Package *> &dependencies)
