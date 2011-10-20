@@ -45,7 +45,7 @@ public:
 
     // Place where the packages should be installed to
     QString installDir() const;
-    void setInstallDir(const QString &dir);
+    void setInstallDir(const QString &dir, bool persistent=true);
 
     // Place where the packages should be downloaded to
     QString downloadDir() const;
@@ -154,6 +154,8 @@ private:
     QSettings *m_settingsMain;
     // stored in installroot 
     QSettings *m_settings;
+
+    QString m_installDir;
 
     QString debug(void) { return m_settings->value("debug", "").toString(); }
     friend QDebug operator<<(QDebug, Settings &);

@@ -34,10 +34,10 @@
 #define SETTINGS_VERSION "2"
 
 Settings::Settings()
- : m_settingsMain( new QSettings(QSettings::IniFormat, QSettings::UserScope, "KDE", "Installer") ), 
-   m_settings( new QSettings(installDir()+"/etc/installer.ini",QSettings::IniFormat) )
+ : m_settingsMain( new QSettings(QSettings::IniFormat, QSettings::UserScope, "KDE", "Installer") )
 
 {
+    m_settings = new QSettings(installDir()+"/etc/installer.ini",QSettings::IniFormat);
     QString version = m_settings->value("version", "").toString();
     // update to current version
     if (version.isEmpty()) // version 1
@@ -75,9 +75,14 @@ Settings::~Settings()
 
 QString Settings::installDir() const
 {
-    QString dir = m_settingsMain->value("rootdir", "").toString();
+    QString dir;
+    if (!m_installDir.isEmpty())
+        dir = m_installDir;
+    else
+        dir = m_settingsMain->value("rootdir", "").toString();
     if(dir.isEmpty())
         dir = QString::fromLocal8Bit( qgetenv( "ProgramFiles" ) ) + "/KDE";
+
     QFileInfo fi(dir);
     if(!fi.exists())
     {
@@ -96,18 +101,23 @@ QString Settings::installDir() const
     return dir;
 }
 
-void Settings::setInstallDir(const QString &dir)
+void Settings::setInstallDir(const QString &dir, bool persistent)
 {
     if (dir != installDir())
     {
-        m_settingsMain->setValue("rootdir", dir);
-        m_settingsMain->sync();
+        if (!persistent)
+            m_installDir = dir;
+        else
+        {
+            m_settingsMain->setValue("rootdir", dir);
+            m_settingsMain->sync();
+        }
         m_settings->sync();
         delete m_settings;
         m_settings = new QSettings(dir+"/etc/installer.ini",QSettings::IniFormat);
         emit installDirChanged(dir);
     }
-    }
+}
 
 QString Settings::downloadDir() const
 {
