@@ -180,19 +180,19 @@ int main(int argc, char *argv[])
         qOut() << "using url " << InstallerEngine::defaultConfigURL << "\n";
 
     if (!options.rootdir.isEmpty())
-        Settings::instance().setInstallDir(options.rootdir);
+        Settings::instance().setInstallDir(options.rootdir, false);
     else
     {    
         QFileInfo f(QCoreApplication::applicationDirPath() + "/../manifest");
         if (f.exists() && f.isDir())
         {
-            Settings::instance().setInstallDir(f.canonicalPath());
+            Settings::instance().setInstallDir(f.canonicalPath(), false);
         }    
         else 
         {
             f.setFile(QCoreApplication::applicationDirPath() + "/manifest");
             if (f.exists() && f.isDir())
-                Settings::instance().setInstallDir(f.canonicalPath());
+                Settings::instance().setInstallDir(f.canonicalPath(), false);
         }
     }
 
