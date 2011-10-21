@@ -111,7 +111,7 @@ bool PostProcessing::start()
             kwinStartmenuMainParameters << "--set-name-string" << m_packageName;
             if (m_singleAppsInstallMode)
             {
-                kwinStartmenuMainParameters << "--set-version-string" << (!m_packageVersion.isEmpty() {
+                kwinStartmenuMainParameters << "--set-version-string" << (!m_packageVersion.isEmpty() ?
                     m_packageVersion : m_engine->getAppVersionString(m_packageName, m_packageName));
             }
             else
@@ -121,9 +121,9 @@ bool PostProcessing::start()
             }
         }
         // 4.7.0
-        elseif (kwinstartmenuVersion >= 0x00010200)
+        else if (kwinstartmenuVersion >= 0x00010200)
         {
-            kwinStartmenuMainParameters << "--set-custom-string" << m_packageName;
+            kwinStartmenuMainParameters << "--set-root-custom-string" << m_packageName;
         }
 
         if (!m_shouldQuit)
