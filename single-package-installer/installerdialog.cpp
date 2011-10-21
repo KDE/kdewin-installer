@@ -190,6 +190,9 @@ void InstallerDialog::setError(int pagenum)
             ui.label5->setPixmap(error);
             break;
     }
+    QString logFileName = logFileName();
+    if (!logFileName.isEmpty())
+        addHint(QString("!! Error details could be fetched from %1").arg(QUrl(logFileName));
     QCoreApplication::processEvents();
 }
 

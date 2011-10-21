@@ -142,6 +142,12 @@ void closeMessageHandler()
 #endif
 }
 
+QString logFileName() const
+{
+    return logFile ? logFile->fileName() : QString();
+}
+
+
 int qDebug_indention = 0;
 char *qDebug_indentBuf = (char*)"                                                                                                               ";
  
