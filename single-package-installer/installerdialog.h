@@ -57,7 +57,7 @@ protected slots:
 protected:
     Ui::InstallerDialog ui;
     InstallerEngineSinglePackage m_engine;
-
+    void closeEvent(QCloseEvent *e);
 
 protected slots:
     void addHint(const QString &hint);

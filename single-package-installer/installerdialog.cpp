@@ -84,8 +84,6 @@ InstallerDialog::InstallerDialog()
 
 InstallerDialog::~InstallerDialog()
 {
-	if (m_log)
-		m_log->hide();
 	delete m_log;
 }
 
@@ -303,7 +301,15 @@ void InstallerDialog::finished()
 
 void InstallerDialog::stop()
 {
-    m_postProcessing.stop();
-    QDialog::close();
+    close();
 }
+
+void InstallerDialog::closeEvent(QCloseEvent *e)
+{
+    m_postProcessing.stop();
+    if (m_log)
+        m_log->hide();
+    e->accept();
+}
+
 
