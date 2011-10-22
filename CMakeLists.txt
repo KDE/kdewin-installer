@@ -194,6 +194,7 @@ set (GUI_INCLUDE_DIR      ${BZIP2_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/shared  ${CUR
 
 if (BUILD_PACKAGER_ONLY)
     add_subdirectory(shared)
+    add_subdirectory(sha1sum)
     add_subdirectory(packager)
 else(BUILD_PACKAGER_ONLY)
 
