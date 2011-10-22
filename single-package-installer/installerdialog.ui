@@ -331,12 +331,12 @@
     <rect>
      <x>220</x>
      <y>300</y>
-     <width>185</width>
+     <width>220</width>
      <height>41</height>
     </rect>
    </property>
    <property name="text">
-    <string>press to see log</string>
+    <string>Click here to see log entries</string>
    </property>
    <property name="icon">
     <iconset resource="installerdialog.qrc">
