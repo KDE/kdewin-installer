@@ -88,14 +88,14 @@ QString Settings::installDir() const
     {
         if(!QDir().mkpath(dir))
         {
-            qWarning() << "could not create directory" << dir;
+            qCritical() << "could not create directory" << dir;
             return QDir::currentPath();
         }
         return dir;
     }
     if(!fi.isDir())
     {
-        qWarning() << "rootdir is no directory " << dir;
+        qCritical() << "rootdir is no directory " << dir;
         return QDir::currentPath();
     }
     return dir;

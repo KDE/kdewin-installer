@@ -252,12 +252,12 @@ void Uninstaller::progressCallback ( const QString &file )
 
 void Uninstaller::setError ( const QString &errStr )
 {
-    qWarning () << qPrintable ( errStr );
+    qCritical() << qPrintable ( errStr );
     emit error ( errStr );
 }
 
 void Uninstaller::setWarning ( const QString &warnStr )
 {
-    qWarning () << qPrintable ( warnStr );
+    qWarning() << qPrintable ( warnStr );
     emit warning ( warnStr );
 }

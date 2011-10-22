@@ -484,7 +484,7 @@ void Unpacker::progressCallback ( const QString &file )
 
 void Unpacker::setError ( const QString &errStr )
 {
-    qWarning() << qPrintable ( errStr );
+    qCritical() << qPrintable ( errStr );
     m_lastError = errStr;
     emit error ( errStr );
 }

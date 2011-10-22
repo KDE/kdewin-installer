@@ -168,7 +168,7 @@ bool Releases::fetch(const QUrl &_url)
         return true;
 
     QUrl url = m_baseURL.toString() + "stable/";
-    qWarning() << "baseURL1:" << url;
+    qDebug() << "baseURL1:" << url;
     if (!Downloader::instance()->fetch(url,out))
     {
         qWarning() << "could not fetch stable versions from" << url;
