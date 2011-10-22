@@ -133,7 +133,7 @@ void InstallerDialog::setSubLabelHint(const QString &hint)
 void InstallerDialog::showLog(bool checked)
 {
     m_log = new QTextEdit(*log());
-    m_log->show();
+    m_log->showMaximized();
 }
 
 void InstallerDialog::setItem(int pagenum)
