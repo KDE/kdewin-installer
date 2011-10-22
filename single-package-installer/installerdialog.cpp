@@ -31,9 +31,10 @@
 #include "../shared/postprocessing.h"
 
 #include <QtGui>
+#include <QTextEdit>
 
 InstallerDialog::InstallerDialog()
-    :  okay(":/images/dialog-ok-apply.png"), next(":/images/go-next.png"), error(":/images/dialog-cancel.png"), m_postProcessing(&m_engine, this)
+    :  okay(":/images/dialog-ok-apply.png"), next(":/images/go-next.png"), error(":/images/dialog-cancel.png"), m_postProcessing(&m_engine, this), m_log(0)
 {
     ui.setupUi(this);
 
@@ -81,6 +82,13 @@ InstallerDialog::InstallerDialog()
     }
 }
 
+InstallerDialog::~InstallerDialog()
+{
+	if (m_log)
+		m_log->hide();
+	delete m_log;
+}
+
 void InstallerDialog::initItems()
 {
     ui.label1->setText("");
@@ -98,12 +106,15 @@ void InstallerDialog::initItems()
     ui.label5->setText("");
     ui.label5->setVisible(false);
     ui.textLabel5->setVisible(false);
+	ui.hintLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
+    ui.logButton->setVisible(false);
     setSubLabelHint("");
+	connect(ui.logButton, SIGNAL(clicked(bool)), this, SLOT(showLog(bool)));
 }
 
 void InstallerDialog::addHint(const QString &hint)
 {
-    ui.hintLabel->setText(ui.hintLabel->text() + "\n" + hint);
+    ui.hintLabel->setText(ui.hintLabel->text() + "<br>" + hint);
     QCoreApplication::processEvents();
 }
 
@@ -119,6 +130,12 @@ void InstallerDialog::setSubLabelHint(const QString &hint)
         ui.subLabel->setText(hint);
     }
     QCoreApplication::processEvents();
+}
+
+void InstallerDialog::showLog(bool checked)
+{
+    m_log = new QTextEdit(*log());
+    m_log->show();
 }
 
 void InstallerDialog::setItem(int pagenum)
@@ -190,9 +207,7 @@ void InstallerDialog::setError(int pagenum)
             ui.label5->setPixmap(error);
             break;
     }
-    QString logFileName = logFileName();
-    if (!logFileName.isEmpty())
-        addHint(QString("!! Error details could be fetched from %1").arg(QUrl(logFileName));
+    ui.logButton->setVisible(true);
     QCoreApplication::processEvents();
 }
 

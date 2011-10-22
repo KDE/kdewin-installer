@@ -300,7 +300,7 @@
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap resource="../end-user-installer/installerdialog.qrc">:/images/kde.png</pixmap>
+    <pixmap resource="installerdialog.qrc">:/images/kde.png</pixmap>
    </property>
   </widget>
   <widget class="QLabel" name="subLabel">
@@ -326,8 +326,26 @@
     <string>TextLabel</string>
    </property>
   </widget>
+  <widget class="QCommandLinkButton" name="logButton">
+   <property name="geometry">
+    <rect>
+     <x>220</x>
+     <y>300</y>
+     <width>185</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>press to see log</string>
+   </property>
+   <property name="icon">
+    <iconset resource="installerdialog.qrc">
+     <normaloff>:/images/go-next.png</normaloff>:/images/go-next.png</iconset>
+   </property>
+  </widget>
  </widget>
  <resources>
+  <include location="installerdialog.qrc"/>
   <include location="../end-user-installer/installerdialog.qrc"/>
  </resources>
  <connections/>

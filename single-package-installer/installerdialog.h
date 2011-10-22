@@ -35,6 +35,7 @@
 #include <QDialog>
 
 class QPixmap;
+class QTextEdit;
 
 class InstallerDialog : public QDialog
 {
@@ -42,6 +43,7 @@ class InstallerDialog : public QDialog
 
 public:
     InstallerDialog();
+    ~InstallerDialog();
 
 protected slots:
     void setupEngine();
@@ -60,6 +62,7 @@ protected:
 protected slots:
     void addHint(const QString &hint);
     void setSubLabelHint(const QString &hint);
+    void showLog(bool checked);
     void stop();
 
 private:
@@ -75,6 +78,7 @@ private:
     QPixmap okay;
     QPixmap error;
     int m_counter;
+    QTextEdit *m_log;
 };
 
 #endif
