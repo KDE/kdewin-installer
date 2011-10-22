@@ -77,25 +77,33 @@ QTextStream &qError()
 }
 
 static QFile *logFile = 0;
+static QByteArray *logData = 0;
 
 void myMessageOutput(QtMsgType type, const char *msg)
 {
     const char *msgtype;
+    const char *msgColor;
     switch (type) {
      case QtDebugMsg: 
          msgtype = "Debug: ";
+         msgColor = "black";
          break;
      case QtWarningMsg:
          msgtype = "Warning: ";
+         msgColor = "GoldenRod";
          break;
      case QtCriticalMsg:
          msgtype = "Critical: ";
+         msgColor = "Red";
          break;
      case QtFatalMsg:
          msgtype = "Fatal: ";
+         msgColor = "DarkRed";
          break;
     }
-    QString data = QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ") + QLatin1String(msgtype) + msg + QLatin1String("\n");
+    QString date = QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ");
+    logData->append(QString("<p><font color=\"gray\">%1</font><font color=\"%2\">%3</font></p>").arg(date).arg(msgColor).arg(msg));
+    QString data = date + QLatin1String(msgtype) + msg + QLatin1String("\n");
 #if defined(Q_WS_WIN) && defined(QT_DEBUG)
     OutputDebugString(data.toLocal8Bit().data());
 #endif
@@ -129,6 +137,7 @@ void setMessageHandler(const QString &baseName)
 
     qInstallMsgHandler(myMessageOutput);
 #endif
+    logData = new QByteArray;
 }
 
 void closeMessageHandler()
@@ -138,15 +147,21 @@ void closeMessageHandler()
     {
         qDebug() << "closed log file";
         logFile->close();
+        delete logData;
     }
 #endif
 }
 
-QString logFileName() const
+QString logFileName()
 {
     return logFile ? logFile->fileName() : QString();
 }
 
+QByteArray *log()
+{
+    static QByteArray empty;
+    return logData ? logData : &empty;
+}
 
 int qDebug_indention = 0;
 char *qDebug_indentBuf = (char*)"                                                                                                               ";

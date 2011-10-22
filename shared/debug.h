@@ -52,7 +52,10 @@ void setMessageHandler(const QString &baseName="kdewin-installer");
 void closeMessageHandler();
 
 /// return log file name
-QString logFileName() const;
+QString logFileName();
+
+/// return log data
+QByteArray *log();
 
 /**
 macros for creating qDebug class support
