@@ -194,6 +194,8 @@ bool Downloader::fetch ( const QUrl &url, QByteArray &ba )
 static int my_curl_debug_callback (CURL *, curl_infotype type, char *data, size_t size, void *)
 {
   QByteArray ba(data, size);
+  ba.replace("\r","");
+  ba.replace("\n","");
   switch( type ) {
     case CURLINFO_TEXT:
       qDebug() << "Text: " << ba.data();
