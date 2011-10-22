@@ -85,7 +85,7 @@ bool PostProcessing::start()
 
         /* removing entries is still here because there were update problems with language switch*/
         if (!m_shouldQuit)
-            runCommand(2,"deleting old windows start menu entries","kwinstartmenu",QStringList() << kwinStartmenuMainParameters << "--remove");
+            runCommand(2,"deleting old start menu entries","kwinstartmenu",QStringList() << kwinStartmenuMainParameters << "--remove");
 
         int kwinstartmenuVersion = m_engine->getAppVersion("kwinstartmenu");
 
@@ -127,7 +127,7 @@ bool PostProcessing::start()
         }
 
         if (!m_shouldQuit)
-            runCommand(3,"creating new windows start menu entries","kwinstartmenu", QStringList() << kwinStartmenuMainParameters << "--install");
+            runCommand(3,"creating new start menu entries","kwinstartmenu", QStringList() << kwinStartmenuMainParameters << "--install");
     }
     emit finished();
     return true;
