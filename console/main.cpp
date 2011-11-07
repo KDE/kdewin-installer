@@ -57,8 +57,10 @@ static struct Options
 }
 options;
 
-static void usage()
+static void usage(const QString &message=QString())
 {
+    if (!message.isEmpty())
+        cout << "error: " << qPrintable(message);
     cout << "... [options] <packagename> [<packagename>]"
     << "Qt: " QTVERSION "\n"
     << "kdewin-installer-console: " VERSION_PATCH "\n"
@@ -66,15 +68,14 @@ static void usage()
     << "\n -v|--verbose                                   print detailed process informations"
     << "\n --debug                                        print debug informations"
     << "\n"
-    << "\n -u|--url                                       use download server <url> [1]"
-    << "\n -r|--root <path>                               use install <root> [1]"
+    << "\n -u <path>|--url=<path>                         use download server <url> [1]"
+    << "\n -r <path>|--root=<path>                        use install <root> [1]"
     << "\n"
     << "\n -i|--install <package>                         download and install package"
     << "\n -d|--download <package>                        download package"
     << "\n -e|--erase <package>                           remove installed package"
     << "\n"
     << "\n -l|--list <listoptions> [<package>]            list available package"
-    << "\n -q|--query <queryoptions> [<package>]          query installed packages"
     << "\n\nOptions for available packages"
     // is search instead of list a better name ? 
     << "\n -l|--list -u|--url <package>                   list package items url of <package>" 
@@ -83,6 +84,8 @@ static void usage()
     << "\n -l|--list -c|--categories <package>            print categories of <package>"
     << "\n -l|--list -d|--description <package>           print description of <package>"
     << "\n -l|--list -r|--requires <package>              list required packages of <package>"
+    << "\n"
+    << "\n -q|--query <queryoptions> [<package>]          query installed packages"
     << "\n\nOptions for installed packages"
     << "\n -q|--query <package>                           print generic information of <package>"
     << "\n -q|--query -l <package>                        list installed package files of <package>"
@@ -114,34 +117,50 @@ int main(int argc, char *argv[])
                 exit(1);
             }
             else if (option == "-a" || option == "--all")
+            {
                 options.all = true;
+            }
             else if (option == "-d" || option == "--download")
                 options.download = true;
             else if (option == "-i" || option == "--install")
                 options.download = options.install = true;
-            if (option == "-l" || option == "--list") 
+            else if (option == "-l" || option == "--list")
             {
                 options.list = true;
-                if (app.arguments().at(i+1) == "-u" || app.arguments().at(i+1) == "--url")
-                {
+            }
+            else if (app.arguments().at(i) == "-u" || app.arguments().at(i) == "--url")
+            {
+                if (options.list)
                     options.listURL = true;
-                    i++;
-                }
-                else if (app.arguments().at(i+1) == "-c" || app.arguments().at(i+1) == "--categories")
+                else
                 {
+                    usage(app.arguments().at(i) + " could not be used in this context");
+                    exit(1);
+                }
+            }
+            else if (app.arguments().at(i) == "-c" || app.arguments().at(i) == "--categories")
+            {
+                if (options.list)
                     options.categories = true;
-                    i++;
-                }
-                else if (app.arguments().at(i+1) == "-d" || app.arguments().at(i+1) == "--description")
+                else
                 {
+                    usage(app.arguments().at(i) + " could not be used in this context");
+                    exit(1);
+                }
+            }
+            else if (app.arguments().at(i) == "-d" || app.arguments().at(i) == "--description")
+            {
+                if (options.list)
                     options.description = true;
-                    i++;
-                }
-                else if (app.arguments().at(i+1) == "-r" || app.arguments().at(i+1) == "--requires")
+                else
                 {
-                    options.requires = true;
-                    i++;
+                    usage(app.arguments().at(i) + " could not be used in this context");
+                    exit(1);
                 }
+            }
+            else if (app.arguments().at(i) == "-r" || app.arguments().at(i) == "--requires")
+            {
+                options.requires = true;
             }
             else if (option == "-q" || option == "--query")
                 options.query = true;
