@@ -339,3 +339,25 @@ bool InstallerEngineConsole::installPackages(const QStringList &packages,const Q
     return true;
 }
 
+
+bool InstallerEngineConsole::removePackages(const QStringList &packages)
+{
+    init();
+    Q_FOREACH(const QString &pkgName, packages)
+    {
+        Package *p = m_packageResources->getPackage(pkgName);
+        if (!p)
+            continue;
+        if (p->hasType(FileTypes::BIN))
+            p->removeItem(m_installer,FileTypes::BIN);
+        if (p->hasType(FileTypes::LIB))
+            p->removeItem(m_installer,FileTypes::LIB);
+        if (p->hasType(FileTypes::DOC))
+            p->removeItem(m_installer,FileTypes::DOC);
+        if (p->hasType(FileTypes::SRC))
+            p->removeItem(m_installer,FileTypes::SRC);
+        if (p->hasType(FileTypes::DBG))
+            p->removeItem(m_installer,FileTypes::DBG);
+    }
+    return true;
+}

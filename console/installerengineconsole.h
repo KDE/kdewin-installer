@@ -62,6 +62,7 @@ public:
 
     bool downloadPackages(const QStringList &packages, const QString &category=QString());
     bool installPackages(const QStringList &packages, const QString &category=QString());
+    bool removePackages(const QStringList &packages);
 
 protected:
     bool init();

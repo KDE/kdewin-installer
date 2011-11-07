@@ -44,6 +44,7 @@ static struct Options
     bool all;
     bool download;
     bool install;
+    bool remove;
     bool list;
     bool listURL;
     bool query;
@@ -117,11 +118,11 @@ int main(int argc, char *argv[])
                 exit(1);
             }
             else if (option == "-a" || option == "--all")
-            {
                 options.all = true;
-            }
             else if (option == "-d" || option == "--download")
                 options.download = true;
+            else if (option == "-e" || option == "--erase")
+                options.remove = true;
             else if (option == "-i" || option == "--install")
                 options.download = options.install = true;
             else if (option == "-l" || option == "--list")
@@ -252,10 +253,15 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    if((options.download || options.install) && packages.size() > 0)
-        engine.downloadPackages(packages);
-    if(options.install && packages.size() > 0)
-        engine.installPackages(packages);
+    if(options.remove && packages.size() > 0)
+        engine.removePackages(packages);
+    else
+    {
+        if((options.download || options.install) && packages.size() > 0)
+            engine.downloadPackages(packages);
+        if(options.install && packages.size() > 0)
+            engine.installPackages(packages);
+    }
     return 0;
 
 }
