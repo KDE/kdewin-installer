@@ -175,7 +175,7 @@ public:
 Q_GLOBAL_STATIC ( UninstallerSingleton, sUninstaller );
 
 Uninstaller::Uninstaller()
-        : m_thread ( NULL ), m_bRet ( false ), m_loop ( NULL )
+        : m_thread ( NULL ), m_bRet ( false ), m_loop ( NULL ), m_progress(0)
 {}
 
 Uninstaller::~Uninstaller()
