@@ -1,5 +1,10 @@
 ChangeLog
 =========
+0.9.9-6
+-----------------
+- console-installer: - added remove package option (Ralf Habacker)
+                     - crash fix when uninstalling package with console installer (Ralf Habacker)
+
 0.9.9-5
 -----------------
 - single-installer:  - crash fix when using upper case package name (Ralf Habacker)
