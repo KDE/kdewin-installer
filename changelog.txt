@@ -8,7 +8,7 @@ ChangeLog
 - common:            - fixed bug not using Mozilla Firefox as install path default value
                        when running from the firefox download manager. 
 					   In case the main installation dir could not be used, use all users 
-					   profile directory as default install root (Ralf Habacker)
+					   profile directory as base for default install root (Ralf Habacker)
 
 0.9.9-4
 -----------------
