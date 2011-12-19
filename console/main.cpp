@@ -159,7 +159,7 @@ int main(int argc, char *argv[])
                     exit(1);
                 }
             }
-            else if (app.arguments().at(i) == "-r" || app.arguments().at(i) == "--requires")
+            else if (options.query && (app.arguments().at(i) == "-r" || app.arguments().at(i) == "--requires"))
             {
                 options.requires = true;
             }
