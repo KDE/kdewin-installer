@@ -21,6 +21,7 @@
 ****************************************************************************/
 
 #include "database.h"
+#include "debug.h"
 #include "downloader.h"
 #include "globalconfig.h"
 #include "installer.h"
@@ -302,7 +303,10 @@ bool InstallerEngineConsole::downloadPackages(const QStringList &packages, const
     {
         Package *p = m_packageResources->getPackage(pkgName);
         if (!p)
+        {
+            qError() << "package \"" << pkgName << "\" not available for download\n";
             continue;
+        }
         if (p->hasType(FileTypes::BIN))
             p->downloadItem(FileTypes::BIN);
         if (p->hasType(FileTypes::LIB))
@@ -324,7 +328,10 @@ bool InstallerEngineConsole::installPackages(const QStringList &packages,const Q
     {
         Package *p = m_packageResources->getPackage(pkgName);
         if (!p)
+        {
+            qError() << "package \"" << pkgName << "\" not available for installation\n";
             continue;
+        }
         if (p->hasType(FileTypes::BIN))
             p->installItem(m_installer,FileTypes::BIN);
         if (p->hasType(FileTypes::LIB))
@@ -346,6 +353,10 @@ bool InstallerEngineConsole::removePackages(const QStringList &packages)
     Q_FOREACH(const QString &pkgName, packages)
     {
         Package *p = m_database->getPackage(pkgName);
+        {
+            qError() << "package \"" << pkgName << "\" could not be removed, it is not installed\n";
+            continue;
+        }
         if (!p)
             continue;
         if (p->hasType(FileTypes::BIN))
