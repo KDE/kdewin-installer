@@ -49,7 +49,7 @@ public:
 
     // Place where the packages should be downloaded to
     QString downloadDir() const;
-    void setDownloadDir(const QString &dir);
+    void setDownloadDir(const QString &dir, bool persistent=true);
 
     // download mirror base url 
     QString mirror() const;
@@ -156,6 +156,7 @@ private:
     QSettings *m_settings;
 
     QString m_installDir;
+    QString m_downloadDir;
 
     QString debug(void) { return m_settings->value("debug", "").toString(); }
     friend QDebug operator<<(QDebug, Settings &);

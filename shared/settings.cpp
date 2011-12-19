@@ -131,12 +131,12 @@ void Settings::setInstallDir(const QString &dir, bool persistent)
 /// @TODO split raw fetching from settings file from path finding logic. The latter has nothing to do with the Settings class
 QString Settings::downloadDir() const
 {
-    QString result;
     QStringList tempPathes;
-    QString path = m_settingsMain->value("tempdir","").toString();
-
+    tempPathes << m_downloadDir;
+    tempPathes << m_settingsMain->value("tempdir","").toString();
 #ifdef Q_WS_WIN
-    if (path.isEmpty()) {
+    {
+        // why not using Qt related methods ? 
         WCHAR *buf = new WCHAR[256];
         int iRet = GetTempPathW(256, buf);
         if( iRet > 255 ) {
@@ -151,34 +151,47 @@ QString Settings::downloadDir() const
            buf2 = new WCHAR[iRet];
            GetLongPathNameW(buf, buf2, iRet);
         }
-        path = QString::fromUtf16((const ushort*)buf2, iRet);
+        tempPathes << QString::fromUtf16((const ushort*)buf2, iRet) + "/KDE";
         delete[] buf;
         delete[] buf2;
-        path += "/KDE";
     }
 #else
-    if (path.isEmpty())
-        path = QString::fromLocal8Bit(qgetenv("TEMP"));
-    if (path.isEmpty())
-        path = QString::fromLocal8Bit(qgetenv("TMP"));
+    tempPathes << QString::fromLocal8Bit(qgetenv("TEMP")) + "/KDE";
+    tempPathes << QString::fromLocal8Bit(qgetenv("TMP")) + "/KDE";
 #endif
-    QDir d(path);
-    if (d.exists())
-        return QDir::toNativeSeparators(d.absolutePath());
-            
-    if (d.mkpath(d.absolutePath()))
-        return QDir::toNativeSeparators(d.absolutePath());
 
-    qWarning() << "could not setup temporay directory" << d.absolutePath();
-    // last ressort path
-    return QDir::toNativeSeparators(QDir::currentPath());
+    foreach(const QString &path, tempPathes)
+    {
+        if (path.isEmpty())
+            continue;
+
+        QDir d(path);
+        if (d.exists())
+            return QDir::toNativeSeparators(d.absolutePath());
+
+        if (d.mkpath(d.absolutePath()))
+            return QDir::toNativeSeparators(d.absolutePath());
+
+        qWarning() << "could not setup temporay directory" << d.absolutePath();
+    }
+    qCritical() << "could not create any temporay directory from" << tempPathes;
+    return QString();
 }
 
-void Settings::setDownloadDir(const QString &dir)
+void Settings::setDownloadDir(const QString &dir, bool persistent)
 {
     QDir d(dir);
-    m_settingsMain->setValue("tempdir", QDir::toNativeSeparators(d.absolutePath()));
-    sync();
+
+    if (d.absolutePath() != downloadDir())
+    {
+        if (!persistent)
+            m_downloadDir = QDir::toNativeSeparators(d.absolutePath());
+        else
+        {
+            m_settingsMain->setValue("tempdir", QDir::toNativeSeparators(d.absolutePath()));
+            m_settingsMain->sync();
+        }
+    }
     emit downloadDirChanged(QDir::toNativeSeparators(d.absolutePath()));
 }
 
