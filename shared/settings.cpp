@@ -87,6 +87,9 @@ QString Settings::installDir() const
 
     foreach(const QString &path, pathes)
     {
+        if (path.isEmpty())
+            continue;
+
         QFileInfo fi(path);
 
         // path exists
