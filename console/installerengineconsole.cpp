@@ -345,7 +345,7 @@ bool InstallerEngineConsole::removePackages(const QStringList &packages)
     init();
     Q_FOREACH(const QString &pkgName, packages)
     {
-        Package *p = m_packageResources->getPackage(pkgName);
+        Package *p = m_database->getPackage(pkgName);
         if (!p)
             continue;
         if (p->hasType(FileTypes::BIN))
