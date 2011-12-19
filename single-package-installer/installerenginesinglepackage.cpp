@@ -35,9 +35,11 @@
 #include <QtDebug>
 
 InstallerEngineSinglePackage::InstallerEngineSinglePackage()
-: InstallerEngine(0), done(false)
+: InstallerEngine(0), done(false), m_withDevelopmentPackages(false)
 {
 }
+
+void setWithInstallPackages(bool state);
 
 void InstallerEngineSinglePackage::setRoot(const QString &root)
 {
@@ -69,6 +71,17 @@ bool InstallerEngineSinglePackage::downloadPackages(QList<Package*> &packagesToI
         if (p->hasType(FileTypes::BIN))
             if (!p->downloadItem(FileTypes::BIN))
                 return false;
+
+        if (m_withDevelopmentPackages)
+        {
+            if (!p->hasType(FileTypes::LIB))
+            {
+                qWarning() << "package do not have a development part, could not download";
+                continue;
+            }
+            if (!p->downloadItem(FileTypes::LIB))
+                return false;
+        }
     }
     return true;
 }
@@ -83,6 +96,17 @@ bool InstallerEngineSinglePackage::installPackages(QList<Package*> &packagesToIn
         if (p->hasType(FileTypes::BIN))
             if (!p->installItem(m_installer,FileTypes::BIN))
                 return false;
+
+        if (m_withDevelopmentPackages)
+        {
+            if (!p->hasType(FileTypes::LIB))
+            {
+                qWarning() << "package do not have development part, install may not be complete";
+                continue;
+            }
+            if (!p->installItem(m_installer,FileTypes::LIB))
+                return false;
+        }
     }
     return true;
 }

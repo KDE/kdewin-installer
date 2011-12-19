@@ -53,24 +53,31 @@ InstallerDialog::InstallerDialog()
     if (config.isValid())
     {
         InstallerEngine::defaultConfigURL = QString("http://www.winkde.org/pub/kde/ports/win32/releases/%1/%2").arg(toString(config.releaseType)).arg(config.version);
-        QString installRoot = QString("%1/%2-%3-%4-%5").arg(QLatin1String(qgetenv("ProgramFiles"))).arg(config.packageName).arg(CompilerTypes::toString(config.compilerType)).arg(toString(config.releaseType)).arg(config.version);
+        QString installRoot = QString("%1/%2-%3-%4-%5%6").arg(QLatin1String(qgetenv("ProgramFiles"))).arg(config.packageName).arg(CompilerTypes::toString(config.compilerType)).arg(toString(config.releaseType)).arg(config.version).arg(config.hasSDK ? "-sdk" : "");
         addHint("I'm installing into " + installRoot);
         Settings::instance().setInstallDir(installRoot, false);
         m_engine.setRoot(installRoot);
+        m_engine.setWithDevelopmentPackages(config.hasSDK);
         ProxySettings ps;
 
         m_postProcessing.setSingleApplicationMode(true);
         m_postProcessing.setPackageName(config.packageName);
 
-        setWindowTitle(tr("KDE %1 Application Installer").arg(config.packageName));
-        ui.topLabel->setText(tr("KDE %1 Installer").arg(config.packageName));
+        QString title = tr("KDE %1 %2 Installer").arg(config.packageName).arg(config.hasSDK ? "SDK" : "Application");
+        setWindowTitle(title);
+        ui.topLabel->setText(title);
 
         if (ps.from(ProxySettings::AutoDetect))
         {
             ps.save();
             addHint("I'm " + ps.toString());
         }
-        packages << config.packageName.toLower()+'-'+CompilerTypes::toString(config.compilerType);
+        m_packages << config.packageName.toLower()+'-'+CompilerTypes::toString(config.compilerType);
+
+        // @TODO: this is a hack, need to be solved by build requirements in the config file
+        if (config.hasSDK && config.packageName.toLower() == "umbrello")
+            m_packages << "automoc" << "boost";
+
         setItem(0);
         QTimer::singleShot(250,this,SLOT(setupEngine()));
     }
@@ -210,19 +217,29 @@ void InstallerDialog::setError(int pagenum)
 }
 
 void InstallerDialog::setupEngine()
-{  
+{
     setItem(1);
     addHint("I'm fetching packages from " + InstallerEngine::defaultConfigURL);
+
     if (m_engine.init())
     {
-        Package *p = m_engine.getPackageByName(packages[0]);
-        if (!p) 
+        foreach(const QString &package, m_packages)
         {
-            addHint(QString(".... could not find package %s").arg(packages[0]));
-            setError(4);
+            Package *p = m_engine.getPackageByName(package);
+            if (p)
+            {
+                packagesToInstall.append(p);
+                m_engine.setDependencyState(p,packagesToInstall);
+            }
+            else
+            {
+                addHint(QString(".... could not find package %1").arg(package));
+                setError(4);
+            }
         }
-        packagesToInstall.append(p);
-        m_engine.setDependencyState(p,packagesToInstall);
+        // the api should provide a method like
+        // m_engine.resolveDependencies(packagesToInstall);
+        // @TODO: in sdk mode we should download and install all dependencies but not the requested package
         QTimer::singleShot(1,this,SLOT(downloadPackages()));
     }
     else
@@ -272,7 +289,12 @@ void InstallerDialog::installPackages()
     setItem(3);
     addHint(QString("I'm installing %1 package(s)").arg(packagesToInstall.size()));
     if (m_engine.installPackages(packagesToInstall))
-        QTimer::singleShot(1,this,SLOT(postProcessing()));
+    {
+        if (m_engine.withDevelopmentPackages())
+            QTimer::singleShot(1,this,SLOT(finished()));
+        else
+            QTimer::singleShot(1,this,SLOT(postProcessing()));
+    }
     else
     {
         addHint(QString(".... installation failed"));

@@ -70,7 +70,7 @@ private:
     void setItem(int pagenum);
     void setError(int pagenum);
 
-    QStringList packages;
+    QStringList m_packages;
     QList<Package *> packagesToInstall;
     PostProcessing m_postProcessing;
     int page;

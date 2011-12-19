@@ -31,6 +31,14 @@ public:
     InstallerEngineSinglePackage();
 
     void setRoot(const QString &root);
+    bool withDevelopmentPackages()
+    {
+        return m_withDevelopmentPackages;
+    }
+    void setWithDevelopmentPackages(bool state)
+    {
+        m_withDevelopmentPackages = state;
+    }
     bool downloadPackages(QList<Package*> &packagesToInstall);
     bool installPackages(QList<Package*> &packagesToInstall);
 
@@ -38,6 +46,7 @@ public:
 
 private:
     bool done;
+    bool m_withDevelopmentPackages;
 };
 
 #endif
