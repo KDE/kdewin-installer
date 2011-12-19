@@ -713,9 +713,8 @@ bool InstallerEngineGui::downloadPackages ( const QString &category )
 
 bool InstallerEngineGui::removePackages ( const QString &category )
 {
-
-    QList<Package*> list = packageStates.packages(m_packageResources);
-    Q_FOREACH ( Package *pkg, dependencyStates.packages(m_packageResources) )
+    QList<Package*> list = packageStates.packages(m_database);
+    Q_FOREACH ( Package *pkg, dependencyStates.packages(m_database) )
         list.append(pkg);
     m_installer->progress()->setPackageCount(list.size());
     int i = 0;
