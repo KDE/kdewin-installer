@@ -228,8 +228,8 @@ void InstallerDialog::setupEngine()
             Package *p = m_engine.getPackageByName(package);
             if (p)
             {
-                packagesToInstall.append(p);
-                m_engine.setDependencyState(p,packagesToInstall);
+                m_packagesToInstall.append(p);
+                m_engine.setDependencyState(p,m_packagesToInstall);
             }
             else
             {
@@ -238,7 +238,7 @@ void InstallerDialog::setupEngine()
             }
         }
         // the api should provide a method like
-        // m_engine.resolveDependencies(packagesToInstall);
+        // m_engine.resolveDependencies(m_packagesToInstall);
         // @TODO: in sdk mode we should download and install all dependencies but not the requested package
         QTimer::singleShot(1,this,SLOT(downloadPackages()));
     }
@@ -252,7 +252,7 @@ void InstallerDialog::setupEngine()
 void InstallerDialog::downloadPackages()
 {
     setItem(2);
-    addHint(QString("I will download up to %1 package(s) depending on what has been downloaded earlier").arg(packagesToInstall.size()));
+    addHint(QString("I will download up to %1 package(s) depending on what has been downloaded earlier").arg(m_packagesToInstall.size()));
     m_counter = 10;
     QTimer::singleShot(1,this,SLOT(downloadPackagesStage1()));
 }
@@ -275,7 +275,7 @@ void InstallerDialog::downloadPackagesStage2()
 {
     setItem(2);
     addHint(QString("I'm downloading package(s)"));
-    if (m_engine.downloadPackages(packagesToInstall))
+    if (m_engine.downloadPackages(m_packagesToInstall))
         QTimer::singleShot(1,this,SLOT(installPackages()));
     else
     {
@@ -287,8 +287,8 @@ void InstallerDialog::downloadPackagesStage2()
 void InstallerDialog::installPackages()
 {
     setItem(3);
-    addHint(QString("I'm installing %1 package(s)").arg(packagesToInstall.size()));
-    if (m_engine.installPackages(packagesToInstall))
+    addHint(QString("I'm installing %1 package(s)").arg(m_packagesToInstall.size()));
+    if (m_engine.installPackages(m_packagesToInstall))
     {
         if (m_engine.withDevelopmentPackages())
             QTimer::singleShot(1,this,SLOT(finished()));
@@ -310,7 +310,7 @@ void InstallerDialog::postProcessing()
     connect(&m_postProcessing,SIGNAL(commandStarted(const QString &)),this,SLOT(addHint(const QString &)));
     ui.closeButton->setEnabled(false);
     // fetch version from package - it is not sure yet if running a gui app --version returns the version on stdout
-    m_postProcessing.setVersion(packagesToInstall[0]->version().toString());
+    m_postProcessing.setVersion(m_packagesToInstall[0]->version().toString());
     m_postProcessing.start();
 }
 
