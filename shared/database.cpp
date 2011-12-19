@@ -295,7 +295,7 @@ bool Database::isAnyPackageInstalled()
 {
     if (m_root.isEmpty())
     {
-        qCritical("no install root defined");
+        qCritical() << "no install root defined";
         return false;
     }
     return QDir ( m_root + "/manifest" ).exists();
