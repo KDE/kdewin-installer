@@ -70,8 +70,8 @@ private:
     void setItem(int pagenum);
     void setError(int pagenum);
 
-    QStringList packages;
-    QList<Package *> packagesToInstall;
+    QStringList m_packages;
+    QList<Package *> m_packagesToInstall;
     PostProcessing m_postProcessing;
     int page;
     QPixmap next;

@@ -29,10 +29,15 @@
 #include <QStringList>
 
 InstallerCallConfig::InstallerCallConfig(const QString &fileName)
-    : isLoaded(false), hasMirror(false), hasVersion(false), hasReleaseType(false)
+    : isLoaded(false), hasMirror(false), hasVersion(false), hasReleaseType(false), hasSDK(false)
 {
     QFileInfo fi(!fileName.isEmpty() ? fileName : QCoreApplication::applicationFilePath());
     installerBaseName = fi.completeBaseName();
+    if (installerBaseName.contains("-sdk"))
+    {
+        installerBaseName.remove("-sdk");
+        hasSDK = true;
+    }
     QStringList a = installerBaseName.split("-");
     releaseType = Stable;
     compilerType = CompilerTypes::MSVC10;

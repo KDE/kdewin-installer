@@ -63,6 +63,7 @@ public:
     bool hasReleaseType;
     bool hasVersion;
     bool hasMirror;
+    bool hasSDK;
 
 protected:
     bool isLoaded; 

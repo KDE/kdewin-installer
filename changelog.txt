@@ -10,6 +10,10 @@ ChangeLog
 - single-installer:  - crash fix when using upper case package name (Ralf Habacker)
                      - extended start menu support by using the package 
                        name and version (Ralf Habacker)
+- common:            - fixed bug not using Mozilla Firefox as install path default value
+                       when running from the firefox download manager. 
+					   In case the main installation dir could not be used, use all users 
+					   profile directory as base for default install root (Ralf Habacker)
 
 0.9.9-4
 -----------------

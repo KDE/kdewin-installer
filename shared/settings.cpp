@@ -73,32 +73,38 @@ Settings::~Settings()
     delete m_settingsMain;
 }
 
+/** 
+ @TODO split raw fetching from settings file from path finding logic. The latter has nothing to do with the Settings class
+ @note installDir() creates the installation dir if not present. The installer saves files into <root>/etc/installer.ini
+*/
 QString Settings::installDir() const
 {
-    QString dir;
-    if (!m_installDir.isEmpty())
-        dir = m_installDir;
-    else
-        dir = m_settingsMain->value("rootdir", "").toString();
-    if(dir.isEmpty())
-        dir = QString::fromLocal8Bit( qgetenv( "ProgramFiles" ) ) + "/KDE";
+    QStringList pathes;
+    pathes << m_installDir;
+    pathes << m_settingsMain->value("rootdir", "").toString();
+    pathes << QString::fromLocal8Bit( qgetenv( "ProgramFiles" ) ) + "/KDE";
+    pathes << QString::fromLocal8Bit( qgetenv( "ALLUSERSPROFILE" ) ) + "/KDE";
 
-    QFileInfo fi(dir);
-    if(!fi.exists())
+    foreach(const QString &path, pathes)
     {
-        if(!QDir().mkpath(dir))
+        QFileInfo fi(path);
+
+        // path exists
+        if(fi.exists())
         {
-            qCritical() << "could not create directory" << dir;
-            return QDir::currentPath();
+            if (fi.isDir())
+                return path;
+            qCritical() << "path is no directory" << path;
+            continue;
         }
-        return dir;
+        // path do not exists
+        if (QDir().mkpath(path))
+            return path;
+
+        qCritical() << "could not create directory" << path;
     }
-    if(!fi.isDir())
-    {
-        qCritical() << "rootdir is no directory " << dir;
-        return QDir::currentPath();
-    }
-    return dir;
+   qCritical() << "I'm not been able to find a usable default root directory, using empty";
+   return QString();
 }
 
 void Settings::setInstallDir(const QString &dir, bool persistent)
@@ -119,6 +125,7 @@ void Settings::setInstallDir(const QString &dir, bool persistent)
     }
 }
 
+/// @TODO split raw fetching from settings file from path finding logic. The latter has nothing to do with the Settings class
 QString Settings::downloadDir() const
 {
     QString result;
