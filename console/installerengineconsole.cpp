@@ -346,6 +346,32 @@ bool InstallerEngineConsole::installPackages(const QStringList &packages,const Q
     return true;
 }
 
+bool InstallerEngineConsole::installPackages(const QUrl &file)
+{
+    init();
+    Package package;
+    Package::PackageItem item(FileTypes::BIN);
+    QFileInfo fi(file.toLocalFile());
+    item.setFileName(fi.fileName());
+    package.add(item);
+    // save an restore original value
+    Settings::instance().setDownloadDir(fi.absolutePath(),false);
+
+    Package *p = &package;
+
+    if (p->hasType(FileTypes::BIN))
+        p->installItem(m_installer,FileTypes::BIN);
+    if (p->hasType(FileTypes::LIB))
+        p->installItem(m_installer,FileTypes::LIB);
+    if (p->hasType(FileTypes::DOC))
+        p->installItem(m_installer,FileTypes::DOC);
+    if (p->hasType(FileTypes::SRC))
+        p->installItem(m_installer,FileTypes::SRC);
+    if (p->hasType(FileTypes::DBG))
+        p->installItem(m_installer,FileTypes::DBG);
+    return true;
+}
+
 
 bool InstallerEngineConsole::removePackages(const QStringList &packages)
 {

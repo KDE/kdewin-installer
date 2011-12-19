@@ -26,6 +26,8 @@
 #include  "installerengine.h"
 #include "typehelper.h"
 
+class QUrl;
+
 class InstallerEngineConsole : public InstallerEngine
 {
 public:
@@ -62,6 +64,7 @@ public:
 
     bool downloadPackages(const QStringList &packages, const QString &category=QString());
     bool installPackages(const QStringList &packages, const QString &category=QString());
+    bool installPackages(const QUrl &file);
     bool removePackages(const QStringList &packages);
 
 protected:

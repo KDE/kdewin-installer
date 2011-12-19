@@ -36,6 +36,7 @@
 class QTextStream;
 class Downloader;
 class Installer;
+class QFile;
 
 typedef QHash<QString, QString> StringHash;
 
@@ -142,6 +143,7 @@ public:
     
     Package();
     Package(const Package &other);
+    Package(const QUrl &file);
 
     // base package related methods 
 

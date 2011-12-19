@@ -55,6 +55,7 @@ static struct Options
     bool debug;
     QString url;
     QString rootdir;
+    QUrl file;
 }
 options;
 
@@ -73,6 +74,7 @@ static void usage(const QString &message=QString())
     << "\n -r <path>|--root=<path>                        use install <root> [1]"
     << "\n"
     << "\n -i|--install <package>                         download and install package"
+    << "\n -i|--install -f| --file <file>                         install package from file"
     << "\n -d|--download <package>                        download package"
     << "\n -e|--erase <package>                           remove installed package"
     << "\n"
@@ -124,7 +126,7 @@ int main(int argc, char *argv[])
             else if (option == "-e" || option == "--erase")
                 options.remove = true;
             else if (option == "-i" || option == "--install")
-                options.download = options.install = true;
+                options.install = true;
             else if (option == "-l" || option == "--list")
             {
                 options.list = true;
@@ -133,6 +135,19 @@ int main(int argc, char *argv[])
             {
                 if (options.list)
                     options.listURL = true;
+                else
+                {
+                    usage(app.arguments().at(i) + " could not be used in this context");
+                    exit(1);
+                }
+            }
+            else if (options.install && (app.arguments().at(i) == "-f" || app.arguments().at(i) == "--file") &&  app.arguments().size() > i+1)
+            {
+                if (options.install)
+                {
+                    options.file = QUrl::fromLocalFile(app.arguments().at(i+1));
+                    i++;
+                }
                 else
                 {
                     usage(app.arguments().at(i) + " could not be used in this context");
@@ -183,6 +198,9 @@ int main(int argc, char *argv[])
         else
             packages << app.arguments().at(i);
     }
+
+    if (options.install && options.file.isEmpty())
+        options.download = true;
 
     setMessageHandler();
 
@@ -253,14 +271,21 @@ int main(int argc, char *argv[])
         return 0;
     }
 
+    // @TODO: implement update mode
+
     if(options.remove && packages.size() > 0)
         engine.removePackages(packages);
     else
     {
-        if((options.download || options.install) && packages.size() > 0)
+        if((options.download) && packages.size() > 0)
             engine.downloadPackages(packages);
-        if(options.install && packages.size() > 0)
-            engine.installPackages(packages);
+        if(options.install)
+        {
+            if (packages.size() > 0)
+                engine.installPackages(packages);
+            else if (!options.file.isEmpty())
+                engine.installPackages(options.file);
+        }
     }
     return 0;
 
