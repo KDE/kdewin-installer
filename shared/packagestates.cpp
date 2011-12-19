@@ -21,6 +21,7 @@
 ****************************************************************************/
 
 #include "packagestates.h"
+#include "database.h"
 #include "typehelper.h"
 
 // @TODO add reference counter to be able to unselected indirect dependencies
@@ -126,6 +127,19 @@ QList <Package *>PackageStates::packages(PackageList *list)
     for (;i != m_states.end(); ++i)
     {
         Package *p = list->getPackage(i.key());
+        if (p)
+            packages.append(p);
+    }
+    return packages;
+}
+
+QList <Package *>PackageStates::packages(Database *database)
+{
+    QList <Package *> packages;
+    PackageStatesType::iterator i = m_states.begin();
+    for (;i != m_states.end(); ++i)
+    {
+        Package *p = database->getPackage(i.key());
         if (p)
             packages.append(p);
     }
