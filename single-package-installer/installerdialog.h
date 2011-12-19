@@ -71,7 +71,7 @@ private:
     void setError(int pagenum);
 
     QStringList m_packages;
-    QList<Package *> packagesToInstall;
+    QList<Package *> m_packagesToInstall;
     PostProcessing m_postProcessing;
     int page;
     QPixmap next;

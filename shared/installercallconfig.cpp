@@ -29,7 +29,7 @@
 #include <QStringList>
 
 InstallerCallConfig::InstallerCallConfig(const QString &fileName)
-    : isLoaded(false), hasMirror(false), hasVersion(false), hasReleaseType(false), hasSDK(true)
+    : isLoaded(false), hasMirror(false), hasVersion(false), hasReleaseType(false), hasSDK(false)
 {
     QFileInfo fi(!fileName.isEmpty() ? fileName : QCoreApplication::applicationFilePath());
     installerBaseName = fi.completeBaseName();
