@@ -353,12 +353,11 @@ bool InstallerEngineConsole::removePackages(const QStringList &packages)
     Q_FOREACH(const QString &pkgName, packages)
     {
         Package *p = m_database->getPackage(pkgName);
+        if (!p)
         {
             qError() << "package \"" << pkgName << "\" could not be removed, it is not installed\n";
             continue;
         }
-        if (!p)
-            continue;
         if (p->hasType(FileTypes::BIN))
             p->removeItem(m_installer,FileTypes::BIN);
         if (p->hasType(FileTypes::LIB))
