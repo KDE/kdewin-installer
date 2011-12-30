@@ -1,7 +1,7 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Ralf Habacker. All rights reserved.
-** Copyright (C) 2011 Patrick von Reth patrick.vonreth@gmail.com> 
+** Copyright (C) 2010-2011 Ralf Habacker. All rights reserved.
+** Copyright (C) 2011 Patrick von Reth patrick.vonreth@gmail.com>
 **
 ** This file is part of the KDE installer for windows
 **
@@ -26,7 +26,8 @@
 #include "package.h"
 #include "typehelper.h"
 
-class PackageInfo {
+class PackageInfo
+{
 public:
     QString name;
     QString architecture;

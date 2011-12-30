@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Ralf Habacker <ralf.habacker@freenet.de>
+** Copyright (C) 2010-2011 Ralf Habacker <ralf.habacker@freenet.de>
 ** Copyright (C) 2011 Patrick von Reth <patrick.vonreth@gmail.com>
 ** All rights reserved.
 **
@@ -27,24 +27,29 @@
 bool PackageInfo::fromString(const QString &name, QString &pkgName, QString &pkgVersion)
 {
     QString work(name);
-    
+
     //something like "-(mingw|mingw4|msvc|vc90|vc100)-
     QRegExp compilersRx = CompilerTypes::regex();
     //alow only number and points, as patchlvl only numbers
     QRegExp versionRx("-(\\w|\\d|\\.|_|\\+)*(-\\d*){0,1}$");
 
-
-    if(compilersRx.indexIn(work) != -1){
+    if (compilersRx.indexIn(work) != -1)
+    {
         QString compiler = compilersRx.capturedTexts()[0];
         QStringList tmp =  work.split(compiler);
         pkgName = tmp[0] + compiler;
         pkgVersion = tmp[1].remove(0,1);
-    }else{
-        if(versionRx.indexIn(work) != -1){
+    }
+    else
+    {
+        if (versionRx.indexIn(work) != -1)
+        {
             QStringList tmp = versionRx.capturedTexts();
             pkgVersion = tmp[0].remove(0,1);
             pkgName = work.remove("-" + tmp[0]);
-        }else{
+        }
+        else
+        {
             qWarning() << "filename without version found" << name;
             return false;
         }
@@ -55,22 +60,26 @@ bool PackageInfo::fromString(const QString &name, QString &pkgName, QString &pkg
 PackageInfo PackageInfo::fromString(const QString &_name, const QString &version)
 {
     PackageInfo result;
-    if(_name.isEmpty())
+    if (_name.isEmpty())
         return result;
 
     QString name = _name;
 
     // check architecture
-    QRegExp archRx = ArchitectureTypes::endswith();    
-    if( archRx.indexIn(name) != -1){
+    QRegExp archRx = ArchitectureTypes::endswith();
+    if ( archRx.indexIn(name) != -1)
+    {
         result.architecture = archRx.capturedTexts()[0];
-    }else{
+    }
+    else
+    {
         result.architecture = "x86";
     }
 
     // check type
     QRegExp typeRx = FileTypes::endswith();
-    if(typeRx.indexIn(name) != -1){
+    if (typeRx.indexIn(name) != -1)
+    {
         result.type = FileTypes::fromString(typeRx.capturedTexts()[0]);
         name.remove("-" + result.type);
     }
@@ -92,11 +101,12 @@ bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QStrin
 
     // first remove ending
     int idx  = fileName.lastIndexOf('.');
-    if(idx != -1)
+    if (idx != -1)
     {
         pkgFormat = fileName.mid(idx + 1);
         baseName = fileName.left(idx).toLower();
-        if(pkgFormat == "bz2") {
+        if (pkgFormat == "bz2")
+        {
             int idx2 = fileName.lastIndexOf('.', idx - 1);
             pkgFormat = fileName.mid(idx2 + 1);
             idx = idx2;
@@ -111,7 +121,8 @@ bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QStrin
 
 
     QRegExp typeRx = FileTypes::endswith();
-    if(typeRx.indexIn(baseName) == -1){
+    if (typeRx.indexIn(baseName) == -1)
+    {
         qWarning() << "filename without type found" << baseName;
         return false;
     }
@@ -148,7 +159,8 @@ QStringList PackageInfo::endings()
 {
     QStringList list;
     list << CompilerTypes::values();
-    if(isX64Windows()) list << "x64";
+    if (isX64Windows())
+        list << "x64";
     list << "x86";
     return list;
 }
