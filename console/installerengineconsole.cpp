@@ -141,7 +141,7 @@ void InstallerEngineConsole::queryPackageListFiles(const QStringList &list)
 void InstallerEngineConsole::queryPackageWhatRequires(const QString &pkgName)
 {
     init();
-    Package *p = m_packageResources->getPackage(pkgName);
+    Package *p = m_packageResources->find(pkgName);
     if (!p)
         return; 
 
@@ -160,7 +160,7 @@ void InstallerEngineConsole::queryPackageWhatRequiresAll(const QString &pkgName,
 {
     init();
     static int level=0; 
-    Package *p = m_packageResources->getPackage(pkgName);
+    Package *p = m_packageResources->find(pkgName);
     if (!p)
         return; 
 
@@ -198,7 +198,7 @@ void InstallerEngineConsole::listPackage()
 void InstallerEngineConsole::listPackage(const QString &pkgName)
 {
     init();
-    Package *p = m_packageResources->getPackage(pkgName);
+    Package *p = m_packageResources->find(pkgName);
     printPackage(p);
 }
 
@@ -249,7 +249,7 @@ void InstallerEngineConsole::listPackageURLs()
 void InstallerEngineConsole::listPackageURLs(const QString &pkgName)
 {
     init();
-    Package *p = m_packageResources->getPackage(pkgName); 
+    Package *p = m_packageResources->find(pkgName);
     if (includePackage(Settings::instance().compilerType(),p->name()))
         printPackageURLs(p);
 }
@@ -267,7 +267,7 @@ void InstallerEngineConsole::listPackageURLs(const QStringList &list)
 void InstallerEngineConsole::listPackageDescription(const QString &pkgName)
 {
     init();
-    Package *p = m_packageResources->getPackage(pkgName); 
+    Package *p = m_packageResources->find(pkgName);
     if (!p)
         return;
     qprintf("%s\n",qPrintable(p->notes()));
@@ -283,7 +283,7 @@ void InstallerEngineConsole::listPackageDescription(const QStringList &list)
 void InstallerEngineConsole::listPackageCategories(const QString &pkgName)
 {
     init();
-    Package *p = m_packageResources->getPackage(pkgName); 
+    Package *p = m_packageResources->find(pkgName);
     if (!p)
         return;
     qprintf("%s\n",qPrintable(p->categories().join("\n")));
@@ -301,7 +301,7 @@ bool InstallerEngineConsole::downloadPackages(const QStringList &packages, const
     init();
     Q_FOREACH(const QString &pkgName, packages)
     {
-        Package *p = m_packageResources->getPackage(pkgName);
+        Package *p = m_packageResources->find(pkgName);
         if (!p)
         {
             qError() << "package \"" << pkgName << "\" not available for download\n";
@@ -326,7 +326,7 @@ bool InstallerEngineConsole::installPackages(const QStringList &packages,const Q
     init();
     Q_FOREACH(const QString &pkgName, packages)
     {
-        Package *p = m_packageResources->getPackage(pkgName);
+        Package *p = m_packageResources->find(pkgName);
         if (!p)
         {
             qError() << "package \"" << pkgName << "\" not available for installation\n";
