@@ -87,7 +87,7 @@ QString Settings::installDir() const
 
     foreach(const QString &path, pathes)
     {
-        if (path.isEmpty())
+        if (path.trimmed().isEmpty())
             continue;
 
         QFileInfo fi(path);
@@ -162,7 +162,7 @@ QString Settings::downloadDir() const
 
     foreach(const QString &path, tempPathes)
     {
-        if (path.isEmpty())
+        if (path.trimmed().isEmpty())
             continue;
 
         QDir d(path);
