@@ -1,9 +1,12 @@
 ChangeLog
 =========
+
 0.9.9-6
 -----------------
 - console-installer: - added remove package option (Ralf Habacker)
                      - crash fix when uninstalling package with console installer (Ralf Habacker)
+- common:            - fixed 'No such slot' message in log file (Ralf Habacker)
+                     - fixed 'Warning: QDir::mkpath: Empty or null file name(s)' message in log file (Ralf Habacker)
 
 0.9.9-5
 -----------------
