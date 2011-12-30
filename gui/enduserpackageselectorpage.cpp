@@ -235,6 +235,8 @@ void EndUserPackageSelectorPage::initializePage()
     engine->init();
     InstallerDialogs::instance().downloadProgressDialog(this,false);
 
+    // disabled for now, because it will not install debug packages for already selected packages, need to be fixed
+    ui.installDebugPackagesCheckBox->setVisible(false);
     ui.installDebugPackagesCheckBox->setEnabled(engine->database()->size() == 0);
     ui.installDebugPackagesCheckBox->setChecked(Settings::instance().installDebugPackages());
     engine->setInstallDebugPackages(Settings::instance().installDebugPackages());
