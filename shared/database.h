@@ -49,7 +49,8 @@ public:
     void listPackages ( const QString &title=QString() );
     QStringList getPackageFiles ( const QString &pkgName, FileTypes::Type pkgType=FileTypes::BIN );
     bool verifyFiles( const QString &pkgName, FileTypes::Type pkgType=FileTypes::BIN  );
-    Package *getPackage ( const QString &pkgName, const QByteArray &version=QByteArray() );
+    Package *getPackage ( const QString &pkgName, const QByteArray &version=QByteArray() ) { return find(pkgName, version); }
+    Package *find ( const QString &pkgName, const QByteArray &version=QByteArray() );
     void clear();
 
     int size() const {

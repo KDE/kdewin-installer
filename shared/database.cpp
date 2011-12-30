@@ -135,7 +135,7 @@ void Database::addFromRegistry()
 }
 
 
-Package *Database::getPackage ( const QString &name, const QByteArray &version )
+Package *Database::find ( const QString &name, const QByteArray &version )
 {
 #ifdef DEBUG
     qDebug() << __FUNCTION__;
