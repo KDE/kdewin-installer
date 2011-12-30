@@ -62,7 +62,7 @@ void PostProcessPage::postProcessingEnd()
     disconnect(&m_postProcessing,SIGNAL(numberOfCommands(int)),ui.progressBar,SLOT(setMaximum(int)));
     disconnect(&m_postProcessing,SIGNAL(finished()),this,SLOT(postProcessingEnd()));
     disconnect(&m_postProcessing,SIGNAL(commandStarted(int)),ui.progressBar,SLOT(setValue(int)));
-    disconnect(&m_postProcessing,SIGNAL(commandStarted(const QString &)),ui.listWidget,SLOT(addItem(const QString &)));
+    disconnect(&m_postProcessing,SIGNAL(commandStarted(const QString &)),this,SLOT(addItem(const QString &)));
     if (Settings::instance().autoNextStep())
         wizard()->next();
 }
