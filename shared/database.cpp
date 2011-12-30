@@ -262,8 +262,9 @@ bool Database::readFromDirectory ( const QString &_dir )
         QString pkgName;
         QString pkgVersion;
         QString pkgType;
+        QString pkgArch;
         QString pkgFormat;
-        if ( !PackageInfo::fromFileName ( fileName,pkgName,pkgVersion,pkgType,pkgFormat ) )
+        if ( !PackageInfo::fromFileName ( fileName,pkgName,pkgVersion,pkgType,pkgArch,pkgFormat ) )
             continue;
         Package *pkg;
         if ( ( pkg = getPackage ( pkgName,pkgVersion.toAscii() ) ) != NULL ) {
@@ -274,6 +275,7 @@ bool Database::readFromDirectory ( const QString &_dir )
         } else {
             Package *pkg =  new Package;
             pkg->setName ( pkgName );
+            pkg->setArchitecture( pkgArch );
             pkg->setInstalledVersion ( pkgVersion );
             Package::PackageItem pi ( pkgType );
             pi.setInstalled(true);

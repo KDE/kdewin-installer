@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2010-2011 Ralf Habacker. All rights reserved.
-** Copyright (C) 2011 Patrick von Reth patrick.vonreth@gmail.com>
+** Copyright (C) 2011 Patrick von Reth <patrick.vonreth@gmail.com>
 **
 ** This file is part of the KDE installer for windows
 **
@@ -29,20 +29,47 @@
 class PackageInfo
 {
 public:
-    QString name;
-    QString architecture;
-    FileTypes::Type type;
-    QString version;
+    QString name;         ///< package name
+    QString architecture; ///< package architecture
+    QString typeString;   ///< package type as string
+    FileTypes::Type type; ///< package type
+    QString version;      ///< package version
+    QString format;       ///< package format eg tar.bz2, zip
 
+    PackageInfo();
+
+    /**
+     check package type
+     @param _type type to check
+     @return true if object is _type
+    */
+    bool isType(FileTypes::Type _type)
+    {
+        return type == _type;
+    }
+
+    /**
+     check package type
+     @param _type type to check
+     @return true if obkect is _type or type is empty
+    */
+    bool isTypeOrEmpty(FileTypes::Type _type)
+    {
+        return isType(_type) || type == FileTypes::NONE;
+    }
 
     /// separate package name and version from a string
-    static bool fromString(const QString &astring, QString &pkgName, QString &pkgVersion);
+    QT_DEPRECATED static bool fromString(const QString &astring, QString &pkgName, QString &pkgVersion);
 
     /// create PackageInfo instance from string containing package name and version
     static PackageInfo fromString(const QString &name, const QString &version=QString());
 
-    /// separate package name, version, type and file format from a filename
-    static bool fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat);
+    /// @TODO make deprecated
+    /// separate package name, version, type, architecture and file format from a filename
+    static bool fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgArch, QString &pkgFormat);
+
+    /// separate package name, version, type, architecture and file format from a filename
+    static PackageInfo fromFileName(const QString &fileName);
 
     /// return package name from string without optional compiler
     static QString baseName(const QString &_name);

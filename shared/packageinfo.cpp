@@ -24,6 +24,10 @@
 
 #include "packageinfo.h"
 
+PackageInfo::PackageInfo() : type(FileTypes::NONE)
+{
+}
+
 bool PackageInfo::fromString(const QString &name, QString &pkgName, QString &pkgVersion)
 {
     QString work(name);
@@ -95,7 +99,7 @@ PackageInfo PackageInfo::fromString(const QString &_name, const QString &version
     return result;
 }
 
-bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat)
+bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgArch, QString &pkgFormat)
 {
     QString baseName;
 
@@ -119,6 +123,17 @@ bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QStrin
         baseName = fileName.toLower();
     }
 
+    // check architecture
+    QRegExp archRx = ArchitectureTypes::endswith();
+    if ( archRx.indexIn(baseName) != -1)
+    {
+        pkgArch = archRx.capturedTexts()[0];
+        baseName.remove("-" + pkgArch);
+    }
+    else
+    {
+        pkgArch = "x86";
+    }
 
     QRegExp typeRx = FileTypes::endswith();
     if (typeRx.indexIn(baseName) == -1)
@@ -133,6 +148,14 @@ bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QStrin
     return fromString(baseName, pkgName, pkgVersion);
 }
 
+PackageInfo PackageInfo::fromFileName(const QString &fileName)
+{
+    PackageInfo info;
+    if (!PackageInfo::fromFileName(fileName, info.name, info.version, info.typeString, info.architecture, info.format))
+        return PackageInfo();
+    info.type = FileTypes::fromString(info.typeString);
+    return info;
+}
 
 QString PackageInfo::versionFileName(const QString &pkgName, const QString &pkgVersion, const FileTypes::Type type)
 {

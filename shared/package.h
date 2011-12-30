@@ -163,9 +163,14 @@ public:
     void setInstalledVersion(const QString &version) { m_installedversion = PackageVersion(version); }
     void setInstalledVersion(PackageVersion version) { m_installedversion = version; }
 
+    /// return architecture
+    QString architecture() const { return m_arch; }
+    /// set architecture
+    void setArchitecture(const QString &arch) { m_arch = arch; }
+
     /// return notes 
     QString notes() const { return m_notes; }
-   
+
     /// return long notes 
     void setNotes(const QString &notes) { m_notes = notes; }
 
@@ -288,6 +293,7 @@ protected:
     QString m_name;     // base name (a2ps)
     PackageVersion m_version;  // base version (4.13b-1)
     PackageVersion m_installedversion;
+    QString m_arch;     ///< architecture
     QString m_notes;    // notes from package.notes
     QString m_homeUrl;  // home url of package
     QString m_longNotes;// notes from package.notes

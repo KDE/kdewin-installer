@@ -94,11 +94,14 @@ Package *PackageList::findPackageFromBaseName(const QString &name, const QByteAr
 
 Package *PackageList::find(const QString &name, const QByteArray &version)
 {
+    return find(PackageInfo::fromString(name, version));
+}
+
+Package *PackageList::find(const PackageInfo &info)
+{
 #ifdef DEBUG
     qDebug() << __FUNCTION__;
 #endif
-    PackageInfo info = PackageInfo::fromString(name, version);
-
     Q_FOREACH( Package *p, m_packageList )
     {
         if (p->name() == info.name) {
@@ -109,6 +112,7 @@ Package *PackageList::find(const QString &name, const QByteArray &version)
     }
     return NULL;
 }
+
 
 QStringList PackageList::listPackages()
 {
@@ -294,8 +298,9 @@ QStringList filterFileName(const QStringList &files)
             QString pkgName;
             QString pkgVersion;
             QString pkgType;
+            QString pkgArch;
             QString pkgFormat;
-            if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgFormat))
+            if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgArch,pkgFormat))
                 continue;
             QString key = pkgName+"-"+pkgType;
             if (packages.contains(key))
@@ -521,14 +526,16 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
             QString pkgName;
             QString pkgVersion;
             QString pkgType;
+            QString pkgArch;
             QString pkgFormat;
-            if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgFormat))
+            if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgArch,pkgFormat))
                 continue;
             Package *pkg = find(pkgName, pkgVersion.toAscii());
             if(!pkg) {
                 Package p;
                 p.setVersion(pkgVersion);
                 p.setName(pkgName);
+                p.setArchitecture(pkgArch);
                 Package::PackageItem item(pkgType);
                 item.setUrlAndFileName(m_baseURL.toString() + fileName,fileName);
                 p.add(item);
