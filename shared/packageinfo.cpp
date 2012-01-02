@@ -156,16 +156,6 @@ QString PackageInfo::baseName(const QString &_name)
 
 }
 
-QStringList PackageInfo::endings()
-{
-    QStringList list;
-    list << CompilerTypes::values();
-    if (isX64Windows())
-        list << "x64";
-    list << "x86";
-    return list;
-}
-
 bool PackageInfo::extractFormat(QString &s, QString &result)
 {
 #ifdef PACKAGEINFO_DEBUG

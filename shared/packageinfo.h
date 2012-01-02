@@ -80,9 +80,6 @@ public:
     // returns manifest file name of package item e.g. xyz-1.2.3-bin.mft
     static QString manifestFileName(const QString &pkgName, const QString &pkgVersion, const FileTypes::Type type);
 
-    /// return the possible package endings
-    static QStringList endings();
-
 protected:
     /// extract file format from string
     static bool extractFormat(QString &s, QString &result);
