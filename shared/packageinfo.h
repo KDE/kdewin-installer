@@ -66,7 +66,7 @@ public:
 
     /// @TODO make deprecated
     /// separate package name, version, type, architecture and file format from a filename
-    static bool fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgArch, QString &pkgFormat);
+    static bool fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat);
 
     /// separate package name, version, type, architecture and file format from a filename
     static PackageInfo fromFileName(const QString &fileName);

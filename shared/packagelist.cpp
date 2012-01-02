@@ -291,16 +291,16 @@ QStringList filterFileName(const QStringList &files)
     QStringList filteredFiles;
 
     QMap<QString,FileType*> packages;
+
     Q_FOREACH(const QString &fileName, files)
     {
-        if (isPackageFileName(fileName) )
+        if (isPackageFileName(fileName) && CompilerTypes::regex().indexIn(fileName) != -1)
         {
             QString pkgName;
             QString pkgVersion;
             QString pkgType;
-            QString pkgArch;
             QString pkgFormat;
-            if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgArch,pkgFormat))
+            if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgFormat))
                 continue;
             QString key = pkgName+"-"+pkgType;
             if (packages.contains(key))
@@ -526,16 +526,14 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
             QString pkgName;
             QString pkgVersion;
             QString pkgType;
-            QString pkgArch;
             QString pkgFormat;
-            if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgArch,pkgFormat))
+            if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgFormat))
                 continue;
             Package *pkg = find(pkgName, pkgVersion.toAscii());
             if(!pkg) {
                 Package p;
                 p.setVersion(pkgVersion);
                 p.setName(pkgName);
-                p.setArchitecture(pkgArch);
                 Package::PackageItem item(pkgType);
                 item.setUrlAndFileName(m_baseURL.toString() + fileName,fileName);
                 p.add(item);
