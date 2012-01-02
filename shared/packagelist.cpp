@@ -92,9 +92,10 @@ Package *PackageList::find(const PackageInfo &info)
 #ifdef DEBUG
     qDebug() << __FUNCTION__;
 #endif
+    QString name = info.name + '-' + info.compiler;
     Q_FOREACH( Package *p, m_packageList )
     {
-        if (p->name() == info.name) {
+        if (p->name() == name) {
             if(!info.version.isEmpty() && p->version() != info.version)
                 continue;
             return p;
