@@ -287,7 +287,7 @@ QStringList filterFileName(const QStringList &files)
 
     Q_FOREACH(const QString &fileName, files)
     {
-        if (isPackageFileName(fileName) && CompilerTypes::regex().indexIn(fileName) != -1)
+        if (isPackageFileName(fileName))
         {
             QString pkgName;
             QString pkgVersion;
