@@ -118,16 +118,17 @@ const QString CompilerTypes::description(Type type)
     return i != -1 ? m_descriptions[i] : QString();
 }
 
-QRegExp CompilerTypes::regex(){
+QRegExp &CompilerTypes::regex()
+{
     static QRegExp compilersRx("("+values().join("|")+")");
     return compilersRx;
 }
 
-QRegExp CompilerTypes::endswith(){
+QRegExp &CompilerTypes::endswith()
+{
     static QRegExp compilersRx("("+values().join("|")+")$");
     return compilersRx;
 }
-
 
 ArchitectureTypes::Type ArchitectureTypes::fromString(const QString &_type)
 {
@@ -161,13 +162,13 @@ const QStringList ArchitectureTypes::values()
     return list;
 }
 
-QRegExp ArchitectureTypes::regex()
+QRegExp& ArchitectureTypes::regex()
 {
     static QRegExp architecturesRx("("+ArchitectureTypes::values().join("|")+")");
     return architecturesRx;
 }
 
-QRegExp ArchitectureTypes::endswith()
+QRegExp& ArchitectureTypes::endswith()
 {
     static QRegExp architecturesRx("("+ArchitectureTypes::values().join("|")+")$");
     return architecturesRx;
@@ -211,13 +212,13 @@ const QStringList FileTypes::values()
     return list;
 }
 
-QRegExp FileTypes::regex()
+QRegExp &FileTypes::regex()
 {
     static QRegExp compilersRx("("+FileTypes::values().join("|")+")");
     return compilersRx;
 }
 
-QRegExp FileTypes::endswith()
+QRegExp &FileTypes::endswith()
 {
     static QRegExp compilersRx("("+FileTypes::values().join("|")+")$");
     return compilersRx;

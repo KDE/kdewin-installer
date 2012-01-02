@@ -77,14 +77,14 @@ public:
      which could be used to match package file names.
      @return regular expression instance
     */
-    static QRegExp regex();
+    static QRegExp &regex();
 
     /**
      returns regular expression of supported compilers which could
      be used to match the end of a package file names.
      @return regular expression instance
     */
-     static QRegExp endswith();
+     static QRegExp &endswith();
 
     // convert a string to compiler type
     static Type fromString(const QString &type);
@@ -111,8 +111,8 @@ public:
     static Type fromString(const QString &type);
     static const QString toString(Type architecture);
     static const QStringList values();
-    static QRegExp regex();
-    static QRegExp endswith();
+    static QRegExp &regex();
+    static QRegExp &endswith();
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(ArchitectureTypes::Types);
 
@@ -125,8 +125,8 @@ public:
     static Type fromString(const QString &type);
     static const QString toString(Type type);
     static const QStringList values();
-    static QRegExp regex();
-    static QRegExp endswith();
+    static QRegExp &regex();
+    static QRegExp &endswith();
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(FileTypes::Types);
 
