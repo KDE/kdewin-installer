@@ -210,7 +210,6 @@ bool PackageInfo::extractCompiler(QString &s, QString &result)
 #ifdef PACKAGEINFO_DEBUG
     QString tmp(s);
 #endif
-    //something like "-(mingw|mingw4|msvc|vc90|vc100)-
     QRegExp compilersRx = CompilerTypes::regex();
 
     if (compilersRx.indexIn(s) == -1)
@@ -232,7 +231,7 @@ bool PackageInfo::extractVersion(QString &s, QString &result)
     QString tmp(s);
 #endif
     //alow only number and points, as patchlvl only numbers
-    QRegExp versionRx("-(\\w|\\d|\\.|_|\\+)*(-\\d*){0,1}$");
+    QRegExp versionRx("-(\\d|\\.|_|\\+)*(-\\d*){0,1}$");
 
     if (versionRx.indexIn(s) == -1)
     {
