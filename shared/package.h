@@ -147,7 +147,7 @@ public:
 
     // base package related methods 
 
-    /// return name 
+    /// return name - the name contains the base name and the compiler
     QString name() const { return m_name; }
     /// set name 
     void setName(QString const &name) { m_name = name; }
