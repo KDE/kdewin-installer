@@ -22,6 +22,7 @@
 
 #include "packagecategorycache.h"
 #include "packagelist.h"
+#include "packageinfo.h"
 #include "database.h"
 
 PackageCategoryCache::PackageCategoryCache()
@@ -73,7 +74,9 @@ QList <Package *>PackageCategoryCache::packages(const QString &category, Package
         return packages;
     Q_FOREACH(const QString &pkgName, m_data[category].packages) 
     {
-        Package *p = list.find(pkgName);
+        PackageInfo info;
+        info.name = pkgName;
+        Package *p = list.find(info);
         if (p)
             packages.append(p);
     }

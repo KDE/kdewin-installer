@@ -141,7 +141,9 @@ Package *Database::find ( const QString &_name, const QByteArray &version )
     qDebug() << __FUNCTION__;
 #endif
     PackageInfo info = PackageInfo::fromString(_name, version);
-    QString name = info.name + '-' + info.compiler;
+    QString name = info.name;
+    if (!info.compiler.isEmpty())
+        name += '-' + info.compiler;
     Q_FOREACH ( Package *pkg, m_database ) {
         if ( pkg->name() == name ) {
             if ( !info.version.isEmpty() && pkg->version() != info.version )

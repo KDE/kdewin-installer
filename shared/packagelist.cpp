@@ -92,7 +92,9 @@ Package *PackageList::find(const PackageInfo &info)
 #ifdef DEBUG
     qDebug() << __FUNCTION__;
 #endif
-    QString name = info.name + '-' + info.compiler;
+    QString name = info.name;
+    if (!info.compiler.isEmpty())
+        name += '-' + info.compiler;
     Q_FOREACH( Package *p, m_packageList )
     {
         if (p->name() == name) {
