@@ -27,6 +27,10 @@
 
 #include <QDebug>
 
+Site::Site() : m_hashType(Hash::None)
+{
+}
+
 void Site::addDependencies(const QString &_package, const QStringList &deps)
 {
     QString package = _package.toLower();
