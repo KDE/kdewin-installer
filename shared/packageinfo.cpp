@@ -71,31 +71,19 @@ PackageInfo PackageInfo::fromString(const QString &_name, const QString &version
 
     QString name = _name;
 
-    // check architecture
-    QRegExp archRx = ArchitectureTypes::endswith();
-    if ( archRx.indexIn(name) != -1)
-    {
-        result.architecture = archRx.capturedTexts()[0];
-    }
-    else
-    {
-        result.architecture = "x86";
-    }
+    extractCompiler(name, result.compiler);
+    extractType(name, result.typeString);
+    result.type = FileTypes::fromString(result.typeString);
 
-    // check type
-    QRegExp typeRx = FileTypes::endswith();
-    if (typeRx.indexIn(name) != -1)
-    {
-        result.type = FileTypes::fromString(typeRx.capturedTexts()[0]);
-        name.remove("-" + result.type);
-    }
 
     // version is given
     if (!version.isEmpty())
     {
         result.version = version;
-        result.name = name;
-        return result;
+    }
+    else
+    {
+        extractVersion(name, result.version);
     }
     result.name = name;
     return result;
@@ -216,7 +204,6 @@ bool PackageInfo::extractType(QString &s, QString &result)
     QRegExp typeRx = FileTypes::endswith();
     if (typeRx.indexIn(s) == -1)
     {
-        qWarning() << "filename without type found" << s;
         return false;
     }
     result = typeRx.capturedTexts()[0];
@@ -238,7 +225,6 @@ bool PackageInfo::extractCompiler(QString &s, QString &result)
 
     if (compilersRx.indexIn(s) == -1)
     {
-        qWarning() << "filename without type found" << s;
         return false;
     }
     result = compilersRx.capturedTexts()[0];
@@ -260,7 +246,6 @@ bool PackageInfo::extractVersion(QString &s, QString &result)
 
     if (versionRx.indexIn(s) == -1)
     {
-        qWarning() << "filename without version found" << s;
         return false;
     }
     result = versionRx.capturedTexts()[0].remove(0,1);

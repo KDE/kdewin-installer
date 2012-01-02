@@ -30,7 +30,7 @@ class PackageInfo
 {
 public:
     QString name;         ///< package name
-    QString architecture; ///< package architecture
+    QString compiler;     ///< compiler
     QString typeString;   ///< package type as string
     FileTypes::Type type; ///< package type
     QString version;      ///< package version
