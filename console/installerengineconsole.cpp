@@ -38,6 +38,12 @@
 #include <QTreeWidget>
 #include <QFlags>
 
+/**
+ package names could be in the form 
+ <package>
+ <package>-<compiler>
+ <package>-<compiler>-<type>
+*/
 
 InstallerEngineConsole::InstallerEngineConsole()
 : InstallerEngine(0), done(false)
@@ -198,7 +204,7 @@ void InstallerEngineConsole::listPackage()
 void InstallerEngineConsole::listPackage(const QString &pkgName)
 {
     init();
-    Package *p = m_packageResources->find(pkgName);
+    Package *p = m_packageResources->find(PackageInfo::fromFileName(pkgName));
     printPackage(p);
 }
 
