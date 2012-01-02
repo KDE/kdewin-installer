@@ -24,6 +24,8 @@
 
 #include "packageinfo.h"
 
+//#define PACKAGEINFO_DEBUG
+
 PackageInfo::PackageInfo() : type(FileTypes::NONE)
 {
 }
@@ -188,3 +190,110 @@ QStringList PackageInfo::endings()
     return list;
 }
 
+bool PackageInfo::extractFormat(QString &s, QString &result)
+{
+#ifdef PACKAGEINFO_DEBUG
+    QString tmp(s);
+#endif
+    // first remove ending
+    int idx  = s.lastIndexOf('.');
+    if (idx != -1)
+    {
+        result = s.mid(idx + 1);
+        s = s.left(idx).toLower();
+        if (result == "bz2")
+        {
+            int idx2 = s.lastIndexOf('.', idx - 1);
+            result = s.mid(idx2 + 1);// @TODO return complete format + '.' + result;
+            idx = idx2;
+        }
+        s = s.left(idx);
+    }
+    else
+    {
+        result = "unknown";
+        s = s.toLower();
+    }
+#ifdef PACKAGEINFO_DEBUG
+    qDebug() << "in:" << tmp << "out:" << s << "extracted" << result;
+#endif
+    return true;
+}
+
+bool PackageInfo::extractType(QString &s, QString &result)
+{
+#ifdef PACKAGEINFO_DEBUG
+    QString tmp(s);
+#endif
+    QRegExp typeRx = FileTypes::endswith();
+    if (typeRx.indexIn(s) == -1)
+    {
+        qWarning() << "filename without type found" << s;
+        return false;
+    }
+    result = typeRx.capturedTexts()[0];
+    s.remove("-" + result);
+
+#ifdef PACKAGEINFO_DEBUG
+    qDebug() << "in:" << tmp << "out:" << s << "extracted" << result;
+#endif
+    return true;
+}
+
+bool PackageInfo::extractCompiler(QString &s, QString &result)
+{
+#ifdef PACKAGEINFO_DEBUG
+    QString tmp(s);
+#endif
+    //something like "-(mingw|mingw4|msvc|vc90|vc100)-
+    QRegExp compilersRx = CompilerTypes::regex();
+
+    if (compilersRx.indexIn(s) == -1)
+    {
+        qWarning() << "filename without type found" << s;
+        return false;
+    }
+    result = compilersRx.capturedTexts()[0];
+    s.remove("-" + result);
+
+#ifdef PACKAGEINFO_DEBUG
+    qDebug() << "in:" << tmp << "out:" << s << "extracted" << result;
+#endif
+    return true;
+}
+
+bool PackageInfo::extractVersion(QString &s, QString &result)
+{
+#ifdef PACKAGEINFO_DEBUG
+    QString tmp(s);
+#endif
+    //alow only number and points, as patchlvl only numbers
+    QRegExp versionRx("-(\\w|\\d|\\.|_|\\+)*(-\\d*){0,1}$");
+
+    if (versionRx.indexIn(s) == -1)
+    {
+        qWarning() << "filename without version found" << s;
+        return false;
+    }
+    result = versionRx.capturedTexts()[0].remove(0,1);
+    s.remove("-" + result);
+
+#ifdef PACKAGEINFO_DEBUG
+    qDebug() << "in:" << tmp << "out:" << s << "extracted" << result;
+#endif
+    return true;
+}
+
+bool PackageInfo::extractName(QString &s, QString &result)
+{
+#ifdef PACKAGEINFO_DEBUG
+    QString tmp(s);
+#endif
+    result = s;
+    s = "";
+
+#ifdef PACKAGEINFO_DEBUG
+    qDebug() << "in:" << tmp << "out:" << s << "extracted" << result;
+#endif
+    return true;
+}

@@ -82,6 +82,19 @@ public:
 
     /// return the possible package endings
     static QStringList endings();
+
+protected:
+    /// extract file format from string
+    static bool extractFormat(QString &s, QString &result);
+    /// extract package type from string
+    static bool extractType(QString &s, QString &result);
+    /// extract compiler from string
+    static bool extractCompiler(QString &s, QString &result);
+    /// extract version from string
+    static bool extractVersion(QString &s, QString &result);
+    /// extract package name from string
+    static bool extractName(QString &s, QString &result);
+
 };
 
 #endif
