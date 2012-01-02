@@ -82,16 +82,6 @@ bool PackageList::append(const PackageList &src)
     return true;
 }
 
-Package *PackageList::findPackageFromBaseName(const QString &name, const QByteArray &version)
-{
-    Q_FOREACH(QString ending, PackageInfo::endings())
-    {
-        Package *p = find(name + "-" + ending, version);
-        if(p) return p;
-    }
-    return NULL;
-}
-
 Package *PackageList::find(const QString &name, const QByteArray &version)
 {
     return find(PackageInfo::fromString(name, version));
