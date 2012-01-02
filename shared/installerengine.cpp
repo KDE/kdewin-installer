@@ -423,10 +423,11 @@ bool InstallerEngine::addMetaPackages()
     Q_FOREACH(const QString& metaPackage, m_globalConfig->metaPackages().keys())
     {
         QList<Package*> pkgList;
-        Q_FOREACH(QString ending, PackageInfo::endings())
+        Q_FOREACH(QString compiler, CompilerTypes::values())
         {
-            Package *_p = m_packageResources->find(metaPackage + "-" + ending);
-            if(_p) pkgList.append(_p);
+            Package *_p = m_packageResources->find(metaPackage + "-" + compiler);
+            if(_p)
+                pkgList.append(_p);
         }
 
         // only add metaPackage if there is no package existing
