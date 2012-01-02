@@ -283,6 +283,7 @@ QStringList filterFileName(const QStringList &files)
 {
     QStringList filteredFiles;
 
+    // key is <package>-<compiler>-<type> eg akonadi-vc100-bin
     QMap<QString,FileType*> packages;
 
     Q_FOREACH(const QString &fileName, files)
@@ -290,12 +291,18 @@ QStringList filterFileName(const QStringList &files)
         if (isPackageFileName(fileName))
         {
             QString pkgName;
+            QString pkgCompiler;
             QString pkgVersion;
             QString pkgType;
             QString pkgFormat;
-            if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgFormat))
+            if (!PackageInfo::fromFileName(fileName, pkgName, pkgCompiler, pkgVersion, pkgType, pkgFormat))
                 continue;
-            QString key = pkgName+"-"+pkgType;
+
+            QString key = pkgName;
+            if (!pkgCompiler.isEmpty())
+                key += "-" + pkgCompiler;
+            key += "-" + pkgType;
+
             if (packages.contains(key))
             {
                 qDebug() << "compare" << fileName << "with" << key << packages.value(key)->version << pkgVersion << (packages.value(key)->version < pkgVersion);
@@ -517,16 +524,21 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
 #endif
         if (fileName.endsWith(".zip") || fileName.endsWith(".tbz") || fileName.endsWith(".tar.bz2") ) {
             QString pkgName;
+            QString pkgCompiler;
             QString pkgVersion;
             QString pkgType;
             QString pkgFormat;
-            if (!PackageInfo::fromFileName(fileName,pkgName,pkgVersion,pkgType,pkgFormat))
+            if (!PackageInfo::fromFileName(fileName, pkgName, pkgCompiler, pkgVersion, pkgType, pkgFormat))
                 continue;
-            Package *pkg = find(pkgName, pkgVersion.toAscii());
+            QString key = pkgName;
+            if (!pkgCompiler.isEmpty())
+                key += "-" + pkgCompiler;
+
+            Package *pkg = find(key, pkgVersion.toAscii());
             if(!pkg) {
                 Package p;
                 p.setVersion(pkgVersion);
-                p.setName(pkgName);
+                p.setName(key);
                 Package::PackageItem item(pkgType);
                 item.setUrlAndFileName(m_baseURL.toString() + fileName,fileName);
                 p.add(item);

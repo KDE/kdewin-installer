@@ -89,7 +89,7 @@ PackageInfo PackageInfo::fromString(const QString &_name, const QString &version
     return result;
 }
 
-bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QString &pkgVersion, QString &pkgType, QString &pkgFormat)
+bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QString &pkgCompiler, QString &pkgVersion, QString &pkgType, QString &pkgFormat)
 {
     QString baseName;
 
@@ -129,7 +129,7 @@ bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QStrin
 PackageInfo PackageInfo::fromFileName(const QString &fileName)
 {
     PackageInfo info;
-    if (!PackageInfo::fromFileName(fileName, info.name, info.version, info.typeString, info.format))
+    if (!PackageInfo::fromFileName(fileName, info.name, info.compiler, info.version, info.typeString, info.format))
         return PackageInfo();
     info.type = FileTypes::fromString(info.typeString);
     return info;

@@ -262,10 +262,11 @@ bool Database::readFromDirectory ( const QString &_dir )
     Q_FOREACH ( const QFileInfo &fi, d.entryInfoList() ) {
         QString fileName = fi.fileName();
         QString pkgName;
+        QString pkgCompiler;
         QString pkgVersion;
         QString pkgType;
         QString pkgFormat;
-        if ( !PackageInfo::fromFileName ( fileName,pkgName,pkgVersion,pkgType,pkgFormat ) )
+        if ( !PackageInfo::fromFileName ( fileName, pkgName, pkgCompiler, pkgVersion, pkgType, pkgFormat ) )
             continue;
         Package *pkg;
         if ( ( pkg = getPackage ( pkgName,pkgVersion.toAscii() ) ) != NULL ) {
