@@ -135,15 +135,15 @@ void Database::addFromRegistry()
 }
 
 
-Package *Database::find ( const QString &name, const QByteArray &version )
+Package *Database::find ( const QString &_name, const QByteArray &version )
 {
 #ifdef DEBUG
     qDebug() << __FUNCTION__;
 #endif
-    PackageInfo info = PackageInfo::fromString(name, version);
-
+    PackageInfo info = PackageInfo::fromString(_name, version);
+    QString name = info.name + '-' + info.compiler;
     Q_FOREACH ( Package *pkg, m_database ) {
-        if ( pkg->name() == info.name ) {
+        if ( pkg->name() == name ) {
             if ( !info.version.isEmpty() && pkg->version() != info.version )
                 continue;
             return pkg;
