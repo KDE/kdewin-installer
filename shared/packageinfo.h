@@ -58,7 +58,10 @@ public:
         return isType(_type) || type == FileTypes::NONE;
     }
 
-    /// separate package name and version from a string
+    /**
+     separate package name and version from a string
+     @note This method returns the package name combined with the compiler
+    */
     QT_DEPRECATED static bool fromString(const QString &astring, QString &pkgName, QString &pkgVersion);
 
     /// create PackageInfo instance from string containing package name and version

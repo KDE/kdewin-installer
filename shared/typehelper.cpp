@@ -27,7 +27,9 @@
 
 #include <QMap>
 #include <QRegExp>
-#include <QStringList>
+
+CompilerTypes supportedCompilers(CompilerTypes::supportedCompiler);
+CompilerTypes allCompilers(CompilerTypes::allCompiler);
 
 //ReleaseType toReleaseType(const QString &_type)
 //{
@@ -54,81 +56,76 @@
 //	    return "unknown";
 //}
 
-QList<CompilerTypes::Type> CompilerTypes::m_types;
-QStringList CompilerTypes::m_typeStrings;
-QStringList CompilerTypes::m_descriptions;
-
-void CompilerTypes::init()
+CompilerTypes::CompilerTypes(Scope scope) :  m_containsRegExp(0), m_endsRegExp(0)
 {
-    if (m_types.size() == 0)
-    {
 #ifdef BUILD_WITH_DEPRECATED
-        m_types << MSVC9 << MinGW4;
-        m_typeStrings << "vc90" << "mingw4";
-        m_descriptions << "MSVC 2008 32bit (deprecated)" << "MinGW4 (deprecated)";
+    m_types << MSVC9 << MinGW4;
+    m_typeStrings << "vc90" << "mingw4";
+    m_descriptions << "MSVC 2008 32bit (deprecated)" << "MinGW4 (deprecated)";
 #endif
-        m_types << MSVC10 << MinGW4_W32;
-        m_typeStrings << "vc100" << "x86-mingw4";
-        m_descriptions << "MSVC 2010 32bit" << "MinGW4 32bit";
-        if (isX64Windows())
-        {
-        // @todo: enable msvc x64 builds if we ever set them up
+    m_types << MSVC10 << MinGW4_W32;
+    m_typeStrings << "vc100" << "x86-mingw4";
+    m_descriptions << "MSVC 2010 32bit" << "MinGW4 32bit";
+    if (scope == allCompiler || isX64Windows())
+    {
+    // @todo: enable msvc x64 builds if we ever set them up
 #ifdef MSVC_X64
-            m_types << MSVC10_X64;
-            m_typeStrings << "x64-vc100";
-            m_descriptions << "MSVC 2010 64bit";
+        m_types << MSVC10_X64;
+        m_typeStrings << "x64-vc100";
+        m_descriptions << "MSVC 2010 64bit";
 #endif
-            m_types << MinGW4_W64;
-            m_typeStrings << "x64-mingw4";
-            m_descriptions << "MinGW4 64bit";
-        }
-     }
+        m_types << MinGW4_W64;
+        m_typeStrings << "x64-mingw4";
+        m_descriptions << "MinGW4 64bit";
+    }
+    m_containsRegExp = new QRegExp("("+values().join("|")+")");
+    m_endsRegExp = new QRegExp("("+values().join("|")+")$");
  }
+
+CompilerTypes::~CompilerTypes()
+{
+    delete m_containsRegExp;
+    delete m_endsRegExp;
+}
 
 bool CompilerTypes::contains(Type type)
 {
-    init();
     return m_types.contains(type);
 }
 
 CompilerTypes::Type CompilerTypes::fromString(const QString &type)
 {
-    init();
     int i = m_typeStrings.indexOf(type.toLower());
     return i != -1 ? m_types[i] : CompilerTypes::Unspecified;
 }
 
 const QString CompilerTypes::toString(Type type)
 {
-    init();
     int i = m_types.indexOf(type);
     return i != -1 ? m_typeStrings[i] : QString();
 }
 
 const QStringList &CompilerTypes::values()
 {
-    init();
     return m_typeStrings;
 }
 
 const QString CompilerTypes::description(Type type)
 {
-    init();
     int i = m_types.indexOf(type);
     return i != -1 ? m_descriptions[i] : QString();
 }
 
 QRegExp &CompilerTypes::regex()
 {
-    static QRegExp compilersRx("("+values().join("|")+")");
-    return compilersRx;
+    return *m_containsRegExp;
 }
 
 QRegExp &CompilerTypes::endswith()
 {
-    static QRegExp compilersRx("("+values().join("|")+")$");
-    return compilersRx;
+    return *m_endsRegExp;
 }
+
 
 ArchitectureTypes::Type ArchitectureTypes::fromString(const QString &_type)
 {
@@ -162,13 +159,13 @@ const QStringList ArchitectureTypes::values()
     return list;
 }
 
-QRegExp& ArchitectureTypes::regex()
+QRegExp &ArchitectureTypes::regex()
 {
     static QRegExp architecturesRx("("+ArchitectureTypes::values().join("|")+")");
     return architecturesRx;
 }
 
-QRegExp& ArchitectureTypes::endswith()
+QRegExp &ArchitectureTypes::endswith()
 {
     static QRegExp architecturesRx("("+ArchitectureTypes::values().join("|")+")$");
     return architecturesRx;

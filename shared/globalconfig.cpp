@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2006-2008 Ralf Habacker ralf.habacker@freenet.de>. All rights reserved.
+** Copyright (C) 2006-2011 Ralf Habacker ralf.habacker@freenet.de>. All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
@@ -25,6 +25,7 @@
 #include "externalinstallercontrol.h"
 #include "downloader.h"
 #include "globalconfig.h"
+#include "typehelper.h"
 
 #include <QFileInfo>
 #include <QBuffer>
@@ -492,7 +493,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     if (pkg.contains("-*"))  
                     {
                         pkg.replace("-*","-%1");
-                        foreach(const QString type, CompilerTypes::values())
+                        foreach(const QString type, supportedCompilers.values())
                             site->setPackageHomeUrl(pkg.arg(type),url);
                         pkg.replace("-%1","");
                         site->setPackageHomeUrl(pkg,url);
@@ -506,7 +507,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     if (pkg.contains("-*")) 
                     {
                         pkg.replace("-*","-%1");
-                        foreach(const QString type, CompilerTypes::values())
+                        foreach(const QString type, supportedCompilers.values())
                             site->setPackageNote(pkg.arg(type),cmd.join(" "));
                         site->setPackageNote(pkg,cmd.join(" "));
                     }
@@ -522,7 +523,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     if (pkg.contains("-*")) 
                     {
                         pkg.replace("-*","-%1");
-                        foreach(const QString type, CompilerTypes::values())
+                        foreach(const QString type, supportedCompilers.values())
                             site->setPackageLongNotes(pkg.arg(type),details);
                     }
                     else

@@ -28,10 +28,9 @@
 #include <QFlags>
 #include <QList>
 #include <QString>
+#include <QStringList>
 
 class QRegExp;
-class QStringList;
-
 
 /**
  holds a set of supported compilers
@@ -52,53 +51,63 @@ public:
         MinGW4_W32=7,
         MinGW4_W64=8 
     };
+    enum Scope {
+        allCompiler,
+        supportedCompiler,
+    };
+
+    CompilerTypes(Scope scope=supportedCompiler);
+    ~CompilerTypes();
 
     /**
       returns a list of string with support compilers
     */
-    static const QStringList &values();
+    const QStringList &values();
 
     /**
       returns description of specific compiler
       @param type compiler type 
       @return description usable in gui 
     */
-    static const QString description(Type type);
+    const QString description(Type type);
 
     /**
      returns state if the requested compiler is supported
      @param type type of compiler
      @return true if compiler is suppoprted
     */
-    static bool contains(Type type);
+    bool contains(Type type);
 
     /**
      returns regular expression of supported compilers
      which could be used to match package file names.
      @return regular expression instance
     */
-    static QRegExp &regex();
+    QRegExp &regex();
 
     /**
      returns regular expression of supported compilers which could
      be used to match the end of a package file names.
      @return regular expression instance
     */
-     static QRegExp &endswith();
+    QRegExp &endswith();
 
     // convert a string to compiler type
-    static Type fromString(const QString &type);
+    Type fromString(const QString &type);
 
     // convert a compiler type to a string
-    static const QString toString(Type compilerType);
+    const QString toString(Type compilerType);
 
 protected:
-    static QList<Type> m_types;
-    static QStringList m_typeStrings;
-    static QStringList m_descriptions;
+    QList<Type> m_types;
+    QStringList m_typeStrings;
+    QStringList m_descriptions;
+    QRegExp *m_containsRegExp;
+    QRegExp *m_endsRegExp;
+};
 
-    static void init();
- };
+extern CompilerTypes supportedCompilers;
+extern CompilerTypes allCompilers;
 
 class ArchitectureTypes {
 public:

@@ -35,7 +35,7 @@ bool PackageInfo::fromString(const QString &name, QString &pkgName, QString &pkg
     QString work(name);
 
     //something like "-(mingw|mingw4|msvc|vc90|vc100)-
-    QRegExp compilersRx = CompilerTypes::regex();
+    QRegExp &compilersRx = allCompilers.regex();
     //alow only number and points, as patchlvl only numbers
     QRegExp versionRx("-(\\w|\\d|\\.|_|\\+)*(-\\d*){0,1}$");
 
@@ -148,7 +148,7 @@ QString PackageInfo::manifestFileName(const QString &pkgName, const QString &pkg
 QString PackageInfo::baseName(const QString &_name)
 {
     QString name = _name;
-    name.remove(CompilerTypes::endswith());
+    name.remove(allCompilers.endswith());
     name.remove(ArchitectureTypes::endswith());
     //remove last "-" at the end
     static QRegExp e("-*$");
@@ -210,7 +210,7 @@ bool PackageInfo::extractCompiler(QString &s, QString &result)
 #ifdef PACKAGEINFO_DEBUG
     QString tmp(s);
 #endif
-    QRegExp compilersRx = CompilerTypes::regex();
+    QRegExp &compilersRx = allCompilers.regex();
 
     if (compilersRx.indexIn(s) == -1)
     {

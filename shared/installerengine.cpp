@@ -423,7 +423,7 @@ bool InstallerEngine::addMetaPackages()
     Q_FOREACH(const QString& metaPackage, m_globalConfig->metaPackages().keys())
     {
         QList<Package*> pkgList;
-        Q_FOREACH(QString compiler, CompilerTypes::values())
+        Q_FOREACH(QString compiler, supportedCompilers.values())
         {
             Package *_p = m_packageResources->find(metaPackage + "-" + compiler);
             if(_p)
@@ -602,6 +602,7 @@ void InstallerEngine::slotError(const QString &msg)
 
 bool InstallerEngine::includePackage(CompilerTypes::Type compilerType, const QString &name, const QString &categoryName)
 {
+    // check correctness
     if ( ( categoryName == "mingw"  || compilerType == CompilerTypes::MinGW )
         &&  QRegExp(".*-(msvc|vc90|vc100|mingw4)$").exactMatch(name) )
         return false;

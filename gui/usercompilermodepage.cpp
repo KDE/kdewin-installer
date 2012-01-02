@@ -35,26 +35,26 @@ UserCompilerModePage::UserCompilerModePage() : InstallWizardPage(0)
     setTitle(windowTitle());
     setSubTitle(statusTip());
 
-    if (!CompilerTypes::contains(CompilerTypes::MinGW4))
+    if (!supportedCompilers.contains(CompilerTypes::MinGW4))
         ui.compilerMinGW4->setVisible(false);
-    if (!CompilerTypes::contains(CompilerTypes::MinGW4_W32))
+    if (!supportedCompilers.contains(CompilerTypes::MinGW4_W32))
         ui.compilerMinGW4_W32->setVisible(false);
-    if (!CompilerTypes::contains(CompilerTypes::MSVC9))
+    if (!supportedCompilers.contains(CompilerTypes::MSVC9))
         ui.compilerMSVC9->setVisible(false);
-    if (!CompilerTypes::contains(CompilerTypes::MSVC10))
+    if (!supportedCompilers.contains(CompilerTypes::MSVC10))
         ui.compilerMSVC10->setVisible(false);
 
-    if (!CompilerTypes::contains(CompilerTypes::MSVC10_X64))
+    if (!supportedCompilers.contains(CompilerTypes::MSVC10_X64))
         ui.compilerMSVCX64->setVisible(false);
-    if (!CompilerTypes::contains(CompilerTypes::MinGW4_W64))
+    if (!supportedCompilers.contains(CompilerTypes::MinGW4_W64))
         ui.compilerMinGW4_W64->setVisible(false);
     
-    ui.compilerMinGW4->setText(CompilerTypes::description(CompilerTypes::MinGW4));
-    ui.compilerMinGW4_W32->setText(CompilerTypes::description(CompilerTypes::MinGW4_W32));
-    ui.compilerMinGW4_W64->setText(CompilerTypes::description(CompilerTypes::MinGW4_W64));
-    ui.compilerMSVC9->setText(CompilerTypes::description(CompilerTypes::MSVC9));
-    ui.compilerMSVC10->setText(CompilerTypes::description(CompilerTypes::MSVC10));
-    ui.compilerMSVCX64->setText(CompilerTypes::description(CompilerTypes::MSVC10_X64));
+    ui.compilerMinGW4->setText(supportedCompilers.description(CompilerTypes::MinGW4));
+    ui.compilerMinGW4_W32->setText(supportedCompilers.description(CompilerTypes::MinGW4_W32));
+    ui.compilerMinGW4_W64->setText(supportedCompilers.description(CompilerTypes::MinGW4_W64));
+    ui.compilerMSVC9->setText(supportedCompilers.description(CompilerTypes::MSVC9));
+    ui.compilerMSVC10->setText(supportedCompilers.description(CompilerTypes::MSVC10));
+    ui.compilerMSVCX64->setText(supportedCompilers.description(CompilerTypes::MSVC10_X64));
 
     // logical grouping isn't available in the designer yet :-P
     QButtonGroup *groupA = new QButtonGroup(this);
