@@ -41,9 +41,9 @@ class Hash {
             note that setting the type after already 
             calling addData() will reset the internal hash value
         */
-        void setType(Type type) { m_type = type; }
+        void setType(Type type);
         bool setType(const QString &type);
-        
+
         /// return hash type
         Hash::Type type() { return m_type; }
 
