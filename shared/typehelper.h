@@ -109,22 +109,6 @@ protected:
 extern CompilerTypes supportedCompilers;
 extern CompilerTypes allCompilers;
 
-class ArchitectureTypes {
-public:
-    enum Type {
-        Unspecified,
-        x86,
-        x64
-    };
-    Q_DECLARE_FLAGS(Types,Type);
-    static Type fromString(const QString &type);
-    static const QString toString(Type architecture);
-    static const QStringList values();
-    static QRegExp &regex();
-    static QRegExp &endswith();
-};
-Q_DECLARE_OPERATORS_FOR_FLAGS(ArchitectureTypes::Types);
-
 class FileTypes {
 public:
     enum Type {

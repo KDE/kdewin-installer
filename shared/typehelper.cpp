@@ -127,51 +127,6 @@ QRegExp &CompilerTypes::endswith()
     return *m_endsRegExp;
 }
 
-
-ArchitectureTypes::Type ArchitectureTypes::fromString(const QString &_type)
-{
-    QString arch = _type.toLower();
-    if(arch == "x86")
-        return x86;
-    else if(arch == "x64")
-        return x64;
-    else 
-        return Unspecified;
-}
-
-const QString ArchitectureTypes::toString(ArchitectureTypes::Type arch)
-{
-    switch(arch){
-        case x86:
-            return "x86";
-        case x64:
-            return "x64";
-        default:
-            return "";
-    }
-}
-
-const QStringList ArchitectureTypes::values()
-{
-    static QStringList list;
-    if(list.isEmpty()){
-        list  << "x86" << "x64" ;
-    }
-    return list;
-}
-
-QRegExp &ArchitectureTypes::regex()
-{
-    static QRegExp architecturesRx("("+ArchitectureTypes::values().join("|")+")");
-    return architecturesRx;
-}
-
-QRegExp &ArchitectureTypes::endswith()
-{
-    static QRegExp architecturesRx("("+ArchitectureTypes::values().join("|")+")$");
-    return architecturesRx;
-}
-
 FileTypes::Type FileTypes::fromString(const QString &type)
 {
     static QMap<QString,FileTypes::Type> typeMap;
