@@ -23,6 +23,7 @@
 
 #include "misc.h"
 #include "installercallconfig.h"
+#include "typehelper.h"
 
 #include <QFileInfo>
 #include <QCoreApplication>
@@ -55,7 +56,7 @@ InstallerCallConfig::InstallerCallConfig(const QString &fileName)
     // setup-<packagename>-<compiler>.exe
     if (a.size() >= 3)
     {
-        compilerType = CompilerTypes::fromString(a[2]);
+        compilerType = supportedCompilers.fromString(a[2]);
         if (compilerType == CompilerTypes::Unspecified)
             compilerType = CompilerTypes::MSVC10;
     }
