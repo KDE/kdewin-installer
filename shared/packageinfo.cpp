@@ -107,7 +107,9 @@ bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QStrin
         return false;
     }
 
-    return fromString(work, pkgName, pkgVersion);
+    extractVersion(work, pkgVersion);
+    extractName(work, pkgName);
+    return true;
 }
 
 PackageInfo PackageInfo::fromFileName(const QString &fileName)
