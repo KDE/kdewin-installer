@@ -12,7 +12,7 @@ sha1sum-filename = package-name file-compiler-type file-version file-package-typ
 package-name =  letter { ( letter | digit | '_' | '-' ) } ;
 file-compiler-type = ( '-' ('mingw' | 'mingw4' | 'x86-mingw4' | 'x64-mingw4' | 'msvc' | 'vc90' | 'vc100' | 'x64-vc100' ) | '') ;
 
-file-version = '-' (version | date | string ) ;         (* string means something specific *) 
+file-version = '-' (version | date | custom-version ) ; 
 version = major-version-number '.' minor-version-number [ '.' patchlevel [ '-' number ] ] ;
 major-version-number = number ;
 minor-version-number = number ;
@@ -28,6 +28,9 @@ hour = 2-digit-number  ; (* 00-23 *)
 minute = 2-digit-number; (* 00-59 *) 
 4-digit-number = decimal-digit decimal-digit decimal-digit decimal-digit ;
 2-digit-number = decimal-digit decimal-digit ;
+
+custom-version = decimal-digit string ;
+string = (* all characters *) ; 
 
 file-package-type = '-' package-type ;
 package-type = ( 'bin' | 'lib' | 'doc' | 'src' | 'dbg' );
