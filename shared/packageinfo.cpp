@@ -91,39 +91,21 @@ PackageInfo PackageInfo::fromString(const QString &_name, const QString &version
 
 bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QString &pkgCompiler, QString &pkgVersion, QString &pkgType, QString &pkgFormat)
 {
-    QString baseName;
+    if (fileName.isEmpty())
+        return false;
 
-    // first remove ending
-    int idx  = fileName.lastIndexOf('.');
-    if (idx != -1)
-    {
-        pkgFormat = fileName.mid(idx + 1);
-        baseName = fileName.left(idx).toLower();
-        if (pkgFormat == "bz2")
-        {
-            int idx2 = fileName.lastIndexOf('.', idx - 1);
-            pkgFormat = fileName.mid(idx2 + 1);
-            idx = idx2;
-        }
-        baseName = fileName.left(idx);
-    }
-    else
-    {
-        pkgFormat = "unknown";
-        baseName = fileName.toLower();
-    }
+    QString work(fileName);
+    extractFormat(work,pkgFormat);
+    // we do not support case sensitive
+    work = work.toLower();
 
-    QRegExp typeRx = FileTypes::endswith();
-    if (typeRx.indexIn(baseName) == -1)
+    if (!extractType(work,pkgType))
     {
-        qWarning() << "filename without type found" << baseName;
+        qWarning() << "filename without type found" << fileName;
         return false;
     }
 
-    pkgType = typeRx.capturedTexts()[0];
-    baseName.remove("-" + pkgType);
-
-    return fromString(baseName, pkgName, pkgVersion);
+    return fromString(work, pkgName, pkgVersion);
 }
 
 PackageInfo PackageInfo::fromFileName(const QString &fileName)
@@ -178,7 +160,6 @@ bool PackageInfo::extractFormat(QString &s, QString &result)
     else
     {
         result = "unknown";
-        s = s.toLower();
     }
 #ifdef PACKAGEINFO_DEBUG
     qDebug() << "in:" << tmp << "out:" << s << "extracted" << result;
