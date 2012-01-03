@@ -505,7 +505,6 @@ bool Package::downloadItem(FileTypes::Type type)
             return true;
         else
             return setError(download2Error); 
-            
     }
 
     // keep download checksum generating in sync with package
@@ -565,7 +564,8 @@ bool Package::downloadItem(FileTypes::Type type)
 
     // the checksum sum may not be present from older downloads, try downloading first. 
     // This prevents redownloading the archive unconditionally when no checksum is present 
-    if (!QFile::exists(hashFileName)) {        qDebug() << __FUNCTION__ << " downloading checksum file";
+    if (!QFile::exists(hashFileName)) {
+        qDebug() << __FUNCTION__ << " downloading checksum file";
         ret = Downloader::instance()->fetch(hashUrl, hashFileName);
         if (!ret || Downloader::instance()->result() != Downloader::Finished)
             return setError(hashDownloadError); 
