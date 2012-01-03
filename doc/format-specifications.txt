@@ -10,7 +10,8 @@ md5sum-filename = package-name file-compiler-type file-version file-package-type
 sha1sum-filename = package-name file-compiler-type file-version file-package-type archive-extension '.sha1' ;
 
 package-name =  letter { ( letter | digit | '_' | '-' ) } ;
-file-compiler-type = ( '-' ('mingw' | 'mingw4' | 'x86-mingw4' | 'x64-mingw4' | 'msvc' | 'vc90' | 'vc100' | 'x64-vc100' ) | '') ;
+file-compiler-type = ( '-' compiler-keys ) | '' ;
+compiler-keys = 'mingw' | 'mingw4' | 'x86-mingw4' | 'x64-mingw4' | 'msvc' | 'vc90' | 'vc100' | 'x64-vc100' ;
 
 file-version = '-' (version | date | custom-version ) ; 
 version = major-version-number '.' minor-version-number [ '.' patchlevel [ '-' number ] ] ;
@@ -18,7 +19,7 @@ major-version-number = number ;
 minor-version-number = number ;
 patchlevel = number; 
 number = { decimal-digit } ;
-decimal-digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+decimal-digit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' ;
 
 date = year month day ; 
 year =  4-digit-number ;
@@ -76,8 +77,8 @@ timestamp-attribute = 'timestamp'  year month day [ hour minute ] ;
 
 (* define a category note eg. @categorynotes qt Qt related packages *)
 categorynotes-attribute = 'categorynotes' category comment ;      
-category = string ;
-
+(* compiler-keys are used for compiler specific categories *)
+category = compiler-keys | string ;
 
 (* category specific package association independend from sites *) 
 categorypackages-attribute = package-category { package-name } ;
