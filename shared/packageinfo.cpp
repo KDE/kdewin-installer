@@ -134,12 +134,9 @@ QString PackageInfo::manifestFileName(const QString &pkgName, const QString &pkg
 QString PackageInfo::baseName(const QString &_name)
 {
     QString name = _name;
-    name.remove(allCompilers.endswith());
-    name.remove(ArchitectureTypes::endswith());
-    //remove last "-" at the end
-    static QRegExp e("-*$");
-    return name.remove(e);
-
+    QString compiler;
+    extractCompiler(name, compiler);
+    return name;
 }
 
 bool PackageInfo::extractFormat(QString &s, QString &result)

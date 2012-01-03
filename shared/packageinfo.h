@@ -74,7 +74,11 @@ public:
     /// separate package name, version, type and file format from a filename
     static PackageInfo fromFileName(const QString &fileName);
 
-    /// return package name from string without optional compiler
+    /**
+     fetch package name from string
+     @param package name with optional compiler
+     @return pur package name without compiler
+    */
     static QString baseName(const QString &_name);
 
     // returns version file name of package item e.g. xyz-1.2.3-bin.ver
