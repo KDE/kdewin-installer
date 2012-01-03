@@ -269,14 +269,19 @@ bool Database::readFromDirectory ( const QString &_dir )
         if ( !PackageInfo::fromFileName ( fileName, pkgName, pkgCompiler, pkgVersion, pkgType, pkgFormat ) )
             continue;
         Package *pkg;
-        if ( ( pkg = getPackage ( pkgName,pkgVersion.toAscii() ) ) != NULL ) {
+
+        QString key = pkgName;
+        if (!pkgCompiler.isEmpty())
+            key += '-' + pkgCompiler;
+
+        if ( ( pkg = getPackage ( key, pkgVersion.toAscii() ) ) != NULL ) {
             Package::PackageItem pi ( pkgType );
             pi.setInstalled(true);
             pkg->add ( pi );
             qDebug() << "set package installed state" << pi << "for package" << *pkg;
         } else {
             Package *pkg =  new Package;
-            pkg->setName ( pkgName );
+            pkg->setName ( key );
             pkg->setInstalledVersion ( pkgVersion );
             Package::PackageItem pi ( pkgType );
             pi.setInstalled(true);

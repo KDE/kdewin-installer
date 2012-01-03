@@ -99,6 +99,8 @@ bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QStrin
     // we do not support case sensitive
     work = work.toLower();
 
+    extractCompiler(work,pkgCompiler);
+
     if (!extractType(work,pkgType))
     {
         qWarning() << "filename without type found" << fileName;
