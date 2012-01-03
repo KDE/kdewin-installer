@@ -387,10 +387,6 @@ bool InstallerEngine::addPackagesFromSites()
             // add some generic categories
             pkg->addCategories("all");
             pkg->addCategories(category);
-            if (pkg->name().contains("mingw"))
-                pkg->addCategories("mingw");
-            if (pkg->name().contains("msvc"))
-                pkg->addCategories("msvc");
 
             // add categories defined in the config
             pkg->addCategories(site->packageCategories(pkg->name()));
@@ -626,8 +622,9 @@ bool InstallerEngine::includePackage(CompilerTypes::Type compilerType, const QSt
 
 bool InstallerEngine::includeCategory(CompilerTypes::Type compilerType, const QString &categoryName)
 {
-    if ( (compilerType == CompilerTypes::MinGW || compilerType == CompilerTypes::MSVC || compilerType == CompilerTypes::MinGW4)
-        && (categoryName == QLatin1String("msvc") || categoryName == QLatin1String("mingw") || categoryName == QLatin1String("mingw4")) )
-        return false;
-    return true;
+    // not compiler specific
+    if (!allCompilers.values().contains(categoryName))
+        return true; 
+    // compiler specific
+    return supportedCompilers.toString(compilerType) == categoryName;
 }
