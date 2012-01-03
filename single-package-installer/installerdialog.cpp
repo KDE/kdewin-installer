@@ -53,7 +53,7 @@ InstallerDialog::InstallerDialog()
     if (config.isValid())
     {
         InstallerEngine::defaultConfigURL = QString("http://www.winkde.org/pub/kde/ports/win32/releases/%1/%2").arg(toString(config.releaseType)).arg(config.version);
-        QString installRoot = QString("%1/%2-%3-%4-%5%6").arg(QLatin1String(qgetenv("ProgramFiles"))).arg(config.packageName).arg(CompilerTypes::toString(config.compilerType)).arg(toString(config.releaseType)).arg(config.version).arg(config.hasSDK ? "-sdk" : "");
+        QString installRoot = QString("%1/%2-%3-%4-%5%6").arg(QLatin1String(qgetenv("ProgramFiles"))).arg(config.packageName).arg(allCompilers.toString(config.compilerType)).arg(toString(config.releaseType)).arg(config.version).arg(config.hasSDK ? "-sdk" : "");
         addHint("I'm installing into " + installRoot);
         Settings::instance().setInstallDir(installRoot, false);
         m_engine.setRoot(installRoot);
@@ -72,7 +72,7 @@ InstallerDialog::InstallerDialog()
             ps.save();
             addHint("I'm " + ps.toString());
         }
-        m_packages << config.packageName.toLower()+'-'+CompilerTypes::toString(config.compilerType);
+        m_packages << config.packageName.toLower()+'-'+allCompilers.toString(config.compilerType);
 
         // @TODO: this is a hack, need to be solved by build requirements in the config file
         if (config.hasSDK && config.packageName.toLower() == "umbrello")
