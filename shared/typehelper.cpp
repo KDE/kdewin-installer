@@ -58,6 +58,7 @@ CompilerTypes allCompilers(CompilerTypes::allCompiler);
 
 CompilerTypes::CompilerTypes(Scope scope) :  m_containsRegExp(0), m_endsRegExp(0)
 {
+    // see doc/format-specifications.txt for details
 #ifdef BUILD_WITH_DEPRECATED
     m_types << MSVC9 << MinGW4;
     m_typeStrings << "vc90" << "mingw4";
@@ -202,6 +203,7 @@ const QString FileTypes::toString(Type type)
 
 const QStringList FileTypes::values()
 {
+    // see doc/format-specifications.txt for details
     static QStringList list;
     if(list.isEmpty()){
         list<<"bin"<<"lib"<<"doc"<<"src"<<"dbg";
