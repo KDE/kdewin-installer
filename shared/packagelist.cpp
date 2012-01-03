@@ -530,6 +530,7 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
             QString pkgFormat;
             if (!PackageInfo::fromFileName(fileName, pkgName, pkgCompiler, pkgVersion, pkgType, pkgFormat))
                 continue;
+
             QString key = pkgName;
             if (!pkgCompiler.isEmpty())
                 key += "-" + pkgCompiler;
@@ -543,17 +544,17 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
                 item.setUrlAndFileName(m_baseURL.toString() + fileName,fileName);
                 p.add(item);
                 if(m_curSite)
-                    p.setNotes(m_curSite->packageNote(pkgName));
+                    p.setNotes(m_curSite->packageNote(key));
                 if(m_curSite)
-                    p.setLongNotes(m_curSite->packageLongNotes(pkgName));
+                    p.setLongNotes(m_curSite->packageLongNotes(key));
                 if(m_curSite)
-                    p.setHomeURL(m_curSite->packageHomeUrl(pkgName));
+                    p.setHomeURL(m_curSite->packageHomeUrl(key));
                 if (m_curSite)
                 {
 #ifdef VERSIONED_DEPENDENCIES
-                    p.addDeps(m_curSite->getDependencies(pkgName+"-"+pkgVersion));
+                    p.addDeps(m_curSite->getDependencies(key+"-"+pkgVersion));
 #endif
-                    p.addDeps(m_curSite->getDependencies(pkgName));
+                    p.addDeps(m_curSite->getDependencies(key));
                 }
                 append(p);
             } else {
@@ -561,17 +562,17 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
                 item.setUrlAndFileName(m_baseURL.toString() + fileName,fileName);
                 pkg->add(item);
                 if(m_curSite)
-                    pkg->setNotes(m_curSite->packageNote(pkgName));
+                    pkg->setNotes(m_curSite->packageNote(key));
                 if(m_curSite)
-                    pkg->setLongNotes(m_curSite->packageLongNotes(pkgName));
+                    pkg->setLongNotes(m_curSite->packageLongNotes(key));
                 if(m_curSite)
-                    pkg->setHomeURL(m_curSite->packageHomeUrl(pkgName));
+                    pkg->setHomeURL(m_curSite->packageHomeUrl(key));
                 if (m_curSite)
                 {
 #ifdef VERSIONED_DEPENDENCIES
-                    pkg->addDeps(m_curSite->getDependencies(pkgName+"-"+pkgVersion));
+                    pkg->addDeps(m_curSite->getDependencies(key+"-"+pkgVersion));
 #endif
-                    pkg->addDeps(m_curSite->getDependencies(pkgName));
+                    pkg->addDeps(m_curSite->getDependencies(key));
                 }
             }
         }
