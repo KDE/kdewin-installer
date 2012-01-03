@@ -215,8 +215,8 @@ bool PackageInfo::extractVersion(QString &s, QString &result)
 #ifdef PACKAGEINFO_DEBUG
     QString tmp(s);
 #endif
-    //alow only number and points, as patchlvl only numbers
-    QRegExp versionRx("-(\\d|\\.|_|\\+)*(-\\d*){0,1}$");
+    // see doc/format-specifications.txt for details
+    QRegExp versionRx("-\\d(\\w|\\d|\\.|_|\\+)+(-\\d*){0,1}$");
 
     if (versionRx.indexIn(s) == -1)
     {
