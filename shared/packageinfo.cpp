@@ -34,32 +34,16 @@ bool PackageInfo::fromString(const QString &name, QString &pkgName, QString &pkg
 {
     QString work(name);
 
-    //something like "-(mingw|mingw4|msvc|vc90|vc100)-
-    QRegExp &compilersRx = allCompilers.regex();
-    //alow only number and points, as patchlvl only numbers
-    QRegExp versionRx("-(\\w|\\d|\\.|_|\\+)*(-\\d*){0,1}$");
+    QString compiler;
+    extractCompiler(work,compiler);
+    if (!extractVersion(work,pkgVersion))
+    {
+        qWarning() << "filename without version found" << name;
+        return false;
+    }
 
-    if (compilersRx.indexIn(work) != -1)
-    {
-        QString compiler = compilersRx.capturedTexts()[0];
-        QStringList tmp =  work.split(compiler);
-        pkgName = tmp[0] + compiler;
-        pkgVersion = tmp[1].remove(0,1);
-    }
-    else
-    {
-        if (versionRx.indexIn(work) != -1)
-        {
-            QStringList tmp = versionRx.capturedTexts();
-            pkgVersion = tmp[0].remove(0,1);
-            pkgName = work.remove("-" + tmp[0]);
-        }
-        else
-        {
-            qWarning() << "filename without version found" << name;
-            return false;
-        }
-    }
+    extractName(work,pkgName);
+    pkgName += "-" + compiler;
     return true;
 }
 
