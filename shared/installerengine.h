@@ -134,6 +134,9 @@ public:
     int getAppVersion(const QString &appname, const QString &key=QString());
     QString getAppVersionString(const QString &appname, const QString &key=QString());
 
+    void setCurrentCompiler(CompilerTypes::Type type) { m_currentCompiler = type; }
+    CompilerTypes::Type currentCompiler() { return m_currentCompiler; }
+
 Q_SIGNALS:
     void error ( const QString &error );
 
@@ -159,6 +162,7 @@ protected:
     int                 m_removedPackages;
     static InstallMode  m_installMode;
     ErrorAction         m_errorAction;  // action required after errors
+    CompilerTypes::Type m_currentCompiler; ///< current compiler
     
     /// init all package definitions
     virtual bool init();

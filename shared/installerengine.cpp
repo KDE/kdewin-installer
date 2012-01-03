@@ -56,13 +56,14 @@ InstallerEngine::InstallerEngine(QObject *parent)
       m_downloadedPackages(0),
       m_removedPackages(0),
       m_canceled(false),
-      m_errorAction(InstallerEngine::ignore)
+      m_errorAction(InstallerEngine::ignore),
+      m_currentCompiler(CompilerTypes::Unspecified)
 {
     m_database = new Database(this);
     m_installer = new Installer(this);
     m_installer->setDatabase(m_database);
     m_globalConfig = new GlobalConfig();
-    m_packageResources = new PackageList();
+    m_packageResources = new PackageList(this);
 
     //connect(&Settings::instance(),SIGNAL(installDirChanged(const QString&)),this,SLOT(installDirChanged(const QString&)));
     connect(m_installer,SIGNAL(error(const QString &)),this,SLOT(slotError(const QString &)));
@@ -316,7 +317,7 @@ bool InstallerEngine::addPackagesFromSites()
 {
     Q_FOREACH ( Site *site, *m_globalConfig->sites() )
     {
-        PackageList packageList;
+        PackageList packageList(this);
         QString category = site->name();
         qDebug() << "download package file list for site: " << category << "from" << site->url();
 

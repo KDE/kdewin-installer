@@ -72,6 +72,7 @@ UserCompilerModePage::UserCompilerModePage() : InstallWizardPage(0)
 
     // initial setup of packagemanager mode from previous settings, may be overriden later by the user
     engine->setPackageManagerMode(Settings::instance().isPackageManagerMode());
+    engine->setCurrentCompiler(Settings::instance().compilerType());
 }
 
 void UserCompilerModePage::initializePage()
@@ -115,6 +116,7 @@ bool UserCompilerModePage::validatePage()
         s.setCompilerType(CompilerTypes::MinGW4_W64);
     else
         s.setCompilerType(CompilerTypes::MSVC10);
+    engine->setCurrentCompiler(s.compilerType());
     return true;
 }
 

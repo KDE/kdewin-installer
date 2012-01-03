@@ -34,6 +34,7 @@ class QTreeWidgetItem;
 class QIODevice;
 class Site;
 class Database;
+class InstallerEngine;
 
 QStringList filterPackageFiles(const QStringList &list,const QString &mode);
 
@@ -44,7 +45,7 @@ class PackageList : public QObject
 public:
     enum Type {ApacheModIndex, Default, Ftp, SourceForge, SourceForgeMirror };
 
-    PackageList();
+    PackageList(InstallerEngine *parent);
     virtual ~PackageList();
 
     QT_DEPRECATED bool addPackage(const Package &package) { return append(package); }
@@ -126,6 +127,7 @@ signals:
     void configLoaded();
 
 protected:
+    InstallerEngine *m_parent;
     bool addPackagesFromFileNames(const QStringList &files, bool ignoreConfigTxt=false);
 
     bool readInternal(QIODevice *ioDev, PackageList::Type type, bool append=false);

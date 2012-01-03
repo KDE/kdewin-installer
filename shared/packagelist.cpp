@@ -24,6 +24,7 @@
 #include "debug.h"
 #include "downloader.h"
 #include "globalconfig.h"
+#include "installerengine.h"
 #include "packageinfo.h"
 #include "packagelist.h"
 #include "misc.h"
@@ -36,8 +37,8 @@
 #include <QUrl>
 #include <QTreeWidget>
 
-PackageList::PackageList()
-        : QObject()
+PackageList::PackageList(InstallerEngine *parent)
+        : QObject(),  m_parent(parent)
 {
 #ifdef DEBUG
     qDebug() << __FUNCTION__;
@@ -279,9 +280,10 @@ class FileType {
 };
 
 // filter List to get latest versions
-QStringList filterFileName(const QStringList &files)
+QStringList filterFileName(const QStringList &files, CompilerTypes::Type currentCompiler)
 {
     QStringList filteredFiles;
+    QString currentCompilerString = allCompilers.toString(currentCompiler);
 
     // key is <package>-<compiler>-<type> eg akonadi-vc100-bin
     QMap<QString,FileType*> packages;
@@ -296,6 +298,9 @@ QStringList filterFileName(const QStringList &files)
             QString pkgType;
             QString pkgFormat;
             if (!PackageInfo::fromFileName(fileName, pkgName, pkgCompiler, pkgVersion, pkgType, pkgFormat))
+                continue;
+            // skip packages for other compilers
+            if (!pkgCompiler.isEmpty() && pkgCompiler != currentCompilerString)
                 continue;
 
             QString key = pkgName;
@@ -326,6 +331,7 @@ QStringList filterFileName(const QStringList &files)
 
     return filteredFiles;
 }
+
 bool PackageList::readFromDirectory(const QString &dir, bool append)
 {
     if (!append)
@@ -346,7 +352,7 @@ bool PackageList::readFromDirectory(const QString &dir, bool append)
         QFileInfo fi = list.at(i);
         files << fi.fileName();
     }
-    files = filterFileName(files);
+    files = filterFileName(files, m_parent->currentCompiler());
     addPackagesFromFileNames(files);
 
     emit configLoaded();
@@ -381,7 +387,7 @@ bool PackageList::readInternal(QIODevice *ioDev, PackageList::Type type, bool ap
                 continue;
             files << file;
         }
-        files = filterFileName(files);
+        files = filterFileName(files, m_parent->currentCompiler());
         addPackagesFromFileNames(files);
         break;
 
@@ -477,7 +483,7 @@ bool PackageList::readInternal(QIODevice *ioDev, PackageList::Type type, bool ap
             else
                  files << path;
         }
-        files = filterFileName(files);
+        files = filterFileName(files, m_parent->currentCompiler());
         addPackagesFromFileNames(files);
         break;
     }
