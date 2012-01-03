@@ -507,8 +507,8 @@ bool GlobalConfig::parse(QIODevice *ioDev)
                     if (pkg.contains("-*")) 
                     {
                         pkg.replace("-*","-%1");
-                        foreach(const QString type, supportedCompilers.values())
-                            site->setPackageNote(pkg.arg(type),cmd.join(" "));
+                        foreach(const QString compiler, supportedCompilers.values())
+                            site->setPackageNote(pkg.arg(compiler),cmd.join(" "));
                         site->setPackageNote(pkg,cmd.join(" "));
                     }
                     else
