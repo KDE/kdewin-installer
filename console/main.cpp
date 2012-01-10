@@ -206,6 +206,12 @@ int main(int argc, char *argv[])
 
     InstallerEngineConsole engine;
 
+    CompilerTypes::Type type = Settings::instance().compilerType();
+    if (type == CompilerTypes::Unspecified)
+        type == CompilerTypes::MSVC10;
+
+    engine.setCurrentCompiler(type);
+
     // set default url 
     if (!options.url.isEmpty())
         InstallerEngine::defaultConfigURL = options.url;
@@ -236,7 +242,7 @@ int main(int argc, char *argv[])
 
     if (options.verbose)
         qOut() << "using root " << Settings::instance().installDir() << "\n";
-        
+
     engine.setRoot(Settings::instance().installDir());
 
     // query needs setting database root, this is performed by root
@@ -285,6 +291,10 @@ int main(int argc, char *argv[])
                 engine.installPackages(packages);
             else if (!options.file.isEmpty())
                 engine.installPackages(options.file);
+
+            // in case packages are installed set compiler type and install url
+            //Settings::instance().setCompilerType(type);
+
         }
     }
     return 0;

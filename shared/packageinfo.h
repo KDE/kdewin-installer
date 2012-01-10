@@ -49,13 +49,12 @@ public:
     }
 
     /**
-     check package type
-     @param _type type to check
-     @return true if obkect is _type or type is empty
+     check if package type is present
+     @return true if type is present
     */
-    bool isTypeOrEmpty(FileTypes::Type _type)
+    bool hasType()
     {
-        return isType(_type) || type == FileTypes::NONE;
+        return type != FileTypes::NONE;
     }
 
     /**

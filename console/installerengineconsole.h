@@ -72,6 +72,7 @@ protected:
     void printPackage(Package *p);
     void printPackageURLs(Package *p);
 
+    int m_installedPackages;
 private:
     bool done;
 };

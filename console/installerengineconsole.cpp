@@ -46,7 +46,7 @@
 */
 
 InstallerEngineConsole::InstallerEngineConsole()
-: InstallerEngine(0), done(false)
+  : InstallerEngine(0), done(false), m_installedPackages(0)
 {
 }
 
@@ -332,26 +332,39 @@ bool InstallerEngineConsole::installPackages(const QStringList &packages,const Q
     init();
     Q_FOREACH(const QString &pkgName, packages)
     {
+        PackageInfo pi(pkgName);
+        bool hasType = pi.hasType();
+
         Package *p = m_packageResources->find(pkgName);
         if (!p)
         {
             qError() << "package \"" << pkgName << "\" not available for installation\n";
             continue;
         }
-        if (p->hasType(FileTypes::BIN))
+        if (pi.isTypeOrEmpty(FileTypes::BIN)  && (!hasType || pi.isType(FileTypes::BIN)) )
             p->installItem(m_installer,FileTypes::BIN);
-        if (p->hasType(FileTypes::LIB))
+        if (p->hasType(FileTypes::LIB) && (!hasType || pi.isType(FileTypes::LIB)) )
             p->installItem(m_installer,FileTypes::LIB);
-        if (p->hasType(FileTypes::DOC))
+        if (p->hasType(FileTypes::DOC) && (!hasType || pi.isType(FileTypes::DOC)) )
             p->installItem(m_installer,FileTypes::DOC);
-        if (p->hasType(FileTypes::SRC))
-            p->installItem(m_installer,FileTypes::SRC);
-        if (p->hasType(FileTypes::DBG))
+        if (p->hasType(FileTypes::SRC) && (!hasType || pi.isType(FileTypes::SRC)) )
+        {
+            // src packages unpacks into the wrong location, do not enable yet
+            // p->installItem(m_installer,FileTypes::SRC);
+            qDebug() << "installing src package \"" << pkgName << "\" not possible due to package problems\n";
+        }
+        if (p->hasType(FileTypes::DBG) && (!hasType || pi.isType(FileTypes::DBG)) )
             p->installItem(m_installer,FileTypes::DBG);
+        m_installedPackages++;
     }
     return true;
 }
 
+/**
+ install package from a local file
+ @param file url of the local file
+ @return true installing finished without any error
+*/
 bool InstallerEngineConsole::installPackages(const QUrl &file)
 {
     init();
@@ -375,6 +388,7 @@ bool InstallerEngineConsole::installPackages(const QUrl &file)
         p->installItem(m_installer,FileTypes::SRC);
     if (p->hasType(FileTypes::DBG))
         p->installItem(m_installer,FileTypes::DBG);
+    m_installedPackages++;
     return true;
 }
 
