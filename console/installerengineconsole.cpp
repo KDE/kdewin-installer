@@ -333,6 +333,11 @@ bool InstallerEngineConsole::installPackages(const QStringList &packages,const Q
     Q_FOREACH(const QString &pkgName, packages)
     {
         PackageInfo pi(pkgName);
+        if (!pi.isValid())
+        {
+            qError() << "package \"" << pkgName << "\" is not a valid package name\n";
+            continue;
+        }
         bool hasType = pi.hasType();
 
         Package *p = m_packageResources->find(pkgName);
@@ -341,7 +346,7 @@ bool InstallerEngineConsole::installPackages(const QStringList &packages,const Q
             qError() << "package \"" << pkgName << "\" not available for installation\n";
             continue;
         }
-        if (pi.isTypeOrEmpty(FileTypes::BIN)  && (!hasType || pi.isType(FileTypes::BIN)) )
+        if (p->hasType(FileTypes::BIN)  && (!hasType || pi.isType(FileTypes::BIN)) )
             p->installItem(m_installer,FileTypes::BIN);
         if (p->hasType(FileTypes::LIB) && (!hasType || pi.isType(FileTypes::LIB)) )
             p->installItem(m_installer,FileTypes::LIB);
