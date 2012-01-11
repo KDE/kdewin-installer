@@ -37,6 +37,7 @@ public:
     QString format;       ///< package format eg tar.bz2, zip
 
     PackageInfo();
+    PackageInfo(const QString &fileName);
 
     /**
      check package type
@@ -56,6 +57,12 @@ public:
     {
         return type != FileTypes::NONE;
     }
+
+    /**
+     check if object has valid content
+     @return true if content is valid
+    */
+    bool isValid() { return m_isValid; }
 
     /**
      separate package name and version from a string
@@ -98,6 +105,7 @@ protected:
     /// extract package name from string
     static bool extractName(QString &s, QString &result);
 
+    bool m_isValid;
 };
 
 #endif

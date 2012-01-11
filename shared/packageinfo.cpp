@@ -26,8 +26,14 @@
 
 //#define PACKAGEINFO_DEBUG
 
-PackageInfo::PackageInfo() : type(FileTypes::NONE)
+PackageInfo::PackageInfo() : type(FileTypes::NONE), m_isValid(false)
 {
+}
+
+PackageInfo::PackageInfo(const QString &fileName)
+{
+    m_isValid = fromFileName(fileName, name, compiler, version, typeString, format);
+    type = FileTypes::fromString(typeString);
 }
 
 bool PackageInfo::fromString(const QString &name, QString &pkgName, QString &pkgVersion)
@@ -70,6 +76,7 @@ PackageInfo PackageInfo::fromString(const QString &_name, const QString &version
         extractVersion(name, result.version);
     }
     result.name = name;
+    result.m_isValid = true;
     return result;
 }
 
@@ -102,6 +109,7 @@ PackageInfo PackageInfo::fromFileName(const QString &fileName)
     if (!PackageInfo::fromFileName(fileName, info.name, info.compiler, info.version, info.typeString, info.format))
         return PackageInfo();
     info.type = FileTypes::fromString(info.typeString);
+    info.m_isValid = true;
     return info;
 }
 
