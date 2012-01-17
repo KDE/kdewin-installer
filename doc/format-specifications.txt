@@ -13,13 +13,12 @@ package-name =  letter { ( letter | digit | '_' | '-' ) } ;
 file-compiler-type = ( '-' compiler-keys ) | '' ;
 compiler-keys = 'mingw' | 'mingw4' | 'x86-mingw4' | 'x64-mingw4' | 'msvc' | 'vc90' | 'vc100' | 'x64-vc100' ;
 
-file-version = '-' (version | date | custom-version ) ; 
-version = major-version-number '.' minor-version-number [ '.' patchlevel [ '-' number ] ] ;
-major-version-number = number ;
-minor-version-number = number ;
-patchlevel = number; 
-number = { decimal-digit } ;
+file-version = '-' (version | date | deprecated-version ) ;
+version = number { ( number | '.' | '-' | '_' | '+' | word ) };
+number = decimal-digit { decimal-digit } ;
+word = letter { letter } ;
 decimal-digit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' ;
+letter = 'A' - 'Z' | 'a' - 'z' ;
 
 date = year month day ; 
 year =  4-digit-number ;
@@ -30,8 +29,7 @@ minute = 2-digit-number; (* 00-59 *)
 4-digit-number = decimal-digit decimal-digit decimal-digit decimal-digit ;
 2-digit-number = decimal-digit decimal-digit ;
 
-custom-version = decimal-digit string ;
-string = (* all characters *) ; 
+deprecated-version = 'gitHEAD' | 'svnHEAD'
 
 file-package-type = '-' package-type ;
 package-type = ( 'bin' | 'lib' | 'doc' | 'src' | 'dbg' );

@@ -206,7 +206,7 @@ bool PackageInfo::extractVersion(QString &s, QString &result)
 #endif
     // see doc/format-specifications.txt for details
     // "-\\d(\\d[0-9._+]+-[a-zA-Z0-9._]+$"
-    QRegExp versionRx("-\\d(\\w|\\d|\\.|_|\\+)+(-\\d*){0,1}$");
+    QRegExp versionRx("-(gitHEAD|svnHEAD|\\d(\\w|\\d|\\.|_|-|\\+))$");
 
     if (versionRx.indexIn(s) == -1)
     {
