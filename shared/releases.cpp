@@ -105,9 +105,8 @@ bool Releases::patchReleaseUrls(const QUrl &url)
 {
     // wwww.winkde.org and sf uses flat directory structure below the version dir, so no extra action is required here 
     if (url.host() == "www.winkde.org" 
-        || url.host() == "sourceforge.net" 
-        || url.host() == "sf.net" 
-        || url.host() == "downloads.sourceforge.net" )
+        || url.host().endsWith("sourceforge.net")
+        || url.host() == "sf.net")
         return true;
 
     // kde mirrors uses a win32 subdir which has to be checked for the existance of a win32 release
