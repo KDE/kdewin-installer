@@ -307,21 +307,29 @@ bool InstallerEngineConsole::downloadPackages(const QStringList &packages, const
     init();
     Q_FOREACH(const QString &pkgName, packages)
     {
+        PackageInfo pi(pkgName);
+        if (!pi.isValid())
+        {
+            qError() << "package \"" << pkgName << "\" is not a valid package name\n";
+            continue;
+        }
+        bool hasType = pi.hasType();
+
         Package *p = m_packageResources->find(pkgName);
         if (!p)
         {
             qError() << "package \"" << pkgName << "\" not available for download\n";
             continue;
         }
-        if (p->hasType(FileTypes::BIN))
+        if (p->hasType(FileTypes::BIN) && (!hasType || pi.isType(FileTypes::BIN)) )
             p->downloadItem(FileTypes::BIN);
-        if (p->hasType(FileTypes::LIB))
+        if (p->hasType(FileTypes::LIB) && (!hasType || pi.isType(FileTypes::LIB)) )
             p->downloadItem(FileTypes::LIB);
-        if (p->hasType(FileTypes::DOC))
+        if (p->hasType(FileTypes::DOC) && (!hasType || pi.isType(FileTypes::DOC)) )
             p->downloadItem(FileTypes::DOC);
-        if (p->hasType(FileTypes::SRC))
+        if (p->hasType(FileTypes::SRC) && (!hasType || pi.isType(FileTypes::SRC)) )
             p->downloadItem(FileTypes::SRC);
-        if (p->hasType(FileTypes::DBG))
+        if (p->hasType(FileTypes::DBG) && (!hasType || pi.isType(FileTypes::DBG)) )
             p->downloadItem(FileTypes::DBG);
     }
     return true;
@@ -346,7 +354,7 @@ bool InstallerEngineConsole::installPackages(const QStringList &packages,const Q
             qError() << "package \"" << pkgName << "\" not available for installation\n";
             continue;
         }
-        if (p->hasType(FileTypes::BIN)  && (!hasType || pi.isType(FileTypes::BIN)) )
+        if (p->hasType(FileTypes::BIN) && (!hasType || pi.isType(FileTypes::BIN)) )
             p->installItem(m_installer,FileTypes::BIN);
         if (p->hasType(FileTypes::LIB) && (!hasType || pi.isType(FileTypes::LIB)) )
             p->installItem(m_installer,FileTypes::LIB);
@@ -403,21 +411,29 @@ bool InstallerEngineConsole::removePackages(const QStringList &packages)
     init();
     Q_FOREACH(const QString &pkgName, packages)
     {
+        PackageInfo pi(pkgName);
+        if (!pi.isValid())
+        {
+            qError() << "package \"" << pkgName << "\" is not a valid package name\n";
+            continue;
+        }
+        bool hasType = pi.hasType();
+
         Package *p = m_database->getPackage(pkgName);
         if (!p)
         {
             qError() << "package \"" << pkgName << "\" could not be removed, it is not installed\n";
             continue;
         }
-        if (p->hasType(FileTypes::BIN))
+        if (p->hasType(FileTypes::BIN) && (!hasType || pi.isType(FileTypes::BIN)) )
             p->removeItem(m_installer,FileTypes::BIN);
-        if (p->hasType(FileTypes::LIB))
+        if (p->hasType(FileTypes::LIB) && (!hasType || pi.isType(FileTypes::LIB)) )
             p->removeItem(m_installer,FileTypes::LIB);
-        if (p->hasType(FileTypes::DOC))
+        if (p->hasType(FileTypes::DOC) && (!hasType || pi.isType(FileTypes::DOC)) )
             p->removeItem(m_installer,FileTypes::DOC);
-        if (p->hasType(FileTypes::SRC))
+        if (p->hasType(FileTypes::SRC) && (!hasType || pi.isType(FileTypes::SRC)) )
             p->removeItem(m_installer,FileTypes::SRC);
-        if (p->hasType(FileTypes::DBG))
+        if (p->hasType(FileTypes::DBG) && (!hasType || pi.isType(FileTypes::DBG)) )
             p->removeItem(m_installer,FileTypes::DBG);
     }
     return true;
