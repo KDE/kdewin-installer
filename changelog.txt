@@ -13,6 +13,7 @@ ChangeLog
                      - refactored download dir handling; added non persistant mode (Ralf Habacker)
                      - use installed database for deinstalling packages - this avoids orphaned packages (Ralf Habacker)
                      - avoid warning caused by empty pathes (Ralf Habacker)
+                     - fixed bug not been able to use sha1 hashes (Ralf Habacker)
 - single-installer:  - initial implementation of a package sdk installer (Ralf Habacker)
 
 0.9.9-5
