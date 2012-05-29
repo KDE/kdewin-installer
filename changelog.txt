@@ -1,6 +1,10 @@
 ChangeLog
 =========
 
+0.9.9-7
+-----------------
+- common:            - save log file from previous run to <logfile>.old(Ralf Habacker)
+
 0.9.9-6
 -----------------
 - console-installer: - added remove package option (Ralf Habacker)
