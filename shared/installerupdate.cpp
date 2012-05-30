@@ -144,13 +144,7 @@ bool InstallerUpdate::isUpdateAvailable()
 void InstallerUpdate::setUrl(const QUrl &url)
 {
     m_url = url;
-#ifdef Q_WS_WIN
-    char installerExePath[MAX_PATH+1];
-    GetModuleFileNameA(NULL, installerExePath, MAX_PATH);
-#else
-    // why can't we use this version for both Windows and Linux???
     QString installerExePath = QCoreApplication::applicationFilePath();
-#endif
     QFileInfo pi(installerExePath); 
     m_currentInstallerFilePath = installerExePath;
     QFileInfo fi(m_url.path()); 
