@@ -22,7 +22,7 @@ endif (BZIP2_UNPACK_SUPPORT)
 # limit external curl library usage to shared build mode 
 # in static build mode we cannot rely that the external library is a static build
 if (NOT STATIC_BUILD)
-    find_package(curl)
+    find_package(CURL)
     if (CURL_FOUND)
         set (CURL_LIBRARIES ${CURL_LIBRARY} CACHE FILEPATH "library" FORCE)
     endif (CURL_FOUND)

@@ -34,7 +34,7 @@ qt4_add_resources(SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/installerdialog.qrc)
 add_executable(${TARGET} WIN32 ${SOURCES} ${HEADERS})
 target_link_libraries(${TARGET} ${GUI_LIBS})
 
-install_targets(/bin ${TARGET})
+install(TARGETS ${TARGET} DESTINATION bin)
 
 pack_target(${TARGET})
 create_checksum_file(${TARGET})

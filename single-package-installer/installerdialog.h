@@ -25,7 +25,7 @@
 
 #include "ui_installerdialog.h"
 
-#include "installerEngineSinglePackage.h"
+#include "installerenginesinglepackage.h"
 
 #include "../shared/package.h"
 #include "../shared/postprocessing.h"

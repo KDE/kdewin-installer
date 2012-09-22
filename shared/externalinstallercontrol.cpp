@@ -28,7 +28,8 @@
 #ifdef Q_WS_WIN
 #include <windows.h>
 #else
-#define Sleep sleep
+#include <unistd.h>
+#define Sleep(x) usleep(1000*(x))
 #endif
 
 bool InstallerControlType::parse(const QString &string)

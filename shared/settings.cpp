@@ -63,7 +63,7 @@ Settings::Settings()
     qDebug() << "proxyPort" << proxyPort();
 #endif
 #ifndef Q_OS_WIN
-    setProxyMode(Environment);
+//     setProxyMode(Environment);
 #endif
 }
 Settings::~Settings()
@@ -156,8 +156,7 @@ QString Settings::downloadDir() const
         delete[] buf2;
     }
 #else
-    tempPathes << QString::fromLocal8Bit(qgetenv("TEMP")) + "/KDE";
-    tempPathes << QString::fromLocal8Bit(qgetenv("TMP")) + "/KDE";
+    tempPathes << QDir::tempPath();
 #endif
 
     foreach(const QString &path, tempPathes)

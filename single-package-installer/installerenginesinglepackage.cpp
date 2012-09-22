@@ -24,7 +24,7 @@
 #include "downloader.h"
 #include "globalconfig.h"
 #include "installer.h"
-#include "InstallerEngineSinglePackage.h"
+#include "installerenginesinglepackage.h"
 #include "package.h"
 #include "packagelist.h"
 #include "downloader.h"

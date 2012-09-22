@@ -35,7 +35,7 @@
 #include <QtDebug>
 #include <QDir>
 #include <QFlags>
-#include <QRegexp>
+#include <QRegExp>
 
 QString InstallerEngine::defaultConfigURL;
 QString InstallerEngine::fallBackURL = "http://downloads.sourceforge.net/kde-windows";
