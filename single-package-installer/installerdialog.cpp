@@ -58,6 +58,7 @@ InstallerDialog::InstallerDialog()
         Settings::instance().setInstallDir(installRoot, false);
         m_engine.setRoot(installRoot);
         m_engine.setWithDevelopmentPackages(config.hasSDK);
+        m_engine.setCurrentCompiler(config.compilerType);
         ProxySettings ps;
 
         m_postProcessing.setSingleApplicationMode(true);
@@ -85,7 +86,7 @@ InstallerDialog::InstallerDialog()
     {
         setWindowTitle(tr("KDE Single Application Installer"));
         ui.topLabel->setText(tr("KDE Single Application Installer"));
-        addHint("I could not found a valid configuration");
+        addHint("I could not find a valid configuration");
     }
 }
 
@@ -310,6 +311,11 @@ void InstallerDialog::postProcessing()
     connect(&m_postProcessing,SIGNAL(commandStarted(const QString &)),this,SLOT(addHint(const QString &)));
     ui.closeButton->setEnabled(false);
     // fetch version from package - it is not sure yet if running a gui app --version returns the version on stdout
+    if(m_packagesToInstall.size() <= 0) {
+        finished();
+        return;
+    }
+
     m_postProcessing.setVersion(m_packagesToInstall[0]->version().toString());
     m_postProcessing.start();
 }
