@@ -50,7 +50,7 @@ public:
     ProxyMode mode;
 
 protected:
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     bool fromInternetExplorer(const QString &url);
 #endif
     bool fromFireFox(const QString &url);

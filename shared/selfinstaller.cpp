@@ -30,7 +30,7 @@
 #include "selfinstaller.h"
 #include "settings.h"
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 #include <windows.h>
 #endif
 
@@ -40,7 +40,7 @@
 #include <QProcess>
 #include <QFileInfo>
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 #include <psapi.h>
 #endif
 

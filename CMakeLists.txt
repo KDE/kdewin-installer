@@ -16,7 +16,17 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 include(cmake/macros.cmake)
 
 #set (CMAKE_SUPPRESS_REGENERATION 1)
-find_package(Qt4 COMPONENTS QtCore QtGui QtXml REQUIRED )
+
+find_package(Qt5Core QUIET)
+if (Qt5Core_FOUND)
+  message(STATUS "Building with Qt5 support")
+  find_package(ECM 0.0.6 REQUIRED NO_MODULE)
+  set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${CMAKE_MODULE_PATH})
+  find_package(Qt5Transitional REQUIRED  Core Gui Xml)
+else()
+  set(QT_MIN_VERSION "4.7.0")
+  find_package(Qt4 COMPONENTS QtCore QtGui QtXml REQUIRED )
+endif()
 
 find_package(UPX)
 find_package(KDEWIN_Packager)

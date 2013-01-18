@@ -64,7 +64,7 @@ static void usage(const QString &message=QString())
     if (!message.isEmpty())
         cout << "error: " << qPrintable(message);
     cout << "... [options] <packagename> [<packagename>]"
-    << "Qt: " QTVERSION "\n"
+    << "Qt: " << qVersion() << "\n"
     << "kdewin-installer-console: " VERSION_PATCH "\n"
     << "\nOptions: "
     << "\n -v|--verbose                                   print detailed process informations"

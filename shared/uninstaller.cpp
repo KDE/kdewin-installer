@@ -150,7 +150,7 @@ bool UIThread::readManifestFile ( QList<FileItem> &fileList )
             emit warning ( QString ( "File %1 does not exist!" ).arg ( fi.fileName() ) );
             continue;
         }
-        fileList += FileItem ( QDir::convertSeparators ( fi.absoluteFilePath() ), hash );
+        fileList += FileItem ( QDir::toNativeSeparators ( fi.absoluteFilePath() ), hash );
     }
     f.close();
 

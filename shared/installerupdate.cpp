@@ -28,7 +28,7 @@
 #include "installerupdate.h"
 #include "settings.h"
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 #include <windows.h>
 #else
 #define Sleep sleep
@@ -39,7 +39,7 @@
 #include <QProcess>
 #include <QFileInfo>
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 #include <psapi.h>
 #else
 #include <unistd.h>
@@ -50,7 +50,7 @@ QByteArray installerName ="kdewin-installer-gui-";
 
 bool isProcessRunning(int pid)
 {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     DWORD aProcesses[1024], cbNeeded, cProcesses;
     unsigned int i;
 
@@ -185,7 +185,7 @@ bool InstallerUpdate::run()
 {
     if (m_url.isValid())
     {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
         QString processID = QString::number(GetCurrentProcessId());
 #else
         QString processID = QString::number(getpid());

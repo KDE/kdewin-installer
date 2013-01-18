@@ -35,7 +35,7 @@ bool ProxySettings::from(ProxyMode _mode, const QString &url)
     // FIXME: add support for different ftp proxy settings
     mode = _mode;
     switch(_mode) {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
         case ProxySettings::InternetExplorer:
             return fromInternetExplorer(url);
 #endif
@@ -46,7 +46,7 @@ bool ProxySettings::from(ProxyMode _mode, const QString &url)
             Settings::instance().proxy(*this);
             return true;
 
-#ifndef Q_WS_WIN
+#ifndef Q_OS_WIN32
         case ProxySettings::Environment:
             return fromEnvironment(url);
 #endif

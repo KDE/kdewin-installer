@@ -27,10 +27,10 @@
 
 #include <QtCore/QDebug>
 #include <QtCore/QUrl>
-#include <QtGui/QLabel>
-#include <QtGui/QProgressBar>
-#include <QtGui/QGridLayout>
-#include <QtGui/QDesktopWidget>
+#include <QLabel>
+#include <QProgressBar>
+#include <QGridLayout>
+#include <QDesktopWidget>
 
 
 //#define DISABLE_GENERICPROCESS_PARENT_CONTROL

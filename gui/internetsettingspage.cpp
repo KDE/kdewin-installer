@@ -41,7 +41,7 @@ InternetSettingsPage::InternetSettingsPage() : InstallWizardPage(0)
 void InternetSettingsPage::initializePage()
 {
     Settings &s = Settings::instance();
-#ifndef Q_WS_WIN
+#ifndef Q_OS_WIN32
     ui.proxyIE->setText(tr("Environment settings"));
 #endif
     ProxySettings proxy;
@@ -81,7 +81,7 @@ bool InternetSettingsPage::validatePage()
     Settings &s = Settings::instance();
     ProxySettings::ProxyMode m = ProxySettings::None;
     if(ui.proxyIE->isChecked())
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
       m = ProxySettings::InternetExplorer;
 #else
       m = ProxySettings::Environment;
@@ -120,7 +120,7 @@ void InternetSettingsPage::switchProxyFields(bool mode)
     Settings &s = Settings::instance();
     ProxySettings proxy;
     if(ui.proxyIE->isChecked())
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
         proxy.from(ProxySettings::InternetExplorer);
 #else
         proxy.from(ProxySettings::Environment);

@@ -30,7 +30,7 @@ class QObject;
 
 #ifdef USE_GUI
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 class QLabel;
 class QProgressBar;

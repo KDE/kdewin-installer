@@ -23,7 +23,7 @@
 #define EXTERNALINSTALLERCONTROL_H
 
 #include <QtDebug>
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 #include <windows.h>
 #endif
 
@@ -56,7 +56,7 @@ class ExternalInstallerControl {
         ExternalInstallerControl();
         ~ExternalInstallerControl();
         bool connect(int pid);
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
         bool connect(HANDLE handle);
 #endif
         bool connect(const QProcess &proc);
@@ -73,7 +73,7 @@ class ExternalInstallerControl {
 
     private:
         ExternalInstallerControlPrivate *d;
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
         DWORD m_processId;
 #endif
 };

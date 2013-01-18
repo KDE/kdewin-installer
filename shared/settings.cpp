@@ -27,7 +27,7 @@
 #include <QtCore/QUrl>
 #include <QtCore/QtDebug>
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 #include <windows.h>
 #endif
 
@@ -134,7 +134,7 @@ QString Settings::downloadDir() const
     QStringList tempPathes;
     tempPathes << m_downloadDir;
     tempPathes << m_settingsMain->value("tempdir","").toString();
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     {
         // why not using Qt related methods ? 
         WCHAR *buf = new WCHAR[256];

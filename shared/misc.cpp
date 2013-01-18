@@ -26,7 +26,7 @@
 
 #include <qglobal.h>
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 #include <windows.h>
 #include <windowsx.h>
 #include <objbase.h>
@@ -87,14 +87,14 @@ QTextStream &operator<<(QTextStream &out, const QList<InstallFile> &c)
     return out;
 }
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 /*
     add correct prefix for win32 filesystem functions
     described in msdn, but taken from Qt's qfsfileeninge_win.cpp
 */
 static QString longFileName(const QString &path)
 {
-    QString absPath = QDir::convertSeparators(path);
+    QString absPath = QDir::toNativeSeparators(path);
     QString prefix = QLatin1String("\\\\?\\");
     if (path.startsWith("//") || path.startsWith("\\\\")) {
         prefix = QLatin1String("\\\\?\\UNC\\");
@@ -102,7 +102,7 @@ static QString longFileName(const QString &path)
     }
     return prefix + absPath;
 }
-#endif  // Q_WS_WIN
+#endif  // Q_OS_WIN32
 
 bool parseQtIncludeFiles(QList<InstallFile> &fileList, const QString &root, const QString &subdir, const QString &filter, const QString &exclude)
 {
@@ -212,7 +212,7 @@ bool generateFileList(QList<InstallFile> &fileList, const QString &root,const QS
        d = QDir(root + '/' + subdir);
    if (!d.exists()) {
         if (verbose)
-            qDebug() << "Can't read directory" << QDir::convertSeparators(d.absolutePath());
+            qDebug() << "Can't read directory" << QDir::toNativeSeparators(d.absolutePath());
         return false;
    }
    QStringList filt = (filter + QLatin1String(" *.manifest")).split(' ');
@@ -289,7 +289,7 @@ bool generateFileList(QList<InstallFile> &fileList, const QString &root,const QS
    return true;
 }
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 QString getStartMenuPath(bool bAllUsers)
 {
     int idl = bAllUsers ? CSIDL_COMMON_PROGRAMS : CSIDL_PROGRAMS;
@@ -304,7 +304,7 @@ QString getStartMenuPath(bool bAllUsers)
     }
     return QString();
 }
-#endif  // Q_WS_WIN
+#endif  // Q_OS_WIN32
 
 bool deleteFile( const QString &root, const QString &filename )
 {
@@ -371,7 +371,7 @@ bool removeDirectory(const QString& aDir)
 }
 
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 static BOOL IsWow64()
 {
     typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);

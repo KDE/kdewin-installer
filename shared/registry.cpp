@@ -25,7 +25,7 @@
 
 #include "registry.h"
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 #include <QtDebug>
 #include <windows.h>
 #include <shlwapi.h>
@@ -292,5 +292,5 @@ bool delWin32RegistryValue(const RegKey& akey, const QString& subKey)
 
     return true;
 }
-#endif  // Q_WS_WIN
+#endif  // Q_OS_WIN32
 
