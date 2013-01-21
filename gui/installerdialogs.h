@@ -55,6 +55,7 @@ class InstallerDialogs : public QObject
         QString m_title;
     private:
         InstallerDialogs();
+        QString logFileLink();
 };
 
 #endif

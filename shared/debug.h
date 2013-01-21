@@ -54,6 +54,9 @@ void closeMessageHandler();
 /// return log file name
 QString logFileName();
 
+/// return log file path and name as url
+QString logFileNameAsURL();
+
 /// return log data
 QByteArray *log();
 

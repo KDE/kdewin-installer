@@ -1,6 +1,11 @@
 ChangeLog
 =========
 
+0.9.9-8
+-----------------
+- gui:               - fixed link to installer log file in error dialogs (Ralf Habacker)
+
+
 0.9.9-7
 -----------------
 - common:            - save log file from previous run to <logfile>.old(Ralf Habacker)

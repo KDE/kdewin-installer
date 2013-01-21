@@ -21,6 +21,7 @@
 ****************************************************************************/
 
 #include "installerdialogs.h"
+#include "debug.h"
 #include "settings.h"
 
 #include <QtGui/QDesktopWidget>
@@ -74,9 +75,11 @@ QMessageBox::StandardButton InstallerDialogs::downloadFailed(const QString &url,
 {
     QString text;
     if (!error.isEmpty())
-        text = tr("The download of %1 failed with error %2").arg(url).arg(error);
+        text = tr("<p>The download of %1 failed with error %2.</p>").arg(url).arg(error);
     else
-        text = tr("The download of %1 failed").arg(url);
+        text = tr("<p>The download of %1 failed.</p>").arg(url);
+        text += logFileLink();
+
     return QMessageBox::critical ( 
                 m_parent, 
                 m_title, 
@@ -90,8 +93,9 @@ bool InstallerDialogs::downloadMirrorListFailed(const QUrl &url1, const QUrl &ur
 {
     QString text = tr("<p>The mirror list could not be downloaded from any of the following locations:"
         "<ul><li><a href=\"%1\">%1</a></li><li><a href=\"%2\">%2</a></li></ul></p>"
-        "<p>You may check your proxy settings"
-        " and/or inspect the installer log file located at<br><a href=\"%3\">%3</a></p>").arg(url1.toString()).arg(url2.toString()).arg(Settings::instance().logFile());
+        "<p>You may check your proxy settings</p>").arg(url1.toString()).arg(url2.toString());
+    text += logFileLink();
+	
     return QMessageBox::critical ( 
                 m_parent, 
                 m_title, 
@@ -168,6 +172,10 @@ bool InstallerDialogs::confirmKillKDEAppsDialog()
     return result == QMessageBox::Ok;
 }
 
+QString InstallerDialogs::logFileLink()
+{
+    return tr("<p>For details see the installer log file located at<br><a href=\"%3\">%3</a></p>").arg(logFileNameAsURL());
+}
 
 InstallerDialogs &InstallerDialogs::instance()
 {

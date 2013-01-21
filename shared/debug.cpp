@@ -171,6 +171,11 @@ QByteArray *log()
     return logData ? logData : &empty;
 }
 
+QString logFileNameAsURL()
+{
+    return QUrl::fromLocalFile(logFileName()).toEncoded();
+}
+
 int qDebug_indention = 0;
 char *qDebug_indentBuf = (char*)"                                                                                                               ";
  
