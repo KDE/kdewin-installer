@@ -4,6 +4,7 @@ ChangeLog
 0.9.9-8
 -----------------
 - gui:               - fixed link to installer log file in error dialogs (Ralf Habacker)
+- shared:            - use windows eol in installer log file (Ralf Habacker)
 
 
 0.9.9-7
