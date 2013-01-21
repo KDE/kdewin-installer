@@ -5,6 +5,7 @@ ChangeLog
 -----------------
 - gui:               - fixed link to installer log file in error dialogs (Ralf Habacker)
 - shared:            - use windows eol in installer log file (Ralf Habacker)
+                     - fixed wrong assumption that only lower case package names are used [313644] (Ralf Habacker)
 - all:               - started Qt5 port (Patrick von Reth)
 
 0.9.9-7
