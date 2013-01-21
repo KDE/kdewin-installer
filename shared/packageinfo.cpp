@@ -87,9 +87,6 @@ bool PackageInfo::fromFileName(const QString &fileName, QString &pkgName, QStrin
 
     QString work(fileName);
     extractFormat(work,pkgFormat);
-    // we do not support case sensitive
-    work = work.toLower();
-
     extractCompiler(work,pkgCompiler);
 
     if (!extractType(work,pkgType))
@@ -141,7 +138,7 @@ bool PackageInfo::extractFormat(QString &s, QString &result)
     if (idx != -1)
     {
         result = s.mid(idx + 1);
-        s = s.left(idx).toLower();
+        s = s.left(idx);
         if (result == "bz2")
         {
             int idx2 = s.lastIndexOf('.', idx - 1);
