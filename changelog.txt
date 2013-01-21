@@ -6,6 +6,8 @@ ChangeLog
 - gui:               - fixed link to installer log file in error dialogs (Ralf Habacker)
 - shared:            - use windows eol in installer log file (Ralf Habacker)
                      - fixed wrong assumption that only lower case package names are used [313644] (Ralf Habacker)
+                     - fix version extraction (Patrick Spendrin)
+                     - Make the KDEWin-Installer compile on linux (Aleix Pol)
 - all:               - started Qt5 port (Patrick von Reth)
 
 0.9.9-7
