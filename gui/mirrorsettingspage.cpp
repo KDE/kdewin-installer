@@ -161,7 +161,9 @@ bool MirrorSettingsPage::isComplete()
 void MirrorSettingsPage::addNewMirrorClicked()
 {
     if (!ui.addServerURL->text().isEmpty()) {
-        QUrl url(ui.addServerURL->text());
+        QString text = ui.addServerURL->text().trimmed();
+        ui.addServerURL->setText(text);
+        QUrl url(text);
         
         if (!url.isValid() || !(url.scheme() == "http" || url.scheme() == "ftp"  || url.scheme() == "file"))
         {
@@ -169,13 +171,13 @@ void MirrorSettingsPage::addNewMirrorClicked()
             return;
         }
         
-        QList<QListWidgetItem *> list = ui.downloadMirror->findItems (ui.addServerURL->text(), Qt::MatchContains);
+        QList<QListWidgetItem *> list = ui.downloadMirror->findItems (text, Qt::MatchContains);
         if (list.size() > 0) 
         {
             setStatus(tr("Warning: This URL is already in the list"));
             return;
         }
-        QListWidgetItem *item = new QListWidgetItem(ui.addServerURL->text());
+        QListWidgetItem *item = new QListWidgetItem(text);
         item->setData(Qt::UserRole, url);
         ui.downloadMirror->addItem(item);
         ui.downloadMirror->setCurrentRow(ui.downloadMirror->count()-1);
