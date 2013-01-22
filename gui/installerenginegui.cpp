@@ -662,13 +662,7 @@ bool InstallerEngineGui::downloadPackageItem(Package *pkg, FileTypes::Type type 
             return true;
         if(Downloader::instance()->result() == Downloader::Aborted)
             return false;
-        QMessageBox::StandardButton result = QMessageBox::critical(
-            m_parent,
-            tr("Download failed"),
-            tr("The download of %1 failed with error: %2").arg(pkg->getUrl(type).toString()).arg(pkg->error()),
-            QMessageBox::Cancel | QMessageBox::Ignore | QMessageBox::Retry,
-            QMessageBox::Retry
-        );
+        QMessageBox::StandardButton result = InstallerDialogs::instance().downloadFailed(pkg->getUrl(type).toString(), pkg->error());
         if (result == QMessageBox::Cancel)
             return false;
         else if (result == QMessageBox::Ignore)
