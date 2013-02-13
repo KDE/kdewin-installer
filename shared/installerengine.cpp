@@ -36,6 +36,7 @@
 #include <QDir>
 #include <QFlags>
 #include <QRegExp>
+#include <QCoreApplication>
 
 QString InstallerEngine::defaultConfigURL;
 QString InstallerEngine::fallBackURL = "http://downloads.sourceforge.net/kde-windows";
@@ -200,10 +201,11 @@ bool InstallerEngine::isAnyKDEProcessRunning()
     }
     QByteArray _stderr = p.readAllStandardError();
     qDebug() << "run" << cmd << args << "without errors" << _stderr; 
-    QList<QByteArray> lines = _stderr.split('\n');
+    QStringList lines = QString(_stderr).split('\n');
     bool processRunning = false;
-    foreach(const QByteArray line, lines)
+    foreach(const QString &line, lines)
     {
+        qDebug() << "got line" << line;
         if (line.contains(QCoreApplication::applicationName()))
             continue;
         else if(line.contains("kdeinit4.exe"))
@@ -213,6 +215,7 @@ bool InstallerEngine::isAnyKDEProcessRunning()
         else
             processRunning = true;
     }
+    qDebug() << "returning running processes" << processRunning;
     return processRunning;
 }
 
