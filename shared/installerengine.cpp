@@ -201,9 +201,19 @@ bool InstallerEngine::isAnyKDEProcessRunning()
     QByteArray _stderr = p.readAllStandardError();
     qDebug() << "run" << cmd << args << "without errors" << _stderr; 
     QList<QByteArray> lines = _stderr.split('\n');
-    int ret = lines.size() - 1; // because of trailing '\n'
-    // one line means ony kdeinit4 is running
-    return ret > 1;
+    bool processRunning = false;
+    foreach(const QByteArray line, lines)
+    {
+        if (line.contains(QCoreApplication::applicationName()))
+            continue;
+        else if(line.contains("kdeinit4.exe"))
+            continue;
+        else if (line == "\n")
+            continue;
+        else
+            processRunning = true;
+    }
+    return processRunning;
 }
 
 bool InstallerEngine::killAllKDEApps()
