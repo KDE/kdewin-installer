@@ -1,9 +1,10 @@
 ChangeLog
 =========
 
-1.0.0-0 
+1.0.0
 -----------------
 - all:               - updated downloads url to reflect the move to download.kde.org (Ralf Habacker)
+                     - get rid of the -x version postfix, versions are now major.minor.patch (Ralf Habacker)
 - gui:               - fix error not selecting currently used mirror (Ralf Habacker)
 
 0.9.9-9
