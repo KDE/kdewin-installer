@@ -37,6 +37,8 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    setMessageHandler();
+    qDebug() << "starting installer" << VERSION_PATCH;
 
 #ifdef BUILD_TRANSLATIONS
     QTranslator translator;
@@ -80,8 +82,6 @@ int main(int argc, char *argv[])
         args.removeFirst();
         SelfInstaller::instance().runFromTemporayLocation(args);
     }
-
-    setMessageHandler();
 
     InstallWizard wizard;
     wizard.show();
