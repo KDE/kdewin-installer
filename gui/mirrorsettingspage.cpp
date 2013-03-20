@@ -93,7 +93,7 @@ void MirrorSettingsPage::initializePage()
             qDebug() << "identified fall back host" << m.url.host();
         }
         ui.downloadMirror->addItem(item);
-        if (!currentMirror.isEmpty() && m.url == currentMirror)
+        if (!currentMirror.isEmpty() && m.url.host() == currentMirror.host())
             mirrorIndex = ui.downloadMirror->count()-1;
     }
     if (currentMirror.isEmpty())
