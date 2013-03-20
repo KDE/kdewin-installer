@@ -5,6 +5,7 @@ ChangeLog
 -----------------
 - all:               - updated downloads url to reflect the move to download.kde.org (Ralf Habacker)
                      - get rid of the -x version postfix, versions are now major.minor.patch (Ralf Habacker)
+		             - Fixed named of remote mirror list replacement file (now mirrors-remote.list) (Ralf Habacker)
 - gui:               - fix error not selecting currently used mirror (Ralf Habacker)
                      - added "show log" button to installer pages (Ralf Habacker)
                      - updated image on title page by an image from a heise.de provided kde 4.10 article (Ralf Habacker)

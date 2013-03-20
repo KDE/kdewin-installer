@@ -60,7 +60,7 @@ bool Mirrors::fetch()
 #else
     QByteArray out;
 #endif
-    QFileInfo cfr(Settings::instance().downloadDir()+"/mirrors-remote.lst");
+    QFileInfo cfr(Settings::instance().downloadDir()+"/mirrors-remote.list");
     qDebug() << "Check if a copy of the remote config file is available at" << cfr.absoluteFilePath() << (cfr.exists() ? "... found" : "... not found");
     if (cfr.exists())
     {
