@@ -202,6 +202,8 @@ bool InstallerUpdate::finish(const QStringList &args, int startIndex)
 {
     QString oldPath = args.at(startIndex);
     int oldPid = args.at(startIndex+1).toInt();
+    qDebug() << "oldPath" << oldPath;
+    qDebug() << "oldPid" << oldPid;
 
     int interval = 500;
     int oneSec = 1000;
