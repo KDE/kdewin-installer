@@ -173,7 +173,7 @@ static int versionToInt(QByteArray version)
 bool InstallerEngine::isInstallerVersionOutdated()
 {
     int minVersion = versionToInt(m_globalConfig->minimalInstallerVersion());
-    int currentVersion = versionToInt(VERSION);
+    int currentVersion = versionToInt(VERSION_PATCH);
     return minVersion != 0 && currentVersion < minVersion;
 }
 
