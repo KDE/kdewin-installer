@@ -1,6 +1,15 @@
 ChangeLog
 =========
 
+1.0.0-0 
+-----------------
+- all:               - updated downloads url to reflect the move to download.kde.org (Ralf Habacker)
+- gui:               - fix error not selecting currently used mirror (Ralf Habacker)
+
+0.9.9-9
+-----------------
+- gui:               - removed leading spaces from newly added mirror [200381] (Ralf Habacker)
+
 0.9.9-8
 -----------------
 - gui:               - fixed link to installer log file in error dialogs (Ralf Habacker)
