@@ -31,6 +31,7 @@
 extern InstallerEngineGui *engine;
 
 #include <QObject>
+#include <QTextEdit>
 #include <QWizard>
 
 class QLabel;
@@ -80,6 +81,7 @@ private slots:
     virtual void reject();
     void slotCurrentIdChanged(int id);
     void slotEngineError(const QString &);
+    void customButtonClicked();
 
 private:
     int nextIdEndUser() const;
@@ -88,6 +90,7 @@ private:
     SettingsPage *_settingsPage;
     int m_lastId;
     static WizardPageType m_titlePage;
+    QTextEdit *m_log;
 };
 
 

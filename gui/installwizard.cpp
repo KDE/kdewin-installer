@@ -63,7 +63,11 @@ InstallerEngineGui *engine;
 
 InstallWizard::WizardPageType InstallWizard::m_titlePage = titlePage;
 
-InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
+InstallWizard::InstallWizard(QWidget *parent)
+  : QWizard(parent),
+    m_lastId(0),
+    m_log(0)
+{
     engine = new InstallerEngineGui(this);
     // default settings from stored values, they may be overrided by the  wizard pages 
     engine->setRoot(Settings::instance().installDir());
@@ -76,6 +80,10 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
 
     setOption(QWizard::NoBackButtonOnStartPage,true);
 
+    setButtonText(QWizard::CustomButton1, tr("Show log"));
+    setOption(QWizard::HaveCustomButton1, true);
+    connect(this, SIGNAL(customButtonClicked(int)), this, SLOT(customButtonClicked()));
+
 #ifdef HAVE_RETRY_BUTTON
     QPushButton *retryButton = new QPushButton(tr("Retry"));
     setButton(QWizard::CustomButton3, retryButton);
@@ -83,6 +91,12 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
     retryButton->hide();
     connect(retryButton, SIGNAL(clicked()), this, SLOT(restart()) );
 #endif
+
+    QList<QWizard::WizardButton> layout;
+       layout << QWizard::CustomButton1 << QWizard::Stretch << QWizard::BackButton
+              << QWizard::NextButton << QWizard::CancelButton << QWizard::FinishButton;
+    setButtonLayout(layout);
+
     TitlePage *titlePageP = new TitlePage();
     
     QString windowTitle = titlePageP->windowTitle() + QLatin1String(" - Version " VERSION_PATCH);
@@ -122,6 +136,7 @@ InstallWizard::InstallWizard(QWidget *parent) : QWizard(parent), m_lastId(0){
 
 InstallWizard::~InstallWizard()
 {
+    delete m_log;
 }
 
 void InstallWizard::setTitlePage(WizardPageType pageType)
@@ -188,6 +203,15 @@ void InstallWizard::slotEngineError(const QString &msg)
     );
 //    engine->setErrorAction(result = QMessageBox::Cancel ?  Cancel : Retry);
 }
+
+void InstallWizard::customButtonClicked()
+{
+    if (m_log)
+        delete m_log;
+    m_log = new QTextEdit(*log());
+    m_log->showMaximized();
+}
+
 
 bool InstallWizard::skipSettings()
 {
