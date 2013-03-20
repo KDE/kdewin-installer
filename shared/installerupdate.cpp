@@ -45,7 +45,7 @@
 #include <unistd.h>
 #endif
 
-QUrl installerUpdateUrl("http://www.winkde.org/pub/kde/ports/win32/installer/");
+QUrl installerUpdateUrl("http://download.kde.org/stable/kdewin/installer/");
 QByteArray installerName ="kdewin-installer-gui-";
 
 bool isProcessRunning(int pid)

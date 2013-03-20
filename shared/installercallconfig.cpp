@@ -43,7 +43,7 @@ InstallerCallConfig::InstallerCallConfig(const QString &fileName)
     releaseType = Stable;
     compilerType = CompilerTypes::MSVC10;
     version = "latest";
-    mirror = "www.winkde.org";
+    mirror = "download.kde.org";
 
     // setup-<packagename>.exe
     if (a.size() >= 2)

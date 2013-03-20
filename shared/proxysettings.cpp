@@ -24,7 +24,7 @@
 #include "settings.h"
 #include "downloader.h"
 
-static QString testUrl = "http://www.winkde.org";
+static QString testUrl = "http://download.kde.org";
 
 ProxySettings::ProxySettings() : port(0)
 {

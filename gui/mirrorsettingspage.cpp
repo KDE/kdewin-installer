@@ -28,28 +28,21 @@
 #include "mirrorsettingspage.h"
 #include "installerdialogs.h"
 
-Mirrors::Config winkde_org_mirrorConfig(
+Mirrors::Config mirrorConfig(
+    "http://download.kde.org/stable/kdewin/installer/mirrors.list",
+    Mirrors::KDE,
+    "",
+    ""
+);
+
+Mirrors::Config fallBackConfig(
     "http://www.winkde.org/pub/kde/ports/win32/mirrors.list",
     Mirrors::KDE,
     "",
     ""
 );
 
-Mirrors::Config winkde_org_mirrorConfigOld(
-    "http://www.winkde.org/pub/kde/ports/win32/mirrors.lst",
-    Mirrors::KDE,
-    "",
-    ""
-);
-
-/// main mirror list server 
-#define mirrorConfig winkde_org_mirrorConfig
-
-/// fall back server when main mirror list server could not be contacted
-#define fallBackConfig winkde_org_mirrorConfigOld
-
-
-QString fallBackHost = "www.winkde.org";
+QString fallBackHost = "download.kde.org";
 
 MirrorSettingsPage::MirrorSettingsPage() : InstallWizardPage(0)
 {
