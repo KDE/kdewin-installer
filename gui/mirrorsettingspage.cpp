@@ -58,14 +58,16 @@ void MirrorSettingsPage::initializePage()
     mirrors.setConfig(mirrorConfig);
     InstallerDialogs::instance().downloadProgressDialog(this,true,tr("Downloading Mirror List"));
     m_failed = false;
-    
+    qDebug() << "start";
+
     if (mirrors.mirrors().size() == 0)
     {
-
+        qDebug() << "downloading mirror list from" << mirrorConfig.url;
         if ( !mirrors.fetch() ) 
         {
             qCritical() << "could not load mirrors from" << mirrorConfig.url;
             mirrors.setConfig(fallBackConfig);
+            qDebug() << "downloading mirror list from" << fallBackConfig.url;
             if ( !mirrors.fetch() )
             {
                 qCritical() << "could not load fallback mirror list from" << fallBackConfig.url;
