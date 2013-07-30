@@ -336,8 +336,10 @@ void qsleep(int ms)
 #ifdef Q_OS_WIN
     Sleep(ms);
 #else
-#warning implement nanosleep
-    //nanosleep(ms);
+    struct timespec ts;
+    ts.tv_sec = ms / 1000;
+    ts.tv_nsec = (ms % 1000) * 1000000;
+    nanosleep(&ts, NULL);
 #endif
 }
 
