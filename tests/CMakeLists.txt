@@ -16,7 +16,14 @@ macro (add_installer_test name)
     add_test(${TEST_NAME} ${CMAKE_CURRENT_BINARY_DIR}/../bin/${TEST_NAME})
 endmacro (add_installer_test name)
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_SOURCE_DIR}/packager)
+include_directories(
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_SOURCE_DIR}/packager
+    ${FILTERS_INCLUDE_DIR}
+    ${QUAZIP_INCLUDE_DIR}
+    ${QT_INCLUDES}
+)
+
 
 add_installer_test(test-database)
 add_installer_test(test-downloader)
