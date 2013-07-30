@@ -85,7 +85,7 @@ public:
 
     // property of the packagerManagerMode
     const bool isDeveloperInstallMode() { return false; }
-    const bool setDeveloperInstallMode() {  }
+    void setDeveloperInstallMode() {  }
 
     /// specify the source mode of proxy settings
     ProxySettings::ProxyMode proxyMode() const { return (ProxySettings::ProxyMode)m_settingsMain->value("proxyMode",0).toInt(); }

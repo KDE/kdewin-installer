@@ -39,6 +39,7 @@
 #ifndef Q_OS_WIN
  #include <pwd.h>
  #include <grp.h>
+ #include <unistd.h>
 #endif
 
 // TODO: proper cleanup states on error
