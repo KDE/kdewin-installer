@@ -374,7 +374,7 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
             QFile f(file.bAbsInputPath ? fn : rootDir + '/' + fn);
             if(!f.open(QIODevice::ReadOnly)) 
             {
-                qWarning("Can't open '%s' as '%s' !", qPrintable(fn), f.fileName());
+                qWarning("Can't open '%s' as '%s' !", qPrintable(fn), qPrintable(f.fileName()));
                 exit(1);
                 continue;
             }
