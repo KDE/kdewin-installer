@@ -158,23 +158,6 @@ UINT DetermineContextForAllProducts()
 }
 #endif
 
-// this should go into Package class sometime in the future
-static Package::Type StringToPackageType(const QString &_type)
-{
-    QString type = _type.toLower();
-    
-    if (type == "bin")
-        return Package::BIN;
-    else if (type == "lib")
-        return Package::LIB;
-    else if (type == "doc")
-        return Package::DOC;
-    else if (type == "src")
-        return Package::SRC;
-    else 
-        return Package::NONE;
-}
-
 
 int main(int argc, char *argv[])
 {
@@ -191,7 +174,8 @@ int main(int argc, char *argv[])
     QString pkgName = args.count() >= 2 ? args.at(1) : "test";
     QString pkgType = args.count() == 3 ? args.at(2) : "bin";
     
-    QStringList files = db.getPackageFiles(pkgName,StringToPackageType(pkgType));
+    QStringList files = db.getPackageFiles(pkgName,FileTypes::fromString(pkgType));
+
     foreach(QString file, files)
         qDebug() << file;
     
