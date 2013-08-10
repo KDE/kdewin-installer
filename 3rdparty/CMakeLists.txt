@@ -52,7 +52,15 @@ endif ()
 # QUAZIP library
 
 #-------------------------------------------------------------------
-add_subdirectory(quazip)
+# limit external quazip library usage to shared build mode 
+# in static build mode we cannot rely that the external library is a static build
+if (NOT STATIC_BUILD)
+    find_package(quazip)
+endif ()
+if (STATIC_BUILD OR NOT QUAZIP_FOUND)
+    message(STATUS "using local static quazip library")
+    add_subdirectory(quazip)
+endif ()
 
 #-------------------------------------------------------------------
 # 7zip library
