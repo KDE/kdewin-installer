@@ -97,7 +97,6 @@ set(installer_GUI_HEADERS
 set (main_UI_SOURCES 
    ${CMAKE_CURRENT_SOURCE_DIR}/dependenciespage.ui
    ${CMAKE_CURRENT_SOURCE_DIR}/downloadsettingspage.ui
-   ${CMAKE_CURRENT_SOURCE_DIR}/finishpage.ui
    ${CMAKE_CURRENT_SOURCE_DIR}/installdirectorypage.ui
    ${CMAKE_CURRENT_SOURCE_DIR}/usercompilermodepage.ui
    ${CMAKE_CURRENT_SOURCE_DIR}/enduserinstallmodepage.ui

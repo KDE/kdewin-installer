@@ -26,7 +26,6 @@
 #define FINISHPAGE_H
 
 #include "installwizard.h"
-//#include "ui_finishpage.h"
 
 #include <QCheckBox>
 
