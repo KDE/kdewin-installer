@@ -264,12 +264,12 @@ bool PackageList::syncWithDatabase(Database &database)
 
 inline bool isPackageFileName(const QString &fileName)
 {
-    return ( fileName.endsWith(".zip") || fileName.endsWith(".tbz") || fileName.endsWith(".tar.bz2") );
+    return ( fileName.endsWith(".zip") || fileName.endsWith(".tbz") || fileName.endsWith(".tar.bz2") || fileName.endsWith(".7z"));
 }
 
 inline bool isPackageFileName(const QByteArray &fileName)
 {
-    return ( fileName.endsWith(".zip") || fileName.endsWith(".tbz") || fileName.endsWith(".tar.bz2") );
+    return ( fileName.endsWith(".zip") || fileName.endsWith(".tbz") || fileName.endsWith(".tar.bz2") || fileName.endsWith(".7z") );
 }
 
 class FileType {
@@ -528,7 +528,7 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
             addPackageFromHintFile(fileName);
         } else
 #endif
-        if (fileName.endsWith(".zip") || fileName.endsWith(".tbz") || fileName.endsWith(".tar.bz2") ) {
+        if (isPackageFileName(fileName)) {
             QString pkgName;
             QString pkgCompiler;
             QString pkgVersion;

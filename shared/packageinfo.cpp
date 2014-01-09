@@ -139,7 +139,7 @@ bool PackageInfo::extractFormat(QString &s, QString &result)
     {
         result = s.mid(idx + 1);
         s = s.left(idx);
-        if (result == "bz2")
+        if (result == "bz2" || result == "7z")
         {
             int idx2 = s.lastIndexOf('.', idx - 1);
             result = s.mid(idx2 + 1);// @TODO return complete format + '.' + result;
