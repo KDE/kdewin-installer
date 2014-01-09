@@ -60,7 +60,7 @@ void FinishPage::initializePage()
         setTitle(tr("Installation/Update Finished"));
 
         label->setText(tr(
-             "<p>Now you should be able to run KDE applications. In the start menu you will find entries for the installed kde applications.</p>"
+             "<p>Now you should be able to run KDE applications. In the start menu you will find entries for the installed KDE applications.</p>"
             ));
 
         funText = tr("<p>Have fun using KDE on windows.</p>");
@@ -78,7 +78,7 @@ void FinishPage::initializePage()
     }
 
     label2->setText(tr(
-         "<p>If you <ul>"
+         "<p>If you would:<ul>"
          "<li>like to see the KDE on Windows project web site see <a href=\"http://windows.kde.org\">http://windows.kde.org</a></li>"
          "<li>like to get community support for this installer and/or running KDE applications please contact "
             "the <a href=\"http://mail.kde.org/mailman/listinfo/kde-windows\">kde-windows@kde.org</a> mailing list.</li>"
@@ -90,7 +90,7 @@ void FinishPage::initializePage()
          "<p><b>The KDE on Windows team</b></p>"
          "<p>&nbsp;</p>"
          "<p>&nbsp;</p>"
-         "<p>This software is designed to provide a powerfull and flexible network based install system using a modern gui toolkit.</p>"
+         "<p>This software is designed to provide a powerful and flexible network based install system using a modern GUI toolkit.</p>"
          ));
 
     setFinalPage(true);
