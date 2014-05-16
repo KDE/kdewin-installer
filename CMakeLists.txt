@@ -85,7 +85,9 @@ ENABLE_TESTING()
 include(CTest)
 include(CTestConfig.cmake)
 
-ADD_DEFINITIONS(-D_WIN32_WINNT=0x0500)
+if(WIN32)
+    ADD_DEFINITIONS(-D_WIN32_WINNT=0x0500)
+endif()
 # -------------------------------------------------------
 # build type settings
 # -------------------------------------------------------
