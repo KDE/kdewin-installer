@@ -1,5 +1,12 @@
 ChangeLog
 =========
+1.0.1
+-----------------
+- all:               - Do not pass DBUS_SESSION_BUS_ADDRESS to running client executables, when running under 
+		       wine. Otherwise clients fails to come up because of they try to contact to host dbus 
+		       session bus. Running installer on wine requires linux binfmt support for windows
+		       executables. (Ralf Habacker)
+		     - add shared Qt5 build support, enabled with -DQT5_BUILD=1 on cmake command line (Ralf Habacker)
 
 1.0.0
 -----------------
