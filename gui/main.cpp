@@ -31,7 +31,6 @@
 
 #include <QApplication>
 #include <QLocale>
-#include <QPlastiqueStyle>
 #include <QTranslator>
 
 int main(int argc, char *argv[])

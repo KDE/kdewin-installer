@@ -35,7 +35,6 @@
 
 #include <QtDebug>
 #include <QDir>
-#include <QTreeWidget>
 #include <QFlags>
 
 /**

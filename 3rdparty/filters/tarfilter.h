@@ -28,8 +28,8 @@
 #ifndef TARFILTER_H
 #define TARFILTER_H
 
-#include <QtCore/QString>
-#include <QtCore/QFile>
+#include <QString>
+#include <QFile>
 
 class QIODevice;
 class QTextCodec;
