@@ -113,7 +113,9 @@ bool FinishPage::isComplete()
 bool FinishPage::validatePage()
 {    
     if (runSystemSettingsBox->isChecked())
-        QProcess::startDetached( engine->root() + "/bin/systemsettings.exe",QStringList(), engine->root() + "/bin");
+    {
+        engine->runProcess("bin/systemsettings.exe");
+    }
     return true;
 }
 

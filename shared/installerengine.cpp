@@ -188,6 +188,7 @@ bool InstallerEngine::isAnyKDEProcessRunning()
     QString cmd = m_root +"/bin/kdeinit4.exe";
     QProcess p;
     QStringList args = QStringList() << "--list";
+    p.setProcessEnvironment(processEnvironment());
     p.start(cmd,args);
     if (!p.waitForStarted()) 
     {
@@ -221,9 +222,11 @@ bool InstallerEngine::isAnyKDEProcessRunning()
 
 bool InstallerEngine::killAllKDEApps()
 {
+
     QString cmd = m_root +"/bin/kdeinit4.exe";
     QStringList args = QStringList() << "--help";
     QProcess p;
+    p.setProcessEnvironment(processEnvironment());
     p.start(cmd, args);
     if (!p.waitForStarted()) 
     {
@@ -482,10 +485,11 @@ void InstallerEngine::stop()
 
 bool InstallerEngine::getStartMenuRootPath()
 {
-    QProcess myProcess;
-    myProcess.start(m_root + "\\bin\\kwinstartmenu", QStringList() << "--query-path");
-    myProcess.waitForFinished(3000);
-    QByteArray data = myProcess.readAllStandardOutput();
+    QProcess p;
+    p.setProcessEnvironment(processEnvironment());
+    p.start(m_root + "\\bin\\kwinstartmenu", QStringList() << "--query-path");
+    p.waitForFinished(3000);
+    QByteArray data = p.readAllStandardOutput();
     if (data.size() > 0) 
     {
         startMenuRootPath = data;
@@ -501,10 +505,11 @@ int InstallerEngine::getAppVersion(const QString &appname, const QString &key)
 
 QString InstallerEngine::getAppVersionString(const QString &appname, const QString &key)
 {
-    QProcess myProcess;
-    myProcess.start(m_root + "\\bin\\" + appname, QStringList() << "--version");
-    myProcess.waitForFinished(3000);
-    QByteArray data = myProcess.readAllStandardOutput();
+    QProcess p;
+    p.setProcessEnvironment(processEnvironment());
+    p.start(m_root + "\\bin\\" + appname, QStringList() << "--version");
+    p.waitForFinished(3000);
+    QByteArray data = p.readAllStandardOutput();
     if (data.size() > 0) 
     {
         QRegExp rx(".*"+(!key.isEmpty() ? key : appname)+":.*([0-9.]+).*",Qt::CaseInsensitive);
@@ -642,3 +647,44 @@ bool InstallerEngine::includeCategory(CompilerTypes::Type compilerType, const QS
     // compiler specific
     return supportedCompilers.toString(compilerType) == categoryName;
 }
+
+QProcessEnvironment InstallerEngine::processEnvironment()
+{
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+//#ifdef Q_WS_WIN
+    QString sessionBus = env.value("DBUS_SESSION_BUS_ADDRESS");
+    if (sessionBus.contains("unix:"))
+        env.insert("DBUS_SESSION_BUS_ADDRESS", "");
+//#endif
+    return env;
+}
+
+bool InstallerEngine::runProcess(const QString &executable, const QStringList &args)
+{
+    QProcess p;
+    p.setProcessEnvironment(processEnvironment());
+    p.setWorkingDirectory(root() + "/bin");
+    p.start(root() + executable, args);
+}
+
+bool InstallerEngine::runProcessAndWait(const QString &cmd, const QStringList &args, QString &result)
+{
+    QProcess p;
+    p.setProcessEnvironment(processEnvironment());
+    p.setWorkingDirectory(root() + "/bin");
+    p.start(root() + '/' + cmd, args);
+    if (!p.waitForStarted())
+    {
+        qCritical() << "could not start" << cmd << args;
+        return false;
+    }
+    if (!p.waitForFinished(3000))
+    {
+        qCritical() << "failed to run" << cmd << args;
+        return false;
+    }
+    result = p.readAllStandardOutput();
+    return p.exitStatus() == QProcess::NormalExit && p.exitCode() == 0;
+}
+
+

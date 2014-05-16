@@ -45,6 +45,7 @@ bool PostProcessing::runCommand(int index, const QString &msg, const QString &ap
     qDebug() << "running " << app << params;
 
     QProcess p;
+    p.setProcessEnvironment(m_engine->processEnvironment());
     p.start(f.absoluteFilePath(), params);
     if (!p.waitForStarted(3000))
         return false;

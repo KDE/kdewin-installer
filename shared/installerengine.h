@@ -137,6 +137,15 @@ public:
     void setCurrentCompiler(CompilerTypes::Type type) { m_currentCompiler = type; }
     CompilerTypes::Type currentCompiler() { return m_currentCompiler; }
 
+    /// return process environment for running tools
+    QProcessEnvironment processEnvironment();
+
+    /// run process detached
+    bool runProcess(const QString &executable, const QStringList &args = QStringList());
+
+    /// run process and return true on successfull finish
+    bool runProcessAndWait(const QString &cmd, const QStringList &args, QString &result);
+
 Q_SIGNALS:
     void error ( const QString &error );
 
