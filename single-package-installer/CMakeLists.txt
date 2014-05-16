@@ -28,9 +28,14 @@ set (HEADERS
     installerenginesinglepackage.h
 )
 
-qt4_wrap_ui(SOURCES ${UI_SOURCES})
-qt4_wrap_cpp(SOURCES ${HEADERS})
-qt4_add_resources(SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/installerdialog.qrc)
+if(QT5_FOUND)
+  qt5_wrap_ui(SOURCES ${UI_SOURCES})
+  qt5_add_resources(SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/installerdialog.qrc)
+else()
+  qt4_wrap_ui(SOURCES ${UI_SOURCES})
+  qt4_wrap_cpp(SOURCES ${HEADERS})
+  qt4_add_resources(SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/installerdialog.qrc)
+endif()
 add_executable(${TARGET} WIN32 ${SOURCES} ${HEADERS})
 target_link_libraries(${TARGET} ${GUI_LIBS})
 

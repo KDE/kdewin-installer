@@ -122,18 +122,34 @@ macro (add_themed_installer _appname _resource)
       ${main_all_headers}
   )
 
-  QT4_WRAP_UI(all_sources ${UI_SOURCES})
+  if(QT5_FOUND)
+    QT5_WRAP_UI(all_sources ${UI_SOURCES})
+  else()
+    QT4_WRAP_UI(all_sources ${UI_SOURCES})
+  endif()
 
-  QT4_ADD_RESOURCES(all_sources ${_resource})
+  if(QT5_FOUND)
+    QT5_ADD_RESOURCES(all_sources ${_resource})
+  else()
+    QT4_ADD_RESOURCES(all_sources ${_resource})
+  endif()
   if(WIN32)
   if(MINGW)
+  if(QT5_FOUND)
+    QT5_ADD_RESOURCES2(all_sources ${CMAKE_CURRENT_SOURCE_DIR}/gui.rc)
+  else()
     QT4_ADD_RESOURCES2(all_sources ${CMAKE_CURRENT_SOURCE_DIR}/gui.rc)
+  endif()
   else(MINGW)
     list(APPEND all_sources ${CMAKE_CURRENT_SOURCE_DIR}/gui.rc)
   endif(MINGW)
   endif(WIN32)
 
-  qt4_wrap_cpp(all_sources ${all_headers})
+  if(QT5_FOUND)
+    QT5_WRAP_CPP(all_sources ${UI_SOURCES})
+  else()
+    QT4_WRAP_CPP(all_sources ${all_headers})
+  endif()
 
 #  if (BUILD_TRANSLATIONS)
 #      qt4_create_translation(
@@ -157,12 +173,7 @@ macro (add_themed_installer _appname _resource)
   add_executable(${TARGET} ${_WIN32} ${all_sources} ${all_headers})
   set_target_properties(${TARGET} PROPERTIES COMPILE_FLAGS "-DUSE_GUI ${GUI_DEFINITIONS}")
   set_target_properties(${TARGET} PROPERTIES OUTPUT_NAME ${TARGET_FILENAME})
-  target_link_libraries(${TARGET}
-                        ${QT_QTCORE_LIBRARY}
-                        ${QT_QTGUI_LIBRARY}
-                        ${QT_QTMAIN_LIBRARY}
-                        ${GUI_LIBS}
-  )
+  target_link_libraries(${TARGET} ${GUI_LIBS})
   write_file(${EXECUTABLE_OUTPUT_PATH}/${TARGET}.bat "start ${TARGET_FILENAME}")
 
   install_targets(/bin ${TARGET} )

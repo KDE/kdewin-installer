@@ -13,7 +13,7 @@ add_executable(sha1sum
     ../shared/hash.cpp 
     ../shared/debug.cpp
 )
-target_link_libraries(sha1sum ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY})
+target_link_libraries(sha1sum ${QT_CONSOLE_LIBRARIES})
 if (MSVC)
     target_link_libraries(sha1sum ws2_32)
 endif (MSVC)

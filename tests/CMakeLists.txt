@@ -10,7 +10,9 @@ macro (add_installer_test name)
         ${TEST_NAME}.cpp
         ${ARGN}
     )
-    qt4_automoc(${${TEST_NAME}_SOURCES})
+    if(QT4_FOUND)
+        qt4_automoc(${${TEST_NAME}_SOURCES})
+    endif()
     add_executable(${TEST_NAME} ${${TEST_NAME}_SOURCES})
     target_link_libraries(${TEST_NAME} ${CONSOLE_LIBS})
     add_test(${TEST_NAME} ${CMAKE_CURRENT_BINARY_DIR}/../bin/${TEST_NAME})

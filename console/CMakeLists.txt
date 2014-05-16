@@ -6,6 +6,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
     ${CONSOLE_INCLUDE_DIR}
+    ${QT_INCLUDES}
 )
 
 set(installer_CONSOLE_SOURCES
@@ -27,8 +28,9 @@ set(all_sources
     ${installer_CONSOLE_SOURCES}
     ${installer_CONSOLE_HEADERS}
 )
-
-qt4_automoc(${all_sources})
+if(QT4_FOUND)
+  qt4_automoc(${all_sources})
+endif()
 
 set (TARGET kdewin-installer-console)
 

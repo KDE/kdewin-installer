@@ -1,7 +1,7 @@
 set (NAME kdewin-installer)
 project(${NAME})
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.11)
 
 set (INSTALLER_VERSION_MAJOR 1)
 set (INSTALLER_VERSION_MINOR 0)
@@ -15,27 +15,6 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 include(cmake/macros.cmake)
 
 #set (CMAKE_SUPPRESS_REGENERATION 1)
-
-find_package(Qt5Core QUIET)
-if (Qt5Core_FOUND)
-  message(STATUS "Building with Qt5 support")
-  find_package(ECM 0.0.6 REQUIRED NO_MODULE)
-  set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${CMAKE_MODULE_PATH})
-  find_package(Qt5Transitional REQUIRED  Core Gui Xml)
-else()
-  set(QT_MIN_VERSION "4.7.0")
-  find_package(Qt4 COMPONENTS QtCore QtGui QtXml REQUIRED )
-endif()
-
-find_package(UPX)
-find_package(KDEWIN_Packager)
-find_package(WinSCP)
-
-# make cmake 2.6 happy
-if(COMMAND cmake_policy)
-    cmake_policy(SET CMP0003 NEW)
-endif(COMMAND cmake_policy)
-          
 # experimental 7zip file support
 # the qua7zip library do not support creating of 7zip archives yet,
 # which means that the packager is not able to write 7zip archives
@@ -59,6 +38,47 @@ OPTION(BUILD_TRANSLATIONS "build translations" OFF)
 OPTION(BUILD_WITH_PACKAGER "build with packager" OFF)
 
 OPTION(BUILD_PACKAGER_ONLY "Only build packager" OFF)
+
+OPTION(QT5_BUILD "Build with QT5" OFF)
+OPTION(QT4_BUILD "Build with QT4" ON)
+
+if(QT5_BUILD)
+    find_package(Qt5Core)
+    find_package(Qt5Gui)
+    find_package(Qt5Widgets)
+    find_package(Qt5Xml)
+
+    if (Qt5Core_FOUND AND Qt5Gui_FOUND AND Qt5Xml_FOUND AND Qt5Widgets_FOUND)
+        set(QT5_FOUND 1)
+        message(STATUS "Building with Qt5 support")
+        set(STATIC_BUILD 0)
+        MESSAGE(STATUS "Qt is build in shared mode - use shared build mode too")
+        set(QT_CONSOLE_LIBRARIES Qt5::Core Qt5::Xml)
+        set(QT_GUI_LIBRARIES Qt5::Core Qt5::Gui Qt5::Xml Qt5::Widgets)
+        if(UNIX)
+            set(QT_DEFINITIONS -fpic)
+        endif()
+        set(QT_INCLUDES /usr/include/qt5;/usr/include/qt5/QtCore;/usr/include/qt5/QtGui;/usr/include/qt5/QtWidgets;/usr/include/qt5/QtXml)
+        set(CMAKE_AUTOMOC ON)
+    endif()
+endif()
+if(NOT QT5_BUILD AND QT4_BUILD)
+    set(QT_MIN_VERSION "4.7.0")
+    find_package(Qt4 COMPONENTS QtCore QtGui QtXml REQUIRED )
+    include(${QT_USE_FILE})
+    set(QT_GUI_LIBRARIES ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTXML_LIBRARY} ${QT_QTMAIN_LIBRARY} )
+    set(QT_CONSOLE_LIBRARIES ${QT_QTCORE_LIBRARY} ${QT_QTXML_LIBRARY} ${QT_QTMAIN_LIBRARY} )
+    message(${QT_INCLUDES})
+endif()
+
+find_package(UPX)
+find_package(KDEWIN_Packager)
+find_package(WinSCP)
+
+# make cmake 2.6 happy
+if(COMMAND cmake_policy)
+    cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
 
 ENABLE_TESTING()
 
@@ -177,15 +197,15 @@ configure_file(${CMAKE_SOURCE_DIR}/config.txt.cmake ${CMAKE_BINARY_DIR}/config/k
 # set libs required by console and gui apps 
 #-----------------------------------------------------------------------------------------
 if (UNIX)
-  set (CONSOLE_LIBS pthread dl z rt ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} shared-console ${CURL_LIBRARIES} ${QUAZIP_LIBRARIES} ${BZIP2_LIBRARIES})
-  set (GUI_LIBS pthread dl z rt ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} shared-gui ${CURL_LIBRARIES} ${QUAZIP_LIBRARIES} ${BZIP2_LIBRARIES})
+  set (CONSOLE_LIBS pthread dl z rt ${QT_CONSOLE_LIBRARIES} shared-console ${CURL_LIBRARIES} ${QUAZIP_LIBRARIES} ${BZIP2_LIBRARIES})
+  set (GUI_LIBS pthread dl z rt ${QT_GUI_LIBRARIES} shared-gui ${CURL_LIBRARIES} ${QUAZIP_LIBRARIES} ${BZIP2_LIBRARIES} shared-gui)
   if (STATIC_BUILD)
     find_package(X11)
     find_package(Freetype)
 # does not work with cmake provided find_packages
 #    find_package(Fontconfig)
 #    find_package(png)
-     set (GUI_LIBS ${GUI_LIBS} ${QT_QTCORE_LIBRARY} ${X11_LIBRARIES} ${FREETYPE_LIBRARIES} crypto ssl fontconfig png Xrandr Xfixes)
+     set (GUI_LIBS ${GUI_LIBS} ${X11_LIBRARIES} ${FREETYPE_LIBRARIES} crypto ssl fontconfig png Xrandr Xfixes)
   endif(STATIC_BUILD)
 
 else(UNIX)
@@ -193,9 +213,9 @@ else(UNIX)
     set (FIRST_LIBS mingw32)
   endif(MINGW)
   # required for static linking
-  set (CONSOLE_LIBS ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} shared-console ${BZIP2_LIBRARIES} ${CURL_LIBRARIES}
+  set (CONSOLE_LIBS ${QT_CONSOLELIBRARIES} shared-console ${BZIP2_LIBRARIES} ${CURL_LIBRARIES}
         ${QUAZIP_LIBRARIES} ${QUA7ZIP_LIBRARIES})
-  set (GUI_LIBS ${QT_QTCORE_LIBRARY} ${QT_QTMAIN_LIBRARY} ${QT_QTGUI_LIBRARY} shared-gui ${BZIP2_LIBRARIES} ${CURL_LIBRARIES}
+  set (GUI_LIBS ${QT_GUI_LIBRARIES} shared-gui ${BZIP2_LIBRARIES} ${CURL_LIBRARIES}
         ${QUAZIP_LIBRARIES} ${QUA7ZIP_LIBRARIES})
   if(BZIP2_UNPACK_SUPPORT)
     list(APPEND CONSOLE_LIBS ${FILTERS_LIBRARIES})
@@ -210,8 +230,8 @@ endif (UNIX)
 set (CONSOLE_DEFINITIONS ${QT_DEFINITIONS} ${CURL_DEFINITIONS} ${BZIP2_DEFINITIONS} ${FILTERS_DEFINITIONS} ${QUAZIP_DEFINITIONS} ${QUA7ZIP_DEFINITIONS})
 set (GUI_DEFINITIONS     "-DUSE_GUI ${QT_DEFINITIONS} ${BZIP2_DEFINITIONS} ${CURL_DEFINITIONS} ${FILTERS_DEFINITIONS} ${QUAZIP_DEFINITIONS} ${QUA7ZIP_DEFINITIONS}")
 
-set (CONSOLE_INCLUDE_DIR  ${BZIP2_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/shared  ${CURL_INCLUDE_DIR} ${FILTERS_INCLUDE_DIR} ${QUAZIP_INCLUDE_DIR} ${QUA7ZIP_INCLUDE_DIR} ${QT_INCLUDES})
-set (GUI_INCLUDE_DIR      ${BZIP2_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/shared  ${CURL_INCLUDE_DIR} ${FILTERS_INCLUDE_DIR} ${QUAZIP_INCLUDE_DIR} ${QUA7ZIP_INCLUDE_DIR} ${QT_INCLUDES})
+set (CONSOLE_INCLUDE_DIR  ${BZIP2_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/shared  ${CURL_INCLUDE_DIR} ${FILTERS_INCLUDE_DIR} ${QUAZIP_INCLUDE_DIR} ${QUA7ZIP_INCLUDE_DIR} )
+set (GUI_INCLUDE_DIR      ${BZIP2_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/shared  ${CURL_INCLUDE_DIR} ${FILTERS_INCLUDE_DIR} ${QUAZIP_INCLUDE_DIR} ${QUA7ZIP_INCLUDE_DIR})
 
 if (BUILD_PACKAGER_ONLY)
     add_subdirectory(shared)
