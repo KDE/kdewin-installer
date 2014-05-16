@@ -23,7 +23,7 @@
 #ifndef INSTALLER_H
 #define INSTALLER_H
 
-#include <QtCore/QProcess>
+#include <QProcess>
 #include "package.h"
 #include "installerprogress.h"
 #include "typehelper.h"

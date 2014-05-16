@@ -30,7 +30,7 @@
 
 #include <QDir>
 #include <QFileInfo>
-#include <QtCore/QTextCodec>
+#include <QTextCodec>
 
 #ifndef DISABLE_SIGNALS
 #define DISABLE_SIGNALS

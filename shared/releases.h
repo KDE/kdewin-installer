@@ -24,8 +24,8 @@
 
 #include "misc.h"
 
-#include <QtCore/QString>
-#include <QtCore/QUrl>
+#include <QString>
+#include <QUrl>
 #include <QtDebug>
 class QByteArray;
 

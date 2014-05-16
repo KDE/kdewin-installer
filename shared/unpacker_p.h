@@ -26,12 +26,12 @@
 
 #include "package.h"
 
-#include <QtCore/QDir>
-#include <QtCore/QList>
-#include <QtCore/QRegExp>
-#include <QtCore/QString>
-#include <QtCore/QStringList>
-#include <QtCore/QThread>
+#include <QDir>
+#include <QList>
+#include <QRegExp>
+#include <QString>
+#include <QStringList>
+#include <QThread>
 
 class QFileInfo;
 class UPThread : public QThread

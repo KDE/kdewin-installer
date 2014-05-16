@@ -24,7 +24,7 @@
 #ifndef UNINSTALLER_P_H
 #define UNINSTALLER_P_H
 
-#include <QtCore/QThread>
+#include <QThread>
 
 class UIThread : public QThread
 {

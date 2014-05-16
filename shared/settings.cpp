@@ -23,9 +23,9 @@
 #include "settings.h"
 #include "misc.h"
 
-#include <QtCore/QDir>
-#include <QtCore/QUrl>
-#include <QtCore/QtDebug>
+#include <QDir>
+#include <QUrl>
+#include <QtDebug>
 
 #ifdef Q_OS_WIN32
 #include <windows.h>

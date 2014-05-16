@@ -27,9 +27,9 @@
 #include "hash.h"
 #include "downloaderprogress.h"
 
-#include <QtCore/QObject>
-#include <QtCore/QString>
-#include <QtCore/QUrl>
+#include <QObject>
+#include <QString>
+#include <QUrl>
 
 class QEventLoop;
 class DownloaderProgress;

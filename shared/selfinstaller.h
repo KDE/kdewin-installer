@@ -22,9 +22,9 @@
 #ifndef SELFINSTALL_H
 #define SELFINSTALL_H
 
-#include <QtCore/QString>
-#include <QtCore/QUrl>
-#include <QtCore/QFileInfo>
+#include <QString>
+#include <QUrl>
+#include <QFileInfo>
 /**    
    \brief The SelfInstaller class handles self installation (and uninstallation) 
    of the installer into <install root>. 

@@ -1,7 +1,7 @@
 #ifndef DOWNLOADER_P_H
 #define DOWNLOADER_P_H
 
-#include <QtCore/QThread>
+#include <QThread>
 #include <curl/curl.h>
 
 class MyThread : public QThread

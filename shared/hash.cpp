@@ -28,7 +28,7 @@
 #include <QDir>
 #include <QByteArray>
 #include <QFile>
-#include <QtCore/QCryptographicHash>
+#include <QCryptographicHash>
 
 Hash::Hash(Type type) : m_type(type), m_cryptoHash(0)
 {

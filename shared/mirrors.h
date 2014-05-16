@@ -22,8 +22,9 @@
 #ifndef MIRRORS_H
 #define MIRRORS_H
 
-#include <QtCore/QString>
-#include <QtCore/QUrl>
+#include <QString>
+#include <QUrl>
+#include <QIODevice>
 class QByteArray;
 
 /**

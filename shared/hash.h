@@ -26,8 +26,8 @@
 class QFile;
 class QCryptographicHash;
 
-#include <QtCore/QByteArray>
-#include <QtCore/QString>
+#include <QByteArray>
+#include <QString>
 
 class Hash {
     public:

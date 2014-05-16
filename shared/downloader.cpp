@@ -37,13 +37,13 @@
 #include <curl/curl.h>
 
 #include <qnamespace.h>
-#include <QtCore/QBuffer>
-#include <QtCore/QByteArray>
-#include <QtCore/QEventLoop>
-#include <QtCore/QFile>
-#include <QtCore/QTemporaryFile>
-#include <QtCore/QThread>
-#include <QtCore/QCryptographicHash>
+#include <QBuffer>
+#include <QByteArray>
+#include <QEventLoop>
+#include <QFile>
+#include <QTemporaryFile>
+#include <QThread>
+#include <QCryptographicHash>
 
 MyThread::MyThread ( CURL *handle, QObject *parent )
         : QThread ( parent ), curlHandle ( handle ), m_bCancel ( false ), m_ret ( CURLE_OK )

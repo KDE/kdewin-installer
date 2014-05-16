@@ -27,11 +27,11 @@
 #include "typehelper.h"
 #include "proxysettings.h"
 
-#include <QtCore/QDir>
-#include <QtCore/QObject>
-#include <QtCore/QSettings>
-#include <QtCore/QStringList>
-#include <QtCore/QUrl>
+#include <QDir>
+#include <QObject>
+#include <QSettings>
+#include <QStringList>
+#include <QUrl>
 
 /**
  holds global options, which are stored in a local user specific config file

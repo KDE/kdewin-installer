@@ -27,7 +27,7 @@
 #include "installerprogress.h"
 #include "package.h"  // StringHash
 
-#include <QtCore/QObject>
+#include <QObject>
 
 class QEventLoop;
 class UPThread;

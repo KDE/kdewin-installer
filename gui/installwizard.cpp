@@ -57,7 +57,7 @@
 #include "installpage.h"
 #include "finishpage.h"
 
-#include <QtCore/QTimer>
+#include <QTimer>
 
 InstallerEngineGui *engine;
 

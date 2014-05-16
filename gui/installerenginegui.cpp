@@ -45,7 +45,7 @@
 #include <windows.h>
 #endif
 
-#include <QtGui/QTreeWidget>
+#include <QTreeWidget>
 
 int BINColumn = 3;
 int SRCColumn = 4;

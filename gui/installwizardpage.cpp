@@ -26,7 +26,7 @@
 
 #include <QLabel>
 #include <QtDebug>
-#include <QtCore/QTimer>
+#include <QTimer>
 
 InstallWizardPage::InstallWizardPage(QWidget *parent) : QWizardPage(parent)
 {

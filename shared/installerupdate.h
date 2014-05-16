@@ -22,8 +22,8 @@
 #ifndef INSTALLERUPDATE_H
 #define INSTALLERUPDATE_H
 
-#include <QtCore/QString>
-#include <QtCore/QUrl>
+#include <QString>
+#include <QUrl>
 
 /**    
    \brief The InstallerUpdate class provides access to new installer versions.

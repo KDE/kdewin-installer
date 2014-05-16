@@ -25,8 +25,8 @@
 
 #include <time.h>
 
-#include <QtCore/QDebug>
-#include <QtCore/QUrl>
+#include <QDebug>
+#include <QUrl>
 #include <QLabel>
 #include <QProgressBar>
 #include <QGridLayout>

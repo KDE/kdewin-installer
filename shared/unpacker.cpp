@@ -40,12 +40,12 @@ using namespace qua7zip;
 #include "unpacker.h"
 #include "unpacker_p.h"
 
-#include <QtCore/QDebug>
-#include <QtCore/QDir>
-#include <QtCore/QEventLoop>
-#include <QtCore/QFile>
-#include <QtCore/QFileInfo>
-#include <QtCore/QProcess>
+#include <QDebug>
+#include <QDir>
+#include <QEventLoop>
+#include <QFile>
+#include <QFileInfo>
+#include <QProcess>
 
 UPThread::UPThread ( QObject *parent )
         : QThread ( parent ), m_bCancel ( false ), m_bRet ( false )

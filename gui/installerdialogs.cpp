@@ -24,8 +24,8 @@
 #include "debug.h"
 #include "settings.h"
 
-#include <QtGui/QDesktopWidget>
-#include <QtGui/QVBoxLayout>
+#include <QDesktopWidget>
+#include <QVBoxLayout>
 
 InstallerDialogs::InstallerDialogs()
 : m_parent(0), m_progress(0), m_oldProgress(0), m_d(0)

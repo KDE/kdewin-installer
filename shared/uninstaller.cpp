@@ -28,11 +28,11 @@
 #include "uninstaller.h"
 #include "uninstaller_p.h"
 
-#include <QtCore/QDir>
-#include <QtCore/QFile>
-#include <QtCore/QFileInfo>
-#include <QtCore/QList>
-#include <QtCore/QEventLoop>
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QList>
+#include <QEventLoop>
 
 UIThread::UIThread ( QObject *parent )
         : QThread ( parent ), m_bCancel ( false ), m_bRet ( false )

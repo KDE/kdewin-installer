@@ -22,8 +22,8 @@
 #ifndef DIALOGS_H
 #define DIALOGS_H
 
-#include <QtCore/QString>
-#include <QtGui/QMessageBox>
+#include <QString>
+#include <QMessageBox>
 
 #include "downloaderprogress.h"
 #include "downloader.h"

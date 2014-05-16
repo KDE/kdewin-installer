@@ -30,11 +30,11 @@
 #include "uninstaller.h"
 #include "typehelper.h"
 
-#include <QtCore/QBuffer>
-#include <QtCore/QDir>
-#include <QtCore/QFileInfo>
-#include <QtCore/QTextStream>
-#include <QtCore/QTextCodec>
+#include <QBuffer>
+#include <QDir>
+#include <QFileInfo>
+#include <QTextStream>
+#include <QTextCodec>
 #include <QApplication>
 
 #ifdef Q_OS_WIN

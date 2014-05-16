@@ -23,7 +23,7 @@
 #ifndef DOWNLOADERPROGRESS_H
 #define DOWNLOADERPROGRESS_H
 
-#include <QtCore/QString>
+#include <QString>
 
 class QUrl;
 class QObject;
