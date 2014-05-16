@@ -32,12 +32,14 @@ QDebug _qWarning(const char *file, int line);
 QDebug _qCritical(const char *file, int line);
 QDebug _qFatal(const char *file, int line);
 
+#if 0
 // wrapper for original q... calls 
 #define qDebug() _qDebug(__FILE__,__LINE__)
 #define qInfo() _qInfo(__FILE__,__LINE__)
 #define qWarning() _qWarning(__FILE__,__LINE__)
 #define qCritical() _qCritical(__FILE__,__LINE__)
 #define qFatal() _qFatal(__FILE__,__LINE__)
+#endif
 
 /// return stdout stream
 QTextStream &qOut();

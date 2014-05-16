@@ -82,7 +82,11 @@ QTextStream &qError()
 static QFile *logFile = 0;
 static QByteArray *logData = 0;
 
+#if QT_VERSION > 0x050000
+void myMessageOutput(QtMsgType type, const QMessageLogContext& context, const QString& msg)
+#else
 void myMessageOutput(QtMsgType type, const char *msg)
+#endif
 {
     const char *msgtype;
     const char *msgColor;
@@ -146,7 +150,11 @@ void setMessageHandler(const QString &baseName)
     logFile->remove();
     logFile->open(QIODevice::WriteOnly);
 
+#if QT_VERSION > 0x050000
+    qInstallMessageHandler(myMessageOutput);
+#else
     qInstallMsgHandler(myMessageOutput);
+#endif
 #endif
     logData = new QByteArray;
 }

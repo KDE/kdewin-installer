@@ -280,7 +280,7 @@ void EndUserPackageSelectorPage::preSelectPackages(const QString &package)
             if (!engine->isPackageSelected(availablePackage,FileTypes::BIN))
             {
                 QString installedVersion = item->text ( C_INSTALLED );
-                Package *installedPackage = engine->database()->getPackage( name,installedVersion.toAscii() );
+                Package *installedPackage = engine->database()->getPackage( name,installedVersion.toLatin1() );
                 engine->setNextState(*item, availablePackage, installedPackage, FileTypes::BIN, C_ACTION );
                 qDebug() << "found" << QString(pattern).arg(code);
             }   
@@ -328,7 +328,7 @@ void EndUserPackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
     QString installedVersion = item->text ( C_INSTALLED );
     QString availableVersion = item->text ( C_AVAILABLE );
 
-    Package *installedPackage = engine->database()->getPackage( name,installedVersion.toAscii() );
+    Package *installedPackage = engine->database()->getPackage( name,installedVersion.toLatin1() );
     Package *availablePackage = engine->getPackageByName( name, availableVersion );
 
     if ( !availablePackage && !installedPackage ) {
@@ -357,7 +357,7 @@ void EndUserPackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
             QString _installedVersion = item->child(i)->text ( C_INSTALLED );
             QString _availableVersion = item->child(i)->text ( C_AVAILABLE );
 
-            Package *ip = engine->database()->getPackage( packageName, _installedVersion.toAscii() );
+            Package *ip = engine->database()->getPackage( packageName, _installedVersion.toLatin1() );
             Package *ap = engine->getPackageByName( packageName, _availableVersion );
 
             if(!ap && !ip) continue;

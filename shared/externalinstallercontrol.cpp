@@ -189,7 +189,7 @@ void SetItemText(HWND hwnd, const QString &message)
     clearItemText(hwnd);
     for (int i = 0; i < message.size(); i++)
     {
-        char c = message.at(i).toAscii();
+        char c = message.at(i).toLatin1();
         uint aKey=MapVirtualKey((uint)c,1);
         PostMessage(hwnd,WM_KEYDOWN,VkKeyScan(c) ,0);
         PostMessage(hwnd,WM_KEYUP,VkKeyScan(c) ,0);

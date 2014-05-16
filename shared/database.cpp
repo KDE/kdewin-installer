@@ -274,7 +274,7 @@ bool Database::readFromDirectory ( const QString &_dir )
         if (!pkgCompiler.isEmpty())
             key += '-' + pkgCompiler;
 
-        if ( ( pkg = getPackage ( key, pkgVersion.toAscii() ) ) != NULL ) {
+        if ( ( pkg = getPackage ( key, pkgVersion.toLatin1() ) ) != NULL ) {
             Package::PackageItem pi ( pkgType );
             pi.setInstalled(true);
             pkg->add ( pi );

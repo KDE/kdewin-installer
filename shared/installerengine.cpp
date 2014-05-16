@@ -474,7 +474,7 @@ bool InstallerEngine::addMetaPackages()
 
 Package *InstallerEngine::getPackageByName(const QString &name,const QString &version)
 {
-    return m_packageResources->find(name,version.toAscii());
+    return m_packageResources->find(name,version.toLatin1());
 }
 
 void InstallerEngine::stop()

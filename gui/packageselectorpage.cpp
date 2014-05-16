@@ -408,7 +408,7 @@ void PackageSelectorPage::itemClicked(QTreeWidgetItem *item, int column)
     QString installedVersion = item->text ( installedVersionColumn );
     QString availableVersion = item->text ( availableVersionColumn );
 
-    Package *installedPackage = engine->database()->getPackage( name,installedVersion.toAscii() );
+    Package *installedPackage = engine->database()->getPackage( name,installedVersion.toLatin1() );
     Package *availablePackage = engine->getPackageByName ( name,availableVersion  );
     updatePackageInfo(availablePackage, installedPackage);
     if ( !availablePackage && !installedPackage ) {

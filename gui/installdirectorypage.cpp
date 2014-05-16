@@ -41,7 +41,11 @@ InstallDirectoryPage::InstallDirectoryPage() : InstallWizardPage(0)
 void InstallDirectoryPage::initializePage()
 {
     const Settings &s = Settings::instance();
+#if QT_VERSION >= 0x050000
+    ui.rootPathEdit->setText(QDir::toNativeSeparators(s.installDir()));
+#else
     ui.rootPathEdit->setText(QDir::convertSeparators(s.installDir()));
+#endif
 }
 
 bool InstallDirectoryPage::isComplete()

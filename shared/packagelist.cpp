@@ -229,7 +229,7 @@ bool PackageList::syncWithDatabase(Database &database)
     QList<Package*> newPackages;
     Q_FOREACH ( Package *apkg, m_packageList )
     {
-        Package *pkg = database.getPackage(apkg->name(), apkg->version().toString().toAscii());
+        Package *pkg = database.getPackage(apkg->name(), apkg->version().toString().toLatin1());
         if (!pkg)
         {
             pkg = database.getPackage(apkg->name());
@@ -237,7 +237,7 @@ bool PackageList::syncWithDatabase(Database &database)
                 continue;
             // if this installed package is already in the package list
             // may be it comes later in the list, don't add it twice
-            Package *p = find(pkg->name(),pkg->version().toString().toAscii());
+            Package *p = find(pkg->name(),pkg->version().toString().toLatin1());
             if (p)
                 continue;
             newPackages += pkg;
@@ -541,7 +541,7 @@ bool PackageList::addPackagesFromFileNames(const QStringList &files, bool ignore
             if (!pkgCompiler.isEmpty())
                 key += "-" + pkgCompiler;
 
-            Package *pkg = find(key, pkgVersion.toAscii());
+            Package *pkg = find(key, pkgVersion.toLatin1());
             if(!pkg) {
                 Package p;
                 p.setVersion(pkgVersion);

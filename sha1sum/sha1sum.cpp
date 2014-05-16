@@ -74,11 +74,11 @@ int main(int argc, char *argv[])
             fprintf(stderr,"hash file has illegal format");
             return -3;
         }
-        QByteArray givenHash = cols[0].toAscii();
+        QByteArray givenHash = cols[0].toLatin1();
         QFile inFile(cols[1]);
         if (!inFile.open(QIODevice::ReadOnly))
         {
-            fprintf(stderr,"could not open file %s", cols[1].toAscii().data());
+            fprintf(stderr,"could not open file %s", cols[1].toLatin1().data());
             return -4;
         }
         QByteArray computedHash = Hash::sha1(inFile).toHex();
@@ -96,13 +96,13 @@ int main(int argc, char *argv[])
     QByteArray hashValue = Hash::sha1(input);
     if (!output.isEmpty())
     {
-        FILE *f = fopen(output.toAscii().data(),"w");
-        fprintf(f,"%s  %s",hashValue.toHex().data(),input.toAscii().data());
+        FILE *f = fopen(output.toLatin1().data(),"w");
+        fprintf(f,"%s  %s",hashValue.toHex().data(),input.toLatin1().data());
         fclose(f);
     }
     else 
     {
-        fprintf(stdout,"%s  %s\n",hashValue.toHex().data(),input.toAscii().data());
+        fprintf(stdout,"%s  %s\n",hashValue.toHex().data(),input.toLatin1().data());
     }
     return 0;
 }

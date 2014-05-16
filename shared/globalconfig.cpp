@@ -191,7 +191,7 @@ bool GlobalConfig::parse(QIODevice *ioDev)
             const QList<QByteArray> cmdBA = line.split(' ');
             QString keyword;
             if (cmd[0].startsWith('@'))
-                keyword = cmd[0].mid(1).toAscii();
+                keyword = cmd[0].mid(1).toLatin1();
             else
                 continue;
            
