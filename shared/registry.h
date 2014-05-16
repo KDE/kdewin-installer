@@ -31,7 +31,7 @@
 typedef enum { hKEY_CURRENT_USER, hKEY_LOCAL_MACHINE, hKEY_CLASSES_ROOT }  RegKey;
 typedef enum { qt_unknown = -1, qt_String, qt_ExpandedString, qt_DWORD, qt_BINARY, qt_MultiString } RegType;
 
-QVariant getWin32RegistryValue(RegKey akey, const QString& subKey, const QString& item, bool *ok = false);
+QVariant getWin32RegistryValue(RegKey akey, const QString& subKey, const QString& item, bool *ok = 0);
 bool setWin32RegistryValue(const RegKey& akey, const QString& subKey, const QString& item, const QVariant& value, RegType pqvType = qt_unknown);
 bool delWin32RegistryValue(const RegKey& akey, const QString& subKey);
 
