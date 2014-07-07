@@ -27,7 +27,6 @@
 #include "unpacker.h"
 
 #include <QVBoxLayout>
-#include <QAbstractButton>
 
 InstallPage::InstallPage() : InstallWizardPage(0)
 {

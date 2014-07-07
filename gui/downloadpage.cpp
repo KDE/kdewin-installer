@@ -27,7 +27,6 @@
 #include "downloader.h"
 
 #include <QVBoxLayout>
-#include <QAbstractButton>
 
 DownloadPage::DownloadPage() : InstallWizardPage(0)
 {

@@ -29,6 +29,7 @@
 
 class QLabel;
 
+#include <QAbstractButton>
 #include <QWizardPage>
 
 class InstallWizardPage : public QWizardPage

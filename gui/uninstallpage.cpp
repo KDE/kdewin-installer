@@ -27,7 +27,6 @@
 #include "uninstaller.h"
 
 #include <QVBoxLayout>
-#include <QAbstractButton>
 
 UninstallPage::UninstallPage()
 {

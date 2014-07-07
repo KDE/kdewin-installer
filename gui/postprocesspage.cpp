@@ -39,7 +39,9 @@ PostProcessPage::PostProcessPage() : InstallWizardPage(0), m_postProcessing(engi
 
 void PostProcessPage::initializePage()
 {
+    wizard()->button(QWizard::NextButton)->setEnabled(false);
 }
+
 void PostProcessPage::addItem(const QString &label)
 {
 	ui.listWidget->addItem(label);
@@ -63,6 +65,7 @@ void PostProcessPage::postProcessingEnd()
     disconnect(&m_postProcessing,SIGNAL(finished()),this,SLOT(postProcessingEnd()));
     disconnect(&m_postProcessing,SIGNAL(commandStarted(int)),ui.progressBar,SLOT(setValue(int)));
     disconnect(&m_postProcessing,SIGNAL(commandStarted(const QString &)),this,SLOT(addItem(const QString &)));
+    wizard()->button(QWizard::NextButton)->setEnabled(true);
     if (Settings::instance().autoNextStep())
         wizard()->next();
 }
