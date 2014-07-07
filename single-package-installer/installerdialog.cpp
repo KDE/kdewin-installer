@@ -225,10 +225,18 @@ void InstallerDialog::setError(int pagenum)
 void InstallerDialog::setupEngine()
 {
     setItem(1);
-    addHint("I'm fetching packages from " + InstallerEngine::defaultConfigURL);
 
     if (m_engine.init())
     {
+        QStringList urls;
+        foreach(Site *site, *m_engine.globalConfig()->sites())
+        {
+            const QUrl listURL = site->listURL().isEmpty() ? site->url() : site->listURL();
+            urls << site->name() + "&nbsp;:&nbsp;" + listURL.toString();
+        }
+
+        addHint("I'm fetching packages from the following repositories:<br>&nbsp;&nbsp;&nbsp;" + urls.join("<br>&nbsp;&nbsp;&nbsp;"));
+
         foreach(const QString &package, m_packages)
         {
             Package *p = m_engine.getPackageByName(package);
