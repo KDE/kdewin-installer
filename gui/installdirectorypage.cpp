@@ -28,6 +28,7 @@
 #include <QDir>
 #include <QString>
 #include <QFileDialog>
+#include <QMessageBox>
 
 InstallDirectoryPage::InstallDirectoryPage() : InstallWizardPage(0)
 {
@@ -56,6 +57,15 @@ bool InstallDirectoryPage::isComplete()
 bool InstallDirectoryPage::validatePage()
 {
     Settings &s = Settings::instance();
+    QFileInfo fi(ui.rootPathEdit->text());
+    if (!fi.isWritable())
+    {
+        QMessageBox::critical(this,
+                              tr("Error"),
+                              tr("You do not have write permissions on the selected install directory."),
+                              QMessageBox::Ok);
+        return false;
+    }
     s.setInstallDir(ui.rootPathEdit->text());
     engine->setRoot(s.installDir());
     return true;
