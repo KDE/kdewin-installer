@@ -346,7 +346,6 @@
  </widget>
  <resources>
   <include location="installerdialog.qrc"/>
-  <include location="../end-user-installer/installerdialog.qrc"/>
  </resources>
  <connections/>
 </ui>
