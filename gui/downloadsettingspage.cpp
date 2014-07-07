@@ -25,6 +25,7 @@
 #include "downloadsettingspage.h"
 
 #include <QFileDialog>
+#include <QMessageBox>
 
 DownloadSettingsPage::DownloadSettingsPage() : InstallWizardPage(0)
 {
@@ -44,6 +45,15 @@ void DownloadSettingsPage::initializePage()
 bool DownloadSettingsPage::validatePage()
 {
     Settings &s = Settings::instance();
+    QFileInfo fi(ui.tempPathEdit->text());
+    if (!fi.isWritable())
+    {
+        QMessageBox::critical(this,
+                              tr("Error"),
+                              tr("You do not have write permissions on the selected download directory."),
+                              QMessageBox::Ok);
+        return false;
+    }
     s.setDownloadDir(ui.tempPathEdit->text());
     return true;
 }
