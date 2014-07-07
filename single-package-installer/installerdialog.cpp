@@ -30,8 +30,10 @@
 #include "../shared/unpacker.h"
 #include "../shared/postprocessing.h"
 
-#include <QtGui>
+#include <QCloseEvent>
+#include <QPixmap>
 #include <QTextEdit>
+#include <QTimer>
 
 InstallerDialog::InstallerDialog()
     :  okay(":/images/dialog-ok-apply.png"), next(":/images/go-next.png"), error(":/images/dialog-cancel.png"), m_postProcessing(&m_engine, this), m_log(0)
