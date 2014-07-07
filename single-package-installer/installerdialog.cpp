@@ -54,7 +54,11 @@ InstallerDialog::InstallerDialog()
     {
         InstallerEngine::defaultConfigURL = QString("http://download.kde.org/%1/%2").arg(toString(config.releaseType)).arg(config.version);
         InstallerEngine::fallBackURL = QString("http://www.winkde.org/pub/kde/ports/win32/releases/%1/%2").arg(toString(config.releaseType)).arg(config.version);
+#ifdef Q_OS_WIN
         QString installRoot = QString("%1/%2-%3-%4-%5%6").arg(QLatin1String(qgetenv("ProgramFiles"))).arg(config.packageName).arg(allCompilers.toString(config.compilerType)).arg(toString(config.releaseType)).arg(config.version).arg(config.hasSDK ? "-sdk" : "");
+#else
+        QString installRoot = QString("%1/%2-%3-%4-%5%6").arg(QLatin1String(qgetenv("HOME"))).arg(config.packageName).arg(allCompilers.toString(config.compilerType)).arg(toString(config.releaseType)).arg(config.version).arg(config.hasSDK ? "-sdk" : "");
+#endif
         addHint("I'm installing into " + installRoot);
         Settings::instance().setInstallDir(installRoot, false);
         m_engine.setRoot(installRoot);
