@@ -26,7 +26,7 @@ set(quazip_HEADERS
 )
 
 add_library(quazip STATIC ${quazip_SOURCES} ${quazip_HEADERS})
-target_link_libraries(quazip)
+target_link_libraries(quazip ${QT_CONSOLE_LIBRARIES} ${ZLIB_LIBRARIES})
 get_target_property(QUAZIP_LIBRARY quazip LOCATION)
 
 # public interface

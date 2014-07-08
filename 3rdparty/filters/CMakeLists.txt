@@ -22,7 +22,7 @@ set(filters_HEADERS
 )
 
 add_library(filters STATIC ${filters_SOURCES} ${filters_HEADERS})
-target_link_libraries(filters)
+target_link_libraries(filters ${QT_CONSOLE_LIBRARIES})
 get_target_property(FILTERS_LIBRARY filters LOCATION)
 
 # public interface
