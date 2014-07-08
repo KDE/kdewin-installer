@@ -182,24 +182,19 @@ bool InstallerEngine::isAnyPackageInstalled()
     return m_database->isAnyPackageInstalled();
 }
 
-
 bool InstallerEngine::isAnyKDEProcessRunning()
 {
+    if (!canRunHelperApplications())
+        return false;
+
     QString cmd = m_root +"/bin/kdeinit4.exe";
     QProcess p;
     QStringList args = QStringList() << "--list";
-    p.setProcessEnvironment(processEnvironment());
-    p.start(cmd,args);
-    if (!p.waitForStarted()) 
+    if (!runProcess(p, cmd, args, true))
     {
-        qCritical() << "could not start" << cmd << args;
         return false;
     }
-    if (!p.waitForFinished())
-    {
-        qCritical() << "failed to run" << cmd << args;
-        return false;
-    }
+
     QByteArray _stderr = p.readAllStandardError();
     qDebug() << "run" << cmd << args << "without errors" << _stderr; 
     QStringList lines = QString(_stderr).split('\n');
@@ -222,41 +217,41 @@ bool InstallerEngine::isAnyKDEProcessRunning()
 
 bool InstallerEngine::killAllKDEApps()
 {
-
     QString cmd = m_root +"/bin/kdeinit4.exe";
     QStringList args = QStringList() << "--help";
     QProcess p;
-    p.setProcessEnvironment(processEnvironment());
-    p.start(cmd, args);
-    if (!p.waitForStarted()) 
+    if (!runProcess(p, cmd, args, true))
     {
-        qCritical() << "could not start" << cmd << args;
-        return false;
-    }
-    if (!p.waitForFinished())
-    {
-        qCritical() << "failed to run" << cmd << args;
         return false;
     }
     QByteArray _stdout = p.readAllStandardOutput();
-    args = QStringList() << "--terminate";
 
-    /// I got cases where files are not removed and resulted into "a could not remove file error on installing" 
-    p.start(cmd,args);
-    if (!p.waitForStarted()) 
+    args = QStringList() << "--terminate";
+    /// I got cases where files are not removed and resulted into "a could not remove file error on installing"
+
+    if (!runProcess(p, cmd, args, true))
     {
-        qCritical() << "could not start" << cmd << args;
         return false;
     }
-    if (!p.waitForFinished())
-    {
-        qCritical() << "failed to run" << cmd << args;
-        return false;
-    }
-    qDebug() << "run" << cmd << args << "without errors"; 
+
+    qDebug() << "run" << cmd << args << "without errors";
     // give applications some time to really be terminated
     qsleep(1000);
     return true;
+}
+
+bool InstallerEngine::canRunHelperApplications()
+{
+#ifdef Q_OS_WIN
+    return true;
+#else
+#ifdef Q_OS_LINUX
+    QFileInfo f("/usr/bin/wine");
+    return f.exists();
+#else
+    return false;
+#endif
+#endif
 }
 
 void InstallerEngine::setConfigURL(const QUrl &url)
@@ -651,40 +646,54 @@ bool InstallerEngine::includeCategory(CompilerTypes::Type compilerType, const QS
 QProcessEnvironment InstallerEngine::processEnvironment()
 {
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-//#ifdef Q_WS_WIN
     QString sessionBus = env.value("DBUS_SESSION_BUS_ADDRESS");
     if (sessionBus.contains("unix:"))
         env.insert("DBUS_SESSION_BUS_ADDRESS", "");
-//#endif
     return env;
 }
 
-bool InstallerEngine::runProcess(const QString &executable, const QStringList &args)
+bool InstallerEngine::runProcessDetached(const QString &command, const QStringList &args)
 {
-    QProcess p;
-    p.setProcessEnvironment(processEnvironment());
-    p.setWorkingDirectory(root() + "/bin");
-    p.start(root() + executable, args);
+    QProcess *p = new QProcess;
+    connect(p, SIGNAL(finished(int)), p, SLOT(deleteLater()));
+    return runProcess(*p, command, args, false);
 }
 
-bool InstallerEngine::runProcessAndWait(const QString &cmd, const QStringList &args, QString &result)
+bool InstallerEngine::runProcess(QProcess &p, const QString &cmd, const QStringList &args, bool waitFinished)
 {
-    QProcess p;
-    p.setProcessEnvironment(processEnvironment());
-    p.setWorkingDirectory(root() + "/bin");
-    p.start(root() + '/' + cmd, args);
-    if (!p.waitForStarted())
-    {
-        qCritical() << "could not start" << cmd << args;
-        return false;
-    }
-    if (!p.waitForFinished(3000))
-    {
-        qCritical() << "failed to run" << cmd << args;
-        return false;
-    }
-    result = p.readAllStandardOutput();
-    return p.exitStatus() == QProcess::NormalExit && p.exitCode() == 0;
-}
+    QString executable;
+    QStringList arguments;
 
+    p.setWorkingDirectory(root() + "/bin");
+#ifdef Q_OS_WIN
+    executable = cmd;
+    arguments = args;
+#else
+    executable = "/usr/bin/wine";
+    arguments << cmd;
+    arguments << args;
+#endif
+
+    qDebug() << "running" << executable << arguments;
+
+    p.setProcessEnvironment(processEnvironment());
+    p.start(executable, arguments);
+
+    if (!p.waitForStarted(3000)) {
+        qCritical() << "application could not be started" << executable << arguments;
+        return false;
+    }
+
+    if (waitFinished)
+    {
+        if (!p.waitForFinished())
+        {
+            qCritical() << "...failed to run" << executable << arguments;
+            return false;
+        }
+        qDebug() << "...finished";
+        return true;
+    }
+    qDebug() << "...not waiting - returning immediatly";
+    return true;}
 

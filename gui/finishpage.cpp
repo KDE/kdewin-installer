@@ -102,7 +102,7 @@ void FinishPage::initializePage()
 #endif
     wizard()->setOption(QWizard::NoBackButtonOnLastPage,true);
     Settings::instance().setFirstRun(false);
-    runSystemSettingsBox->setVisible(QFile::exists(engine->root() + "/bin/systemsettings.exe"));
+    runSystemSettingsBox->setVisible(QFile::exists(engine->root() + "/bin/systemsettings.exe") && engine->canRunHelperApplications());
 }
 
 bool FinishPage::isComplete()
@@ -114,7 +114,7 @@ bool FinishPage::validatePage()
 {    
     if (runSystemSettingsBox->isChecked())
     {
-        engine->runProcess("bin/systemsettings.exe");
+        engine->runProcessDetached(engine->root() + "/bin/systemsettings.exe");
     }
     return true;
 }

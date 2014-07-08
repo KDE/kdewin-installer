@@ -142,10 +142,13 @@ public:
     QProcessEnvironment processEnvironment();
 
     /// run process detached
-    bool runProcess(const QString &executable, const QStringList &args = QStringList());
+    bool runProcessDetached(const QString &executable, const QStringList &args = QStringList());
 
-    /// run process and return true on successfull finish
-    bool runProcessAndWait(const QString &cmd, const QStringList &args, QString &result);
+    /// run process
+    bool runProcess(QProcess &p, const QString &cmd, const QStringList &args = QStringList(), bool waitFinished = false);
+
+    // check if helper applications could be started (used for running installer on linux)
+    bool canRunHelperApplications();
 
 Q_SIGNALS:
     void error ( const QString &error );

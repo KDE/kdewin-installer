@@ -45,12 +45,8 @@ bool PostProcessing::runCommand(int index, const QString &msg, const QString &ap
     emit commandStarted(index);
     emit commandStarted(msg);
 
-    qDebug() << "running " << app << params;
-
     QProcess p;
-    p.setProcessEnvironment(m_engine->processEnvironment());
-    p.start(f.absoluteFilePath(), params);
-    if (!p.waitForStarted(3000))
+    if (!m_engine->runProcess(p, f.absoluteFilePath(), params, true))
         return false;
 
     m_shouldQuit = false;
@@ -58,9 +54,8 @@ bool PostProcessing::runCommand(int index, const QString &msg, const QString &ap
     {
         QCoreApplication::processEvents();
     }
+    qDebug() << "should quit state" << m_shouldQuit;
     bool noError = p.exitStatus() == QProcess::NormalExit && p.exitCode() == 0;
-
-    qDebug() << "application finished" << m_shouldQuit;
 
     emit commandFinished(noError);
     return noError;
