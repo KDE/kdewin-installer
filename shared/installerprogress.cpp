@@ -24,13 +24,14 @@
 #include "settings.h"
 
 #include <QDebug>
+
+#ifdef USE_GUI
 #include <QLabel>
 #include <QProgressBar>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QListWidget>
 
-#ifdef USE_GUI
 InstallerProgress::InstallerProgress(QWidget *parent,bool showProgress)
 : GenericProgress(parent), m_progress(0)
 {

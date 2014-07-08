@@ -27,10 +27,6 @@
 
 #include <QDebug>
 #include <QUrl>
-#include <QLabel>
-#include <QProgressBar>
-#include <QGridLayout>
-#include <QDesktopWidget>
 
 
 //#define DISABLE_GENERICPROCESS_PARENT_CONTROL
@@ -39,6 +35,11 @@
 // uncomment the above listed define to disable 
 
 #ifdef USE_GUI
+#include <QLabel>
+#include <QProgressBar>
+#include <QGridLayout>
+#include <QDesktopWidget>
+
 GenericProgress::GenericProgress(QWidget *parent)
   : QWidget(parent), m_titleLabel(NULL), m_parent(parent)
 {}

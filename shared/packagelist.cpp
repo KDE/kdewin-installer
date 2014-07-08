@@ -33,9 +33,12 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
-#include <QStandardItemModel>
 #include <QUrl>
+
+#ifdef USE_GUI
+#include <QStandardItemModel>
 #include <QTreeWidget>
+#endif
 
 PackageList::PackageList(InstallerEngine *parent)
         : QObject(),  m_parent(parent)

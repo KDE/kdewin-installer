@@ -24,9 +24,12 @@
 #include "installerengine.h"
 #include "settings.h"
 
-#include <QListWidget>
 #include <QProcess>
 #include <QCoreApplication>
+
+#ifdef USE_GUI
+#include <QListWidget>
+#endif
 
 PostProcessing::PostProcessing(InstallerEngine *engine, QObject *parent) : QObject(parent), m_singleAppsInstallMode(false), m_engine(engine)
 {

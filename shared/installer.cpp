@@ -35,7 +35,7 @@
 #include <QFileInfo>
 #include <QTextStream>
 #include <QTextCodec>
-#include <QApplication>
+#include <QCoreApplication>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
