@@ -74,11 +74,15 @@ void printBuildInTemplate()
 
 static void printHelp(const QString &addInfo)
 {
+#if QT_VERSION >= 0x050000
+    qerr << QDir::toNativeSeparators(QCoreApplication::applicationFilePath());
+#else
     qerr << QDir::convertSeparators(QCoreApplication::applicationFilePath());
+#endif
     if(!addInfo.isEmpty())
         qerr << ": " << addInfo;
     qerr << "\n";
-    qerr << "Qt: " QTVERSION "\n";
+    qerr << "Qt: " QT_VERSION_STR "\n";
     qerr << "kdewin-packager: " VERSION_PATCH "\n";
     qerr << "Options:"
        << "\n\t\t"      << "-complete              create all-in-one package with all files"
