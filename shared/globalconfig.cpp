@@ -73,7 +73,7 @@ QStringList GlobalConfig::fetch(const QString &baseURL)
         return configFiles;
     }
     // remote config file
-    else if (url.scheme() == "http" || url.scheme() == "ftp")
+    else if (url.scheme() == "http" || url.scheme() == "https" || url.scheme() == "ftp")
     {
         QFileInfo cfr(Settings::instance().downloadDir()+"/config-remote.txt");
         qDebug() << "Check if a copy of the remote config file is available at" << cfr.absoluteFilePath() << (cfr.exists() ? "... found" : "... not found");

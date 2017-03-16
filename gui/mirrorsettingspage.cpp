@@ -160,7 +160,7 @@ void MirrorSettingsPage::addNewMirrorClicked()
         ui.addServerURL->setText(text);
         QUrl url(text);
         
-        if (!url.isValid() || !(url.scheme() == "http" || url.scheme() == "ftp"  || url.scheme() == "file"))
+        if (!url.isValid() || !(url.scheme() == "http" || url.scheme() == "https" || url.scheme() == "ftp"  || url.scheme() == "file"))
         {
             setStatus(tr("Warning: This URL is not valid"));
             return;

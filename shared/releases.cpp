@@ -232,7 +232,7 @@ bool Releases::parse(const QByteArray &data, const QUrl &url, ReleaseType type)
 
 bool Releases::parse(QIODevice *ioDev, const QUrl &url, ReleaseType type)
 {
-    if (url.scheme() == "http") 
+    if (url.scheme() == "http" || url.scheme() == "https")
     {
         while (!ioDev->atEnd())
         {
