@@ -46,7 +46,7 @@ bool Releases::convertFromOldMirrorUrl(QUrl &url)
 {
     // in case the url contains already a release path, remove this part as the following code will detect the releases by itself
     QString path = url.path();
-    int i = path.indexOf(QRegExp("/(unstable|stable|nightly)/(latest|[0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{1,2}|[0-9]{8})"));
+    int i = path.indexOf(QRegExp("/(Attic|unstable|stable|nightly)/(latest|[0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{1,2}|[0-9]{8})"));
     if (i != -1)
     {
         url.setPath(path.left(i) + '/');
@@ -195,6 +195,16 @@ bool Releases::fetch(const QUrl &_url)
     else if (!parse(out,url,Nightly))
     {
         qWarning() << "could not extract nightly versions from directory list fetched from" << url;
+    }
+
+    url = m_baseURL.toString() + "Attic/";
+    if (!Downloader::instance()->fetch(url,out))
+    {
+        qWarning() << "could not fetch outdated versions from" << url;
+    }
+    else if (!parse(out,url,Attic))
+    {
+        qWarning() << "could not extract outdated versions from directory list fetched from" << url;
     }
     return patchReleaseUrls(m_baseURL);
 }
