@@ -12,6 +12,15 @@ set (VERSION_PATCH "${INSTALLER_VERSION_MAJOR}.${INSTALLER_VERSION_MINOR}.${INST
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
+# make cmake 2.6 happy
+if(COMMAND cmake_policy)
+    cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
+
+if(CMAKE_MAJOR_VERSION STREQUAL "3")
+    cmake_policy(SET CMP0026 OLD)
+endif()
+
 include(cmake/macros.cmake)
 
 #set (CMAKE_SUPPRESS_REGENERATION 1)
@@ -78,11 +87,6 @@ endif()
 find_package(UPX)
 find_package(KDEWIN_Packager)
 find_package(WinSCP)
-
-# make cmake 2.6 happy
-if(COMMAND cmake_policy)
-    cmake_policy(SET CMP0003 NEW)
-endif(COMMAND cmake_policy)
 
 ENABLE_TESTING()
 
