@@ -14,9 +14,9 @@ add_executable(sha1sum
     ../shared/debug.cpp
 )
 target_link_libraries(sha1sum ${QT_CONSOLE_LIBRARIES})
-if (MSVC)
+if (WIN32)
     target_link_libraries(sha1sum ws2_32)
-endif (MSVC)
+endif ()
 
 get_target_property(SHA1SUM_EXECUTABLE sha1sum LOCATION)
 if (CMAKE_CROSSCOMPILING)
