@@ -14,7 +14,7 @@ set(bzip2_HEADERS
     bzlib_private.h
 )
 
-add_library(bzip2  ${bzip2_SOURCES} ${bzip2_HEADERS})
+add_library(bzip2 STATIC ${bzip2_SOURCES} ${bzip2_HEADERS})
 target_link_libraries(bzip2)
 get_target_property(BZIP2_LIBRARY bzip2 LOCATION)
 
