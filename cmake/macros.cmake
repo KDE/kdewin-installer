@@ -87,18 +87,18 @@ macro (pack_target _target)
 endmacro (pack_target)
 
 macro (create_checksum_file _target)
-    if (SHA1SUM_EXECUTABLE)
+    if (SHA1SUM_LOCAL_EXECUTABLE)
         get_target_property( _filename ${_target} LOCATION )
         get_filename_component(_name ${_filename} NAME)
         add_custom_command(
             TARGET ${_target}
             POST_BUILD
-            COMMAND ${SHA1SUM_EXECUTABLE} ${_name} > ${_name}.sha1
+            COMMAND ${SHA1SUM_LOCAL_EXECUTABLE} ${_name} > ${_name}.sha1
             WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
             COMMENT "creating sha1sum file for ${_target}"
         )
         install(FILES ${_filename}.sha1 DESTINATION bin)
-    endif (SHA1SUM_EXECUTABLE)
+    endif ()
 endmacro (create_checksum_file _target)
 
 # the following macro adds a themed installer
