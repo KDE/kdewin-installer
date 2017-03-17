@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2005 Ralf Habacker. All rights reserved.
+** Copyright (C) 2005-2017 Ralf Habacker. All rights reserved.
 **
 ** This file is part of the KDE installer for windows
 **
@@ -27,12 +27,15 @@
 #include "hash.h"
 #include "downloaderprogress.h"
 
+
 #include <QObject>
 #include <QString>
 #include <QUrl>
 
-class QEventLoop;
 class DownloaderProgress;
+class QEventLoop;
+class QNetworkReply;
+
 class Downloader : public QObject
 {
     Q_OBJECT
@@ -74,8 +77,9 @@ Q_SIGNALS:
     void done ( bool error );
     void error ( const QString &error );
 protected Q_SLOTS:
-    void threadFinished ();
-    int progressCallback ( double ultotal, double ulnow );
+    void slotReadyRead ();
+    void slotReplyFinished ( QNetworkReply*reply );
+    int slotProgressCallback ( qint64 now, qint64 total );
 protected:
     void setError ( const QString &errStr );
     bool fetchInternal ( const QUrl &url );

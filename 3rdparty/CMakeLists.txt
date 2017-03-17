@@ -33,22 +33,6 @@ if (BZIP2_UNPACK_SUPPORT)
 endif (BZIP2_UNPACK_SUPPORT)
 
 #-------------------------------------------------------------------
-# LIBCURL
-#-------------------------------------------------------------------
-# limit external curl library usage to shared build mode 
-# in static build mode we cannot rely that the external library is a static build
-if (NOT STATIC_BUILD)
-    find_package(CURL)
-    if (CURL_FOUND)
-        set (CURL_LIBRARIES ${CURL_LIBRARY} CACHE FILEPATH "library" FORCE)
-    endif ()
-endif ()
-if (STATIC_BUILD OR NOT CURL_FOUND)
-    message(STATUS "using local static curl library")
-    add_subdirectory(curl)
-endif ()
-
-#-------------------------------------------------------------------
 # QUAZIP library
 
 #-------------------------------------------------------------------

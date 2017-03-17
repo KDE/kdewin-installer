@@ -20,7 +20,6 @@ set(installer_shared_HEADERS
     database.h
     debug.h
     downloader.h
-    downloader_p.h
     downloaderprogress.h
     externalinstallercontrol.h
     globalconfig.h
