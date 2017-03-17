@@ -316,6 +316,7 @@
 #ifndef _SSIZE_T_DEFINED
 #if (defined(__WATCOMC__) && (__WATCOMC__ >= 1240)) || defined(__POCC__) || \
     defined(__MINGW32__)
+#define ssize_t int
 #elif defined(_WIN64)
 #define ssize_t __int64
 #else
