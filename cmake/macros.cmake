@@ -93,8 +93,7 @@ macro (create_checksum_file _target)
         add_custom_command(
             TARGET ${_target}
             POST_BUILD
-            COMMAND ${SHA1SUM_EXECUTABLE}
-            ARGS -o ${_name}.sha1 ${_name}
+            COMMAND ${SHA1SUM_EXECUTABLE} ${_name} > ${_name}.sha1
             WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
             COMMENT "creating sha1sum file for ${_target}"
         )
