@@ -583,11 +583,12 @@ InstallerEngineGui::InstallerEngineGui (QWidget *parent)
 {
     InstallerUpdate &iu = InstallerUpdate::instance();
     if (iu.isUpdateAvailable()) {
-        if (InstallerDialogs::instance().newInstallerAvailable())
+        if (InstallerDialogs::instance().newInstallerAvailable()) {
             if (iu.fetch())
                 iu.run();
             else 
                 InstallerDialogs::instance().newInstallerDownloadError();
+        }
     }
 }
 
