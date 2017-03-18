@@ -279,7 +279,10 @@ if (WIN32)
 endif(WIN32)
 
 if(NOT BUILD_INSTALLER_THEME)
-install( FILES cmake/modules/FindKDEWIN_Packager.cmake  DESTINATION  share/apps/cmake/modules )
+
+if(BUILD_WITH_PACKAGER OR BUILD_PACKAGER_ONLY)
+    install( FILES cmake/modules/FindKDEWIN_Packager.cmake  DESTINATION  share/apps/cmake/modules )
+endif()
 
 # install required shared libraries
 if (INSTALL_SYSTEM_LIBS)
