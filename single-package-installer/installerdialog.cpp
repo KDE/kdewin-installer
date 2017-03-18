@@ -36,7 +36,11 @@
 #include <QTimer>
 
 InstallerDialog::InstallerDialog()
-    :  okay(":/images/dialog-ok-apply.png"), next(":/images/go-next.png"), error(":/images/dialog-cancel.png"), m_postProcessing(&m_engine, this), m_log(0)
+    : m_postProcessing(&m_engine, this),
+      next(":/images/go-next.png"),
+      okay(":/images/dialog-ok-apply.png"),
+      error(":/images/dialog-cancel.png"),
+      m_log(0)
 {
     ui.setupUi(this);
 
