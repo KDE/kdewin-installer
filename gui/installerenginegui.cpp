@@ -654,7 +654,6 @@ void InstallerEngineGui::selectPackagesForReinstall()
 
 bool InstallerEngineGui::downloadPackageItem(Package *pkg, FileTypes::Type type )
 {
-    bool all = false; //isMarkedForInstall(pkg,FileTypes::ALL);
     if ( !isMarkedForDownload ( pkg,type ) )
         return true;
 

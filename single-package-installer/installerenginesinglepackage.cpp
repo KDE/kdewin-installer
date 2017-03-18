@@ -63,7 +63,6 @@ bool InstallerEngineSinglePackage::init()
 
 bool InstallerEngineSinglePackage::downloadPackages(QList<Package*> &packagesToInstall)
 {
-    int i=0;
     Q_FOREACH(Package *p, packagesToInstall)
     {
         if (!p)
@@ -88,7 +87,6 @@ bool InstallerEngineSinglePackage::downloadPackages(QList<Package*> &packagesToI
 
 bool InstallerEngineSinglePackage::installPackages(QList<Package*> &packagesToInstall)
 {
-    int i=0;
     Q_FOREACH(Package *p, packagesToInstall)
     {
         if (!p)
