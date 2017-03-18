@@ -78,7 +78,7 @@ QMessageBox::StandardButton InstallerDialogs::downloadFailed(const QString &url,
         text = tr("<p>The download of %1 failed with error %2.</p>").arg(url).arg(error);
     else
         text = tr("<p>The download of %1 failed.</p>").arg(url);
-        text += logFileLink();
+    text += logFileLink();
 
     return QMessageBox::critical ( 
                 m_parent, 
