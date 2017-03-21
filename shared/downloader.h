@@ -29,6 +29,7 @@
 
 
 #include <QObject>
+#include <QSslError>
 #include <QString>
 #include <QUrl>
 
@@ -77,6 +78,7 @@ Q_SIGNALS:
     void done ( bool error );
     void error ( const QString &error );
 protected Q_SLOTS:
+    void slotSslErrors(QNetworkReply *reply, const QList<QSslError> &errors);
     void slotReadyRead ();
     void slotReplyFinished ( QNetworkReply*reply );
     int slotProgressCallback ( qint64 now, qint64 total );

@@ -86,6 +86,8 @@ Downloader::Downloader ()
     d ( new Private () )
 {
     connect(d->manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(slotReplyFinished(QNetworkReply*)));
+    connect(d->manager, SIGNAL(sslErrors(QNetworkReply *, const QList<QSslError> &)),
+                               this, SLOT(slotSslErrors(QNetworkReply *, const QList<QSslError> &)));
 }
 
 Downloader::~Downloader()
@@ -184,6 +186,14 @@ bool Downloader::fetchInternal ( const QUrl &url )
         d->progress->hide();
 
     return ( d->ret == 0 );
+}
+
+void Downloader::slotSslErrors(QNetworkReply *reply, const QList<QSslError> & errors)
+{
+    qDebug() << reply->url();
+    foreach(const QSslError error, errors)
+        qDebug() << reply->url() << error;
+    d->reply->ignoreSslErrors();
 }
 
 void Downloader::slotReadyRead()
