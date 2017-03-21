@@ -44,7 +44,8 @@ void PostProcessPage::initializePage()
 
 void PostProcessPage::addItem(const QString &label)
 {
-	ui.listWidget->addItem(label);
+    ui.listWidget->addItem(label);
+    ui.listWidget->repaint();
 }
 
 void PostProcessPage::performAction()
