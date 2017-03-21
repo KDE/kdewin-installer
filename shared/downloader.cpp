@@ -43,6 +43,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkProxyFactory>
 #include <QNetworkReply>
+#include <QPointer>
 #include <QSslConfiguration>
 #include <QTemporaryFile>
 
@@ -76,7 +77,7 @@ public:
     QString     fileName;         // holds filename in case target is a file
     Hash hash;
     QNetworkAccessManager *manager;
-    QNetworkReply *reply;
+    QPointer<QNetworkReply> reply;
     int ret;
 };
 
