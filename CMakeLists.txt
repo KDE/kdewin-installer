@@ -168,6 +168,11 @@ if (STATIC_BUILD AND MSVC)
     set (CMAKE_EXE_LINKER_FLAGS_DEBUG "/debug /INCREMENTAL:NO ${MSVCRT_LINK_FLAGS} /NODEFAULTLIB:libcmt libcmtd.lib")
 endif (STATIC_BUILD AND MSVC)
 
+if (STATIC_BUILD AND CMAKE_COMPILER_IS_GNUCXX)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static, -Wl,-static")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static, -Wl,-static")
+endif ()
+
 # where to store executables
 if (WIN32 OR CYGWIN)
     set (LIBRARY_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/bin)
