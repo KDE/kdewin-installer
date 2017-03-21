@@ -256,12 +256,9 @@ int InstallWizard::nextIdEndUser() const
         if (InstallerEngine::installMode() == InstallerEngine::localInstall)
             return endUserInstallModePage;
         else
-#ifdef HAVE_PROXY_SUPPORT
             return internetSettingsPage;
-#else
-        return mirrorSettingsPage;
-#endif
-    case internetSettingsPage: 
+
+    case internetSettingsPage:
         return mirrorSettingsPage;
         
     case mirrorSettingsPage: 

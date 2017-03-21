@@ -164,10 +164,6 @@ bool Downloader::fetchInternal ( const QUrl &url )
     d->ret = 0;
     startRequest(url);
 
-    Settings &s = Settings::instance();
-    ProxySettings ps;
-    ps.from(s.proxyMode(),m_usedURL.scheme());
-
     if ( d->progress ) 
     {    
         d->progress->setValue ( 0 );
@@ -279,6 +275,23 @@ void Downloader::cancel()
 
 bool Downloader::startRequest(const QUrl &url)
 {
+    Settings &s = Settings::instance();
+    ProxySettings ps;
+    ps.from(s.proxyMode(), url.scheme());
+
+    if (ps.mode != ProxySettings::None)
+    {
+        QNetworkProxy proxy;
+        proxy.setType(QNetworkProxy::HttpProxy);
+        proxy.setHostName(ps.hostname);
+        proxy.setPort(ps.port);
+        proxy.setUser(ps.user);
+        proxy.setPassword(ps.password);
+        QNetworkProxy::setApplicationProxy(proxy);
+    }
+    else
+        QNetworkProxy::setApplicationProxy(QNetworkProxy(QNetworkProxy::NoProxy));
+
     QNetworkRequest request(url);
     request.setSslConfiguration(QSslConfiguration::defaultConfiguration());
     d->reply = d->manager->get(request);
