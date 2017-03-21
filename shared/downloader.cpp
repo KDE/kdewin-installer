@@ -171,6 +171,7 @@ bool Downloader::fetchInternal ( const QUrl &url )
     } while ( !d->reply->isFinished() || m_result == Undefined );
 
     d->ret = d->reply->error() == QNetworkReply::NoError ? 0 : 1;
+    d->reply->deleteLater();
 
     if ( d->progress )
         d->progress->hide();
