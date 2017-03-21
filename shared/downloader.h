@@ -84,10 +84,7 @@ protected:
     bool startRequest(const QUrl &url);
     void setError ( const QString &errStr );
     bool fetchInternal ( const QUrl &url );
-    size_t curlWrite ( const char * data, size_t  size );
-    static size_t curlWriteCallback ( void *ptr, size_t size, size_t nmemb, void *stream );
-    static int curlProgressCallback ( void *clientp, double dltotal, double dlnow,
-                                      double ultotal, double ulnow );
+
 protected:
     ResultType  m_result;
     QString     m_resultString;
