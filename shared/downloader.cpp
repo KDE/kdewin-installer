@@ -115,8 +115,6 @@ bool Downloader::fetch ( const QUrl &url, const QString &fileName )
 {
     if ( url.isEmpty() )
         return false;
-    if ( d->progress )
-        d->progress->setTitle ( url, fileName );
 
     QTemporaryFile *file = new QTemporaryFile ( fileName + ".part" );
     if ( !file->open () ) {
@@ -138,8 +136,6 @@ bool Downloader::fetch ( const QUrl &url, QByteArray &ba )
 
     if ( url.isEmpty() )
         return true;
-    if ( d->progress )
-        d->progress->setTitle ( url );
 
     ba.clear();
     d->ioDevice = new QBuffer ( &ba );
@@ -165,12 +161,9 @@ bool Downloader::fetchInternal ( const QUrl &url )
     d->ret = 0;
     startRequest(url);
 
-    if ( d->progress ) 
-    {    
-        d->progress->setValue ( 0 );
+    if ( d->progress )
         d->progress->show();
-        d->progress->setTitle ( m_usedURL );
-    }
+
     if ( !m_loop )
         m_loop = new QEventLoop ( this );
     do {
@@ -217,8 +210,6 @@ void Downloader::slotReplyFinished(QNetworkReply *reply)
         d->ioDevice->seek(0);
         d->reply->deleteLater();
         m_usedURL = value.toUrl();
-        if (d->progress)
-            d->progress->setTitle(m_usedURL);
         startRequest(value.toUrl());
         return;
     }
@@ -292,6 +283,12 @@ bool Downloader::startRequest(const QUrl &url)
     }
     else
         QNetworkProxy::setApplicationProxy(QNetworkProxy(QNetworkProxy::NoProxy));
+
+    if (d->progress)
+    {
+        d->progress->setValue(0);
+        d->progress->setTitle(url);
+    }
 
     QNetworkRequest request(url);
     request.setSslConfiguration(QSslConfiguration::defaultConfiguration());
