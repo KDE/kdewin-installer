@@ -81,6 +81,7 @@ protected Q_SLOTS:
     void slotReplyFinished ( QNetworkReply*reply );
     int slotProgressCallback ( qint64 now, qint64 total );
 protected:
+    bool startRequest(const QUrl &url);
     void setError ( const QString &errStr );
     bool fetchInternal ( const QUrl &url );
     size_t curlWrite ( const char * data, size_t  size );

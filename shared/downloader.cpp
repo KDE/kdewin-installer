@@ -160,11 +160,7 @@ bool Downloader::fetchInternal ( const QUrl &url )
     m_resultString = QString();
     d->hash.reset();
     d->ret = 0;
-    QNetworkRequest request(url);
-    request.setSslConfiguration(QSslConfiguration::defaultConfiguration());
-    d->reply = d->manager->get(request);
-    connect(d->reply, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
-    connect(d->reply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(slotProgressCallback(qint64, qint64)));
+    startRequest(url);
 
     Settings &s = Settings::instance();
     ProxySettings ps;
@@ -216,11 +212,7 @@ void Downloader::slotReplyFinished(QNetworkReply *reply)
         m_usedURL = value.toUrl();
         if (d->progress)
             d->progress->setTitle(m_usedURL);
-        QNetworkRequest request(value.toUrl());
-        request.setSslConfiguration(QSslConfiguration::defaultConfiguration());
-        d->reply = d->manager->get(request);
-        connect(d->reply, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
-        connect(d->reply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(slotProgressCallback(qint64, qint64)));
+        startRequest(value.toUrl());
         return;
     }
 
@@ -273,6 +265,16 @@ void Downloader::cancel()
     d->cancel = true;
     if (d->reply)
         d->reply->abort();
+}
+
+bool Downloader::startRequest(const QUrl &url)
+{
+    QNetworkRequest request(url);
+    request.setSslConfiguration(QSslConfiguration::defaultConfiguration());
+    d->reply = d->manager->get(request);
+    connect(d->reply, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
+    connect(d->reply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(slotProgressCallback(qint64, qint64)));
+    return d->reply->error() == QNetworkReply::NoError;
 }
 
 void Downloader::setError ( const QString &errStr )
