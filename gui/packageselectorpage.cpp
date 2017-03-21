@@ -365,9 +365,9 @@ void PackageSelectorPage::initializePage()
     Settings::instance().setSkipBasicSettings(true);
     setSettingsButtonVisible(true);
     /// @TODO display separate window
-    InstallerDialogs::instance().downloadProgressDialog(this,true,tr("Downloading Package Lists"));
+    InstallerDialogs::instance().enableDownloadProgressDialog(this, tr("Downloading Package Lists"));
     engine->init();
-    InstallerDialogs::instance().downloadProgressDialog(this,false);
+    InstallerDialogs::instance().disableDownloadProgressDialog();
     connect(tree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(itemClicked(QTreeWidgetItem *, int)));
     connect(leftTree,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(on_leftTree_itemClicked(QTreeWidgetItem *, int)));
     connect(filterEdit,SIGNAL(textChanged(const QString &)),this,SLOT(slotFilterTextChanged(const QString &)));

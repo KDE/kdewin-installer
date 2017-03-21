@@ -105,29 +105,27 @@ bool InstallerDialogs::downloadMirrorListFailed(const QUrl &url1, const QUrl &ur
             );
 }
 
-void InstallerDialogs::downloadProgressDialog(QWidget *parent,bool show, const QString &title)
+void InstallerDialogs::enableDownloadProgressDialog(QWidget *parent, const QString &title)
 {
-    if (show) 
-    {
-        m_d = new QDialog(parent);
-        m_progress = new DownloaderProgress(m_d);
-        if (!title.isEmpty())
-            m_d->setWindowTitle(title);
-        QVBoxLayout *layout = new QVBoxLayout(m_d); 
-        layout->addWidget(m_progress);
-        m_d->setLayout(layout);
-        m_oldProgress = Downloader::instance()->progress();
-        Downloader::instance()->setProgress(m_progress);
-    }
-    else 
-    {
-        Downloader::instance()->setProgress(m_oldProgress);
-        if(m_d)
-            m_d->hide();
-        delete m_d;
-        m_d = NULL;
-        m_progress = NULL;
-    }
+    m_d = new QDialog(parent);
+    m_progress = new DownloaderProgress(m_d);
+    if (!title.isEmpty())
+        m_d->setWindowTitle(title);
+    QVBoxLayout *layout = new QVBoxLayout(parent);
+    layout->addWidget(m_progress);
+    m_d->setLayout(layout);
+    m_oldProgress = Downloader::instance()->progress();
+    Downloader::instance()->setProgress(m_progress);
+}
+
+void InstallerDialogs::disableDownloadProgressDialog()
+{
+    Downloader::instance()->setProgress(m_oldProgress);
+    if(m_d)
+        m_d->hide();
+    delete m_d;
+    m_d = NULL;
+    m_progress = NULL;
 }
 
 bool InstallerDialogs::confirmRemovalDialog()

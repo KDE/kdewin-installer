@@ -39,7 +39,7 @@ void ReleaseSelectionPage::initializePage()
 {
     QUrl mirror = Settings::instance().mirror();
 
-    InstallerDialogs::instance().downloadProgressDialog(this,true,tr("Downloading Releases"));
+    InstallerDialogs::instance().enableDownloadProgressDialog(this, tr("Downloading Releases"));
     m_failed = false;
     
     Releases releases;
@@ -50,7 +50,7 @@ void ReleaseSelectionPage::initializePage()
     }
     
     ui.releaseList->clear();
-    InstallerDialogs::instance().downloadProgressDialog(this,false);
+    InstallerDialogs::instance().disableDownloadProgressDialog();
     if (m_failed)
         return;
     QUrl currentMirror = Settings::instance().mirrorWithReleasePath();

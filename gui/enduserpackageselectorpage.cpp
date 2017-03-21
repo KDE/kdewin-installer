@@ -231,9 +231,9 @@ void EndUserPackageSelectorPage::initializePage()
     Settings::instance().setFirstRun(false);
     Settings::instance().setSkipBasicSettings(true);
     setSettingsButtonVisible(true);
-    InstallerDialogs::instance().downloadProgressDialog(this,true,tr("Downloading Package Lists"));
+    InstallerDialogs::instance().enableDownloadProgressDialog(this, tr("Downloading Package Lists"));
     engine->init();
-    InstallerDialogs::instance().downloadProgressDialog(this,false);
+    InstallerDialogs::instance().disableDownloadProgressDialog();
 
     // disabled for now, because it will not install debug packages for already selected packages, need to be fixed
     ui.installDebugPackagesCheckBox->setVisible(false);

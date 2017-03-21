@@ -56,7 +56,7 @@ void MirrorSettingsPage::initializePage()
     Settings &s = Settings::instance();
     Mirrors &mirrors = Mirrors::instance();
     mirrors.setConfig(mirrorConfig);
-    InstallerDialogs::instance().downloadProgressDialog(this,true,tr("Downloading Mirror List"));
+    InstallerDialogs::instance().enableDownloadProgressDialog(this,tr("Downloading Mirror List"));
     m_failed = false;
     qDebug() << "start";
 
@@ -77,7 +77,7 @@ void MirrorSettingsPage::initializePage()
         }
     }
     ui.downloadMirror->clear();
-    InstallerDialogs::instance().downloadProgressDialog(this,false);
+    InstallerDialogs::instance().disableDownloadProgressDialog();
 
     QUrl currentMirror(s.mirror());
 
