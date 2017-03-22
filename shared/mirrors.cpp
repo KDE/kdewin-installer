@@ -175,6 +175,8 @@ bool Mirrors::parse(QIODevice *ioDev)
             }
         }
         break;
+    default:
+        break;
     }
     return true;
 }
