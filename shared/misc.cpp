@@ -351,7 +351,6 @@ bool removeDirectory(const QString& aDir)
     {
         QFileInfoList entries = dir.entryInfoList(QDir::NoDotAndDotDot | 
         QDir::Dirs | QDir::Files);
-        int count = entries.size();
         foreach(QFileInfo entryInfo, entries)
         {
             QString path = entryInfo.absoluteFilePath();

@@ -108,7 +108,7 @@ BOOL CALLBACK ExternalInstallerControlPrivate::EnumWindowsProc(HWND hwnd,LPARAM 
     ExternalInstallerControlPrivate *p = (ExternalInstallerControlPrivate*)lParam;
 
     DWORD dwProcessId;
-    DWORD processID = GetWindowThreadProcessId(hwnd, &dwProcessId);
+    GetWindowThreadProcessId(hwnd, &dwProcessId);
     if (dwProcessId != p->m_processId)
         return TRUE;
     
@@ -124,14 +124,14 @@ BOOL CALLBACK ExternalInstallerControlPrivate::EnumWindowsProc(HWND hwnd,LPARAM 
     p->items.append(item);
     p->m_parentWindowsHandle = hwnd;
 
-    BOOL ret = EnumChildWindows(hwnd, ExternalInstallerControlPrivate::EnumChildWindowProc,lParam);
+    EnumChildWindows(hwnd, ExternalInstallerControlPrivate::EnumChildWindowProc,lParam);
     return TRUE;
 }
 
 bool ExternalInstallerControlPrivate::enumerateWindows(DWORD processId)
 {
     m_processId = processId;
-    BOOL ret = EnumWindows(ExternalInstallerControlPrivate::EnumWindowsProc,(LPARAM)this);
+    EnumWindows(ExternalInstallerControlPrivate::EnumWindowsProc,(LPARAM)this);
     return true;
 }
 #endif
@@ -190,7 +190,7 @@ void SetItemText(HWND hwnd, const QString &message)
     for (int i = 0; i < message.size(); i++)
     {
         char c = message.at(i).toLatin1();
-        uint aKey=MapVirtualKey((uint)c,1);
+        MapVirtualKey((uint)c,1);
         PostMessage(hwnd,WM_KEYDOWN,VkKeyScan(c) ,0);
         PostMessage(hwnd,WM_KEYUP,VkKeyScan(c) ,0);
     }
@@ -233,7 +233,7 @@ bool ExternalInstallerControl::updateWindowItems()
     while(1) 
     {
 #ifdef Q_OS_WIN32
-        bool ret = d->enumerateWindows(m_processId);
+        d->enumerateWindows(m_processId);
 #else
         break;
 #endif

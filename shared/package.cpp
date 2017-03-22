@@ -401,7 +401,6 @@ bool Package::read(QTextStream &in)
     setVersion(parts.at(1));
     const QStringList options = parts.at(2).split(';');
     const QStringList state = options.at(0).split(':');
-    const QString &baseURL = options.at(1);
     if(!options.at(2).isEmpty())
     {
         Package::PackageItem item(FileTypes::BIN);

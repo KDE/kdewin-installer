@@ -530,7 +530,7 @@ bool InstallerEngine::setDependencyState(Package *_package, QList<Package *> &de
             continue;
 
         // check dependencies first
-        bool ret = setDependencyState(package, dependencies);
+        setDependencyState(package, dependencies);
 
         stateType state = packageStates.getState(package,FileTypes::BIN);
         stateType depState = dependencyStates.getState(package,FileTypes::BIN);
