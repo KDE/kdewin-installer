@@ -143,13 +143,13 @@ void setMessageHandler(const QString &baseName)
     if (i != -1)
         fileOffset = i + key.size() + 1;
 
-	QString fileName = Settings::instance().logFile(baseName);
-	// make backup of last log file
-	if (QFile::exists(fileName))
-	{
-		QFile::remove(fileName + ".old");
-		QFile::rename(fileName, fileName + ".old");
-	}
+    QString fileName = Settings::instance().logFile(baseName);
+    // make backup of last log file
+    if (QFile::exists(fileName))
+    {
+        QFile::remove(fileName + ".old");
+        QFile::rename(fileName, fileName + ".old");
+    }
     logFile = new QFile(fileName);
     logFile->remove();
     logFile->open(QIODevice::WriteOnly);
