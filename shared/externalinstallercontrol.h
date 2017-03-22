@@ -32,9 +32,9 @@ class InstallerControlType {
         bool parse(const QString &line); 
         bool parse(const QStringList &line); 
         QString type() { return m_type; }
-        QString setType(const QString &type) { m_type = type; }
+        void setType(const QString &type) { m_type = type; }
         QString caption() { return m_caption; }
-        QString setCaption(const QString &caption) { m_caption = caption; }
+        void setCaption(const QString &caption) { m_caption = caption; }
         QString timeout() { return m_timeout; }
  
     protected:
