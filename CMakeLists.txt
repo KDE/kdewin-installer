@@ -169,8 +169,8 @@ if (STATIC_BUILD AND MSVC)
 endif (STATIC_BUILD AND MSVC)
 
 if (STATIC_BUILD AND CMAKE_COMPILER_IS_GNUCXX)
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static, -Wl,-static")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static, -Wl,-static")
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static -Wl,-static")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static -Wl,-static")
 endif ()
 
 # where to store executables
@@ -247,8 +247,8 @@ if (STATIC_BUILD)
     list(APPEND CONSOLE_LIBS ${OPENSSL_LIBRARIES})
     list(APPEND GUI_LIBS ${OPENSSL_LIBRARIES})
     if(WIN32)
-        list(APPEND CONSOLE_LIBS Crypt32)
-        list(APPEND GUI_LIBS Crypt32)
+        list(APPEND CONSOLE_LIBS crypt32)
+        list(APPEND GUI_LIBS crypt32)
     endif()
 endif ()
 
