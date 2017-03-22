@@ -281,7 +281,7 @@ Settings &Settings::instance()
 bool Settings::hasDebug(const QString area)
 {
     Settings &s = Settings::instance();
-    return area.isEmpty() && !s.debug().isEmpty()
+    return (area.isEmpty() && !s.debug().isEmpty())
         || !area.isEmpty() &&
             (s.debug().toLower() == "all"
             || s.debug().toLower().contains(area.toLower()));

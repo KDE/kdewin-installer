@@ -169,7 +169,7 @@ bool PackageList::readFromFile(const QString &_fileName)
         Package pkg;
         if (pkg.read(in))
         {
-            if ( pkg.isInstalled(FileTypes::BIN) || m_curSite && !m_curSite->isExclude(pkg.name()))
+            if ( pkg.isInstalled(FileTypes::BIN) || (m_curSite && !m_curSite->isExclude(pkg.name())))
                 append(pkg);
         }
     }

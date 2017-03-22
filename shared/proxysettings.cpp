@@ -163,8 +163,8 @@ bool ProxySettings::fromFireFox(const QString &url)
         if (mode == 1)
         {
             if (url.startsWith("http") ||
-                       prefs.contains("network.m_share_proxy_settings")
-                    && prefs["network.m_share_proxy_settings"] == "true")
+                    (prefs.contains("network.m_share_proxy_settings") &&
+                     prefs["network.m_share_proxy_settings"] == "true"))
             {
                 hostname = prefs["network.m_http"];
                 port = prefs["network.m_http_port"].toInt();
