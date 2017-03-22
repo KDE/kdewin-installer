@@ -55,8 +55,8 @@ InstallerEngine::InstallerEngine(QObject *parent)
       m_addedPackages(false),
       m_installedPackages(0),
       m_downloadedPackages(0),
-      m_removedPackages(0),
       m_canceled(false),
+      m_removedPackages(0),
       m_errorAction(InstallerEngine::ignore),
       m_currentCompiler(CompilerTypes::Unspecified)
 {
