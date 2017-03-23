@@ -63,7 +63,7 @@ void FinishPage::initializePage()
              "<p>Now you should be able to run KDE applications. In the start menu you will find entries for the installed KDE applications.</p>"
             ));
 
-        funText = tr("<p>Have fun using KDE on windows.</p>");
+        funText = tr("<p>Have fun using KDE on Windows.</p>");
     }
     else if (engine->removedPackages() > 0)
     {
@@ -73,7 +73,7 @@ void FinishPage::initializePage()
     else if (engine->installedPackages() == 0)
     {
         label->setText(tr(
-             "<p>Thank you for using KDE on windows.</p>"
+             "<p>Thank you for using KDE on Windows.</p>"
             ));
     }
 
