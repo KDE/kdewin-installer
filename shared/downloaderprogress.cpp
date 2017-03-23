@@ -56,12 +56,10 @@ void GenericProgress::setTitle(const QString &title)
 void GenericProgress::show()
 {
 #ifndef DISABLE_GENERICPROCESS_PARENT_CONTROL
-	if(m_parent) {
-		m_parent->show();
-		const QRect &r = QDesktopWidget().screenGeometry();
-		m_parent->move(r.width() / 2 - m_parent->width() / 2, r.height() / 2 - m_parent->height() / 2);
-		return;
-	}
+    if(m_parent) {
+        m_parent->show();
+        return;
+    }
 #endif
   	QWidget::show();
 }
