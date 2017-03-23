@@ -90,7 +90,7 @@ void FinishPage::initializePage()
          "<p><b>The KDE on Windows team</b></p>"
          "<p>&nbsp;</p>"
          "<p>&nbsp;</p>"
-         "<p>This software is designed to provide a powerful and flexible network based install system using a modern GUI toolkit.</p>"
+         "<p>Contributors: Ralf Habacker, Christian Ehrlicher, Patrick Spendrin, Hannah von Reth</p>"
          ));
 
     setFinalPage(true);
