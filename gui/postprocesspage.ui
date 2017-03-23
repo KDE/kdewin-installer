@@ -42,7 +42,7 @@
       <bool>true</bool>
      </property>
      <property name="styleSheet" >
-      <string notr="true" >background-color: rgb(236, 233, 216);</string>
+      <string notr="true" >background-color: transparent;</string>
      </property>
      <property name="frameShape" >
       <enum>QFrame::NoFrame</enum>
