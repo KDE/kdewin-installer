@@ -35,7 +35,7 @@ class QIODevice;
 class QTextStream;
 
 
-typedef enum { RTUnspecified=0, Stable, Unstable, Nightly, Attic } ReleaseType;
+typedef enum { Undefined = 0, Single, Stable, Unstable, Nightly, Attic } ReleaseType;
 ReleaseType toReleaseType(const QString &type); 
 const QString toString(ReleaseType type);
 

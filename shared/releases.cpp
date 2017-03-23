@@ -33,6 +33,9 @@
 #include <QStringList>
 #include <QFileInfo>
 
+const char *versionRegex = "/(latest|[0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{1,2}|[0-9]{8})";
+const char *branchRegex = "/(Attic|unstable|stable|nightly)";
+
 Releases::Releases()
 {
 }
@@ -42,17 +45,38 @@ Releases::~Releases()
     clear();
 }
 
-bool Releases::convertFromOldMirrorUrl(QUrl &url)
+/**
+ * check if a single release is mentioned
+ * @param url
+ * @return true if single release is specified in the url
+ * @return false if single release is not specified in the url
+ */
+bool Releases::isSingleRelease(QUrl &url)
 {
-    // in case the url contains already a release path, remove this part as the following code will detect the releases by itself
-    QString path = url.path();
-    int i = path.indexOf(QRegExp("/(Attic|unstable|stable|nightly)/(latest|[0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{1,2}|[0-9]{8})"));
-    if (i != -1)
-    {
-        url.setPath(path.left(i) + '/');
-        return false;
-    }
-    return false;
+    QRegExp rx(versionRegex);
+    int i = rx.indexIn(url.path());
+    return i != -1;
+}
+
+QString Releases::singleRelease(QUrl &url)
+{
+    QRegExp rx(versionRegex);
+    int i = rx.indexIn(url.path());
+    return i != -1 ? rx.cap(1) : "";
+}
+
+bool Releases::isBranchRelease(QUrl &url)
+{
+    QRegExp rx(branchRegex);
+    int i = rx.indexIn(url.path());
+    return i != -1;
+}
+
+QString Releases::branchRelease(QUrl &url)
+{
+    QRegExp rx(branchRegex);
+    int i = rx.indexIn(url.path());
+    return i != -1 ? rx.cap(1) : "";
 }
 
 bool Releases::useOldMirrorUrl(const QUrl &url)
@@ -101,7 +125,7 @@ bool Releases::useOldMirrorUrl(const QUrl &url)
     return false;
 }
 
-bool Releases::patchReleaseUrls(const QUrl &url)
+bool Releases::checkIfReleasesArePresent(const QUrl &url)
 {
     // wwww.winkde.org and sf uses flat directory structure below the version dir, so no extra action is required here 
     if (url.host() == "www.winkde.org" 
@@ -163,50 +187,46 @@ bool Releases::fetch(const QUrl &_url)
     m_releases.clear();
     m_baseURL = _url;
 
-    if (convertFromOldMirrorUrl(m_baseURL))
+    if (isSingleRelease(m_baseURL))
+    {
+        MirrorReleaseType release;
+        release.url = m_baseURL;
+        release.name = singleRelease(m_baseURL);
+        release.type = Single;
+        m_releases.append(release);
         return true;
-
-    QUrl url = m_baseURL.toString() + "stable/";
-    qDebug() << "baseURL1:" << url;
-    if (!Downloader::instance()->fetch(url,out))
-    {
-        qWarning() << "could not fetch stable versions from" << url;
-    }
-    else if (!parse(out,url,Stable))
-    {
-        qWarning() << "could not extract stable versions from directory list fetched from" << url;
     }
 
-    url = m_baseURL.toString() + "unstable/";
-    if (!Downloader::instance()->fetch(url,out))
+    QMap<ReleaseType, QUrl> releases;
+
+    if (isBranchRelease(m_baseURL))
     {
-        qWarning() << "could not fetch unstable versions from" << url;
+        QString branch = branchRelease(m_baseURL);
+        ReleaseType type = toReleaseType(branch);
+        releases[type] = m_baseURL;
     }
-    else if (!parse(out,url,Unstable))
+    else
     {
-        qWarning() << "could not extract unstable versions from directory list fetched from" << url;
+        releases[Stable] = m_baseURL.toString() + "stable/";
+        releases[Unstable] = m_baseURL.toString() + "unstable/";
+        releases[Nightly] = m_baseURL.toString() + "nightly/";
+        releases[Attic] = m_baseURL.toString() + "Attic/";
     }
 
-    url = m_baseURL.toString() + "nightly/";
-    if (!Downloader::instance()->fetch(url,out))
+    foreach(ReleaseType key, releases.keys())
     {
-        qWarning() << "could not fetch nightly versions from" << url;
-    }
-    else if (!parse(out,url,Nightly))
-    {
-        qWarning() << "could not extract nightly versions from directory list fetched from" << url;
+        const QUrl &url = releases[key];
+        if (!Downloader::instance()->fetch(url, out))
+        {
+            qWarning() << "could not fetch" << toString(key) << "versions from" << url;
+        }
+        else if (!parse(out, url, key))
+        {
+            qWarning() << "could not extract" << toString(key) << "versions from directory list fetched from" << url;
+        }
     }
 
-    url = m_baseURL.toString() + "Attic/";
-    if (!Downloader::instance()->fetch(url,out))
-    {
-        qWarning() << "could not fetch outdated versions from" << url;
-    }
-    else if (!parse(out,url,Attic))
-    {
-        qWarning() << "could not extract outdated versions from directory list fetched from" << url;
-    }
-    return patchReleaseUrls(m_baseURL);
+    return checkIfReleasesArePresent(m_baseURL);
 }
 
 bool Releases::parse(const QString &fileName, const QUrl &url, ReleaseType type)

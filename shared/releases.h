@@ -81,13 +81,20 @@ class Releases
 
         /// return singleton instance
         static Releases &instance();
+
     protected:
-        /// convert old style mirror url to ReleaseType based 
-        bool convertFromOldMirrorUrl(QUrl &url);
+        /// return state if url contains a single release
+        bool isSingleRelease(QUrl &url);
+        /// return release version
+        QString singleRelease(QUrl &url);
+        /// return state if url contains a release branch
+        bool isBranchRelease(QUrl &url);
+        /// return release branch
+        QString branchRelease(QUrl &url);
         /// remove release path from old style mirror url 
         bool useOldMirrorUrl(const QUrl &url);
         /// check win32 in release path for kde mirrors
-        bool patchReleaseUrls(const QUrl &url);
+        bool checkIfReleasesArePresent(const QUrl &url);
 
         /**
          parse release list from a local file. The release list is accessable by the releases() method. 

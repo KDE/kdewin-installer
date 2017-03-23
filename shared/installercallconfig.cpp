@@ -71,7 +71,7 @@ InstallerCallConfig::InstallerCallConfig(const QString &fileName)
         if (!a[3].isEmpty() && a[3] != QLatin1String("*"))
         {
             releaseType = toReleaseType(a[3]);
-            if (releaseType == RTUnspecified)
+            if (releaseType == Undefined)
                 releaseType = Stable;
             else
                 hasReleaseType = true;

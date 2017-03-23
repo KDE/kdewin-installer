@@ -415,8 +415,12 @@ ReleaseType toReleaseType(const QString &_type)
         return Stable;
     else if (type == "nightly")
         return Nightly;
-    else 
-        return RTUnspecified;
+    else if (type == "attic")
+        return Attic;
+    else if (type == "single")
+        return Single;
+    else
+        return Undefined;
 }
 
 const QString toString(ReleaseType type)
@@ -427,6 +431,10 @@ const QString toString(ReleaseType type)
 	    return "unstable";
     else if (type == Nightly)
 	    return "nightly";
+    else if (type == Attic)
+        return "attic";
+    else if (type == Single)
+        return "single";
     else
 	    return "unknown";
 }
