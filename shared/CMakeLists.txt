@@ -99,11 +99,6 @@ set(installer_shared_gui_SOURCES
 set (shared_sources_console ${installer_shared_console_SOURCES} ${installer_shared_HEADERS})
 set (shared_sources_gui ${installer_shared_gui_SOURCES} ${installer_shared_HEADERS})
 
-if(QT5_FOUND)
-  qt5_wrap_cpp(shared_sources_console ${installer_shared_HEADERS})
-  qt5_wrap_cpp(shared_sources_gui ${installer_shared_HEADERS})
-endif()
-
 if(NOT BUILD_INSTALLER_THEME)
 add_library(shared-console STATIC ${shared_sources_console})
 target_link_libraries(shared-console ${QT_CONSOLE_LIBRARIES} ${BZIP2_LIBRARIES} ${CURL_LIBRARIES} ${FILTERS_LIBRARIES} ${QUAZIP_LIBRARIES} ${QUA7ZIP_LIBRARIES})
