@@ -220,7 +220,7 @@ bool Releases::fetch(const QUrl &_url)
         {
             qWarning() << "could not fetch" << toString(key) << "versions from" << url;
         }
-        else if (!parse(out, url, key))
+        else if (!parse(out, Downloader::instance()->usedURL(), key))
         {
             qWarning() << "could not extract" << toString(key) << "versions from directory list fetched from" << url;
         }
