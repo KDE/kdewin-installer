@@ -51,6 +51,8 @@ OPTION(BUILD_PACKAGER_ONLY "Only build packager" OFF)
 OPTION(QT5_BUILD "Build with QT5" OFF)
 OPTION(QT4_BUILD "Build with QT4" ON)
 
+set(CMAKE_AUTOMOC ON)
+
 if(QT5_BUILD)
     find_package(Qt5Core)
     find_package(Qt5Gui)
@@ -70,7 +72,6 @@ if(QT5_BUILD)
         if(UNIX)
             set(QT_DEFINITIONS -fpic)
         endif()
-        set(CMAKE_AUTOMOC ON)
         set(QT4_BUILD OFF)
         # QT_INCLUDES is not used; includes are provided by imported targets
     endif()

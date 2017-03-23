@@ -146,8 +146,6 @@ macro (add_themed_installer _appname _resource)
 
   if(QT5_FOUND)
     QT5_WRAP_CPP(all_sources ${UI_SOURCES})
-  else()
-    QT4_WRAP_CPP(all_sources ${all_headers})
   endif()
 
 #  if (BUILD_TRANSLATIONS)

@@ -102,9 +102,6 @@ set (shared_sources_gui ${installer_shared_gui_SOURCES} ${installer_shared_HEADE
 if(QT5_FOUND)
   qt5_wrap_cpp(shared_sources_console ${installer_shared_HEADERS})
   qt5_wrap_cpp(shared_sources_gui ${installer_shared_HEADERS})
-else()
-  qt4_wrap_cpp(shared_sources_console ${installer_shared_HEADERS})
-  qt4_wrap_cpp(shared_sources_gui ${installer_shared_HEADERS})
 endif()
 
 if(NOT BUILD_INSTALLER_THEME)
