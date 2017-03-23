@@ -111,10 +111,10 @@ void myMessageOutput(QtMsgType type, const char *msg)
     QString date = QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ");
     logData->append(QString("<p><font color=\"gray\">%1</font><font color=\"%2\">%3</font></p>").arg(date).arg(msgColor).arg(msg));
     QString data = date + QLatin1String(msgtype) + msg + QLatin1String(EOL);
-#if defined(QT_DEBUG)
 #if defined(Q_OS_WIN32)
     OutputDebugString(data.toLocal8Bit().data());
 #else
+#if defined(QT_DEBUG)
     fprintf(stderr, "%s", data.toLocal8Bit().constData());
 #endif
 #endif
