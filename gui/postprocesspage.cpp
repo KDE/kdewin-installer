@@ -53,10 +53,10 @@ void PostProcessPage::performAction()
     if (engine->installedPackages() > 0 && !SelfInstaller::instance().isInstalled())
 		SelfInstaller::instance().install();
 
-    Q_ASSERT(connect(&m_postProcessing,SIGNAL(numberOfCommands(int)),ui.progressBar,SLOT(setMaximum(int))));
-    Q_ASSERT(connect(&m_postProcessing,SIGNAL(finished()),this,SLOT(postProcessingEnd())));
-    Q_ASSERT(connect(&m_postProcessing,SIGNAL(commandStarted(int)),ui.progressBar,SLOT(setValue(int))));
-    Q_ASSERT(connect(&m_postProcessing,SIGNAL(commandStarted(const QString &)),this,SLOT(addItem(const QString &))));
+    connect(&m_postProcessing,SIGNAL(numberOfCommands(int)),ui.progressBar,SLOT(setMaximum(int)));
+    connect(&m_postProcessing,SIGNAL(finished()),this,SLOT(postProcessingEnd()));
+    connect(&m_postProcessing,SIGNAL(commandStarted(int)),ui.progressBar,SLOT(setValue(int)));
+    connect(&m_postProcessing,SIGNAL(commandStarted(const QString &)),this,SLOT(addItem(const QString &)));
     m_postProcessing.start();
 }
 
