@@ -125,7 +125,7 @@ bool Mirrors::parse(QIODevice *ioDev)
                         mirror.url = QUrl(parts[2]);
                     else
                         mirror.url = QUrl(parts[2] + m_config.releasePath);
-                    mirror.name = parts[0] + "://" + mirror.url.host();
+                    mirror.name = mirror.url.scheme() + "://" + mirror.url.host();
                     if (m_countries.contains(parts[1])) 
                     {
                         mirror.country = m_countries[parts[1]];
