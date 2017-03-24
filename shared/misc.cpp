@@ -488,18 +488,18 @@ bool isDirWritable(const QString &rootDir)
             f.remove();
         }
         QDir d2;
-        if (!d2.mkdir(rootDir + "/~temp"))
+        if (!d2.mkdir(rootDir + "/~tempdir"))
         {
             isWritable = false;
             qDebug() << "Could not create directories in directory" << rootDir;
         }
         else
         {
-            d2.rmdir(d2.canonicalPath());
+            d2.rmdir(rootDir + "/~tempdir");
         }
     }
     if (deleteDir)
-        d.rmdir(d.canonicalPath());
+        d.rmdir(rootDir);
     return isWritable;
 #endif
 }
