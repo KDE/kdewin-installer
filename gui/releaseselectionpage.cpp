@@ -64,7 +64,7 @@ void ReleaseSelectionPage::initializePage()
     Q_FOREACH(const MirrorReleaseType &m, releases.releases())
     {
         qDebug() << "adding release" << m.name << "with url" << m.url;
-        QString name = m.type == Attic ? "Stable" + m.name : m.type == Undefined ? m.name : m.toString();
+        QString name = m.type == Attic ? "Stable " + m.name : m.type == Undefined ? m.name : m.toString();
         QListWidgetItem *item = new QListWidgetItem(name);
         item->setData(Qt::UserRole, m.url);
         ui.releaseList->addItem(item);
