@@ -28,9 +28,6 @@ set(all_sources
     ${installer_CONSOLE_SOURCES}
     ${installer_CONSOLE_HEADERS}
 )
-if(QT4_FOUND)
-  qt4_automoc(${all_sources})
-endif()
 
 set (TARGET kdewin-installer-console)
 
