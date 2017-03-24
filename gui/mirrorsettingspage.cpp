@@ -166,7 +166,7 @@ void MirrorSettingsPage::addNewMirrorClicked()
             return;
         }
         
-        QList<QListWidgetItem *> list = ui.downloadMirror->findItems (text, Qt::MatchContains);
+        QList<QListWidgetItem *> list = ui.downloadMirror->findItems (text, Qt::MatchExactly);
         if (list.size() > 0) 
         {
             setStatus(tr("Warning: This URL is already in the list"));
