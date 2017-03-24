@@ -64,14 +64,14 @@ void ReleaseSelectionPage::initializePage()
     Q_FOREACH(const MirrorReleaseType &m, releases.releases())
     {
         qDebug() << "adding release" << m.name << "with url" << m.url;
-        QListWidgetItem *item = new QListWidgetItem(m.name);
+        QString name = m.type == Undefined ? m.name : m.toString();
+        QListWidgetItem *item = new QListWidgetItem(name);
         item->setData(Qt::UserRole, m.url);
         ui.releaseList->addItem(item);
         if (!currentMirror.isEmpty() && m.url == currentMirror)
             mirrorIndex = ui.releaseList->count()-1;
     }
 
-    
     if (currentMirror.isEmpty())
         ;// do nothing
     // current release not empty and not found in list 

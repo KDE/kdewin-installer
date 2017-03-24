@@ -190,7 +190,7 @@ bool Releases::fetch(const QUrl &_url)
         MirrorReleaseType release;
         release.url = m_baseURL;
         release.name = singleRelease(m_baseURL);
-        release.type = Single;
+        release.type = Undefined;
         m_releases.append(release);
         return true;
     }
