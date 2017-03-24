@@ -28,6 +28,8 @@
 #include "releaseselectionpage.h"
 #include "installerdialogs.h"
 
+#include <QTimer>
+
 ReleaseSelectionPage::ReleaseSelectionPage() : InstallWizardPage(0)
 {
     ui.setupUi(this);
@@ -62,7 +64,7 @@ void ReleaseSelectionPage::initializePage()
     Q_FOREACH(const MirrorReleaseType &m, releases.releases())
     {
         qDebug() << "adding release" << m.name << "with url" << m.url;
-        QListWidgetItem *item = new QListWidgetItem(m.toString());
+        QListWidgetItem *item = new QListWidgetItem(m.name);
         item->setData(Qt::UserRole, m.url);
         ui.releaseList->addItem(item);
         if (!currentMirror.isEmpty() && m.url == currentMirror)
@@ -81,6 +83,12 @@ void ReleaseSelectionPage::initializePage()
         ui.releaseList->setCurrentRow(mirrorIndex);
 
     ui.releaseList->sortItems();
+
+    if (releases.releases().size() == 1)
+    {
+        ui.releaseList->setCurrentRow(0);
+        QTimer::singleShot(10, wizard(), SLOT(next()));
+    }
 }
 
 void ReleaseSelectionPage::performAction()
