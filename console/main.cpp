@@ -208,7 +208,7 @@ int main(int argc, char *argv[])
 
     CompilerTypes::Type type = Settings::instance().compilerType();
     if (type == CompilerTypes::Unspecified)
-        type == CompilerTypes::MSVC10;
+        type = CompilerTypes::MSVC10;
 
     engine.setCurrentCompiler(type);
 
