@@ -120,6 +120,7 @@ class Mirrors
         void add(const MirrorType &mirror) { m_mirrors.append(mirror); }
         MirrorTypeList &mirrors() { return m_mirrors; }
         static Mirrors &instance();
+        static bool isKDE(const QUrl &url);
     protected:
 
         /**

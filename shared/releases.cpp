@@ -23,6 +23,7 @@
 
 #include "downloader.h"
 #include "downloaderprogress.h"
+#include "mirrors.h"
 #include "releases.h"
 #include "settings.h"
 
@@ -127,13 +128,10 @@ bool Releases::useOldMirrorUrl(const QUrl &url)
 
 bool Releases::checkIfReleasesArePresent(const QUrl &url)
 {
-    // wwww.winkde.org and sf uses flat directory structure below the version dir, so no extra action is required here 
-    if (url.host() == "www.winkde.org" 
-        || url.host().endsWith("sourceforge.net")
-        || url.host() == "sf.net")
+    // kde mirrors uses a win32 subdir which has to be checked for the existance of a win32 release
+    if (!Mirrors::isKDE(url))
         return true;
 
-    // kde mirrors uses a win32 subdir which has to be checked for the existance of a win32 release
     /// @TODO add a fetchSilent() method 
     DownloaderProgress *old = Downloader::instance()->progress();
     Downloader::instance()->setProgress(0);

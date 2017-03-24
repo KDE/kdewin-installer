@@ -187,6 +187,11 @@ Mirrors &Mirrors::instance()
     return mirrors;
 }
 
+bool Mirrors::isKDE(const QUrl &url)
+{
+    return url.host() == "download.kde.org";
+}
+
 QDebug &operator<<(QDebug &out, const MirrorTypeList &c)
 {
     out << "QList<MirrorType> (";
