@@ -118,4 +118,7 @@ bool removeDirectory(const QString& aDir);
 /// check if system is 64 bit Windows
 bool isX64Windows();
 
+//// check if a directory is writable
+bool isDirWritable(const QString &rootDir);
+
 #endif

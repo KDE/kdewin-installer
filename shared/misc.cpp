@@ -454,3 +454,52 @@ int toVersionInt(const QString &version)
 
     return result;
 }
+
+bool isDirWritable(const QString &rootDir)
+{
+#ifndef Q_OS_WIN32
+    QFileInfo fi(rootDir);
+    return fi.isWritable();
+#else
+    bool isWritable = true;
+    bool deleteDir = false;
+    QDir d(rootDir);
+    if (!d.exists())
+    {
+        if (!d.mkdir(rootDir))
+        {
+            isWritable = false;
+            qDebug() << "directory" << rootDir << "is not writable";
+        }
+        else
+            deleteDir = true;
+    }
+    if (isWritable)
+    {
+        QFile f(rootDir + "/~temp");
+        if (!f.open(QIODevice::ReadWrite))
+        {
+            isWritable = false;
+            qDebug() << "Could not create files in directory" << rootDir;
+        }
+        else
+        {
+            f.close();
+            f.remove();
+        }
+        QDir d2;
+        if (!d2.mkdir(rootDir + "/~temp"))
+        {
+            isWritable = false;
+            qDebug() << "Could not create directories in directory" << rootDir;
+        }
+        else
+        {
+            d2.rmdir(d2.canonicalPath());
+        }
+    }
+    if (deleteDir)
+        d.rmdir(d.canonicalPath());
+    return isWritable;
+#endif
+}

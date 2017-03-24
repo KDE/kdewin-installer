@@ -24,11 +24,11 @@
 
 #include "database.h"
 #include "installdirectorypage.h"
+#include "misc.h"
 
-#include <QDir>
-#include <QString>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QString>
 
 InstallDirectoryPage::InstallDirectoryPage() : InstallWizardPage(0)
 {
@@ -57,12 +57,11 @@ bool InstallDirectoryPage::isComplete()
 bool InstallDirectoryPage::validatePage()
 {
     Settings &s = Settings::instance();
-    QFileInfo fi(ui.rootPathEdit->text());
-    if (!fi.isWritable())
+    if (!isDirWritable(ui.rootPathEdit->text()))
     {
         QMessageBox::critical(this,
                               tr("Error"),
-                              tr("You do not have write permissions on the selected install directory."),
+                              tr("You do not have write permissions on the selected directory. Please select another one."),
                               QMessageBox::Ok);
         return false;
     }
