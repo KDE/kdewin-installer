@@ -46,7 +46,7 @@ bool PostProcessing::runCommand(int index, const QString &msg, const QString &ap
     emit commandStarted(msg);
 
     QProcess p;
-    if (!m_engine->runProcess(p, f.absoluteFilePath(), params, true))
+    if (!m_engine->runProcess(p, f.absoluteFilePath(), params, false))
         return false;
 
     m_shouldQuit = false;
