@@ -192,6 +192,11 @@ bool Mirrors::isKDE(const QUrl &url)
     return url.host() == "download.kde.org";
 }
 
+bool Mirrors::isSourceForge(const QUrl &url)
+{
+    return url.host().contains("sourceforge.net") || url.host().contains("sf.net");
+}
+
 QDebug &operator<<(QDebug &out, const MirrorTypeList &c)
 {
     out << "QList<MirrorType> (";

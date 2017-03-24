@@ -213,7 +213,10 @@ bool Releases::fetch(const QUrl &_url)
 
     foreach(ReleaseType key, releases.keys())
     {
-        const QUrl &url = releases[key];
+        QUrl url = releases[key];
+        if (Mirrors::isSourceForge(url))
+            url.setPath(url.path() + "releases.txt");
+
         if (!Downloader::instance()->fetch(url, out))
         {
             qWarning() << "could not fetch" << toString(key) << "versions from" << url;
@@ -250,7 +253,21 @@ bool Releases::parse(const QByteArray &data, const QUrl &url, ReleaseType type)
 
 bool Releases::parse(QIODevice *ioDev, const QUrl &url, ReleaseType type)
 {
-    if (url.scheme() == "http" || url.scheme() == "https")
+    if (Mirrors::isSourceForge(url))
+    {
+        while (!ioDev->atEnd())
+        {
+            const QString line = QString::fromUtf8(ioDev->readLine().replace("\n",""));
+            const QString version = line;
+            qDebug() << "line:" << line << version;
+            MirrorReleaseType release;
+            release.url = url.toString() + version + '/';
+            release.name = version;
+            release.type = type;
+            m_releases.append(release);
+        }
+    }
+    else if (url.scheme() == "http" || url.scheme() == "https")
     {
         while (!ioDev->atEnd())
         {

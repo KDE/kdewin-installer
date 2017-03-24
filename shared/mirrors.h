@@ -121,6 +121,7 @@ class Mirrors
         MirrorTypeList &mirrors() { return m_mirrors; }
         static Mirrors &instance();
         static bool isKDE(const QUrl &url);
+        static bool isSourceForge(const QUrl &url);
     protected:
 
         /**
