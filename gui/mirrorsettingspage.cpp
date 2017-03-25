@@ -36,13 +36,13 @@ Mirrors::Config mirrorConfig(
 );
 
 Mirrors::Config fallBackConfig(
-    "http://www.winkde.org/pub/kde/ports/win32/mirrors.list",
+    "http://ftp.gwdg.de/pub/linux/kde/stable/kdewin/installer/mirrors.list",
     Mirrors::KDE,
     "",
     ""
 );
 
-QString fallBackHost = "download.kde.org";
+QString fallBackHost = "ftp.gwdg.de";
 
 MirrorSettingsPage::MirrorSettingsPage() : InstallWizardPage(0)
 {
