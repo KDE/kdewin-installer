@@ -74,5 +74,4 @@ void InstallWizardPage::setSettingsButtonVisible(bool mode)
 
 void InstallWizardPage::performAction()
 {
-    qDebug() << "called"; 
 }
