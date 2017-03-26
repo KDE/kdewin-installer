@@ -51,15 +51,15 @@ endif (KDEWIN_PACKAGER_FOUND)
 static compile hints
 ====================
 
-- msvc: To have a size optimised static msvc version replace all occurrence 
-  of /MD with /MT in mkspecs/win32-msvc2005/qmake.conf 
+- msvc: To have a size optimized static msvc version replace all occurrence2
+  of /MD with /MT in mkspecs/win32-msvcXXXX/qmake.conf where XXXX is the year of the related msvc release.
 
-  Then you should configure qt using the command line options 
-	
-    qconfigure msvc2005 -static -debug-and-release -no-stl -no-exceptions -no-qt3support -no-rtti
+  Then you should configure qt using the command line options
 
-  and compile qt with 
-  
+    qconfigure msvcXXXX -static -debug-and-release -no-stl -no-exceptions -no-qt3support -no-rtti
+
+  and compile qt with
+
     nmake sub-src
 
   After qt is compiled, then you should checkout kdewin-installer source, the configure and compile 
