@@ -6,8 +6,8 @@ See http://commit-digest.org/issues/2007-01-14/ for an article about the backgro
 
 State
 =====
-The gui installer is able to download, install and update packages from different internet ftp 
-or http location with or without using a proxy. The command line installer works as expected 
+The gui installer is able to download, install and update packages from different internet ftp
+or http or https location with or without using a proxy. The command line installer works as expected.
 
 NOTES
 ===== 
