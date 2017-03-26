@@ -1,7 +1,7 @@
 About
 =====
 
-The KDEWIN Installer is aimed to be a installer tool to ease kde installation on windows. 
+The KDEWIN Installer is aimed to be a installer tool to ease kde installation on windows.
 See http://commit-digest.org/issues/2007-01-14/ for an article about the background of this installer.
 
 State
@@ -17,17 +17,17 @@ NOTES
 
 - the released version is build using a static qt release with specific configure 
   parameters, see section "static compile hints" for more informations
-   
+
 Known Bugs
 ==========
--  manifest files for gnuwin32 source packages does not contain the full path, there must 
+-  manifest files for gnuwin32 source packages does not contain the full path, there must
    be prefixed src/<package>-<version> - repackaging of the related package will help
 
 
 cmake support
 =============
 
-kdewin-installer allows to add binary packaging suppport to cmake based projects by providing a cmake module named KDEWIN_Packager. 
+kdewin-installer allows to add binary packaging suppport to cmake based projects by providing a cmake module named KDEWIN_Packager.
 
 1. copy share/apps/cmake/modules/FindKDEWIN_Packager.cmake into cmake/modules of your project
 
@@ -45,7 +45,7 @@ KDEWIN_PACKAGER(
 )
 endif (KDEWIN_PACKAGER_FOUND)
 
-3. after compiling, run <make-tool> kdewin_package. For more information see FindKDEWIN_Packager.cmake. 
+3. after compiling, run <make-tool> kdewin_package. For more information see FindKDEWIN_Packager.cmake.
 
 
 static compile hints
@@ -62,16 +62,16 @@ static compile hints
 
     nmake sub-src
 
-  After qt is compiled, then you should checkout kdewin-installer source, the configure and compile 
+  After qt is compiled, then you should checkout kdewin-installer source, the configure and compile
   kdewin-installer using default settings
-  
-	cmake -G "NMake Makefiles" ..\kdewin-installer   -DSTATIC_BUILD=1 -> Release Build 
-	<make-tool> 
 
-  or 
+	cmake -G "NMake Makefiles" ..\kdewin-installer   -DSTATIC_BUILD=1 -> Release Build
+	<make-tool>
+
+  or
 
 	cmake -G "NMake Makefiles" ..\kdewin-installer  -DSTATIC_BUILD=1 -DCMAKE_BUILD_TYPE=MinSizeRel  -> size optimized
-	<make-tool> 
+	<make-tool>
 
 
 Happy hacking
