@@ -219,8 +219,8 @@ bool Packager::generatePackageFileList(QList<InstallFile> &fileList, Packager::T
                 generateFileList(fileList, dir, QString(), "*.xml", "");
                 return true;
             case DEBUG:
-                generateFileList(fileList, dir, "bin",  "*d4.dll", "");
-                generateFileList(fileList, dir, "lib",  "d4*.pdb", "");
+                generateFileList(fileList, dir, "bin",  "*d4.dll *d.dll *d.pdb", "");
+                generateFileList(fileList, dir, "lib",  "d4*.pdb *d.pdb", "");
                 generateFileList(fileList, dir, "plugins", "*d.dll *d4.dll *d1.dll");
                 generateFileList(fileList, dir, "plugins", "*d.pdb *d4.pdb *d1.pdb");
                 if (m_type == "mingw" || m_type == "mingw4")
