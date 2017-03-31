@@ -614,22 +614,31 @@ bool InstallerEngine::includePackage(CompilerTypes::Type compilerType, const QSt
 {
     // check correctness
     if ( ( categoryName == "mingw"  || compilerType == CompilerTypes::MinGW )
-        &&  QRegExp(".*-(msvc|vc90|vc100|mingw4)$").exactMatch(name) )
+        &&  QRegExp(".*-(msvc|vc90|vc100|vc110|vc120|vc140|mingw4)$").exactMatch(name) )
         return false;
     else if ( ( categoryName == "mingw4"  || compilerType == CompilerTypes::MinGW4 )
-            && QRegExp(".*-(mingw|x86-mingw4|msvc|vc90|vc100)$" ).exactMatch(name) )
+            && QRegExp(".*-(mingw|x86-mingw4|msvc|vc90|vc100|vc110|vc120|vc140)$" ).exactMatch(name) )
         return false;
     else if ( ( categoryName == "mingw4"  || compilerType == CompilerTypes::MinGW4_W32 )
-            && ( QRegExp(".*-(mingw|mingw4|msvc|vc90|vc100)$" ).exactMatch(name) && !QRegExp(".*-x86-mingw4$" ).exactMatch(name) ) )
+            && ( QRegExp(".*-(mingw|mingw4|msvc|vc90|vc100|vc110|vc120|vc140)$" ).exactMatch(name) && !QRegExp(".*-x86-mingw4$" ).exactMatch(name) ) )
         return false;
     else if ( ( categoryName == "mingw4"  || compilerType == CompilerTypes::MinGW4_W64 )
-            && ( QRegExp(".*-(mingw|mingw4|msvc|vc90|vc100)$" ).exactMatch(name) && !QRegExp(".*-x64-mingw4$" ).exactMatch(name) ) )
+            && ( QRegExp(".*-(mingw|mingw4|msvc|vc90|vc100|vc110|vc120|vc140)$" ).exactMatch(name) && !QRegExp(".*-x64-mingw4$" ).exactMatch(name) ) )
         return false;
     else if ( ( categoryName == "msvc"  || compilerType == CompilerTypes::MSVC9 )
-              && QRegExp(".*-(mingw|mingw4|vc100)$" ).exactMatch(name) )
+              && QRegExp(".*-(mingw|mingw4|vc100|vc110|vc120|vc140)$" ).exactMatch(name) )
         return false;
     else if ( ( categoryName == "msvc"  || compilerType == CompilerTypes::MSVC10 )
-              && QRegExp(".*-(mingw|mingw4|msvc|vc90)$" ).exactMatch(name)  )
+              && QRegExp(".*-(mingw|mingw4|msvc|vc90|vc110|vc120|vc140)$" ).exactMatch(name)  )
+        return false;
+    else if ( ( categoryName == "msvc"  || compilerType == CompilerTypes::MSVC11 )
+              && QRegExp(".*-(mingw|mingw4|msvc|vc90|vc100|vc120|vc140)$" ).exactMatch(name)  )
+        return false;
+    else if ( ( categoryName == "msvc"  || compilerType == CompilerTypes::MSVC12 )
+              && QRegExp(".*-(mingw|mingw4|msvc|vc90|vc100|vc110|vc140)$" ).exactMatch(name)  )
+        return false;
+    else if ( ( categoryName == "msvc"  || compilerType == CompilerTypes::MSVC14 )
+              && QRegExp(".*-(mingw|mingw4|msvc|vc90|vc100|vc110|vc120)$" ).exactMatch(name)  )
         return false;
     return true;
 }

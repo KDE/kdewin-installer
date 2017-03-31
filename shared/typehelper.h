@@ -49,7 +49,10 @@ public:
         MinGW4=5,
         MSVC10_X64=6,
         MinGW4_W32=7,
-        MinGW4_W64=8 
+        MinGW4_W64=8,
+        MSVC11=9,
+        MSVC12=10,
+        MSVC14=11,
     };
     enum Scope {
         allCompiler,

@@ -64,9 +64,9 @@ CompilerTypes::CompilerTypes(Scope scope) :  m_containsRegExp(0), m_endsRegExp(0
     m_typeStrings << "vc90" << "mingw4";
     m_descriptions << "MSVC 2008 32bit (deprecated)" << "MinGW4 (deprecated)";
 #endif
-    m_types << MSVC10 << MinGW4_W32;
-    m_typeStrings << "vc100" << "x86-mingw4";
-    m_descriptions << "MSVC 2010 32bit" << "MinGW4 32bit";
+    m_types << MSVC10 << MSVC11 << MSVC12 << MSVC14 << MinGW4_W32;
+    m_typeStrings << "vc100" << "vc110" << "vc120" << "vc140" << "x86-mingw4";
+    m_descriptions << "MSVC 2010 32bit" << "MSVC 2011 32bit" << "MSVC 2012 32bit" << "MSVC 2014 32bit" << "MinGW4 32bit";
     if (scope == allCompiler || isX64Windows())
     {
     // @todo: enable msvc x64 builds if we ever set them up
