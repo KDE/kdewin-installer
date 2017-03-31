@@ -31,7 +31,6 @@ set (packager_HEADERS
 if(QT5_BUILD)
     qt5_add_resources(packager_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/packager.qrc)
 else()
-    qt4_automoc(${packager_SOURCES})
     QT4_ADD_RESOURCES(packager_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/packager.qrc)
 endif()
 
