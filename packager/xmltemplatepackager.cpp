@@ -384,32 +384,8 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
 {
     QString dir = root.isEmpty() ? m_rootDir : root;
 
-    QString compilerType; 
-    if (m_type == "mingw")
-        compilerType = "mingw";
-    else if (m_type == "mingw4")
-        compilerType = "mingw4";
-    else if (m_type == "x86-mingw4")
-        compilerType = "x86-mingw4";
-    else if (m_type == "x64-mingw4")
-        compilerType = "x64-mingw4";
-    else if (m_type == "vc80")
-        compilerType = "vc80";
-    else if (m_type == "vc90")
-        compilerType = "vc90";
-    else if (m_type == "vc100")
-        compilerType = "vc100";
-    else if (m_type == "vc110")
-        compilerType = "vc110";
-    else if (m_type == "vc120")
-        compilerType = "vc120";
-    else if (m_type == "vc140")
-        compilerType = "vc140";
-    else if (m_type == "x64-vc100")
-        compilerType = "x64-vc100";
-    else 
-    
-        compilerType = "undefined";
+    QString compilerType = m_type;
+
     QString packageType;
     if (type == Packager::BIN)
         packageType = "runtime";
