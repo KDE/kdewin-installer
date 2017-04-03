@@ -422,7 +422,7 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
         if (!part)
             return false;
     }    
-        
+
     if (part->fileList.size() > 0)
     {
         foreach(XmlFiles *f, part->fileList)
@@ -430,7 +430,7 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
             if (!f->compiler.isEmpty() && compilerType != f->compiler)
             {
                 if (m_debug)
-                    qDebug() << *f << "ignored";                    
+                    qDebug() << *f << "ignored";
                 continue;
             }
             if (m_debug)
