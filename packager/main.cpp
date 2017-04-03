@@ -96,6 +96,7 @@ static void printHelp(const QString &addInfo)
        << "\n\t\t"      << "-name <packageName>    specify package name"
        << "\n\t\t"      << "-notes <text>          specify additional notes for manifest files"
        << "\n\t\t"      << "-root <path>           specify path to root directory of installed files"
+       << "\n\t\t"      << "-special               use special packages for Qt packages (deprecated, use -template)"
        << "\n\t\t"      << "-srcroot <path>        specify path to source root"
        << "\n\t\t"      << "-srcexclude <pattern>  path pattern to exclude from src package (deprecated, use template)"
        << "\n\t\t"      << "-symroot <path>        the root directory where you symbols can be found"
