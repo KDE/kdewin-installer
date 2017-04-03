@@ -54,6 +54,8 @@ There has to be one xml file per KDE-module
                      <files compiler= "mingw" | "mingw4" | "x86-mingw4" | "x64-mingw4" | "vc80" | "vc90"| "vc100">
             -->
              <files compiler="vc90" directory="bin" include="*.dll"/>
+             <!-- compiler can also be a regex -->
+             <files compiler="vc*" directory="bin" include="*.dll"/>
              <!--
                 - handler specifies an internal handler for performing non easy transformations. 
                   Currently only "parseQtIncludeFiles" for performing special actions for  qt include files is available

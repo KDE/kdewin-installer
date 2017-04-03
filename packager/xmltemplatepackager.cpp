@@ -425,9 +425,11 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
 
     if (part->fileList.size() > 0)
     {
+        QRegExp cx(compilerType);
+
         foreach(XmlFiles *f, part->fileList)
         {
-            if (!f->compiler.isEmpty() && compilerType != f->compiler)
+            if (!f->compiler.isEmpty() && cx.indexIn(f->compiler) == -1)
             {
                 if (m_debug)
                     qDebug() << *f << "ignored";
