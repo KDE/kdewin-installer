@@ -52,7 +52,8 @@ QMap<QString, QString> internalTemplateList;
 void initTemplateList()
 {
     internalTemplateList["kde"] = ":/template-kde.xml";
-    internalTemplateList["qt"] = ":/template-qt.xml";
+    internalTemplateList["qt4"] = ":/template-qt4.xml";
+    internalTemplateList["qt5"] = ":/template-qt5.xml";
     internalTemplateList["example"] = ":/template-example.xml";
 }
 
@@ -103,9 +104,9 @@ static void printHelp(const QString &addInfo)
        << "\n\t\t"      << "-strip                 strip debug infos (MinGW only)"
        << "\n\t\t"      << "-type <type>           specify type of package (mingw, mingw4, x86-mingw4, x64-mingw4,"
        << "\n\t\t"      << "                           msvc{=vc80}, vc90, vc100, vc110, vc120, vc140, x64-vc100)"
-       << "\n\t\t"      << "-print-templates       print internal xml templates (kde,qt)"
+       << "\n\t\t"      << "-print-templates       print internal xml templates (kde, qt4, qt5)"
        << "\n\t\t"      << "-template <filepath>   use xml template <filepath> for generating modules"
-       << "\n\t\t"      << "-template kde | qt     choose internal template (default is to use the old implementation"
+       << "\n\t\t"      << "-template kde|qt4|qt5  choose internal template (default is to use the old implementation)"
        << "\n";
 
     qerr.flush();

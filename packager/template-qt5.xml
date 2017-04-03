@@ -1,30 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module name="qt">
+<module name="qt5">
     <package name="default">
         <part name="runtime">
            <!-- assistant.exe can be used separatly from qt doc - better in bin than doc package -->
-            <files directory="bin" include="*.dll assistant.exe qdbus.exe qdbusviewer.exe" exclude="*d.dll *d4.dll"/>
-            <files directory="plugins" include="*.dll" exclude="*d.dll *d4.dll *d1.dll"/>
+            <files directory="bin" include="*.dll assistant.exe qdbus.exe qdbusviewer.exe" exclude="*d.dll"/>
+            <files directory="plugins" include="*.dll" exclude="*d.dll"/>
             <files directory="translations" include="*.qm"/>
             <files directory="lib" include="*.exe *.bat"/>
             <files directory="manifest" include="*-bin.cmd"/>
             <files directory="." include="*.xml"/>
         </part>
         <part name="development">
-            <files directory="bin" include="*.exe *.bat" exclude="assistant.exe qtdemo.exe qdbus.exe qdbusviewer.exe"/>
+            <files directory="bin" include="*.exe *.bat *d.dll" exclude="assistant.exe qtdemo.exe qdbus.exe qdbusviewer.exe"/>
+            <files directory="plugins" include="*d.dll"/>
             <files directory="." include=".qmake.cache"/>
             <files directory="mkspecs" include="*.*" exclude=".svn CVS"/>
             <files directory="tools/linguist/phrasebooks" include="*.qph"/>
             <files directory="phrasebooks" include="*.qph"/>
             <files handler="parseQtIncludeFiles" directory="include" include="*" exclude="private *_p.h *.pr* .svn .git CVS"/>
             <files directory="manifest" include="*-lib.cmd"/>
-            <files compiler="mingw" directory="lib" include="*.a" exclude="*d4.a *d.a"/>
-            <files compiler="mingw4" directory="lib" include="*.a" exclude="*d4.a *d.a"/>
-            <files compiler="x86-mingw4" directory="lib" include="*.a" exclude="*d4.a *d.a"/>
-            <files compiler="x64-mingw4" directory="lib" include="*.a" exclude="*d4.a *d.a"/>
-            <files compiler="vc80" directory="lib" include="*.lib" exclude="*d4.lib *d.lib"/>
-            <files compiler="vc90" directory="lib" include="*.lib" exclude="*d4.lib *d.lib"/>
-            <files compiler="vc100" directory="lib" include="*.lib" exclude="*d4.lib *d.lib"/>
+            <files compiler="*mingw*" directory="lib" include="*.a"/>
+            <files compiler="vc*" directory="lib" include="*.lib"/>
+            <files directory="lib/cmake" include="*"/>
         </part>
         <part name="documentation">
             <files directory="bin" include="qtdemo.exe"/>
@@ -35,7 +32,8 @@
             <files directory="." include="*.*" exclude=".git .svn CVS *.bak *.orig"/>
         </part>
         <part name="symbols">
-            <files directory="." include="*.*"/>
+            <files compiler="vc*" directory="." include="*.pdb"/>
+            <files compiler="mingw*" directory="." include="*.sym"/>
         </part>
     </package>
 </module>

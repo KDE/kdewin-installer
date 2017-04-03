@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="qt4">
+    <package name="default">
+        <part name="runtime">
+           <!-- assistant.exe can be used separatly from qt doc - better in bin than doc package -->
+            <files directory="bin" include="*.dll assistant.exe qdbus.exe qdbusviewer.exe" exclude="*d.dll *d4.dll"/>
+            <files directory="plugins" include="*.dll" exclude="*d.dll *d4.dll *d1.dll"/>
+            <files directory="translations" include="*.qm"/>
+            <files directory="lib" include="*.exe *.bat"/>
+            <files directory="manifest" include="*-bin.cmd"/>
+            <files directory="." include="*.xml"/>
+        </part>
+        <part name="development">
+            <files directory="bin" include="*.exe *.bat" exclude="assistant.exe qtdemo.exe qdbus.exe qdbusviewer.exe"/>
+            <files directory="." include=".qmake.cache"/>
+            <files directory="mkspecs" include="*.*" exclude=".svn CVS"/>
+            <files directory="tools/linguist/phrasebooks" include="*.qph"/>
+            <files directory="phrasebooks" include="*.qph"/>
+            <files handler="parseQtIncludeFiles" directory="include" include="*" exclude="private *_p.h *.pr* .svn .git CVS"/>
+            <files directory="manifest" include="*-lib.cmd"/>
+            <files compiler="*mingw*" directory="lib" include="*.a" exclude="*d4.a *d.a"/>
+            <files compiler="vc*" directory="lib" include="*.lib" exclude="*d4.lib *d.lib"/>
+        </part>
+        <part name="documentation">
+            <files directory="bin" include="qtdemo.exe"/>
+            <files directory="manifest" include="*-doc.cmd"/>
+            <files directory="doc" include="*.*" exclude=".svn .git CVS"/>
+        </part>
+        <part name="source">
+            <files directory="." include="*.*" exclude=".git .svn CVS *.bak *.orig"/>
+        </part>
+        <part name="symbols">
+            <files directory="." include="*.*"/>
+        </part>
+    </package>
+</module>
