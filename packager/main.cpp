@@ -135,13 +135,17 @@ int main(int argc, char *argv[])
 
     idx = args.indexOf("-template");
     if(idx != -1 && idx < args.count() -1) {
-        templateFile = args[idx + 1];
-		useTemplate = true;
+        QString templateName = args[idx + 1];
+        useTemplate = true;
         args.removeAt(idx + 1);
         args.removeAt(idx);
         useTemplate = true;
-        if (internalTemplateList.contains(templateFile))
+        if (internalTemplateList.contains(templateName)) {
             internalTemplate = true;
+            templateFile = internalTemplateList[templateName];
+        }
+        else
+            templateFile = templateName;
     }
 
     idx = args.indexOf("-name");
