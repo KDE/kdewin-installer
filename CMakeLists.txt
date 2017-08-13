@@ -19,6 +19,7 @@ endif(COMMAND cmake_policy)
 
 if(CMAKE_MAJOR_VERSION STREQUAL "3")
     cmake_policy(SET CMP0026 OLD)
+    cmake_policy(SET CMP0060 NEW)
 endif()
 
 include(cmake/macros.cmake)
