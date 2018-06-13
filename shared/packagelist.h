@@ -45,7 +45,7 @@ class PackageList : public QObject
 public:
     enum Type {ApacheModIndex, Default, Ftp, SourceForge, SourceForgeMirror };
 
-    PackageList(InstallerEngine *parent);
+    PackageList(InstallerEngine *parent = 0);
     virtual ~PackageList();
 
     QT_DEPRECATED bool addPackage(const Package &package) { return append(package); }

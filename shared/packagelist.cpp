@@ -337,6 +337,8 @@ QStringList filterFileName(const QStringList &files, CompilerTypes::Type current
 
 bool PackageList::readFromDirectory(const QString &dir, bool append)
 {
+    Q_ASSERT(m_parent);
+
     if (!append)
         m_packageList.clear();
 
@@ -365,6 +367,8 @@ bool PackageList::readFromDirectory(const QString &dir, bool append)
 
 bool PackageList::readInternal(QIODevice *ioDev, PackageList::Type type, bool append)
 {
+    Q_ASSERT(m_parent);
+
     if (!append)
         m_packageList.clear();
 
