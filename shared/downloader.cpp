@@ -240,8 +240,11 @@ void Downloader::slotReplyFinished(QNetworkReply *reply)
     }
 
     d->ioDevice = 0;
-    if (reply->error() != QNetworkReply::NoError)
+    if (reply->error() != QNetworkReply::NoError) {
         m_resultString = reply->errorString();
+        d->ret = true;
+    }
+
     if ( d->ret )
         setError ( m_resultString );
     emit done ( bRet );
