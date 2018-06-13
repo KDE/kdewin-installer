@@ -33,24 +33,22 @@ int main(int argc, char *argv[])
 
     QString http("http://www.heise.de");
     QString ftp("ftp://www.heise.de");
-    QString host; 
     bool ret;
-    Settings &s = Settings::instance();
     ProxySettings ps;
 
-    ret = s.proxy(Settings::InternetExplorer, http, ps);
+    ret = ps.from(ProxySettings::InternetExplorer, http);
     qDebug() << "IE settings for " << http << ":" << ret << ps;
-    ret = s.proxy(Settings::InternetExplorer, ftp, ps);
+    ret = ps.from(ProxySettings::InternetExplorer, ftp);
     qDebug() << "IE settings for " << ftp << ":" << ret << ps;
 
-    ret = s.proxy(Settings::FireFox, http, ps);
+    ret = ps.from(ProxySettings::FireFox, http);
     qDebug() << "Firefox settings for " << http << ":" << ret << ps;
-    ret = s.proxy(Settings::FireFox, ftp, ps);
+    ret = ps.from(ProxySettings::FireFox, ftp);
     qDebug() << "Firefox settings for " << ftp << ":" << ret << ps;
 
-    ret = s.proxy(Settings::Manual, http, ps);
+    ret = ps.from(ProxySettings::Manual, http);
     qDebug() << "Manual settings for " << http << ":" << ret << ps;
-    ret = s.proxy(Settings::Manual, ftp, ps);
+    ret = ps.from(ProxySettings::Manual, ftp);
     qDebug() << "Manual settings for " << ftp << ":" << ret << ps;
 
     return 0;
