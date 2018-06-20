@@ -28,7 +28,7 @@ include_directories(
 
 
 add_installer_test(test-database)
-add_installer_test(test-downloader)
+add_installer_test(test-downloader ../shared/downloaderprogress.cpp)
 add_installer_test(test-globalconfig)
 add_installer_test(test-mirrors)
 add_installer_test(test-package)
