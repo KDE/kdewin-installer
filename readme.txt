@@ -2,7 +2,7 @@ About
 =====
 
 The KDEWIN Installer is aimed to be a installer tool to ease kde installation on windows.
-See http://commit-digest.org/issues/2007-01-14/ for an article about the background of this installer.
+See https://commit-digest.org/issues/2007-01-14/ for an article about the background of this installer.
 
 State
 =====
