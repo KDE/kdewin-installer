@@ -145,7 +145,7 @@ if (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel OR
         if (UPX_EXECUTABLE AND UPX_SUPPORT)
             set (PACK_EXECUTABLE 1)
             message(STATUS "upx found, packing of executables enabled")
-        endif (UPX_EXECUTABLE)
+        endif ()
         set (INSTALL_SYSTEM_LIBS 0)
     else (STATIC_BUILD)
         # add shared mode options
