@@ -49,6 +49,8 @@ OPTION(BUILD_WITH_PACKAGER "build with packager" OFF)
 
 OPTION(BUILD_PACKAGER_ONLY "Only build packager" OFF)
 
+OPTION(UPX_SUPPORT "Use UPX to package executables" ON)
+
 OPTION(QT5_BUILD "Build with QT5" OFF)
 OPTION(QT4_BUILD "Build with QT4" ON)
 
@@ -140,7 +142,7 @@ set (PACK_EXECUTABLE 0)
 
 if (CMAKE_BUILD_TYPE STREQUAL Release OR CMAKE_BUILD_TYPE STREQUAL MinSizeRel OR CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo)
     if (STATIC_BUILD)
-        if (UPX_EXECUTABLE)
+        if (UPX_EXECUTABLE AND UPX_SUPPORT)
             set (PACK_EXECUTABLE 1)
             message(STATUS "upx found, packing of executables enabled")
         endif (UPX_EXECUTABLE)
