@@ -87,7 +87,7 @@ macro (pack_target _target)
 endmacro (pack_target)
 
 macro (create_checksum_file _target)
-    if (SHA1SUM_LOCAL_EXECUTABLE)
+    if (SHA1SUM_LOCAL_EXECUTABLE AND SHA1SUM_SUPPORT)
         get_target_property( _filename ${_target} LOCATION )
         get_filename_component(_name ${_filename} NAME)
         add_custom_command(

@@ -50,6 +50,7 @@ OPTION(BUILD_WITH_PACKAGER "build with packager" OFF)
 OPTION(BUILD_PACKAGER_ONLY "Only build packager" OFF)
 
 OPTION(UPX_SUPPORT "Use UPX to package executables" ON)
+OPTION(SHA1SUM_SUPPORT "Create sha1 checksums for executables" ON)
 
 OPTION(QT5_BUILD "Build with QT5" OFF)
 OPTION(QT4_BUILD "Build with QT4" ON)
