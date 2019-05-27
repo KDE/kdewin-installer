@@ -15,7 +15,7 @@ add_executable(sha1sum
     ../shared/hash.cpp 
     ../shared/debug.cpp
 )
-target_link_libraries(sha1sum ${QT_CONSOLE_LIBRARIES})
+target_link_libraries(sha1sum ${QT_CONSOLE_LIBRARIES} ${ZLIB_LIBRARIES})
 if (WIN32)
     target_link_libraries(sha1sum ws2_32)
 endif ()
