@@ -29,14 +29,14 @@
 #include "installerdialogs.h"
 
 Mirrors::Config mirrorConfig(
-    "http://download.kde.org/stable/kdewin/installer/mirrors.list",
+    "http://download.kde.org/" INSTALLER_URL_PATH "/mirrors.list",
     Mirrors::KDE,
     "",
     ""
 );
 
 Mirrors::Config fallBackConfig(
-    "http://ftp.gwdg.de/pub/linux/kde/stable/kdewin/installer/mirrors.list",
+    "http://ftp.gwdg.de/pub/linux/kde/" INSTALLER_URL_PATH "/mirrors.list",
     Mirrors::KDE,
     "",
     ""

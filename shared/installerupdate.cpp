@@ -45,7 +45,7 @@
 #include <unistd.h>
 #endif
 
-QUrl installerUpdateUrl("http://download.kde.org/stable/kdewin/installer/");
+QUrl installerUpdateUrl("http://download.kde.org/" INSTALLER_URL_PATH "/");
 QByteArray installerName ="kdewin-installer-gui-";
 
 bool isProcessRunning(int pid)

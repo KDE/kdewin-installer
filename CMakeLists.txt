@@ -55,6 +55,11 @@ OPTION(SHA1SUM_SUPPORT "Create sha1 checksums for executables" ON)
 OPTION(QT5_BUILD "Build with QT5" OFF)
 OPTION(QT4_BUILD "Build with QT4" ON)
 
+if(NOT INSTALLER_URL_PATH)
+    set(INSTALLER_URL_PATH "stable/kdewin/installer")
+endif()
+set(INSTALLER_URL_PATH ${INSTALLER_URL_PATH} CACHE FILEPATH "relativ installer path" FORCE)
+
 set(CMAKE_AUTOMOC ON)
 
 if(QT5_BUILD)
