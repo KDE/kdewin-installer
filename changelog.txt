@@ -1,5 +1,8 @@
 ChangeLog
 =========
+
+see https://cgit.kde.org/kdewin-installer.git/log/
+
 1.0.1
 -----------------
 - all:               - Do not pass DBUS_SESSION_BUS_ADDRESS to running client executables, when running under 
