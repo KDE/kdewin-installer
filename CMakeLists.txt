@@ -64,7 +64,7 @@ OPTION(QT4_BUILD "Build with QT4" ON)
 if(NOT INSTALLER_URL_PATH)
     set(INSTALLER_URL_PATH "stable/kdewin/installer")
 endif()
-set(INSTALLER_URL_PATH ${INSTALLER_URL_PATH} CACHE STRING "relativ installer path" FORCE)
+set(INSTALLER_URL_PATH ${INSTALLER_URL_PATH} CACHE STRING "relative installer path" FORCE)
 
 set(CMAKE_AUTOMOC ON)
 
