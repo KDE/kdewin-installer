@@ -129,9 +129,10 @@ bool Site::isExclude(const QString &_package)
 QDebug &operator<<(QDebug &out, const Site::SiteType &c)
 {
     switch(c) {
+        case Site::ApacheModIndex:    out << "ApacheModIndex"; break;
+        case Site::Ftp:               out << "FTP"; break;
         case Site::SourceForge:       out << "SourceForge"; break;
         case Site::SourceForgeMirror: out << "SourceForgeMirror"; break;
-        case Site::ApacheModIndex:    out << "ApacheModIndex"; break;
         default:                      out << "unknown type";
     }
     return out;
