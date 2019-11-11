@@ -34,11 +34,251 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QUrl>
+#include <QtXml>
 
 #ifdef USE_GUI
 #include <QStandardItemModel>
 #include <QTreeWidget>
 #endif
+
+typedef QMap<QString,QString> PackagePathMap;
+
+class XmlHandlerBase : public QXmlDefaultHandler
+{
+public:
+    XmlHandlerBase()
+        : m_level(0)
+    {
+    }
+
+    virtual ~XmlHandlerBase()
+    {
+    }
+
+    bool parse(QIODevice *device)
+    {
+        QXmlSimpleReader xmlReader;
+        xmlReader.setContentHandler(this);
+        xmlReader.setErrorHandler(this);
+        QXmlInputSource source(device);
+        bool ok = xmlReader.parse(&source);
+        return ok;
+    }
+
+    const QUrl &url() { return m_url; }
+
+    protected:
+        QString element;
+        bool m_inElement;
+        QString m_parent;
+        QString m_last;
+        int m_level;
+        QUrl m_url;
+
+        bool startElement ( const QString & namespaceURI, const QString & localName, const QString & qName, const QXmlAttributes & atts )
+        {
+            Q_UNUSED(namespaceURI);
+            Q_UNUSED(localName);
+
+            m_inElement = true;
+            element = qName;
+            m_last = qName;
+            return true;
+        }
+
+        bool characters ( const QString & ch )
+        {
+            if  (!m_inElement)
+                return true;
+
+            return true;
+        }
+
+        bool error( const QXmlParseException & exception )
+        {
+            qDebug() << exception.lineNumber() << exception.columnNumber() << exception.message();
+            return  true;
+        }
+
+        bool fatalError ( const QXmlParseException & exception )
+        {
+            qCritical() << exception.lineNumber() << exception.columnNumber() << exception.message();
+            return  false;
+        }
+
+        bool warning ( const QXmlParseException & exception )
+        {
+            qWarning() << exception.lineNumber() << exception.columnNumber() << exception.message();
+            return  true;
+        }
+};
+
+
+class JenkinsJobsXmlHandler : public XmlHandlerBase
+{
+public:
+    JenkinsJobsXmlHandler(PackagePathMap &packages, const QString &filter)
+        : m_packages(packages)
+        , m_filter(filter.toLower())
+    {
+    }
+
+    virtual ~JenkinsJobsXmlHandler()
+    {
+    }
+
+    bool characters(const QString & ch)
+    {
+        if  (!m_inElement)
+            return true;
+        // handle in element data
+        if (element == "name") {
+            QString s = ch.toLower();
+            if (s.contains(m_filter)) {
+                s.replace("_" + m_filter, "");
+                m_packages[s] = ch;
+            }
+        }
+
+        return true;
+    }
+
+    protected:
+        PackagePathMap &m_packages;
+        QString m_filter;
+};
+
+class JenkinsJobXmlHandler : public XmlHandlerBase
+{
+public:
+    JenkinsJobXmlHandler(const QString &jobName)
+        : m_jobName(jobName)
+    {
+    }
+
+    virtual ~JenkinsJobXmlHandler()
+    {
+    }
+
+    bool load(Site *site)
+    {
+        QByteArray ba;
+        QUrl url(site->url().toString() + QString("/job/%1/api/xml").arg(m_jobName));
+        if (!Downloader::instance()->fetch(url, ba)) {
+            return false;
+        }
+        QXmlSimpleReader xmlReader;
+        xmlReader.setContentHandler(this);
+        xmlReader.setErrorHandler(this);
+        QXmlInputSource source;
+        source.setData(ba);
+        bool ok = xmlReader.parse(&source);
+        qDebug() << m_url;
+        return ok;
+    }
+
+    protected:
+        QString m_jobName;
+
+        bool startElement(const QString & namespaceURI, const QString & localName, const QString & qName, const QXmlAttributes & atts)
+        {
+            Q_UNUSED(namespaceURI);
+            Q_UNUSED(localName);
+
+            element = qName;
+            m_last = qName;
+            qDebug() << __FUNCTION__ << qName << m_level;
+            if (element == "lastSuccessfulBuild")
+                m_inElement = true;
+            m_level++;
+            return true;
+        }
+
+        bool endElement(const QString& namespaceURI, const QString& localName, const QString& qName)
+        {
+            qDebug() << __FUNCTION__ << qName << m_level;
+            if (qName == "lastSuccessfulBuild")
+                m_inElement = false;
+            m_level--;
+            return true;
+        }
+
+        bool characters(const QString & ch)
+        {
+            qDebug() << __FUNCTION__ << m_level << ch;
+            // handle in element data
+            if (m_inElement && !m_url.isValid() && element == "url")
+                m_url = QUrl::fromUserInput(ch);
+            return true;
+        }
+};
+
+class JenkinsBuildArtifactHandler : public XmlHandlerBase
+{
+public:
+    JenkinsBuildArtifactHandler()
+    {
+    }
+
+    virtual ~JenkinsBuildArtifactHandler()
+    {
+    }
+
+    bool load(const QUrl &url)
+    {
+        QByteArray ba;
+        m_url = url;
+        if (!Downloader::instance()->fetch(url.toString() + "/api/xml", ba)) {
+            return false;
+        }
+        QXmlSimpleReader xmlReader;
+        xmlReader.setContentHandler(this);
+        xmlReader.setErrorHandler(this);
+        QXmlInputSource source;
+        source.setData(ba);
+        bool ok = xmlReader.parse(&source);
+        qDebug() << m_url;
+        return ok;
+    }
+
+    const QStringList &fileNames() { return m_fileNames; }
+
+    protected:
+        QStringList m_fileNames;
+
+        bool startElement(const QString & namespaceURI, const QString & localName, const QString & qName, const QXmlAttributes & atts)
+        {
+            Q_UNUSED(namespaceURI);
+            Q_UNUSED(localName);
+
+            element = qName;
+            m_last = qName;
+            if (element == "artifact")
+                m_inElement = true;
+            m_level++;
+            return true;
+        }
+
+        bool endElement(const QString& namespaceURI, const QString& localName, const QString& qName)
+        {
+            if (qName == "artifact")
+                m_inElement = false;
+            m_level--;
+            return true;
+        }
+
+        bool characters(const QString & ch)
+        {
+            if (m_inElement && element == "fileName") {
+                QString value = ch;
+                value.replace("64-cl","64");
+                value.replace("_64.7z","_64-bin.7z");
+                value.replace("-windows", "");
+                m_fileNames << value;
+            }
+            return true;
+        }
+};
 
 PackageList::PackageList(InstallerEngine *parent)
         : QObject(),  m_parent(parent)
@@ -397,6 +637,27 @@ bool PackageList::readInternal(QIODevice *ioDev, PackageList::Type type, bool ap
         files = filterFileName(files, m_parent->currentCompiler());
         addPackagesFromFileNames(files);
         break;
+
+    // <hudson _class='hudson.model.Hudson'><job _class='org.jenkinsci.plugins.workflow.job.WorkflowJob'><name>Adwaita_arm_flatpak</name></job><
+    case PackageList::JenkinsXml: {
+        PackagePathMap packages;
+        JenkinsJobsXmlHandler jobs(packages, "release_win64");
+        bool ok = jobs.parse(ioDev);
+        qDebug() << packages;
+        foreach(const QString &package, packages.keys()) {
+            JenkinsJobXmlHandler handler(packages[package]);
+            ok = handler.load(m_curSite);
+            if (!ok)
+                continue;
+            JenkinsBuildArtifactHandler buildHandler;
+            if (!buildHandler.load(handler.url()))
+                continue;
+            qDebug() << buildHandler.fileNames();
+            files = filterFileName(buildHandler.fileNames(), CompilerTypes::MSVC141_X64);
+            //addPackagesFromFileNames(files);
+        }
+        break;
+    }
 
     case PackageList::SourceForge:
         while (!ioDev->atEnd())

@@ -43,7 +43,7 @@ class PackageList : public QObject
     Q_OBJECT
 
 public:
-    enum Type {ApacheModIndex, Default, Ftp, SourceForge, SourceForgeMirror };
+    enum Type {ApacheModIndex, Default, Ftp, JenkinsXml, SourceForge, SourceForgeMirror };
 
     PackageList(InstallerEngine *parent = 0);
     virtual ~PackageList();

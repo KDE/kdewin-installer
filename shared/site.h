@@ -39,7 +39,7 @@ class Site
 
 public:
     /// @deprecated we use the autoparser 
-    enum SiteType {ApacheModIndex, Ftp, SourceForge, SourceForgeMirror };
+    enum SiteType {ApacheModIndex, Ftp, JenkinsXml, SourceForge, SourceForgeMirror };
 
     Site();
 

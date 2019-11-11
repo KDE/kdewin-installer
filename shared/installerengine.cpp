@@ -368,6 +368,7 @@ bool InstallerEngine::addPackagesFromSites()
                 case Site::SourceForgeMirror: type = PackageList::SourceForgeMirror; break;
                 case Site::ApacheModIndex: type = PackageList::ApacheModIndex; break;
                 case Site::Ftp: type = PackageList::Ftp; break;
+                case Site::JenkinsXml: type = PackageList::JenkinsXml; break;
                 default:
                     emit error("unknown Site type "  + site->Type());
                     type = PackageList::ApacheModIndex;

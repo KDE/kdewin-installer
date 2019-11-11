@@ -79,7 +79,9 @@ bool Site::setType(const QString &type)
         setType(Site::SourceForgeMirror);
     else if (type == "ftp")
         setType(Site::Ftp);
-    else 
+    else if (type == "jenkinsxml")
+        setType(Site::JenkinsXml);
+    else
     {
         setType(Site::ApacheModIndex);
         return false;
@@ -131,6 +133,7 @@ QDebug &operator<<(QDebug &out, const Site::SiteType &c)
     switch(c) {
         case Site::ApacheModIndex:    out << "ApacheModIndex"; break;
         case Site::Ftp:               out << "FTP"; break;
+        case Site::JenkinsXml:        out << "JenkinsXml"; break;
         case Site::SourceForge:       out << "SourceForge"; break;
         case Site::SourceForgeMirror: out << "SourceForgeMirror"; break;
         default:                      out << "unknown type";
