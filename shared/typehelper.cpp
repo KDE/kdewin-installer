@@ -77,6 +77,8 @@ CompilerTypes::CompilerTypes(Scope scope) :  m_containsRegExp(0), m_endsRegExp(0
     {
         m_compiler
             << Compiler(MSVC10_X64, "x64-vc100", "MSVC 2010 64bit")
+            << Compiler(MSVC141_X64, "x64-vc141", "MSVC 2017 64bit")
+            << Compiler(MSVC142_X64, "x64-vc142", "MSVC 2019 64bit")
             << Compiler(MinGW4_W64, "x64-mingw4", "MinGW4 64bit")
             ;
     }
