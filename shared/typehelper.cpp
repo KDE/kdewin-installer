@@ -76,10 +76,7 @@ CompilerTypes::CompilerTypes(Scope scope) :  m_containsRegExp(0), m_endsRegExp(0
     if (scope == allCompiler || isX64Windows())
     {
         m_compiler
-    // @todo: enable msvc x64 builds if we ever set them up
-#ifdef MSVC_X64
-            << Compiler(MSVC10_X64, "x64-vc100", "MSVC 2010 64bit");
-#endif
+            << Compiler(MSVC10_X64, "x64-vc100", "MSVC 2010 64bit")
             << Compiler(MinGW4_W64, "x64-mingw4", "MinGW4 64bit")
             ;
     }
