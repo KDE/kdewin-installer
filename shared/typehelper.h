@@ -53,10 +53,27 @@ public:
         MSVC11=9,
         MSVC12=10,
         MSVC14=11,
+        MSVC141=12,
+        MSVC141_X64=13,
+        MSVC142=14,
+        MSVC142_X64=15
     };
     enum Scope {
         allCompiler,
         supportedCompiler,
+    };
+
+    class Compiler {
+    public:
+        Type type;
+        QString name;
+        QString description;
+
+        Compiler(Type _type, const QString &_name, const QString &_description)
+          : type(_type)
+          , name(_name)
+          , description(_description)
+        {}
     };
 
     CompilerTypes(Scope scope=supportedCompiler);
@@ -65,7 +82,7 @@ public:
     /**
       returns a list of string with support compilers
     */
-    const QStringList &values();
+    const QStringList values();
 
     /**
       returns description of specific compiler
@@ -102,9 +119,8 @@ public:
     const QString toString(Type compilerType);
 
 protected:
-    QList<Type> m_types;
-    QStringList m_typeStrings;
-    QStringList m_descriptions;
+    QList<Compiler> m_compiler;
+
     QRegExp *m_containsRegExp;
     QRegExp *m_endsRegExp;
 };

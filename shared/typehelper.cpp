@@ -59,25 +59,29 @@ CompilerTypes allCompilers(CompilerTypes::allCompiler);
 CompilerTypes::CompilerTypes(Scope scope) :  m_containsRegExp(0), m_endsRegExp(0)
 {
     // see doc/format-specifications.txt for details
+    m_compiler
 #ifdef BUILD_WITH_DEPRECATED
-    m_types << MSVC9 << MinGW4;
-    m_typeStrings << "vc90" << "mingw4";
-    m_descriptions << "MSVC 2008 32bit (deprecated)" << "MinGW4 (deprecated)";
+        << Compiler(MSVC9,  "vc90", "MSVC 2008 32bit (deprecated)")
+        << Compiler(MSVC11,  "mingw4", "MINGW4 32bit (deprecated)")
 #endif
-    m_types << MSVC10 << MSVC11 << MSVC12 << MSVC14 << MinGW4_W32;
-    m_typeStrings << "vc100" << "vc110" << "vc120" << "vc140" << "x86-mingw4";
-    m_descriptions << "MSVC 2010 32bit" << "MSVC 2011 32bit" << "MSVC 2012 32bit" << "MSVC 2014 32bit" << "MinGW4 32bit";
+        << Compiler(MSVC10,  "vc100", "MSVC 2010 32bit")
+        << Compiler(MSVC11,  "vc110", "MSVC 2011 32bit")
+        << Compiler(MSVC12,  "vc120", "MSVC 2012 32bit")
+        << Compiler(MSVC14,  "vc140", "MSVC 2014 32bit")
+        << Compiler(MSVC141, "vc141", "MSVC 2017 32bit")
+        << Compiler(MSVC142, "vc142", "MSVC 2019 32bit")
+        << Compiler(MinGW4_W32, "x86-mingw4", "MinGW4 32bit")
+        ;
+
     if (scope == allCompiler || isX64Windows())
     {
+        m_compiler
     // @todo: enable msvc x64 builds if we ever set them up
 #ifdef MSVC_X64
-        m_types << MSVC10_X64;
-        m_typeStrings << "x64-vc100";
-        m_descriptions << "MSVC 2010 64bit";
+            << Compiler(MSVC10_X64, "x64-vc100", "MSVC 2010 64bit");
 #endif
-        m_types << MinGW4_W64;
-        m_typeStrings << "x64-mingw4";
-        m_descriptions << "MinGW4 64bit";
+            << Compiler(MinGW4_W64, "x64-mingw4", "MinGW4 64bit")
+            ;
     }
     m_containsRegExp = new QRegExp("("+values().join("|")+")");
     m_endsRegExp = new QRegExp("("+values().join("|")+")$");
@@ -91,30 +95,47 @@ CompilerTypes::~CompilerTypes()
 
 bool CompilerTypes::contains(Type type)
 {
-    return m_types.contains(type);
+    foreach(const Compiler &c, m_compiler) {
+        if (c.type == type)
+            return true;
+    }
+    return false;
 }
 
 CompilerTypes::Type CompilerTypes::fromString(const QString &type)
 {
-    int i = m_typeStrings.indexOf(type.toLower());
-    return i != -1 ? m_types[i] : CompilerTypes::Unspecified;
+    QString name = type.toLower();
+    foreach(const Compiler &c, m_compiler) {
+        if (c.name == name)
+            return c.type;
+    }
+    return CompilerTypes::Unspecified;
 }
 
 const QString CompilerTypes::toString(Type type)
 {
-    int i = m_types.indexOf(type);
-    return i != -1 ? m_typeStrings[i] : QString();
+    foreach(const Compiler &c, m_compiler) {
+        if (c.type == type)
+            return c.name;
+    }
+    return QString();
 }
 
-const QStringList &CompilerTypes::values()
+const QStringList CompilerTypes::values()
 {
-    return m_typeStrings;
+    QStringList result;
+    foreach(const Compiler &c, m_compiler)
+        result << c.name;
+    return result;
 }
 
 const QString CompilerTypes::description(Type type)
 {
-    int i = m_types.indexOf(type);
-    return i != -1 ? m_descriptions[i] : QString();
+    foreach(const Compiler &c, m_compiler) {
+        if (c.type == type)
+            return c.description;
+    }
+    return QString();
 }
 
 QRegExp &CompilerTypes::regex()
