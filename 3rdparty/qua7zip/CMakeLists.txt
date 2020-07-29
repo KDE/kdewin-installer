@@ -1,5 +1,3 @@
-include_directories(${QT_INCLUDES})
-
 set(qua7zip_SOURCES
     qua7zip.cpp
     utils.c
@@ -31,6 +29,7 @@ set(qua7zip_HEADERS
 )
 
 add_library(qua7zip STATIC ${qua7zip_SOURCES} ${qua7zip_HEADERS})
+target_link_libraries(qua7zip PRIVATE ${QT_CONSOLE_LIBRARIES})
 target_include_directories(qua7zip PUBLIC ${CMAKE_SOURCE_DIR}/3rdparty/qua7zip)
 # public interface
 set(QUA7ZIP_LIBRARIES qua7zip CACHE FILEPATH "libraries" FORCE)

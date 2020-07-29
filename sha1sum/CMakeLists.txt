@@ -2,11 +2,9 @@ if(NOT SHA1SUM_EXECUTABLE AND SHA1SUM_SUPPORT)
 
 add_definitions(
     -DMISC_SMALL_VERSION
-    ${QT_DEFINITIONS}
 )
 
 include_directories(
-    ${QT_INCLUDES}
     ../shared
 )
 

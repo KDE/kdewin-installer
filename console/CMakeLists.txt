@@ -6,7 +6,6 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
     ${CONSOLE_INCLUDE_DIR}
-    ${QT_INCLUDES}
 )
 
 set(installer_CONSOLE_SOURCES

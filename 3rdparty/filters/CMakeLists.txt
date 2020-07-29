@@ -1,13 +1,3 @@
-
-add_definitions(
-    ${QT_DEFINITIONS}
-)
-
-include_directories(
-    ${QT_INCLUDES}
-)
-
-
 set(FILTERS_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/filters)
 
 set(filters_SOURCES

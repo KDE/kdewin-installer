@@ -22,7 +22,6 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_SOURCE_DIR}/packager
     ${FILTERS_INCLUDE_DIR}
-    ${QT_INCLUDES}
 )
 
 

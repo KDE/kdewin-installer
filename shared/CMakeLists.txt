@@ -1,11 +1,9 @@
 add_definitions(
     ${CURL_DEFINITIONS}
-    ${QT_DEFINITIONS}
 )
 
 include_directories(
     ${CURL_INCLUDE_DIR}
-    ${QT_INCLUDES}
 )
 
 set(installer_shared_HEADERS
