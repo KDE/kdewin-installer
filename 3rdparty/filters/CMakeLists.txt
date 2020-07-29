@@ -21,10 +21,6 @@ set(filters_HEADERS
 
 add_library(filters STATIC ${filters_SOURCES} ${filters_HEADERS})
 target_link_libraries(filters PRIVATE ${QT_CONSOLE_LIBRARIES} ${BZIP2_LIBRARIES})
-get_target_property(FILTERS_LIBRARY filters LOCATION)
-
+target_include_directories(filters PUBLIC ${CMAKE_SOURCE_DIR}/3rdparty/filters)
 # public interface
-set(FILTERS_DEFINITIONS ""  CACHE STRING "definitions" FORCE)
-set(FILTERS_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/filters CACHE FILEPATH "include directories" FORCE)
-set(FILTERS_LIBRARIES ${FILTERS_LIBRARY} ${BZIP2_LIBRARIES} CACHE FILEPATH "libraries" FORCE)
-set(FILTERS_FOUND TRUE CACHE BOOL "state" FORCE)
+set(FILTERS_LIBRARIES filters CACHE FILEPATH "libraries" FORCE)
