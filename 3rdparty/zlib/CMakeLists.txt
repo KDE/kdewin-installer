@@ -13,10 +13,6 @@ add_library(zlib STATIC
     zutil.c
 )
 
-get_target_property(ZLIB_LIBRARY zlib LOCATION)
-
+target_include_directories(zlib PUBLIC ${CMAKE_SOURCE_DIR}/3rdparty/zlib)
 # public interface
-set(ZLIB_DEFINITIONS ""  CACHE STRING "definitions" FORCE)
-set(ZLIB_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/zlib CACHE FILEPATH "include directories" FORCE)
-set(ZLIB_LIBRARIES ${ZLIB_LIBRARY} CACHE FILEPATH "libraries" FORCE)
-set(ZLIB_FOUND TRUE CACHE BOOL "state" FORCE)
+set(ZLIB_LIBRARIES zlib CACHE FILEPATH "libraries" FORCE)
