@@ -1,12 +1,10 @@
 add_definitions(
     ${CURL_DEFINITIONS}
-    ${QUA7ZIP_DEFINITIONS}
     ${QT_DEFINITIONS}
 )
 
 include_directories(
     ${CURL_INCLUDE_DIR}
-    ${QUA7ZIP_INCLUDE_DIR}
     ${QT_INCLUDES}
 )
 

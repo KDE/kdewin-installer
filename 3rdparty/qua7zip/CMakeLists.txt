@@ -31,11 +31,6 @@ set(qua7zip_HEADERS
 )
 
 add_library(qua7zip STATIC ${qua7zip_SOURCES} ${qua7zip_HEADERS})
-target_link_libraries(qua7zip)
-get_target_property(QUA7ZIP_LIBRARY qua7zip LOCATION)
-
+target_include_directories(qua7zip PUBLIC ${CMAKE_SOURCE_DIR}/3rdparty/qua7zip)
 # public interface
-set(QUA7ZIP_DEFINITIONS "" CACHE STRING "compiler definitions" FORCE)
-set(QUA7ZIP_INCLUDE_DIR qua7zip ${CMAKE_SOURCE_DIR}/3rdparty/qua7zip CACHE PATH "include directories" FORCE)
-set(QUAZIP_LIBRARIES ${QUA7ZIP_LIBRARY} CACHE FILEPATH "libraries" FORCE)
-set(QUA7ZIP_FOUND TRUE CACHE BOOL "state" FORCE)
+set(QUA7ZIP_LIBRARIES qua7zip CACHE FILEPATH "libraries" FORCE)
