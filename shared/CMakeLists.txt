@@ -1,5 +1,4 @@
 add_definitions(
-    ${BZIP2_DEFINITIONS}
     ${CURL_DEFINITIONS}
     ${FILTERS_DEFINITIONS}
     ${QUAZIP_DEFINITIONS}
@@ -8,7 +7,6 @@ add_definitions(
 )
 
 include_directories(
-    ${BZIP2_INCLUDE_DIR}
     ${CURL_INCLUDE_DIR}
     ${FILTERS_INCLUDE_DIR}
     ${QUAZIP_INCLUDE_DIR}

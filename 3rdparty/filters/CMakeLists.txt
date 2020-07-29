@@ -1,11 +1,9 @@
 
 add_definitions(
-    ${BZIP2_DEFINITIONS}
     ${QT_DEFINITIONS}
 )
 
 include_directories(
-    ${BZIP2_INCLUDE_DIR}
     ${QT_INCLUDES}
 )
 
@@ -22,7 +20,7 @@ set(filters_HEADERS
 )
 
 add_library(filters STATIC ${filters_SOURCES} ${filters_HEADERS})
-target_link_libraries(filters ${QT_CONSOLE_LIBRARIES})
+target_link_libraries(filters PRIVATE ${QT_CONSOLE_LIBRARIES} ${BZIP2_LIBRARIES})
 get_target_property(FILTERS_LIBRARY filters LOCATION)
 
 # public interface

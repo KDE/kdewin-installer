@@ -23,7 +23,6 @@ if (BZIP2_UNPACK_SUPPORT)
     # in static build mode we cannot rely that the external library is a static build
     if (NOT STATIC_BUILD)
         find_package(BZip2)
-        set(BZIP2_DEFINITIONS "" CACHE STRING "BZIP compiler definitions" FORCE)
     endif ()
     if (STATIC_BUILD OR NOT BZIP2_FOUND)
         message(STATUS "using local static bzip2 library")
