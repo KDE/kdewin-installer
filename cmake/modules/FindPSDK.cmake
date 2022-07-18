@@ -7,8 +7,7 @@
 #
 # Copyright (c) 2008, Ralf Habacker, <ralf.habacker@freenet.de>
 #
-# Redistribution and use is allowed according to the terms of the BSD license.
-# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
+# SPDX-License-Identifier: BSD-3-Clause
 
 if(PSDK_INCLUDE_DIR)
    set(PSDK_FOUND TRUE)

@@ -3,7 +3,7 @@
 # 
 # Copyright (c) 2006-2007, Ralf Habacker <ralf.habacker@freenet.de>
 #
-# Redistribution and use is allowed according to the terms of the BSD license.
+# SPDX-License-Identifier: BSD-3-Clause
 #
 
 if (WIN32)
