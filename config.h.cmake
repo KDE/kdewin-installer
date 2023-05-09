@@ -9,6 +9,7 @@
 #cmakedefine BUILD_TRANSLATIONS "@BUILD_TRANSLATIONS@"
 #cmakedefine BUILD_WITH_SHA1_CHECKSUM 1
 #cmakedefine INSTALLER_URL_PATH "@INSTALLER_URL_PATH@"
+#cmakedefine INSTALLER_UPDATE_URL "@INSTALLER_UPDATE_URL@"
 #include "debug.h"
 
 #endif

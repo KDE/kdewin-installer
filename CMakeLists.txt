@@ -61,6 +61,11 @@ OPTION(SHA1SUM_SUPPORT "Create sha1 checksums for executables" ON)
 OPTION(QT5_BUILD "Build with QT5" OFF)
 OPTION(QT4_BUILD "Build with QT4" ON)
 
+if(NOT INSTALLER_UPDATE_URL)
+    set(INSTALLER_UPDATE_URL "http://download.kde.org/stable/kdewin/installer")
+endif()
+set(INSTALLER_UPDATE_URL ${INSTALLER_UPDATE_URL} CACHE STRING "absolute installer url" FORCE)
+
 if(NOT INSTALLER_URL_PATH)
     set(INSTALLER_URL_PATH "stable/kdewin/installer")
 endif()
