@@ -62,6 +62,11 @@ There has to be one xml file per KDE-module
                      <files handler="parseQtIncludeFiles" 
             -->                 
             <files handler="parseQtIncludeFiles" directory="include" include="*" exclude="private *_p.h *.pr* .svn CVS"/>
+            <!--
+                - outputdirectory defines the output directory.
+                  Very helpful if the specified path in the attribute directory is to be renamed.
+             -->
+            <files directory="bin/vc141/Win32" outputdirectory="bin" include="*.dll"/>
         </part>
     </package>
 </module>

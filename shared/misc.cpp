@@ -170,7 +170,7 @@ bool findExecutables(QList<InstallFile> &fileList, const QString &root, const QS
   return true;
 }
 
-bool generateFileList(QList<InstallFile> &fileList, const QString &root, const QString &subdir, const QString &filter, const QString &exclude, bool verbose)
+bool generateFileList(QList<InstallFile> &fileList, const QString &root, const QString &subdir, const QString &filter, const QString &exclude, const QString &outputdir, bool verbose)
 {
    // create a QListQRegExp
 	QStringList sl = exclude.split(' ');
@@ -186,10 +186,10 @@ bool generateFileList(QList<InstallFile> &fileList, const QString &root, const Q
        rxList += rx;
    }
 
-   return ::generateFileList(fileList, root, subdir, filter, rxList, verbose);
+   return ::generateFileList(fileList, root, subdir, subdir, filter, rxList, outputdir, verbose);
 }
 
-bool generateFileList(QList<InstallFile> &fileList, const QString &root,const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList, bool verbose)
+bool generateFileList(QList<InstallFile> &fileList, const QString &root, const QString &origSubdir, const QString &subdir, const QString &filter, const QList<QRegExp> &excludeList, const QString &outputdir, bool verbose)
 {
    QDir d;
    bool subdirs = true;
@@ -242,10 +242,11 @@ bool generateFileList(QList<InstallFile> &fileList, const QString &root,const QS
           //fileList += toAdd;
           //qDebug() << "added ..." << toAdd;
 
-          generateFileList(fileList, root, fn, filter, excludeList);
+          generateFileList(fileList, root, origSubdir, fn, filter, excludeList, outputdir);
        }
        else {
          QString toAdd;
+         QString renameTo;
          if(subdir.isEmpty())
            toAdd = fn;
          else
@@ -257,22 +258,44 @@ bool generateFileList(QList<InstallFile> &fileList, const QString &root,const QS
          else
            toAdd = subdir + '/' + fn;
 
+         if(!outputdir.isEmpty())
+         {
+           renameTo = toAdd;
+           if(!origSubdir.isEmpty())
+             renameTo.replace(origSubdir, outputdir);
+           else
+             renameTo = outputdir + '/' + toAdd;
+         }
+
          if(toAdd.endsWith(QLatin1String(".manifest"))) {
            manifestList += toAdd;
            continue;
          }
          if(toAdd.endsWith(QLatin1String(".exe")) ||
             toAdd.endsWith(QLatin1String(".dll"))) {
-           executableList += toAdd;
+             executableList += toAdd;
          }
          if(!fileList.contains(toAdd))
-          fileList += toAdd;
+         {
+           fileList += InstallFile(toAdd, renameTo);
+         }
        }
    }
    for(int i = 0; i < executableList.count(); i++) {
      const QString manifest = executableList[i] + QLatin1String(".manifest");
      if(manifestList.contains(manifest))
-       fileList += manifest;
+     {
+       QString renameTo;
+       if(!outputdir.isEmpty())
+       {
+         renameTo = manifest;
+         if(!origSubdir.isEmpty())
+           renameTo.replace(origSubdir, outputdir);
+         else
+           renameTo = outputdir + '/' + manifest;
+       }
+       fileList += InstallFile(manifest, renameTo);
+     }
    }
    return true;
 }

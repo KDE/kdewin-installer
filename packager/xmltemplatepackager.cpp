@@ -26,6 +26,7 @@ public:
         , exclude(atts.value("exclude"))
         , handler(atts.value("handler"))
         , include(atts.value("include"))
+        , outputdirectory(atts.value("outputdirectory"))
     {
     }
 
@@ -34,6 +35,7 @@ public:
     QString exclude;
     QString handler;
     QString include;
+    QString outputdirectory;
     QStringList fileList;
     friend QDebug operator<<(QDebug, const XmlFiles &);
 };
@@ -457,7 +459,7 @@ bool XmlTemplatePackager::generatePackageFileList(QList<InstallFile> &fileList, 
             else if (f->handler == "parseQtIncludeFiles")
                 parseQtIncludeFiles(fileList, dir, f->directory,  f->include, f->exclude);
             else if (!f->directory.isEmpty())
-                generateFileList(fileList, dir, f->directory,  f->include, f->exclude);
+                generateFileList(fileList, dir, f->directory,  f->include, f->exclude, f->outputdirectory);
             else 
             {
                 for (QList<InstallFile>::iterator i = m_fileList.begin(); i != m_fileList.end(); ++i)
