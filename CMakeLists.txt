@@ -1,7 +1,7 @@
 set (NAME kdewin-installer)
-project(${NAME})
-
 cmake_minimum_required(VERSION 2.8.11)
+
+project(${NAME})
 
 if(VERSION)
     set(VERSION_PATCH ${VERSION})
@@ -84,11 +84,11 @@ set(INSTALLER_MIRROR_FALLBACK_URL ${INSTALLER_MIRROR_FALLBACK_URL} CACHE STRING 
 set(CMAKE_AUTOMOC ON)
 
 if(QT5_BUILD)
-    find_package(Qt5Core)
-    find_package(Qt5Gui)
-    find_package(Qt5Widgets)
-    find_package(Qt5Xml)
-    find_package(Qt5Network)
+    set(QT_COMPONENTS Core Gui Widgets Xml Network)
+    if(BUILD_TESTS)
+        list(APPEND COMPONENTS Test)
+    endif()
+    find_package(Qt5 COMPONENTS ${QT_COMPONENTS} REQUIRED)
 
     if (Qt5Core_FOUND AND Qt5Gui_FOUND AND Qt5Xml_FOUND AND Qt5Widgets_FOUND AND Qt5Network_FOUND)
         set(QT5_FOUND 1)
@@ -109,7 +109,7 @@ if(QT5_BUILD)
 endif()
 if(NOT QT5_BUILD AND QT4_BUILD)
     set(QT_MIN_VERSION "4.7.0")
-    find_package(Qt4 COMPONENTS QtCore QtGui QtXml QtNetwork REQUIRED )
+    find_package(Qt4 COMPONENTS QtCore QtGui QtXml QtNetwork QtTest REQUIRED)
     include(${QT_USE_FILE})
     set(QT_GUI_LIBRARIES ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${QT_QTXML_LIBRARY} ${QT_QTMAIN_LIBRARY})
     set(QT_CONSOLE_LIBRARIES ${QT_QTNETWORK_LIBRARY} ${QT_QTCORE_LIBRARY} ${QT_QTXML_LIBRARY} ${QT_QTMAIN_LIBRARY})
@@ -303,6 +303,7 @@ if (BUILD_PACKAGER_ONLY)
     add_subdirectory(shared)
     add_subdirectory(sha1sum)
     add_subdirectory(packager)
+    add_subdirectory(tests)
 else(BUILD_PACKAGER_ONLY)
 
 #-----------------------------------------------------------------------------------------

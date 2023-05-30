@@ -1,5 +1,12 @@
 if (BUILD_TESTS)
 
+if(QT5_BUILD)
+    find_package(Qt5Test)
+    list(APPEND CONSOLE_LIBS Qt5::Test)
+else()
+    list(APPEND CONSOLE_LIBS ${QT_QTGUI_LIBRARY} ${QT_QTTEST_LIBRARY})
+endif()
+
 #
 # add_installer_test(testname [additional sources])
 #
@@ -24,7 +31,10 @@ include_directories(
     ${FILTERS_INCLUDE_DIR}
 )
 
+set(CONSOLE_LIBS ${CONSOLE_LIBS} ${QT_QTXML_LIBRARY})
+add_installer_test(test-packager ../packager/packager.cpp ../packager/xmltemplatepackager.cpp)
 
+if(NOT BUILD_PACKAGER_ONLY)
 add_installer_test(test-database)
 add_installer_test(test-downloader ../shared/downloaderprogress.cpp)
 add_installer_test(test-globalconfig)
@@ -33,13 +43,12 @@ add_installer_test(test-package)
 add_installer_test(test-packagelist-apachemodindex)
 add_installer_test(test-packagelist-sourceforge)
 add_installer_test(test-packagelist-sourceforge-mirror)
-set(CONSOLE_LIBS ${CONSOLE_LIBS} ${QT_QTXML_LIBRARY})
-add_installer_test(test-packager ../packager/packager.cpp ../packager/xmltemplatepackager.cpp)
 add_installer_test(test-settings)
 add_installer_test(test-unpacker)
 if(win32)
   add_installer_test(test-startmenu)
 endif(win32)
 add_installer_test(test-proxy)
+endif()
 
 endif (BUILD_TESTS)
