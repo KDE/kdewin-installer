@@ -20,8 +20,8 @@ void TestHashFile::test1()
     QCOMPARE(QString(hashFile.toHashFileContent()), QString("e9506d89dd4b301b77ebd059df5faffea732b921  test-hashfile.txt\n"));
 
     HashFile hashFile2(Hash::SHA1, CMAKE_SOURCE_DIR "/tests/data/test-hashfile.txt");
-    QCOMPARE(hashFile.computeHash(), true);
-    QCOMPARE(QString(hashFile.toHashFileContent()), QString("e9506d89dd4b301b77ebd059df5faffea732b921  test-hashfile.txt\n"));
+    QCOMPARE(hashFile2.computeHash(), true);
+    QCOMPARE(QString(hashFile2.toHashFileContent()), QString("e9506d89dd4b301b77ebd059df5faffea732b921  " CMAKE_SOURCE_DIR "/tests/data/test-hashfile.txt\n"));
 }
 
 QTEST_MAIN(TestHashFile)
