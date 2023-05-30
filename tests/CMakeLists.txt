@@ -31,6 +31,7 @@ include_directories(
     ${FILTERS_INCLUDE_DIR}
 )
 
+add_installer_test(test-hashfile)
 set(CONSOLE_LIBS ${CONSOLE_LIBS} ${QT_QTXML_LIBRARY})
 add_installer_test(test-packager ../packager/packager.cpp ../packager/xmltemplatepackager.cpp)
 

@@ -1,0 +1,13 @@
+@site test
+@type apachemodindex
+
+@site test2
+@type sourceforge
+
+@site test3
+@type sourceforge-mirror
+
+@site test4
+@type unknown-type
+
+
