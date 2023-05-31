@@ -34,7 +34,7 @@ struct InstallFile
   bool bAbsInputPath;
   bool usedFile;
 
-  InstallFile(const QString &in, const QString &out = QString(), bool absPath = false)
+  InstallFile(const QString &in=QString(), const QString &out = QString(), bool absPath = false)
     : inputFile(in), outputFile(out), bAbsInputPath(absPath), usedFile(false)
   {}
   bool operator==(const InstallFile &o)
