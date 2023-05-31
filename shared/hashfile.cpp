@@ -32,11 +32,6 @@ HashFile::~HashFile()
 
 bool HashFile::computeHash()
 {
-    if(m_fullName.contains("\\ ")) 
-    {
-        m_fullName.replace("\\ ", " ");
-    }
-    
     QFile f(m_fullName);
     if (!f.open(QIODevice::ReadOnly)) 
     {
@@ -57,8 +52,10 @@ QByteArray HashFile::toHashFileContent()
     if (m_hash.isEmpty())
         if (!computeHash())
             return QByteArray();
-    
-    return m_hash.toHex() + QByteArray("  ") + m_fileName.toUtf8() + QByteArray("\n");
+
+    QString fileName(m_fileName);
+    fileName.replace(' ', "\\ "); // escape
+    return m_hash.toHex() + QByteArray("  ") + fileName.toUtf8() + QByteArray("\n");
 }
 
 bool HashFile::save(const QString &fileName)

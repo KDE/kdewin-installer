@@ -387,7 +387,6 @@ bool Packager::createManifestFiles(const QString &rootDir, QList<InstallFile> &f
             if (m_checkSumMode.isEmpty())
                 continue;
             QString fn = file.outputFile.isEmpty() ? file.inputFile : file.outputFile;
-            fn.replace(' ', "\\ "); // escape ' '
             HashFile hf(m_checkSumMode == "sha1" ? HashFile::SHA1 : HashFile::MD5,fn,rootDir); 
             out << hf.toHashFileContent();
         }
