@@ -17,6 +17,7 @@ class TestMisc : public QObject
     Q_OBJECT
 private slots:
     void testGenerateFileList();
+    void testGenerateFileListManifest();
     void testGenerateFileListRegExpExcludes();
 };
 

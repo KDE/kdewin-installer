@@ -28,7 +28,26 @@ void TestMisc::testGenerateFileList()
     QCOMPARE(files[0].outputFile, QString());
 }
 
+void TestMisc::testGenerateFileListManifest()
+{
+    QList<InstallFile> files;
+    QString root(CMAKE_SOURCE_DIR);
+    QString subdir(DATA_DIR);
+    QString filter("*");
+    QString exclude("*.txt");
+    QCOMPARE(generateFileList(files, root, subdir, filter, exclude), true);
+    QCOMPARE(files.size(), 5);
+    qDebug() << files;
+    QCOMPARE(files[0].inputFile, QString(DATA_DIR "/test.dll"));
     QCOMPARE(files[0].outputFile, QString());
+    QCOMPARE(files[1].inputFile, QString(DATA_DIR "/test.exe"));
+    QCOMPARE(files[1].outputFile, QString());
+    QCOMPARE(files[2].inputFile, QString(DATA_DIR "/without-manifest.exe"));
+    QCOMPARE(files[2].outputFile, QString());
+    QCOMPARE(files[3].inputFile, QString(DATA_DIR "/test.dll.manifest"));
+    QCOMPARE(files[3].outputFile, QString());
+    QCOMPARE(files[4].inputFile, QString(DATA_DIR "/test.exe.manifest"));
+    QCOMPARE(files[4].outputFile, QString());
 }
 
 void TestMisc::testGenerateFileListRegExpExcludes()
