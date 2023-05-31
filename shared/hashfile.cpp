@@ -20,10 +20,17 @@
 
 HashFile::HashFile(HashFile::Type type, const QString &fileName, const QString &basePath) 
     : Hash(type),
-      m_fileName(fileName),
+      m_installFile(InstallFile(fileName)),
       m_fullName(basePath.isEmpty() ? fileName : basePath + '/' + fileName)
 {
    
+}
+HashFile::HashFile(HashFile::Type type, const InstallFile &file, const QString &basePath)
+    : Hash(type),
+      m_installFile(file),
+      m_fullName( (basePath.isEmpty() || m_installFile.bAbsInputPath) ? file.inputFile : basePath + '/' + file.inputFile)
+{
+
 }
 
 HashFile::~HashFile()
@@ -53,7 +60,7 @@ QByteArray HashFile::toHashFileContent()
         if (!computeHash())
             return QByteArray();
 
-    QString fileName(m_fileName);
+    QString fileName = m_installFile.outputFile.isEmpty() ? m_installFile.inputFile : m_installFile.outputFile;
     fileName.replace(' ', "\\ "); // escape
     return m_hash.toHex() + QByteArray("  ") + fileName.toUtf8() + QByteArray("\n");
 }

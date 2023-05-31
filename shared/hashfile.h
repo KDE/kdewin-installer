@@ -12,6 +12,7 @@
 #define HASHFILE_H
 
 #include "hash.h"
+#include "misc.h"
 
 #include <QString>
 #include <QByteArray>
@@ -19,8 +20,11 @@
 class HashFile : public Hash {
     public: 
         typedef Hash::Type Type; 
-        /// create hash instance with the given type and based on the originalFile
+        /// create hash instance with the given type and based on the original file
         HashFile(Type type, const QString &fileName, const QString &basePath = QString());
+
+        /// create hash instance with the given type and based on the original file
+        HashFile(Type type, const InstallFile &file, const QString &basePath = QString());
         ~HashFile();
 
         /**
@@ -65,7 +69,7 @@ class HashFile : public Hash {
         static bool isHashFileName(const QString &fileName);
     protected: 
         QByteArray m_hash; 
-        QString m_fileName;
+        InstallFile m_installFile;
         QString m_fullName;
 };
 
