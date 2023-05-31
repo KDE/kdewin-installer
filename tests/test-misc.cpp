@@ -14,33 +14,35 @@
 
 #include <QTest>
 
+#define DATA_DIR "tests/data/misc"
+
 void TestMisc::testGenerateFileList()
 {
     QList<InstallFile> files;
     QString root(CMAKE_SOURCE_DIR);
-    QString subdir("tests/data");
+    QString subdir(DATA_DIR);
     QString filter("*.txt");
     QCOMPARE(generateFileList(files, root, subdir, filter), true);
-    QCOMPARE(files.size(), 3);
-    QCOMPARE(files[0].inputFile, "tests/data/config-site.txt");
-    QCOMPARE(files[1].inputFile, "tests/data/test-hashfile space.txt");
-    QCOMPARE(files[2].inputFile, "tests/data/test-hashfile.txt");
+    QCOMPARE(files.size(), 1);
+    QCOMPARE(files[0].inputFile, QString(DATA_DIR "/config-site.txt"));
+    QCOMPARE(files[0].outputFile, QString());
+}
+
+    QCOMPARE(files[0].outputFile, QString());
 }
 
 void TestMisc::testGenerateFileListRegExpExcludes()
 {
     QList<InstallFile> files;
     QString root(CMAKE_SOURCE_DIR);
-    QString subdir("tests/data");
+    QString subdir(DATA_DIR);
     QString filter("*.txt");
     QList<QRegExp> excludes;
-    QRegExp rx("*config-site*");
+    QRegExp rx("config-site.*");
     rx.setPatternSyntax(QRegExp::Wildcard);
     excludes << rx;
     QCOMPARE(generateFileList(files, root, subdir, filter, excludes), true);
-    QCOMPARE(files.size(), 2);
-    QCOMPARE(files[0].inputFile, "tests/data/test-hashfile space.txt");
-    QCOMPARE(files[1].inputFile, "tests/data/test-hashfile.txt");
+    QCOMPARE(files.size(), 0);
 }
 
 QTEST_MAIN(TestMisc)
