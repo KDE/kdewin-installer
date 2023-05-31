@@ -37,7 +37,6 @@ void TestMisc::testGenerateFileListManifest()
     QString exclude("*.txt");
     QCOMPARE(generateFileList(files, root, subdir, filter, exclude), true);
     QCOMPARE(files.size(), 5);
-    qDebug() << files;
     QCOMPARE(files[0].inputFile, QString(DATA_DIR "/test.dll"));
     QCOMPARE(files[0].outputFile, QString());
     QCOMPARE(files[1].inputFile, QString(DATA_DIR "/test.exe"));
