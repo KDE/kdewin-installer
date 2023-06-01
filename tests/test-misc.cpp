@@ -54,12 +54,14 @@ void TestMisc::testGenerateFileListRegExpExcludes()
     QList<InstallFile> files;
     QString root(CMAKE_SOURCE_DIR);
     QString subdir(DATA_DIR);
+    QString origSubdir = subdir;
     QString filter("*.txt");
+    QString outputDir;
     QList<QRegExp> excludes;
     QRegExp rx("config-site.*");
     rx.setPatternSyntax(QRegExp::Wildcard);
     excludes << rx;
-    QCOMPARE(generateFileList(files, root, subdir, filter, excludes), true);
+    QCOMPARE(generateFileList(files, root, origSubdir, subdir, filter, excludes, outputDir), true);
     QCOMPARE(files.size(), 0);
 }
 
