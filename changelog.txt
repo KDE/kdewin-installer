@@ -1,7 +1,7 @@
 ChangeLog
 =========
 
-see https://cgit.kde.org/kdewin-installer.git/log/
+see https://invent.kde.org/packaging/kdewin-installer/-/tags
 
 1.0.2
 -----------------
