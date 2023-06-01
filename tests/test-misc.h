@@ -19,6 +19,8 @@ private slots:
     void testGenerateFileList();
     void testGenerateFileListManifest();
     void testGenerateFileListRegExpExcludes();
+    void testGenerateFileListRenameSubDirOutputDirectory();
+    void testGenerateFileListRenameOutputDirectory();
 };
 
 #endif // TEST_MISC_H
