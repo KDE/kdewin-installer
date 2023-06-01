@@ -26,6 +26,11 @@ void TestHashFile::test1()
     HashFile hashFile3(Hash::SHA1, CMAKE_SOURCE_DIR "/tests/data/hashfile/test-hashfile space.txt");
     QCOMPARE(hashFile3.computeHash(), true);
     QCOMPARE(QString(hashFile3.toHashFileContent()), QString("e9506d89dd4b301b77ebd059df5faffea732b921  " CMAKE_SOURCE_DIR "/tests/data/hashfile/test-hashfile\\ space.txt\n"));
+
+    InstallFile installFile(CMAKE_SOURCE_DIR "/tests/data/hashfile/test-hashfile.txt", "tests/test-hashfile.txt");
+    HashFile hashFile4(Hash::SHA1, installFile);
+    QCOMPARE(hashFile4.computeHash(), true);
+    QCOMPARE(QString(hashFile4.toHashFileContent()), QString("e9506d89dd4b301b77ebd059df5faffea732b921  tests/test-hashfile.txt\n"));
 }
 
 QTEST_MAIN(TestHashFile)
