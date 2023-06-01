@@ -4,6 +4,8 @@ About
 The KDEWIN Installer is aimed to be a installer tool to ease kde installation on windows.
 See http://commit-digest.org/issues/2007-01-14/ for an article about the background of this installer.
 
+There is also a command line tool for packaging used by the emerge build system and used by companies.
+
 State
 =====
 The gui installer is able to download, install and update packages from different internet ftp
@@ -13,7 +15,7 @@ NOTES
 ===== 
 - see doc/readme.txt for more informations about the idea and backgrounds of the installer
 
-- sources are located on https://cgit.kde.org/kdewin-installer.git/
+- sources are located on https://invent.kde.org/packaging/kdewin-installer.git
 
 - the released version is build using a static qt release with specific configure 
   parameters, see section "static compile hints" for more informations
