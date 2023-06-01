@@ -12,6 +12,8 @@
 #include "enduserinstallmodepage.h"
 #include "installerdialogs.h"
 
+#include <QButtonGroup>
+
 EndUserInstallModePage::EndUserInstallModePage() : InstallWizardPage(0)
 {
     ui.setupUi(this);

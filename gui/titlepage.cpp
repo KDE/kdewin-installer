@@ -11,6 +11,8 @@
 #include "config.h"
 #include "titlepage.h"
 
+#include <QButtonGroup>
+
 TitlePage::TitlePage()
 {
     ui.setupUi(this);

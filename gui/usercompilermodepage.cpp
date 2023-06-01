@@ -14,6 +14,7 @@
 #include <QDir>
 #include <QString>
 #include <QFileDialog>
+#include <QButtonGroup>
 
 UserCompilerModePage::UserCompilerModePage() : InstallWizardPage(0)
 {
