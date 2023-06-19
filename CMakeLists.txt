@@ -101,6 +101,10 @@ if(QT5_BUILD)
             set(QT_DEFINITIONS -fpic)
         endif()
         set(QT4_BUILD OFF)
+
+        get_target_property(QT_CONFIG Qt5::Core TYPE)
+        string(TOLOWER ${QT_CONFIG} QT_CONFIG)
+
         # QT_INCLUDES is not used; includes are provided by imported targets
     endif()
 endif()
