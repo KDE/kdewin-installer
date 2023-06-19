@@ -18,4 +18,4 @@ add_library(bzip2 STATIC ${bzip2_SOURCES} ${bzip2_HEADERS})
 target_include_directories(bzip2 PUBLIC ${CMAKE_SOURCE_DIR}/3rdparty/bzip2)
 
 # public interface
-set(BZIP2_LIBRARIES bzip2 CACHE FILEPATH "libraries" FORCE)
+set(BZIP2_LIBRARIES bzip2 PARENT_SCOPE)
